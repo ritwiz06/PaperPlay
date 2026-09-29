@@ -1,0 +1,23 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.measure.cancelling-headings",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "measure",
+  "claim": "Opposite headings cancel whatever the speeds, and birds 10 apart form two groups.",
+  "derivation": [
+    "A (5, 5) v (1, 0) and B (15, 5) v (−2, 0). Headings (1, 0) and (−1, 0) cancel, so directionalAgreement = 0: it measures heading, not speed (E12).",
+    "Each bird's nearest neighbour is the other, 10 away: meanNeighbourDistance = 10 (E13).",
+    "10 ≥ 4.5, so the birds are not linked and clusterCount = 2 (E14)."
+  ],
+  "state": {
+    "width": 32, "height": 32, "stepIndex": 0,
+    "agents": [
+      { "x": 5, "y": 5, "vx": 1, "vy": 0 },
+      { "x": 15, "y": 5, "vx": -2, "vy": 0 }
+    ],
+    "beacons": [], "obstacles": []
+  },
+  "expected": { "directionalAgreement": 0, "meanNeighbourDistance": 10, "clusterCount": 2 },
+  "tolerance": 1e-12
+}

@@ -1,0 +1,42 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.one-step.alignment",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "one-step",
+  "claim": "Alignment moves each bird's velocity a fraction w_a·Δt of the way toward its neighbours' mean velocity, excluding its own.",
+  "derivation": [
+    "Only alignment is on (w_a = 1.5). A (10, 10) v (2, 0); B (12, 10) v (0, 2); C (10, 12) v (1, 1); D (12, 12) v (2, 2); every pair is within R = 4.5.",
+    "Each neighbour mean excludes the bird itself: ū_A = ((0, 2) + (1, 1) + (2, 2))/3 = (1, 5/3), ū_B = (5/3, 1), ū_C = (4/3, 4/3), ū_D = (1, 1) (E3).",
+    "A_A = 1.5 · (ū_A − v_A) = (−1.5, 2.5); A_B = (2.5, −1.5); A_C = (0.5, 0.5); A_D = (−1.5, −1.5); none exceeds a_max = 50 (E8).",
+    "v′ = v + A Δt: A (1.975, 0.041667), B (0.041667, 1.975), C (1.008333, 1.008333), D (1.975, 1.975); every speed stays inside [0.45, 3.6] (E9).",
+    "The velocity sum is (5, 5) before and after: alignment only redistributes velocity within a mutual neighbourhood."
+  ],
+  "params": {
+    "agentCount": 4, "worldWidth": 32, "worldHeight": 32,
+    "separationWeight": 0, "alignmentWeight": 1.5, "cohesionWeight": 0,
+    "perceptionRadius": 4.5, "separationRadius": 1.55,
+    "targetSpeed": 2.7, "minSpeed": 0.45, "maxSpeed": 3.6, "maxAcceleration": 50,
+    "beaconWeight": 0, "obstacleWeight": 0, "obstacleRadius": 3.4
+  },
+  "dt": 0.016666666666666666,
+  "state": {
+    "width": 32, "height": 32, "stepIndex": 0,
+    "agents": [
+      { "x": 10, "y": 10, "vx": 2, "vy": 0 },
+      { "x": 12, "y": 10, "vx": 0, "vy": 2 },
+      { "x": 10, "y": 12, "vx": 1, "vy": 1 },
+      { "x": 12, "y": 12, "vx": 2, "vy": 2 }
+    ],
+    "beacons": [], "obstacles": []
+  },
+  "expected": {
+    "agents": [
+      { "x": 10.032916666666667, "y": 10.000694444444445, "vx": 1.975, "vy": 0.041666666666666664 },
+      { "x": 12.000694444444445, "y": 10.032916666666667, "vx": 0.041666666666666664, "vy": 1.975 },
+      { "x": 10.016805555555555, "y": 12.016805555555555, "vx": 1.0083333333333333, "vy": 1.0083333333333333 },
+      { "x": 12.032916666666667, "y": 12.032916666666667, "vx": 1.975, "vy": 1.975 }
+    ]
+  },
+  "tolerance": 1e-12
+}

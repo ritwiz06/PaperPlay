@@ -1,0 +1,28 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.no-alignment.stays-disordered",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "expected-qualitative",
+  "kind": "threshold",
+  "claim": "With separation and cohesion at their defaults but alignment off, the flock should not settle on a shared heading.",
+  "derivation": [
+    "Expected, not derived: this is the brief's first example with separation and cohesion left on at their defaults.",
+    "Each remaining rule steers velocity toward a desired velocity set only by relative positions: toward the local centre (E4) or away from crowding (E5). Over a group these point inward and outward in roughly cancelling directions.",
+    "Their −v_i terms damp any shared motion of a group at a rate near w_c + w_s, so nothing sustains a common heading and agreement should stay well below 1.",
+    "Not guaranteed: attraction–repulsion models without explicit alignment can still align under some settings. A failure here is a finding to investigate, not a threshold to tune."
+  ],
+  "params": {
+    "agentCount": 72, "worldWidth": 32, "worldHeight": 32,
+    "separationWeight": 1.2, "alignmentWeight": 0, "cohesionWeight": 0.8,
+    "perceptionRadius": 4.5, "separationRadius": 1.55,
+    "targetSpeed": 2.7, "minSpeed": 0.45, "maxSpeed": 3.6, "maxAcceleration": 4.6,
+    "beaconWeight": 0.85, "obstacleWeight": 3, "obstacleRadius": 3.4
+  },
+  "dt": 0.016666666666666666,
+  "seeds": [1, 2, 3, 4, 5, 6, 7, 8],
+  "steps": 1200,
+  "metric": "directionalAgreement",
+  "at": "final",
+  "comparison": "lt",
+  "value": 0.5
+}

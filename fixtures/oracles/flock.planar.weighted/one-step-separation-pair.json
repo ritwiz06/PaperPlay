@@ -1,0 +1,39 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.one-step.separation-pair",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "one-step",
+  "claim": "Two birds closer than the separation radius steer apart, each toward target speed directly away from the other.",
+  "derivation": [
+    "Only separation is on (w_s = 1); every other weight is 0 and a_max = 50 is never reached.",
+    "A at (10, 10) sees B at δ = (1, 0), |δ| = 1 < R_s = 1.55, so s_A = −(1, 0)/1² = (−1, 0) (E2, E5).",
+    "S_A = 1 · (2.7 · (−1, 0) − (1, 0)) = (−3.7, 0), and |a| = 3.7 ≤ 50 (E8).",
+    "v′_A = (1 − 3.7/60, 0) = (0.938333…, 0), inside [0.45, 3.6] (E9); x′_A = 10 + 0.938333…/60 = 10.015639 (E10).",
+    "B sees A at δ = (−1, 0): S_B = 2.7 · (1, 0) − (1, 0) = (1.7, 0), v′_B = (1.028333…, 0), x′_B = 11 + 1.028333…/60 = 11.017139.",
+    "The birds end 1.0015 apart, farther than the 1 they started at."
+  ],
+  "params": {
+    "agentCount": 2, "worldWidth": 32, "worldHeight": 32,
+    "separationWeight": 1, "alignmentWeight": 0, "cohesionWeight": 0,
+    "perceptionRadius": 4.5, "separationRadius": 1.55,
+    "targetSpeed": 2.7, "minSpeed": 0.45, "maxSpeed": 3.6, "maxAcceleration": 50,
+    "beaconWeight": 0, "obstacleWeight": 0, "obstacleRadius": 3.4
+  },
+  "dt": 0.016666666666666666,
+  "state": {
+    "width": 32, "height": 32, "stepIndex": 0,
+    "agents": [
+      { "x": 10, "y": 10, "vx": 1, "vy": 0 },
+      { "x": 11, "y": 10, "vx": 1, "vy": 0 }
+    ],
+    "beacons": [], "obstacles": []
+  },
+  "expected": {
+    "agents": [
+      { "x": 10.015638888888889, "y": 10, "vx": 0.9383333333333334, "vy": 0 },
+      { "x": 11.017138888888889, "y": 10, "vx": 1.0283333333333333, "vy": 0 }
+    ]
+  },
+  "tolerance": 1e-12
+}

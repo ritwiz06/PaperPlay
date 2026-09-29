@@ -1,0 +1,28 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.symmetry.translation",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "metamorphic",
+  "claim": "Moving the whole world around the torus moves its future by the same amount.",
+  "derivation": [
+    "The torus has no preferred place: every rule depends only on displacements between birds, beacons and obstacles (E1–E7).",
+    "So shifting everything by (7.25, −3.5), wrapped onto the torus, shifts the whole trajectory by that amount (E10).",
+    "The shift changes the rounding of positions by about 1e-15; over 30 steps that stays far below 1e-9 unless a bird sits within that distance of a neighbourhood boundary, which is vanishingly unlikely. Positions are compared the short way round.",
+    "Observables do not depend on where the flock is and agree to the same tolerance (E12–E14)."
+  ],
+  "params": {
+    "agentCount": 72, "worldWidth": 32, "worldHeight": 32,
+    "separationWeight": 1.2, "alignmentWeight": 1, "cohesionWeight": 0.8,
+    "perceptionRadius": 4.5, "separationRadius": 1.55,
+    "targetSpeed": 2.7, "minSpeed": 0.45, "maxSpeed": 3.6, "maxAcceleration": 4.6,
+    "beaconWeight": 0.85, "obstacleWeight": 3, "obstacleRadius": 3.4
+  },
+  "dt": 0.016666666666666666,
+  "seed": 13,
+  "steps": 30,
+  "beacons": [{ "x": 5, "y": 27 }],
+  "obstacles": [{ "x": 20, "y": 9 }],
+  "transform": { "type": "translate", "by": [7.25, -3.5] },
+  "tolerance": 1e-9
+}

@@ -1,0 +1,15 @@
+{
+  "name": "@paperplay/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "PaperPlay API: holds secrets, runs the job state machine, makes bounded model calls.",
+  "scripts": {
+    "dev": "node --watch src/main.ts",
+    "start": "node src/main.ts",
+    "typecheck": "tsc -p tsconfig.json && tsc -p test/tsconfig.json"
+  },
+  "dependencies": {
+    "fastify": "^5.12.5"
+  }
+}

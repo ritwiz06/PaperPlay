@@ -1,0 +1,38 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.one-step.obstacle",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "one-step",
+  "claim": "An obstacle pushes a bird away in proportion to how deep inside its radius the bird is, and leaves birds beyond it alone.",
+  "derivation": [
+    "Only the obstacle rule is on (w_o = 3, R_o = 3.4). One obstacle sits at (12, 10).",
+    "A (10, 10) moving (1, 0) is 2 from the obstacle: push = 3 · (3.4 − 2) = 4.2 along −δ/|δ| = (−1, 0), so O_A = (−4.2, 0) (E7).",
+    "v′_A = (1 − 4.2/60, 0) = (0.93, 0) and x′_A = 10 + 0.93/60 = 10.0155 (E9, E10). Obstacles have no damping term, unlike the steering rules.",
+    "B (20, 20) is 12.81 from the obstacle, beyond R_o, so it keeps (0, 1) and moves to (20, 20.016667)."
+  ],
+  "params": {
+    "agentCount": 2, "worldWidth": 32, "worldHeight": 32,
+    "separationWeight": 0, "alignmentWeight": 0, "cohesionWeight": 0,
+    "perceptionRadius": 4.5, "separationRadius": 1.55,
+    "targetSpeed": 2.7, "minSpeed": 0.45, "maxSpeed": 3.6, "maxAcceleration": 50,
+    "beaconWeight": 0, "obstacleWeight": 3, "obstacleRadius": 3.4
+  },
+  "dt": 0.016666666666666666,
+  "state": {
+    "width": 32, "height": 32, "stepIndex": 0,
+    "agents": [
+      { "x": 10, "y": 10, "vx": 1, "vy": 0 },
+      { "x": 20, "y": 20, "vx": 0, "vy": 1 }
+    ],
+    "beacons": [],
+    "obstacles": [{ "x": 12, "y": 10 }]
+  },
+  "expected": {
+    "agents": [
+      { "x": 10.0155, "y": 10, "vx": 0.9299999999999999, "vy": 0 },
+      { "x": 20, "y": 20.016666666666666, "vx": 0, "vy": 1 }
+    ]
+  },
+  "tolerance": 1e-12
+}

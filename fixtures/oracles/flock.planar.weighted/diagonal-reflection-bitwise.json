@@ -1,0 +1,27 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.symmetry.diagonal-reflection-bitwise",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "metamorphic",
+  "claim": "Reflecting a square world across its diagonal reflects its whole future, bit for bit.",
+  "derivation": [
+    "On a square torus (W = H), swapping x and y for every position and velocity maps the world onto itself; the beacon (8, 20) becomes (20, 8) and the obstacle (24, 12) becomes (12, 24).",
+    "Every equation treats the two components identically (E1–E11): displacements, distances √(δx² + δy²), means and both clamps are unchanged by the swap, and IEEE-754 addition and multiplication are commutative.",
+    "So the swapped world evolves as the swap of the original with no rounding difference at all, and after each of 600 steps with every rule on the two runs agree exactly, observables included (E12–E14)."
+  ],
+  "params": {
+    "agentCount": 72, "worldWidth": 32, "worldHeight": 32,
+    "separationWeight": 1.2, "alignmentWeight": 1, "cohesionWeight": 0.8,
+    "perceptionRadius": 4.5, "separationRadius": 1.55,
+    "targetSpeed": 2.7, "minSpeed": 0.45, "maxSpeed": 3.6, "maxAcceleration": 4.6,
+    "beaconWeight": 0.85, "obstacleWeight": 3, "obstacleRadius": 3.4
+  },
+  "dt": 0.016666666666666666,
+  "seed": 7,
+  "steps": 600,
+  "beacons": [{ "x": 8, "y": 20 }],
+  "obstacles": [{ "x": 24, "y": 12 }],
+  "transform": { "type": "reflect-diagonal" },
+  "tolerance": 0
+}

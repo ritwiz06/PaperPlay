@@ -1,0 +1,35 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.alignment.conserves-velocity-sum",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "conserved-velocity-sum",
+  "claim": "When every bird sees every other and only alignment is on, the total velocity of the flock never changes.",
+  "derivation": [
+    "World 16 × 16 with R = 12: the longest short-way distance on this torus is √(8² + 8²) ≈ 11.31 < 12, so every bird always sees the other three (E1, E2).",
+    "With only alignment on, Σ A_i = w_a Σ (ū_i − v_i), and ū_i = (V − v_i)/3 with V = Σ v_j, so Σ ū_i = (4V − V)/3 = V and the sum is zero (E3).",
+    "v′_i = (1 − w_a Δt) v_i + w_a Δt ū_i with w_a Δt = 0.025 is a convex combination of current velocities, so every velocity stays in the triangle (2, 0), (0, 2), (2, 2).",
+    "Speeds therefore stay within [√2, 2√2] ⊂ [0.45, 3.6] and |a| ≤ 1.5 · 2√2 ≈ 4.24 < 50, so neither clamp acts (E8, E9).",
+    "The total velocity stays (5, 5) at every one of 120 steps; only floating-point rounding can move it."
+  ],
+  "params": {
+    "agentCount": 4, "worldWidth": 16, "worldHeight": 16,
+    "separationWeight": 0, "alignmentWeight": 1.5, "cohesionWeight": 0,
+    "perceptionRadius": 12, "separationRadius": 1.55,
+    "targetSpeed": 2.7, "minSpeed": 0.45, "maxSpeed": 3.6, "maxAcceleration": 50,
+    "beaconWeight": 0, "obstacleWeight": 0, "obstacleRadius": 3.4
+  },
+  "dt": 0.016666666666666666,
+  "state": {
+    "width": 16, "height": 16, "stepIndex": 0,
+    "agents": [
+      { "x": 10, "y": 10, "vx": 2, "vy": 0 },
+      { "x": 12, "y": 10, "vx": 0, "vy": 2 },
+      { "x": 10, "y": 12, "vx": 1, "vy": 1 },
+      { "x": 12, "y": 12, "vx": 2, "vy": 2 }
+    ],
+    "beacons": [], "obstacles": []
+  },
+  "steps": 120,
+  "tolerance": 1e-9
+}

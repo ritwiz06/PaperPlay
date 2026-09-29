@@ -1,0 +1,28 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.replay.same-seed-same-events-bitwise",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "replay",
+  "claim": "The same seed and the same parameter changes at the same steps give identical observables, bit for bit, on one runtime.",
+  "derivation": [
+    "This is the brief's example 'identical seed + events ⇒ identical observables (bitwise) on the same runtime'.",
+    "init depends only on the parameters and seed (E15), and a step only on the previous state and the parameters (E1–E11); neither reads a clock or an unseeded random source.",
+    "Applying the same changes before the same step indices therefore reproduces every state, and every observable, bit for bit."
+  ],
+  "params": {
+    "agentCount": 72, "worldWidth": 32, "worldHeight": 32,
+    "separationWeight": 1.2, "alignmentWeight": 1, "cohesionWeight": 0.8,
+    "perceptionRadius": 4.5, "separationRadius": 1.55,
+    "targetSpeed": 2.7, "minSpeed": 0.45, "maxSpeed": 3.6, "maxAcceleration": 4.6,
+    "beaconWeight": 0.85, "obstacleWeight": 3, "obstacleRadius": 3.4
+  },
+  "dt": 0.016666666666666666,
+  "seed": 42,
+  "steps": 600,
+  "events": [
+    { "step": 120, "variable": "alignmentWeight", "value": 0 },
+    { "step": 300, "variable": "cohesionWeight", "value": 1.6 },
+    { "step": 450, "variable": "alignmentWeight", "value": 2 }
+  ]
+}

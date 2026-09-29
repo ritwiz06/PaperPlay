@@ -1,0 +1,50 @@
+{
+  "$comment": "Read by scripts/check-gate.ts. A test proves a requirement by carrying its id in its title, e.g. \"[R01] …\". Requirement text lives in docs/requirements.md. Each later gate's script list grows when that gate begins.",
+  "current": "G1",
+  "requirements": {
+    "R01": "Deterministic, oracle-checked primitives",
+    "R02": "Model/render separation",
+    "R03": "Strict, versioned contracts",
+    "R04": "Playable local world",
+    "R05": "Origin labels and two-way provenance",
+    "R06": "Level structure and learning tools",
+    "R07": "Replay and stale evidence",
+    "R08": "Spec, not code",
+    "R09": "Untrusted paper text and server-only secrets",
+    "R10": "Sovereign checks and bounded repair",
+    "R11": "Honest job states",
+    "R12": "Accessibility and motion floor"
+  },
+  "gates": {
+    "G1": {
+      "title": "Playable baseline",
+      "tag": "v0.1.0",
+      "scripts": ["typecheck", "lint", "test", "build", "test:e2e"],
+      "requires": ["R01", "R02", "R03", "R04"]
+    },
+    "G2": {
+      "title": "Verified authored world",
+      "tag": "v0.2.0",
+      "scripts": ["typecheck", "lint", "test", "build", "test:e2e"],
+      "requires": ["R01", "R02", "R03", "R04", "R05", "R06", "R07", "R08", "R12"]
+    },
+    "G3": {
+      "title": "Constrained generation",
+      "tag": "v0.3.0",
+      "scripts": ["typecheck", "lint", "test", "build", "test:e2e"],
+      "requires": ["R01", "R02", "R03", "R04", "R05", "R06", "R07", "R08", "R09", "R10", "R11", "R12"]
+    },
+    "G4": {
+      "title": "Evaluation and feature freeze",
+      "tag": "v0.4.0",
+      "scripts": ["typecheck", "lint", "test", "build", "test:e2e"],
+      "requires": ["R01", "R02", "R03", "R04", "R05", "R06", "R07", "R08", "R09", "R10", "R11", "R12"]
+    },
+    "G5": {
+      "title": "Delivery",
+      "tag": "v1.0.0",
+      "scripts": ["typecheck", "lint", "test", "build", "test:e2e"],
+      "requires": ["R01", "R02", "R03", "R04", "R05", "R06", "R07", "R08", "R09", "R10", "R11", "R12"]
+    }
+  }
+}

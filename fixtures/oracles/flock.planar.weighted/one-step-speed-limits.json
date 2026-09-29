@@ -1,0 +1,39 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.one-step.speed-limits",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "one-step",
+  "claim": "A new velocity faster than maxSpeed is cut to maxSpeed, and one slower than minSpeed is lifted to minSpeed, keeping its direction.",
+  "derivation": [
+    "Only the beacon rule is on (w_b = 4, v* = 6, a_max = 50). Beacons sit at (15, 5) and (27, 25).",
+    "A (5, 5) moving (3.5, 0): the nearest beacon is (15, 5), 10 away (the other is 15.62), desired (6, 0), so B_A = 4 · ((6, 0) − (3.5, 0)) = (10, 0) (E6).",
+    "v′_A = (3.5 + 10/60, 0) = (3.666667, 0) exceeds v_max = 3.6 and is scaled to (3.6, 0) (E9); x′_A = 5 + 3.6/60 = 5.06 (E10).",
+    "B (5, 25) moving (0.5, 0): the beacon at (27, 25) is 10 away to the left across the seam (22 − 32 = −10), nearer than (15, 5) at 15.62; desired (−6, 0), B_B = (−26, 0).",
+    "v′_B = (0.5 − 26/60, 0) = (0.066667, 0) is below v_min = 0.45 but not zero, so it is scaled to (0.45, 0) in the same direction; x′_B = 5 + 0.45/60 = 5.0075."
+  ],
+  "params": {
+    "agentCount": 2, "worldWidth": 32, "worldHeight": 32,
+    "separationWeight": 0, "alignmentWeight": 0, "cohesionWeight": 0,
+    "perceptionRadius": 4.5, "separationRadius": 1.55,
+    "targetSpeed": 6, "minSpeed": 0.45, "maxSpeed": 3.6, "maxAcceleration": 50,
+    "beaconWeight": 4, "obstacleWeight": 0, "obstacleRadius": 3.4
+  },
+  "dt": 0.016666666666666666,
+  "state": {
+    "width": 32, "height": 32, "stepIndex": 0,
+    "agents": [
+      { "x": 5, "y": 5, "vx": 3.5, "vy": 0 },
+      { "x": 5, "y": 25, "vx": 0.5, "vy": 0 }
+    ],
+    "beacons": [{ "x": 15, "y": 5 }, { "x": 27, "y": 25 }],
+    "obstacles": []
+  },
+  "expected": {
+    "agents": [
+      { "x": 5.06, "y": 5, "vx": 3.6, "vy": 0 },
+      { "x": 5.0075, "y": 25, "vx": 0.45, "vy": 0 }
+    ]
+  },
+  "tolerance": 1e-12
+}

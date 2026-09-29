@@ -1,0 +1,17 @@
+{
+  "name": "@paperplay/primitives",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Deterministic, fixed-step scientific primitives and their registry.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json && tsc -p test/tsconfig.json"
+  },
+  "dependencies": {
+    "@paperplay/contracts": "*",
+    "zod": "^4.6.5"
+  }
+}

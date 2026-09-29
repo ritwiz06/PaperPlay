@@ -1,0 +1,27 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.measure.mixed",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "measure",
+  "claim": "The three observables of a small hand-built flock, measured the short way round the torus.",
+  "derivation": [
+    "World 32 × 32. A (1, 1) v (1, 0); B (2, 1) v (1, 0); C (10, 10) v (0, 2); D (31, 1) v (−3, 0).",
+    "Unit headings are (1, 0), (1, 0), (0, 1) and (−1, 0); their mean is (1, 1)/4, so directionalAgreement = √2/4 = 0.353553 (E12).",
+    "Nearest neighbours: A→B 1; B→A 1; D→A 2, because 1 − 31 = −30 wraps to +2 (E1); C→B √(8² + 9²) = √145 = 12.041595 (C→A is 12.73, C→D is √202 = 14.21).",
+    "meanNeighbourDistance = (1 + 1 + √145 + 2)/4 = 4.010399 (E13).",
+    "Links shorter than 4.5 join A–B (1), A–D (2) and B–D (3) across the seam; C links to nobody, so clusterCount = 2 (E14)."
+  ],
+  "state": {
+    "width": 32, "height": 32, "stepIndex": 0,
+    "agents": [
+      { "x": 1, "y": 1, "vx": 1, "vy": 0 },
+      { "x": 2, "y": 1, "vx": 1, "vy": 0 },
+      { "x": 10, "y": 10, "vx": 0, "vy": 2 },
+      { "x": 31, "y": 1, "vx": -3, "vy": 0 }
+    ],
+    "beacons": [], "obstacles": []
+  },
+  "expected": { "directionalAgreement": 0.3535533905932738, "meanNeighbourDistance": 4.010398644698074, "clusterCount": 2 },
+  "tolerance": 1e-12
+}

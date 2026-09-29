@@ -1,0 +1,38 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.one-step.nearest-beacon",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "one-step",
+  "claim": "Each bird steers toward its nearest beacon only, and the pull eases off within 2.5 world units of it.",
+  "derivation": [
+    "Only the beacon rule is on (w_b = 1, v* = 2.7). Beacons sit at (5, 6) and (26, 20).",
+    "A (5, 5) moving (1, 0): the nearest beacon is (5, 6) at 1 (the other is 18.60 away). Inside r_b = 2.5 the pull eases: desired = 2.7 · (0, 1)/2.5 = (0, 1.08), so B_A = (−1, 1.08) (E6).",
+    "B (20, 20) moving (0, 1): the nearest beacon is (26, 20) at 6 (the other is 20.52 away); desired = 2.7 · (6, 0)/6 = (2.7, 0), so B_B = (2.7, −1).",
+    "v′_A = (0.983333, 0.018) and v′_B = (0.045, 0.983333); p′ = p + v′ Δt (E9, E10)."
+  ],
+  "params": {
+    "agentCount": 2, "worldWidth": 32, "worldHeight": 32,
+    "separationWeight": 0, "alignmentWeight": 0, "cohesionWeight": 0,
+    "perceptionRadius": 4.5, "separationRadius": 1.55,
+    "targetSpeed": 2.7, "minSpeed": 0.45, "maxSpeed": 3.6, "maxAcceleration": 50,
+    "beaconWeight": 1, "obstacleWeight": 0, "obstacleRadius": 3.4
+  },
+  "dt": 0.016666666666666666,
+  "state": {
+    "width": 32, "height": 32, "stepIndex": 0,
+    "agents": [
+      { "x": 5, "y": 5, "vx": 1, "vy": 0 },
+      { "x": 20, "y": 20, "vx": 0, "vy": 1 }
+    ],
+    "beacons": [{ "x": 5, "y": 6 }, { "x": 26, "y": 20 }],
+    "obstacles": []
+  },
+  "expected": {
+    "agents": [
+      { "x": 5.016388888888889, "y": 5.0003, "vx": 0.9833333333333333, "vy": 0.018000000000000002 },
+      { "x": 20.00075, "y": 20.01638888888889, "vx": 0.04500000000000001, "vy": 0.9833333333333333 }
+    ]
+  },
+  "tolerance": 1e-12
+}

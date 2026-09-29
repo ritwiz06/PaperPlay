@@ -1,0 +1,39 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.one-step.wrap",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "one-step",
+  "claim": "A bird that crosses an edge re-enters from the opposite edge; one that stays inside is untouched.",
+  "derivation": [
+    "World 20 × 20 with every rule off, so velocities are unchanged (E8, E9).",
+    "A at (19.99, 5) moving (3, 0) reaches x = 19.99 + 0.05 = 20.04, which wraps to 0.04 (E10).",
+    "C at (7, 0.01) moving (0, −2) reaches y = 0.01 − 0.033333 = −0.023333, which wraps to 19.976667.",
+    "B at (5, 15) moving (0, −1) stays inside: y = 15 − 1/60 = 14.983333."
+  ],
+  "params": {
+    "agentCount": 3, "worldWidth": 20, "worldHeight": 20,
+    "separationWeight": 0, "alignmentWeight": 0, "cohesionWeight": 0,
+    "perceptionRadius": 4.5, "separationRadius": 1.55,
+    "targetSpeed": 2.7, "minSpeed": 0.45, "maxSpeed": 3.6, "maxAcceleration": 50,
+    "beaconWeight": 0, "obstacleWeight": 0, "obstacleRadius": 3.4
+  },
+  "dt": 0.016666666666666666,
+  "state": {
+    "width": 20, "height": 20, "stepIndex": 0,
+    "agents": [
+      { "x": 19.99, "y": 5, "vx": 3, "vy": 0 },
+      { "x": 5, "y": 15, "vx": 0, "vy": -1 },
+      { "x": 7, "y": 0.01, "vx": 0, "vy": -2 }
+    ],
+    "beacons": [], "obstacles": []
+  },
+  "expected": {
+    "agents": [
+      { "x": 0.03999999999999915, "y": 5, "vx": 3, "vy": 0 },
+      { "x": 5, "y": 14.983333333333333, "vx": 0, "vy": -1 },
+      { "x": 7, "y": 19.976666666666667, "vx": 0, "vy": -2 }
+    ]
+  },
+  "tolerance": 1e-12
+}

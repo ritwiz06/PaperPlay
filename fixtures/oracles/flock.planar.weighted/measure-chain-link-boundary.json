@@ -1,0 +1,27 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.measure.chain-link-boundary",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "measure",
+  "claim": "Groups link transitively, and a bird exactly 4.5 away is not linked.",
+  "derivation": [
+    "Five birds on the line y = 16: A x = 2, B 6, C 10, D 14, E 18.5. Every velocity points along (0.6, 0.8), so the mean heading has length 1: directionalAgreement = 1 (E12).",
+    "Consecutive gaps A–B, B–C and C–D are 4; D–E is exactly 4.5; E to A is 15.5 the short way round (E1).",
+    "Nearest distances are 4, 4, 4, 4 and 4.5, so meanNeighbourDistance = 20.5/5 = 4.1 (E13).",
+    "Links need a distance strictly below 4.5 (E14): A, B, C and D form one chain although A and D are 12 apart, and E stays alone, so clusterCount = 2."
+  ],
+  "state": {
+    "width": 32, "height": 32, "stepIndex": 0,
+    "agents": [
+      { "x": 2, "y": 16, "vx": 0.6, "vy": 0.8 },
+      { "x": 6, "y": 16, "vx": 1.2, "vy": 1.6 },
+      { "x": 10, "y": 16, "vx": 1.8, "vy": 2.4 },
+      { "x": 14, "y": 16, "vx": 0.3, "vy": 0.4 },
+      { "x": 18.5, "y": 16, "vx": 3, "vy": 4 }
+    ],
+    "beacons": [], "obstacles": []
+  },
+  "expected": { "directionalAgreement": 1, "meanNeighbourDistance": 4.1, "clusterCount": 2 },
+  "tolerance": 1e-12
+}

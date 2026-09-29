@@ -1,0 +1,18 @@
+{
+  "oracle": "oracle/1",
+  "id": "prng.mulberry32.known-answers",
+  "basis": "derived",
+  "kind": "known-answers",
+  "claim": "mulberry32 produces these first six 32-bit outputs for each seed.",
+  "derivation": [
+    "Computed with a Python transcription of the reference C code for mulberry32 (Tommy Ettinger, public domain), not with this repository's TypeScript.",
+    "Per draw: s = (s + 0x6D2B79F5) mod 2^32; z = s; z = ((z ^ (z >> 15)) * (z | 1)) mod 2^32; z ^= (z + ((z ^ (z >> 7)) * (z | 61) mod 2^32)) mod 2^32; output z ^ (z >> 14).",
+    "Cross-checked against the separate generator in reference/murmuration-valley.html, which yields the same values for all four seeds."
+  ],
+  "outputs": {
+    "0": [1144304738, 1416247, 958946056, 627933444, 2007157716, 2340967985],
+    "1": [2693262067, 11749833, 2265367787, 4213581821, 4159151403, 1207330352],
+    "42": [2581720956, 1925393290, 3661312704, 2876485805, 750819978, 2261697747],
+    "4294967295": [3850105811, 813802916, 3073704848, 4054706436, 3630262831, 2315588663]
+  }
+}

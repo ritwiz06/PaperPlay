@@ -1,0 +1,35 @@
+{
+  "name": "paperplay",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Turns a research paper into a playable, explorable world.",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=24.11.0 <25"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace @paperplay/web",
+    "dev:api": "npm run dev --workspace @paperplay/api",
+    "build": "npm run build --workspace @paperplay/web",
+    "typecheck": "tsc -p tsconfig.json && npm run typecheck --workspaces",
+    "lint": "eslint . --max-warnings=0",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "check:gate": "node scripts/check-gate.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^24.0.0",
+    "eslint": "^10.11.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.71.0",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
+  }
+}

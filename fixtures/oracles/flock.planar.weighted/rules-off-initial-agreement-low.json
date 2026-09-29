@@ -1,0 +1,28 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.rules-off.initial-agreement-low",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "threshold",
+  "claim": "A freshly seeded flock of 72 starts with low directional agreement, because its headings are drawn uniformly.",
+  "derivation": [
+    "E15 draws each heading uniformly on the circle, independently of the others.",
+    "For N independent uniform unit vectors, the length r of their mean satisfies P(r > x) ≈ exp(−N x²) for large N (the Rayleigh approximation).",
+    "With N = 72 and x = 0.4 that is exp(−11.52) ≈ 1e-5 per seed, so all eight seeds start below 0.4 unless the generator or the heading draw is broken.",
+    "This is a probabilistic bound, stated with its odds, not an exact value."
+  ],
+  "params": {
+    "agentCount": 72, "worldWidth": 32, "worldHeight": 32,
+    "separationWeight": 0, "alignmentWeight": 0, "cohesionWeight": 0,
+    "perceptionRadius": 4.5, "separationRadius": 1.55,
+    "targetSpeed": 2.7, "minSpeed": 0.45, "maxSpeed": 3.6, "maxAcceleration": 4.6,
+    "beaconWeight": 0, "obstacleWeight": 0, "obstacleRadius": 3.4
+  },
+  "dt": 0.016666666666666666,
+  "seeds": [1, 2, 3, 4, 5, 6, 7, 8],
+  "steps": 0,
+  "metric": "directionalAgreement",
+  "at": "initial",
+  "comparison": "lt",
+  "value": 0.4
+}

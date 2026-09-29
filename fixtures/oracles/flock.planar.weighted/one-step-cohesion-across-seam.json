@@ -1,0 +1,38 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.one-step.cohesion-across-seam",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "one-step",
+  "claim": "Birds on opposite edges of the torus are neighbours the short way round and are pulled together across the seam.",
+  "derivation": [
+    "World 20 × 20; only cohesion is on (w_c = 1). A (0.5, 10) and B (19.5, 10) both move at (0, 1).",
+    "The raw offset A→B is (19, 0); the short way round is 19 − 20 = −1 (E1), so they are neighbours at distance 1 (E2).",
+    "A: c = (−1, 0), |c| = 1 < 3, desired = 2.7 · (−1, 0)/3 = (−0.9, 0), so C_A = (−0.9, −1); B mirrors it with C_B = (0.9, −1) (E4).",
+    "v′_A = (−0.015, 0.983333), v′_B = (0.015, 0.983333): each heads for the seam between them, not across the middle of the world (E9).",
+    "x′_A = 0.5 − 0.015/60 = 0.49975 and x′_B = 19.5 + 0.015/60 = 19.50025 (E10)."
+  ],
+  "params": {
+    "agentCount": 2, "worldWidth": 20, "worldHeight": 20,
+    "separationWeight": 0, "alignmentWeight": 0, "cohesionWeight": 1,
+    "perceptionRadius": 4.5, "separationRadius": 1.55,
+    "targetSpeed": 2.7, "minSpeed": 0.45, "maxSpeed": 3.6, "maxAcceleration": 50,
+    "beaconWeight": 0, "obstacleWeight": 0, "obstacleRadius": 3.4
+  },
+  "dt": 0.016666666666666666,
+  "state": {
+    "width": 20, "height": 20, "stepIndex": 0,
+    "agents": [
+      { "x": 0.5, "y": 10, "vx": 0, "vy": 1 },
+      { "x": 19.5, "y": 10, "vx": 0, "vy": 1 }
+    ],
+    "beacons": [], "obstacles": []
+  },
+  "expected": {
+    "agents": [
+      { "x": 0.49975, "y": 10.016388888888889, "vx": -0.015, "vy": 0.9833333333333333 },
+      { "x": 19.50025, "y": 10.016388888888889, "vx": 0.015, "vy": 0.9833333333333333 }
+    ]
+  },
+  "tolerance": 1e-12
+}

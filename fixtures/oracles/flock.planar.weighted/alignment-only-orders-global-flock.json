@@ -1,0 +1,29 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.alignment-only.orders-global-flock",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "threshold",
+  "claim": "With alignment at 2 and every other rule off, a flock in which every bird sees every other reaches near-total agreement within 600 steps.",
+  "derivation": [
+    "This is the brief's example 'alignment 2, others 0 ⇒ agreement → 1 within K steps', with the flock made well mixed so K can be derived: on a 16 × 16 torus the farthest two birds can be is √128 ≈ 11.31 < R = 12, so every bird sees all 23 others (E1, E2).",
+    "E3 then gives v′_i − V̄ = (1 − k)(v_i − V̄) with k = w_a Δt · N/(N − 1) = (2/60)(24/23) = 0.034783, where V̄, the mean velocity, is conserved while no clamp acts.",
+    "Deviations from V̄ shrink by (1 − k)^t, and 0.965217^600 ≈ 6e-10, so every heading points along V̄ well before step 600 unless |V̄| is vanishingly small.",
+    "For 24 random headings at speed 2.7, |V̄| < 1e-4 has probability about 3e-8 per seed; v_max = 8 and a_max = 50 are never reached (|a| ≤ 2 · 5.4 = 10.8).",
+    "A bird whose velocity passes near zero on its way to V̄ is lifted to v_min = 0.05 in the same direction, which does not change the heading it converges to. So directionalAgreement > 0.99 at step 600 for every seed."
+  ],
+  "params": {
+    "agentCount": 24, "worldWidth": 16, "worldHeight": 16,
+    "separationWeight": 0, "alignmentWeight": 2, "cohesionWeight": 0,
+    "perceptionRadius": 12, "separationRadius": 1.55,
+    "targetSpeed": 2.7, "minSpeed": 0.05, "maxSpeed": 8, "maxAcceleration": 50,
+    "beaconWeight": 0, "obstacleWeight": 0, "obstacleRadius": 3.4
+  },
+  "dt": 0.016666666666666666,
+  "seeds": [1, 2, 3, 4, 5, 6, 7, 8],
+  "steps": 600,
+  "metric": "directionalAgreement",
+  "at": "final",
+  "comparison": "gt",
+  "value": 0.99
+}

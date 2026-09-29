@@ -1,0 +1,26 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.rules-off.agreement-frozen",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "frozen-observable",
+  "claim": "With alignment and every other rule at zero, directional agreement never moves from its starting value.",
+  "derivation": [
+    "This is the brief's example 'alignment weight 0 ⇒ directional agreement stays low', in the form the equations settle exactly.",
+    "With alignment and every other weight at 0 and no beacons or obstacles, each steering term is 0 · (finite vector) = 0 (E3–E7), so a = 0 (E8).",
+    "Then v′ = v + 0 · Δt = v exactly, and the speed clamp leaves the starting speed 2.7 alone because it lies in [0.45, 3.6] (E9, E15).",
+    "Headings never change, so directionalAgreement equals its starting value bit for bit at every step (E12). flock.rules-off.initial-agreement-low shows that starting value is low.",
+    "Why only this form: with separation and cohesion on, attraction and repulsion alone can align some flocks, so 'stays low' is not derivable there; flock.no-alignment.stays-disordered records that case as an expected-qualitative check."
+  ],
+  "params": {
+    "agentCount": 72, "worldWidth": 32, "worldHeight": 32,
+    "separationWeight": 0, "alignmentWeight": 0, "cohesionWeight": 0,
+    "perceptionRadius": 4.5, "separationRadius": 1.55,
+    "targetSpeed": 2.7, "minSpeed": 0.45, "maxSpeed": 3.6, "maxAcceleration": 4.6,
+    "beaconWeight": 0, "obstacleWeight": 0, "obstacleRadius": 3.4
+  },
+  "dt": 0.016666666666666666,
+  "seeds": [1, 2, 3, 4, 5, 6, 7, 8],
+  "steps": 600,
+  "metric": "directionalAgreement"
+}

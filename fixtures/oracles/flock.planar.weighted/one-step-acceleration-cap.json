@@ -1,0 +1,37 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.one-step.acceleration-cap",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "one-step",
+  "claim": "A summed steering acceleration longer than maxAcceleration is scaled down to it, keeping its direction.",
+  "derivation": [
+    "The same pair as flock.one-step.separation-pair, but with a_max = 1.",
+    "S_A = (−3.7, 0) has length 3.7 > 1, so it is scaled to (−1, 0); S_B = (1.7, 0) is scaled to (1, 0) (E8).",
+    "v′_A = (1 − 1/60, 0) = (0.983333…, 0) and x′_A = 10 + 0.983333…/60 = 10.016389 (E9, E10).",
+    "v′_B = (1 + 1/60, 0) = (1.016667, 0) and x′_B = 11 + 1.016667/60 = 11.016944."
+  ],
+  "params": {
+    "agentCount": 2, "worldWidth": 32, "worldHeight": 32,
+    "separationWeight": 1, "alignmentWeight": 0, "cohesionWeight": 0,
+    "perceptionRadius": 4.5, "separationRadius": 1.55,
+    "targetSpeed": 2.7, "minSpeed": 0.45, "maxSpeed": 3.6, "maxAcceleration": 1,
+    "beaconWeight": 0, "obstacleWeight": 0, "obstacleRadius": 3.4
+  },
+  "dt": 0.016666666666666666,
+  "state": {
+    "width": 32, "height": 32, "stepIndex": 0,
+    "agents": [
+      { "x": 10, "y": 10, "vx": 1, "vy": 0 },
+      { "x": 11, "y": 10, "vx": 1, "vy": 0 }
+    ],
+    "beacons": [], "obstacles": []
+  },
+  "expected": {
+    "agents": [
+      { "x": 10.016388888888889, "y": 10, "vx": 0.9833333333333333, "vy": 0 },
+      { "x": 11.016944444444444, "y": 10, "vx": 1.0166666666666666, "vy": 0 }
+    ]
+  },
+  "tolerance": 1e-12
+}

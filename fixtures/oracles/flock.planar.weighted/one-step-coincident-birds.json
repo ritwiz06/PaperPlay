@@ -1,0 +1,36 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.one-step.coincident-birds-do-not-separate",
+  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "one-step",
+  "claim": "Two birds at exactly the same point exert no separation on each other, because no direction between them is defined.",
+  "derivation": [
+    "A and B share the point (10, 10) with velocities (1, 0) and (0, 1); only separation is on (w_s = 1).",
+    "Their distance is 0, and E2 admits only 0 < |δ| < R_s into S_i, so both separation sets are empty and S = 0 (E5).",
+    "No other rule is on, so a = 0 and both velocities are unchanged (E8, E9); each bird moves v Δt: A to (10.016667, 10), B to (10, 10.016667) (E10)."
+  ],
+  "params": {
+    "agentCount": 2, "worldWidth": 32, "worldHeight": 32,
+    "separationWeight": 1, "alignmentWeight": 0, "cohesionWeight": 0,
+    "perceptionRadius": 4.5, "separationRadius": 1.55,
+    "targetSpeed": 2.7, "minSpeed": 0.45, "maxSpeed": 3.6, "maxAcceleration": 50,
+    "beaconWeight": 0, "obstacleWeight": 0, "obstacleRadius": 3.4
+  },
+  "dt": 0.016666666666666666,
+  "state": {
+    "width": 32, "height": 32, "stepIndex": 0,
+    "agents": [
+      { "x": 10, "y": 10, "vx": 1, "vy": 0 },
+      { "x": 10, "y": 10, "vx": 0, "vy": 1 }
+    ],
+    "beacons": [], "obstacles": []
+  },
+  "expected": {
+    "agents": [
+      { "x": 10.016666666666667, "y": 10, "vx": 1, "vy": 0 },
+      { "x": 10, "y": 10.016666666666667, "vx": 0, "vy": 1 }
+    ]
+  },
+  "tolerance": 1e-12
+}
