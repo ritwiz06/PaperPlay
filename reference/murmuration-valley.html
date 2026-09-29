@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PaperPlay — Murmuration Valley</title>
+<style>
+:root{--ink:#172b2b;--sub:#526a66;--dark:#132b2b;--lime:#d4f581;--line:#d2ddd3;--cream:#f8faee;--aqua:#62cbc2;--orange:#e8885c}*{box-sizing:border-box}body{margin:0;background:#d2e7df;color:var(--ink);font:14px 'DM Sans',system-ui,sans-serif;overflow:hidden}button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.48}button,a,input{touch-action:manipulation}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #c07625;outline-offset:4px}button{color:inherit}svg{vertical-align:middle}button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.hidden,[hidden]{display:none!important}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.rail{position:fixed;inset:0 auto 0 0;width:72px;background:var(--dark);z-index:10;display:flex;align-items:center;flex-direction:column;padding:20px 0;gap:12px;border-right:1px solid #ffffff14}.logo{height:39px;width:39px;background:var(--lime);border-radius:12px;display:grid;place-items:center;margin-bottom:35px;transform:rotate(-5deg)}.logo svg{width:27px;height:27px;fill:none;stroke:#214039;stroke-width:1.8}.rail button{border:0;background:transparent;color:#a4bab2;width:43px;height:43px;border-radius:12px;position:relative}.rail button.active{background:#d4f581;color:#1e3831}.rail button:hover{background:#36534b;color:#fff}.rail button:after{content:attr(aria-label);position:absolute;left:55px;top:8px;background:#15332f;color:#f5fae6;padding:7px 10px;border-radius:7px;white-space:nowrap;opacity:0;pointer-events:none;transition:.15s;box-shadow:0 5px 15px #0002;font-size:12px}.rail button:hover:after,.rail button:focus-visible:after{opacity:1}.rail .spacer{flex:1}.avatar{border:1px solid #668475!important;border-radius:50%!important;font-size:12px;letter-spacing:1px;color:#e4eddf!important}
+header{position:fixed;top:0;left:72px;right:0;height:74px;background:#f7f9edf5;border-bottom:1px solid #b8c8b96b;z-index:8;display:flex;align-items:center;justify-content:space-between;padding:0 29px;gap:16px}.brand{background:none;border:0;padding:0;color:inherit;font:800 21px 'Manrope',sans-serif;letter-spacing:-1px}.crumb{display:flex;align-items:center;gap:20px}.crumb i{height:20px;width:1px;background:#cbd6c8}.crumb span{font-size:12px;color:var(--sub)}.head-actions{display:flex;align-items:center;gap:10px}.pill{font-size:11px;font-weight:600;padding:7px 10px;border-radius:30px;display:inline-flex;gap:7px;align-items:center}.pill i,.live-dot{display:inline-block;width:6px;height:6px;background:#719c58;border-radius:50%}.head-actions .pill{border:1px solid #d4ddca;color:#557054;margin-right:8px}.plain{background:transparent;border:1px solid #bacbbe;border-radius:9px;padding:9px 14px;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:7px}.primary{background:var(--dark);color:#f4f9e8;border:1px solid var(--dark);border-radius:10px;padding:11px 16px;font-weight:600;font-size:12px;display:inline-flex;gap:9px;align-items:center;justify-content:center}.primary:hover{background:#295348}.lime{background:var(--lime);border-color:var(--lime);color:#1c3831}.lime:hover{background:#e2faa8}.subtle{border:0;background:none;color:var(--sub);padding:6px;font-size:12px}.icon-btn{width:34px;height:34px;padding:0;display:grid;place-items:center;border:1px solid #c8d6c8;border-radius:9px;background:#fafff080}
+#stage{position:absolute;inset:74px 0 0 72px;background:radial-gradient(ellipse at 45% 34%,#f0f3df 0%,#d6e8dc 38%,#b6d7d0 80%);overflow:hidden}#world{touch-action:none;display:block;width:100%;height:100%;outline:none;cursor:grab}#world.placing{cursor:crosshair}.vignette{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 -70px 95px -75px #426d6150;background:linear-gradient(180deg,#e5eee24f,transparent 28%)}
+.world-title{position:absolute;top:32px;left:34px;pointer-events:none;max-width:300px}.eyebrow{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:#547461;display:flex;align-items:center;gap:9px}.eyebrow:before{content:'';width:18px;height:1px;background:#719b70}.world-title h1{font:600 clamp(34px,3.4vw,52px)/1.04 'Manrope',sans-serif;letter-spacing:-2.5px;margin:15px 0 12px}.world-title p{max-width:235px;color:#57766a;font-size:12px;line-height:1.7;margin:0}.world-title .edition{margin-top:15px;font-size:10px;color:#627d6e;display:flex;align-items:center;gap:7px}.edition span{width:5px;height:5px;background:#789c64;border-radius:50%}
+.view-switch{position:absolute;top:26px;left:50%;transform:translateX(-50%);padding:4px;background:#f9fcedda;border:1px solid #ccdcc6;border-radius:12px;display:flex;box-shadow:0 7px 20px #33504709}.view-switch button{border:0;background:none;padding:9px 15px;white-space:nowrap;font-size:11px;font-weight:600;border-radius:8px;color:#57756b}.view-switch button.selected{background:var(--dark);color:#f3f8e8}.camera-tools{position:absolute;left:34px;top:270px;display:flex;flex-direction:column;gap:7px}.camera-tools .icon-btn{width:37px;height:37px;background:#f8fcead9;border-color:#c4d4be;box-shadow:0 3px 10px #39694b0c}.camera-tools button.on{background:var(--dark);color:var(--lime)}
+.lab{position:absolute;right:25px;top:98px;width:253px;border:1px solid #eff8e48c;border-radius:18px;background:#f8fbecf2;box-shadow:0 15px 55px #36554018;padding:19px;backdrop-filter:blur(15px)}.lab-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:17px}.lab-heading strong{font-size:13px}.lab-heading span{font-size:10px;color:#668171}.segmented{display:flex;border:1px solid #d4dfcc;border-radius:8px;overflow:hidden;margin-bottom:17px}.segmented button{flex:1;background:none;border:0;padding:8px 2px;font-size:10px;color:#698073}.segmented button.active{background:#e1ebd6;color:#253e31;font-weight:700}.rule{margin:0 0 17px}.rule-label{display:flex;align-items:center;justify-content:space-between;font-size:12px;margin-bottom:8px}.rule-label label{display:flex;gap:7px;align-items:center}.rule-label output{font-variant-numeric:tabular-nums;color:#4c6c58;font-size:11px}.rule p{font-size:10px;color:#75907c;margin:6px 0 0}.rule-dot{height:6px;width:6px;border-radius:50%;background:#7ca876}.rule:nth-of-type(3) .rule-dot{background:#d3936f}.rule:nth-of-type(4) .rule-dot{background:#71b7ac}input[type=range]{appearance:none;width:100%;height:4px;background:#d5e0cc;border-radius:10px;margin:3px 0 0;display:block;accent-color:#31564a}input[type=range]::-webkit-slider-thumb{appearance:none;width:12px;height:12px;border-radius:50%;background:#2e5345;border:2px solid #fafcec;box-shadow:0 1px 4px #0003;cursor:grab}input[type=range]::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:#2e5345;border:2px solid #fafcec}.rule-foot{border-top:1px solid #dbe5d0;padding-top:13px;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#64806e}.toggle-line{display:flex;align-items:center;justify-content:space-between;font-size:11px;margin:15px 0 0}.toggle-line input{accent-color:#33574a}.lab .subtle{font-size:10px;padding:0;color:#466e57;text-decoration:underline;text-underline-offset:3px}
+.mission{position:absolute;left:34px;bottom:34px;width:326px;background:#16342ef5;color:#f2f9e8;border:1px solid #64827850;border-radius:18px;padding:20px;box-shadow:0 20px 40px #2b4b4722}.mission-tag{font-size:9px;letter-spacing:1.6px;color:#bed38e;display:flex;align-items:center;gap:8px}.mission-tag span{width:5px;height:5px;background:#cee998;border-radius:50%}.mission h2{font:600 21px/1.25 'Manrope',sans-serif;letter-spacing:-.5px;margin:12px 0 9px}.mission p{font-size:11px;line-height:1.7;color:#aac5b7;margin:0 0 16px}.mission .primary{width:100%;font-size:11px;justify-content:space-between}.mission-steps{display:flex;align-items:center;gap:7px;margin-top:14px;color:#83a491;font-size:9px}.mission-steps b{font-weight:500;color:#d4edac}.mission-steps i{height:1px;flex:1;background:#43665a}
+.transport{position:absolute;bottom:35px;left:50%;transform:translateX(-50%);background:#f8fbeeea;border:1px solid #f9fff4;border-radius:15px;box-shadow:0 8px 30px #26463516;display:flex;gap:12px;align-items:center;padding:10px 12px;white-space:nowrap}.play-btn{height:36px;width:36px;border:0;background:#294e41;color:#e5f4d3;border-radius:10px;display:grid;place-items:center}.time{font:600 13px 'DM Sans',sans-serif;font-variant-numeric:tabular-nums;min-width:52px}.transport .sep{height:23px;width:1px;background:#d3ddca}.speed{background:transparent;border:0;font-size:11px;color:#52705e;width:39px}.canvas-help{position:absolute;bottom:95px;left:50%;transform:translateX(-50%);font-size:10px;color:#608577;white-space:nowrap;letter-spacing:.2px}.canvas-help kbd{padding:2px 4px;border:1px solid #a8c4b4;border-radius:4px;font:9px inherit;margin-right:4px}
+.world-status{position:absolute;right:26px;bottom:34px;width:214px;border-radius:15px;background:#f5fae9e8;border:1px solid #f4fbea;padding:15px;box-shadow:0 10px 40px #33594413}.status-top{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:#64856f}.status-top strong{color:#345640;font-size:11px}.status-values{margin-top:14px;display:flex;justify-content:space-between;gap:8px}.status-values span{display:block;font-size:9px;color:#698672;margin-top:4px}.status-values b{font-size:20px;font-weight:500;letter-spacing:-.7px;font-variant-numeric:tabular-nums}.micrograph{display:block;width:100%;height:28px;margin-top:12px}.status-caption{font-size:9px;color:#69816c;margin-top:6px}.north{position:absolute;bottom:241px;right:35px;font-size:10px;text-align:center;color:#587e6a;line-height:1.8}.north div{width:1px;height:23px;background:#83a790;margin:2px auto}.north b{font-weight:500}.world-credit{position:absolute;left:34px;bottom:10px;color:#618575;font-size:9px;letter-spacing:.1px}.selection{position:absolute;top:90px;left:50%;transform:translateX(-50%);background:#193d32ee;color:#e4f3d4;padding:10px 17px;border-radius:25px;box-shadow:0 8px 30px #23493026;font-size:11px;pointer-events:none;max-width:90%;text-align:center}
+.toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);z-index:25;background:#18372f;color:#e9f6db;border:1px solid #689a76;border-radius:12px;padding:13px 19px;max-width:520px;font-size:12px;box-shadow:0 10px 30px #133f3426}.modal-backdrop{position:fixed;inset:0;background:#102e2e70;backdrop-filter:blur(9px);z-index:30;display:flex;align-items:center;justify-content:center;padding:24px}.modal{width:740px;max-width:100%;max-height:89vh;overflow:auto;background:#f7f9ee;border:1px solid #e5eeda;border-radius:24px;padding:29px;box-shadow:0 30px 110px #18382940}.modal.wide{width:950px}.modal-top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.modal-top h2{font:600 29px/1.2 'Manrope',sans-serif;letter-spacing:-1px;margin:8px 0 12px}.modal p{font-size:12px;line-height:1.8;color:#617b6b}.modal small{font-size:10px;color:#6a8272;line-height:1.7}.modal .eyebrow{font-size:9px}.modal .icon-btn{flex-shrink:0}.modal a{color:#2d795e;text-underline-offset:3px}.modal hr{border:0;border-top:1px solid #d9e2cf;margin:23px 0}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:22px}.source-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.source-grid article{background:#eaf0dd;border-radius:13px;padding:17px}.source-grid h3{font-size:12px;margin:0 0 7px}.source-grid p{font-size:11px;margin:0}.source-list{font-size:12px;color:#51705e;line-height:1.9;padding-left:18px}.prediction{display:flex;gap:10px;margin:20px 0}.prediction button{flex:1;text-align:left;background:#edf2e3;border:1px solid #d8e2ce;border-radius:12px;padding:16px;font-size:12px;line-height:1.5}.prediction button.selected{background:#ddeeaf;border-color:#708d46}.prediction small{display:block;margin-top:4px}.protocol{padding:16px;background:#e8efdb;border-radius:12px;font-size:11px;color:#4c6c58;line-height:1.9}.protocol strong{color:#345443}.trace-labels{display:flex;gap:20px;font-size:11px;margin:18px 0 5px}.trace-labels i{display:inline-block;width:15px;height:3px;vertical-align:middle;margin-right:6px}.results-metrics{display:grid;grid-template-columns:1fr 1fr;gap:15px}.result-cell{background:#e8efdd;border-radius:13px;padding:18px}.result-cell p{font-size:11px;margin:0 0 5px}.result-cell b{font-size:31px;font-weight:500;letter-spacing:-1px}.result-cell span{font-size:11px;color:#70816c}.plot{display:block;width:100%;height:190px;background:#eff4e6;border-radius:12px;margin:13px 0}.world-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:23px 0}.world-card{border:1px solid #d1dec8;padding:0;text-align:left;background:#edf3e3;border-radius:16px;overflow:hidden;color:#294d3c}.world-card .art{height:150px;position:relative;overflow:hidden;display:grid;place-items:center;background:radial-gradient(ellipse at 60% 30%,#c6e8b9,#85b7a5)}.world-card .art.city{background:radial-gradient(ellipse at 60% 30%,#bcbde7,#626a9d)}.world-card .art.reef{background:radial-gradient(ellipse at 60% 30%,#94e4da,#458c91)}.world-card .art svg{width:150px;height:110px;filter:drop-shadow(0 10px 10px #31574240)}.world-card .info{padding:15px}.world-card strong{font-size:13px;display:block}.world-card small{display:block;font-size:10px;margin-top:7px}.world-card .card-status{font-size:8px;letter-spacing:1px;margin:0 0 9px;color:#527c5d;text-transform:uppercase}.world-card:hover{border-color:#628955}.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}.flow article{border:1px solid #ccd9c0;border-radius:12px;padding:15px;position:relative}.flow article:after{content:'';position:absolute;right:-9px;top:18px;z-index:1;background:#f7f9ee}.flow article:last-child:after{display:none}.flow b{display:block;font-size:11px;margin-bottom:8px}.flow p{font-size:10px;margin:0}.fork-flow{display:flex;gap:12px;align-items:center;padding:15px;background:#e5edda;border-radius:12px;font-size:11px;line-height:1.8}.remix-input{display:flex;gap:9px;margin:20px 0 10px}.remix-input input{flex:1;min-width:0;background:#fffef7;border:1px solid #bccfb5;border-radius:10px;padding:13px}.suggestions{display:flex;flex-wrap:wrap;gap:7px;margin:13px 0}.suggestions button{font-size:10px;background:#e8efdc;border:1px solid #ccd9c0;padding:8px 12px;border-radius:20px}.remix-reply{padding:14px;border-radius:12px;background:#e5eed6;font-size:12px;line-height:1.7;min-height:50px}.clean .lab,.clean .world-title,.clean .mission,.clean .world-status,.clean .world-credit,.clean .north,.clean .canvas-help,.clean .view-switch{display:none}.clean .camera-tools{top:25px}.clean .transport{opacity:.4}.clean .transport:hover{opacity:1}.progress-track{height:3px;background:#dce5d0;border-radius:4px;overflow:hidden;margin:10px 0}.progress-track div{height:100%;background:#85ae62;width:0}.experiment-note{position:absolute;top:90px;left:50%;transform:translateX(-50%);background:#fafbeeee;border:1px solid #bacdb3;border-radius:12px;padding:12px 18px;font-size:11px;min-width:260px;color:#416044}.experiment-note span{font-size:9px}.compare-legend{display:flex;justify-content:space-between;gap:15px}.compare-legend i{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px}.lab.locked{opacity:.6}.reset-world{display:flex;gap:8px;align-items:center;font-size:11px}.seed-input{width:65px;border:1px solid #c9d7be;padding:7px;border-radius:7px;background:#fcfff5;color:#456447}
+@media(min-width:1700px){.world-title{top:45px;left:48px}.lab{right:36px;top:115px;width:270px;padding:23px}.mission{left:48px;bottom:45px;width:355px;padding:25px}.world-status{right:36px;bottom:45px}.transport{bottom:45px}}
+@media(max-height:780px) and (min-width:1000px){.lab{top:80px;padding:15px}.rule{margin-bottom:13px}.world-title h1{font-size:36px}.mission{padding:16px;width:295px;bottom:25px}.mission h2{font-size:18px}.mission p{font-size:10px;margin-bottom:12px}.mission-steps{display:none}.world-status{bottom:25px}.camera-tools{top:230px;gap:5px}.camera-tools .icon-btn{width:32px;height:32px}}
+@media(max-width:1180px){.head-actions .pill{display:none}.lab{width:220px;right:18px;padding:16px}.world-title{left:22px}.world-title h1{font-size:38px}.world-title p{max-width:185px}.view-switch{left:51%;top:22px}.mission{left:22px;width:274px;padding:17px}.mission h2{font-size:19px}.world-status{width:187px;right:18px}.transport{left:53%}.canvas-help{left:53%;font-size:9px}.camera-tools{left:22px}}
+@media(max-width:900px){.rail{width:56px;padding-top:17px}.logo{width:34px;height:34px}.rail button{width:37px;height:37px}header{left:56px;padding:0 17px;height:64px}.crumb span,.crumb i{display:none}#stage{left:56px;top:64px}.brand{font-size:19px}.head-actions button{font-size:10px;padding:9px}.head-actions svg{display:none}.world-title{top:25px;left:20px}.world-title h1{font-size:34px;letter-spacing:-1.5px}.world-title p,.world-title .edition{display:none}.eyebrow{font-size:8px}.view-switch{left:auto;right:17px;transform:none;top:22px}.view-switch button{padding:8px 10px;font-size:10px}.lab{top:80px;right:15px;width:192px;padding:13px}.lab .segmented{margin-bottom:12px}.rule{margin-bottom:11px}.rule-label{font-size:10px}.rule p{display:none}.toggle-line{font-size:10px;margin-top:11px}.lab-heading{margin-bottom:10px}.lab-heading strong{font-size:11px}.world-status{display:none}.mission{bottom:25px;width:246px;padding:16px}.mission h2{font-size:18px}.mission p{font-size:10px}.mission-steps{display:none}.transport{left:auto;right:17px;transform:none;bottom:25px;gap:8px}.canvas-help{left:auto;right:17px;transform:none;bottom:87px;font-size:9px}.north{display:none}.camera-tools{top:148px;left:20px}.world-credit{left:20px;bottom:8px;font-size:8px}.source-grid{grid-template-columns:1fr}.flow{grid-template-columns:1fr 1fr}.flow article:after{display:none}}
+@media(max-width:580px){.rail{display:none}header{left:0;height:57px;padding:0 12px}.brand{font-size:18px}.head-actions{gap:6px}.head-actions #source-open{display:none}#stage{inset:57px 0 0 0}.world-title{top:19px;left:17px}.world-title h1{font-size:30px;margin-top:11px}.world-title .eyebrow{font-size:7px;letter-spacing:1.5px}.view-switch{right:10px;top:116px}.view-switch button{font-size:9px;padding:8px}.lab{display:none;right:10px;top:161px;width:205px}.lab.mobile-open{display:block;z-index:6}.camera-tools{left:15px;top:127px}.camera-tools .icon-btn{width:33px;height:33px}.mission{bottom:82px;left:12px;width:calc(100% - 24px);padding:14px 17px;border-radius:14px}.mission h2{font-size:18px;margin:7px 0}.mission p{margin:0 0 11px;line-height:1.5}.mission .primary{padding:9px 12px}.mission-tag{font-size:8px}.mission-steps{display:none}.transport{bottom:23px;right:12px;padding:7px 9px;gap:11px;border-radius:12px}.canvas-help{display:none}.world-credit{bottom:4px;left:13px;font-size:7px}.modal-backdrop{padding:10px}.modal{padding:20px;max-height:93vh;border-radius:18px}.modal-top h2{font-size:25px}.world-cards{grid-template-columns:1fr}.world-card{display:grid;grid-template-columns:105px 1fr}.world-card .art{height:112px}.world-card .art svg{width:100px;height:90px}.prediction{flex-direction:column}.prediction button{padding:11px}.prediction small{display:none}.source-grid{gap:9px}.flow{gap:7px}.flow article{padding:12px}.fork-flow{display:block}.experiment-note{top:161px;font-size:10px;max-width:90%;min-width:245px}.selection{top:161px;width:75%;font-size:10px}.toast{bottom:280px;max-width:90%;width:320px}.clean .camera-tools{top:19px}.clean .mission{display:none}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style></head><body>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute"><defs>
+<symbol id="i-world" viewBox="0 0 24 24"><path d="m12 3 9 5v8l-9 5-9-5V8zM3 8l9 5 9-5M12 13v8M7.5 5.5l9 5"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6C8 3 4 4 3 5v14c3-2 6-1 9 1 3-2 6-3 9-1V5c-3-2-6-1-9 1v14"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.3 6.7L21 12l-6.7 2.3L12 21l-2.3-6.7L3 12l6.7-2.3zM20 3v4M18 5h4"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h7m4 0h5M4 17h3m4 0h9"/><circle cx="13" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></symbol>
+<symbol id="i-orbit" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(-35 12 12)"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V3m0 1c5-4 8 4 14 0v10c-6 4-9-4-14 0"/></symbol>
+<symbol id="i-tree" viewBox="0 0 24 24"><path d="m12 2-6 8h3l-5 7h16l-5-7h3zM12 17v5"/></symbol>
+<symbol id="i-focus" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/><circle cx="12" cy="12" r="4"/></symbol>
+<symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 11a8 8 0 1 1 1 6M4 5v6h6"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="m8 4 12 8-12 8z"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+<symbol id="i-nodes" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/><path d="M12 8v4H5v4m7-4h7v4"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+</defs></svg>
+<nav class="rail" aria-label="PaperPlay navigation"><div class="logo"><svg><use href="#i-world"/></svg></div><button class="active" id="home" aria-label="Your world"><svg><use href="#i-world"/></svg></button><button id="worlds-open" aria-label="World collection"><svg><use href="#i-grid"/></svg></button><button id="mission-open" aria-label="Guided experiment"><svg><use href="#i-flag"/></svg></button><button id="agents-open" aria-label="World building agents"><svg><use href="#i-nodes"/></svg></button><div class="spacer"></div><button id="help-open" aria-label="How to play"><svg><use href="#i-book"/></svg></button><button class="avatar" id="about-open" aria-label="About this prototype">PP</button></nav>
+<header><div class="crumb"><button class="brand" id="brand-worlds" aria-label="Choose a research world">paperplay<span style="color:#8fa964">.</span></button><i></i><span>Your worlds&nbsp; / &nbsp;<b>Murmuration Valley</b></span></div><div class="head-actions"><span class="pill"><i></i>Interactive prototype</span><button class="plain" id="source-open"><svg><use href="#i-book"/></svg>The paper</button><button class="primary" id="remix-open"><svg><use href="#i-spark"/></svg>Remix world</button></div></header>
+<main id="stage"><canvas id="world" tabindex="0" aria-label="Orbitable island with a live flock simulation. Drag to orbit, scroll to zoom. Use the beacon and obstacle tools to change the world."></canvas><div class="vignette"></div>
+<div class="world-title"><div class="eyebrow">World 001 · Collective behavior</div><h1>Murmuration<br>Valley</h1><p>A living paper. A flock with no leader.<br>A world of small discoveries.</p><div class="edition"><span></span>Inspired by Craig Reynolds · 1987</div></div>
+<div class="view-switch" role="group" aria-label="Experience mode"><button id="explore-tab" class="selected" aria-pressed="true">Free exploration</button><button id="guided-tab" aria-pressed="false">Follow the paper</button></div>
+<div class="camera-tools" role="toolbar" aria-label="World tools"><button class="icon-btn" id="orbit-tool" aria-label="Orbit camera" title="Orbit camera"><svg><use href="#i-orbit"/></svg></button><button class="icon-btn" id="beacon-tool" aria-label="Place an attraction beacon" title="Place beacon · click the world"><svg><use href="#i-flag"/></svg></button><button class="icon-btn" id="rock-tool" aria-label="Place an obstacle" title="Place obstacle · click the world"><svg><use href="#i-tree"/></svg></button><button class="icon-btn" id="rules-toggle" aria-label="Toggle world rules" title="World rules"><svg><use href="#i-sliders"/></svg></button><button class="icon-btn" id="zoom-in" aria-label="Zoom in" title="Zoom in"><svg><use href="#i-plus"/></svg></button><button class="icon-btn" id="zoom-out" aria-label="Zoom out" title="Zoom out"><svg><use href="#i-minus"/></svg></button><button class="icon-btn" id="focus-tool" aria-label="Toggle cinematic view" title="Cinematic view · F"><svg><use href="#i-focus"/></svg></button></div>
+<aside class="lab" id="lab" aria-label="World rules"><div class="lab-heading"><strong>Rules of this world</strong><span>03 active</span></div><div class="segmented" aria-label="Rule presets"><button id="preset-balanced" class="active">Balanced</button><button id="preset-chaos">No alignment</button></div><div class="rule"><div class="rule-label"><label for="separation"><span class="rule-dot"></span>Personal space</label><output id="separation-out">1.20</output></div><input type="range" min="0" max="2" step=".05" value="1.2" id="separation"><p>Keep a little distance from neighbors.</p></div><div class="rule"><div class="rule-label"><label for="alignment"><span class="rule-dot"></span>Move together</label><output id="alignment-out">1.00</output></div><input type="range" min="0" max="2" step=".05" value="1" id="alignment"><p>Match the movement around you.</p></div><div class="rule"><div class="rule-label"><label for="cohesion"><span class="rule-dot"></span>Stay close</label><output id="cohesion-out">0.80</output></div><input type="range" min="0" max="2" step=".05" value=".8" id="cohesion"><p>Return toward your local flock.</p></div><div class="rule-foot"><span>72 birds · seed <b id="seed-label">42</b></span><button class="subtle" id="rules-source">View the mechanism ↗</button></div><label class="toggle-line" for="trails-toggle">Flight trails<input type="checkbox" id="trails-toggle" checked></label><label class="toggle-line" for="neighbors-toggle">One bird’s neighborhood<input type="checkbox" id="neighbors-toggle"></label></aside>
+<section class="mission" aria-labelledby="mission-title"><div class="mission-tag"><span></span><span id="mission-kicker">YOUR FIRST EXPEDITION</span></div><h2 id="mission-title">Who’s leading the flock?</h2><p id="mission-copy">Change one rule. Watch a whole world respond. Discover how a flock finds its rhythm.</p><button class="primary lime" id="mission-start"><span id="mission-cta">Start a guided experiment</span><svg><use href="#i-arrow"/></svg></button><div class="mission-steps"><b id="step-observe">01 Observe</b><i></i><span id="step-change">02 Intervene</span><i></i><span id="step-compare">03 Compare</span></div></section>
+<div class="canvas-help"><kbd>Drag</kbd> orbit &nbsp; <kbd>Scroll</kbd> zoom &nbsp; <kbd>Space</kbd> pause</div><div class="transport" role="group" aria-label="Simulation playback"><button class="play-btn" id="play-pause" aria-label="Pause simulation"><svg><use href="#i-pause"/></svg></button><span class="time" id="clock">00:00</span><span class="sep"></span><button class="speed" id="speed" aria-label="Change simulation speed">1×</button><button class="subtle" id="reset" aria-label="Restart with the same seed" title="Restart same seed"><svg width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.6"><use href="#i-reset"/></svg></button></div>
+<aside class="world-status" aria-label="Measured live state"><div class="status-top"><strong><span class="live-dot"></span> &nbsp;Living system</strong><span id="system-mode">LIVE</span></div><div class="status-values"><div><b id="bird-count">72</b><span>autonomous birds</span></div><div><b id="agreement">0.00</b><span>directional agreement</span></div></div><svg class="micrograph" viewBox="0 0 182 28" preserveAspectRatio="none" role="img" aria-label="Recent directional agreement"><path id="live-chart" fill="none" stroke="#769b65" stroke-width="1.6" d="M0 24H182"/></svg><div class="status-caption">Measured here · 0 scattered / 1 aligned</div></aside><div class="north"><b>N</b><div></div>✧</div><div class="world-credit">Paper-inspired model · educational adaptation · world-scale units</div><div class="selection" id="placement-help" hidden></div><div class="experiment-note" id="experiment-note" hidden><div class="compare-legend"><b>Same start. One different rule.</b><span id="experiment-time">0 / 20s</span></div><div class="progress-track"><div id="experiment-progress"></div></div><div class="compare-legend"><span><i style="background:#5e9e96"></i>Baseline (teal)</span><span><i style="background:#dd8557"></i>Alignment off (coral)</span></div></div>
+</main><div class="toast" role="status" id="toast" hidden></div>
+<div class="modal-backdrop" id="modal-backdrop" hidden><section class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-top"><div><div class="eyebrow" id="modal-kicker"></div><h2 id="modal-title"></h2></div><button class="icon-btn" id="modal-close" aria-label="Close dialog"><svg><use href="#i-close"/></svg></button></div><div id="modal-content"></div></section></div>
+<script>(function (root) {
+  'use strict';
+
+  const version = 'paperplay-flock-2d/1.0.0';
+  const defaults = Object.freeze({ separation: 1.2, alignment: 1, cohesion: 0.8 });
+  const FIXED_DT = 1 / 60;
+  const WORLD_RADIUS = 16;
+  const NEIGHBOR_RADIUS = 4.5;
+  const SEPARATION_RADIUS = 1.55;
+  const MAX_SPEED = 3.6;
+  const MIN_SPEED = 0.45;
+  const TARGET_SPEED = 2.7;
+  const MAX_ACCELERATION = 4.6;
+  const EPS = 1e-9;
+
+  const clamp = (value, lo, hi) => Math.max(lo, Math.min(hi, value));
+  function normalizedParams(params) {
+    return Object.fromEntries(Object.keys(defaults).map(key => [key,
+      Number.isFinite(Number(params[key])) ? clamp(Number(params[key]), 0, 2) : defaults[key]
+    ]));
+  }
+  function randomGenerator(seed) {
+    let counter = seed >>> 0;
+    return function () {
+      counter += 0x6D2B79F5;
+      let value = counter;
+      value = Math.imul(value ^ value >>> 15, value | 1);
+      value ^= value + Math.imul(value ^ value >>> 7, value | 61);
+      return ((value ^ value >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  function create(seed = 42, count = 72, params = {}) {
+    seed = Number(seed) >>> 0;
+    count = clamp(Math.round(Number(count) || 72), 1, 256);
+    const random = randomGenerator(seed);
+    const birds = Array.from({ length: count }, () => {
+      const radius = Math.sqrt(random()) * 11.8;
+      const positionAngle = random() * Math.PI * 2;
+      const velocityAngle = random() * Math.PI * 2;
+      const speed = 2.1 + random() * 0.8;
+      return { x: Math.cos(positionAngle) * radius, z: Math.sin(positionAngle) * radius,
+        vx: Math.cos(velocityAngle) * speed, vz: Math.sin(velocityAngle) * speed };
+    });
+    return { birds, params: normalizedParams(params), time: 0, seed, stepCount: 0,
+      beacon: null, obstacles: [], version };
+  }
+
+  // A bounded educational, planar adaptation of Reynolds-style local flocking.
+  // All neighbor forces read the preceding state before any bird is updated.
+  function step(state, dt = FIXED_DT) {
+    if (!Number.isFinite(dt) || dt <= 0 || dt > 0.05) {
+      throw new RangeError('Use a positive timestep no larger than 0.05 seconds.');
+    }
+    const birds = state.birds;
+    const count = birds.length;
+    const params = normalizedParams(state.params);
+    const next = new Array(count);
+    const neighborRadius2 = NEIGHBOR_RADIUS * NEIGHBOR_RADIUS;
+    const separationRadius2 = SEPARATION_RADIUS * SEPARATION_RADIUS;
+
+    for (let i = 0; i < count; i++) {
+      const bird = birds[i];
+      let neighbors = 0, separateCount = 0;
+      let sumVx = 0, sumVz = 0, sumX = 0, sumZ = 0;
+      let separateX = 0, separateZ = 0;
+      for (let j = 0; j < count; j++) {
+        if (j === i) continue;
+        const other = birds[j];
+        const dx = bird.x - other.x, dz = bird.z - other.z;
+        const distance2 = dx * dx + dz * dz;
+        if (distance2 < neighborRadius2) {
+          neighbors++;
+          sumVx += other.vx; sumVz += other.vz;
+          sumX += other.x; sumZ += other.z;
+        }
+        if (distance2 < separationRadius2) {
+          separateCount++;
+          if (distance2 > EPS) {
+            separateX += dx / distance2;
+            separateZ += dz / distance2;
+          } else {
+            // Deterministic antisymmetric force for exactly coincident birds.
+            const low = Math.min(i, j), high = Math.max(i, j);
+            const angle = ((low * 73856093 ^ high * 19349663) >>> 0) / 4294967296 * Math.PI * 2;
+            const sign = i < j ? 1 : -1;
+            separateX += Math.cos(angle) * sign * 10;
+            separateZ += Math.sin(angle) * sign * 10;
+          }
+        }
+      }
+
+      let ax = 0, az = 0;
+      if (neighbors) {
+        // Match the local mean velocity, including speed (not only heading).
+        ax += (sumVx / neighbors - bird.vx) * params.alignment;
+        az += (sumVz / neighbors - bird.vz) * params.alignment;
+        const towardX = sumX / neighbors - bird.x;
+        const towardZ = sumZ / neighbors - bird.z;
+        const distance = Math.hypot(towardX, towardZ);
+        if (distance > EPS) {
+          const seekSpeed = TARGET_SPEED * Math.min(distance / 3, 1);
+          ax += (towardX / distance * seekSpeed - bird.vx) * params.cohesion * 0.65;
+          az += (towardZ / distance * seekSpeed - bird.vz) * params.cohesion * 0.65;
+        }
+      }
+      if (separateCount) {
+        const length = Math.hypot(separateX, separateZ);
+        if (length > EPS) {
+          ax += (separateX / length * TARGET_SPEED - bird.vx) * params.separation;
+          az += (separateZ / length * TARGET_SPEED - bird.vz) * params.separation;
+        }
+      }
+
+      // Boundary and obstacles are explicit environmental additions.
+      const radius = Math.hypot(bird.x, bird.z);
+      if (radius > 12.5) {
+        const inward = (radius - 12.5) * 1.85;
+        ax -= bird.x / radius * inward;
+        az -= bird.z / radius * inward;
+      }
+      if (state.beacon && Number.isFinite(state.beacon.x) && Number.isFinite(state.beacon.z)) {
+        const dx = state.beacon.x - bird.x, dz = state.beacon.z - bird.z;
+        const distance = Math.hypot(dx, dz);
+        if (distance > EPS) {
+          const desiredSpeed = TARGET_SPEED * Math.min(distance / 2.5, 1);
+          ax += (dx / distance * desiredSpeed - bird.vx) * 0.85;
+          az += (dz / distance * desiredSpeed - bird.vz) * 0.85;
+        }
+      }
+      for (const obstacle of state.obstacles) {
+        const dx = bird.x - obstacle.x, dz = bird.z - obstacle.z;
+        const distance = Math.hypot(dx, dz);
+        const obstacleRadius = Math.max(0.2, Number(obstacle.radius) || 1.2);
+        if (distance < obstacleRadius + 2.2 && distance > EPS) {
+          const avoidance = (obstacleRadius + 2.2 - distance) * 3;
+          ax += dx / distance * avoidance;
+          az += dz / distance * avoidance;
+        }
+      }
+      const acceleration = Math.hypot(ax, az);
+      if (acceleration > MAX_ACCELERATION) {
+        ax *= MAX_ACCELERATION / acceleration;
+        az *= MAX_ACCELERATION / acceleration;
+      }
+      let vx = bird.vx + ax * dt, vz = bird.vz + az * dt;
+      const speed = Math.hypot(vx, vz);
+      if (speed > MAX_SPEED) {
+        vx *= MAX_SPEED / speed; vz *= MAX_SPEED / speed;
+      } else if (speed < MIN_SPEED) {
+        if (speed > EPS) {
+          vx *= MIN_SPEED / speed; vz *= MIN_SPEED / speed;
+        } else {
+          const priorSpeed = Math.hypot(bird.vx, bird.vz);
+          vx = priorSpeed > EPS ? bird.vx / priorSpeed * MIN_SPEED : MIN_SPEED;
+          vz = priorSpeed > EPS ? bird.vz / priorSpeed * MIN_SPEED : 0;
+        }
+      }
+      let x = bird.x + vx * dt, z = bird.z + vz * dt;
+      const newRadius = Math.hypot(x, z);
+      if (newRadius > WORLD_RADIUS) {
+        const nx = x / newRadius, nz = z / newRadius;
+        x = nx * WORLD_RADIUS; z = nz * WORLD_RADIUS;
+        const outwardSpeed = vx * nx + vz * nz;
+        if (outwardSpeed > 0) { vx -= 1.5 * outwardSpeed * nx; vz -= 1.5 * outwardSpeed * nz; }
+      }
+      for (const obstacle of state.obstacles) {
+        let dx = x - obstacle.x, dz = z - obstacle.z;
+        const distance = Math.hypot(dx, dz);
+        const safeRadius = Math.max(0.2, Number(obstacle.radius) || 1.2) + 0.16;
+        if (distance < safeRadius) {
+          if (distance > EPS) { dx /= distance; dz /= distance; }
+          else { dx = Math.cos(i * 2.39996323); dz = Math.sin(i * 2.39996323); }
+          x = obstacle.x + dx * safeRadius; z = obstacle.z + dz * safeRadius;
+          const inwardSpeed = vx * dx + vz * dz;
+          if (inwardSpeed < 0) { vx -= 1.5 * inwardSpeed * dx; vz -= 1.5 * inwardSpeed * dz; }
+        }
+      }
+      next[i] = { x, z, vx, vz };
+    }
+    state.birds = next;
+    state.time += dt;
+    state.stepCount += 1;
+    return state;
+  }
+
+  function metrics(state) {
+    const birds = state.birds, count = birds.length;
+    if (!count) return { polarization: 0, nearestDistance: 0, meanNeighborDistance: 0,
+      closePairs: 0, centroid: { x: 0, z: 0 }, spread: 0, meanSpeed: 0 };
+    let headingX = 0, headingZ = 0, centroidX = 0, centroidZ = 0, meanSpeed = 0;
+    let nearestTotal = 0, neighborTotal = 0, neighborPairs = 0, closePairs = 0;
+    for (let i = 0; i < count; i++) {
+      const bird = birds[i], speed = Math.hypot(bird.vx, bird.vz);
+      if (speed > EPS) { headingX += bird.vx / speed; headingZ += bird.vz / speed; }
+      centroidX += bird.x; centroidZ += bird.z; meanSpeed += speed;
+      let nearest = Infinity;
+      for (let j = 0; j < count; j++) {
+        if (i === j) continue;
+        const distance = Math.hypot(bird.x - birds[j].x, bird.z - birds[j].z);
+        nearest = Math.min(nearest, distance);
+        if (j > i) {
+          if (distance < 0.8) closePairs++;
+          if (distance < NEIGHBOR_RADIUS) { neighborTotal += distance; neighborPairs++; }
+        }
+      }
+      nearestTotal += Number.isFinite(nearest) ? nearest : 0;
+    }
+    centroidX /= count; centroidZ /= count;
+    let squaredSpread = 0;
+    for (const bird of birds) squaredSpread += (bird.x - centroidX) ** 2 + (bird.z - centroidZ) ** 2;
+    return { polarization: clamp(Math.hypot(headingX, headingZ) / count, 0, 1),
+      nearestDistance: nearestTotal / count,
+      meanNeighborDistance: neighborPairs ? neighborTotal / neighborPairs : 0,
+      closePairs, centroid: { x: centroidX, z: centroidZ },
+      spread: Math.sqrt(squaredSpread / count), meanSpeed: meanSpeed / count };
+  }
+
+  function experiment({ seed = 42, count = 72, duration = 20, params = {} } = {}) {
+    const baselineParams = normalizedParams(params);
+    const alteredParams = { ...baselineParams, alignment: 0 };
+    const baseline = create(seed, count, baselineParams);
+    const altered = create(seed, count, alteredParams);
+    const initialBirds = baseline.birds.map(bird => ({ ...bird }));
+    const requestedDuration = Number.isFinite(Number(duration)) ? clamp(Number(duration), 0, 120) : 20;
+    const steps = Math.round(requestedDuration / FIXED_DT);
+    const baselineTrace = [{ time: 0, step: 0, ...metrics(baseline) }];
+    const alteredTrace = [{ time: 0, step: 0, ...metrics(altered) }];
+    for (let i = 1; i <= steps; i++) {
+      step(baseline); step(altered);
+      if (i % 60 === 0 || i === steps) {
+        baselineTrace.push({ time: i * FIXED_DT, step: i, ...metrics(baseline) });
+        alteredTrace.push({ time: i * FIXED_DT, step: i, ...metrics(altered) });
+      }
+    }
+    return {
+      schema: 'paperplay.paired-flock-experiment/1',
+      engineVersion: version,
+      model: 'Planar educational adaptation of local separation, velocity matching, and cohesion',
+      source: { title: 'Flocks, Herds, and Schools: A Distributed Behavioral Model',
+        author: 'Craig W. Reynolds', year: 1987, url: 'https://www.red3d.com/cwr/papers/1987/boids.html' },
+      seed: baseline.seed, count: baseline.birds.length, timestep: FIXED_DT,
+      duration: steps * FIXED_DT, steps,
+      independentVariable: 'alignment weight',
+      environment: { worldRadius: WORLD_RADIUS, neighborhoodRadius: NEIGHBOR_RADIUS,
+        separationRadius: SEPARATION_RADIUS, beacon: null, obstacles: [], boundary: 'Soft inward steering with hard containment' },
+      initialBirds,
+      baseline: { label: 'All configured rules', params: baselineParams,
+        trace: baselineTrace, finalMetrics: metrics(baseline), finalBirds: baseline.birds },
+      altered: { label: 'Alignment removed', params: alteredParams,
+        trace: alteredTrace, finalMetrics: metrics(altered), finalBirds: altered.birds },
+      limitations: [
+        'This is an educational 2D adaptation, not an implementation of the original 3D system or a reproduction of its published results.',
+        'The fixed circular arena, force weights, speed limits, obstacle and beacon behavior are design choices for this sandbox.',
+        'One paired seed provides an illustrative comparison, not a statistical estimate or a guaranteed direction of effect.',
+        'Polarization measures agreement in heading. It does not by itself measure all aspects of flock quality.',
+        'Identical inputs replay deterministically within this engine/runtime; floating-point equality across all browser engines is not guaranteed.'
+      ]
+    };
+  }
+
+  root.FlockEngine = Object.freeze({ create, step, metrics, experiment, defaults, version });
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+</script><script>(function(){
+'use strict';
+const TAU=Math.PI*2;
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function tint(hex,k){if(!hex.startsWith('#'))return hex;let n=parseInt(hex.slice(1),16);return 'rgb('+[n>>16,(n>>8)&255,n&255].map(v=>Math.round(clamp(v*k,0,255))).join(',')+')';}
+
+class WorldRenderer{
+ constructor(canvas){this.canvas=canvas;this.ctx=canvas.getContext('2d');this.yaw=-.6;this.pitch=.62;this.zoomValue=1;this.mesh=[];this.trails=new Map();this.lastTime=0;this.lastTrailTime=-1;this.build();this.resize();}
+ resize(){const r=this.canvas.getBoundingClientRect();this.width=r.width||this.canvas.clientWidth||1200;this.height=r.height||this.canvas.clientHeight||800;this.dpr=Math.min(globalThis.devicePixelRatio||1,2);this.canvas.width=Math.round(this.width*this.dpr);this.canvas.height=Math.round(this.height*this.dpr);this.setCamera();}
+ setCamera(){this.scale=Math.min(this.width/48,this.height/32)*this.zoomValue;this.cx=this.width*.49;this.cy=this.height*.405;this.cosY=Math.cos(this.yaw);this.sinY=Math.sin(this.yaw);this.cosP=Math.cos(this.pitch);this.sinP=Math.sin(this.pitch);}
+ orbit(dx,dy){this.yaw+=dx*.007;this.pitch=clamp(this.pitch+dy*.005,.28,1.17);this.setCamera();}
+ zoom(delta){this.zoomValue=clamp(this.zoomValue*Math.exp(-delta*.001),.65,1.65);this.setCamera();}
+ resetCamera(){this.yaw=-.6;this.pitch=.62;this.zoomValue=1;this.setCamera();}
+ project(x,y,z){const xx=x*this.cosY-z*this.sinY,zz=x*this.sinY+z*this.cosY;return{x:this.cx+xx*this.scale,y:this.cy+(zz*this.sinP-y*this.cosP)*this.scale,depth:zz*this.cosP+y*this.sinP};}
+ screenToWorld(clientX,clientY,height=.12){const r=this.canvas.getBoundingClientRect(),xx=(clientX-r.left-this.cx)/this.scale,zz=((clientY-r.top-this.cy)/this.scale+height*this.cosP)/this.sinP;return{x:xx*this.cosY+zz*this.sinY,z:-xx*this.sinY+zz*this.cosY};}
+ face(points,color,shade=true){if(shade&&color.startsWith('#')){const a=points[0],b=points[1],c=points[2],u=b.map((v,i)=>v-a[i]),v=c.map((n,i)=>n-a[i]);let nx=u[1]*v[2]-u[2]*v[1],ny=u[2]*v[0]-u[0]*v[2],nz=u[0]*v[1]-u[1]*v[0];const m=Math.hypot(nx,ny,nz)||1;const light=Math.abs((nx*-.5+ny*.8+nz*-.3)/m);color=tint(color,.77+.24*light);}this.mesh.push({points,color,layer:this.layer||0,order:this.mesh.length});}
+ box(x,y,z,w,h,d,color){const p=[[x-w/2,y,z-d/2],[x+w/2,y,z-d/2],[x+w/2,y,z+d/2],[x-w/2,y,z+d/2]],q=p.map(v=>[v[0],y+h,v[2]]);this.face(q,color);for(let i=0;i<4;i++)this.face([p[i],p[(i+1)%4],q[(i+1)%4],q[i]],color);}
+ cone(x,y,z,r,h,color,n=7){for(let i=0;i<n;i++){let a=i/n*TAU,b=(i+1)/n*TAU;this.face([[x+Math.cos(a)*r,y,z+Math.sin(a)*r],[x,y+h,z],[x+Math.cos(b)*r,y,z+Math.sin(b)*r]],color);}}
+ disc(x,y,z,r,color,n=16){const p=[];for(let i=0;i<n;i++){let a=i/n*TAU;p.push([x+Math.cos(a)*r,y,z+Math.sin(a)*r]);}this.face(p,color,false);}
+ cylinder(x,y,z,r,h,color,n=7){for(let i=0;i<n;i++){const a=i/n*TAU,b=(i+1)/n*TAU;this.face([[x+Math.cos(a)*r,y,z+Math.sin(a)*r],[x+Math.cos(b)*r,y,z+Math.sin(b)*r],[x+Math.cos(b)*r,y+h,z+Math.sin(b)*r],[x+Math.cos(a)*r,y+h,z+Math.sin(a)*r]],color);}this.disc(x,y+h,z,r,color,n);}
+ rock(x,y,z,r,color='#9da89c'){const s=5,ring=[];for(let i=0;i<s;i++)ring.push([x+Math.cos(i/s*TAU)*r,y+.05,z+Math.sin(i/s*TAU)*r]);for(let i=0;i<s;i++){const a=ring[i],b=ring[(i+1)%s];this.face([a,b,[x+r*.14,y+r*.94,z-r*.12]],color);}}
+ tree(x,z,s,kind=0){this.cylinder(x,.15,z,.12*s,.7*s,'#8b7760',5);if(kind===0){this.cone(x,.6*s,z,.85*s,1.55*s,'#4c9980',6);this.cone(x,1.3*s,z,.66*s,1.4*s,'#61af89',6);}else{this.cone(x,.8*s,z,.88*s,1.05*s,'#76b879',6);this.cone(x,1.55*s,z,.65*s,.8*s,'#91c888',6);}}
+ ribbon(points,width,color,y=.2){for(let i=0;i<points.length-1;i++){const a=points[i],b=points[i+1],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),nx=-dz/len*width*.5,nz=dx/len*width*.5;this.face([[a[0]+nx,y,a[1]+nz],[a[0]-nx,y,a[1]-nz],[b[0]-nx,y,b[1]-nz],[b[0]+nx,y,b[1]+nz]],color,false);if(i)this.disc(a[0],y+.003,a[1],width/2,color,12);}}
+ island(x,y,z,r,seed,small=false){const random=rng(seed),n=small?13:40,angles=[],ring=[];for(let i=0;i<n;i++){let a=i/n*TAU,rad=r*(.96+random()*.08);angles.push(a);ring.push([x+Math.cos(a)*rad,y,z+Math.sin(a)*rad]);}const colors=['#b6d4a4','#b8d6a6','#b5d3a3','#bdd8ab','#b6d4a5'];const bands=small?1:5;for(let band=0;band<bands;band++){const r1=band/bands,r2=(band+1)/bands;for(let i=0;i<n;i++){const j=(i+1)%n,P=(k,r)=>[x+(ring[k][0]-x)*r,y+.025*(1-r),z+(ring[k][2]-z)*r];if(band===0)this.face([[x,y+.025,z],P(i,r2),P(j,r2)],colors[(i+band)%5],false);else{this.face([P(i,r1),P(i,r2),P(j,r2)],colors[(i+band)%5],false);this.face([P(i,r1),P(j,r2),P(j,r1)],colors[(i+band)%5],false);}}}const levels=[{r:1,y:0},{r:1.005,y:-.55},{r:.94,y:-3.0},{r:.70,y:-7.4},{r:.22,y:-11.2}];const cliff=['#879b88','#587f76','#426b67','#375957'];for(let l=0;l<levels.length-1;l++){const a=levels[l],b=levels[l+1],sc=small?r/16:1;for(let i=0;i<n;i++){let j=(i+1)%n;const p=k=>[x+(ring[k][0]-x)*a.r,y+a.y*sc,z+(ring[k][2]-z)*a.r],q=k=>[x+(ring[k][0]-x)*b.r,y+b.y*sc-(i%3)*.07*sc,z+(ring[k][2]-z)*b.r];this.face([p(i),p(j),q(j)],tint(cliff[l],.88+(i%4)*.055));this.face([p(i),q(j),q(i)],tint(cliff[l],.95+(i%3)*.035));}}return ring;}
+ build(){const random=rng(719);this.island(0,0,0,16.35,17);this.island(-24,-2,10,4.2,28,true);this.island(23,-3,13,3.1,54,true);this.island(21,-.2,-13,2.0,65,true);
+  this.layer=1;
+  // Small patches break up the grass into a softly faceted miniature landscape.
+  for(let i=0;i<36;i++){const a=random()*TAU,r=Math.sqrt(random())*14.5,x=Math.cos(a)*r,z=Math.sin(a)*r;this.disc(x,.032,z,1.0+random()*1.7,['#badbac','#b1d3a1','#c0dda9','#afd09d'][i%4],5);}
+  // A continuous shallow river, a small pool, and its waterfall over the island's rim.
+  const river=[[-6,-15.8],[-6.7,-12],[-5.8,-8],[-7,-4],[-6,0],[-6.8,4],[-5,8],[-3.5,12],[-4.0,15.5]];
+  this.ribbon(river,2.05,'#e2dfb6',.055);this.ribbon(river,1.5,'#62c8bc',.076);this.ribbon(river.map(p=>[p[0]-.25,p[1]]),.48,'#95e2d0',.084);
+  this.disc(-6.2,.075,-1.2,2.7,'#dfdfb7',18);this.disc(-6.2,.088,-1.2,2.32,'#70cdbe',18);this.disc(-6.55,.093,-1.35,1.35,'#90dfca',18);
+  // Warm stone paths and a timber footbridge.
+  this.ribbon([[10,7],[7,6],[5,3],[4,-1],[6,-5],[8,-7]],.85,'#e9e3c1',.11);
+  this.ribbon([[5,3],[1,3],[-3,4],[-9,4],[-12,7]],.8,'#e9e3c1',.112);
+  this.layer=2;
+  for(let i=0;i<11;i++)this.box(-8.05+i*.27,.23,4,.22,.13,1.35,i%2?'#b9946a':'#caa67b');
+  for(const z of [3.33,4.67]){this.box(-6.68,.61,z,3.1,.075,.075,'#b29774');for(let k=0;k<3;k++)this.box(-8+k*1.31,.18,z,.075,.62,.075,'#b29774');}
+  // Perimeter groves leave the central flight ground open.
+  for(let i=0;i<41;i++){let a=i/41*TAU+.06*(random()-.5),r=13.1+random()*1.8,x=Math.cos(a)*r,z=Math.sin(a)*r;if(Math.abs(x+6)<1.55||x>7&&z>3&&z<11)continue;this.tree(x,z,.73+random()*.38,i%4===0?1:0);if(i%5===0)this.rock(x+1,.08,z-.5,.55);}
+  this.tree(-24,10,.95);this.tree(-25,11,.62,1);this.tree(22.4,13.7,.76);this.tree(21,-13,.6,1);
+  for(let i=0;i<26;i++){const a=random()*TAU,r=11+random()*3.5,x=Math.cos(a)*r,z=Math.sin(a)*r;if(Math.abs(x+6)<1.7)continue;this.rock(x,.12,z,.2+random()*.4,['#9bb09a','#c6c4a3','#b0baa6'][i%3]);}
+  // Raised observatory: pale plaster, mint roof, warm windows, stairs, and aerials.
+  this.box(9,.1,7.5,4.2,.25,3.1,'#d5d6ba');this.box(9,.35,7.5,3.35,1.9,2.5,'#f2edcf');
+  this.box(9,2.24,7.5,3.68,.22,2.82,'#6ea893');this.box(9,2.45,7.5,3.23,.13,2.39,'#7ab49b');
+  this.box(9,.38,6.23,.73,1.32,.035,'#517f74');this.box(10.12,1.12,6.219,.66,.6,.045,'#bedbcc');this.box(7.91,1.12,6.219,.62,.6,.045,'#bedbcc');
+  this.box(10.685,1.13,7.62,.045,.7,1.15,'#bedbcc');this.box(7.307,1.13,7.55,.045,.7,1.15,'#aacdc0');this.box(8.25,.39,8.765,.66,1.28,.045,'#527c70');this.box(9.56,1.1,8.772,1.08,.62,.045,'#aacdc0');
+  for(let i=0;i<3;i++)this.box(9,.06+i*.09,5.56+i*.21,1.2,.09,.32,'#d6d0ae');
+  this.cylinder(7.8,2.56,8.1,.075,.65,'#e3ddc2',5);this.cone(7.8,3.12,8.1,.76,.28,'#e2ede0',10);this.cylinder(7.8,3.15,8.1,.038,.42,'#719e8d',5);
+  this.cylinder(10.2,2.5,8.3,.035,1.1,'#7d9686',5);this.box(10.5,3.39,8.3,.6,.31,.02,'#e5a575');
+  // A tiny solar station beside the observatory.
+  this.box(12,.2,7.7,.1,.65,.1,'#829883');this.face([[11.3,.8,7.1],[12.7,.8,7.1],[12.7,1.13,8.15],[11.3,1.13,8.15]],'#426f77');
+  for(let k=0;k<4;k++)this.face([[11.35+k*.34,.819,7.12],[11.37+k*.34,.819,7.12],[11.37+k*.34,1.145,8.12],[11.35+k*.34,1.145,8.12]],'#81b6b4',false);
+  // Field camp: specimen beds, a landing target, and a windsock.
+  for(let j=0;j<3;j++){this.box(10.8,.15,3.3+j*.55,1.6,.13,.35,'#a6b789');for(let k=0;k<5;k++)this.cone(10.2+k*.3,.29,3.3+j*.55,.12,.26,'#83b783',5);}
+  this.disc(7,.13,-7,1.35,'#dce0b8',20);this.disc(7,.142,-7,1.1,'#b5cba2',20);this.disc(7,.15,-7,.25,'#f2e8c3',12);
+  this.cylinder(9,.1,-8.2,.045,2.65,'#dcd7b8',5);this.face([[9,2.73,-8.2],[10.3,2.57,-8.2],[9,2.38,-8.2]],'#e9a27d',false);
+  // Tiny plants and pastel mineral clusters, kept at the forest edge.
+  for(let i=0;i<55;i++){let a=random()*TAU,r=10.8+random()*3.4,x=Math.cos(a)*r,z=Math.sin(a)*r;if(Math.abs(x+6)<1.6)continue;this.cone(x,.08,z,.09,.25,['#dfbc91','#e8d3b2','#d69390','#f1e1ad'][i%4],4);}
+  for(const [x,z]of [[-10,-9],[12,-4],[-11,6]]){this.cone(x,.05,z,.3,.9,'#a4ddca',5);this.cone(x+.36,.05,z+.2,.19,.58,'#d0efcf',5);}
+ }
+ polygon(points,color,stroke){const c=this.ctx;c.beginPath();points.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.closePath();c.fillStyle=color;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=.55;c.stroke();}}
+ path(points,color,width=1){if(!points.length)return;const c=this.ctx;c.beginPath();points.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.strokeStyle=color;c.lineWidth=width;c.lineCap='round';c.lineJoin='round';c.stroke();}
+ ellipse(x,y,rx,ry,color){const c=this.ctx;c.beginPath();c.ellipse(x,y,Math.max(.1,rx),Math.max(.1,ry),0,0,TAU);c.fillStyle=color;c.fill();}
+ worldRing(x,y,z,r,color,width=1){const p=[];for(let i=0;i<=48;i++)p.push(this.project(x+Math.cos(i/48*TAU)*r,y,z+Math.sin(i/48*TAU)*r));this.path(p,color,width);}
+ draw(state={},options={}){this.setCamera();const c=this.ctx,w=this.width,h=this.height,t=Number(options.time)||0;c.setTransform(this.dpr,0,0,this.dpr,0,0);c.clearRect(0,0,w,h);const bg=c.createLinearGradient(0,0,w,h);bg.addColorStop(0,'#e6efe7');bg.addColorStop(.52,'#edf3e9');bg.addColorStop(1,'#dcebe3');c.fillStyle=bg;c.fillRect(0,0,w,h);
+  // Floating aerial perspective and a soft underside shadow.
+  const sh=this.project(0,-8.7,0);for(let i=10;i>0;i--)this.ellipse(sh.x,sh.y,15*this.scale+i*2,3.3*this.scale+i,`rgba(63,103,87,${.0025*(11-i)})`);
+  const clouds=[[-22,2,-14,1],[19,1,19,.9],[-22,0,15,.7],[19,-6,-17,.8]];for(let i=0;i<clouds.length;i++){const q=clouds[i],p=this.project(q[0]+Math.sin(t*.025+i)*.4,q[1],q[2]);for(let k=0;k<4;k++)this.ellipse(p.x+(k-1.5)*this.scale*1.2*q[3],p.y-Math.sin(k)*this.scale*.25,this.scale*2.25*q[3],this.scale*.56*q[3],'rgba(255,255,250,.25)');}
+  const drawables=this.mesh.map(f=>{const p=f.points.map(v=>this.project(...v));return{p,color:f.color,layer:f.layer,order:f.order,depth:p.reduce((s,v)=>s+v.depth,0)/p.length};});
+  const birds=state.birds||[];const append=(points,color)=>{const p=points.map(v=>this.project(...v));drawables.push({p,color,layer:2,depth:p.reduce((s,v)=>s+v.depth,0)/p.length});};
+  if(-4*this.sinY+15.8*this.cosY>0){for(let i=0;i<3;i++){const x=-4.6+i*.4;append([[x,.08,15.8],[x+.38,.08,15.8],[x+.43,-7.2,16.1],[x-.03,-7.2,16.1]],['#68c9bb','#a3e9d9','#87dac9'][i]);}}
+  const obstacleList=options.obstacles||state.obstacles||[];
+  for(const o of obstacleList){const r=o.radius||o.r||1.2;for(let j=0;j<7;j++){const a=j/7*TAU,b=(j+1)/7*TAU;append([[o.x+Math.cos(a)*r,.12,o.z+Math.sin(a)*r],[o.x+Math.cos(b)*r,.12,o.z+Math.sin(b)*r],[o.x+.17,1.15*r,o.z-.16]],tint('#8b9f92',.75+j*.045));}}
+  const birdHeight=(b,i)=>2.05+.23*Math.sin(i*1.71+t*.9);
+  const addBird=(b,i,ghost=false)=>{const angle=Math.atan2(b.vz||0,b.vx||.001),a=Math.cos(angle),s=Math.sin(angle),y=birdHeight(b,i),wing=.1+Math.sin(t*7+i*2.14)*.12,size=ghost?.85:1;const P=(x,dy,z)=>[b.x+(x*a-z*s)*size,y+dy,b.z+(x*s+z*a)*size];const selected=options.selected!=null&&(options.selected===i||options.selected===b.id);const warm=selected?'#f0613e':'#e48765';append([P(.35,.01,0),P(-.17,.035,-.34),P(-.065,.095,0)],ghost?'rgba(54,125,120,.72)':warm);append([P(.35,.01,0),P(-.065,.095,0),P(-.17,wing,.34)],ghost?'rgba(49,112,109,.62)':selected?'#cb502f':'#c96a51');append([P(.35,.01,0),P(-.13,-.035,0),P(-.065,.095,0)],ghost?'rgba(87,154,144,.78)':'#f1ae80');};
+  // Trails are world-projected so camera moves do not disturb them.
+  if(options.showTrails&&t!==this.lastTrailTime){birds.forEach((b,i)=>{const id=b.id??i,tr=this.trails.get(id)||[];tr.push([b.x,birdHeight(b,i),b.z]);if(tr.length>24)tr.shift();this.trails.set(id,tr);});this.lastTrailTime=t;}else if(!options.showTrails)this.trails.clear();
+  birds.forEach((b,i)=>{const p=[];for(let j=0;j<7;j++)p.push(this.project(b.x+Math.cos(j/7*TAU)*.20,.17,b.z+Math.sin(j/7*TAU)*.20));drawables.push({p,color:'rgba(62,102,76,.12)',layer:1,order:100000+i,depth:0});addBird(b,i);});(options.ghostBirds||[]).forEach((b,i)=>addBird(b,i,true));
+  drawables.sort((a,b)=>a.layer-b.layer||(a.layer===1?a.order-b.order:a.depth-b.depth));for(const f of drawables)this.polygon(f.p,f.color,f.layer===0?f.color:null);
+  // Water shimmer and soft falling water retain motion while the flock is paused.
+  for(let i=0;i<7;i++){const z=-14+((i*2.4+t*.3)%28),x=-6.0-Math.sin(z*.47)*.5;this.path([this.project(x-.24,.105,z),this.project(x+.22,.105,z)],'rgba(239,255,234,.5)',1);}
+  if(-4*this.sinY+15.8*this.cosY>0){for(let i=0;i<9;i++){const yy=-((t*1.3+i*.75)%6.9);this.path([this.project(-3.92,yy,16.12),this.project(-3.92,yy-.28,16.12)],'rgba(235,255,245,.7)',1.25);}
+  const mist=this.project(-4,-7.3,16.13);for(let i=0;i<4;i++)this.ellipse(mist.x+(i-1.5)*7,mist.y+Math.sin(t+i)*2,8+Math.sin(t+i)*2,3,'rgba(231,250,236,.4)');}
+  if(options.showTrails){for(const tr of this.trails.values())this.path(tr.map(p=>this.project(...p)),'rgba(218,136,93,.30)',1.2);}
+  const index=options.selected==null?-1:typeof options.selected==='number'?options.selected:birds.findIndex(b=>b.id===options.selected),selected=birds[index];
+  if(options.showNeighbors&&selected){const radius=state.params?.perception||state.params?.neighborRadius||4.5;this.worldRing(selected.x,.16,selected.z,radius,'rgba(62,140,115,.4)',1);birds.forEach((b,i)=>{if(i!==index&&Math.hypot(b.x-selected.x,b.z-selected.z)<radius)this.path([this.project(selected.x,birdHeight(selected,index),selected.z),this.project(b.x,birdHeight(b,i),b.z)],'rgba(72,148,122,.25)',1);});}
+  if(selected){const p=this.project(selected.x,birdHeight(selected,index),selected.z);c.strokeStyle='#356c60';c.lineWidth=1.3;c.beginPath();c.ellipse(p.x,p.y,10,10,0,0,TAU);c.stroke();}
+  const beacon=options.beacon||state.beacon;if(beacon){this.worldRing(beacon.x,.16,beacon.z,1.0,'rgba(24,139,120,.65)',1.6);this.worldRing(beacon.x,.17,beacon.z,1.4+.12*Math.sin(t*2),'rgba(29,149,122,.22)',1.1);const p=this.project(beacon.x,.16,beacon.z),q=this.project(beacon.x,3.35+.15*Math.sin(t*2),beacon.z);const glow=c.createLinearGradient(0,q.y,0,p.y);glow.addColorStop(0,'rgba(100,232,195,0)');glow.addColorStop(1,'rgba(43,172,136,.22)');this.polygon([this.project(beacon.x-.42,0,beacon.z),this.project(beacon.x+.42,0,beacon.z),this.project(beacon.x+.16,3.2,beacon.z),this.project(beacon.x-.16,3.2,beacon.z)],glow);this.ellipse(q.x,q.y,4,4,'#53bba0');}
+  this.lastTime=t;
+ }
+}
+globalThis.WorldRenderer=WorldRenderer;
+})();
+</script><script>(function(){
+'use strict';
+const $=id=>document.getElementById(id), E=FlockEngine, canvas=$('world'), renderer=new WorldRenderer(canvas);
+let seed=42,state=E.create(seed),running=!matchMedia('(prefers-reduced-motion: reduce)').matches,speed=1,tool='orbit',selected=null,frameTime=0,accumulator=0,compare=null,lastExperiment=null,prediction=null,chart=[],events=[],initialState=JSON.parse(JSON.stringify(state)),toastTimer,lastFocus=null,modalPaused=false;
+const clone=x=>JSON.parse(JSON.stringify(x));
+function record(type,payload){events.push({step:state.stepCount,type,payload:clone(payload)});}
+function notify(msg){$('toast').textContent=msg;$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,3800);}
+function playback(){ $('play-pause').innerHTML='<svg><use href="#i-'+(running?'pause':'play')+'"/></svg>';$('play-pause').setAttribute('aria-label',running?'Pause simulation':'Resume simulation');$('system-mode').textContent=compare?'PAIRED RUN':running?'LIVE':'PAUSED';}
+function syncRules(){for(const k of ['separation','alignment','cohesion']){$(k).value=state.params[k];$(k+'-out').value=state.params[k].toFixed(2);$(k).disabled=!!compare;}$('lab').classList.toggle('locked',!!compare);$('lab').querySelector('.lab-heading span').textContent=Object.values(state.params).filter(x=>x>0).length.toString().padStart(2,'0')+' active';$('preset-balanced').disabled=$('preset-chaos').disabled=!!compare;$('preset-chaos').classList.toggle('active',state.params.alignment===0);$('preset-balanced').classList.toggle('active',Object.keys(E.defaults).every(k=>state.params[k]===E.defaults[k]));$('seed-label').textContent=seed;}
+function clearTraces(){renderer.trails.clear();renderer.lastTrailTime=-1;chart=[];}
+function setTool(next){if(compare&&next!=='orbit'){notify('Placement is locked during the controlled comparison.');return;}tool=next;canvas.classList.toggle('placing',next!=='orbit');for(const k of ['orbit','beacon','rock'])$(k+'-tool').classList.toggle('on',next===k);$('placement-help').hidden=next==='orbit';$('placement-help').textContent=next==='beacon'?'Click the island to attract the flock. Press B to place a center beacon.':'Click the island to add a boulder. Press O for a center obstacle.';}
+function setParams(params){if(compare)return;Object.assign(state.params,params);record('parameters',params);syncRules();}
+function resetWorld(){if(compare){speed=compare.priorSpeed;$('speed').textContent=speed+'×';}compare=null;state=E.create(seed,72,state.params);events=[];initialState=clone(state);clearTraces();$('experiment-note').hidden=true;syncRules();setTool('orbit');setMission('explore');playback();notify('Same seed. Same initial positions. A fresh experiment.');}
+function setMission(mode){$('explore-tab').classList.toggle('selected',mode==='explore');$('guided-tab').classList.toggle('selected',mode!=='explore');$('explore-tab').setAttribute('aria-pressed',String(mode==='explore'));$('guided-tab').setAttribute('aria-pressed',String(mode!=='explore'));if(mode==='explore'){$('mission-kicker').textContent='YOUR FIRST EXPEDITION';$('mission-title').textContent='Who’s leading the flock?';$('mission-copy').textContent='Change one rule. Watch a whole world respond. Discover how a flock finds its rhythm.';$('mission-cta').textContent='Start a guided experiment';}else if(mode==='running'){$('mission-kicker').textContent='EXPERIMENT IN PROGRESS';$('mission-title').textContent='One world. Two futures.';$('mission-copy').textContent='Teal birds keep all three rules. Coral birds have alignment removed. Both start identically.';$('mission-cta').textContent='Stop experiment';}else{$('mission-kicker').textContent='EXPEDITION COMPLETE';$('mission-title').textContent='A pattern you can explain.';$('mission-copy').textContent='You changed one rule and measured the consequence. Compare the two trajectories.';$('mission-cta').textContent='See what happened';}}
+function openModal(kicker,title,html,wide=false){if($('modal-backdrop').hidden){lastFocus=document.activeElement;modalPaused=running;running=false;playback();}$('modal-kicker').textContent=kicker;$('modal-title').textContent=title;$('modal-content').innerHTML=html;$('modal').classList.toggle('wide',wide);$('modal-backdrop').hidden=false;$('modal-close').focus();}
+function closeModal(resume=true){if($('modal-backdrop').hidden)return;$('modal-backdrop').hidden=true;if(resume){running=modalPaused;playback();}if(lastFocus&&lastFocus.focus)lastFocus.focus();}
+$('modal-close').onclick=()=>closeModal();$('modal-backdrop').onclick=e=>{if(e.target===$('modal-backdrop'))closeModal();};
+function sourceModal(){openModal('THE PAPER → THE WORLD','A mechanism you can play with.',`<p><b>Flocks, Herds, and Schools: A Distributed Behavioral Model</b><br>Craig W. Reynolds · SIGGRAPH 1987</p><div class="source-grid"><article><h3>In the paper</h3><p>Individuals avoid crowding, match nearby velocities, and move toward their local flock. Collective motion emerges from local behavior.</p></article><article><h3>In this world</h3><p>Personal space → separation<br>Move together → velocity matching<br>Stay close → flock centering</p></article></div><hr><div class="eyebrow">WHAT YOU ARE ACTUALLY RUNNING</div><p>This playable prototype computes a <b>planar, weighted-sum adaptation</b> with a fixed circular boundary. The paper’s system is three-dimensional and uses prioritized acceleration allocation. Our neighborhood is a full circle; the island, beacon, constraints, and numerical settings are teaching choices.</p><p>“Follow the paper” follows these mechanisms through a PaperPlay learning experiment. Its alignment ablation and directional-agreement metric are our protocol. <b>This is not a reproduction of the paper’s original experiment or quantitative results.</b></p><div class="source-grid"><article><h3>What is measured?</h3><p>Directional agreement is the magnitude of the average normalized bird velocity: 0 means cancelling headings; 1 means a common heading. It does not measure every aspect of flock quality.</p></article><article><h3>How is it repeatable?</h3><p>Saved seed, 72 starting states, model version, fixed 1/60-second steps, rule settings, arena parameters, and measured traces. Floating-point results may vary across browser engines.</p></article></div><p><a href="https://www.red3d.com/cwr/papers/1987/SIGGRAPH87.pdf" target="_blank" rel="noopener">Read the original paper ↗</a> &nbsp;·&nbsp; <a href="https://www.red3d.com/cwr/boids/" target="_blank" rel="noopener">Author’s Boids overview ↗</a></p><small>Source sections: Simulated Flocks; Arbitrating Independent Behaviors; Impromptu Flocking. A full original-experiment runner requires verified source code, assets, configuration, and separate execution support.</small>`);}
+function missionModal(){if(compare){notify('The paired experiment is running. Pause it with Space or stop it from the mission card.');return;}prediction=null;openModal('GUIDED EXPERIMENT · ABOUT 10 SECONDS','Can they agree without alignment?',`<p>Keep the same birds and starting positions. Remove only the rule that matches their neighbors’ movement. Predict the effect, then watch both worlds unfold.</p><div class="prediction" role="group" aria-label="Predict directional agreement"><button data-predict="lower">Less agreement<small>More independent directions</small></button><button data-predict="same">About the same<small>Other rules compensate</small></button><button data-predict="higher">More agreement<small>A different collective pattern</small></button></div><div class="protocol"><strong>A controlled comparison in this sandbox</strong><br>72 birds · seed <span id="protocol-seed">${seed}</span> · 20 simulated seconds · 1/60-second steps<br>Baseline: separation 1.2, alignment 1.0, cohesion 0.8<br>Intervention: alignment 0.0; all other settings identical<br>Beacons and user obstacles are absent in both runs.</div><p><small>This is our teaching protocol, based on the paper’s mechanism. One seed illustrates a result; it does not establish a general finding.</small></p><div class="modal-actions"><button class="plain" id="mission-skip">Explore first</button><button class="primary" id="run-pair" disabled>Run both worlds <svg><use href="#i-arrow"/></svg></button></div>`);document.querySelectorAll('[data-predict]').forEach(b=>b.onclick=()=>{prediction=b.dataset.predict;document.querySelectorAll('[data-predict]').forEach(x=>x.classList.toggle('selected',x===b));$('run-pair').disabled=false;});$('mission-skip').onclick=()=>closeModal();$('run-pair').onclick=()=>{closeModal(false);startPair(seed);};}
+function startPair(runSeed){seed=Number(runSeed)>>>0;compare={baseline:E.create(seed),altered:E.create(seed,72,{...E.defaults,alignment:0}),seed,prediction,priorSpeed:speed};state=compare.altered;events=[];initialState=clone(state);setTool('orbit');clearTraces();running=true;speed=2;$('speed').textContent='2×';$('experiment-note').hidden=false;setMission('running');syncRules();playback();}
+function stopPair(){if(!compare)return;speed=compare.priorSpeed;compare=null;$('speed').textContent=speed+'×';$('experiment-note').hidden=true;events=[];initialState=clone(state);syncRules();setMission('explore');playback();notify('Experiment stopped. The current world is yours to explore.');}
+function finishPair(){const finished=compare;lastExperiment=E.experiment({seed:finished.seed,count:72,duration:20});lastExperiment.prediction=finished.prediction;lastExperiment.source.url='https://www.red3d.com/cwr/papers/1987/SIGGRAPH87.pdf';lastExperiment.createdAt=new Date().toISOString();lastExperiment.observedFinalStateMatches=JSON.stringify(state.birds)===JSON.stringify(lastExperiment.altered.finalBirds);compare=null;running=false;speed=finished.priorSpeed;$('speed').textContent=speed+'×';$('experiment-note').hidden=true;syncRules();setMission('complete');playback();resultsModal();modalPaused=false;}
+function meanTail(run){const a=run.trace.filter(x=>x.time>=15);return a.reduce((s,x)=>s+x.polarization,0)/a.length;}
+function plotPath(trace){return trace.map((x,i)=>(i?'L':'M')+(40+x.time/20*590).toFixed(1)+' '+(155-x.polarization*130).toFixed(1)).join(' ');}
+function resultsModal(){if(!lastExperiment)return missionModal();const r=lastExperiment,a=meanTail(r.baseline),b=meanTail(r.altered),diff=b-a,actual=Math.abs(diff)<.05?'same':diff<0?'lower':'higher';const interp=actual==='same'?'The two runs have similar late-stage directional agreement.':actual==='lower'?'Removing alignment reduced late-stage directional agreement in this run.':'Removing alignment increased late-stage directional agreement in this run.';openModal('MEASURED IN YOUR SANDBOX','Small rule. Visible consequence.',`<p>${interp} ${r.prediction?'Your prediction was '+(r.prediction===actual?'consistent with this result.':'different from this result.') :''}</p><div class="results-metrics"><div class="result-cell"><p>All three rules</p><b>${a.toFixed(3)}</b><span> / 1 agreement</span></div><div class="result-cell"><p>Alignment removed</p><b>${b.toFixed(3)}</b><span> / 1 agreement</span></div></div><small>Mean of the six 1-second samples from simulated seconds 15–20. These values are computed from this run.</small><div class="trace-labels"><span><i style="background:#4b9187"></i>All three rules</span><span><i style="background:#d78356"></i>Alignment removed</span></div><svg class="plot" viewBox="0 0 660 190" role="img" aria-label="Directional agreement across 20 simulated seconds"><path d="M40 25H630M40 90H630M40 155H630" stroke="#d4dfc9" stroke-width="1" fill="none"/><g fill="#70866c" font-size="10" font-family="sans-serif"><text x="13" y="29">1.0</text><text x="13" y="94">0.5</text><text x="13" y="159">0.0</text><text x="40" y="179">0 s</text><text x="325" y="179">10 s</text><text x="610" y="179">20 s</text></g><path d="${plotPath(r.baseline.trace)}" stroke="#4b9187" stroke-width="2.4" fill="none"/><path d="${plotPath(r.altered.trace)}" stroke="#d78356" stroke-width="2.4" fill="none"/></svg><p>Seed ${r.seed}; only alignment changed. The island artwork does not enter the calculation. Repeat with another seed before interpreting a trend.</p><div class="reset-world"><label for="next-seed">Next seed</label><input class="seed-input" id="next-seed" type="number" min="0" max="4294967295" step="1" value="${(r.seed+1)>>>0}"><button class="plain" id="try-seed">Run comparison</button></div><div class="modal-actions"><button class="plain" id="export-experiment"><svg><use href="#i-download"/></svg>Export run</button><button class="plain" id="replay-experiment">Replay same seed</button><button class="primary" id="return-world">Back to world</button></div>`);$('export-experiment').onclick=()=>download(r,'PaperPlay_Experiment_Seed_'+r.seed+'.json');$('replay-experiment').onclick=()=>{prediction=r.prediction;closeModal(false);startPair(r.seed);};$('return-world').onclick=()=>{closeModal(false);running=true;events=[];initialState=clone(state);setMission('explore');playback();};$('try-seed').onclick=()=>{const val=Number($('next-seed').value);if(!Number.isInteger(val)||val<0||val>4294967295){notify('Choose a whole-number seed from 0 to 4294967295.');return;}prediction=null;closeModal(false);startPair(val);};}
+function download(data,name){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),500);notify('Run record exported with seed, parameters, and measurements.');}
+function agentsModal(){openModal('PROPOSED GENERATION PIPELINE','A world with scientific rules.',`<p>The product direction is a world-building agent system. The output is an executable world with goals, objects, and interventions tied to a paper’s mechanism. This prototype demonstrates one authored world; automatic paper-to-world generation is the next development phase.</p><div class="flow"><article><b>01 · Paper reader</b><p>Extract mechanisms, objects, constraints, and exact source anchors.</p></article><article><b>02 · World designer</b><p>Map variables to manipulable objects and causal actions. Design a learning mission.</p></article><article><b>03 · World builder</b><p>Compose a scene, controls, and trusted simulation primitives.</p></article><article><b>04 · Semantic reviewer</b><p>Check that gameplay and explanations preserve the chosen scientific scope.</p></article></div><div class="fork-flow"><div><b>Builder → isolated runner</b><br>Execute the generated world.</div><span>→</span><div><b>Two parallel checks</b><br>Semantic review + independent numerical checks.</div><span>→</span><div><b>Validation gate</b><br>Release the world, or route a scoped repair.</div></div><p>Source errors return to the reader. Invalid world mappings return to the designer. Runtime defects return to the builder. The controller records every revision and limits repair attempts.</p><hr><div class="source-grid"><article><h3>Visual runtime</h3><p>This preview uses a self-contained Canvas renderer with 3D geometry, depth sorting, orbit, and zoom. The production target is Three.js / React Three Fiber, using lighting, instancing, and selectable world objects.</p></article><article><h3>Scientific runtime</h3><p>The model runs independently from the artwork. Keep deterministic state, recorded interventions, source mappings, and independent reference checks when replacing the renderer.</p></article></div><p><small>First build: one fully checked world and its guided experiment. Next: extract a WorldSpec and use agents to generate variants. Broader papers, original experiment runners, and publication evaluation follow.</small></p>`,true);}
+function worldsModal(){openModal('YOUR RESEARCH WORLDS','Every paper opens a different world.',`<p>The scenery and interaction should come from what the paper studies. This flocking island is the playable visual direction. The other worlds below are future concepts.</p><div class="world-cards"><button class="world-card" id="choose-valley"><div class="art"><svg viewBox="0 0 160 110"><path fill="#456f60" d="m15 49 62 38 68-36-69 51z"/><path fill="#a9d39a" d="m15 49 64-30 66 32-68 36z"/><path fill="#79a773" d="m37 50 8-25 8 25zm14 8 9-30 9 30zm57-4 10-27 10 27z"/><path fill="#e6a074" d="m82 30 17 5-9 3zm-15 18 18 3-10 5z"/><path stroke="#9fe2d0" stroke-width="6" fill="none" d="m80 24-9 22 10 9-7 24"/></svg></div><div class="info"><div class="card-status">Playable now</div><strong>Murmuration Valley</strong><small>Local rules → collective behavior</small></div></button><button class="world-card" id="concept-attention"><div class="art city"><svg viewBox="0 0 160 110"><g fill="#d8d5fa"><path d="m25 75 0-35 15-8 16 8v35l-15 9zM65 72V19l16-8 16 8v53l-16 9zM108 77V43l15-8 16 8v34l-15 9z"/></g><path d="M41 44 81 26l42 27M41 67l40-24 42 30" fill="none" stroke="#a5e0db" stroke-width="2"/></svg></div><div class="info"><div class="card-status">Concept · not built</div><strong>Attention City</strong><small>Route signals. Change who can listen.</small></div></button><button class="world-card" id="concept-diffusion"><div class="art reef"><svg viewBox="0 0 160 110"><g fill="none" stroke="#c8eee0" stroke-width="1.5"><ellipse cx="80" cy="58" rx="53" ry="27"/><ellipse cx="80" cy="58" rx="37" ry="18"/><ellipse cx="80" cy="58" rx="21" ry="9"/></g><g fill="#efcdb3"><circle cx="42" cy="45" r="5"/><circle cx="90" cy="49" r="4"/><circle cx="114" cy="64" r="5"/><circle cx="63" cy="70" r="4"/><circle cx="82" cy="26" r="3"/></g></svg></div><div class="info"><div class="card-status">Concept · not built</div><strong>Diffusion Reef</strong><small>Shape noise. Watch structure emerge.</small></div></button></div><small>Future worlds need their own verified scientific primitives. Reskinning the same game cannot explain every paper.</small><div class="modal-actions"><button class="plain" id="worlds-help">How to play / export</button><button class="plain" id="worlds-source">The paper</button><button class="primary" id="worlds-agents">World generation plan</button></div>`,true);$('worlds-help').onclick=helpModal;$('worlds-source').onclick=sourceModal;$('worlds-agents').onclick=agentsModal;$('choose-valley').onclick=()=>closeModal();$('concept-attention').onclick=()=>conceptModal('Attention City','Tokens become listening stations. Re-route signals, block future messages, and inspect which information can reach a target. A toy mechanism must remain separate from running a trained transformer.');$('concept-diffusion').onclick=()=>conceptModal('Diffusion Reef','Particles drift through a score field. Change noise and sampling steps, then compare the distributions they reach. Begin with a known toy score before running a paper’s trained model.');}
+function conceptModal(title,desc){openModal('FUTURE WORLD · NOT IMPLEMENTED',title,`<p>${desc}</p><div class="protocol">World design follows the scientific mechanism: meaningful actions → computed consequences → guided challenges → inspectable evidence.</div><div class="modal-actions"><button class="primary" id="back-worlds">Back to world collection</button></div>`);$('back-worlds').onclick=worldsModal;}
+function remixModal(){openModal('AUTHOR MODE · LOCAL PREVIEW','Change the world while you play.',`<p>Try the implemented commands below. This prototype applies local actions; it does not send your prompt to an AI model. Full generation will use the planned agent workflow.</p><form class="remix-input" id="remix-form"><label class="sr" for="remix-text">Describe a supported world change</label><input id="remix-text" placeholder="Turn off alignment…" autocomplete="off"><button class="primary">Apply <svg><use href="#i-spark"/></svg></button></form><div class="suggestions"><button data-remix="Turn off alignment">Turn off alignment</button><button data-remix="Add a beacon">Add a beacon</button><button data-remix="Add a boulder">Add a boulder</button><button data-remix="Restore balanced rules">Restore balanced rules</button></div><div class="remix-reply" id="remix-reply">Your edits will change the running simulation.</div><div class="modal-actions"><button class="plain" id="remix-agents">See generation plan</button><button class="primary" id="remix-done">Play in the world</button></div>`);$('remix-form').onsubmit=e=>{e.preventDefault();applyRemix($('remix-text').value);};document.querySelectorAll('[data-remix]').forEach(b=>b.onclick=()=>{$('remix-text').value=b.dataset.remix;applyRemix(b.dataset.remix);});$('remix-agents').onclick=agentsModal;$('remix-done').onclick=()=>closeModal();}
+function applyRemix(text){if(compare){$('remix-reply').textContent='Finish or stop the controlled experiment before editing its conditions.';return;}let reply;if(/alignment|chaos/i.test(text)){setParams({alignment:0});reply='Alignment removed. Personal space and flock centering stay active. Return to the world to watch the change.';}else if(/beacon/i.test(text)){state.beacon={x:0,z:0};record('beacon',state.beacon);reply='An attraction beacon is active at the center. Move it with the flag tool.';}else if(/boulder|obstacle/i.test(text)){addObstacle(2,2);reply='A boulder is placed near the center. The birds now steer around its exclusion zone.';}else if(/balanced|reset|restore/i.test(text)){setParams({...E.defaults});reply='The three rule weights are restored to their defaults. Existing objects and trajectories are preserved.';}else{reply='This prototype recognizes the four commands above. Arbitrary AI world generation is planned.';}$('remix-reply').textContent=reply;}
+function helpModal(){openModal('FIELD GUIDE','A little curiosity goes a long way.',`<div class="source-grid"><article><h3>Look around</h3><p>Drag the world to orbit. Scroll or use + / − to zoom. Arrow keys rotate the camera when the canvas is focused. F hides the panels.</p></article><article><h3>Change its behavior</h3><p>Use the three rule sliders. The flag places an attraction beacon; the obstacle tool adds a boulder. Click a bird to select it.</p></article><article><h3>Watch the local view</h3><p>Enable “One bird’s neighborhood” to see the nearby birds that affect it. Flight trails make changes in movement easier to follow.</p></article><article><h3>Run an experiment</h3><p>“Follow the paper” launches a paired learning experiment. Predict, compare identical seeds, inspect measurements, and export the run record.</p></article></div><p>Space pauses. R restarts this seed. B places a center beacon. O adds a center obstacle. All tools also have visible buttons; the remix panel provides keyboard-accessible placement commands.</p><div class="modal-actions"><button class="plain" id="export-world">Export current exploration</button><button class="primary" id="help-done">Back to the valley</button></div>`);$('help-done').onclick=()=>closeModal();$('export-world').onclick=()=>download({schema:'paperplay.exploration/1',modelVersion:E.version,seed,timestep:1/60,initialState,interventions:events,finalState:state,metrics:E.metrics(state),limitations:['Educational planar model; not original experiment reproduction.','Replay from initialState and apply each intervention before its recorded step is advanced.']},'PaperPlay_Exploration.json');}
+function addObstacle(x,z){if(compare)return;if(state.obstacles.length>=12){notify('This prototype supports up to 12 placed obstacles. Reset to clear them.');return;}const obstacle={x,z,radius:1.2};state.obstacles.push(obstacle);record('obstacle',obstacle);}
+function place(x,z){if(Math.hypot(x,z)>14.5){notify('Choose a point on the main island.');return;}if(tool==='beacon'){state.beacon={x,z};record('beacon',state.beacon);notify('Beacon placed. Watch the flock turn toward it.');}else{addObstacle(x,z);notify('Boulder placed. Watch nearby birds steer around it.');}setTool('orbit');}
+let drag=null;
+canvas.addEventListener('pointerdown',e=>{if(e.button!==0)return;drag={x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY,moved:false};canvas.setPointerCapture(e.pointerId);canvas.focus({preventScroll:true});});
+canvas.addEventListener('pointermove',e=>{if(!drag)return;let dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(e.clientX-drag.startX,e.clientY-drag.startY)>4)drag.moved=true;if(tool==='orbit'&&drag.moved)renderer.orbit(dx,dy);drag.x=e.clientX;drag.y=e.clientY;});
+canvas.addEventListener('pointerup',e=>{if(!drag)return;const moved=drag.moved;drag=null;if(moved)return;if(tool!=='orbit'){const p=renderer.screenToWorld(e.clientX,e.clientY);place(p.x,p.z);}else{const box=canvas.getBoundingClientRect(),x=e.clientX-box.left,y=e.clientY-box.top;let best=18,idx=null;state.birds.forEach((b,i)=>{const p=renderer.project(b.x,2.05,b.z),d=Math.hypot(p.x-x,p.y-y);if(d<best){best=d;idx=i;}});selected=idx;if(idx!==null)notify('Bird '+(idx+1)+' selected. Enable its neighborhood to see local influences.');}});
+canvas.addEventListener('pointercancel',()=>drag=null);canvas.addEventListener('wheel',e=>{e.preventDefault();renderer.zoom(e.deltaY);},{passive:false});
+window.addEventListener('resize',()=>renderer.resize());
+document.addEventListener('keydown',e=>{if(!$('modal-backdrop').hidden){if(e.key==='Escape')closeModal();if(e.key==='Tab'){const focusables=[...$('modal').querySelectorAll('button:not([disabled]),a[href],input:not([disabled])')],first=focusables[0],last=focusables[focusables.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}return;}if(['INPUT','TEXTAREA','SELECT','BUTTON','A'].includes(document.activeElement.tagName)&&document.activeElement!==canvas)return;if(e.code==='Space'){e.preventDefault();running=!running;playback();}if(e.key.toLowerCase()==='f')$('stage').classList.toggle('clean');if(e.key.toLowerCase()==='r')resetWorld();if(e.key.toLowerCase()==='b'&&!compare){state.beacon={x:0,z:0};record('beacon',state.beacon);notify('Beacon placed at the island center.');}if(e.key.toLowerCase()==='o'&&!compare){addObstacle(0,0);notify('Obstacle placed at the island center.');}if(e.key==='Escape')setTool('orbit');if(document.activeElement===canvas&&e.key.startsWith('Arrow')){e.preventDefault();renderer.orbit(e.key==='ArrowLeft'?-7:e.key==='ArrowRight'?7:0,e.key==='ArrowUp'?-7:e.key==='ArrowDown'?7:0);}});
+for(const k of ['separation','alignment','cohesion'])$(k).addEventListener('input',()=>setParams({[k]:Number($(k).value)}));
+$('preset-balanced').onclick=()=>setParams({...E.defaults});$('preset-chaos').onclick=()=>setParams({alignment:0});$('play-pause').onclick=()=>{running=!running;playback();};$('speed').onclick=()=>{speed=speed===1?2:speed===2?.5:1;$('speed').textContent=speed+'×';};$('reset').onclick=resetWorld;
+for(const k of ['orbit','beacon','rock'])$(k+'-tool').onclick=()=>setTool(k);
+$('zoom-in').onclick=()=>renderer.zoom(-170);$('zoom-out').onclick=()=>renderer.zoom(170);$('focus-tool').onclick=()=>{$('stage').classList.toggle('clean');$('focus-tool').setAttribute('aria-pressed',String($('stage').classList.contains('clean')));};
+$('rules-toggle').onclick=()=>{if(innerWidth<=580){$('lab').hidden=false;$('lab').classList.toggle('mobile-open');}else $('lab').hidden=!$('lab').hidden;};$('neighbors-toggle').onchange=()=>{if($('neighbors-toggle').checked&&selected===null)selected=0;};
+$('source-open').onclick=$('rules-source').onclick=sourceModal;$('worlds-open').onclick=$('brand-worlds').onclick=worldsModal;$('agents-open').onclick=agentsModal;$('remix-open').onclick=remixModal;$('help-open').onclick=helpModal;$('about-open').onclick=agentsModal;
+$('home').onclick=()=>{closeModal();renderer.resetCamera();$('stage').classList.remove('clean');};$('guided-tab').onclick=$('mission-open').onclick=missionModal;$('explore-tab').onclick=()=>{if(compare)stopPair();setMission('explore');};$('mission-start').onclick=()=>{if(compare)stopPair();else if($('mission-kicker').textContent==='EXPEDITION COMPLETE')resultsModal();else missionModal();};
+function animate(timestamp){const dt=frameTime?Math.min((timestamp-frameTime)/1000,.05):0;frameTime=timestamp;if(running&&$('modal-backdrop').hidden){accumulator+=dt*speed;let steps=0;while(accumulator>=1/60&&steps++<12){if(compare){E.step(compare.baseline);E.step(compare.altered);state=compare.altered;if(state.stepCount>=1200){accumulator=0;finishPair();break;}}else E.step(state);accumulator-=1/60;}}else accumulator=0;renderer.draw(state,{time:state.time,selected,showTrails:$('trails-toggle').checked,showNeighbors:$('neighbors-toggle').checked,ghostBirds:compare?compare.baseline.birds:[],beacon:state.beacon,obstacles:state.obstacles});const secs=Math.floor(state.time);$('clock').textContent=String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0');if(compare){$('experiment-time').textContent=Math.min(20,state.time).toFixed(1)+' / 20s';$('experiment-progress').style.width=Math.min(100,state.time/20*100)+'%';}if(!animate.lastMetric||timestamp-animate.lastMetric>220){animate.lastMetric=timestamp;const m=E.metrics(state);$('agreement').textContent=m.polarization.toFixed(2);$('bird-count').textContent=state.birds.length;if(running){chart.push(m.polarization);if(chart.length>60)chart.shift();}$('live-chart').setAttribute('d',chart.length?chart.map((y,i)=>(i?'L':'M')+(i/Math.max(1,chart.length-1)*182).toFixed(1)+' '+(26-y*24).toFixed(1)).join(' '):'M0 26H182');}requestAnimationFrame(animate);}
+globalThis.PaperPlayWorld={getState:()=>clone(state),getExperiment:()=>clone(lastExperiment),getEvents:()=>clone(events),renderer,startPair,resetWorld,setParams,openSource:sourceModal,openMission:missionModal,openResults:resultsModal};
+syncRules();setTool('orbit');playback();requestAnimationFrame(animate);
+})();
+</script>
+</body></html>
