@@ -28,9 +28,9 @@ nobody reaches for it early.
   relative imports carry `.ts` extensions, and Node 24 runs TypeScript directly by type
   stripping (scripts, the API). Vite and Vitest compile the same files, so there is no
   build step between packages.
-- **Web:** React 19.3 on Vite 8 with `@vitejs/plugin-react` 6. A Canvas 2D renderer at
-  G1, behind an interface that a Three.js or R3F renderer can replace after G5 without
-  touching primitives.
+- **Web:** React 19.3 on Vite 8 with `@vitejs/plugin-react` 6. The renderer was planned
+  as Canvas 2D at G1, behind an interface a Three.js renderer could replace later; ADR-0004
+  (2026-09-30) supersedes this and uses Three.js from G1.
 - **API:** Fastify 5. Artifacts are JSON files on disk; SQLite through `better-sqlite3`
   only if listing and filtering become painful.
 - **Contracts:** Zod 4.6 with strict objects throughout. Documents persisted on their own

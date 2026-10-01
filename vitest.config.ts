@@ -19,6 +19,10 @@ export default defineConfig({
       },
       {
         extends: true,
+        test: { name: "ui", environment: "node", include: ["packages/ui/test/**/*.test.ts"] },
+      },
+      {
+        extends: true,
         test: { name: "api", environment: "node", include: ["apps/api/test/**/*.test.ts"] },
       },
       {

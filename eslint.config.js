@@ -62,6 +62,45 @@ export default defineConfig(
     },
   },
   {
+    // The stage core is pure presentation: it may read simulation types, never run the
+    // simulation, and it knows nothing of Three.js, React or the DOM.
+    files: ["packages/ui/src/stage-core/**/*.ts"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            { name: "@paperplay/primitives", allowTypeImports: true, message: "The stage core reads simulation state; it never runs the simulation." },
+            { name: "@paperplay/contracts", allowTypeImports: true, message: "The stage core reads contract types only." },
+          ],
+          patterns: [
+            {
+              regex: "^(?!@paperplay/(primitives|contracts)$|\\.{1,2}/)",
+              message: "The stage core is framework-free: no Three.js, React or DOM libraries.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // The adapter draws frame descriptions; it cannot even import the packages that hold simulation state.
+    files: ["packages/ui/src/three-adapter/**/*.ts"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              regex: "^@paperplay/(primitives|contracts)",
+              message: "The Three.js adapter never reads or writes simulation state: draw from the FrameDescription.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     // Contracts are the shared language: no runtime dependency besides zod.
     files: ["packages/contracts/src/**/*.ts"],
     rules: {

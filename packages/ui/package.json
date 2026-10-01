@@ -3,11 +3,20 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Design tokens and world-first components (WorldStage, LabBench, EvidenceRail and friends).",
+  "description": "Design tokens, the pure stage core and its Three.js adapter.",
   "exports": {
-    ".": "./src/index.ts"
+    "./tokens": "./src/tokens.ts",
+    "./stage-core": "./src/stage-core/index.ts",
+    "./three-adapter": "./src/three-adapter/index.ts"
   },
   "scripts": {
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json && tsc -p src/stage-core/tsconfig.json && tsc -p src/three-adapter/tsconfig.json && tsc -p test/tsconfig.json"
+  },
+  "dependencies": {
+    "@paperplay/primitives": "*",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@types/three": "^0.186.0"
   }
 }

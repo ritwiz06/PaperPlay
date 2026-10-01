@@ -1,12 +1,25 @@
+import { useEffect, useRef } from "react";
+import { startLocalStage } from "./stage/local-stage.ts";
+
 /**
- * App shell only. The local world (/world/local) replaces this in the WorldStage slice;
- * the web app renders primitive state and submits actions but never computes science.
+ * The stage for the first world. Controls, the paper and readouts arrive with the
+ * WorldStage and LabBench slice; the web app renders state and never computes science.
  */
 export function App() {
+  const stage = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const container = stage.current;
+    return container ? startLocalStage(container) : undefined;
+  }, []);
+
   return (
-    <main>
-      <h1>PaperPlay</h1>
-      <p>A research paper you can play with. The first world, a flock you can touch, is being built.</p>
-    </main>
+    <div className="shell">
+      <header className="masthead">
+        <h1>PaperPlay</h1>
+        <p>Murmuration Valley</p>
+      </header>
+      <main className="stage" ref={stage} />
+    </div>
   );
 }
