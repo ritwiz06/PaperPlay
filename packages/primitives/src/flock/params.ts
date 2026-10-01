@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { deepFreeze, defaultsOf, shapeOf, type VariableTable } from "../variables.ts";
 
-// Ranges are teaching choices carried over from the Murmuration Valley prototype. The four
-// rule defaults were chosen by a deterministic sweep (ADR-0003, eval/sweeps/); the rest
-// are the prototype's. None of them comes from the paper. MODEL.md has the equations.
+// Ranges are teaching choices carried over from the Murmuration Valley prototype, except
+// alignment's, widened to 0–4 so its default sits mid-range (2.2.0). The four rule
+// defaults were chosen by a deterministic sweep (ADR-0003, eval/sweeps/); the rest are the
+// prototype's. None of them comes from the paper. MODEL.md has the equations.
 export const FLOCK_VARIABLES = deepFreeze({
   agentCount: {
     unit: "birds",
@@ -40,7 +41,7 @@ export const FLOCK_VARIABLES = deepFreeze({
   alignmentWeight: {
     unit: "per second",
     meaning: "How quickly a bird matches the average velocity of the neighbours it can see.",
-    range: [0, 2],
+    range: [0, 4],
     defaultValue: 2,
     phase: "live",
     integer: false,

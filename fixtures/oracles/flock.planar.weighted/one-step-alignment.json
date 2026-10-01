@@ -1,7 +1,7 @@
 {
   "oracle": "oracle/1",
   "id": "flock.one-step.alignment",
-  "primitive": { "id": "flock.planar.weighted", "version": "2.1.0" },
+  "primitive": { "id": "flock.planar.weighted", "version": "2.2.0" },
   "basis": "derived",
   "kind": "one-step",
   "claim": "Alignment moves each bird's velocity a fraction w_a·Δt of the way toward its neighbours' mean velocity, excluding its own.",

@@ -32,6 +32,13 @@ describe("flock.planar.weighted parameters", () => {
     }
   });
 
+  it("gives alignment room on both sides of its default: range 0–4, default 2 (ADR-0003)", () => {
+    expect(description.variables.alignmentWeight?.range).toEqual([0, 4]);
+    expect(description.variables.alignmentWeight?.defaultValue).toBe(2);
+    expect(accepts({ alignmentWeight: 4 })).toBe(true);
+    expect(accepts({ alignmentWeight: 4 + 1e-9 })).toBe(false);
+  });
+
   it("requires a whole number of birds", () => {
     expect(accepts({ agentCount: 72.5 })).toBe(false);
   });

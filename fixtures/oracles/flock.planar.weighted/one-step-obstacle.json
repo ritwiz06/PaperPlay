@@ -1,7 +1,7 @@
 {
   "oracle": "oracle/1",
   "id": "flock.one-step.obstacle",
-  "primitive": { "id": "flock.planar.weighted", "version": "2.1.0" },
+  "primitive": { "id": "flock.planar.weighted", "version": "2.2.0" },
   "basis": "derived",
   "kind": "one-step",
   "claim": "An obstacle pushes a bird away in proportion to how deep inside its radius the bird is, and leaves birds beyond it alone.",

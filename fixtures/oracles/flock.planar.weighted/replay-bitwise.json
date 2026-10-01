@@ -1,7 +1,7 @@
 {
   "oracle": "oracle/1",
   "id": "flock.replay.same-seed-same-events-bitwise",
-  "primitive": { "id": "flock.planar.weighted", "version": "2.1.0" },
+  "primitive": { "id": "flock.planar.weighted", "version": "2.2.0" },
   "basis": "derived",
   "kind": "replay",
   "claim": "The same seed and the same parameter changes at the same steps give identical observables, bit for bit, on one runtime.",
