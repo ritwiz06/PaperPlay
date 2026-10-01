@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import type { FrameDescription, MarkerPose, StagePalette } from "../stage-core/index.ts";
+import type { FrameDescription, MarkerPose, RingPose, StagePalette } from "../stage-core/index.ts";
 import { paintValley, valleyGeometry } from "./geometry.ts";
 import { BIRD_CAPACITY, disposeGeometries, type StageScene } from "./scene.ts";
 
@@ -98,6 +98,42 @@ function showMarkers(stage: StageScene, beacons: readonly MarkerPose[], obstacle
   }
 }
 
+/** Fog starts this far beyond the field's centre and is complete this far beyond it, wherever the camera stands. */
+const FOG_BAND = [4, 92] as const;
+
+/** Half the width of a ring's band, in world units. */
+const RING_HALF_WIDTH = 0.12;
+
+function showRings(stage: StageScene, rings: readonly RingPose[]): void {
+  const wanted = new Map<string, RingPose>(rings.map((ring) => [ring.key, ring]));
+  for (const [key, mesh] of stage.rings) {
+    if (wanted.has(key)) continue;
+    stage.scene.remove(mesh);
+    mesh.geometry.dispose();
+    mesh.material.dispose();
+    stage.rings.delete(key);
+  }
+  for (const [key, ring] of wanted) {
+    let mesh = stage.rings.get(key);
+    if (!mesh) {
+      const material = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.9, side: THREE.DoubleSide, depthWrite: false });
+      mesh = new THREE.Mesh(new THREE.RingGeometry(1, 1, 1), material);
+      mesh.userData.radius = Number.NaN;
+      stage.rings.set(key, mesh);
+      stage.scene.add(mesh);
+    }
+    // A new radius gets a new band, so the band keeps its width whatever the radius.
+    if (mesh.userData.radius !== ring.radius) {
+      mesh.geometry.dispose();
+      const inner = Math.max(ring.radius - RING_HALF_WIDTH, 0);
+      mesh.geometry = new THREE.RingGeometry(inner, ring.radius + RING_HALF_WIDTH, 96).rotateX(-Math.PI / 2);
+      mesh.userData.radius = ring.radius;
+    }
+    mesh.material.color.set(ring.color);
+    mesh.position.set(...ring.position);
+  }
+}
+
 /**
  * Makes the scene show one frame. It reads only the frame description: positions,
  * orientations, colours and camera all come from the stage core, never from simulation state.
@@ -109,6 +145,10 @@ export function applyFrame(stage: StageScene, frame: FrameDescription): void {
   stage.camera.up.set(...camera.up);
   stage.camera.lookAt(...camera.target);
   stage.camera.updateProjectionMatrix();
+  const fog = stage.scene.fog as THREE.Fog;
+  const centre = stage.camera.position.distanceTo(scratch.position.set(...camera.target));
+  fog.near = centre + FOG_BAND[0];
+  fog.far = centre + FOG_BAND[1];
 
   showField(stage, frame.field);
   paint(stage, frame.palette);
@@ -119,7 +159,7 @@ export function applyFrame(stage: StageScene, frame: FrameDescription): void {
     const bird = frame.birds[i];
     if (!bird) continue;
     scratch.rotation.setFromAxisAngle(Y, bird.yaw).multiply(scratch.bank.setFromAxisAngle(X, bird.bank));
-    scratch.size.setScalar(bird.fade);
+    scratch.size.setScalar(bird.fade * bird.size);
     scratch.matrix.compose(scratch.position.set(...bird.position), scratch.rotation, scratch.size);
     stage.birds.setMatrixAt(i, scratch.matrix);
     stage.birds.setColorAt(i, scratch.color.set(bird.color).lerp(scratch.sky, 1 - bird.fade));
@@ -129,4 +169,5 @@ export function applyFrame(stage: StageScene, frame: FrameDescription): void {
   if (stage.birds.instanceColor) stage.birds.instanceColor.needsUpdate = true;
 
   showMarkers(stage, frame.beacons, frame.obstacles);
+  showRings(stage, frame.rings);
 }

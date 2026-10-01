@@ -15,6 +15,22 @@ describe("stage palettes", () => {
     }
   });
 
+  it("keeps a selected bird's neighbours as legible as any bird, and the rest visible though dimmed", () => {
+    for (const palette of [valleyDay, dusk]) {
+      expect(contrastRatio(palette.neighbour, palette.sky), palette.name).toBeGreaterThanOrEqual(7);
+      expect(contrastRatio(palette.selected, palette.sky), palette.name).toBeGreaterThanOrEqual(7);
+      const dimmed = contrastRatio(palette.context, palette.sky);
+      expect(dimmed, palette.name).toBeGreaterThanOrEqual(1.5);
+      expect(dimmed, palette.name).toBeLessThan(contrastRatio(palette.neighbour, palette.sky) / 2);
+    }
+  });
+
+  it("draws the keyboard cursor at 3:1 or better against the valley floor (WCAG non-text contrast)", () => {
+    for (const palette of [valleyDay, dusk]) {
+      expect(contrastRatio(palette.cursor, palette.groundLow), palette.name).toBeGreaterThanOrEqual(3);
+    }
+  });
+
   it("draws birds in ink by day and cream at dusk, not the prototype's coral", () => {
     expect(valleyDay.bird).toBe(tokens.ink);
     expect(dusk.bird).toBe(tokens.cream);

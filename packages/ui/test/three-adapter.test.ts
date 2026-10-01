@@ -80,6 +80,60 @@ describe("Three.js stage adapter", () => {
     expect(hex(color)).toBe(valleyDay.bird);
   });
 
+  it("scales each bird by its size, so a selected bird is drawn larger", () => {
+    const stage = createStageScene();
+    const frame = frameOf(world());
+    applyFrame(stage, { ...frame, birds: frame.birds.map((bird, index) => (index === 1 ? { ...bird, size: 1.6 } : bird)) });
+    const [matrix, position, rotation, size] = [new THREE.Matrix4(), new THREE.Vector3(), new THREE.Quaternion(), new THREE.Vector3()];
+    stage.birds.getMatrixAt(1, matrix);
+    matrix.decompose(position, rotation, size);
+    expectClose(size.toArray(), [1.6, 1.6, 1.6], 5);
+  });
+
+  it("draws each ring as a flat band at its position and radius, in its colour, and drops rings no longer described", () => {
+    const stage = createStageScene();
+    const frame = frameOf(world());
+    applyFrame(stage, {
+      ...frame,
+      rings: [
+        { key: "reach", position: [0, 3.2, 0], radius: 9, color: valleyDay.reach },
+        { key: "cursor", position: [-6, 0, 4], radius: 1.2, color: valleyDay.cursor },
+      ],
+    });
+    const reach = stage.rings.get("reach");
+    expect(reach?.position.toArray()).toEqual([0, 3.2, 0]);
+    expect(hex((reach?.material as THREE.MeshBasicMaterial).color)).toBe(valleyDay.reach);
+    const band = (reach?.geometry as THREE.RingGeometry).parameters;
+    expect((band.innerRadius + band.outerRadius) / 2).toBeCloseTo(9, 9);
+    expect(stage.rings.get("cursor")?.position.toArray()).toEqual([-6, 0, 4]);
+
+    applyFrame(stage, { ...frame, rings: [{ key: "reach", position: [1, 3.2, 1], radius: 4, color: valleyDay.reach }] });
+    expect(stage.rings.get("reach")).toBe(reach);
+    expect(((reach?.geometry as THREE.RingGeometry).parameters.innerRadius + (reach?.geometry as THREE.RingGeometry).parameters.outerRadius) / 2).toBeCloseTo(4, 9);
+    expect(stage.rings.has("cursor")).toBe(false);
+
+    applyFrame(stage, frame);
+    expect(stage.rings.size).toBe(0);
+    expect(reach?.parent).toBeNull();
+  });
+
+  it("keeps the fog band the same distance beyond the field's centre however far the camera stands", () => {
+    const stage = createStageScene();
+    const fogFromCentre = (camera: typeof DEFAULT_CAMERA) => {
+      const frame = frameOf(world(), valleyDay, camera);
+      applyFrame(stage, frame);
+      const fog = stage.scene.fog as THREE.Fog;
+      const centre = Math.hypot(...frame.camera.eye.map((value, axis) => value - (frame.camera.target[axis] ?? 0)));
+      return [fog.near - centre, fog.far - centre];
+    };
+    const near = fogFromCentre(DEFAULT_CAMERA);
+    expect(near[0]).toBeCloseTo(4, 9);
+    expect(near[1]).toBeCloseTo(92, 9);
+    const far = fogFromCentre({ ...DEFAULT_CAMERA, distance: 96, aspect: 0.5 });
+    expect(far[0]).toBeCloseTo(near[0] ?? Number.NaN, 9);
+    expect(far[1]).toBeCloseTo(near[1] ?? Number.NaN, 9);
+  });
+
   it("holds as many birds as the primitive allows", () => {
     const stage = createStageScene();
     const many: Agent[] = Array.from({ length: BIRD_CAPACITY }, (_, i) => ({ x: 4 + (i % 20), y: 4 + Math.floor(i / 20), vx: 1, vy: 0 }));

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   DEFAULT_CAMERA,
   DISTANCE_LIMITS,
+  MAX_FIT,
   orbit,
   PITCH_LIMITS,
   poseOf,
@@ -37,13 +38,27 @@ describe("orbit camera", () => {
     expect(withViewport(DEFAULT_CAMERA, 0, 0).aspect).toBe(DEFAULT_CAMERA.aspect);
   });
 
-  it("backs off on a portrait screen so the field still fits across it, and only then", () => {
+  it("backs off on a narrow stage so the field still fits, and only then", () => {
     const eyeDistance = (aspect: number) => length(minus(poseOf({ ...DEFAULT_CAMERA, aspect }, target).eye, target));
 
     expect(eyeDistance(16 / 9)).toBeCloseTo(DEFAULT_CAMERA.distance, 12);
-    expect(eyeDistance(1.2)).toBeCloseTo(DEFAULT_CAMERA.distance, 12);
     expect(eyeDistance(390 / 844)).toBeGreaterThan(DEFAULT_CAMERA.distance * 1.4);
-    expect(eyeDistance(0.1)).toBeCloseTo(DEFAULT_CAMERA.distance * 2, 12);
+    expect(eyeDistance(0.1)).toBeCloseTo(DEFAULT_CAMERA.distance * MAX_FIT, 12);
+  });
+
+  it("fits the whole flight field on screen at the default view, whatever the stage's shape", () => {
+    // A 32 × 32 field: its four corners on the ground and the tops of its four posts.
+    const points: Vec3[] = [-16, 16].flatMap((x) => [-16, 16].flatMap((z) => [[x, 0, z] as Vec3, [x, 4.2, z] as Vec3]));
+    // Wide screens, the stage beside the bench at 1440 × 900, a phone's square-ish stage, and a phone held upright.
+    for (const aspect of [16 / 9, 1048 / 686, 1.2, 1, 366 / 400, 390 / 844]) {
+      const camera = { ...DEFAULT_CAMERA, aspect };
+      const pose = poseOf(camera, target);
+      for (const point of points) {
+        const [x, y] = projectToNdc(viewMatrix(pose), projectionMatrix(camera), point);
+        expect(Math.abs(x), `aspect ${aspect.toFixed(3)}, corner ${point.join(", ")}`).toBeLessThanOrEqual(0.98);
+        expect(Math.abs(y), `aspect ${aspect.toFixed(3)}, corner ${point.join(", ")}`).toBeLessThanOrEqual(0.98);
+      }
+    }
   });
 
   it("places the eye at its distance from the target, raised by the pitch angle", () => {

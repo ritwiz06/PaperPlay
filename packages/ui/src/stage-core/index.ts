@@ -7,4 +7,5 @@ export { contrastRatio, mixHex, relativeLuminance } from "./color.ts";
 export * from "./fixed-step.ts";
 export * from "./frame.ts";
 export * from "./palettes.ts";
+export * from "./picking.ts";
 export { transform4, transformPoint, type Mat4, type Vec3 } from "./vec.ts";

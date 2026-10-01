@@ -40,9 +40,17 @@ export const zoom = (camera: OrbitCamera, factor: number): OrbitCamera => ({
 export const withViewport = (camera: OrbitCamera, width: number, height: number): OrbitCamera =>
   width > 0 && height > 0 ? { ...camera, aspect: width / height } : camera;
 
-/** On screens narrower than 1.2:1 the eye backs off so the field still fits across them, up to twice as far. */
+/** Below this aspect the field would overflow the stage's width at the default view. */
+export const FIT_ASPECT = 1.32;
+/** The furthest the eye backs off for a narrow stage, as a multiple of its distance. */
+export const MAX_FIT = 3;
+
+/**
+ * On stages narrower than FIT_ASPECT the eye backs off so the whole field still fits. The
+ * width a view holds grows with the distance, so the back-off is inverse to the aspect.
+ */
 export function portraitFit(aspect: number): number {
-  return aspect >= 1.2 ? 1 : Math.min(Math.sqrt(1.2 / aspect), 2);
+  return aspect >= FIT_ASPECT ? 1 : Math.min(FIT_ASPECT / aspect, MAX_FIT);
 }
 
 export function poseOf(camera: OrbitCamera, target: Vec3): CameraPose {
@@ -75,7 +83,7 @@ export function projectToNdc(view: Mat4, projection: Mat4, point: Vec3): Vec3 {
 
 /** Where the ray through a screen point (NDC x, y) meets the plane y = groundY, or null if it never does. */
 export function unprojectToGround(
-  camera: OrbitCamera,
+  camera: Pick<OrbitCamera, "fovDeg" | "aspect">,
   pose: CameraPose,
   [x, y]: readonly [number, number],
   groundY: number,

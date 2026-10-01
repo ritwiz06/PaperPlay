@@ -18,6 +18,8 @@ export interface StageScene {
   readonly camera: THREE.PerspectiveCamera;
   readonly birds: THREE.InstancedMesh;
   readonly markers: Map<string, THREE.Object3D>;
+  /** Flat bands by key: a selected bird's reach, the keyboard cursor. */
+  readonly rings: Map<string, THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial>>;
   readonly fieldMaterial: THREE.LineBasicMaterial;
   readonly postMaterial: THREE.MeshStandardMaterial;
   readonly beaconMaterial: THREE.MeshStandardMaterial;
@@ -65,18 +67,20 @@ export function createStageScene(): StageScene {
     groundMaterial: new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 0.95 }),
   };
 
+  const rings: StageScene["rings"] = new Map();
   return {
     scene,
     camera,
     birds,
     markers: new Map(),
+    rings,
     ...materials,
     hemisphere,
     sun,
     shown: { palette: null, field: null, ground: null, outline: null },
     dispose() {
       disposeGeometries(scene);
-      for (const material of [birdMaterial, ...Object.values(materials)]) material.dispose();
+      for (const material of [birdMaterial, ...Object.values(materials), ...[...rings.values()].map((ring) => ring.material)]) material.dispose();
     },
   };
 }

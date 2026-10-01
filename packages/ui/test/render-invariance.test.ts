@@ -1,6 +1,6 @@
 // R02: the renderer displays state; primitives compute state. Drawing the flock under any
 // camera or palette, or not at all, must leave every measured observable bit-identical.
-import { flockDefaultParams, flockPlanarWeighted as flock, type FlockState } from "@paperplay/primitives";
+import { flockDefaultParams, flockNeighbours, flockPlanarWeighted as flock, type FlockState } from "@paperplay/primitives";
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_CAMERA,
@@ -24,7 +24,7 @@ function deepFreeze<T>(value: T): T {
   return value;
 }
 
-function run(view: { camera: OrbitCamera; palette: StagePalette } | null) {
+function run(view: { camera: OrbitCamera; palette: StagePalette; emphasise?: boolean } | null) {
   let current: FlockState = deepFreeze({
     ...flock.init(flockDefaultParams, 42),
     beacons: [{ id: "beacon-1", x: 6, y: 26 }],
@@ -39,7 +39,11 @@ function run(view: { camera: OrbitCamera; palette: StagePalette } | null) {
     observables.push([measured.directionalAgreement, measured.meanNeighbourDistance, measured.clusterCount]);
     if (view) {
       const camera = orbit(view.camera, t * 0.01, 0);
-      frames.push(describeFrame({ previous, current, alpha: (t % 4) / 4, timestep: flock.fixedTimestep }, camera, view.palette));
+      // The selected-neighbour view asks the primitive's read-only query, then draws its answer.
+      const emphasis = view.emphasise
+        ? { selected: t % 72, neighbours: flockNeighbours(current, flockDefaultParams, t % 72).seen, reach: 9, cursor: { x: t % 32, y: 16 } }
+        : {};
+      frames.push(describeFrame({ previous, current, alpha: (t % 4) / 4, timestep: flock.fixedTimestep }, camera, view.palette, emphasis));
     }
   }
   return { observables, frames };
@@ -50,6 +54,7 @@ const bitwise = (a: number[][], b: number[][]): boolean =>
 
 const close = run({ camera: zoom(DEFAULT_CAMERA, 0.6), palette: valleyDay });
 const far = run({ camera: orbit(zoom(DEFAULT_CAMERA, 1.6), 2.2, 0.3), palette: dusk });
+const selecting = run({ camera: DEFAULT_CAMERA, palette: valleyDay, emphasise: true });
 const unseen = run(null);
 
 describe("[R02] model/render separation", () => {
@@ -57,6 +62,11 @@ describe("[R02] model/render separation", () => {
     expect(close.observables).toHaveLength(STEPS);
     expect(bitwise(close.observables, unseen.observables)).toBe(true);
     expect(bitwise(far.observables, unseen.observables)).toBe(true);
+  });
+
+  it("gives bit-identical observables while a bird is selected and its neighbours are shown", () => {
+    expect(selecting.frames.every((frame) => frame.rings.length === 2)).toBe(true);
+    expect(bitwise(selecting.observables, unseen.observables)).toBe(true);
   });
 
   it("really draws each frame differently under the two cameras and palettes", () => {
