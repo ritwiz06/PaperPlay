@@ -21,11 +21,13 @@ records that output. The requirements each gate enforces are machine-readable in
    Done 2026-09-28.
 3. Primitives: `flock.planar.weighted@1.0.0`, seeded PRNG, registry, `describe()`,
    hand-derived oracle fixtures, determinism tests. Done 2026-09-28.
-4. `packages/ui` tokens, `WorldStage` (Canvas 2D, projected camera, orbit and zoom),
-   `LabBench`, `CaptionStrip`, `StatusChip`. Next.
+4. `packages/ui` tokens and the stage: Three.js from G1 (ADR-0004), as a pure `stage-core`
+   (state, camera, palette → FrameDescription) and a `three-adapter`. Done 2026-09-30.
+   `WorldStage`'s controls, `LabBench`, `CaptionStrip` and `StatusChip` move to the
+   next slice.
 5. `apps/web` `/world/local`: live rule controls, beacon and obstacle placement,
-   selected-neighbour view, next seed, replay same seed, and the render-invariance
-   test (R02).
+   selected-neighbour view, next seed, replay same seed. The render-invariance test (R02)
+   is done (2026-09-30, on FrameDescription); the rest is next.
 6. Playwright smoke: the page loads, a slider moves the `directionalAgreement` readout,
    no console errors (R04).
 
