@@ -32,6 +32,10 @@ export interface SweepOptions {
 
 const KEYS = ["separationWeight", "alignmentWeight", "cohesionWeight", "perceptionRadius"] as const;
 
+/** The seeds the defaults were chosen on, and the window they had to order within (20 s at 1/60 s). */
+export const SWEEP_SEEDS: readonly number[] = Array.from({ length: 20 }, (_, index) => index + 1);
+export const WINDOW_STEPS = 1200;
+
 /** Held fixed for every configuration: the prototype's values for everything not swept. */
 export const BASE: FlockParams = {
   agentCount: 72,

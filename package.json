@@ -21,7 +21,8 @@
     "test:e2e": "playwright test",
     "check:gate": "node scripts/check-gate.ts",
     "check:docs": "node scripts/check-docs.ts",
-    "sweep:defaults": "node scripts/sweep-defaults.ts"
+    "sweep:defaults": "node scripts/sweep-defaults.ts",
+    "choose:hook-seed": "node scripts/hook-seed.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -1,13 +1,14 @@
 import { flockDefaultParams, flockPlanarWeighted as flock } from "@paperplay/primitives";
 import { advance, DEFAULT_CAMERA, describeFrame, START_CLOCK, valleyDay, withViewport } from "@paperplay/ui/stage-core";
 import { mountStage } from "@paperplay/ui/three-adapter";
+import { HOOK_SEED } from "../world/local-world.ts";
 
 /**
  * Runs the flock at its fixed 1/60 s step and draws it on every animation frame. The
  * simulation advances by whole steps only; the renderer receives finished states.
  * Returns a function that stops the loop and releases the stage.
  */
-export function startLocalStage(container: HTMLElement, seed = 42): () => void {
+export function startLocalStage(container: HTMLElement, seed = HOOK_SEED): () => void {
   const params = flockDefaultParams;
   const reducedMotion = container.ownerDocument.defaultView?.matchMedia("(prefers-reduced-motion: reduce)").matches ?? false;
   let redraw = (): void => undefined;

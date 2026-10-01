@@ -19,6 +19,8 @@ import {
   toCsv,
   toMarkdown,
   union,
+  SWEEP_SEEDS,
+  WINDOW_STEPS,
   type StageResult,
   type SweepGrid,
 } from "./sweep/flock-sweep.ts";
@@ -45,7 +47,7 @@ const STAGES: readonly { name: string; note: string; grid: SweepGrid }[] = [
     },
   },
 ];
-const OPTIONS = { seeds: Array.from({ length: 20 }, (_, index) => index + 1), steps: 1200, sampleEvery: 60 };
+const OPTIONS = { seeds: SWEEP_SEEDS, steps: WINDOW_STEPS, sampleEvery: 60 };
 const HELD_OUT = Array.from({ length: 40 }, (_, index) => index + 21);
 const MIN_SUCCESSES = 11;
 
