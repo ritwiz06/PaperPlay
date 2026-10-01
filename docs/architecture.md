@@ -84,7 +84,7 @@ flowchart LR
 | RunRecord, with RunEvent (`param` · `place` · `remove`) | `runrecord/2` | `packages/contracts/src/run.ts` |
 | Origin, Anchor, PrimitiveRef, Action, JobState | Versioned with the documents that embed them | `packages/contracts/src/` |
 | WorldSpec | `worldspec/1`, planned | G2 |
-| `flock.planar.weighted` | 2.1.0: equations E1–E17, defaults per ADR-0003 | `packages/primitives/src/flock/MODEL.md` |
+| `flock.planar.weighted` | 2.2.0: equations E1–E17, defaults per ADR-0003, alignment range 0–4 | `packages/primitives/src/flock/MODEL.md` |
 | Oracle fixtures | `oracle/1` | `fixtures/oracles/README.md` |
 | FrameDescription | Unversioned: in-process only, never persisted | `packages/ui/src/stage-core/frame.ts` |
 | Gate definitions | Requirements per gate | `gates.json` |
@@ -126,7 +126,10 @@ flowchart LR
   - `check:gate` runs typecheck, lint, check:docs, test, build and test:e2e, then checks
     the evidence;
   - `check:docs` checks the documentation;
-  - `sweep:defaults` reproduces ADR-0003's sweep.
+  - `sweep:defaults` reproduces ADR-0003's sweep;
+  - `choose:hook-seed` re-applies ADR-0003's hook-seed rule.
+- **The local world's settings** live in `apps/web/src/world/local-world.ts`. They are
+  teaching choices: the hook seed now, and its levels until WorldSpec arrives at G2.
 
 ## Changes
 
@@ -136,3 +139,6 @@ flowchart LR
 | 2026-09-30 | a5ca4df | `runrecord/2`; flock 2.0.0 (named entities, `apply`, `stateSchema`); the replay engine |
 | 2026-09-30 | cdaf66f | Flock 2.1.0 defaults; the sweep scripts and `eval/sweeps/` |
 | 2026-09-30 | f89a2db | `packages/ui` (tokens, stage-core, three-adapter); `apps/web` draws the stage; Playwright on SwiftShader |
+| 2026-10-01 | c84333d | `check:docs` runs inside every gate |
+| 2026-10-01 | a93e033 | Flock 2.2.0: alignment's range widens to 0–4 |
+| 2026-10-01 | ef7eb32 | The hook seed (4) in `apps/web/src/world/local-world.ts`, with `choose:hook-seed` and a drift test |

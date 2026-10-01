@@ -24,7 +24,7 @@ Commit docs separately as "docs: …". `npm run check:docs`, which `check:gate` 
 - `npm run typecheck` · `npm run lint` · `npm run test` (Vitest) · `npm run test:e2e` (Playwright)
 - `npm run check:gate` — runs every check the current gate requires, `check:docs` included; must actually run tests (no `--passWithNoTests`, no silent skips)
 - `npm run check:docs` — checks the docs against the repository (rules in `docs/README.md`)
-- `npm run sweep:defaults` — reproduces the flock defaults sweep (ADR-0003)
+- `npm run sweep:defaults` — reproduces the flock defaults sweep (ADR-0003) · `npm run choose:hook-seed` — re-applies the hook-seed rule (ADR-0003)
 - `npm run replay -- <run.json>` — replays a run record and reports tolerance results (arrives at G2)
 
 ## Repository shape

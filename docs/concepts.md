@@ -83,6 +83,18 @@ that can reach each other is one group. The groups are counted with a union–fi
   stay comparable when a learner changes how far birds can see.
 - **Learn more:** [Disjoint-set (union–find) data structure](https://en.wikipedia.org/wiki/Disjoint-set_data_structure)
 
+### Percolation: when scattered points join up
+
+Link every pair of points closer than a set distance. Below a critical density the links
+form many small clusters; near it, one cluster suddenly spans the whole space. For points
+in a plane, that happens when each point has on average about 4.5 links.
+
+- **Used in:** `packages/primitives/src/flock/measure.ts`, `eval/sweeps/hook-seed.md`, `docs/decisions/ADR-0003-flock-defaults.md`
+- **Why here:** The default flock sits close to that threshold (about 4.4 links per bird).
+  So 17% of purely random scatters already count as "one group", which is why groups are
+  always read together with directional agreement.
+- **Learn more:** [Percolation threshold](https://en.wikipedia.org/wiki/Percolation_threshold)
+
 ### Semi-implicit Euler integration
 
 Each step updates a bird's velocity first, then moves it using the new velocity. It is the
