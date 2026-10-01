@@ -108,8 +108,13 @@ widened alignment's range; see the follow-ups.)
    - **Where:** `/world/local` opens on seed 4 instead of 42, labelled as a teaching
      choice, and free exploration moves on to other seeds. A test re-runs the rule and
      fails if the pinned seed drifts from it.
-   - **In the browser:** checked once the world page shows its readouts; the result is
-     recorded here.
+   - **In the browser, on 2026-10-01:** `/world/local` was played in real time under
+     software WebGL, with the readouts sampled ten times a second.
+     - The run matched the record. The flock was one group from step 576 on, against
+       571 in the record, and ordered from step 1038 on, against 1033. Each sampled step
+       is the first sample after the recorded one.
+     - At 20.1 s it showed a single dense, ordered murmuration: agreement 0.96, one group.
+     - The R04 browser tests also compare this seed's readouts with Node bit for bit.
 3. **Alignment's range widens to 0–4** in flock.planar.weighted 2.2.0, so the default of 2
    sits mid-range. Equations, defaults and the state contract are unchanged.
 4. **No further sweeps for now.** Options 3 and 5 stay open.

@@ -9,7 +9,7 @@ finished slices are logged in [progress.md](progress.md). A gate is tagged only 
 
 | Gate | Days | Tag | Planned effort | Requirements enforced | State |
 |---|---|---|---|---|---|
-| G1 Playable baseline | 1–7 | v0.1.0 | 21–28 h | R01–R04 | In progress |
+| G1 Playable baseline | 1–7 | v0.1.0 | 21–28 h | R01–R04 | Passed on 2026-10-01; the tag waits for the owner |
 | G2 Verified authored world | 8–14 | v0.2.0 | 21–28 h | R01–R08, R12 | Early work done |
 | G3 Constrained generation | 15–21 | v0.3.0 | 21–28 h | R01–R12 | Not started |
 | G4 Evaluation and feature freeze | 22–27 | v0.4.0 | 18–24 h | R01–R12, plus evaluation checks | Not started |
@@ -31,17 +31,20 @@ Done:
 - [x] Stage: tokens, the Three.js stage core and adapter, and the render-invariance test
   for R02 (2026-09-30, ADR-0004).
 - [x] Documentation system, checked by `check:docs` inside every gate (2026-10-01).
+- [x] The owner's decisions of 2026-10-01 (all on 2026-10-01):
+  - hook seed 4, and alignment's range widened to 0–4 in flock 2.2.0 (ADR-0003);
+  - self-hosted fonts (ADR-0002);
+  - the evaluation protocol at `eval/protocol.md` (ADR-0005);
+  - a private reference folder (ADR-0006).
+- [x] React `WorldStage`: orbit and zoom by pointer and keyboard, pause, next seed, replay
+  same seed, readouts at most ten times a second (2026-10-01, ADR-0007).
+- [x] `LabBench` and `/world/local`: the alignment control, "Rules of this world", beacon
+  and obstacle placement, the selected-neighbour view, and the hook seed (2026-10-01).
+- [x] The [R04] tests: 11 session tests and 5 browser tests, with readouts compared with
+  Node bit for bit (2026-10-01).
+- [x] `check:gate` passes G1 (2026-10-01, commit 107a38a).
 
 Next:
-- [ ] The owner's decisions of 2026-10-01: a pinned hook seed and alignment's range widened
-  to 0–4 (ADR-0003), self-hosted fonts (ADR-0002), the evaluation protocol's location, and a
-  private reference folder.
-- [ ] React `WorldStage`: orbit and zoom by pointer and keyboard, pause, next seed, replay
-  same seed, readouts at most ten times a second.
-- [ ] `LabBench` and `/world/local`: the alignment slider, "Rules of this world", beacon and
-  obstacle placement, the selected-neighbour view, and the hook seed.
-- [ ] The [R04] smoke test: a slider moves the engine parameter and the
-  `directionalAgreement` readout, with no console errors.
 - [ ] Tag v0.1.0, after asking the owner.
 
 Later (moved out of G1):
@@ -65,7 +68,8 @@ Next:
 - [ ] RunRecord export and import; `npm run replay` with a tolerance report; a replay test
   on a fresh page load.
 - [ ] The stale-evidence rule.
-- [ ] An axe accessibility scan in `test:e2e` (R12).
+- [ ] An axe accessibility scan in `test:e2e` (R12). It needs `@axe-core/playwright`, a new
+  dependency awaiting the owner's approval.
 
 Later:
 - Loading the Three.js stage as its own chunk (the bundle is 878 KB; the owner deferred this).
@@ -111,7 +115,7 @@ commit times). The owner's own focused hours are not tracked unless logged.
 
 | Gate | Planned | Used so far |
 |---|---|---|
-| G1 | Days 1–7, 21–28 h | Days 1–4 (2026-09-28 to 2026-10-01). Sessions: about 1.4 h (09-28), 5.4 h (09-30), and the 10-01 session, still in progress |
+| G1 | Days 1–7, 21–28 h | Days 1–4 (2026-09-28 to 2026-10-01), about 8.3 h of sessions: 1.4 h (09-28), 5.4 h (09-30) and 1.5 h (10-01). Under plan, because Claude Code did the building; the owner's own review time is not tracked |
 | G2–G5 | As in Gates | None yet, apart from G2's early RunRecord and replay work |
 
 ## Plan changes
@@ -126,3 +130,6 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-01 | A documentation system, with `check:docs` in every gate | Owner: any session must learn what exists, why and what is next from a few files |
 | 2026-10-01 | CaptionStrip, StatusChip and the tethers move from G1 to G2 | The owner scoped the next slice to WorldStage, LabBench, `/world/local` and R04. The caption strip's "In the paper" column and the tethers need the source map (G2), and status chips show job states, which begin at G3 |
 | 2026-10-01 | Code-splitting the stage is deferred; the bundle-size warning stays | Owner decision |
+| 2026-10-01 | The opening level pins seed 4; alignment's range widens to 0–4 (flock 2.2.0) | Owner decisions (ADR-0003) |
+| 2026-10-01 | Read-only primitive queries do not change a model's version | A query changes no equation, state, default or range; replay depends only on those (ADR-0007, MODEL.md Q1) |
+| 2026-10-01 | The stage's fit rule changes: back off in inverse proportion to the aspect, below 1.32:1 | The old rule cropped the field on the phone layout (ADR-0007) |

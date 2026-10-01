@@ -1,42 +1,45 @@
 # Status
 
-Updated 2026-10-01, during the session that adds the documentation system
+Updated 2026-10-01, at the end of the session that added the documentation system, carried
+out the owner's decisions and built the playable local world
 ([log](sessions/2026-10-01.md)). This file is rewritten every session.
 
 ## Where we are
 
-- **Gate:** G1 Playable baseline, in progress. Every G1 requirement has passing evidence
-  except R04, the playable local world.
+- **Gate:** G1 Playable baseline **passes**. `check:gate` ran every required script, and each
+  of R01–R04 has passing evidence. Tagging v0.1.0 waits for the owner.
 - **Branches,** stacked, one coherent change each; nothing is pushed and there is no remote:
   `g1/kickoff` → `g1/run-record-v2` → `g1/flock-defaults` → `g1/stage-three` →
-  `g1/docs-system` (this session).
-- **Working commit:** `843050f` on `g1/stage-three`. It is the newest commit on which every
-  `check:gate` script passes; G1 itself still waits for R04.
+  `g1/docs-system` → `g1/layout` → `g1/hook-seed` → `g1/fonts` → `g1/world-local`.
+- **Working commit:** `107a38a` on `g1/world-local`, where G1 passes. The docs commit after
+  it changes only documentation.
 - **Runtime:** Node 24.21.0, pinned in `.node-version`. An interactive shell switches to it
   on `cd` into the repo; `check:gate` refuses evidence from any other version.
+- **What a learner can do now,** on `/world/local`, opened on seed 4:
+  - change the rules;
+  - place and remove beacons and obstacles, by pointer or by keyboard;
+  - pick a bird and see the birds it sees;
+  - replay the same seed, or move to the next one;
+  - watch the readouts, labelled as computed observations.
 
-## Latest check:gate (G1), 2026-10-01, on the documentation system's tree
-
-This run is the tree of the documentation system's commit, which comes after `843050f` on
-`g1/docs-system`. A commit cannot name its own hash, so the next docs commit records it.
+## Latest check:gate (G1), 2026-10-01, commit 107a38a
 
 ```
 check:gate G1 · Playable baseline · tag v0.1.0
   runtime    node 24.21.0 (pinned 24.21.0)  ok
-  typecheck  ok      6.2 s
-  lint       ok      6.1 s
+  typecheck  ok      8.0 s
+  lint       ok      6.9 s
   check:docs ok      0.2 s
-  test       ok      4.0 s
+  test       ok      7.3 s
   build      ok      0.4 s
-  test:e2e   ok      4.6 s
-  evidence   202 tests (vitest 199, playwright 3), 0 skipped
-    R01  Deterministic, oracle-checked primitives      40 passing
-    R02  Model/render separation                       4 passing
+  test:e2e   ok      11.2 s
+  evidence   256 tests (vitest 246, playwright 10), 0 skipped
+    R01  Deterministic, oracle-checked primitives      43 passing
+    R02  Model/render separation                       5 passing
     R03  Strict, versioned contracts                   49 passing
-    R04  Playable local world                          no evidence yet
+    R04  Playable local world                          16 passing
 
-G1 not passed: 1 problem(s)
-  - R04 has no passing test tagged [R04]
+G1 passed: every required check ran and every requirement has passing evidence.
 ```
 
 ## Blockers
@@ -45,44 +48,44 @@ None.
 
 ## Decisions waiting on the owner
 
-None open. On 2026-10-01 the owner settled:
-- ADR-0003's options;
-- the typography;
-- the evaluation protocol's location;
-- where the handbook lives.
+1. **Tag v0.1.0?** G1 passes at `107a38a`; the tag would go on the docs commit after it.
+2. **Approve `@axe-core/playwright`,** a new dev dependency, for the axe scan that R12
+   enforces at G2.
+3. **Which seed "fastest" means.**
+   - Seed 4 becomes one group soonest (9.52 s), which is the owner's wording.
+   - Seed 12 orders into a murmuration soonest (14.65 s).
 
-Those are being carried out this session. Tagging v0.1.0 waits for the owner's go-ahead
-once G1 passes.
+   Seed 4 is pinned; switching is one constant, and the rule's tests would follow.
+4. **Revisit the group measure before G2 teaches with it?** At the default density, 17% of
+   random scatters already count as one group (ADR-0003). A new link distance would be a
+   new primitive version.
 
 ## Next three actions
 
-1. Carry out the 2026-10-01 decisions:
-   - pin the hook seed and widen alignment's range to 0–4 (ADR-0003);
-   - self-host the fonts (ADR-0002);
-   - move the protocol to `eval/protocol.md`;
-   - create the private reference folder.
-2. Build the React `WorldStage` and `LabBench` on `/world/local`, showing the hook seed.
-3. Add the [R04] smoke test, run `check:gate` for G1, and ask the owner about tagging
-   v0.1.0.
+1. Hear the owner on the four decisions above, then tag v0.1.0 if they say so.
+2. Run `check:gate` once on a machine without a GPU, or in CI, before or right after the tag.
+3. Start G2: the source register, the flocking source map, and the section files.
 
 ## Recommendations
 
 In priority order:
 
-1. **Keep the R04 smoke test deterministic.** Start the world paused and compare browser
-   readouts with values computed in Node. Tests driven by the wall clock flake under
-   software WebGL.
-2. **Add the axe scan in the WorldStage slice, not at G2.** Retrofitting accessibility
-   costs more than building it in (R12).
-3. **Code-split the Three.js stage before anyone tests on a phone.** Risk: 239 KB of gzipped
-   JavaScript loads before the first frame.
-4. **Run `check:gate` once on a machine without a GPU (or in CI) before tagging v0.1.0.**
-   Risk: SwiftShader has only been exercised on this Mac.
-5. **Profile before any level raises `agentCount`.** Risk: the neighbour search is O(N²).
-   It costs about 22 µs per step for 72 birds, roughly 30 times more at 400.
-6. **Handle WebGL context loss in `mountStage`.** Risk: mobile browsers drop contexts in
-   the background, and the stage would stay blank.
-7. **Revisit TypeScript 7 monthly.** Only typescript-eslint's support blocks the move
+1. **Approve the axe dependency before the first G2 interface work.** The evidence rail and
+   tethers add the most interactive surface yet. Risk: accessibility retrofitted after the
+   fact costs more than accessibility built in (R12).
+2. **Run `check:gate` on a machine without a GPU, or in CI.** Risk: SwiftShader has only
+   been exercised on this Mac.
+3. **Settle the group measure before a level teaches with it.** Risk: a learner reads
+   "Groups: 1" as "a murmuration formed" when a random scatter can show the same.
+4. **Code-split the Three.js stage before anyone tests on a phone.** Risk: 245 KB of gzipped
+   JavaScript (896 KB raw) loads before the first frame.
+5. **Profile before any level raises `agentCount`.** Risk: the neighbour search is O(N²). At
+   the default settings, a step of 72 birds costs about 77 µs and a measurement 46 µs.
+6. **Handle WebGL context loss in `mountStage`.** Risk: mobile browsers drop contexts in the
+   background, and the stage would stay blank.
+7. **Add dark mode with the G2 shell.** The tokens and the stage's dusk palette exist, but
+   the page has no dark theme yet.
+8. **Revisit TypeScript 7 monthly.** Only typescript-eslint's support blocks the move
    (ADR-0001).
-8. **Treat the no-alignment oracle as a hypothesis.** It is expected-qualitative, so a
+9. **Treat the no-alignment oracle as a hypothesis.** It is expected-qualitative, so a
    failure there is a finding, not a threshold to tune (`fixtures/oracles/README.md`).

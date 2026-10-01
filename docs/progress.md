@@ -7,6 +7,62 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-01 · The playable local world
+
+- Branch: `g1/world-local`
+- Commits: `109e9c6`, `73c491e`, `107a38a`
+- Shipped:
+  - `/world/local` on the hook seed: WorldStage, LabBench, the origin legend, readouts,
+    placement, the selected-neighbour view, next seed and replay same seed (ADR-0007).
+  - A recorded session that replays exactly through `runEvents`.
+- Evidence: R01 43, R02 5, R03 49, R04 16. 20 of 20 planted bugs were caught.
+- Gate: `check:gate` G1 passed at `107a38a`: every script ran, and every requirement has
+  evidence.
+
+## 2026-10-01 · Self-hosted fonts
+
+- Branch: `g1/fonts`
+- Commits: `788a1a3` (code), `eae973a` (docs)
+- Shipped: Fredoka 400 and 600 and Literata 400, in latin and latin-ext, served from the
+  page's own origin (ADR-0002).
+- Evidence: 5 unit tests and 1 browser test, untagged. 6 of 6 planted failures were caught.
+- Gate: no `check:gate` run is recorded at these commits; the run at `107a38a` includes them.
+
+## 2026-10-01 · Hook seed and alignment's range
+
+- Branch: `g1/hook-seed`
+- Commits: `a93e033`, `ef7eb32` (code), `394e322` (docs)
+- Shipped:
+  - `flock.planar.weighted@2.2.0`, with alignment's range at 0–4.
+  - `npm run choose:hook-seed` and `eval/sweeps/hook-seed.md`.
+  - Seed 4 as the opening seed (ADR-0003).
+- Evidence:
+  - 7 tooling tests, one of which re-runs the rule; 2 of 2 planted bugs were caught.
+  - Confirmed in the browser on `/world/local`.
+- Gate: no `check:gate` run is recorded at these commits; the run at `107a38a` includes them.
+
+## 2026-10-01 · Protocol location and private reference folder
+
+- Branch: `g1/layout`
+- Commits: `22fa5f6` (code), `50df5d1` (docs)
+- Shipped:
+  - `eval/protocol.md` is the protocol's only path (ADR-0005).
+  - `reference/private/` is git-ignored, and the handbook was moved there (ADR-0006).
+- Evidence: configuration and docs only. `git check-ignore` confirms the handbook is ignored.
+- Gate: no `check:gate` run is recorded at these commits; the run at `107a38a` includes them.
+
+## 2026-10-01 · Documentation system
+
+- Branch: `g1/docs-system`
+- Commits: `c84333d`
+- Shipped:
+  - The docs index, architecture, concepts, this ledger, and the session template and
+    protocol.
+  - `check:docs` in every gate.
+- Evidence: 14 checker tests, one planted failure per rule, and 3 planted failures in the
+  real files.
+- Gate: `check:gate` G1 on its tree passed every script. R04 had no evidence yet.
+
 ## 2026-09-30 · Three.js stage core and adapter
 
 - Branch: `g1/stage-three`

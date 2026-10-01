@@ -252,9 +252,10 @@ when something is added, and the patch for fixes.
 Store the starting state and every learner action with the step it happened at. Running
 them again reproduces the whole run.
 
-- **Used in:** `packages/primitives/src/replay.ts`, `packages/contracts/src/run.ts`
+- **Used in:** `packages/primitives/src/replay.ts`, `packages/contracts/src/run.ts`, `apps/web/src/world/session.ts`
 - **Why here:** A seed alone cannot reproduce a run in which a learner moved sliders and
-  placed beacons. Replay makes every recorded observation checkable.
+  placed beacons. Replay makes every recorded observation checkable, and "Replay same
+  seed" on `/world/local` is this, live.
 - **Learn more:** [Glenn Fiedler, "Deterministic Lockstep"](https://gafferongames.com/post/deterministic_lockstep/)
 
 ### Test oracles
@@ -376,6 +377,29 @@ Tests drive a real browser through the app as a person would, and assert on what
   that the fallback explains itself.
 - **Learn more:** [Playwright](https://playwright.dev)
 
+### An animation loop outside React's state
+
+The browser calls a function before each repaint (`requestAnimationFrame`). The stage runs
+its loop there, and keeps the camera and the last frame in a ref, which React does not
+watch. React's state changes only for readouts, at most ten times a second.
+
+- **Used in:** `packages/ui/src/react/WorldStage.tsx`, `apps/web/src/world/LocalWorld.tsx`
+- **Why here:** Re-rendering the page every frame would be slow, and the brief forbids it.
+  The drawing stays smooth while the page's text updates calmly.
+- **Learn more:** [React: referencing values with refs](https://react.dev/learn/referencing-values-with-refs)
+
+### Keyboard operability
+
+Everything a pointer can do, a keyboard can do too, and focus always shows where the keys
+will act.
+
+- **Used in:** `packages/ui/src/react/WorldStage.tsx`, `tests/e2e/world.spec.ts`
+- **Why here:**
+  - On the stage, arrows orbit the view or move a cursor across the ground, and Enter
+    places or picks at the cursor.
+  - The R04 tests place an obstacle and pick a bird by keyboard alone.
+- **Learn more:** [WCAG 2.1: keyboard (2.1.1)](https://www.w3.org/TR/WCAG21/#keyboard)
+
 ### Docs as checked artifacts
 
 Documentation lives beside the code and a program checks it. Missing sections, stale dates
@@ -428,13 +452,15 @@ A camera on a sphere around a target, described by an angle around (yaw), an ang
   camera flipping under the ground.
 - **Learn more:** [WebGL2 Fundamentals: cameras](https://webgl2fundamentals.org/webgl/lessons/webgl-3d-camera.html)
 
-### Picking the ground (unprojection)
+### Picking: from the screen back to the world
 
 Turn a point on the screen back into a ray from the camera, and find where that ray meets
-the ground plane.
+the ground plane. Picking a bird works the other way round: project every bird onto the
+screen and take the one drawn nearest the pointer.
 
-- **Used in:** `packages/ui/src/stage-core/camera.ts`
-- **Why here:** It is how a click becomes a beacon at the right spot in the world.
+- **Used in:** `packages/ui/src/stage-core/camera.ts`, `packages/ui/src/stage-core/picking.ts`
+- **Why here:** It is how a click becomes a beacon at the right spot in the world, or a
+  picked bird. Both work on what is drawn, so picking never touches the simulation.
 - **Learn more:** [Scratchapixel: ray–plane intersection](https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection.html)
 
 ### Quaternions for orientation
@@ -455,6 +481,17 @@ the prototype's island.
 - **Used in:** `packages/ui/src/three-adapter/geometry.ts`
 - **Why here:** It matches the accepted visual direction and stays cheap to draw.
 - **Learn more:** [three.js: MeshStandardMaterial (flatShading)](https://threejs.org/docs/#api/en/materials/MeshStandardMaterial)
+
+### Focus and context
+
+Show the thing of interest in full detail and keep everything around it visible, but quieter.
+Nothing disappears, so the viewer keeps their bearings.
+
+- **Used in:** `packages/ui/src/stage-core/frame.ts`, `packages/ui/src/stage-core/palettes.ts`
+- **Why here:** The selected-neighbour view enlarges the picked bird and keeps the birds it
+  sees in ink. The rest are dimmed, which works with this palette where colour would not:
+  aqua and lime have too little contrast against the cream sky.
+- **Learn more:** [InfoVis:Wiki, "Focus-plus-Context"](https://infovis-wiki.net/wiki/Focus-plus-Context)
 
 ### Shadow maps
 

@@ -8,15 +8,15 @@ How PaperPlay fits together today. The concepts named here are explained in
 | Path | Job | Key exports or entry points |
 |---|---|---|
 | `packages/contracts` | Zod schemas and inferred types: the shared language | `Origin`, `Anchor`, `SourceManifest`, `PrimitiveRef`, `Action`, `RunEvent`, `RunRecord`, `JobState` |
-| `packages/primitives` | Deterministic, fixed-step scientific models, their registry, and run replay | `flockPlanarWeighted`, `mulberry32`, `registry`, `runEvents`, `replayRecord` |
-| `packages/ui` | Design tokens and the stage, in three parts | `@paperplay/ui/tokens`, `@paperplay/ui/stage-core`, `@paperplay/ui/three-adapter` |
+| `packages/primitives` | Deterministic, fixed-step scientific models, their registry, and run replay | `flockPlanarWeighted`, `flockNeighbours`, `mulberry32`, `registry`, `runEvents`, `replayRecord` |
+| `packages/ui` | Design tokens, fonts, the stage and the bench | `@paperplay/ui/tokens`, `fonts.css`, `components.css`, `stage-core`, `three-adapter`, `react` |
 | `packages/pipeline` | Agent roles, model adapters, checks, controller | Empty until G3 |
-| `apps/web` | React shell: owns the fixed-step loop, renders state, submits actions | `src/stage/local-stage.ts` |
+| `apps/web` | React shell: owns the run, renders state, submits actions | `src/world/session.ts`, `src/world/LocalWorld.tsx` at `/world/local`, `src/world/local-world.ts` |
 | `apps/api` | Fastify API: will hold secrets and run jobs | `GET /health` only, until G3 |
-| `scripts/` | Gate, docs checker, defaults sweep | `check-gate.ts`, `check-docs.ts`, `sweep-defaults.ts` |
+| `scripts/` | Gate, docs checker, defaults sweep, hook seed | `check-gate.ts`, `check-docs.ts`, `sweep-defaults.ts`, `hook-seed.ts` |
 | `fixtures/oracles/` | Hand-derived expected behaviours for primitives | See `fixtures/oracles/README.md` |
 | `eval/` | Sweeps now; the frozen protocol and raw attempts from G4 | `eval/sweeps/` |
-| `tests/e2e/` | Playwright browser tests on Chromium | `smoke.spec.ts`, `stage.spec.ts` |
+| `tests/e2e/` | Playwright browser tests on Chromium | `world.spec.ts` [R04], `stage.spec.ts`, `fonts.spec.ts`, `smoke.spec.ts` |
 
 Inside `packages/ui`:
 - **`src/tokens.ts`:** the accepted palette.
@@ -24,6 +24,8 @@ Inside `packages/ui`:
   `fonts.css` as `@paperplay/ui/fonts.css` (ADR-0002).
 - **`src/stage-core/`:** pure presentation; turns states into a `FrameDescription`.
 - **`src/three-adapter/`:** turns a `FrameDescription` into a Three.js scene.
+- **`src/react/`:** WorldStage, LabBench, Readout, and the origin chip and legend
+  (ADR-0007). They display what a driver gives them and report what the learner does.
 
 ## Dependency directions
 
@@ -32,8 +34,13 @@ An arrow means "may import". Dotted arrows are type-only imports.
 ```mermaid
 flowchart LR
   web["apps/web"] --> primitives["packages/primitives"]
+  web --> react["packages/ui · react"]
   web --> stagecore["packages/ui · stage-core"]
-  web --> adapter["packages/ui · three-adapter"]
+  web -.-> contracts
+  react --> stagecore
+  react --> adapter["packages/ui · three-adapter"]
+  react -.-> contracts
+  react --> reactlib(["react"])
   primitives --> contracts["packages/contracts"]
   stagecore -.-> primitives
   stagecore --> tokens["packages/ui · tokens"]
@@ -48,7 +55,8 @@ Forbidden, and enforced (see the invariants table below):
 - `contracts` importing anything but zod;
 - `primitives` importing UI, apps, the pipeline or Node;
 - `stage-core` importing Three.js, React or DOM libraries, or importing simulation values;
-- `three-adapter` importing `primitives` or `contracts` in any form.
+- `three-adapter` importing `primitives` or `contracts` in any form;
+- `react` (the components) importing simulation values: types only, and React, from outside its package.
 
 `packages/pipeline` has no imports yet.
 
@@ -58,9 +66,14 @@ Forbidden, and enforced (see the invariants table below):
 flowchart LR
   seed[("seed + params")] --> init["primitive.init"]
   init --> state["FlockState"]
-  events[("events: param · place · remove")] --> loop
+  learner(["learner: controls, clicks, keys"]) --> session["apps/web session<br/>records events at the current step"]
+  session --> events[("events: param · place · remove")]
+  events --> loop
   state --> loop["fixed-step loop<br/>advance → step / apply"]
   loop --> state
+  state --> query["primitive neighbourhood query"]
+  query --> emphasis["emphasis: picked bird and neighbours"]
+  emphasis --> describe
   state --> describe["stage-core.describeFrame<br/>(previous, current, alpha)"]
   describe --> frame["FrameDescription"]
   frame --> apply["three-adapter.applyFrame"]
@@ -71,8 +84,10 @@ flowchart LR
   replay --> measure
 ```
 
-1. **The simulation moves only in fixed steps.** `apps/web` takes whole 1/60 s steps from
-   `advance`, applies learners' edits through `apply`, and calls `step`.
+1. **The simulation moves only in fixed steps.** The session in `apps/web` takes whole
+   1/60 s steps from `advance`, records each learner action as an event at the current
+   step, applies it through `apply` or the parameter schema, and calls `step`. Its own
+   plan replays through `runEvents` to the same state, bit for bit.
 2. **Drawing reads finished states.** `describeFrame` receives the two latest states. The
    adapter draws the resulting description, and nothing flows back into the simulation.
 3. **Replay rebuilds a run from a record.** It takes a `RunRecord`'s initial state and
@@ -86,9 +101,9 @@ flowchart LR
 | RunRecord, with RunEvent (`param` · `place` · `remove`) | `runrecord/2` | `packages/contracts/src/run.ts` |
 | Origin, Anchor, PrimitiveRef, Action, JobState | Versioned with the documents that embed them | `packages/contracts/src/` |
 | WorldSpec | `worldspec/1`, planned | G2 |
-| `flock.planar.weighted` | 2.2.0: equations E1–E17, defaults per ADR-0003, alignment range 0–4 | `packages/primitives/src/flock/MODEL.md` |
+| `flock.planar.weighted` | 2.2.0: equations E1–E17, defaults per ADR-0003, alignment range 0–4, and the read-only query Q1 (neighbourhoods), which does not change the version | `packages/primitives/src/flock/MODEL.md` |
 | Oracle fixtures | `oracle/1` | `fixtures/oracles/README.md` |
-| FrameDescription | Unversioned: in-process only, never persisted | `packages/ui/src/stage-core/frame.ts` |
+| FrameDescription, with FrameEmphasis | Unversioned: in-process only, never persisted | `packages/ui/src/stage-core/frame.ts` |
 | Gate definitions | Requirements per gate | `gates.json` |
 
 ## Invariants and where they are enforced
@@ -101,9 +116,16 @@ flowchart LR
 | Primitive behaviour matches hand-derived equations | Oracle fixtures [R01] | `fixtures/oracles/`, `packages/primitives/test/flock.oracles.test.ts` |
 | Contracts depend only on zod | Lint | `eslint.config.js` |
 | Contracts reject unknown keys and enforce their refinements | Tests [R03] | `packages/contracts/test/` |
-| The renderer never changes an observable | Test [R02] | `packages/ui/test/render-invariance.test.ts` |
+| The renderer never changes an observable, even with a bird picked | Test [R02] | `packages/ui/test/render-invariance.test.ts` |
 | The stage core is framework-free, with type-only simulation imports | A tsconfig without the DOM library; lint | `packages/ui/src/stage-core/tsconfig.json`, `eslint.config.js` |
 | The adapter never reads or writes simulation state | Lint and an import test | `packages/ui/test/three-adapter.test.ts` |
+| The React stage and bench import no simulation code | Lint (types only) | `eslint.config.js` |
+| A live session replays exactly from its own record | Test [R04]: `runEvents` on the session's plan reaches its state bit for bit | `apps/web/test/session.test.ts` |
+| A control moves the engine parameter, and readouts show the primitive's values | Browser tests [R04], compared with Node bit for bit | `tests/e2e/world.spec.ts` |
+| Readouts update at most ten times a second, never once per frame | `readoutDue`, tested; the stage's loop calls it | `packages/ui/test/fixed-step.test.ts`, `packages/ui/src/react/WorldStage.tsx` |
+| The local world's controls are valid actions on the primitive's variables, within its ranges | Test | `apps/web/test/session.test.ts` |
+| The page's palette equals the stage's tokens | Test | `packages/ui/test/tokens.test.ts` |
+| The opening seed follows ADR-0003's rule | A test re-runs the rule | `scripts/test/hook-seed.test.ts` |
 | Replay refuses another primitive version and out-of-range events | Tests [R07] | `packages/primitives/test/replay.test.ts` |
 | Evidence comes only from the pinned runtime | The gate's runtime check | `scripts/check-gate.ts` |
 | No skipped tests, no missing scripts, no pass-with-no-tests | The gate's evidence rules; Vitest (`passWithNoTests` and `allowOnly` both false); Playwright (`forbidOnly`, no retries) | `scripts/gate/evidence.ts`, `vitest.config.ts`, `playwright.config.ts` |
@@ -121,7 +143,7 @@ flowchart LR
 - **TypeScript 6.0, strict and NodeNext.** Each workspace typechecks its source and its tests
   separately. It is pinned below 6.1 for typescript-eslint (ADR-0001).
 - **Web:** Vite 8, React 19.3, and Three.js 0.186 (ADR-0004).
-- **Tests and lint:** Vitest 5, with one project per workspace and a JSON report. Playwright
+- **Tests and lint:** Vitest 5, with one project per workspace (`apps/web` included) and a JSON report. Playwright
   1.63 runs on Chromium with forced SwiftShader. ESLint 10 has type-aware rules and the
   boundary rules above.
 - **Libraries:** Zod 4.6 for contracts, Fastify 5 for the API.
@@ -146,3 +168,6 @@ flowchart LR
 | 2026-10-01 | a93e033 | Flock 2.2.0: alignment's range widens to 0–4 |
 | 2026-10-01 | ef7eb32 | The hook seed (4) in `apps/web/src/world/local-world.ts`, with `choose:hook-seed` and a drift test |
 | 2026-10-01 | 788a1a3 | Self-hosted fonts in `packages/ui/src/fonts`, exported as `@paperplay/ui/fonts.css` |
+| 2026-10-01 | 109e9c6 | The read-only neighbourhood query `flockNeighbours` (Q1) |
+| 2026-10-01 | 73c491e | `FrameEmphasis`, picking, rings; the fit backs off in inverse proportion to the aspect; fog keeps its distance |
+| 2026-10-01 | 107a38a | `packages/ui/src/react` (WorldStage, LabBench, origins); the session and `/world/local` in `apps/web`; a Vitest project for `apps/web`; `src/stage/local-stage.ts` removed |

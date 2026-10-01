@@ -54,7 +54,10 @@ into the simulation.
   These aren't the prototype's coral birds: coral isn't a token, and the brief rules out a
   terracotta look. A test pins bird-on-sky contrast at 7:1 or better.
 - **Framing:** on screens narrower than 1.2:1, the camera backs off (up to twice as far) so
-  the field still fits across a phone.
+  the field still fits across a phone. Superseded on 2026-10-01 by ADR-0007: the old
+  back-off cropped a field corner even at 1.2:1. The camera now backs off in inverse
+  proportion to the aspect below 1.32:1, up to three times as far, and the fog keeps its
+  distance beyond the field's centre.
 - **Shadows:** `PCFShadowMap` with a radius, because three 0.186 removed `PCFSoftShadowMap`.
 - **Reduced motion:** the flock is drawn still, and redrawn only when the stage changes
   size.
