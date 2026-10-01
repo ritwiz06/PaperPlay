@@ -35,10 +35,10 @@ packages/contracts  Zod schemas + types: SourceManifest, Anchor, WorldSpec, Acti
 packages/primitives Pure, deterministic, fixed-step scientific primitives (starts with flock.planar.weighted).
 packages/pipeline   Reader → Planner/Designer → Explainer → Builder → Checks → Reviewer → Controller. Mock provider first.
 packages/ui         Design tokens, world stage, lab bench, evidence rail, depth dial, fork view.
-eval/               Frozen protocol, held-out sections, baseline B1, raw attempts, analysis.
+eval/               protocol.md (frozen at G4, ADR-0005), held-out sections, baseline B1, raw attempts, analysis; sweeps/ behind teaching-choice defaults.
 fixtures/           Papers, source maps, WorldSpec fixtures, independent oracle fixtures.
-reference/          murmuration-valley.html — the accepted visual direction. Read it; do not copy it verbatim.
-docs/               README (index), project-brief, roadmap, status, requirements, architecture, concepts, progress, sessions/, decisions/ (ADRs), research/protocol.md
+reference/          murmuration-valley.html — the accepted visual direction. Read it; do not copy it verbatim. private/ is git-ignored owner-only material (ADR-0006): read a file there only when the owner asks.
+docs/               README (index), project-brief, roadmap, status, requirements, architecture, concepts, progress, sessions/, decisions/ (ADRs)
 ```
 
 ## The boundaries that matter most
