@@ -1,35 +1,35 @@
 # Status
 
-Updated 2026-09-30, at the end of the session on RunRecord v2, the flock defaults and the
-Three.js stage core.
+Updated 2026-10-01, during the session that adds the documentation system
+([log](sessions/2026-10-01.md)). This file is rewritten every session.
 
 ## Where we are
 
-- **Gate:** G1 Playable baseline, in progress.
-  - Steps 1–4 are done. Step 4 became the Three.js stage core and adapter (ADR-0004).
-  - From step 5, the render-invariance test (R02) is done; `/world/local` is next.
-- **Branches,** stacked, each one coherent change. Nothing is pushed and there is no remote.
-  - `g1/kickoff`: c18488d (kickoff), 3b2352a (kickoff docs).
-  - `g1/run-record-v2`: a5ca4df.
-  - `g1/flock-defaults`: cdaf66f.
-  - `g1/stage-three`: f89a2db.
-- **Working commit:** f89a2db on `g1/stage-three`. This document lands in the
-  commit after it.
-- **Runtime:** Node 24.21.0, pinned in `.node-version`. `~/.zshrc` now runs
-  `fnm env --use-on-cd`, so an interactive shell switches automatically on `cd` into the
-  repo. `check:gate` refuses evidence from any other version.
+- **Gate:** G1 Playable baseline, in progress. Every G1 requirement has passing evidence
+  except R04, the playable local world.
+- **Branches,** stacked, one coherent change each; nothing is pushed and there is no remote:
+  `g1/kickoff` → `g1/run-record-v2` → `g1/flock-defaults` → `g1/stage-three` →
+  `g1/docs-system` (this session).
+- **Working commit:** `843050f` on `g1/stage-three`. It is the newest commit on which every
+  `check:gate` script passes; G1 itself still waits for R04.
+- **Runtime:** Node 24.21.0, pinned in `.node-version`. An interactive shell switches to it
+  on `cd` into the repo; `check:gate` refuses evidence from any other version.
 
-## Latest check:gate (G1), 2026-09-30
+## Latest check:gate (G1), 2026-10-01, on the documentation system's tree
+
+This run is the tree of the documentation system's commit, which comes after `843050f` on
+`g1/docs-system`. A commit cannot name its own hash, so the next docs commit records it.
 
 ```
 check:gate G1 · Playable baseline · tag v0.1.0
   runtime    node 24.21.0 (pinned 24.21.0)  ok
   typecheck  ok      6.2 s
-  lint       ok      6.0 s
+  lint       ok      6.1 s
+  check:docs ok      0.2 s
   test       ok      4.0 s
   build      ok      0.4 s
-  test:e2e   ok      4.4 s
-  evidence   188 tests (vitest 185, playwright 3), 0 skipped
+  test:e2e   ok      4.6 s
+  evidence   202 tests (vitest 199, playwright 3), 0 skipped
     R01  Deterministic, oracle-checked primitives      40 passing
     R02  Model/render separation                       4 passing
     R03  Strict, versioned contracts                   49 passing
@@ -39,59 +39,50 @@ G1 not passed: 1 problem(s)
   - R04 has no passing test tagged [R04]
 ```
 
-G1 is not passed: R04 (the playable local world and its smoke test) is the next slice.
-Everything else G1 requires has passing evidence.
-
-## What exists
-
-- **`packages/contracts`:** the G1 subset, with `runrecord/2` (event union, sampling
-  fields).
-- **`packages/primitives`:**
-  - `flock.planar.weighted@2.1.0`, with equations E1–E17 in `src/flock/MODEL.md`;
-  - named entities, `apply` and `stateSchema`;
-  - mulberry32, the registry, and the replay engine (`runEvents`, `replayRecord`).
-- **`packages/ui`:**
-  - tokens;
-  - `stage-core`: a pure FrameDescription, the orbit camera, the fixed-step driver and the
-    palettes;
-  - `three-adapter`: the Three.js scene, `mountStage` and the WebGL fallback.
-- **`apps/web`** draws the live flock with the default settings and seed 42. It has no
-  controls yet.
-- **Evaluation:**
-  - `eval/sweeps/` holds the defaults sweep (ADR-0003).
-  - `fixtures/oracles/` holds 23 hand-derived flock oracles and the mulberry32 vectors.
-- **Not yet:** `npm run replay` (in CLAUDE.md's command list) arrives with replay export at
-  G2. ADR-0002 (typography) is not written; the header uses a placeholder system font.
-
 ## Blockers
 
 None.
 
 ## Decisions waiting on the owner
 
-1. **ADR-0003's open options.**
-   - The new defaults succeed for 14 of 20 sweep seeds but only 17 of 40 unseen seeds.
-   - Alignment sits at its maximum (2).
-   - Seed 42, which the page shows, does not settle within 30 s.
+None open. On 2026-10-01 the owner settled:
+- ADR-0003's options;
+- the typography;
+- the evaluation protocol's location;
+- where the handbook lives.
 
-   The options are: accept; widen alignment's range; relax or lengthen the criterion; pin a
-   hook seed known to form a murmuration (as a teaching choice); or sweep further.
-2. **Typography (ADR-0002).** Choosing a display and text pair means loading font files.
-   Self-hosting them adds assets to the repo; a font CDN adds a network dependency.
-3. **Where the evaluation protocol lives.** The brief says `eval/protocol.md`; CLAUDE.md
-   lists `docs/research/protocol.md`. Pick one before G4.
-4. **The handbook PDF** in the repo root is untracked. Should it be committed, ignored, or
-   moved out of the repo?
+Those are being carried out this session. Tagging v0.1.0 waits for the owner's go-ahead
+once G1 passes.
 
 ## Next three actions
 
-1. The owner decides decision 1, at least for the hook's starting world.
-2. **React `WorldStage`:**
-   - pointer and keyboard orbit and zoom;
-   - pause, next seed, and replay same seed;
-   - live readouts at 10 Hz or less, labelled computed-observation.
-3. **`LabBench` and `/world/local`:**
-   - one tethered rule slider plus collapsed "Rules of this world";
-   - beacon and obstacle placement through `unprojectToGround` and `apply`, recorded as
-     RunRecord events;
-   - the [R04] smoke test: a slider moves the `directionalAgreement` readout.
+1. Carry out the 2026-10-01 decisions:
+   - pin the hook seed and widen alignment's range to 0–4 (ADR-0003);
+   - self-host the fonts (ADR-0002);
+   - move the protocol to `eval/protocol.md`;
+   - create the private reference folder.
+2. Build the React `WorldStage` and `LabBench` on `/world/local`, showing the hook seed.
+3. Add the [R04] smoke test, run `check:gate` for G1, and ask the owner about tagging
+   v0.1.0.
+
+## Recommendations
+
+In priority order:
+
+1. **Keep the R04 smoke test deterministic.** Start the world paused and compare browser
+   readouts with values computed in Node. Tests driven by the wall clock flake under
+   software WebGL.
+2. **Add the axe scan in the WorldStage slice, not at G2.** Retrofitting accessibility
+   costs more than building it in (R12).
+3. **Code-split the Three.js stage before anyone tests on a phone.** Risk: 239 KB of gzipped
+   JavaScript loads before the first frame.
+4. **Run `check:gate` once on a machine without a GPU (or in CI) before tagging v0.1.0.**
+   Risk: SwiftShader has only been exercised on this Mac.
+5. **Profile before any level raises `agentCount`.** Risk: the neighbour search is O(N²).
+   It costs about 22 µs per step for 72 birds, roughly 30 times more at 400.
+6. **Handle WebGL context loss in `mountStage`.** Risk: mobile browsers drop contexts in
+   the background, and the stage would stay blank.
+7. **Revisit TypeScript 7 monthly.** Only typescript-eslint's support blocks the move
+   (ADR-0001).
+8. **Treat the no-alignment oracle as a hypothesis.** It is expected-qualitative, so a
+   failure there is a finding, not a threshold to tune (`fixtures/oracles/README.md`).

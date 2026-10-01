@@ -1,15 +1,28 @@
 # Requirements
 
-Twelve requirements, R01–R12. A requirement counts as evidenced only when tests carrying
-its id in their title (for example `[R01] …`) ran and passed, none were skipped, on the
-Node version pinned in `.node-version`. `npm run check:gate` enforces this for the
-requirements `gates.json` lists under the current gate, and rejects tags that name no
-requirement.
+Twelve requirements, R01–R12, and the evidence each has. Counts come from the latest
+`check:gate` run recorded in [status.md](status.md); how each one is enforced is mapped in
+[architecture.md](architecture.md).
 
-Each row links issue → commit → check → evidence path. There is no issue tracker yet,
-so the issue column names the brief section or kickoff step that asked for the work.
-The brief's tenth non-negotiable, "checks are real", is not numbered: `check:gate`
-itself enforces it, and `scripts/test/gate-evidence.test.ts` tests that enforcement.
+## How evidence is counted
+
+- **What counts:** a requirement counts as evidenced only when tests carrying its id in
+  their title (for example `[R01] …`) ran and passed, none were skipped, on the Node version
+  pinned in `.node-version`.
+- **What enforces it:** `npm run check:gate` enforces this for the requirements `gates.json`
+  lists under the current gate, and rejects tags that name no requirement.
+- **Tests tagged ahead of their gate:** they still run and must pass; they are counted here
+  but not enforced until their gate.
+- **The chain each row records:** issue → commit → check → evidence path. There is no issue
+  tracker yet, so the issue column names the brief section or decision that asked for the
+  work.
+- **Unnumbered rules:** the brief's tenth non-negotiable, "checks are real", is enforced by
+  `check:gate` itself and tested in `scripts/test/gate-evidence.test.ts`. Documentation
+  consistency is enforced by `check:docs`, tested in `scripts/test/check-docs.test.ts`.
+
+## Evidence
+
+Counts as of 2026-10-01 (commit 843050f).
 
 | ID | Requirement | Issue | First gate | Checked by | Commit | Evidence | Status |
 |---|---|---|---|---|---|---|---|

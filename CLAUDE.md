@@ -2,13 +2,30 @@
 
 PaperPlay turns a research paper into a playable, explorable world: the paper is the storyline, each level has one thing you can manipulate and one "what if the authors had…" fork, and every control is tethered to the passage in the paper it came from. It is a **learning sandbox, not a simulation of the study**: no scores, no badges, no claims of reproducing the authors' results.
 
-Read `docs/status.md` before doing anything. The full build brief is `docs/BUILD_PROMPT.md`.
+Start every session with the session protocol below. The documentation index is `docs/README.md`; the full build brief is `docs/BUILD_PROMPT.md`.
+
+## Session protocol
+At the start, read `docs/status.md`, the latest session log and `docs/architecture.md`, then only what the task touches: relevant ADRs, requirement rows, the roadmap's gate section, concept entries. Don't reread everything. Record what you read in the session log.
+
+Before stopping, update:
+- the session log, `docs/sessions/YYYY-MM-DD.md` (template in `docs/README.md`; add `-2`, `-3` for further sessions that day);
+- `docs/status.md`;
+- `docs/progress.md` if a slice finished;
+- `docs/roadmap.md` checklists and plan changes;
+- `docs/requirements.md` counts;
+- `docs/architecture.md` if packages, contracts or boundaries changed;
+- `docs/concepts.md` if a new concept appeared;
+- an ADR in `docs/decisions/` for any decision.
+
+Commit docs separately as "docs: …". `npm run check:docs`, which `check:gate` runs, fails when the docs drift from the repository.
 
 ## Commands (Windows PowerShell first; use `npm.cmd` if `npm.ps1` is blocked)
 - `npm run dev` — web app (Vite) · `npm run dev:api` — Fastify API
 - `npm run typecheck` · `npm run lint` · `npm run test` (Vitest) · `npm run test:e2e` (Playwright)
-- `npm run check:gate` — runs every check the current gate requires; must actually run tests (no `--passWithNoTests`, no silent skips)
-- `npm run replay -- <run.json>` — replays a run record and reports tolerance results
+- `npm run check:gate` — runs every check the current gate requires, `check:docs` included; must actually run tests (no `--passWithNoTests`, no silent skips)
+- `npm run check:docs` — checks the docs against the repository (rules in `docs/README.md`)
+- `npm run sweep:defaults` — reproduces the flock defaults sweep (ADR-0003)
+- `npm run replay -- <run.json>` — replays a run record and reports tolerance results (arrives at G2)
 
 ## Repository shape
 ```
@@ -21,7 +38,7 @@ packages/ui         Design tokens, world stage, lab bench, evidence rail, depth 
 eval/               Frozen protocol, held-out sections, baseline B1, raw attempts, analysis.
 fixtures/           Papers, source maps, WorldSpec fixtures, independent oracle fixtures.
 reference/          murmuration-valley.html — the accepted visual direction. Read it; do not copy it verbatim.
-docs/               project-brief, roadmap, requirements, status, sessions/, decisions/ (ADRs), research/protocol.md
+docs/               README (index), project-brief, roadmap, status, requirements, architecture, concepts, progress, sessions/, decisions/ (ADRs), research/protocol.md
 ```
 
 ## The boundaries that matter most
@@ -37,7 +54,7 @@ docs/               project-brief, roadmap, requirements, status, sessions/, dec
 ## Working style
 - Smallest reviewable slice per change; one coherent change per branch.
 - Before implementing, restate the acceptance condition in plain language.
-- After implementing: run the relevant checks, show exact output, record in `docs/sessions/YYYY-MM-DD.md` (what changed, what was checked, what failed, next action).
+- After implementing: run the relevant checks, show exact output, and update the docs as the session protocol says.
 - Never claim a gate passed without running `npm run check:gate` and pasting the result.
 - Prefer deleting scope over weakening a check.
 - Ask before adding a dependency, a new agent role, or a new world. Record the decision as an ADR.
