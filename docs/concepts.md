@@ -152,7 +152,7 @@ v·ω divided by gravity. Turning harder or faster means leaning further.
 Wall-clock time from each frame goes into an accumulator. The simulation then takes as
 many whole 1/60 s steps as that time allows, capped so a stall cannot snowball.
 
-- **Used in:** `packages/ui/src/stage-core/fixed-step.ts`, `apps/web/src/stage/local-stage.ts`
+- **Used in:** `packages/ui/src/stage-core/fixed-step.ts`, `apps/web/src/world/session.ts`
 - **Why here:** States then depend only on the number of steps, never on the frame rate,
   which is what makes runs reproducible.
 - **Learn more:** [Glenn Fiedler, "Fix Your Timestep!"](https://gafferongames.com/post/fix_your_timestep/)
@@ -540,7 +540,7 @@ least 4.5:1 to be readable.
 
 Operating systems let people ask for less animation, and pages can read that setting.
 
-- **Used in:** `apps/web/src/stage/local-stage.ts`
+- **Used in:** `apps/web/src/world/LocalWorld.tsx`, `tests/e2e/world.spec.ts`
 - **Why here:** The brief's quality floor. The flock is drawn still until the learner
   presses play.
 - **Learn more:** [MDN: prefers-reduced-motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion)

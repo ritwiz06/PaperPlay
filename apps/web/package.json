@@ -8,9 +8,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json && tsc -p test/tsconfig.json"
   },
   "dependencies": {
+    "@paperplay/contracts": "*",
     "@paperplay/primitives": "*",
     "@paperplay/ui": "*",
     "react": "^19.3.0",

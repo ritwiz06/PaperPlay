@@ -27,6 +27,10 @@ export default defineConfig({
       },
       {
         extends: true,
+        test: { name: "web", environment: "node", include: ["apps/web/test/**/*.test.ts"] },
+      },
+      {
+        extends: true,
         test: { name: "tooling", environment: "node", include: ["scripts/test/**/*.test.ts"] },
       },
     ],

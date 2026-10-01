@@ -3,21 +3,28 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Design tokens, self-hosted fonts, the pure stage core and its Three.js adapter.",
+  "description": "Design tokens, self-hosted fonts, the pure stage core, its Three.js adapter, and the React stage and bench.",
   "exports": {
     "./tokens": "./src/tokens.ts",
+    "./fonts.css": "./src/fonts/fonts.css",
+    "./components.css": "./src/react/components.css",
     "./stage-core": "./src/stage-core/index.ts",
     "./three-adapter": "./src/three-adapter/index.ts",
-    "./fonts.css": "./src/fonts/fonts.css"
+    "./react": "./src/react/index.ts"
   },
   "scripts": {
-    "typecheck": "tsc -p tsconfig.json && tsc -p src/stage-core/tsconfig.json && tsc -p src/three-adapter/tsconfig.json && tsc -p test/tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json && tsc -p src/stage-core/tsconfig.json && tsc -p src/three-adapter/tsconfig.json && tsc -p src/react/tsconfig.json && tsc -p test/tsconfig.json"
   },
   "dependencies": {
+    "@paperplay/contracts": "*",
     "@paperplay/primitives": "*",
     "three": "^0.186.1"
   },
+  "peerDependencies": {
+    "react": "^19.3.0"
+  },
   "devDependencies": {
+    "@types/react": "^19.3.0",
     "@types/three": "^0.186.0"
   }
 }

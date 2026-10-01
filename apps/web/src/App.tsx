@@ -1,25 +1,39 @@
-import { useEffect, useRef } from "react";
-import { startLocalStage } from "./stage/local-stage.ts";
+import { OriginLegend } from "@paperplay/ui/react";
+import { useSyncExternalStore } from "react";
+import { LocalWorld } from "./world/LocalWorld.tsx";
+
+const subscribe = (onChange: () => void) => {
+  window.addEventListener("popstate", onChange);
+  return () => window.removeEventListener("popstate", onChange);
+};
+const currentPath = () => window.location.pathname;
 
 /**
- * The stage for the first world. Controls, the paper and readouts arrive with the
- * WorldStage and LabBench slice; the web app renders state and never computes science.
+ * The shell: a masthead with the origin legend, which is always on screen, and the page for
+ * the current path. The web app renders state and submits actions; it never computes science.
  */
 export function App() {
-  const stage = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const container = stage.current;
-    return container ? startLocalStage(container) : undefined;
-  }, []);
-
+  const path = useSyncExternalStore(subscribe, currentPath);
+  const world = path === "/world/local";
   return (
     <div className="shell">
       <header className="masthead">
-        <h1>PaperPlay</h1>
-        <p>Murmuration Valley</p>
+        <p className="brand">PaperPlay</p>
+        <h1>{world ? "Murmuration Valley" : "Nothing here"}</h1>
+        <OriginLegend />
       </header>
-      <main className="stage" ref={stage} />
+      {world ? (
+        <main className="page">
+          <LocalWorld />
+        </main>
+      ) : (
+        <main className="page not-found">
+          <p>There is no page at {path}.</p>
+          <p>
+            <a href="/world/local">Go to Murmuration Valley</a>
+          </p>
+        </main>
+      )}
     </div>
   );
 }

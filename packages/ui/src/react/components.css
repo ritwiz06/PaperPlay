@@ -1,0 +1,246 @@
+/*
+ * Styles for @paperplay/ui/react. The palette is the accepted one; tokens.ts holds the same
+ * values, and packages/ui/test/tokens.test.ts keeps the two equal. Text uses only the shipped
+ * Fredoka weights, 400 and 600 (ADR-0002). Sentence case throughout: nothing is transformed.
+ */
+:root {
+  --cream: #f8faee;
+  --ink: #172b2b;
+  --dark: #132b2b;
+  --aqua: #62cbc2;
+  --lime: #d4f581;
+  --line: #d2ddd3;
+  --sub: #526a66;
+}
+
+/* Origins: the origin colour is the chip's fill and the text stays ink, so every chip reads at AA. */
+.origin-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: 0.75rem;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+.origin-paper-derived {
+  background: var(--ink);
+  color: var(--cream);
+}
+.origin-teaching-choice {
+  background: var(--aqua);
+}
+.origin-computed-observation {
+  background: var(--lime);
+}
+/* Hatched, so a generated inference can never be mistaken for evidence. */
+.origin-generated-inference {
+  border: 1px dashed var(--sub);
+  background: repeating-linear-gradient(135deg, transparent 0 4px, rgb(82 106 102 / 0.22) 4px 6px);
+}
+
+.origin-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.origin-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--sub);
+  font-size: 0.8125rem;
+}
+
+/* The stage: the canvas fills it; controls laid over it stay small and out of the way. */
+/* Only the hint bar is dark: a dark frame behind the canvas would show at its rounded corners. */
+.stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+.stage[data-webgl="off"] .stage-view {
+  background: var(--dark);
+}
+.stage:focus-visible {
+  outline: 3px solid var(--aqua);
+  outline-offset: 2px;
+}
+.stage-view {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+.stage-canvas {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+  touch-action: none;
+}
+.stage-canvas:active {
+  cursor: grabbing;
+}
+.stage[data-tool="beacon"] .stage-canvas,
+.stage[data-tool="obstacle"] .stage-canvas,
+.stage[data-tool="bird"] .stage-canvas {
+  cursor: crosshair;
+}
+.stage-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.stage-keys {
+  margin: 0;
+  padding: 0.5rem 0.875rem;
+  background: var(--dark);
+  color: var(--line);
+  font-size: 0.8125rem;
+}
+.stage-fallback {
+  max-width: 36rem;
+  margin: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.75rem;
+  background: var(--cream);
+  color: var(--ink);
+  line-height: 1.5;
+}
+.stage-fallback h2 {
+  margin-top: 0;
+  font-size: 1.25rem;
+}
+
+/* The lab bench */
+.lab-bench h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+.control {
+  display: grid;
+  gap: 0.375rem;
+  margin-block: 0.875rem;
+}
+.control-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.control-head label {
+  font-weight: 600;
+}
+.control input[type="range"] {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--dark);
+}
+.control-value {
+  margin: 0;
+  color: var(--sub);
+  font-size: 0.875rem;
+}
+.control-value output {
+  display: inline-block;
+  min-width: 3.5ch;
+  color: var(--ink);
+  font-weight: 600;
+  text-align: right;
+}
+.control-help {
+  margin: 0;
+  color: var(--sub);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+/* The level's one control is large, with a thumb you can find by feel. */
+.control-primary label {
+  font-size: 1.125rem;
+}
+.control-primary input[type="range"] {
+  height: 2.25rem;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+.control-primary input[type="range"]::-webkit-slider-runnable-track {
+  height: 0.375rem;
+  border-radius: 999px;
+  background: var(--sub);
+}
+.control-primary input[type="range"]::-webkit-slider-thumb {
+  width: 1.625rem;
+  height: 1.625rem;
+  margin-top: -0.625rem;
+  appearance: none;
+  border: 4px solid var(--aqua);
+  border-radius: 50%;
+  background: var(--dark);
+  box-shadow: 0 1px 4px rgb(19 43 43 / 0.3);
+}
+.control-primary input[type="range"]::-moz-range-track {
+  height: 0.375rem;
+  border-radius: 999px;
+  background: var(--sub);
+}
+.control-primary input[type="range"]::-moz-range-thumb {
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 4px solid var(--aqua);
+  border-radius: 50%;
+  background: var(--dark);
+}
+.control-primary .control-value {
+  font-size: 1rem;
+}
+.restore {
+  justify-self: start;
+}
+.world-rules {
+  margin-top: 1rem;
+}
+.world-rules summary {
+  padding-block: 0.25rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Readouts: a label and a value on one line, the digits in a fixed-width slot (ADR-0002). */
+.readouts {
+  display: grid;
+  margin: 0;
+}
+.readout {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.375rem;
+  border-bottom: 1px solid var(--line);
+}
+.readout dt {
+  color: var(--sub);
+}
+.readout dd {
+  margin: 0;
+}
+.readout output {
+  display: inline-block;
+  min-width: 4ch;
+  font-weight: 600;
+  text-align: right;
+}
+.readout-unit {
+  margin-left: 0.375rem;
+  color: var(--sub);
+  font-size: 0.8125rem;
+}

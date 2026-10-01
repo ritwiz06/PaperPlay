@@ -42,7 +42,7 @@ test("the stage draws a non-blank frame with software WebGL", async ({ page }) =
   const errors = collectErrors(page);
   await page.goto("/");
 
-  const stage = page.getByRole("main");
+  const stage = page.getByRole("application", { name: "World stage" });
   await expect.poll(async () => Number((await stage.getAttribute("data-frames")) ?? 0), { timeout: 15_000 }).toBeGreaterThanOrEqual(30);
 
   const renderer = await page.evaluate(() => {

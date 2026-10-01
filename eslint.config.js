@@ -101,6 +101,28 @@ export default defineConfig(
     },
   },
   {
+    // The React stage and bench display state and report actions. They may read simulation
+    // types, but never import simulation code: the app hands them a driver.
+    files: ["packages/ui/src/react/**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            { name: "@paperplay/primitives", allowTypeImports: true, message: "The React stage and bench display state; they never run the simulation." },
+            { name: "@paperplay/contracts", allowTypeImports: true, message: "The React stage and bench read contract types only." },
+          ],
+          patterns: [
+            {
+              regex: "^(?!react$|react/|@paperplay/(primitives|contracts)$|\\.{1,2}/)",
+              message: "The React layer imports React, its own package's modules, and simulation types only.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     // Contracts are the shared language: no runtime dependency besides zod.
     files: ["packages/contracts/src/**/*.ts"],
     rules: {
