@@ -8,8 +8,19 @@
   --line: #d2ddd3;
   --sub: #526a66;
   color-scheme: light;
-  /* Placeholder until ADR-0002 chooses the display and text families. */
-  font-family: system-ui, sans-serif;
+  /* Fredoka for the interface, Literata for paper passages (ADR-0002, @paperplay/ui/fonts.css). */
+  font-family: var(--font-interface);
+}
+
+/* Only 400 and 600 ship, so nothing may ask the browser to synthesise another weight. */
+h1,
+h2,
+h3,
+h4,
+b,
+strong,
+th {
+  font-weight: 600;
 }
 
 * {
