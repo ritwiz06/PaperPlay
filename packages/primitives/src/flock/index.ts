@@ -8,6 +8,7 @@ import { FlockStateSchema } from "./state-schema.ts";
 import type { FlockObservables, FlockState } from "./state.ts";
 import { FIXED_TIMESTEP, stepFlock } from "./step.ts";
 
+export { neighboursOf as flockNeighbours, type Neighbourhood } from "./neighbours.ts";
 export { flockDefaultParams, FlockParams } from "./params.ts";
 export { FlockStateSchema } from "./state-schema.ts";
 export type { Agent, Entity, FlockObservables, FlockState, Vec2 } from "./state.ts";

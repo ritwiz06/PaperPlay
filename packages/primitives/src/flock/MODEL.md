@@ -106,6 +106,12 @@ for states read back from JSON.
 Edits never touch the birds or `stepIndex`. In a run, the events recorded at step s are
 applied in order after any sample taken at s and before step s is taken.
 
+## Queries (read a state, change nothing)
+
+- **Q1 Neighbourhoods.** `neighbours(state, params, i)` returns N_i and S_i (E2) as lists of
+  bird indices in list order. The selected-neighbour view shows them. A query adds no
+  equation and changes no state, default or range, so it does not change the version.
+
 ## Initial state
 
 - **E15** Draw from mulberry32(seed), seed an unsigned 32-bit integer. For each agent in
