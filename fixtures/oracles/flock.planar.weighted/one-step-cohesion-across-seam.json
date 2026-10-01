@@ -1,7 +1,7 @@
 {
   "oracle": "oracle/1",
   "id": "flock.one-step.cohesion-across-seam",
-  "primitive": { "id": "flock.planar.weighted", "version": "2.0.0" },
+  "primitive": { "id": "flock.planar.weighted", "version": "2.1.0" },
   "basis": "derived",
   "kind": "one-step",
   "claim": "Birds on opposite edges of the torus are neighbours the short way round and are pulled together across the seam.",

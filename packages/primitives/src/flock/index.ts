@@ -44,10 +44,10 @@ const DESCRIPTION: PrimitiveDescription = deepFreeze({
   ],
 });
 
-/** flock.planar.weighted@2.0.0, specified equation by equation in MODEL.md. */
+/** flock.planar.weighted@2.1.0, specified equation by equation in MODEL.md. */
 export const flockPlanarWeighted: EditablePrimitive<FlockParams, FlockState, FlockObservables> = Object.freeze({
   id: "flock.planar.weighted",
-  version: "2.0.0",
+  version: "2.1.0",
   fixedTimestep: FIXED_TIMESTEP,
   paramSchema: FlockParams,
   stateSchema: FlockStateSchema,

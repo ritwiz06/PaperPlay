@@ -1,7 +1,7 @@
 {
   "oracle": "oracle/1",
   "id": "flock.one-step.speed-limits",
-  "primitive": { "id": "flock.planar.weighted", "version": "2.0.0" },
+  "primitive": { "id": "flock.planar.weighted", "version": "2.1.0" },
   "basis": "derived",
   "kind": "one-step",
   "claim": "A new velocity faster than maxSpeed is cut to maxSpeed, and one slower than minSpeed is lifted to minSpeed, keeping its direction.",

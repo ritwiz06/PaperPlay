@@ -43,7 +43,7 @@ const Transform = z.discriminatedUnion("type", [
 const common = {
   oracle: z.literal("oracle/1"),
   id: z.string().min(1),
-  primitive: z.strictObject({ id: z.literal("flock.planar.weighted"), version: z.literal("2.0.0") }),
+  primitive: z.strictObject({ id: z.literal("flock.planar.weighted"), version: z.literal("2.1.0") }),
   basis: z.enum(["derived", "expected-qualitative"]),
   claim: z.string().min(1),
   derivation: z.array(z.string().min(1)).min(1),

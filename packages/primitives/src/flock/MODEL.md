@@ -1,4 +1,4 @@
-# flock.planar.weighted@2.0.0
+# flock.planar.weighted@2.1.0
 
 A planar, weighted-rule adaptation of local flocking in the spirit of Reynolds (1987),
 "Flocks, Herds, and Schools: A Distributed Behavioral Model". It is a teaching model:
@@ -12,6 +12,8 @@ primitive version.
 Versions: 1.0.0 (2026-09-28, never tagged or persisted) introduced E1–E15. 2.0.0
 (2026-09-30) names every beacon and obstacle so a learner's placement can be removed and
 replayed (E16, E17). E1–E15 are unchanged, so every 1.0.0 derivation still holds.
+2.1.0 (2026-09-30) changes four defaults, chosen by a deterministic sweep (ADR-0003);
+the equations and the state contract are those of 2.0.0.
 
 ## Symbols
 
@@ -20,10 +22,10 @@ replayed (E16, E17). E1–E15 are unchanged, so every 1.0.0 derivation still hol
 | N | `agentCount` | birds | 72 | 2 – 400 (whole) | init |
 | W | `worldWidth` | world units | 32 | 8 – 200 | init |
 | H | `worldHeight` | world units | 32 | 8 – 200 | init |
-| w_s | `separationWeight` | per second | 1.2 | 0 – 2 | live |
-| w_a | `alignmentWeight` | per second | 1.0 | 0 – 2 | live |
-| w_c | `cohesionWeight` | per second | 0.8 | 0 – 2 | live |
-| R | `perceptionRadius` | world units | 4.5 | 0.5 – 50 | live |
+| w_s | `separationWeight` | per second | 1.05 | 0 – 2 | live |
+| w_a | `alignmentWeight` | per second | 2 | 0 – 2 | live |
+| w_c | `cohesionWeight` | per second | 0.4 | 0 – 2 | live |
+| R | `perceptionRadius` | world units | 9 | 0.5 – 50 | live |
 | R_s | `separationRadius` | world units | 1.55 | 0.1 – 10 | live |
 | v* | `targetSpeed` | world units per second | 2.7 | 0.1 – 8 | live |
 | v_min | `minSpeed` | world units per second | 0.45 | 0.05 – 4 | live |
@@ -35,8 +37,9 @@ replayed (E16, E17). E1–E15 are unchanged, so every 1.0.0 derivation still hol
 
 `minSpeed` must be below `maxSpeed`. Fixed constants: cohesion ease radius r_c = 3, beacon
 ease radius r_b = 2.5, cluster link distance L_c = 4.5 (world units), fixed timestep
-Δt = 1/60 s (any step from 0 to 0.05 s is accepted). Defaults and ranges are teaching
-choices carried over from the Murmuration Valley prototype, not values from the paper.
+Δt = 1/60 s (any step from 0 to 0.05 s is accepted). Ranges are teaching choices carried
+over from the Murmuration Valley prototype; the four rule defaults come from a sweep
+(ADR-0003) and the rest from the prototype. None comes from the paper.
 
 ## State
 

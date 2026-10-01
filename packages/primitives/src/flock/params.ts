@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { deepFreeze, defaultsOf, shapeOf, type VariableTable } from "../variables.ts";
 
-// Defaults and ranges are teaching choices carried over from the Murmuration Valley
-// prototype, not values from the paper. See MODEL.md for the equations they feed.
+// Ranges are teaching choices carried over from the Murmuration Valley prototype. The four
+// rule defaults were chosen by a deterministic sweep (ADR-0003, eval/sweeps/); the rest
+// are the prototype's. None of them comes from the paper. MODEL.md has the equations.
 export const FLOCK_VARIABLES = deepFreeze({
   agentCount: {
     unit: "birds",
@@ -32,7 +33,7 @@ export const FLOCK_VARIABLES = deepFreeze({
     unit: "per second",
     meaning: "How quickly a bird steers away from neighbours inside its separation radius.",
     range: [0, 2],
-    defaultValue: 1.2,
+    defaultValue: 1.05,
     phase: "live",
     integer: false,
   },
@@ -40,7 +41,7 @@ export const FLOCK_VARIABLES = deepFreeze({
     unit: "per second",
     meaning: "How quickly a bird matches the average velocity of the neighbours it can see.",
     range: [0, 2],
-    defaultValue: 1,
+    defaultValue: 2,
     phase: "live",
     integer: false,
   },
@@ -48,7 +49,7 @@ export const FLOCK_VARIABLES = deepFreeze({
     unit: "per second",
     meaning: "How quickly a bird steers toward the centre of the neighbours it can see.",
     range: [0, 2],
-    defaultValue: 0.8,
+    defaultValue: 0.4,
     phase: "live",
     integer: false,
   },
@@ -56,7 +57,7 @@ export const FLOCK_VARIABLES = deepFreeze({
     unit: "world units",
     meaning: "How far a bird can see; alignment and cohesion use only the birds inside it.",
     range: [0.5, 50],
-    defaultValue: 4.5,
+    defaultValue: 9,
     phase: "live",
     integer: false,
   },
