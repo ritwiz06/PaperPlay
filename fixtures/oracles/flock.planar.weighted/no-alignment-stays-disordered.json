@@ -1,7 +1,7 @@
 {
   "oracle": "oracle/1",
   "id": "flock.no-alignment.stays-disordered",
-  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "primitive": { "id": "flock.planar.weighted", "version": "2.0.0" },
   "basis": "expected-qualitative",
   "kind": "threshold",
   "claim": "With separation and cohesion at their defaults but alignment off, the flock should not settle on a shared heading.",

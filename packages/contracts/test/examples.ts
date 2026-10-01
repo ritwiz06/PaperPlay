@@ -60,22 +60,25 @@ export function action() {
 
 export function runRecord() {
   return {
-    schemaVersion: "runrecord/1",
+    schemaVersion: "runrecord/2",
     runId: "run-0001",
     worldSpecHash: sha("b"),
-    primitive: { id: "flock.planar.weighted", version: "1.0.0" },
+    primitive: { id: "flock.planar.weighted", version: "2.0.0" },
     codeHash: sha("c"),
     lockHash: sha("d"),
     seed: 42,
     initialState: { agents: [] },
     timestep: 1 / 60,
+    sampleInterval: 60,
+    totalSteps: 120,
     events: [
-      { step: 0, actionId: "alignment-strength", value: 1 },
-      { step: 120, actionId: "alignment-strength", value: 0 },
-      { step: 120, actionId: "alignment-strength", value: 0.5 },
+      { kind: "param", step: 0, actionId: "alignment-strength", value: 1 },
+      { kind: "place", step: 30, entityId: "beacon-1", entity: "beacon", x: 8, y: 8 },
+      { kind: "param", step: 60, actionId: "alignment-strength", value: 0 },
+      { kind: "remove", step: 90, entityId: "beacon-1" },
     ],
-    observables: { directionalAgreement: [0.1, 0.4, 0.9] },
-    hashes: { "state@600": sha("e") },
+    observables: { directionalAgreement: [0.1, 0.4, 0.9], clusterCount: [5, 3, 1] },
+    hashes: { "state@120": sha("e") },
     runtime: { engine: "node 24.21.0", os: "darwin arm64" },
     tolerance: 1e-9,
   };

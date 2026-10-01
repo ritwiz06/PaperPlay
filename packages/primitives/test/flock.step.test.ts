@@ -15,7 +15,7 @@ function deepFreeze<T>(value: T): T {
 describe("[R01] flock.planar.weighted step", () => {
   it("does not mutate the state it is given", () => {
     const state = deepFreeze(
-      { ...flock.init(flockDefaultParams, 3), beacons: [{ x: 5, y: 5 }], obstacles: [{ x: 20, y: 20 }] },
+      { ...flock.init(flockDefaultParams, 3), beacons: [{ id: "beacon-a", x: 5, y: 5 }], obstacles: [{ id: "rock-a", x: 20, y: 20 }] },
     );
     const before = JSON.stringify(state);
 
@@ -29,8 +29,8 @@ describe("[R01] flock.planar.weighted step", () => {
   it("advances stepIndex by one and carries the world and its beacons and obstacles forward", () => {
     const state: FlockState = {
       ...flock.init(flockDefaultParams, 3),
-      beacons: [{ x: 5, y: 5 }],
-      obstacles: [{ x: 20, y: 20 }],
+      beacons: [{ id: "beacon-a", x: 5, y: 5 }],
+      obstacles: [{ id: "rock-a", x: 20, y: 20 }],
     };
 
     const next = flock.step(state, flockDefaultParams, dt);
@@ -38,8 +38,8 @@ describe("[R01] flock.planar.weighted step", () => {
     expect(next.stepIndex).toBe(1);
     expect(next.width).toBe(state.width);
     expect(next.height).toBe(state.height);
-    expect(next.beacons).toEqual([{ x: 5, y: 5 }]);
-    expect(next.obstacles).toEqual([{ x: 20, y: 20 }]);
+    expect(next.beacons).toEqual([{ id: "beacon-a", x: 5, y: 5 }]);
+    expect(next.obstacles).toEqual([{ id: "rock-a", x: 20, y: 20 }]);
     expect(next.agents).toHaveLength(state.agents.length);
   });
 
@@ -70,7 +70,7 @@ describe("[R01] flock.planar.weighted step", () => {
         { x: 10, y: 10, vx: 0.5, vy: 0 },
         { x: 25, y: 25, vx: 0, vy: 1 },
       ],
-      beacons: [{ x: 0, y: 10 }],
+      beacons: [{ id: "beacon-a", x: 0, y: 10 }],
       obstacles: [],
     };
 
@@ -81,7 +81,7 @@ describe("[R01] flock.planar.weighted step", () => {
 
   it("keeps every bird inside the torus, finite and within the speed limits over a long run", () => {
     const params = flockDefaultParams;
-    let state: FlockState = { ...flock.init(params, 21), beacons: [{ x: 16, y: 16 }], obstacles: [{ x: 8, y: 24 }] };
+    let state: FlockState = { ...flock.init(params, 21), beacons: [{ id: "beacon-a", x: 16, y: 16 }], obstacles: [{ id: "rock-a", x: 8, y: 24 }] };
     for (let t = 0; t < 1200; t++) {
       state = flock.step(state, params, dt);
       for (const agent of state.agents) {

@@ -1,7 +1,7 @@
 {
   "oracle": "oracle/1",
   "id": "flock.symmetry.permutation",
-  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "primitive": { "id": "flock.planar.weighted", "version": "2.0.0" },
   "basis": "derived",
   "kind": "metamorphic",
   "claim": "The order in which birds are listed does not change what they do.",
@@ -20,7 +20,7 @@
   "dt": 0.016666666666666666,
   "seed": 11,
   "steps": 1,
-  "beacons": [{ "x": 16, "y": 16 }],
+  "beacons": [{ "id": "beacon-a", "x": 16, "y": 16 }],
   "obstacles": [],
   "transform": { "type": "reverse-order" },
   "tolerance": 1e-12

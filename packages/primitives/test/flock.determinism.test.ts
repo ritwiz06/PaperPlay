@@ -30,7 +30,7 @@ describe("[R01] flock.planar.weighted determinism", () => {
   });
 
   it("replays bit for bit from a JSON round trip of its initial state", () => {
-    const start: FlockState = { ...flock.init(flockDefaultParams, 99), beacons: [{ x: 3, y: 29 }], obstacles: [{ x: 16, y: 16 }] };
+    const start: FlockState = { ...flock.init(flockDefaultParams, 99), beacons: [{ id: "beacon-a", x: 3, y: 29 }], obstacles: [{ id: "rock-a", x: 16, y: 16 }] };
     const restored = JSON.parse(JSON.stringify(start)) as FlockState;
 
     expect(bitwiseEqual(run(start, 600), run(restored, 600))).toBe(true);

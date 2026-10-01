@@ -1,7 +1,7 @@
 {
   "oracle": "oracle/1",
   "id": "flock.one-step.nearest-beacon",
-  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "primitive": { "id": "flock.planar.weighted", "version": "2.0.0" },
   "basis": "derived",
   "kind": "one-step",
   "claim": "Each bird steers toward its nearest beacon only, and the pull eases off within 2.5 world units of it.",
@@ -25,7 +25,7 @@
       { "x": 5, "y": 5, "vx": 1, "vy": 0 },
       { "x": 20, "y": 20, "vx": 0, "vy": 1 }
     ],
-    "beacons": [{ "x": 5, "y": 6 }, { "x": 26, "y": 20 }],
+    "beacons": [{ "id": "beacon-a", "x": 5, "y": 6 }, { "id": "beacon-b", "x": 26, "y": 20 }],
     "obstacles": []
   },
   "expected": {

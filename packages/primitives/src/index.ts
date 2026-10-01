@@ -5,11 +5,14 @@
 export * from "./types.ts";
 export { assertSeed, mulberry32, type Prng } from "./prng.ts";
 export { createRegistry, registry, type PrimitiveRegistry } from "./registry.ts";
+export { replayRecord, runEvents, type ReplayReport, type RunPlan, type RunResult, type RunSetup } from "./replay.ts";
 export {
   flockDefaultParams,
   FlockParams,
   flockPlanarWeighted,
+  FlockStateSchema,
   type Agent,
+  type Entity,
   type FlockObservables,
   type FlockState,
   type Vec2,

@@ -1,13 +1,16 @@
-import type { Primitive, PrimitiveDescription } from "../types.ts";
+import type { EditablePrimitive, PrimitiveDescription } from "../types.ts";
 import { deepFreeze } from "../variables.ts";
+import { applyFlockEdit } from "./edits.ts";
 import { initFlock } from "./init.ts";
 import { measureFlock } from "./measure.ts";
 import { FLOCK_VARIABLES, FlockParams } from "./params.ts";
+import { FlockStateSchema } from "./state-schema.ts";
 import type { FlockObservables, FlockState } from "./state.ts";
 import { FIXED_TIMESTEP, stepFlock } from "./step.ts";
 
 export { flockDefaultParams, FlockParams } from "./params.ts";
-export type { Agent, FlockObservables, FlockState, Vec2 } from "./state.ts";
+export { FlockStateSchema } from "./state-schema.ts";
+export type { Agent, Entity, FlockObservables, FlockState, Vec2 } from "./state.ts";
 
 const DESCRIPTION: PrimitiveDescription = deepFreeze({
   variables: FLOCK_VARIABLES,
@@ -36,18 +39,21 @@ const DESCRIPTION: PrimitiveDescription = deepFreeze({
     "Speed is kept between minSpeed and maxSpeed after every update.",
     "All birds update together from the previous state with a fixed 1/60 s timestep (semi-implicit Euler).",
     "Birds at exactly the same point exert no separation on each other.",
+    "Learners place and remove named beacons and obstacles between steps; a placement wraps onto the torus.",
     "A two-dimensional teaching adaptation, not a reproduction of the paper's system or results; defaults and ranges are teaching choices.",
   ],
 });
 
-/** flock.planar.weighted@1.0.0, specified equation by equation in MODEL.md. */
-export const flockPlanarWeighted: Primitive<FlockParams, FlockState, FlockObservables> = Object.freeze({
+/** flock.planar.weighted@2.0.0, specified equation by equation in MODEL.md. */
+export const flockPlanarWeighted: EditablePrimitive<FlockParams, FlockState, FlockObservables> = Object.freeze({
   id: "flock.planar.weighted",
-  version: "1.0.0",
+  version: "2.0.0",
   fixedTimestep: FIXED_TIMESTEP,
   paramSchema: FlockParams,
+  stateSchema: FlockStateSchema,
   init: initFlock,
   step: stepFlock,
   measure: measureFlock,
+  apply: applyFlockEdit,
   describe: (): PrimitiveDescription => DESCRIPTION,
 });

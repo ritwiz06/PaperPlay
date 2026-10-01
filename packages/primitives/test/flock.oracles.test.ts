@@ -15,7 +15,7 @@ const REQUIRED = [
 ];
 
 const Num = z.number();
-const Point = z.strictObject({ x: Num, y: Num });
+const Entity = z.strictObject({ id: z.string().min(1), x: Num, y: Num });
 const AgentJson = z.strictObject({ x: Num, y: Num, vx: Num, vy: Num });
 const StateJson = z
   .strictObject({
@@ -23,8 +23,8 @@ const StateJson = z
     height: Num,
     stepIndex: z.int().nonnegative(),
     agents: z.array(AgentJson).min(2),
-    beacons: z.array(Point),
-    obstacles: z.array(Point),
+    beacons: z.array(Entity),
+    obstacles: z.array(Entity),
   })
   .refine(
     (state) =>
@@ -43,7 +43,7 @@ const Transform = z.discriminatedUnion("type", [
 const common = {
   oracle: z.literal("oracle/1"),
   id: z.string().min(1),
-  primitive: z.strictObject({ id: z.literal("flock.planar.weighted"), version: z.literal("1.0.0") }),
+  primitive: z.strictObject({ id: z.literal("flock.planar.weighted"), version: z.literal("2.0.0") }),
   basis: z.enum(["derived", "expected-qualitative"]),
   claim: z.string().min(1),
   derivation: z.array(z.string().min(1)).min(1),
@@ -102,8 +102,8 @@ const Fixture = z.discriminatedUnion("kind", [
     dt: Num,
     seed: z.int(),
     steps: z.int().positive(),
-    beacons: z.array(Point),
-    obstacles: z.array(Point),
+    beacons: z.array(Entity),
+    obstacles: z.array(Entity),
     transform: Transform,
     tolerance: Num,
   }),
@@ -146,8 +146,8 @@ function transformState(transform: z.infer<typeof Transform>, state: FlockState)
         height: state.width,
         stepIndex: state.stepIndex,
         agents: state.agents.map((a) => ({ x: a.y, y: a.x, vx: a.vy, vy: a.vx })),
-        beacons: state.beacons.map((p) => ({ x: p.y, y: p.x })),
-        obstacles: state.obstacles.map((p) => ({ x: p.y, y: p.x })),
+        beacons: state.beacons.map((p) => ({ id: p.id, x: p.y, y: p.x })),
+        obstacles: state.obstacles.map((p) => ({ id: p.id, x: p.y, y: p.x })),
       };
     case "reverse-order":
       return { ...state, agents: [...state.agents].reverse() };
@@ -157,8 +157,8 @@ function transformState(transform: z.infer<typeof Transform>, state: FlockState)
       return {
         ...state,
         agents: state.agents.map((a) => ({ ...a, ...move(a) })),
-        beacons: state.beacons.map(move),
-        obstacles: state.obstacles.map(move),
+        beacons: state.beacons.map((p) => ({ id: p.id, ...move(p) })),
+        obstacles: state.obstacles.map((p) => ({ id: p.id, ...move(p) })),
       };
     }
   }

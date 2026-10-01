@@ -3,6 +3,11 @@ export interface Vec2 {
   readonly y: number;
 }
 
+/** A beacon or obstacle a learner placed. The id lets a later event remove it. */
+export interface Entity extends Vec2 {
+  readonly id: string;
+}
+
 export interface Agent {
   readonly x: number;
   readonly y: number;
@@ -12,7 +17,8 @@ export interface Agent {
 
 /**
  * Plain JSON, so a JSON round trip reproduces it exactly. Invariants: at least two
- * agents, and every agent, beacon and obstacle lies in [0, width) × [0, height).
+ * agents; every agent, beacon and obstacle lies in [0, width) × [0, height); entity
+ * ids are unique across beacons and obstacles.
  */
 export interface FlockState {
   readonly width: number;
@@ -20,8 +26,8 @@ export interface FlockState {
   /** Steps taken since init. */
   readonly stepIndex: number;
   readonly agents: readonly Agent[];
-  readonly beacons: readonly Vec2[];
-  readonly obstacles: readonly Vec2[];
+  readonly beacons: readonly Entity[];
+  readonly obstacles: readonly Entity[];
 }
 
 // A type alias rather than an interface so it satisfies Record<string, number>.

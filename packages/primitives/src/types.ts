@@ -1,3 +1,4 @@
+import type { EntityEdit } from "@paperplay/contracts";
 import type { z } from "zod";
 
 /** One parameter a primitive accepts, described for learners, the Planner and the builder. */
@@ -34,8 +35,17 @@ export interface Primitive<P, S, O extends Record<string, number> = Record<strin
   readonly fixedTimestep: number;
   /** Allowed parameters and their ranges. An Action may only target a key of this schema. */
   readonly paramSchema: z.ZodType<P>;
+  /** Validates a state read back from JSON, e.g. a RunRecord's initialState. */
+  readonly stateSchema: z.ZodType<S>;
   init(params: P, seed: number): S;
   step(state: S, params: P, dt: number): S;
   measure(state: S): O;
   describe(): PrimitiveDescription;
+  /** Places or removes a named entity. Pure. Primitives without placeable entities leave it out. */
+  apply?(state: S, edit: EntityEdit): S;
 }
+
+/** A primitive whose worlds hold entities a learner can place and remove. */
+export type EditablePrimitive<P, S, O extends Record<string, number> = Record<string, number>> = Primitive<P, S, O> & {
+  apply(state: S, edit: EntityEdit): S;
+};

@@ -1,7 +1,7 @@
 {
   "oracle": "oracle/1",
   "id": "flock.symmetry.diagonal-reflection-bitwise",
-  "primitive": { "id": "flock.planar.weighted", "version": "1.0.0" },
+  "primitive": { "id": "flock.planar.weighted", "version": "2.0.0" },
   "basis": "derived",
   "kind": "metamorphic",
   "claim": "Reflecting a square world across its diagonal reflects its whole future, bit for bit.",
@@ -20,8 +20,8 @@
   "dt": 0.016666666666666666,
   "seed": 7,
   "steps": 600,
-  "beacons": [{ "x": 8, "y": 20 }],
-  "obstacles": [{ "x": 24, "y": 12 }],
+  "beacons": [{ "id": "beacon-a", "x": 8, "y": 20 }],
+  "obstacles": [{ "id": "rock-a", "x": 24, "y": 12 }],
   "transform": { "type": "reflect-diagonal" },
   "tolerance": 0
 }

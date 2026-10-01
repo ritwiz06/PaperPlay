@@ -1,4 +1,4 @@
-# flock.planar.weighted@1.0.0
+# flock.planar.weighted@2.0.0
 
 A planar, weighted-rule adaptation of local flocking in the spirit of Reynolds (1987),
 "Flocks, Herds, and Schools: A Distributed Behavioral Model". It is a teaching model:
@@ -6,7 +6,12 @@ not the paper's three-dimensional system, and not a reproduction of its results.
 
 These equations are the primitive's specification. The oracle fixtures in
 `fixtures/oracles/flock.planar.weighted/` are derived from this page by hand, never from
-the implementation. Changing any equation here requires a new primitive version.
+the implementation. Changing any equation, the state contract or a default requires a new
+primitive version.
+
+Versions: 1.0.0 (2026-09-28, never tagged or persisted) introduced E1–E15. 2.0.0
+(2026-09-30) names every beacon and obstacle so a learner's placement can be removed and
+replayed (E16, E17). E1–E15 are unchanged, so every 1.0.0 derivation still holds.
 
 ## Symbols
 
@@ -38,11 +43,14 @@ choices carried over from the Murmuration Valley prototype, not values from the 
 ```json
 { "width": 32, "height": 32, "stepIndex": 0,
   "agents": [{ "x": 0, "y": 0, "vx": 0, "vy": 0 }],
-  "beacons": [{ "x": 0, "y": 0 }], "obstacles": [{ "x": 0, "y": 0 }] }
+  "beacons": [{ "id": "beacon-1", "x": 0, "y": 0 }],
+  "obstacles": [{ "id": "rock-1", "x": 0, "y": 0 }] }
 ```
 
 Plain JSON: a JSON round trip reproduces it exactly. Invariants: at least two agents;
-every agent, beacon and obstacle lies in [0, W) × [0, H). `stepIndex` counts steps taken.
+every agent, beacon and obstacle lies in [0, W) × [0, H); entity ids are unique across
+beacons and obstacles. `stepIndex` counts steps taken. `stateSchema` checks all of this
+for states read back from JSON.
 
 ## One step (all agents update synchronously)
 
@@ -79,6 +87,17 @@ every agent, beacon and obstacle lies in [0, W) × [0, H). `stepIndex` counts st
   nearest-neighbour distance, measured across the torus seams.
 - **E14 `clusterCount`** = the number of connected groups when birds closer than L_c = 4.5
   are linked, transitively. L_c is fixed so counts compare across perception settings.
+
+## Edits (between steps, from learner events)
+
+- **E16 Place.** `place(id, beacon | obstacle, x, y)` appends an entity with that id at
+  (wrap(x, W), wrap(y, H)) to the end of its list. The id must not already name an entity,
+  and x and y must be finite.
+- **E17 Remove.** `remove(id)` drops the entity with that id from whichever list holds it.
+  The id must name an existing entity.
+
+Edits never touch the birds or `stepIndex`. In a run, the events recorded at step s are
+applied in order after any sample taken at s and before step s is taken.
 
 ## Initial state
 
