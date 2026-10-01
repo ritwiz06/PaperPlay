@@ -9,7 +9,7 @@ finished slices are logged in [progress.md](progress.md). A gate is tagged only 
 
 | Gate | Days | Tag | Planned effort | Requirements enforced | State |
 |---|---|---|---|---|---|
-| G1 Playable baseline | 1–7 | v0.1.0 | 21–28 h | R01–R04 | Passed on 2026-10-01; the tag waits for the owner |
+| G1 Playable baseline | 1–7 | v0.1.0 | 21–28 h | R01–R04 | Passed and tagged v0.1.0 on 2026-10-01 |
 | G2 Verified authored world | 8–14 | v0.2.0 | 21–28 h | R01–R08, R12 | Early work done |
 | G3 Constrained generation | 15–21 | v0.3.0 | 21–28 h | R01–R12 | Not started |
 | G4 Evaluation and feature freeze | 22–27 | v0.4.0 | 18–24 h | R01–R12, plus evaluation checks | Not started |
@@ -44,8 +44,7 @@ Done:
   Node bit for bit (2026-10-01).
 - [x] `check:gate` passes G1 (2026-10-01, commit 107a38a).
 
-Next:
-- [ ] Tag v0.1.0, after asking the owner.
+- [x] Tagged v0.1.0 at `3448e5b`, with the owner's go-ahead (2026-10-01).
 
 Later (moved out of G1):
 - CaptionStrip, StatusChip and the tethers move to G2 (see Plan changes, 2026-10-01).
@@ -59,8 +58,12 @@ Done early:
 - [x] RunRecord v2 and the replay engine, part of R07 (2026-09-30).
 
 Next:
+- [ ] First: add `@axe-core/playwright` (approved 2026-10-01) and the axe scan in `test:e2e`
+  (R12).
 - [ ] Source register, source map, four development and eight held-out section files,
   reading notes and learning questions.
+- [ ] Decide the group measure before any level teaches with it (owner, 2026-10-01). At the
+  default density, 17% of random scatters count as one group (ADR-0003).
 - [ ] The full WorldSpec schema and the hand-authored `flocking-reference.json`.
 - [ ] The deterministic builder, with binding fixtures.
 - [ ] EvidenceRail with two-way provenance and tethers; PathRibbon; DepthDial; ForkView;
@@ -68,8 +71,6 @@ Next:
 - [ ] RunRecord export and import; `npm run replay` with a tolerance report; a replay test
   on a fresh page load.
 - [ ] The stale-evidence rule.
-- [ ] An axe accessibility scan in `test:e2e` (R12). It needs `@axe-core/playwright`, a new
-  dependency awaiting the owner's approval.
 
 Later:
 - Loading the Three.js stage as its own chunk (the bundle is 878 KB; the owner deferred this).
@@ -133,3 +134,5 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-01 | The opening level pins seed 4; alignment's range widens to 0–4 (flock 2.2.0) | Owner decisions (ADR-0003) |
 | 2026-10-01 | Read-only primitive queries do not change a model's version | A query changes no equation, state, default or range; replay depends only on those (ADR-0007, MODEL.md Q1) |
 | 2026-10-01 | The stage's fit rule changes: back off in inverse proportion to the aspect, below 1.32:1 | The old rule cropped the field on the phone layout (ADR-0007) |
+| 2026-10-01 | The axe scan moves to the start of G2, with `@axe-core/playwright` | Owner approved the dependency |
+| 2026-10-01 | The group measure is settled at G2 | Owner decision (ADR-0003) |

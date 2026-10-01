@@ -7,6 +7,15 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-01 · G1 tagged v0.1.0
+
+- Branch: `g1/world-local`
+- Commits: `3448e5b`
+- Shipped: the G1 playable baseline, tagged `v0.1.0` (a local tag; nothing is pushed),
+  with the owner's go-ahead.
+- Evidence: R01 43, R02 5, R03 49, R04 16, from 256 tests with none skipped.
+- Gate: `check:gate` G1 passed at `3448e5b`, exit 0.
+
 ## 2026-10-01 · The playable local world
 
 - Branch: `g1/world-local`

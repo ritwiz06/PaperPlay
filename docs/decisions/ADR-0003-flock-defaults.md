@@ -108,6 +108,8 @@ widened alignment's range; see the follow-ups.)
    - **Where:** `/world/local` opens on seed 4 instead of 42, labelled as a teaching
      choice, and free exploration moves on to other seeds. A test re-runs the rule and
      fails if the pinned seed drifts from it.
+   - **Confirmed by the owner, on 2026-10-01:** seed 4 stays, over seed 12, which orders
+     soonest but becomes one group later (see below).
    - **In the browser, on 2026-10-01:** `/world/local` was played in real time under
      software WebGL, with the readouts sampled ten times a second.
      - The run matched the record. The flock was one group from step 576 on, against
@@ -131,6 +133,8 @@ widened alignment's range; see the follow-ups.)
   - So 171 of 1,000 purely random scatters already count as one group at step 0; among
     the sweep's seeds, 6 and 7 do.
   - This is why the criterion pairs groups with agreement, and readouts should show both.
+  - The owner chose, on 2026-10-01, to settle the measure at G2, before any level teaches
+    with it. A new link distance would be a new primitive version.
 - **One seed is one run.** The hook shows what these rules can do, not what they usually
   do. The usual rate is the held-out one, 43%.
 

@@ -6,13 +6,13 @@ out the owner's decisions and built the playable local world
 
 ## Where we are
 
-- **Gate:** G1 Playable baseline **passes**. `check:gate` ran every required script, and each
-  of R01–R04 has passing evidence. Tagging v0.1.0 waits for the owner.
+- **Gate:** G1 Playable baseline **passed**, and is tagged `v0.1.0` at `3448e5b`, with the
+  owner's go-ahead on 2026-10-01. The tag is local; nothing is pushed. G2 is next.
 - **Branches,** stacked, one coherent change each; nothing is pushed and there is no remote:
   `g1/kickoff` → `g1/run-record-v2` → `g1/flock-defaults` → `g1/stage-three` →
   `g1/docs-system` → `g1/layout` → `g1/hook-seed` → `g1/fonts` → `g1/world-local`.
-- **Working commit:** `107a38a` on `g1/world-local`, where G1 passes. The docs commit after
-  it changes only documentation.
+- **Working commit:** `3448e5b` on `g1/world-local`, tagged `v0.1.0`, where G1 passes. The
+  docs commit after it records the owner's answers and changes only documentation.
 - **Runtime:** Node 24.21.0, pinned in `.node-version`. An interactive shell switches to it
   on `cd` into the repo; `check:gate` refuses evidence from any other version.
 - **What a learner can do now,** on `/world/local`, opened on seed 4:
@@ -22,7 +22,7 @@ out the owner's decisions and built the playable local world
   - replay the same seed, or move to the next one;
   - watch the readouts, labelled as computed observations.
 
-## Latest check:gate (G1), 2026-10-01, commit 107a38a
+## Latest check:gate (G1), 2026-10-01, commit 3448e5b (tagged v0.1.0)
 
 ```
 check:gate G1 · Playable baseline · tag v0.1.0
@@ -32,7 +32,7 @@ check:gate G1 · Playable baseline · tag v0.1.0
   check:docs ok      0.2 s
   test       ok      7.3 s
   build      ok      0.4 s
-  test:e2e   ok      11.2 s
+  test:e2e   ok      11.7 s
   evidence   256 tests (vitest 246, playwright 10), 0 skipped
     R01  Deterministic, oracle-checked primitives      43 passing
     R02  Model/render separation                       5 passing
@@ -48,34 +48,31 @@ None.
 
 ## Decisions waiting on the owner
 
-1. **Tag v0.1.0?** G1 passes at `107a38a`; the tag would go on the docs commit after it.
-2. **Approve `@axe-core/playwright`,** a new dev dependency, for the axe scan that R12
-   enforces at G2.
-3. **Which seed "fastest" means.**
-   - Seed 4 becomes one group soonest (9.52 s), which is the owner's wording.
-   - Seed 12 orders into a murmuration soonest (14.65 s).
-
-   Seed 4 is pinned; switching is one constant, and the rule's tests would follow.
-4. **Revisit the group measure before G2 teaches with it?** At the default density, 17% of
-   random scatters already count as one group (ADR-0003). A new link distance would be a
-   new primitive version.
+None open. On 2026-10-01 the owner:
+- tagged v0.1.0 at `3448e5b`;
+- approved `@axe-core/playwright` for the axe scan, to be added at the start of G2
+  (ADR-0001);
+- kept seed 4 as the opening seed (ADR-0003);
+- chose to settle the group measure at G2, before any level teaches with it (ADR-0003).
 
 ## Next three actions
 
-1. Hear the owner on the four decisions above, then tag v0.1.0 if they say so.
-2. Run `check:gate` once on a machine without a GPU, or in CI, before or right after the tag.
-3. Start G2: the source register, the flocking source map, and the section files.
+1. Start G2 by adding `@axe-core/playwright` and an axe scan of `/world/local` to `test:e2e`
+   (R12).
+2. Write the source register, the flocking source map, and the four development and eight
+   held-out section files.
+3. Run `check:gate` once on a machine without a GPU, or in CI, to confirm v0.1.0 there.
 
 ## Recommendations
 
 In priority order:
 
-1. **Approve the axe dependency before the first G2 interface work.** The evidence rail and
-   tethers add the most interactive surface yet. Risk: accessibility retrofitted after the
-   fact costs more than accessibility built in (R12).
+1. **Run the axe scan before the first G2 interface work,** now that the dependency is
+   approved. Risk: the evidence rail and tethers add the most interactive surface yet, and
+   accessibility retrofitted after the fact costs more than accessibility built in (R12).
 2. **Run `check:gate` on a machine without a GPU, or in CI.** Risk: SwiftShader has only
    been exercised on this Mac.
-3. **Settle the group measure before a level teaches with it.** Risk: a learner reads
+3. **Settle the group measure early in G2, as the owner chose.** Risk: a learner reads
    "Groups: 1" as "a murmuration formed" when a random scatter can show the same.
 4. **Code-split the Three.js stage before anyone tests on a phone.** Risk: 245 KB of gzipped
    JavaScript (896 KB raw) loads before the first frame.

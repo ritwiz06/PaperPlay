@@ -43,6 +43,8 @@ nobody reaches for it early.
 - **Companion dev packages** approved by the owner on 2026-09-28: `typescript-eslint`,
   `@eslint/js`, `@types/react`, `@types/react-dom`, `@types/node@24`,
   `@vitejs/plugin-react`, `eslint-plugin-react-hooks`.
+- **`@axe-core/playwright`** approved by the owner on 2026-10-01, for the R12 accessibility
+  scan in `test:e2e`. It is to be added at the start of G2.
 
 ## Productization path: after G5, not now
 
