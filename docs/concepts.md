@@ -513,6 +513,19 @@ shrink and blend into the sky along it.
   that from reading as a teleport.
 - **Learn more:** [Smoothstep](https://en.wikipedia.org/wiki/Smoothstep)
 
+### Self-hosted web fonts, subsets and static weights
+
+A web font is a file the page downloads and declares with `@font-face`. Each declaration
+covers one weight and a range of characters (`unicode-range`), and the browser fetches a
+file only when text on the page needs it. Asking for a weight that was never declared
+makes the browser fake it by thickening the strokes.
+
+- **Used in:** `packages/ui/src/fonts/fonts.css`, `packages/ui/test/fonts.test.ts`, `tests/e2e/fonts.spec.ts`
+- **Why here:** The owner's rule was no network at runtime or in tests, and only the
+  weights in use. So the files sit beside the code, one static file per weight, and a
+  test fails if a page asks for an unshipped weight.
+- **Learn more:** [web.dev: best practices for fonts](https://web.dev/articles/font-best-practices)
+
 ### Contrast ratio (WCAG)
 
 A number from 1 to 21 comparing the relative brightness of two colours. Text needs at

@@ -20,6 +20,8 @@ How PaperPlay fits together today. The concepts named here are explained in
 
 Inside `packages/ui`:
 - **`src/tokens.ts`:** the accepted palette.
+- **`src/fonts/`:** the self-hosted typefaces, Fredoka and Literata, declared in
+  `fonts.css` as `@paperplay/ui/fonts.css` (ADR-0002).
 - **`src/stage-core/`:** pure presentation; turns states into a `FrameDescription`.
 - **`src/three-adapter/`:** turns a `FrameDescription` into a Three.js scene.
 
@@ -108,6 +110,7 @@ flowchart LR
 | Each gate requirement has passing tagged tests | `check:gate` | `gates.json` |
 | Docs stay consistent with the repository | `check:docs`, inside `check:gate` | `scripts/docs/check.ts` |
 | Browser tests render WebGL in software | Launch flags, and a test that asserts SwiftShader was used | `playwright.config.ts`, `tests/e2e/stage.spec.ts` |
+| Fonts come from the page's own origin, and only the shipped weights are declared or rendered | A unit test on the font files; a browser test that blocks off-origin requests | `packages/ui/test/fonts.test.ts`, `tests/e2e/fonts.spec.ts` |
 | Secrets stay server-side | Not yet enforced (G3) | — |
 
 ## Runtime and tooling
@@ -142,3 +145,4 @@ flowchart LR
 | 2026-10-01 | c84333d | `check:docs` runs inside every gate |
 | 2026-10-01 | a93e033 | Flock 2.2.0: alignment's range widens to 0–4 |
 | 2026-10-01 | ef7eb32 | The hook seed (4) in `apps/web/src/world/local-world.ts`, with `choose:hook-seed` and a drift test |
+| 2026-10-01 | 788a1a3 | Self-hosted fonts in `packages/ui/src/fonts`, exported as `@paperplay/ui/fonts.css` |
