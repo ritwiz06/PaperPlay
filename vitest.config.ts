@@ -19,6 +19,10 @@ export default defineConfig({
       },
       {
         extends: true,
+        test: { name: "pipeline", environment: "node", include: ["packages/pipeline/test/**/*.test.ts"] },
+      },
+      {
+        extends: true,
         test: { name: "ui", environment: "node", include: ["packages/ui/test/**/*.test.ts"] },
       },
       {

@@ -123,6 +123,23 @@ export default defineConfig(
     },
   },
   {
+    // The builder is deterministic: it interprets a WorldSpec against the registry and calls no model.
+    files: ["packages/pipeline/src/builder/**/*.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              regex: "^(?!@paperplay/(contracts|primitives)$|\\.{1,2}/)",
+              message: "The builder may import only @paperplay/contracts, @paperplay/primitives and its own modules: no model client, network or UI.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     // Contracts are the shared language: no runtime dependency besides zod.
     files: ["packages/contracts/src/**/*.ts"],
     rules: {

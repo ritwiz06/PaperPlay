@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@paperplay/contracts": "*",
+    "@paperplay/pipeline": "*",
     "@paperplay/primitives": "*",
     "@paperplay/ui": "*",
     "react": "^19.3.0",

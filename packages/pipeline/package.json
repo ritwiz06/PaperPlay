@@ -8,6 +8,13 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json && tsc -p test/tsconfig.json"
+  },
+  "dependencies": {
+    "@paperplay/contracts": "*",
+    "@paperplay/primitives": "*"
+  },
+  "devDependencies": {
+    "zod": "^4.6.5"
   }
 }

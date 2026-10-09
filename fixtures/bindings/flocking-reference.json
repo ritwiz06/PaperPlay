@@ -1,0 +1,24 @@
+{
+  "about": "Binding fixtures for fixtures/worldspecs/flocking-reference.json, written by hand from the level script (docs/design/flocking-levels.md) and flock.planar.weighted's parameter table, never from the builder. For each level: the variable its one control must move, where it starts, a value to set it to, the fork's overrides, whether the fork restarts both worlds, and the level's setup. A test sets the control through the built world and checks the engine parameter, not the slider's label (R08).",
+  "worldSpec": "fixtures/worldspecs/flocking-reference.json",
+  "primitive": { "id": "flock.planar.weighted", "version": "3.0.0" },
+  "seed": 5,
+  "steps": 120,
+  "levels": [
+    { "levelId": "hook", "actionId": "alignment-strength", "variable": "alignmentWeight", "start": 2, "set": 3.5, "fork": { "alignmentWeight": 0 }, "restarts": false, "setup": [] },
+    { "levelId": "background", "actionId": "perception-radius", "variable": "perceptionRadius", "start": 9, "set": 2, "fork": { "perceptionRadius": 50 }, "restarts": false, "setup": [] },
+    { "levelId": "idea", "actionId": "separation-strength", "variable": "separationWeight", "start": 1.05, "set": 0.1, "fork": { "separationWeight": 0 }, "restarts": false, "setup": [] },
+    { "levelId": "method", "actionId": "cohesion-strength", "variable": "cohesionWeight", "start": 0.4, "set": 1.2, "fork": { "cohesionWeight": 0 }, "restarts": false, "setup": [] },
+    {
+      "levelId": "evaluation",
+      "actionId": "obstacle-radius",
+      "variable": "obstacleRadius",
+      "start": 3.4,
+      "set": 6,
+      "fork": { "obstacleWeight": 20 },
+      "restarts": false,
+      "setup": [{ "entityId": "rock-in-path", "entity": "obstacle", "x": 15, "y": 8.5 }]
+    },
+    { "levelId": "result", "actionId": "alignment-strength", "variable": "alignmentWeight", "start": 2, "set": 1, "fork": { "worldWidth": 64, "worldHeight": 64 }, "restarts": true, "setup": [] }
+  ]
+}

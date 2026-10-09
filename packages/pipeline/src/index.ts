@@ -1,5 +1,18 @@
 /**
- * @paperplay/pipeline: agent roles, model adapters, independent checks, controller.
- * Deliberately empty until G3; the mock adapter comes before any real provider.
+ * @paperplay/pipeline: agent roles, model adapters, independent checks, controller. The
+ * deterministic builder comes first (G2); the agents and the mock adapter follow at G3.
  */
-export {};
+export {
+  BUILD_DEPTHS,
+  buildWorld,
+  SHELL,
+  type BuildProblem,
+  type BuildResult,
+  type BuiltAction,
+  type BuiltFork,
+  type BuiltLevel,
+  type BuiltOverride,
+  type BuiltPlacement,
+  type BuiltWorld,
+  type Depth,
+} from "./builder/build.ts";
