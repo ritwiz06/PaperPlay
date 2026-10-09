@@ -72,6 +72,33 @@ events would also land on different steps from run to run, which changes the run
    - the runtime and the browser;
    - two SHA-256 hashes per file: one of the frame stream and one of the video.
 
+## The new world and a scripted camera (owner, 2026-10-09)
+
+After the world art pass (ADR-0013), the owner asked for a scripted camera path: open close
+on the flock, orbit slowly, then ease out to the valley as the murmuration forms and the
+colours converge. Kept deterministic.
+- **The capture uses the new world,** with colour by heading, wingbeats and trails, and the
+  same seed, beacon drag and two steps a frame.
+- **The camera is a pure function** of the video's second and a focus on the flock's centre.
+  - The focus is eased once per video frame, closing most of the gap in 1.2 s, the short
+    way round the world, and kept over the field.
+  - 0 to 3 s: 22 units from the flock, pitch 0.5.
+  - 3 to 10 s: an eased orbit of 0.9 radians, pulling back to 30 units.
+  - 10 to 15 s: easing out to 74 units over the field's centre, with a last drift of 0.25
+    radians.
+- **The stage asks its driver for the scripted camera just before each frame,** rather than
+  taking a React prop. A prop could arrive a frame late, and that frame would be drawn with
+  the camera of the frame before.
+- **Tests:**
+  - the path opens close and ends wide on the field's centre;
+  - no frame jumps by more than 0.02 radians, 0.6 units of distance or 0.35 units of target;
+  - two runs give the same path.
+- **On this Mac,** two runs gave byte-identical frames and videos:
+  - 1080 × 1350: frames `5134ce27e32b…`, video `85bee87719af…`;
+  - 1920 × 1080: frames `85b886b88a05…`, video `fd24374d0495…`.
+
+  The videos are now about 22 MB each, and a run takes about 2.5 minutes.
+
 ## The canonical runtime (owner, 2026-10-09)
 
 CI found that a capture's bytes hold per runtime: macOS arm64 and Linux x86-64 each repeat

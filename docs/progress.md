@@ -7,6 +7,20 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · The capture's scripted camera
+
+- Branch: `g2/capture-camera`
+- Commits: `7c12a97`
+- Shipped:
+  - `capture:demo` films the new world along a scripted camera path: close on the flock,
+    a slow orbit, then easing out to the valley as the colours converge (ADR-0010);
+  - WorldStage reads a scripted camera from its driver.
+- Evidence:
+  - 4 new unit tests;
+  - two Mac runs byte-identical;
+  - the canonical copy comes from CI's `ubuntu-24.04` job.
+- Gate: `check:gate` G1 passed at `7c12a97` with 334 tests.
+
 ## 2026-10-09 · The world art pass
 
 - Branch: `g2/world-art`
