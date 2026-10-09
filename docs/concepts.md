@@ -157,6 +157,18 @@ v·ω divided by gravity. Turning harder or faster means leaning further.
 
 ## Engineering
 
+### Code splitting (loading a module on demand)
+
+A bundler normally puts every imported module into one file the browser must download before
+anything runs. An `import()` call instead marks a split point: that module, and what only it
+needs, goes into its own chunk, fetched when the call runs.
+
+- **Used in:** `packages/ui/src/react/WorldStage.tsx`, `scripts/test/bundle.test.ts`
+- **Why here:** Three.js was more than half the bundle. Loading it when the stage mounts lets
+  the HUD draw first. A test builds the bundle to check the split holds, since a single eager
+  import anywhere would undo it (ADR-0017).
+- **Learn more:** [Vite: dynamic import](https://vite.dev/guide/features#dynamic-import)
+
 ### Fixed-step simulation loop
 
 Wall-clock time from each frame goes into an accumulator. The simulation then takes as

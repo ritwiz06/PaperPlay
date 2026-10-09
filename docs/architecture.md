@@ -13,7 +13,7 @@ How PaperPlay fits together today. The concepts named here are explained in
 | `packages/pipeline` | Agent roles, model adapters, checks, controller | `buildWorld`, the deterministic builder in `src/builder/` (ADR-0016); the agents and adapters arrive at G3 |
 | `apps/web` | React shell: owns the run, renders state, submits actions | `src/world/session.ts`, `src/world/LocalWorld.tsx` at `/world/local`, `src/world/local-world.ts`; `src/world/authored-world.ts`, which builds `fixtures/worldspecs/flocking-reference.json` with the builder at start-up; `src/hook/HookWorld.tsx` at `/world/hook`, the six levels played from the built world, and `src/hook/guide.ts`, the guide from each level's script; the dev-only capture page `capture.html` with `src/capture/` (ADR-0010) |
 | `apps/api` | Fastify API: will hold secrets and run jobs | `GET /health` only, until G3 |
-| `scripts/` | Gate, docs checker, defaults sweep, hook seed, group-measure sweep, demo capture | `check-gate.ts`, `check-docs.ts`, `sweep-defaults.ts`, `hook-seed.ts`, `group-measure.ts`, `capture-demo.ts` |
+| `scripts/` | Gate, docs checker, defaults sweep, hook seed, group-measure sweep, demo capture; `scripts/test/bundle.test.ts` builds the production bundle | `check-gate.ts`, `check-docs.ts`, `sweep-defaults.ts`, `hook-seed.ts`, `group-measure.ts`, `capture-demo.ts` |
 | `fixtures/oracles/` | Hand-derived expected behaviours for primitives | See `fixtures/oracles/README.md` |
 | `fixtures/worldspecs/` | Authored WorldSpecs | `flocking-reference.json`, a draft with placeholder anchors until the source map exists |
 | `fixtures/bindings/` | Hand-written binding fixtures: the variable each level's control must move, its fork and setup | `flocking-reference.json` |
@@ -161,6 +161,8 @@ flowchart LR
 | The demo capture advances a fixed two steps per video frame, replays from its own record, and ends on one group; its scripted camera never jumps and is the same every run | Tests, on both runtimes | `apps/web/test/demo-script.test.ts`, `scripts/test/capture.test.ts` |
 | **Per runtime:** the demo capture's bytes are the same on every run | Two runs on macOS arm64 and two on Linux x86-64 in CI, each pair byte-identical. The two runtimes give different bytes (see Claims per runtime) | 2026-10-09 logs; `.github/workflows/check-gate.yml` (capture job) |
 | The capture page never ships | The production build has one entry, `index.html` | `apps/web/vite.config.ts` (Vite's default input) |
+| Three.js loads as its own chunk, never in the entry chunk | A test builds the production bundle and reads its chunks | `scripts/test/bundle.test.ts`, `packages/ui/src/react/WorldStage.tsx` |
+| The deploy builds the repository's own build, from a clean install, and serves the app on every path | A test reads `vercel.json` against `package.json` | `scripts/test/bundle.test.ts`, `vercel.json` (ADR-0017) |
 | Secrets stay server-side | Not yet enforced (G3) | — |
 
 ## Runtime and tooling
@@ -256,3 +258,4 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 | 2026-10-09 | 4d942fd | The builder in `packages/pipeline/src/builder/`, a Vitest project for the pipeline, and `fixtures/bindings/` |
 | 2026-10-09 | d2e9f9f | The session takes a level's setup, and `load()`s another level on the same stage |
 | 2026-10-09 | e5c30b7 | `/world/hook` from the built world: `authored-world.ts`, the guide from scripts, SpacingGauge, GroupsCounter, the `dial` styles; `hook-content.ts` removed |
+| 2026-10-09 | 2ce3b34 | WorldStage loads the Three.js adapter with `import()`; `vercel.json` (ADR-0017) |

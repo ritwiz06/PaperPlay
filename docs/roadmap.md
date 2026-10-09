@@ -110,7 +110,10 @@ Next:
 - [ ] The stale-evidence rule.
 
 Later:
-- Loading the Three.js stage as its own chunk (the bundle is 878 KB; the owner deferred this).
+- [x] Loading the Three.js stage as its own chunk (2026-10-09, ADR-0017): the entry chunk is
+  416 KB, the stage chunk 551 KB.
+- [ ] Connect the static deploy (`vercel.json`, ADR-0017): the owner's account, then a
+  Content-Security-Policy tried against a preview.
 - A cross-runtime capture check: Mac and Linux frames agree within a stated pixel tolerance,
   with bird pixels overlapping (option b of the 2026-10-09 capture finding, ADR-0010).
 
@@ -159,7 +162,7 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | Gate | Planned | Used so far |
 |---|---|---|
 | G1 | Days 1–7, 21–28 h | Days 1–4 (2026-09-28 to 2026-10-01), about 8.3 h of sessions: 1.4 h (09-28), 5.4 h (09-30) and 1.5 h (10-01). Under plan, because Claude Code did the building; the owner's own review time is not tracked |
-| G2 | Days 8–14, 21–28 h | G2's early RunRecord and replay work. Then three sessions on 2026-10-09:<br>• 00:51 to 01:45, about 0.9 h: `main`, ADR-0008, the axe scan, the demo capture, the hook spike and the plan change.<br>• 10:25 to 11:05, about 0.7 h: `origin`, CI, `--frames` and the capture finding.<br>• 11:06 to about 12:05, about 1 h: the canonical capture, the shell, the world art, the capture's camera and the level script. |
+| G2 | Days 8–14, 21–28 h | G2's early RunRecord and replay work. Then four sessions on 2026-10-09:<br>• 00:51 to 01:45, about 0.9 h: `main`, ADR-0008, the axe scan, the demo capture, the hook spike and the plan change.<br>• 10:25 to 11:05, about 0.7 h: `origin`, CI, `--frames` and the capture finding.<br>• 11:06 to about 12:05, about 1 h: the canonical capture, the shell, the world art, the capture's camera and the level script.<br>• 12:08 to about 14:25, about 2.3 h: the group measure, WorldSpec and the builder, the six levels from the spec, the stage split and the deploy configuration. |
 | G3–G5 | As in Gates | None yet |
 
 ## Plan changes
@@ -190,3 +193,4 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-09 | The source register and source map wait for the Reynolds PDF; the group measure, WorldSpec and the builder go first, with placeholder anchors clearly marked | Owner decision: the PDF is not on disk yet |
 | 2026-10-09 | WorldSpec gains a draft status with placeholder anchors and a pending source; Level gains a goal, a bonus flag, a slider, setup, a guide script and further reading; depth variants name a closed list of shell elements; equations are Unicode text; DesignSpec drops layout and typography | Building it for the game-first shell and the owner's level decisions, with no source in hand (ADR-0016) |
 | 2026-10-09 | Each What-if's expected effect is checked against the model before it is written into a fixture | Two of the level script's effects did not hold on seed 5 (levels 2 and 4) |
+| 2026-10-09 | The Three.js stage loads as its own chunk; a static deploy on Vercel is configured, waiting for the owner's account | Owner request (slice 4); Vercel protects pull-request previews by default (ADR-0017) |

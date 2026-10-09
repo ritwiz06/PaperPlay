@@ -1,8 +1,8 @@
 # Status
 
-Updated 2026-10-09, during the day's fourth session: the level script's decisions, the
-group measure, sources and WorldSpec ([log](sessions/2026-10-09-4.md)). This file is rewritten
-every session.
+Updated 2026-10-09, at the close of the day's fourth session: the level script's decisions,
+the group measure, WorldSpec and the builder, the six levels, the stage split
+([log](sessions/2026-10-09-4.md)). This file is rewritten every session.
 
 ## Where we are
 
@@ -15,8 +15,10 @@ every session.
     ADR-0011).
 - **Branches:** only `main`. Every slice this session merged fast-forward and was pushed
   (ADR-0009).
-- **Working commit:** `bd6ffa4` on `main`, the latest code commit there. `check:gate` passed
+- **Working commit:** `2ce3b34` on `main`, the latest code commit there. `check:gate` passed
   G1 on it.
+- **Bundle:** the entry chunk is 416 KB, and Three.js loads after it as its own 551 KB chunk.
+  `vercel.json` is ready for a static deploy, and nothing is connected (ADR-0017).
 - **Primitive:** `flock.planar.weighted@3.0.0`, with the owner's group measure (ADR-0015).
 - **WorldSpec:** `worldspec/1` and the builder exist (ADR-0016).
   `fixtures/worldspecs/flocking-reference.json` holds the six levels as a draft, with
@@ -92,20 +94,24 @@ Ahead of their gate, from the same run's reports: R05 4, R06 1, R07 11, R08 41, 
      groups counter, my reading of its readout.
 2. **WorldSpec's shape beyond the brief** (ADR-0016), and the reference fixture kept as a
    draft until real anchors exist.
-3. **The shell and the world art,** from the screenshots:
+3. **The deploy** (ADR-0017): connect Vercel with the steps given, or not. Decide first
+   whether a public production URL is acceptable; pull-request previews are protected by
+   default.
+4. **The shell and the world art,** from the screenshots, now with every level in
+   `captures/final/levels/`:
    - the bottom-left stack;
    - the compass;
    - the quiet chips;
    - the following camera;
    - colour by heading, trails and the valley.
-4. **The canonical capture,** in `captures/canonical/`, from CI.
+5. **The canonical capture,** in `captures/canonical/`, from CI.
 
 ## Next three actions
 
-1. `/world/hook` driven by the WorldSpec through all six levels, with the readout each level
-   names.
-2. Screenshots of every level on desktop and phone.
-3. Code-split the Three.js stage, then the static deploy (slice 4).
+1. The owner's answers on levels 2 and 4, and the fixture updated to them.
+2. The source register and source map once the PDF is in `reference/private/`, then the
+   fixture reviewed.
+3. The ForkView, guided exploration and replay export (the next session).
 
 ## Recommendations
 
@@ -119,7 +125,8 @@ In priority order:
 3. **Profile on a phone's GPU before raising `agentCount`.** The M3 Pro holds 60 fps at 72
    birds, with a p99 frame of 16.8 ms. Risk: phones are slower, and the neighbour search is
    O(N²).
-4. **Code-split the Three.js stage.** Risk: the bundle loads before the first frame.
+4. **Try a Content-Security-Policy against the first preview deploy.** Risk: without one,
+   an injected script would run with the page's full rights.
 5. **Handle WebGL context loss in `mountStage`.** Risk: mobile browsers drop contexts in the
    background.
 6. **Add dark mode with the shell.** The dusk palette now has the valley's roles too.

@@ -7,6 +7,23 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · The stage as its own chunk, and a deploy configuration
+
+- Branch: `g2/stage-split`
+- Commits: `2ce3b34`
+- Shipped (ADR-0017):
+  - `WorldStage` loads the Three.js adapter on demand. The entry chunk is 416 KB, down from
+    967 KB, and the stage chunk 551 KB.
+  - `vercel.json`, for a static deploy with pull-request previews. Nothing is connected; the
+    owner's steps are in ADR-0017.
+  - A test that builds the production bundle and checks the split and the deploy
+    configuration. It caught a planted eager import.
+- Evidence:
+  - R01 51, R02 6, R03 91, R04 18;
+  - ahead of their gate: R05 4, R06 5, R07 14, R08 41, R12 10;
+  - from 441 tests with none skipped.
+- Gate: `check:gate` G1 passed at `2ce3b34`.
+
 ## 2026-10-09 · The six levels from the WorldSpec
 
 - Branch: `g2/hook-levels`
