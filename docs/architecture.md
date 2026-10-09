@@ -180,6 +180,8 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
   - Bird pixels overlap 99.3–99.6% at 0, 7.5 and 14.9 s, so the run itself agrees across
     runtimes and the drawing differs. The likeliest cause is SwiftShader's code generation
     on the two architectures.
+- **Canonical for published captures:** CI's capture job on a pinned `ubuntu-24.04` image
+  (owner, 2026-10-09; ADR-0010).
 - **Not compared across runtimes:** R01's bit-identical observables are a within-runtime
   claim, as R01 says ("on one runtime"). No test yet compares a Mac run with a Linux run
   bit for bit.

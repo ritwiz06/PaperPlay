@@ -1,8 +1,7 @@
 # Status
 
-Updated 2026-10-09, during the day's second session. It set up `origin` and CI, and started
-the shell. It stopped early, as the owner asked, because CI found that the demo capture's
-bytes differ between macOS and Linux ([log](sessions/2026-10-09-2.md)). This file is
+Updated 2026-10-09, during the day's third session: the owner chose option a for the
+capture finding, and the slices resumed ([log](sessions/2026-10-09-3.md)). This file is
 rewritten every session.
 
 ## Where we are
@@ -63,28 +62,13 @@ among the 14 Playwright tests.
 
 ## Blockers
 
-- **The capture finding waits on the owner** (the owner's rule for any capture result that
-  differs from the Mac).
-  - The demo capture is byte-identical run to run on each runtime, with two runs on each.
-  - macOS arm64 and Linux x86-64 give different bytes.
-  - The frames differ by rendering noise, and the run itself agrees (architecture.md,
-    Claims per runtime).
-  - Slices 1 to 4 wait for the owner's answer.
+None.
 
 ## Decisions waiting on the owner
 
-1. **The capture finding.** Options:
-   - **a.** Accept per-runtime byte-identity, and make one runtime canonical for published
-     videos. CI's Linux runner is the reproducible choice.
-   - **b.** Add a cross-runtime check: Mac and Linux frames must agree within a stated
-     pixel tolerance, and bird pixels must overlap. It would be a new test, not a loosened
-     one.
-   - **c.** Investigate further: compare the lossless PNG frames, to tell SwiftShader's
-     drawing from JPEG's encoding.
-2. **Whether to resume slice 1** from `bc8c630`. So far:
-   - the HUD covers 15.1% of 1440 × 900 and 21.3% of 390 × 844 at rest;
-   - the field lands inside the free rectangle on both;
-   - axe finds no violations.
+None yet this session. On 2026-10-09 the owner chose option a for the capture finding:
+- published captures come from CI's capture job on a pinned `ubuntu-24.04`;
+- a cross-runtime check is a follow-up in the roadmap (ADR-0010).
 
 ## Next three actions
 
@@ -99,9 +83,8 @@ among the 14 Playwright tests.
 
 In priority order:
 
-1. **Choose option a, and keep b as a follow-up.** Risk: a video published from one machine
-   can't be reproduced bit for bit on another. A canonical runtime fixes that, and a
-   tolerance check would catch real drift.
+1. **Add the cross-runtime capture check (option b) before publishing widely.** Risk: real
+   drift between machines would hide inside "rendering noise" without a stated tolerance.
 2. **Settle the group measure early in G2, as the owner chose.** Risk: a learner reads
    "Groups: 1" as "a murmuration formed" when a random scatter can show the same.
 3. **Code-split the Three.js stage before anyone tests on a phone.** Risk: 245 KB of gzipped

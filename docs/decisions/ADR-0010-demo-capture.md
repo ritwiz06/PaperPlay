@@ -72,6 +72,19 @@ events would also land on different steps from run to run, which changes the run
    - the runtime and the browser;
    - two SHA-256 hashes per file: one of the frame stream and one of the video.
 
+## The canonical runtime (owner, 2026-10-09)
+
+CI found that a capture's bytes hold per runtime: macOS arm64 and Linux x86-64 each repeat
+themselves exactly, but differ from each other by rendering noise. The owner chose option a:
+- **Published videos come from one runtime:** CI's capture job, on a pinned `ubuntu-24.04`
+  image rather than `ubuntu-latest`, which moves to Ubuntu 26 from 2026-10-19.
+- **The job runs on `main` and on demand.** A manual run can also write the lossless PNG
+  sequences, through the workflow's `frames` input.
+- **Its artifact is the published capture.** A capture made on a Mac is a preview.
+- **A cross-runtime check stays a follow-up** (option b, in the roadmap): Mac and Linux frames
+  would have to agree within a stated pixel tolerance, with bird pixels overlapping. It
+  would be a new test, not a loosened one.
+
 ## Consequences
 
 - **Two runs on one runtime give byte-identical videos,** on macOS arm64 and on Linux x86-64

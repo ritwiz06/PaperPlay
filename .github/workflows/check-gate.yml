@@ -1,12 +1,18 @@
 # check:gate on every push and pull request, on Linux with the pinned Node (ADR-0011).
-# The capture job films the demo on Linux too, so its hashes can be compared with the
-# Mac's (ADR-0010); it is not part of the gate and runs on main and on demand only.
+# The capture job films the demo on the canonical capture runtime, a pinned ubuntu-24.04
+# image: published videos come from it, since a capture's bytes hold per runtime
+# (ADR-0010). It is not part of the gate and runs on main and on demand only.
 name: check-gate
 
 on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      frames:
+        description: Also write the lossless PNG sequences (about 280 MB)
+        type: boolean
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
@@ -44,9 +50,10 @@ jobs:
           retention-days: 14
 
   capture:
-    name: capture:demo (ubuntu-latest), for comparison with the Mac
+    name: capture:demo on the canonical runtime (ubuntu-24.04)
     if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+    # Pinned, not ubuntu-latest, so the canonical bytes do not move when the image does.
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
@@ -56,10 +63,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium ffmpeg
-      - run: npm run capture:demo
+      - run: npm run capture:demo -- ${{ inputs.frames && '--frames' || '' }}
       - run: cat captures/murmuration.json
       - uses: actions/upload-artifact@v7
         with:
           name: demo-capture
           path: captures/
-          retention-days: 14
+          retention-days: 7

@@ -89,6 +89,8 @@ Next:
 
 Later:
 - Loading the Three.js stage as its own chunk (the bundle is 878 KB; the owner deferred this).
+- A cross-runtime capture check: Mac and Linux frames agree within a stated pixel tolerance,
+  with bird pixels overlapping (option b of the 2026-10-09 capture finding, ADR-0010).
 
 ## G3 Constrained generation
 
@@ -157,5 +159,6 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-01 | The group measure is settled at G2 | Owner decision (ADR-0003) |
 | 2026-10-09 | `main` holds G1; work moves to short branches off `main` | Owner decision (ADR-0009) |
 | 2026-10-09 | `npm run capture:demo` added before G2's interface work | Owner request (ADR-0010) |
+| 2026-10-09 | Published captures come from CI's capture job on a pinned `ubuntu-24.04`; a cross-runtime check is deferred | CI found a capture's bytes hold per runtime; owner chose option a (ADR-0010) |
 | 2026-10-09 | The four development and eight held-out section files move from G2 to after the authored world plays end to end, as G3's first item | Owner decision: G3 and G4 need them; G2's interface does not |
 | 2026-10-09 | A game-first interface replaces the brief's §6 layout. G2's interface items are renamed: LevelCard, Guide, PaperJournal, LevelMap, DepthToggle and a split-screen ForkView, plus a design spike first | Owner decision (ADR-0008): the §6 layout reads as a dashboard |
