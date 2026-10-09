@@ -165,7 +165,8 @@ flowchart LR
   - `check:docs` checks the documentation;
   - `sweep:defaults` reproduces ADR-0003's sweep;
   - `choose:hook-seed` re-applies ADR-0003's hook-seed rule;
-  - `capture:demo` films the demo video into the git-ignored `captures/` (ADR-0010).
+  - `capture:demo` films the demo video into the git-ignored `captures/`, and with
+    `-- --frames` a lossless PNG sequence too (ADR-0010).
 - **The local world's settings** live in `apps/web/src/world/local-world.ts`. They are
   teaching choices: the hook seed now, and its levels until WorldSpec arrives at G2.
 

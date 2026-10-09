@@ -61,7 +61,12 @@ events would also land on different steps from run to run, which changes the run
      and bit-exact, with no metadata, capped at 12 Mbit/s with crf 4.
    - Stdin is `pipe:0`. The build has no `-` protocol.
 6. **Output.** `captures/murmuration-1080x1350.webm`, `captures/murmuration-1920x1080.webm`
-   and `captures/murmuration.json`. The JSON records:
+   and `captures/murmuration.json`. With `-- --frames`, each format is also written as a
+   lossless PNG sequence, `captures/murmuration-WxH/frame-0001.png` onwards (the owner
+   decided on 2026-10-09 to encode MP4 elsewhere, with no new dependency here).
+   - Each PNG is a second screenshot of the same drawn frame. The stage draws only when the
+     script asks, so the frame cannot change between the two screenshots.
+   - The manifest adds each sequence's pattern, count and SHA-256. The JSON records:
    - the primitive's version;
    - the seed, the frame rate and the steps per frame;
    - the runtime and the browser;
@@ -70,10 +75,11 @@ events would also land on different steps from run to run, which changes the run
 ## Consequences
 
 - **Two runs on one machine give byte-identical videos.** The session log records the check.
-- **The capture is a WebM.**
-  - Browsers, YouTube and most players take it.
-  - Some social platforms want MP4 (H.264). That needs an ffmpeg with an H.264 encoder,
-    which is a new dependency, so the owner decides.
+- **The capture is a WebM, and with `--frames` a PNG sequence too.**
+  - Browsers, YouTube and most players take the WebM.
+  - For MP4 (H.264), the owner encodes the PNG sequence elsewhere. The sequences are large:
+    118 MB at 1080 × 1350 and 158 MB at 1920 × 1080. A run with `--frames` takes about 3
+    minutes instead of 1.5.
 - **The pixels depend on the browser and ffmpeg revisions.** A Playwright upgrade can change
   them; the manifest says which revision made a file.
 - **It takes about 90 s on this Mac,** because every frame is drawn in software.
