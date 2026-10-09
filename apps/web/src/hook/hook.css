@@ -1,0 +1,667 @@
+/*
+ * /world/hook, the game-first design spike (ADR-0008). The stage fills the window and the
+ * HUD lies over it. Cards take the reference's chunky look inside the accepted palette: a
+ * 2 px ink edge, round corners and a hard offset shadow with no blur. Only the cards and
+ * their controls catch the pointer, so the stage stays playable around them. Type uses the
+ * shipped Fredoka weights, 400 and 600, and Literata for the passage (ADR-0002).
+ */
+.hook {
+  position: fixed;
+  inset: 0;
+  /* clip, not hidden: nothing, not even focus, may scroll the world sideways. */
+  overflow: clip;
+  background: var(--cream);
+}
+.hook .stage {
+  position: absolute;
+  inset: 0;
+  border-radius: 0;
+}
+.hook .stage:focus-visible {
+  outline-offset: -4px;
+}
+/* The stage's key hints stay for screen readers; the HUD needs the space they took. */
+.hook .stage-keys,
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.hud {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+.hud .card,
+.hud button,
+.hud input {
+  pointer-events: auto;
+}
+
+.hook .card {
+  border: 2px solid var(--ink);
+  border-radius: 18px;
+  background: var(--cream);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.hook .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: var(--ink);
+  color: var(--cream);
+  font-weight: 600;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease;
+}
+.hook .btn:hover:not(:disabled) {
+  background: var(--dark);
+}
+.hook .btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+.hook .btn-light,
+.hook .btn-light:hover:not(:disabled) {
+  background: var(--cream);
+  color: var(--ink);
+}
+.hook .btn-light:hover:not(:disabled) {
+  background: rgb(98 203 194 / 0.25);
+}
+.hook .btn-icon {
+  width: 44px;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* Origin chips: a word or two, filled with the origin's colour, ink text so each reads at AA. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  vertical-align: 0.1em;
+}
+.chip-paper-derived {
+  background: var(--ink);
+  color: var(--cream);
+}
+.chip-teaching-choice {
+  background: var(--aqua);
+}
+.chip-computed-observation {
+  background: var(--lime);
+}
+.chip-generated-inference {
+  border-style: dashed;
+  background: repeating-linear-gradient(135deg, var(--cream) 0 4px, rgb(82 106 102 / 0.22) 4px 6px);
+}
+
+/* Top row: the world, the level map, and the two buttons. */
+.hud-top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+  gap: 12px;
+}
+.world-card {
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px 8px 10px;
+}
+.world-card h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.1;
+}
+.world-card p {
+  margin: 2px 0 0;
+  color: var(--sub);
+  font-size: 0.8125rem;
+}
+.bird-mark {
+  flex: none;
+}
+
+.level-map {
+  justify-self: center;
+  padding: 5px;
+}
+.level-map ol {
+  display: flex;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.level-map button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 3px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-weight: 600;
+}
+.level-map button:disabled {
+  opacity: 1;
+  cursor: default;
+}
+.level-map .now button {
+  padding-right: 14px;
+  background: var(--ink);
+  color: var(--cream);
+}
+.level-map .dot {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  font-size: 0.8125rem;
+}
+.level-map .locked .dot {
+  border-style: dashed;
+  color: var(--sub);
+}
+.level-map .open .dot {
+  border-color: var(--ink);
+  background: var(--aqua);
+}
+.level-name {
+  white-space: nowrap;
+}
+
+.hud-buttons {
+  justify-self: end;
+  display: flex;
+  gap: 10px;
+}
+
+/* Bottom left: the guide speaks just above the level card it reacts to. The field's middle,
+   where the camera puts the flock, stays clear. */
+.hud-bottom {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+}
+.guide,
+.what-if,
+.level-card {
+  width: min(460px, 100%);
+}
+.guide {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px 10px 10px;
+  border-radius: 18px 18px 18px 6px;
+}
+.guide ul {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  line-height: 1.35;
+}
+.guide li .chip {
+  margin-right: 4px;
+}
+
+.what-if {
+  padding: 14px 18px;
+}
+.what-if h2 {
+  margin: 0 0 6px;
+  font-size: 1.125rem;
+}
+.what-if p {
+  margin: 0 0 10px;
+  color: var(--sub);
+}
+
+.level-card {
+  padding: 14px 18px 16px;
+}
+.level-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.level-kicker {
+  margin: 0;
+  color: var(--sub);
+  font-size: 0.875rem;
+}
+.level-card h2 {
+  margin: 6px 0 2px;
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+.level-goal {
+  margin: 0;
+  color: var(--sub);
+}
+.control-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.control-line label {
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+.hook .from-paper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  margin-left: auto;
+  padding: 0 12px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--cream);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.hook .from-paper:hover {
+  background: rgb(212 245 129 / 0.6);
+}
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+.slider-row input[type="range"] {
+  flex: 1;
+  height: 36px;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+.slider-row input[type="range"]::-webkit-slider-runnable-track {
+  height: 8px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--line);
+}
+.slider-row input[type="range"]::-webkit-slider-thumb {
+  width: 28px;
+  height: 28px;
+  margin-top: -12px;
+  appearance: none;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--aqua);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.slider-row input[type="range"]::-moz-range-track {
+  height: 8px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--line);
+}
+.slider-row input[type="range"]::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--aqua);
+}
+.value-pill {
+  min-width: 4.5ch;
+  padding: 2px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--aqua);
+  font-weight: 600;
+  text-align: center;
+}
+.level-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+}
+.readout-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+.readout-line output {
+  display: inline-block;
+  min-width: 4ch;
+  font-weight: 600;
+  text-align: right;
+}
+.readout-line .unit {
+  color: var(--sub);
+  font-size: 0.875rem;
+}
+.explain {
+  margin: 8px 0 0;
+  color: var(--sub);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+
+/* Depth: a small segmented toggle, in the level card and in the journal. */
+.depth {
+  display: inline-flex;
+  gap: 2px;
+  margin: 0;
+  padding: 2px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+}
+.depth label {
+  position: relative;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+.depth label.on {
+  background: var(--ink);
+  color: var(--cream);
+}
+.depth input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.depth label:has(input:focus-visible) {
+  outline: 3px solid var(--aqua);
+  outline-offset: 2px;
+}
+
+/* The paper journal: a slide-over on demand, never a permanent column. */
+.journal {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  bottom: 12px;
+  width: min(420px, calc(100% - 24px));
+  padding: 18px 20px 24px;
+  overflow-y: auto;
+  visibility: hidden;
+  transform: translateX(calc(100% + 24px));
+  transition:
+    transform 0.25s ease,
+    visibility 0s linear 0.25s;
+}
+.journal.open {
+  visibility: visible;
+  transform: none;
+  transition: transform 0.25s ease;
+}
+.journal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.journal h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+.journal-intro {
+  margin: 6px 0 12px;
+  color: var(--sub);
+}
+.pages {
+  display: grid;
+  gap: 14px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.page {
+  padding-top: 12px;
+  border-top: 2px dashed var(--line);
+}
+.page-level {
+  margin: 0 0 8px;
+  color: var(--sub);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.passage {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: var(--cream);
+  text-align: left;
+}
+.highlighted .passage {
+  background: rgb(212 245 129 / 0.55);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.passage-head {
+  display: flex;
+  gap: 6px;
+}
+.placeholder-tag {
+  padding: 1px 8px;
+  border: 1.5px dashed var(--sub);
+  border-radius: 999px;
+  color: var(--sub);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.passage-title {
+  font-weight: 600;
+}
+.passage-text {
+  font-family: var(--font-passage);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+.passage-locator {
+  color: var(--sub);
+  font-size: 0.8125rem;
+}
+.passage-try {
+  justify-self: start;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--cream);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.in-this-world {
+  margin: 10px 0 0;
+  color: var(--sub);
+  font-size: 0.9375rem;
+}
+.locked-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+.locked-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px 2px 3px;
+  border: 1.5px dashed var(--sub);
+  border-radius: 999px;
+  color: var(--sub);
+  font-size: 0.875rem;
+}
+.locked-list .dot {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1.5px dashed var(--sub);
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.locked-note {
+  margin: 0;
+  color: var(--sub);
+  font-size: 0.875rem;
+}
+.legend {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 2px solid var(--ink);
+}
+.legend h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+.legend ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.legend li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--sub);
+  font-size: 0.875rem;
+}
+
+/* Phones: the buttons keep only their icons, the map only its dots, and the cards span the
+   width and tighten, so the stage keeps the middle of the screen. */
+@media (max-width: 760px) {
+  .hud {
+    gap: 8px;
+    padding-inline: 10px;
+  }
+  .hud-top {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+  .level-map {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .level-map .level-name,
+  .btn-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .level-map .now button {
+    padding-right: 3px;
+  }
+  .hook .btn {
+    min-width: 44px;
+    padding: 0 12px;
+  }
+  .world-card {
+    padding: 6px 12px 6px 8px;
+  }
+  .world-card h1 {
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+  .world-card p,
+  .guide .bird-mark {
+    display: none;
+  }
+  .hud-bottom {
+    justify-items: stretch;
+    gap: 8px;
+  }
+  .guide,
+  .what-if,
+  .level-card {
+    width: 100%;
+  }
+  .guide {
+    padding: 8px 12px;
+    font-size: 0.875rem;
+  }
+  .level-card {
+    padding: 10px 14px 12px;
+  }
+  .level-card h2 {
+    margin-top: 4px;
+    font-size: 1.25rem;
+  }
+  .level-goal {
+    font-size: 0.9375rem;
+  }
+  .control-line {
+    margin-top: 8px;
+  }
+  .depth label {
+    padding: 1px 8px;
+    font-size: 0.75rem;
+  }
+  .journal {
+    top: 8px;
+    right: 8px;
+    bottom: 8px;
+    width: calc(100% - 16px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journal,
+  .journal.open,
+  .hook .btn {
+    transition: none;
+  }
+}
