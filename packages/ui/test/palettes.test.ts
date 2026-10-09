@@ -38,8 +38,9 @@ describe("stage palettes", () => {
 
   it("names its colours as six-digit hex so any renderer can read them", () => {
     for (const palette of [valleyDay, dusk]) {
-      for (const [role, color] of Object.entries(palette)) {
-        if (role !== "name") expect(color, `${palette.name}.${role}`).toMatch(/^#[0-9a-f]{6}$/);
+      for (const [role, value] of Object.entries(palette)) {
+        if (role === "name") continue;
+        for (const color of [value].flat()) expect(color, `${palette.name}.${role}`).toMatch(/^#[0-9a-f]{6}$/);
       }
     }
   });

@@ -25,6 +25,8 @@ export interface OrbitCamera {
   readonly aspect: number;
   /** Where on the canvas the view is framed; the whole canvas when absent. */
   readonly window?: ViewWindow;
+  /** The point the camera looks at, in world coordinates; the field's centre when absent. */
+  readonly target?: Vec3;
 }
 
 /** The aspect of the window the view is framed in. */

@@ -26,6 +26,21 @@ export interface StagePalette {
   readonly sun: string;
   /** Hemisphere light from below. */
   readonly shade: string;
+  /** The meadow under the flight field, and the soft band where it meets the valley. */
+  readonly meadow: string;
+  readonly meadowEdge: string;
+  readonly water: string;
+  readonly foliage: string;
+  readonly trunk: string;
+  readonly rock: string;
+  /** The sky overhead; `sky` is its colour at the horizon. */
+  readonly skyZenith: string;
+  readonly sunDisc: string;
+  /**
+   * Colour by heading: a wheel of three palette colours, one per third of a turn, blended in
+   * between. Every colour on it keeps 3:1 against the meadow.
+   */
+  readonly headingWheel: readonly [string, string, string];
 }
 
 /** The accepted look: ink birds against a cream sky, like starlings at dusk, over a soft valley. */
@@ -46,6 +61,15 @@ export const valleyDay: StagePalette = Object.freeze({
   obstacle: tokens.sub,
   sun: tokens.cream,
   shade: mixHex(tokens.sub, tokens.line, 0.5),
+  meadow: mixHex(tokens.cream, tokens.lime, 0.3),
+  meadowEdge: mixHex(tokens.lime, tokens.sub, 0.3),
+  water: mixHex(tokens.aqua, tokens.ink, 0.15),
+  foliage: mixHex(tokens.lime, tokens.sub, 0.6),
+  trunk: mixHex(tokens.sub, tokens.ink, 0.35),
+  rock: mixHex(tokens.line, tokens.sub, 0.45),
+  skyZenith: mixHex(tokens.aqua, tokens.cream, 0.55),
+  sunDisc: tokens.cream,
+  headingWheel: [mixHex(tokens.aqua, tokens.ink, 0.4), mixHex(tokens.lime, tokens.ink, 0.55), tokens.ink] as const,
 });
 
 /** Dark mode: cream and ink swap, aqua and lime stay. */
@@ -66,4 +90,22 @@ export const dusk: StagePalette = Object.freeze({
   obstacle: tokens.line,
   sun: mixHex(tokens.cream, tokens.aqua, 0.25),
   shade: tokens.dark,
+  meadow: mixHex(tokens.dark, tokens.sub, 0.35),
+  meadowEdge: mixHex(tokens.dark, tokens.aqua, 0.3),
+  water: mixHex(tokens.dark, tokens.aqua, 0.45),
+  foliage: mixHex(tokens.dark, tokens.lime, 0.25),
+  trunk: mixHex(tokens.dark, tokens.sub, 0.5),
+  rock: mixHex(tokens.dark, tokens.line, 0.3),
+  skyZenith: mixHex(tokens.dark, tokens.aqua, 0.12),
+  sunDisc: mixHex(tokens.cream, tokens.lime, 0.4),
+  headingWheel: [tokens.aqua, tokens.lime, tokens.cream] as const,
 });
+
+/** A field heading's colour on the palette's wheel: the stops at 0, ⅓ and ⅔ of a turn, blended between. */
+export function headingColor(palette: StagePalette, angle: number): string {
+  const turn = 2 * Math.PI;
+  const position = (((angle % turn) + turn) % turn) / turn * palette.headingWheel.length;
+  const index = Math.floor(position) % palette.headingWheel.length;
+  const next = (index + 1) % palette.headingWheel.length;
+  return mixHex(palette.headingWheel[index] ?? palette.bird, palette.headingWheel[next] ?? palette.bird, position - Math.floor(position));
+}
