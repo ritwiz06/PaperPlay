@@ -238,3 +238,29 @@ describe("[R07] a level's setup and loading the next level", () => {
     expect(() => session.setAction(PRIMARY_ACTION, 1)).toThrow(/no action alignment-strength/);
   });
 });
+
+describe("[R07] a branch, as a fork opens one", () => {
+  it("starts from the given state, counts its events from there, and replays from its own plan", () => {
+    const trunk = open();
+    run(trunk, 90);
+    const branch = createWorldSession({ seed: HOOK_SEED, params: flockDefaultParams, actions: LOCAL_ACTIONS, start: trunk.state() });
+    expect(json(branch.state())).toBe(json(trunk.state()));
+    branch.stepBy(30);
+    branch.setAction(PRIMARY_ACTION, 0);
+    branch.stepBy(30);
+    const plan = branch.plan();
+    expect(plan.initialState).toBe(trunk.state());
+    expect(plan.totalSteps).toBe(60);
+    expect(plan.events).toEqual([{ kind: "param", step: 30, actionId: PRIMARY_ACTION, value: 0 }]);
+    expect(json(runEvents({ primitive: flock, params: plan.params, actions: LOCAL_ACTIONS }, plan).finalState)).toBe(json(branch.state()));
+  });
+
+  it("takes exactly the steps it is told to, playing or not", () => {
+    const session = open(false);
+    session.stepBy(7);
+    expect(session.snapshot().step).toBe(7);
+    let state = flock.init(flockDefaultParams, HOOK_SEED);
+    for (let i = 0; i < 7; i++) state = flock.step(state, flockDefaultParams, STEP);
+    expect(json(session.state())).toBe(json(state));
+  });
+});

@@ -32,6 +32,8 @@ export interface SessionOptions {
   readonly setup?: readonly PlaceEvent[];
   /** Draw the ring of the flock's spread (Q3) around its largest group. Presentation only. */
   readonly ring?: boolean;
+  /** Start from this state instead of the seed's: a fork's branch from the moment it opens. */
+  readonly start?: FlockState;
   readonly playing?: boolean;
 }
 
@@ -59,6 +61,8 @@ export interface WorldSession {
   emphasis(): FrameEmphasis;
   /** Takes the whole steps this much wall time allows while playing; returns how many. */
   tick(frameSeconds: number): number;
+  /** Takes exactly this many fixed steps now, playing or not: a fork keeps two worlds in step this way. */
+  stepBy(steps: number): void;
   play(): void;
   pause(): void;
   setAction(actionId: string, value: number): void;
@@ -92,7 +96,10 @@ export function createWorldSession(first: SessionOptions): WorldSession {
   let seed = options.seed >>> 0;
   let initialParams = flock.paramSchema.parse(options.params);
   let params = initialParams;
-  let current = flock.init(initialParams, seed);
+  /** The state the run starts from: the seed's, or a fork's branch. Events are counted in steps from it. */
+  const origin = (): FlockState => options.start ?? flock.init(initialParams, seed);
+  let current = origin();
+  const stepsTaken = (): number => current.stepIndex - (options.start?.stepIndex ?? 0);
   let previous = current;
   let alpha = 0;
   let clock: StepClock = START_CLOCK;
@@ -135,17 +142,17 @@ export function createWorldSession(first: SessionOptions): WorldSession {
 
   /** Applies the recorded events due at the current step, as a replay reaches them. */
   const applyDue = (): void => {
-    for (let event = events[applied]; event !== undefined && event.step === current.stepIndex; event = events[++applied]) applyEvent(event);
+    for (let event = events[applied]; event !== undefined && event.step === stepsTaken(); event = events[++applied]) applyEvent(event);
   };
 
   const setAction = (actionId: string, value: number): void => {
     const parameter = parameterOf(actionId);
     params = flock.paramSchema.parse({ ...params, [parameter]: value });
-    record({ kind: "param", step: current.stepIndex, actionId, value });
+    record({ kind: "param", step: stepsTaken(), actionId, value });
   };
 
   const restart = (): void => {
-    current = flock.init(initialParams, seed);
+    current = origin();
     previous = current;
     params = initialParams;
     alpha = 0;
@@ -157,6 +164,17 @@ export function createWorldSession(first: SessionOptions): WorldSession {
   };
 
   applyDue();
+
+  function stepBy(steps: number): void {
+    for (let i = 0; i < steps; i++) {
+      history.push(current);
+      if (history.length > TRAIL_STEPS) history.shift();
+      previous = current;
+      current = flock.step(current, params, TIMESTEP);
+      applyDue();
+    }
+    if (steps > 0) changed();
+  }
 
   return {
     snapshot: () => ({
@@ -191,16 +209,10 @@ export function createWorldSession(first: SessionOptions): WorldSession {
       const next = advance(clock, frameSeconds, TIMESTEP);
       clock = next.clock;
       alpha = next.alpha;
-      for (let i = 0; i < next.steps; i++) {
-        history.push(current);
-        if (history.length > TRAIL_STEPS) history.shift();
-        previous = current;
-        current = flock.step(current, params, TIMESTEP);
-        applyDue();
-      }
-      if (next.steps > 0) changed();
+      stepBy(next.steps);
       return next.steps;
     },
+    stepBy,
     play() {
       playing = true;
       changed();
@@ -221,13 +233,13 @@ export function createWorldSession(first: SessionOptions): WorldSession {
       const taken = (id: string) => current.beacons.some((e) => e.id === id) || current.obstacles.some((e) => e.id === id);
       do entityId = `${PREFIX[entity]}-${++placed[entity]}`;
       while (taken(entityId));
-      const event = { kind: "place", step: current.stepIndex, entityId, entity, x, y } as const;
+      const event = { kind: "place", step: stepsTaken(), entityId, entity, x, y } as const;
       current = flock.apply(current, event);
       record(event);
       return entityId;
     },
     remove(entityId) {
-      const event = { kind: "remove", step: current.stepIndex, entityId } as const;
+      const event = { kind: "remove", step: stepsTaken(), entityId } as const;
       current = flock.apply(current, event);
       record(event);
     },
@@ -240,6 +252,8 @@ export function createWorldSession(first: SessionOptions): WorldSession {
     },
     nextSeed() {
       seed = (seed + 1) >>> 0;
+      // A branch belongs to its seed; the next seed starts from its own.
+      options = { ...options, start: undefined };
       initialParams = params;
       events = setupEvents();
       placed = { beacon: 0, obstacle: 0 };
@@ -251,9 +265,9 @@ export function createWorldSession(first: SessionOptions): WorldSession {
     },
     plan: () => ({
       params: initialParams,
-      initialState: flock.init(initialParams, seed),
+      initialState: origin(),
       events: events.slice(0, applied),
-      totalSteps: current.stepIndex,
+      totalSteps: stepsTaken(),
       sampleInterval: 60,
       timestep: TIMESTEP,
     }),
