@@ -7,6 +7,22 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · The demo capture
+
+- Branch: `g2/capture-demo`
+- Commits: `edfadad`
+- Shipped:
+  - `npm run capture:demo`: seed 4 forming a murmuration while a scripted beacon is dragged
+    through it, at 1080 × 1350 and 1920 × 1080, 15 s each, into the git-ignored
+    `captures/` (ADR-0010).
+  - The world advances two steps per video frame, and Playwright's own ffmpeg writes
+    bit-exact VP8 WebM.
+- Evidence:
+  - 9 new unit tests, untagged.
+  - Two full runs gave byte-identical frame streams and videos.
+  - A planted unknown encoder failed at once, with ffmpeg's own message.
+- Gate: `check:gate` G1 passed at `edfadad` with 269 tests.
+
 ## 2026-10-09 · The axe scan
 
 - Branch: `g2/axe-scan`

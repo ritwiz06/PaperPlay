@@ -58,6 +58,8 @@ Every displayed scientific statement has an anchor or an adaptation label.
 
 Done early:
 - [x] RunRecord v2 and the replay engine, part of R07 (2026-09-30).
+- [x] `npm run capture:demo`, a deterministic demo video, at the owner's request
+  (2026-10-09, ADR-0010).
 
 Next:
 - [x] First: add `@axe-core/playwright` (approved 2026-10-01) and the axe scan in `test:e2e`
@@ -149,4 +151,5 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-01 | The axe scan moves to the start of G2, with `@axe-core/playwright` | Owner approved the dependency |
 | 2026-10-01 | The group measure is settled at G2 | Owner decision (ADR-0003) |
 | 2026-10-09 | `main` holds G1; work moves to short branches off `main` | Owner decision (ADR-0009) |
+| 2026-10-09 | `npm run capture:demo` added before G2's interface work | Owner request (ADR-0010) |
 | 2026-10-09 | A game-first interface replaces the brief's §6 layout. G2's interface items are renamed: LevelCard, Guide, PaperJournal, LevelMap, DepthToggle and a split-screen ForkView, plus a design spike first | Owner decision (ADR-0008): the §6 layout reads as a dashboard |

@@ -11,9 +11,9 @@ How PaperPlay fits together today. The concepts named here are explained in
 | `packages/primitives` | Deterministic, fixed-step scientific models, their registry, and run replay | `flockPlanarWeighted`, `flockNeighbours`, `mulberry32`, `registry`, `runEvents`, `replayRecord` |
 | `packages/ui` | Design tokens, fonts, the stage and the bench | `@paperplay/ui/tokens`, `fonts.css`, `components.css`, `stage-core`, `three-adapter`, `react` |
 | `packages/pipeline` | Agent roles, model adapters, checks, controller | Empty until G3 |
-| `apps/web` | React shell: owns the run, renders state, submits actions | `src/world/session.ts`, `src/world/LocalWorld.tsx` at `/world/local`, `src/world/local-world.ts` |
+| `apps/web` | React shell: owns the run, renders state, submits actions | `src/world/session.ts`, `src/world/LocalWorld.tsx` at `/world/local`, `src/world/local-world.ts`; the dev-only capture page `capture.html` with `src/capture/` (ADR-0010) |
 | `apps/api` | Fastify API: will hold secrets and run jobs | `GET /health` only, until G3 |
-| `scripts/` | Gate, docs checker, defaults sweep, hook seed | `check-gate.ts`, `check-docs.ts`, `sweep-defaults.ts`, `hook-seed.ts` |
+| `scripts/` | Gate, docs checker, defaults sweep, hook seed, demo capture | `check-gate.ts`, `check-docs.ts`, `sweep-defaults.ts`, `hook-seed.ts`, `capture-demo.ts` |
 | `fixtures/oracles/` | Hand-derived expected behaviours for primitives | See `fixtures/oracles/README.md` |
 | `eval/` | Sweeps now; the frozen protocol and raw attempts from G4 | `eval/sweeps/` |
 | `tests/e2e/` | Playwright browser tests on Chromium | `world.spec.ts` [R04], `accessibility.spec.ts` [R12], `stage.spec.ts`, `fonts.spec.ts`, `smoke.spec.ts` |
@@ -134,6 +134,8 @@ flowchart LR
 | Browser tests render WebGL in software | Launch flags, and a test that asserts SwiftShader was used | `playwright.config.ts`, `tests/e2e/stage.spec.ts` |
 | Fonts come from the page's own origin, and only the shipped weights are declared or rendered | A unit test on the font files; a browser test that blocks off-origin requests | `packages/ui/test/fonts.test.ts`, `tests/e2e/fonts.spec.ts` |
 | `/world/local` has no WCAG 2.x A or AA violation that axe can detect, in four states, at 1280 and 360 px | Browser tests [R12] | `tests/e2e/accessibility.spec.ts` |
+| The demo capture advances a fixed two steps per video frame, replays from its own record, and ends on one group | Tests; two runs gave byte-identical videos (2026-10-09 log) | `apps/web/test/demo-script.test.ts`, `scripts/test/capture.test.ts` |
+| The capture page never ships | The production build has one entry, `index.html` | `apps/web/vite.config.ts` (Vite's default input) |
 | Secrets stay server-side | Not yet enforced (G3) | — |
 
 ## Runtime and tooling
@@ -154,7 +156,8 @@ flowchart LR
     the evidence;
   - `check:docs` checks the documentation;
   - `sweep:defaults` reproduces ADR-0003's sweep;
-  - `choose:hook-seed` re-applies ADR-0003's hook-seed rule.
+  - `choose:hook-seed` re-applies ADR-0003's hook-seed rule;
+  - `capture:demo` films the demo video into the git-ignored `captures/` (ADR-0010).
 - **The local world's settings** live in `apps/web/src/world/local-world.ts`. They are
   teaching choices: the hook seed now, and its levels until WorldSpec arrives at G2.
 
@@ -174,3 +177,4 @@ flowchart LR
 | 2026-10-01 | 73c491e | `FrameEmphasis`, picking, rings; the fit backs off in inverse proportion to the aspect; fog keeps its distance |
 | 2026-10-01 | 107a38a | `packages/ui/src/react` (WorldStage, LabBench, origins); the session and `/world/local` in `apps/web`; a Vitest project for `apps/web`; `src/stage/local-stage.ts` removed |
 | 2026-10-09 | 3639dfb | The axe scan in `test:e2e` [R12]; `npm run typecheck` covers `tests/e2e` |
+| 2026-10-09 | edfadad | `npm run capture:demo`: the dev-only capture page, the demo script, Playwright's ffmpeg (ADR-0010) |
