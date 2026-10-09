@@ -11,12 +11,15 @@ import { existsSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { performance } from "node:perf_hooks";
 import { evaluateGate, fromPlaywrightReport, fromVitestReport, type TestResult } from "./gate/evidence.ts";
+import { reviewProblems } from "./gate/worlds.ts";
 
 interface Gate {
   title: string;
   tag: string;
   scripts: string[];
   requires: string[];
+  /** WorldSpecs that must be reviewed, not drafts, for the gate to pass. */
+  reviewedWorlds?: string[];
 }
 
 interface GatesFile {
@@ -91,6 +94,14 @@ for (const script of gate.scripts) {
   } catch (error) {
     problems.push(`${report.file}: ${error instanceof Error ? error.message : String(error)}`);
   }
+}
+
+// Worlds the gate requires as reviewed: a draft, or any placeholder anchor, fails it.
+for (const path of gate.reviewedWorlds ?? []) {
+  const full = join(root, path);
+  const found = existsSync(full) ? reviewProblems(path, readJson(full)) : [`${path} does not exist`];
+  problems.push(...found);
+  summary.push(`  ${pad("world", 11)}${pad(found.length === 0 ? "ok" : "draft", 8)}${path}`);
 }
 
 const outcome = evaluateGate({ requires: gate.requires, known: Object.keys(gates.requirements), results });
