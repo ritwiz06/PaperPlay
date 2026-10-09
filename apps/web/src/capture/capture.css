@@ -1,0 +1,18 @@
+/* The capture page: the stage fills the window edge to edge, with nothing laid over it. */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+body {
+  overflow: hidden;
+  background: var(--cream);
+}
+#root .stage {
+  height: 100%;
+  border-radius: 0;
+}
+#root .stage-keys {
+  display: none;
+}

@@ -11,6 +11,9 @@ playwright-report/
 blob-report/
 coverage/
 
+# Demo videos from npm run capture:demo; regenerated, never committed
+captures/
+
 # Secrets live in apps/api/.env only and are never committed
 .env
 .env.*
