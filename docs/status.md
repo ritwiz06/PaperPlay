@@ -20,7 +20,7 @@ rewritten every session.
 - **Branches:**
   - `g2/shell` holds slice 1 so far: `7b88705` (ADR-0008 records the spike's review), then a
     local work-in-progress commit, `bc8c630`. It is unmerged and unpushed.
-  - `g2/finding-capture` holds this finding's docs.
+  - This finding's docs are on `main` (`ff51afe`), and pushed.
 - **Working commit:** `8d36d62` on `main`, the latest code commit there (`capture:demo
   --frames`). `check:gate` passed on it, with this finding's docs on top.
 - **Runtime:** Node 24.21.0, pinned in `.node-version`. Run tools through
