@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { App } from "./App.tsx";
 import "@paperplay/ui/fonts.css";
 import "@paperplay/ui/components.css";
+import "@paperplay/ui/hud.css";
 import "./styles.css";
 
 const container = document.getElementById("root");

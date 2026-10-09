@@ -9,12 +9,14 @@
  */
 import type { RunEvent } from "@paperplay/contracts";
 import {
+  flockHeadings,
   flockNeighbours,
   flockPlanarWeighted as flock,
   type Entity,
   type FlockObservables,
   type FlockParams,
   type FlockState,
+  type Headings,
   type RunPlan,
 } from "@paperplay/primitives";
 import { advance, START_CLOCK, type FrameEmphasis, type StageInput, type StepClock } from "@paperplay/ui/stage-core";
@@ -41,6 +43,8 @@ export interface SessionSnapshot {
   readonly beacons: readonly Entity[];
   readonly obstacles: readonly Entity[];
   readonly selected: { readonly index: number; readonly seen: readonly number[]; readonly crowding: readonly number[] } | null;
+  /** Each bird's heading and the flock's mean heading, from the primitive's query (Q2), for the compass. */
+  readonly headings: Headings;
 }
 
 export interface WorldSession {
@@ -145,6 +149,7 @@ export function createWorldSession(options: SessionOptions): WorldSession {
       beacons: current.beacons,
       obstacles: current.obstacles,
       selected: selected === null ? null : { index: selected, ...flockNeighbours(current, params, selected) },
+      headings: flockHeadings(current),
     }),
     state: () => current,
     stageInput: () => ({ previous, current, alpha: playing ? alpha : 1, timestep: TIMESTEP }),

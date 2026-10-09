@@ -1,5 +1,5 @@
 import { Action } from "@paperplay/contracts";
-import { flockDefaultParams, flockNeighbours, flockPlanarWeighted as flock, runEvents } from "@paperplay/primitives";
+import { flockDefaultParams, flockHeadings, flockNeighbours, flockPlanarWeighted as flock, runEvents } from "@paperplay/primitives";
 import { describe, expect, it } from "vitest";
 import { HOOK_SEED, LOCAL_ACTIONS, LOCAL_CONTROLS, PRIMARY_ACTION } from "../src/world/local-world.ts";
 import { createWorldSession, type WorldSession } from "../src/world/session.ts";
@@ -148,6 +148,12 @@ describe("[R04] local world session", () => {
     session.select(null);
     expect(session.snapshot().selected).toBeNull();
     expect(() => session.select(72)).toThrow(RangeError);
+  });
+
+  it("shows every bird's heading and the mean heading exactly as the primitive's query reports them", () => {
+    const session = open();
+    run(session, 120);
+    expect(session.snapshot().headings).toEqual(flockHeadings(session.state()));
   });
 
   it("restores the default rules with one event for each rule that had moved", () => {

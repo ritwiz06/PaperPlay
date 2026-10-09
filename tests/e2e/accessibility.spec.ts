@@ -54,3 +54,35 @@ for (const size of SIZES) {
     });
   });
 }
+
+async function openHook(page: Page): Promise<void> {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/world/hook");
+  await expect.poll(async () => Number((await page.getByRole("application", { name: "World stage" }).getAttribute("data-frames")) ?? 0)).toBeGreaterThan(0);
+}
+
+for (const size of SIZES) {
+  test.describe(`/world/hook at ${size.width} × ${size.height}`, () => {
+    test.use({ viewport: { width: size.width, height: size.height } });
+
+    test(`[R12] /world/hook passes the axe scan as it opens, after the control moves, and with What if open, on a ${size.name}`, async ({ page }) => {
+      await openHook(page);
+      expect(await violations(page)).toEqual([]);
+      const slider = page.getByRole("slider", { name: "Move together" });
+      await slider.focus();
+      await page.keyboard.press("End");
+      await expect(page.getByRole("group", { name: "Guide" })).toBeVisible();
+      expect(await violations(page)).toEqual([]);
+      await page.getByRole("button", { name: "What if" }).click();
+      await expect(page.getByRole("heading", { name: /What if birds ignored/ })).toBeVisible();
+      expect(await violations(page)).toEqual([]);
+    });
+
+    test(`[R12] /world/hook passes the axe scan with the paper journal open, on a ${size.name}`, async ({ page }) => {
+      await openHook(page);
+      await page.getByRole("button", { name: "Journal" }).click();
+      await expect(page.getByRole("complementary", { name: "Paper journal" })).toBeVisible();
+      expect(await violations(page)).toEqual([]);
+    });
+  });
+}

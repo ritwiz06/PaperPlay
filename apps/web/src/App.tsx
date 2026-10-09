@@ -1,5 +1,6 @@
 import { OriginLegend } from "@paperplay/ui/react";
 import { useSyncExternalStore } from "react";
+import { HookWorld } from "./hook/HookWorld.tsx";
 import { LocalWorld } from "./world/LocalWorld.tsx";
 
 const subscribe = (onChange: () => void) => {
@@ -14,6 +15,8 @@ const currentPath = () => window.location.pathname;
  */
 export function App() {
   const path = useSyncExternalStore(subscribe, currentPath);
+  // The game-first shell (ADR-0008) owns the whole window: no masthead over its stage.
+  if (path === "/world/hook") return <HookWorld />;
   const world = path === "/world/local";
   return (
     <div className="shell">
