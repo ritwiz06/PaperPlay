@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { encodeArgs, playwrightFfmpegPath } from "../capture/ffmpeg.ts";
+import { parseCaptureOptions } from "../capture/options.ts";
 
 describe("Playwright's own ffmpeg", () => {
   const base = { revision: "1011", home: "/home/ada", coreDir: "/repo/node_modules/playwright-core" } as const;
@@ -47,5 +48,17 @@ describe("the encoder's arguments", () => {
     expect(after("-flags:v")).toBe("+bitexact");
     expect(after("-map_metadata")).toBe("-1");
     expect(args.at(-1)).toBe("captures/demo.webm");
+  });
+});
+
+describe("the capture's options", () => {
+  it("writes only the videos by default, and a lossless PNG sequence too with --frames", () => {
+    expect(parseCaptureOptions([])).toEqual({ frames: false });
+    expect(parseCaptureOptions(["--frames"])).toEqual({ frames: true });
+  });
+
+  it("refuses anything else, rather than ignore a typo", () => {
+    expect(() => parseCaptureOptions(["--frame"])).toThrow(/--frame/);
+    expect(() => parseCaptureOptions(["--frames", "extra"])).toThrow(/extra/);
   });
 });
