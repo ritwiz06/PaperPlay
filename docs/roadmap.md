@@ -47,7 +47,9 @@ Done:
 - [x] Tagged v0.1.0 at `3448e5b`, with the owner's go-ahead (2026-10-01).
 
 Later (moved out of G1):
-- CaptionStrip, StatusChip and the tethers move to G2 (see Plan changes, 2026-10-01).
+- CaptionStrip, StatusChip and the tethers move to G2 (see Plan changes, 2026-10-01). Since
+  then, ADR-0008 has replaced the caption strip with the guide and the tethers with "From the
+  paper"; StatusChip waits for G3's job states.
 
 ## G2 Verified authored world
 
@@ -66,8 +68,18 @@ Next:
   default density, 17% of random scatters count as one group (ADR-0003).
 - [ ] The full WorldSpec schema and the hand-authored `flocking-reference.json`.
 - [ ] The deterministic builder, with binding fixtures.
-- [ ] EvidenceRail with two-way provenance and tethers; PathRibbon; DepthDial; ForkView;
-  GuidedExploration; CaptionStrip.
+- [ ] A design spike at `/world/hook` with hard-coded content, screenshotted on desktop
+  and phone, for the owner's review (ADR-0008).
+- [ ] The game-first shell (ADR-0008): a full-screen stage, with the LevelCard (the one
+  control, its live readout and "What if"), the Guide and the LevelMap over it.
+- [ ] The PaperJournal, with two-way provenance: "From the paper" on every control,
+  passages unlocked level by level, and the origin legend.
+- [ ] The DepthToggle (Beginner / Intermediate / Advanced), in the level card and the
+  journal, showing and hiding by element id.
+- [ ] The split-screen ForkView: two synchronized worlds and one measured difference
+  between them.
+- [ ] Guided exploration in the guide: predict, intervene, observe, explain, never scored.
+- [ ] `/world/local` moves into the shell as the free sandbox.
 - [ ] RunRecord export and import; `npm run replay` with a tolerance report; a replay test
   on a fresh page load.
 - [ ] The stale-evidence rule.
@@ -136,3 +148,5 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-01 | The stage's fit rule changes: back off in inverse proportion to the aspect, below 1.32:1 | The old rule cropped the field on the phone layout (ADR-0007) |
 | 2026-10-01 | The axe scan moves to the start of G2, with `@axe-core/playwright` | Owner approved the dependency |
 | 2026-10-01 | The group measure is settled at G2 | Owner decision (ADR-0003) |
+| 2026-10-09 | `main` holds G1; work moves to short branches off `main` | Owner decision (ADR-0009) |
+| 2026-10-09 | A game-first interface replaces the brief's §6 layout. G2's interface items are renamed: LevelCard, Guide, PaperJournal, LevelMap, DepthToggle and a split-screen ForkView, plus a design spike first | Owner decision (ADR-0008): the §6 layout reads as a dashboard |

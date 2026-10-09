@@ -1,6 +1,7 @@
 # ADR-0007: The local world: a recorded session, a React stage and bench
 
-- Status: accepted
+- Status: accepted. Item 8 is superseded on world screens by ADR-0008, which moves the
+  legend into the paper journal; `/world/local` keeps it until it moves into the shell.
 - Date: 2026-10-01
 - Decided by: the owner set the slice (WorldStage, LabBench, `/world/local` and the [R04]
   smoke test, on the hook seed). The design below was made while building it, and is

@@ -34,10 +34,10 @@ apps/api          Node 24 + Fastify + TS. Holds secrets, runs the job state mach
 packages/contracts  Zod schemas + types: SourceManifest, Anchor, WorldSpec, Action, RunRecord, JobState.
 packages/primitives Pure, deterministic, fixed-step scientific primitives (starts with flock.planar.weighted).
 packages/pipeline   Reader → Planner/Designer → Explainer → Builder → Checks → Reviewer → Controller. Mock provider first.
-packages/ui         Design tokens, world stage, lab bench, evidence rail, depth dial, fork view.
+packages/ui         Design tokens, world stage, and the game-first HUD (ADR-0008): level card, guide, paper journal, level map, depth toggle, fork view.
 eval/               protocol.md (frozen at G4, ADR-0005), held-out sections, baseline B1, raw attempts, analysis; sweeps/ behind teaching-choice defaults.
 fixtures/           Papers, source maps, WorldSpec fixtures, independent oracle fixtures.
-reference/          murmuration-valley.html — the accepted visual direction. Read it; do not copy it verbatim. private/ is git-ignored owner-only material (ADR-0006): read a file there only when the owner asks.
+reference/          murmuration-valley.html — the accepted world and palette; outbreak-island.html — the game-first HUD (ADR-0008). Read them; do not copy them verbatim. private/ is git-ignored owner-only material (ADR-0006): read a file there only when the owner asks.
 docs/               README (index), project-brief, roadmap, status, requirements, architecture, concepts, progress, sessions/, decisions/ (ADRs)
 ```
 
@@ -67,7 +67,7 @@ docs/               README (index), project-brief, roadmap, status, requirements
 - Ask before adding a dependency, a new agent role, or a new world. Record the decision as an ADR.
 
 ## Design floor (details in the build brief)
-Accepted palette: cream `#f8faee`, ink `#172b2b`, dark `#132b2b`, aqua `#62cbc2`, lime `#d4f581`, line `#d2ddd3`, sub `#526a66`. World-first layout: the canvas is the interface; controls sit on a lab bench beside it, tethered to their evidence. Sentence case everywhere. No all-caps eyebrow labels, no numbered `01/02/03` markers unless content is a sequence, no identical card grids, no arrows appended to buttons, no fade-up-on-scroll on every section. Respect `prefers-reduced-motion`. Keyboard focus visible.
+Accepted palette: cream `#f8faee`, ink `#172b2b`, dark `#132b2b`, aqua `#62cbc2`, lime `#d4f581`, line `#d2ddd3`, sub `#526a66`. Game-first layout (ADR-0008): the stage fills the screen at all times, with no permanent side columns; a level card (title, goal, the one control, "What if"), the guide and a compact level map sit over it; the paper journal slides over on demand, and every control's "From the paper" tap opens it at its passage. Origin chips name their origin in words; the legend lives in the journal. Sentence case everywhere. No all-caps eyebrow labels, no numbered `01/02/03` markers unless content is a sequence, no identical card grids, no arrows appended to buttons, no fade-up-on-scroll on every section. Respect `prefers-reduced-motion`. Keyboard focus visible.
 
 ## Out of scope for month one
 Universal paper coverage, arbitrary generated code execution outside the widget sandbox, reproduction of original experiments, billing/teams, multiple providers, photorealism/VR/multiplayer, Next.js/Trigger.dev/Neon productization (planned after G5; packages are framework-agnostic so they port).

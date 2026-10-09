@@ -20,9 +20,9 @@ Google's servers. Until now the app fell back to the system font.
   - 600 for headings, emphasis and buttons.
 
   No element may ask for another weight, so the browser never synthesises a fake bold.
-- **Literata sets paper passages,** in weight 400. The evidence rail, at G2, is the first
-  part of the interface to show them. Italic or other weights are added only when a passage
-  needs them.
+- **Literata sets paper passages,** in weight 400. The evidence rail (the paper journal
+  since ADR-0008), at G2, is the first part of the interface to show them. Italic or other
+  weights are added only when a passage needs them.
 - **Self-hosted.** The files live in `packages/ui/src/fonts/`, beside `fonts.css`, which
   declares them; `apps/web` imports `@paperplay/ui/fonts.css`. No request leaves the page's
   origin, at runtime or in tests.

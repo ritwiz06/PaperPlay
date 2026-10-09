@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Outbreak Island — PaperPlay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --ink:#172b2b; --cream:#f8faee; --aqua:#62cbc2; --lime:#d4f581; --sick:#ff7a45;
+  --card:#f8faee; --text:#172b2b; --sub:#4a615d; --edge:#172b2b; --shadow:#172b2b;
+  --btn:#172b2b; --btnText:#f8faee; --sky:#cfeee9;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --card:#1b3534; --text:#f8faee; --sub:#b3c8c3; --edge:#050f0f; --shadow:#050f0f;
+    --btn:#d4f581; --btnText:#172b2b; --sky:#10292a;
+  }
+}
+:root[data-theme="dark"]{
+  --card:#1b3534; --text:#f8faee; --sub:#b3c8c3; --edge:#050f0f; --shadow:#050f0f;
+  --btn:#d4f581; --btnText:#172b2b; --sky:#10292a;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{height:100%;margin:0;background:var(--sky);color:var(--text);font-family:'Fredoka','Trebuchet MS',system-ui,sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+#app{position:relative;width:100%;height:100%;overflow:hidden}
+#scene{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:pointer}
+.card{background:var(--card);border:2px solid var(--edge);border-radius:18px;box-shadow:4px 4px 0 var(--shadow)}
+button{font:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--aqua);outline-offset:2px}
+
+.brand{position:absolute;left:16px;top:16px;display:flex;align-items:center;gap:12px;padding:10px 16px 10px 12px}
+.brand .world{font-size:20px;font-weight:700;line-height:1.1}
+.brand .src{font-size:13px;color:var(--sub);margin-top:2px}
+
+.path{position:absolute;left:50%;top:18px;transform:translateX(-50%);display:flex;gap:6px;list-style:none;margin:0;padding:6px}
+.path li{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 8px;border-radius:999px;font-size:14px;font-weight:500;color:var(--sub)}
+.path li .dot{width:24px;height:24px;border-radius:50%;border:2px solid var(--sub);display:grid;place-items:center;font-size:13px;font-weight:700}
+.path li.done .dot{background:var(--aqua);border-color:var(--edge);color:#172b2b}
+.path li.now{background:var(--btn);color:var(--btnText)}
+.path li.now .dot{border-color:var(--btnText);color:var(--btnText)}
+
+.stats{position:absolute;right:16px;top:16px;padding:12px 14px;width:236px}
+.pills{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.pill{border-radius:12px;padding:6px 4px;text-align:center;border:2px solid var(--edge)}
+.pill b{display:block;font-size:22px;line-height:1.1}
+.pill span{font-size:12px;font-weight:500}
+.pill.s{background:#fbf8ec;color:#172b2b}
+.pill.i{background:var(--sick);color:#172b2b}
+.pill.r{background:var(--aqua);color:#172b2b}
+#chart{display:block;width:100%;height:56px;margin-top:10px;border-radius:10px;background:rgba(23,43,43,.06)}
+.rline{margin-top:8px;font-size:13px;color:var(--sub)}
+.rline b{color:var(--text);font-size:15px}
+.prot{margin-top:6px;font-size:13px;color:var(--sub)}
+.prot b{color:var(--text)}
+
+.level{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);width:min(560px,calc(100% - 32px));padding:16px 18px 16px}
+.lvl-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lvl-num{font-size:14px;color:var(--sub);font-weight:500}
+.chip{font-size:12px;font-weight:600;border-radius:999px;padding:3px 10px;border:1.5px solid var(--edge)}
+.chip.paper{background:#172b2b;color:#f8faee}
+.chip.whatif{background:repeating-linear-gradient(135deg,#f8faee 0 4px,#e3e9df 4px 7px);color:#172b2b;border-style:dashed}
+.level h2{margin:6px 0 2px;font-size:26px;font-weight:700;line-height:1.1}
+.level p.hint{margin:0;font-size:16px;line-height:1.35;color:var(--sub);max-width:60ch}
+.ctrl{margin-top:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ctrl label{font-size:15px;font-weight:600}
+.ctrl input[type=range]{flex:1;min-width:160px;accent-color:var(--sick);height:32px}
+.ctrl .word{min-width:92px;text-align:center;font-weight:700;font-size:15px;border-radius:999px;padding:5px 12px;background:var(--sick);color:#172b2b;border:2px solid var(--edge)}
+details.paper{margin-top:10px;font-size:14px}
+details.paper summary{cursor:pointer;font-weight:600;color:var(--text);list-style-position:outside}
+details.paper p{margin:6px 0 0;color:var(--sub);line-height:1.4}
+.actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.btn{min-height:46px;padding:0 18px;border-radius:14px;border:2px solid var(--edge);background:var(--btn);color:var(--btnText);font-weight:600;font-size:15px;box-shadow:3px 3px 0 var(--shadow);transition:transform .08s ease, box-shadow .08s ease}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--shadow)}
+.btn.ghost{background:transparent;color:var(--text)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none}
+.btn.next{margin-left:auto}
+
+.toast{position:absolute;left:50%;top:92px;transform:translateX(-50%) scale(.96);opacity:0;pointer-events:none;padding:16px 20px;width:min(440px,calc(100% - 32px));text-align:center;transition:opacity .25s ease, transform .25s ease}
+.toast.show{opacity:1;transform:translateX(-50%) scale(1);pointer-events:auto}
+.toast strong{display:block;font-size:24px;line-height:1.15}
+.toast p{margin:6px 0 0;font-size:15px;color:var(--sub);line-height:1.4}
+.toast .btn{margin-top:12px}
+
+#intro{position:absolute;inset:0;display:grid;place-items:center;background:rgba(16,41,42,.28);transition:opacity .5s ease}
+#intro.gone{opacity:0;pointer-events:none}
+#intro .card{padding:28px 30px;width:min(480px,calc(100% - 32px));text-align:left}
+#intro .kicker{font-size:15px;color:var(--sub);font-weight:500}
+#intro h1{margin:6px 0 8px;font-size:48px;line-height:1;font-weight:700;letter-spacing:-.01em}
+#intro p{margin:0;font-size:17px;line-height:1.4;color:var(--sub)}
+#intro .legend{display:flex;gap:14px;margin:16px 0 18px;flex-wrap:wrap;font-size:14px;font-weight:500}
+#intro .legend span{display:flex;align-items:center;gap:6px}
+#intro .legend i{width:14px;height:14px;border-radius:50%;border:2px solid var(--edge);display:inline-block}
+#fallback{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center}
+
+@media (max-width: 760px){
+  .path{top:auto;bottom:auto;left:16px;transform:none;top:86px;padding:0}
+  .path li{padding:4px 8px 4px 4px;font-size:0}
+  .path li .dot{font-size:13px}
+  .stats{top:auto;right:16px;left:auto;width:190px;top:84px;padding:10px}
+  .pill b{font-size:18px}
+  #chart{height:40px}
+  .brand .src{font-size:12px}
+  .level h2{font-size:22px}
+  .level p.hint{font-size:15px}
+  .toast{top:auto;bottom:calc(50% - 40px)}
+  #intro h1{font-size:38px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="scene" aria-label="A 3D island with people walking around. Tap a person to interact."></canvas>
+
+  <div class="brand card">
+    <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="15" fill="#62cbc2" stroke="#172b2b" stroke-width="2"/><circle cx="12" cy="20" r="3.5" fill="#ff7a45" stroke="#172b2b" stroke-width="1.5"/><circle cx="22" cy="13" r="3.5" fill="#f8faee" stroke="#172b2b" stroke-width="1.5"/><path d="M14.5 17.5 Q17 12 19.5 13" fill="none" stroke="#172b2b" stroke-width="1.5" stroke-dasharray="1.5 2"/></svg>
+    <div>
+      <div class="world">Outbreak Island</div>
+      <div class="src">From Kermack and McKendrick, 1927</div>
+    </div>
+  </div>
+
+  <ol class="path card" aria-label="Levels">
+    <li data-l="0"><span class="dot">1</span>Start it</li>
+    <li data-l="1"><span class="dot">2</span>Turn the dial</li>
+    <li data-l="2"><span class="dot">3</span>What if?</li>
+  </ol>
+
+  <div class="stats card" aria-label="Live island counts">
+    <div class="pills">
+      <div class="pill s"><b id="nS">0</b><span>healthy</span></div>
+      <div class="pill i"><b id="nI">0</b><span>sick</span></div>
+      <div class="pill r"><b id="nR">0</b><span>recovered</span></div>
+    </div>
+    <canvas id="chart" aria-label="How many people are sick over time"></canvas>
+    <div class="rline">Each sick person infected about <b id="rNum">…</b></div>
+    <div class="prot" id="protLine" hidden>Protected: <b id="nV">0</b></div>
+  </div>
+
+  <div class="toast card" id="toast" role="status" aria-live="polite">
+    <strong id="toastTitle"></strong>
+    <p id="toastBody"></p>
+    <button class="btn" id="toastBtn" hidden></button>
+  </div>
+
+  <section class="level card" aria-live="polite">
+    <div class="lvl-top">
+      <span class="lvl-num" id="lvlNum">Level 1 of 3</span>
+      <span class="chip paper" id="lvlChip">From the paper</span>
+    </div>
+    <h2 id="lvlTitle">Start an outbreak</h2>
+    <p class="hint" id="lvlHint"></p>
+    <div class="ctrl" id="ctrlSlider" hidden>
+      <label for="contag">How catchy</label>
+      <input id="contag" type="range" min="0" max="100" value="55">
+      <span class="word" id="contagWord">Catchy</span>
+    </div>
+    <div class="ctrl" id="ctrlShield" hidden>
+      <button class="btn ghost" id="protBtn">Protect 40% at random</button>
+      <button class="btn ghost" id="unprotBtn">Clear protection</button>
+    </div>
+    <details class="paper">
+      <summary>What the paper says</summary>
+      <p id="paperLine"></p>
+    </details>
+    <div class="actions">
+      <button class="btn" id="startBtn">Start at random</button>
+      <button class="btn ghost" id="resetBtn">Reset island</button>
+      <button class="btn ghost next" id="nextBtn" disabled>Next level</button>
+    </div>
+  </section>
+
+  <div id="intro">
+    <div class="card">
+      <div class="kicker">PaperPlay world, generated from a 1927 paper</div>
+      <h1>Outbreak Island</h1>
+      <p>Why do epidemics stop before everyone gets sick? Kermack and McKendrick worked it out with equations. Here you get to find out by poking an island.</p>
+      <div class="legend">
+        <span><i style="background:#fbf8ec"></i>healthy</span>
+        <span><i style="background:#ff7a45"></i>sick</span>
+        <span><i style="background:#62cbc2"></i>recovered</span>
+        <span><i style="background:#d4f581"></i>protected</span>
+      </div>
+      <button class="btn" id="playBtn">Play</button>
+    </div>
+  </div>
+
+  <div id="fallback" hidden><div class="card" style="padding:24px;max-width:420px">This world needs WebGL, which isn’t available in this browser. Try a recent version of Chrome, Safari or Firefox.</div></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var $ = function(id){ return document.getElementById(id); };
+  if (!window.THREE) { $('fallback').hidden = false; $('intro').classList.add('gone'); return; }
+
+  var canvas = $('scene');
+  var renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true }); }
+  catch (e) { $('fallback').hidden = false; $('intro').classList.add('gone'); return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(42, 1, 0.1, 400);
+  var CAM_END = new THREE.Vector3(0, 25, 36);
+  camera.position.set(0, 70, 95);
+
+  var controls = null;
+  if (THREE.OrbitControls) {
+    controls = new THREE.OrbitControls(camera, canvas);
+    controls.enableDamping = true; controls.dampingFactor = 0.08;
+    controls.enablePan = false; controls.minDistance = 20; controls.maxDistance = 70;
+    controls.maxPolarAngle = 1.3; controls.target.set(0, 1.8, 0);
+    controls.autoRotate = !reduce; controls.autoRotateSpeed = 0.35;
+    controls.enabled = false;
+    var resumeTimer = null;
+    controls.addEventListener('start', function(){ controls.autoRotate = false; clearTimeout(resumeTimer); });
+    controls.addEventListener('end', function(){ clearTimeout(resumeTimer); if (!reduce) resumeTimer = setTimeout(function(){ controls.autoRotate = true; }, 8000); });
+  }
+  camera.lookAt(0, 1.8, 0);
+
+  // Lights and theme
+  var hemi = new THREE.HemisphereLight(0xffffff, 0x8fb89a, 0.85);
+  scene.add(hemi);
+  var sun = new THREE.DirectionalLight(0xfff4dc, 0.95);
+  sun.position.set(22, 34, 14);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  var sc = sun.shadow.camera; sc.left = -26; sc.right = 26; sc.top = 26; sc.bottom = -26; sc.near = 1; sc.far = 90;
+  sun.shadow.bias = -0.0005;
+  scene.add(sun);
+
+  function isDark(){
+    var t = document.documentElement.getAttribute('data-theme');
+    if (t === 'dark') return true; if (t === 'light') return false;
+    return window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  function applyTheme(){
+    var d = isDark();
+    var sky = d ? 0x10292a : 0xcfeee9;
+    scene.background = new THREE.Color(sky);
+    scene.fog = new THREE.Fog(sky, 70, 170);
+    hemi.color.set(d ? 0x9fc9c4 : 0xffffff);
+    hemi.groundColor.set(d ? 0x10292a : 0x8fb89a);
+    hemi.intensity = d ? 0.55 : 0.85;
+    sun.intensity = d ? 0.65 : 0.95;
+    sun.color.set(d ? 0xcfe3ff : 0xfff4dc);
+  }
+  applyTheme();
+  if (window.matchMedia) {
+    var mq = matchMedia('(prefers-color-scheme: dark)');
+    if (mq.addEventListener) mq.addEventListener('change', applyTheme);
+  }
+  new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  function std(color, extra){
+    var o = { color: color, flatShading: true, roughness: 0.85, metalness: 0 };
+    if (extra) for (var k in extra) o[k] = extra[k];
+    return new THREE.MeshStandardMaterial(o);
+  }
+  function add(mesh, shadow){ if (shadow) { mesh.castShadow = true; mesh.receiveShadow = true; } scene.add(mesh); return mesh; }
+
+  // Sea
+  var seaGeo = new THREE.PlaneGeometry(220, 220, 70, 70);
+  seaGeo.rotateX(-Math.PI / 2);
+  var seaBase = seaGeo.attributes.position.array.slice();
+  var sea = new THREE.Mesh(seaGeo, std(0x4fbfb5, { roughness: 0.55 }));
+  sea.receiveShadow = true; scene.add(sea);
+  function waves(t){
+    var p = seaGeo.attributes.position.array;
+    for (var i = 0; i < p.length; i += 3) {
+      var x = seaBase[i], z = seaBase[i + 2];
+      p[i + 1] = Math.sin(x * 0.18 + t * 0.9) * 0.35 + Math.cos(z * 0.22 + t * 0.7) * 0.3;
+    }
+    seaGeo.attributes.position.needsUpdate = true;
+    seaGeo.computeVertexNormals();
+  }
+  waves(0);
+
+  // Island
+  var GY = 1.85;
+  var sand = add(new THREE.Mesh(new THREE.CylinderGeometry(19, 22.5, 3, 40), std(0xf1e2b8)), true);
+  sand.position.y = 0;
+  var grass = add(new THREE.Mesh(new THREE.CylinderGeometry(16, 17.2, 0.5, 40), std(0x8cc46a)), true);
+  grass.position.y = GY - 0.25;
+  var plaza = add(new THREE.Mesh(new THREE.CylinderGeometry(4.2, 4.2, 0.06, 32), std(0xe9dcb6)), false);
+  plaza.position.y = GY + 0.02; plaza.receiveShadow = true;
+  var well = add(new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1, 0.9, 12), std(0xb9b2a0)), true);
+  well.position.y = GY + 0.45;
+  var wellRoof = add(new THREE.Mesh(new THREE.ConeGeometry(1.3, 0.9, 4), std(0x172b2b)), true);
+  wellRoof.position.y = GY + 2.2; wellRoof.rotation.y = Math.PI / 4;
+  [[-0.7, 0], [0.7, 0]].forEach(function(o){
+    var post = add(new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.4, 6), std(0x8a6a4a)), true);
+    post.position.set(o[0], GY + 1.3, o[1]);
+  });
+
+  // Houses around the edge
+  var houseAngles = [];
+  var roofColors = [0x172b2b, 0x62cbc2, 0xff9f6b, 0x172b2b, 0x62cbc2, 0x3f7d77, 0xff9f6b, 0x172b2b, 0x62cbc2];
+  for (var h = 0; h < 9; h++) {
+    var a = h / 9 * Math.PI * 2 + 0.2;
+    houseAngles.push(a);
+    var r = 13 + (h % 2) * 0.6;
+    var house = new THREE.Group();
+    var walls = new THREE.Mesh(new THREE.BoxGeometry(2, 1.5, 2), std(0xfbf5e4));
+    walls.position.y = 0.75; walls.castShadow = true; walls.receiveShadow = true;
+    var roof = new THREE.Mesh(new THREE.ConeGeometry(1.7, 1.2, 4), std(roofColors[h]));
+    roof.position.y = 2.1; roof.rotation.y = Math.PI / 4; roof.castShadow = true;
+    var door = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.8, 0.05), std(0x8a6a4a));
+    door.position.set(0, 0.4, 1.02);
+    house.add(walls, roof, door);
+    house.position.set(Math.cos(a) * r, GY, Math.sin(a) * r);
+    house.lookAt(0, GY, 0);
+    scene.add(house);
+  }
+
+  // Trees
+  var trees = [];
+  for (var t = 0; t < 30; t++) {
+    var ta = t / 30 * Math.PI * 2 + 0.07;
+    var near = houseAngles.some(function(ha){ var d = Math.abs(((ta - ha + Math.PI * 3) % (Math.PI * 2)) - Math.PI); return d < 0.24; });
+    if (near) continue;
+    var tr = 14.6 + ((t * 37) % 10) / 10 * 1.1;
+    var tree = new THREE.Group();
+    var trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.24, 1.1, 6), std(0x8a6a4a));
+    trunk.position.y = 0.55; trunk.castShadow = true;
+    var leaves = new THREE.Mesh(new THREE.IcosahedronGeometry(0.9 + (t % 3) * 0.18, 0), std(t % 4 === 0 ? 0x5fa35a : 0x6fb85e));
+    leaves.position.y = 1.6; leaves.castShadow = true;
+    tree.add(trunk, leaves);
+    tree.position.set(Math.cos(ta) * tr, GY, Math.sin(ta) * tr);
+    scene.add(tree);
+    trees.push({ leaves: leaves, off: t * 1.7 });
+  }
+
+  // Dock and boats
+  var dockA = 2.55;
+  var dock = add(new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.25, 8), std(0xa27d56)), true);
+  dock.position.set(Math.cos(dockA) * 21, 1.3, Math.sin(dockA) * 21);
+  dock.lookAt(0, 1.3, 0);
+  var boats = [];
+  [[2.35, 27, 0xff9f6b], [2.9, 31, 0xfbf5e4], [5.4, 28, 0x62cbc2]].forEach(function(b, i){
+    var boat = new THREE.Group();
+    var hull = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.6, 3.2), std(b[2]));
+    hull.castShadow = true;
+    var mast = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2.6, 6), std(0x8a6a4a));
+    mast.position.y = 1.5;
+    var sail = new THREE.Mesh(new THREE.ConeGeometry(0.9, 2.1, 3), std(0xfbfbf5));
+    sail.position.set(0, 1.6, 0.35); sail.scale.set(0.15, 1, 1); sail.castShadow = true;
+    boat.add(hull, mast, sail);
+    boat.position.set(Math.cos(b[0]) * b[1], 0.3, Math.sin(b[0]) * b[1]);
+    boat.rotation.y = b[0];
+    scene.add(boat);
+    boats.push({ g: boat, off: i * 2.1 });
+  });
+
+  // Clouds
+  var cloudRoot = new THREE.Group(); scene.add(cloudRoot);
+  var cloudMat = std(0xffffff, { roughness: 1 });
+  for (var c = 0; c < 7; c++) {
+    var cg = new THREE.Group();
+    for (var p = 0; p < 4; p++) {
+      var puff = new THREE.Mesh(new THREE.IcosahedronGeometry(1.4 + (p % 2) * 0.6, 0), cloudMat);
+      puff.position.set(p * 1.5 - 2.2, (p % 2) * 0.5, (p % 3) * 0.4);
+      cg.add(puff);
+    }
+    var ca = c / 7 * Math.PI * 2;
+    cg.position.set(Math.cos(ca) * 34, 20 + (c % 3) * 3, Math.sin(ca) * 34);
+    cloudRoot.add(cg);
+  }
+
+  // People
+  var N = 140, WALK_R = 11.2;
+  var geoBody = new THREE.CylinderGeometry(0.26, 0.34, 0.72, 8); geoBody.translate(0, 0.36, 0);
+  var geoHead = new THREE.SphereGeometry(0.27, 14, 10);
+  var M = {
+    S: std(0xfbf8ec),
+    I: std(0xff7a45, { emissive: 0xff5a1f, emissiveIntensity: 0.5 }),
+    R: std(0x62cbc2),
+    V: std(0xfbf8ec)
+  };
+  var skin = std(0xffdcb8);
+  var ringGeo = new THREE.RingGeometry(0.42, 0.7, 24); ringGeo.rotateX(-Math.PI / 2);
+  var ringMat = new THREE.MeshBasicMaterial({ color: 0xff7a45, transparent: true, opacity: 0.75, depthWrite: false });
+  var bubbleGeo = new THREE.SphereGeometry(0.66, 16, 12);
+  var bubbleMat = new THREE.MeshStandardMaterial({ color: 0xd4f581, emissive: 0xa9d34a, emissiveIntensity: 0.35, transparent: true, opacity: 0.38, depthWrite: false, roughness: 0.3 });
+
+  var agents = [], pickables = [];
+  function randIn(r){ var a = Math.random() * Math.PI * 2, d = Math.sqrt(Math.random()) * r; return [Math.cos(a) * d, Math.sin(a) * d]; }
+  function pickTarget(ag){
+    var pt;
+    if (Math.random() < 0.2) { var ha = houseAngles[(Math.random() * houseAngles.length) | 0]; pt = [Math.cos(ha) * 11.4, Math.sin(ha) * 11.4]; }
+    else pt = randIn(WALK_R);
+    ag.tx = pt[0]; ag.tz = pt[1];
+  }
+  for (var n = 0; n < N; n++) {
+    var g = new THREE.Group();
+    var body = new THREE.Mesh(geoBody, M.S); body.castShadow = true;
+    var head = new THREE.Mesh(geoHead, skin); head.position.y = 0.98; head.castShadow = true;
+    var ring = new THREE.Mesh(ringGeo, ringMat); ring.position.y = 0.03; ring.visible = false;
+    var bubble = new THREE.Mesh(bubbleGeo, bubbleMat); bubble.position.y = 0.62; bubble.visible = false;
+    g.add(body, head, ring, bubble);
+    scene.add(g);
+    var ag = { g: g, body: body, ring: ring, bubble: bubble, x: 0, z: 0, tx: 0, tz: 0, speed: 1.1 + Math.random() * 1.1, phase: Math.random() * 6, state: 'S', tI: 0, dur: 5, caused: 0, hit: false };
+    body.userData.ag = ag; head.userData.ag = ag;
+    pickables.push(body, head);
+    agents.push(ag);
+  }
+
+  // Sparks: the moment someone passes it on
+  var sparks = [];
+  var sparkMat = new THREE.LineBasicMaterial({ color: 0xff7a45, transparent: true, opacity: 1 });
+  for (var s = 0; s < 40; s++) {
+    var sg = new THREE.BufferGeometry();
+    sg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(10 * 3), 3));
+    var line = new THREE.Line(sg, sparkMat.clone());
+    line.visible = false; line.frustumCulled = false;
+    scene.add(line);
+    sparks.push({ line: line, life: 0 });
+  }
+  function spark(a, b){
+    var sp = null;
+    for (var i = 0; i < sparks.length; i++) if (sparks[i].life <= 0) { sp = sparks[i]; break; }
+    if (!sp) return;
+    var arr = sp.line.geometry.attributes.position.array;
+    for (var k = 0; k < 10; k++) {
+      var u = k / 9;
+      arr[k * 3] = a.x + (b.x - a.x) * u;
+      arr[k * 3 + 1] = GY + 1.1 + Math.sin(u * Math.PI) * 1.1;
+      arr[k * 3 + 2] = a.z + (b.z - a.z) * u;
+    }
+    sp.line.geometry.attributes.position.needsUpdate = true;
+    sp.line.visible = true; sp.life = 0.7; sp.line.material.opacity = 1;
+  }
+
+  // Game state
+  var LEVELS = [
+    { title: 'Start an outbreak', num: 'Level 1 of 3', chip: 'paper',
+      hint: 'Tap anyone on the island to make them sick, then watch. Does it reach everyone?',
+      paper: 'The 1927 paper asks why an epidemic ends while many people who could still catch it are left.',
+      slider: false, shield: false, c: 55, start: 'Start at random' },
+    { title: 'Turn the dial', num: 'Level 2 of 3', chip: 'paper',
+      hint: 'Make the illness less catchy and start again. Find the point where it stops spreading at all.',
+      paper: 'The paper finds a threshold. Below it, an outbreak cannot grow, however many people could catch it.',
+      slider: true, shield: false, c: 55, start: 'Start at random' },
+    { title: 'What if some were protected?', num: 'Level 3 of 3', chip: 'whatif',
+      hint: 'Tap people to put them in a bubble, or protect 40% at once. Then start the outbreak.',
+      paper: 'Not in the 1927 paper. This is a what-if built on its threshold idea, so the island labels it as one.',
+      slider: false, shield: true, c: 55, start: 'Start the outbreak' }
+  ];
+  var level = 0, phase = 'intro', simT = 0, contag = 55, chartData = [], chartTick = 0, uiTick = 0, finished = [];
+  var reached = [true, false, false];
+
+  function beta(){ return (contag / 100) * 0.62; }
+  function contagWord(v){ return v < 18 ? 'Barely' : v < 40 ? 'Mild' : v < 70 ? 'Catchy' : 'Very catchy'; }
+
+  function setState(ag, st){
+    ag.state = st;
+    ag.body.material = M[st];
+    ag.ring.visible = st === 'I';
+    ag.bubble.visible = st === 'V';
+  }
+  function resetIsland(keepShields){
+    agents.forEach(function(ag){
+      var p = randIn(WALK_R); ag.x = p[0]; ag.z = p[1]; pickTarget(ag);
+      ag.caused = 0; ag.hit = false;
+      if (keepShields && ag.state === 'V') setState(ag, 'V'); else setState(ag, 'S');
+    });
+    simT = 0; chartData = []; finished = [];
+    phase = 'ready';
+    hideToast();
+    updateUI(true);
+  }
+  function infect(ag, from){
+    setState(ag, 'I'); ag.tI = simT; ag.dur = 4 + Math.random() * 2; ag.hit = true;
+    if (from) { from.caused++; spark(from, ag); }
+  }
+  function startAt(ag){
+    if (!ag || ag.state !== 'S') return false;
+    infect(ag, null); phase = 'running'; hideToast(); updateUI(true);
+    return true;
+  }
+  function startRandom(){
+    if (phase === 'over') resetIsland(true);
+    var pool = agents.filter(function(a){ return a.state === 'S'; });
+    if (pool.length) startAt(pool[(Math.random() * pool.length) | 0]);
+  }
+
+  function counts(){
+    var o = { S: 0, I: 0, R: 0, V: 0, ever: 0 };
+    agents.forEach(function(a){ o[a.state]++; if (a.hit) o.ever++; });
+    return o;
+  }
+
+  // UI
+  function enterLevel(i){
+    level = i; reached[i] = true;
+    var L = LEVELS[i];
+    $('lvlNum').textContent = L.num;
+    $('lvlTitle').textContent = L.title;
+    $('lvlHint').textContent = L.hint;
+    $('paperLine').textContent = L.paper;
+    var chip = $('lvlChip');
+    chip.className = 'chip ' + L.chip;
+    chip.textContent = L.chip === 'paper' ? 'From the paper' : 'A what-if';
+    $('ctrlSlider').hidden = !L.slider;
+    $('ctrlShield').hidden = !L.shield;
+    $('protLine').hidden = !L.shield;
+    $('startBtn').textContent = L.start;
+    contag = L.c; $('contag').value = contag; $('contagWord').textContent = contagWord(contag);
+    $('nextBtn').disabled = true;
+    $('nextBtn').textContent = i === 2 ? 'Finish' : 'Next level';
+    document.querySelectorAll('.path li').forEach(function(li){
+      var l = +li.getAttribute('data-l');
+      li.className = l === i ? 'now' : (l < i ? 'done' : '');
+      if (l === i) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+    });
+    agents.forEach(function(a){ setState(a, 'S'); });
+    resetIsland(false);
+  }
+  function updateUI(force){
+    var k = counts();
+    $('nS').textContent = k.S + k.V;
+    $('nI').textContent = k.I;
+    $('nR').textContent = k.R;
+    $('nV').textContent = k.V;
+    if (finished.length >= 3) {
+      var avg = finished.reduce(function(s, v){ return s + v; }, 0) / finished.length;
+      $('rNum').textContent = avg.toFixed(1) + ' others';
+    } else $('rNum').textContent = '…';
+    drawChart();
+  }
+  var toastEl = $('toast');
+  function showToast(title, body, btnText, onBtn){
+    $('toastTitle').textContent = title; $('toastBody').textContent = body;
+    var b = $('toastBtn');
+    if (btnText) { b.hidden = false; b.textContent = btnText; b.onclick = onBtn; } else { b.hidden = true; b.onclick = null; }
+    toastEl.classList.add('show');
+  }
+  function hideToast(){ toastEl.classList.remove('show'); }
+
+  function outbreakOver(){
+    phase = 'over';
+    var k = counts();
+    var never = N - k.ever - k.V;
+    var pct = Math.round(k.ever / N * 100);
+    if (level === 2) {
+      if (k.V === 0) showToast('Nobody was protected', 'Put some people in bubbles first, then run it again.');
+      else showToast('It’s over', 'You protected ' + k.V + ' people, and ' + never + ' unprotected people never caught it either. Bubbles slow it for everyone.', 'See what you found', finale);
+    } else if (k.ever <= Math.max(4, N * 0.05)) {
+      showToast('It fizzled out', 'Each sick person passed it to fewer than one other, so it died away. You found the threshold.');
+    } else {
+      showToast('It’s over', pct + '% caught it, and ' + never + ' people never did. It ran out of people to reach before it ran out of people.');
+    }
+    $('nextBtn').disabled = false;
+    updateUI(true);
+  }
+  function finale(){
+    showToast('You rediscovered a 1927 idea', 'Epidemics stop early, and below a threshold they can’t start at all. Kermack and McKendrick showed it with equations; you showed it on an island.', 'Play again', function(){ hideToast(); enterLevel(0); });
+  }
+
+  // Chart
+  var chart = $('chart'), cx2 = chart.getContext('2d');
+  function drawChart(){
+    var w = chart.clientWidth, h = chart.clientHeight, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    if (chart.width !== Math.round(w * dpr)) { chart.width = Math.round(w * dpr); chart.height = Math.round(h * dpr); }
+    cx2.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cx2.clearRect(0, 0, w, h);
+    if (!chartData.length) {
+      cx2.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--sub');
+      cx2.font = '500 12px Fredoka, sans-serif';
+      cx2.fillText('The sick curve appears here', 8, h / 2 + 4);
+      return;
+    }
+    var maxLen = Math.max(chartData.length, 120);
+    cx2.beginPath();
+    cx2.moveTo(0, h);
+    chartData.forEach(function(v, i){ cx2.lineTo(i / (maxLen - 1) * w, h - 3 - v * (h - 6) * 1.6); });
+    cx2.lineTo((chartData.length - 1) / (maxLen - 1) * w, h);
+    cx2.closePath();
+    cx2.fillStyle = 'rgba(255,122,69,.35)'; cx2.fill();
+    cx2.beginPath();
+    chartData.forEach(function(v, i){ var x = i / (maxLen - 1) * w, y = h - 3 - v * (h - 6) * 1.6; if (i) cx2.lineTo(x, y); else cx2.moveTo(x, y); });
+    cx2.strokeStyle = '#ff7a45'; cx2.lineWidth = 2.5; cx2.stroke();
+  }
+
+  // Picking
+  var ray = new THREE.Raycaster(), mouse = new THREE.Vector2(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -GY), hitPt = new THREE.Vector3();
+  var downAt = null;
+  canvas.addEventListener('pointerdown', function(e){ downAt = { x: e.clientX, y: e.clientY, t: performance.now() }; });
+  canvas.addEventListener('pointerup', function(e){
+    if (!downAt) return;
+    var moved = Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y), dt = performance.now() - downAt.t;
+    downAt = null;
+    if (moved > 7 || dt > 500 || phase === 'intro') return;
+    var rect = canvas.getBoundingClientRect();
+    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    ray.setFromCamera(mouse, camera);
+    var ag = null;
+    var hits = ray.intersectObjects(pickables, false);
+    if (hits.length) ag = hits[0].object.userData.ag;
+    else if (ray.ray.intersectPlane(plane, hitPt)) {
+      var best = 1.4;
+      agents.forEach(function(a){ var d = Math.hypot(a.x - hitPt.x, a.z - hitPt.z); if (d < best) { best = d; ag = a; } });
+    }
+    if (!ag) return;
+    onTapPerson(ag);
+  });
+  function onTapPerson(ag){
+    if (level === 2 && phase === 'over') resetIsland(true);
+    if (level === 2 && phase === 'ready') {
+      if (ag.state === 'S') setState(ag, 'V'); else if (ag.state === 'V') setState(ag, 'S');
+      updateUI(true); return;
+    }
+    if (phase === 'over') { resetIsland(level === 2); }
+    if (phase === 'ready') startAt(ag);
+  }
+
+  // Buttons
+  $('playBtn').addEventListener('click', function(){
+    $('intro').classList.add('gone');
+    flyStart = performance.now();
+    phase = 'ready';
+    enterLevel(0);
+  });
+  $('startBtn').addEventListener('click', startRandom);
+  $('resetBtn').addEventListener('click', function(){ resetIsland(level === 2); });
+  $('nextBtn').addEventListener('click', function(){ if (level < 2) enterLevel(level + 1); else finale(); });
+  $('contag').addEventListener('input', function(e){ contag = +e.target.value; $('contagWord').textContent = contagWord(contag); });
+  $('protBtn').addEventListener('click', function(){
+    if (phase !== 'ready') resetIsland(false);
+    agents.forEach(function(a){ if (a.state === 'S' && Math.random() < 0.4) setState(a, 'V'); });
+    updateUI(true);
+  });
+  $('unprotBtn').addEventListener('click', function(){
+    agents.forEach(function(a){ if (a.state === 'V') setState(a, 'S'); });
+    if (phase !== 'ready') resetIsland(false);
+    updateUI(true);
+  });
+  document.querySelectorAll('.path li').forEach(function(li){
+    li.style.cursor = 'pointer';
+    li.addEventListener('click', function(){ var l = +li.getAttribute('data-l'); if (reached[l] && phase !== 'intro') enterLevel(l); });
+  });
+
+  // Sizing
+  function resize(){
+    var w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.fov = w < 700 ? 52 : 42;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // Intro island: people wander before you press play
+  agents.forEach(function(ag){ var p = randIn(WALK_R); ag.x = p[0]; ag.z = p[1]; pickTarget(ag); });
+
+  var flyStart = null, FLY_MS = reduce ? 1 : 2200, camStart = camera.position.clone();
+  var clock = new THREE.Clock(), R2 = 1.25 * 1.25;
+  function ease(u){ return 1 - Math.pow(1 - u, 3); }
+
+  function loop(){
+    requestAnimationFrame(loop);
+    var dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+
+    if (flyStart !== null) {
+      var u = Math.min(1, (performance.now() - flyStart) / FLY_MS);
+      camera.position.lerpVectors(camStart, CAM_END, ease(u));
+      camera.lookAt(0, 1.8, 0);
+      if (u >= 1) { flyStart = null; if (controls) controls.enabled = true; }
+    } else if (controls && controls.enabled) controls.update();
+    else if (phase === 'intro' && !reduce) {
+      var a = t * 0.08;
+      camera.position.set(Math.sin(a) * 60, 42, Math.cos(a) * 60);
+      camera.lookAt(0, 1.8, 0); camStart.copy(camera.position);
+    }
+
+    if (!reduce) {
+      waves(t);
+      boats.forEach(function(b){ b.g.position.y = 0.3 + Math.sin(t * 1.2 + b.off) * 0.25; b.g.rotation.z = Math.sin(t * 0.9 + b.off) * 0.07; });
+      trees.forEach(function(tr){ tr.leaves.rotation.z = Math.sin(t * 1.4 + tr.off) * 0.05; });
+      cloudRoot.rotation.y += dt * 0.012;
+    }
+
+    // Move people
+    for (var i = 0; i < N; i++) {
+      var ag = agents[i];
+      var dx = ag.tx - ag.x, dz = ag.tz - ag.z, d = Math.hypot(dx, dz);
+      var sp = ag.speed * (ag.state === 'I' ? 0.6 : 1);
+      if (d < 0.3) pickTarget(ag);
+      else {
+        var step = Math.min(d, sp * dt);
+        ag.x += dx / d * step; ag.z += dz / d * step;
+        ag.g.rotation.y = Math.atan2(dx, dz);
+      }
+      ag.phase += dt * sp * 6;
+      ag.g.position.set(ag.x, GY + Math.abs(Math.sin(ag.phase)) * (reduce ? 0.03 : 0.12), ag.z);
+      if (ag.state === 'I') { var s2 = 1 + Math.sin(t * 6 + i) * 0.22; ag.ring.scale.set(s2, 1, s2); }
+    }
+    M.I.emissiveIntensity = 0.35 + Math.sin(t * 5) * 0.25;
+
+    // Spread
+    if (phase === 'running') {
+      simT += dt;
+      var b = beta();
+      var sick = agents.filter(function(a){ return a.state === 'I'; });
+      for (var j = 0; j < sick.length; j++) {
+        var src = sick[j];
+        for (var q = 0; q < N; q++) {
+          var tgt = agents[q];
+          if (tgt.state !== 'S') continue;
+          var ex = tgt.x - src.x, ez = tgt.z - src.z;
+          if (ex * ex + ez * ez < R2 && Math.random() < b * dt) infect(tgt, src);
+        }
+        if (simT - src.tI > src.dur) { setState(src, 'R'); finished.push(src.caused); }
+      }
+      chartTick += dt;
+      if (chartTick > 0.15) { chartTick = 0; chartData.push(counts().I / N); }
+      if (!agents.some(function(a){ return a.state === 'I'; })) outbreakOver();
+    }
+
+    for (var k = 0; k < sparks.length; k++) {
+      var spk = sparks[k];
+      if (spk.life > 0) { spk.life -= dt; spk.line.material.opacity = Math.max(0, spk.life / 0.7); if (spk.life <= 0) spk.line.visible = false; }
+    }
+
+    uiTick += dt;
+    if (uiTick > 0.1 && phase !== 'intro') { uiTick = 0; updateUI(false); }
+
+    renderer.render(scene, camera);
+  }
+  loop();
+})();
+</script>
+</body>
+</html>

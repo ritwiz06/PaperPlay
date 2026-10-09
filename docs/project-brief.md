@@ -31,8 +31,9 @@ before keeping the last working world.
 
 One mechanism, done properly: local collective motion (flocking), through the primitive
 `flock.planar.weighted@1.0.0`, with the Murmuration Valley prototype
-(`reference/murmuration-valley.html`) as the visual direction. The architecture is
-domain-agnostic; month one proves it on one family of models.
+(`reference/murmuration-valley.html`) as the visual direction for the world, and
+Outbreak Island (`reference/outbreak-island.html`) for its game-first HUD (ADR-0008).
+The architecture is domain-agnostic; month one proves it on one family of models.
 
 Out of scope for month one: universal paper coverage; running generated code outside
 the sandboxed widget tier; reproducing original experiments; billing and teams; more
