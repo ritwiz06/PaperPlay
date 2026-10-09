@@ -24,6 +24,7 @@ export function sessionOptionsFor(level: BuiltLevel, playing: boolean): SessionO
     params: level.params as FlockParams,
     actions: level.actions as Readonly<Record<string, keyof FlockParams>>,
     setup: level.setup.map((placement) => placement.event),
+    ring: level.observable.metricId === "groupSpread",
     playing,
   };
 }

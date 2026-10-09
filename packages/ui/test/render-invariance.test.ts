@@ -1,6 +1,6 @@
 // R02: the renderer displays state; primitives compute state. Drawing the flock under any
 // camera or palette, or not at all, must leave every measured observable bit-identical.
-import { flockDefaultParams, flockNeighbours, flockPlanarWeighted as flock, type FlockState } from "@paperplay/primitives";
+import { flockDefaultParams, flockNeighbours, flockPlanarWeighted as flock, flockSpread, type FlockState } from "@paperplay/primitives";
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_CAMERA,
@@ -15,6 +15,11 @@ import {
 } from "../src/stage-core/index.ts";
 
 const STEPS = 600;
+
+const spreadRing = (state: FlockState) => {
+  const spread = flockSpread(state);
+  return spread.centre ? { ...spread.centre, radius: spread.radius } : null;
+};
 
 function deepFreeze<T>(value: T): T {
   if (typeof value === "object" && value !== null && !Object.isFrozen(value)) {
@@ -38,12 +43,19 @@ function run(view: { camera: OrbitCamera; palette: StagePalette; emphasise?: boo
     history.push(previous);
     current = deepFreeze(flock.step(current, flockDefaultParams, flock.fixedTimestep));
     const measured = flock.measure(current);
-    observables.push([measured.directionalAgreement, measured.meanNeighbourDistance, measured.clusterCount]);
+    observables.push(Object.values(measured));
     if (view) {
       const camera = orbit(view.camera, t * 0.01, 0);
       // The selected-neighbour view asks the primitive's read-only query, then draws its answer.
       const emphasis = view.emphasise
-        ? { selected: t % 72, neighbours: flockNeighbours(current, flockDefaultParams, t % 72).seen, reach: 9, cursor: { x: t % 32, y: 16 } }
+        ? {
+            selected: t % 72,
+            neighbours: flockNeighbours(current, flockDefaultParams, t % 72).seen,
+            reach: 9,
+            cursor: { x: t % 32, y: 16 },
+            // The spread ring asks the primitive's read-only spread query (Q3), then draws its answer.
+            spread: spreadRing(current),
+          }
         : {};
       // The world art: colour by heading, wingbeats, and trails through the last states.
       const trail = view.art ? history.slice(-180).filter((_, i, all) => (all.length - 1 - i) % 18 === 0) : undefined;
@@ -71,8 +83,10 @@ describe("[R02] model/render separation", () => {
     expect(bitwise(far.observables, unseen.observables)).toBe(true);
   });
 
-  it("gives bit-identical observables while a bird is selected and its neighbours are shown", () => {
-    expect(selecting.frames.every((frame) => frame.rings.length === 2)).toBe(true);
+  it("gives bit-identical observables while a bird is selected, its neighbours are shown, and the spread ring is drawn", () => {
+    const keys = (frame: FrameDescription) => frame.rings.map((ring) => ring.key).sort();
+    expect(selecting.frames.every((frame) => ["cursor,reach", "cursor,reach,spread"].includes(keys(frame).join(",")))).toBe(true);
+    expect(selecting.frames.filter((frame) => keys(frame).includes("spread")).length).toBeGreaterThan(STEPS / 2);
     expect(bitwise(selecting.observables, unseen.observables)).toBe(true);
   });
 

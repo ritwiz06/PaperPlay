@@ -23,6 +23,7 @@ import {
   PaperJournal,
   PlayIcon,
   SpacingGauge,
+  SpreadDial,
   useFreeRect,
   WorldStage,
   type Depth,
@@ -129,6 +130,8 @@ function readoutFor(level: BuiltLevel, snapshot: SessionSnapshot, showNumber: bo
       return <HeadingCompass angles={snapshot.headings.angles} mean={snapshot.headings.mean} agreement={observed.directionalAgreement} yaw={yaw} showNumber={showNumber} />;
     case "meanNeighbourDistance":
       return <SpacingGauge spacing={observed.meanNeighbourDistance} showNumber={showNumber} />;
+    case "groupSpread":
+      return <SpreadDial spread={observed.groupSpread} showNumber={showNumber} />;
     case "clusterCount":
       return <GroupsCounter groups={observed.clusterCount} strayShare={observed.strayShare} birds={snapshot.headings.angles.length} showNumber={showNumber} />;
     default: {

@@ -11,6 +11,7 @@ import type { PlaceEvent, RunEvent } from "@paperplay/contracts";
 import {
   flockHeadings,
   flockNeighbours,
+  flockSpread,
   flockPlanarWeighted as flock,
   type Entity,
   type FlockObservables,
@@ -29,6 +30,8 @@ export interface SessionOptions {
   readonly actions: Readonly<Record<string, keyof FlockParams>>;
   /** A level's setup: placements at step 0, recorded as ordinary place events (ADR-0014). */
   readonly setup?: readonly PlaceEvent[];
+  /** Draw the ring of the flock's spread (Q3) around its largest group. Presentation only. */
+  readonly ring?: boolean;
   readonly playing?: boolean;
 }
 
@@ -178,8 +181,11 @@ export function createWorldSession(first: SessionOptions): WorldSession {
       timestep: TIMESTEP,
       trail: history.filter((_, index) => (history.length - 1 - index) % TRAIL_STRIDE === 0),
     }),
-    emphasis: () =>
-      selected === null ? {} : { selected, neighbours: flockNeighbours(current, params, selected).seen, reach: params.perceptionRadius },
+    emphasis: () => {
+      const spread = options.ring === true ? flockSpread(current) : null;
+      const ring = spread?.centre ? { spread: { ...spread.centre, radius: spread.radius } } : {};
+      return selected === null ? ring : { ...ring, selected, neighbours: flockNeighbours(current, params, selected).seen, reach: params.perceptionRadius };
+    },
     tick(frameSeconds) {
       if (!playing) return 0;
       const next = advance(clock, frameSeconds, TIMESTEP);

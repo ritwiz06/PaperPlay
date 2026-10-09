@@ -164,6 +164,7 @@ export function WorldStage(props: WorldStageProps) {
       if (follow) state.camera = { ...zoom(state.camera, FOLLOW_ZOOM), pitch: FOLLOW_PITCH };
       state.lastInput = performance.now();
       let shownFocus = "";
+      let shownRing = "";
 
       const onWheel = (event: WheelEvent) => {
         event.preventDefault();
@@ -221,6 +222,10 @@ export function WorldStage(props: WorldStageProps) {
           const [fx, fy] = projectToNdc(state.frame.camera.view, state.frame.camera.projection, state.frame.camera.target);
           const focus = JSON.stringify({ x: Math.round(((fx + 1) / 2) * width * 10) / 10, y: Math.round(((1 - fy) / 2) * height * 10) / 10 });
           if (focus !== shownFocus) element.dataset.focus = shownFocus = focus;
+        // The spread ring as drawn, for tests: presentation only.
+        const ring = state.frame.rings.find((entry) => entry.key === "spread");
+        const ringText = ring ? JSON.stringify({ radius: ring.radius }) : "";
+        if (ringText !== shownRing) element.dataset.spreadRing = shownRing = ringText;
           drawn = version;
           state.dirty = false;
           frames += 1;

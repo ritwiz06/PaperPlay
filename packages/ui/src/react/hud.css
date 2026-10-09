@@ -547,6 +547,17 @@
   stroke-width: 0.05;
 }
 
+/* The spread dial: a ring as wide as the flock spreads, like the one on the ground. */
+.spread-ring {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 0.1;
+  stroke-dasharray: 0.18 0.1;
+}
+.spread-centre {
+  fill: var(--ink);
+}
+
 /* The groups counter: one small cluster per group, up to six; scattered strays when there is none. */
 .groups-bird {
   fill: var(--ink);

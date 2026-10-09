@@ -74,6 +74,9 @@ test("[R06] the six levels play in order from the WorldSpec: each opens once the
     const readout = card(page).locator(`[data-observable="${metric}"]`);
     await expect(readout).toHaveCount(1);
     expect(Number(await readout.getAttribute("data-value"))).toBe(flock.measure(state)[metric]);
+    // The spread level draws a ring around the flock on the ground; the others draw none.
+    if (metric === "groupSpread") await expect(stage(page)).toHaveAttribute("data-spread-ring", /radius/);
+    else await expect(stage(page)).not.toHaveAttribute("data-spread-ring", /radius/);
 
     const next = LEVELS[at + 1];
     if (!next) break;

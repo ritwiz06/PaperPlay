@@ -65,9 +65,9 @@ export interface FrameLook {
   readonly birdColor?: "plain" | "heading";
 }
 
-/** A flat ring: how far a selected bird sees, or where the keyboard cursor is. */
+/** A flat ring: how far a selected bird sees, where the keyboard cursor is, or how far the flock spreads. */
 export interface RingPose {
-  readonly key: "reach" | "cursor";
+  readonly key: "reach" | "cursor" | "spread";
   readonly position: Vec3;
   readonly radius: number;
   readonly color: string;
@@ -86,6 +86,8 @@ export interface FrameEmphasis {
   readonly reach?: number;
   /** The keyboard cursor, in simulation coordinates. */
   readonly cursor?: { readonly x: number; readonly y: number } | null;
+  /** The largest group's centre and spread, as the primitive's spread query reported them (Q3). */
+  readonly spread?: { readonly x: number; readonly y: number; readonly radius: number } | null;
 }
 
 export interface MarkerPose {
@@ -219,6 +221,11 @@ export function describeFrame(input: StageInput, camera: OrbitCamera, palette: S
   if (chosen && emphasis.reach !== undefined) rings.push({ key: "reach", position: chosen.position, radius: emphasis.reach, color: palette.reach });
   if (emphasis.cursor) {
     rings.push({ key: "cursor", position: toWorld(emphasis.cursor.x, emphasis.cursor.y, 0), radius: CURSOR_RADIUS, color: palette.cursor });
+  }
+  // Drawn to the nearest tenth of a unit, so the ring is not rebuilt on every step.
+  if (emphasis.spread && emphasis.spread.radius > 0) {
+    const radius = Math.max(Math.round(emphasis.spread.radius * 10) / 10, 0.1);
+    rings.push({ key: "spread", position: toWorld(emphasis.spread.x, emphasis.spread.y, 0), radius, color: palette.reach });
   }
 
   return {
