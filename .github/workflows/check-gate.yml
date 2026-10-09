@@ -1,0 +1,65 @@
+# check:gate on every push and pull request, on Linux with the pinned Node (ADR-0011).
+# The capture job films the demo on Linux too, so its hashes can be compared with the
+# Mac's (ADR-0010); it is not part of the gate and runs on main and on demand only.
+name: check-gate
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: check:gate (ubuntu-latest, Node from .node-version)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # Full history: check:docs looks up the commits that status.md and progress.md name.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run check:gate
+      - name: Keep the test reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: gate-reports
+          path: |
+            reports/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  capture:
+    name: capture:demo (ubuntu-latest), for comparison with the Mac
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium ffmpeg
+      - run: npm run capture:demo
+      - run: cat captures/murmuration.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: demo-capture
+          path: captures/
+          retention-days: 14
