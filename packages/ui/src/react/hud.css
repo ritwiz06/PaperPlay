@@ -1,0 +1,860 @@
+/*
+ * The game-first HUD (ADR-0008), as @paperplay/ui/hud.css. The stage fills the window and the
+ * HUD lies over it. Cards have a 2 px ink edge, round corners and a hard offset shadow with no
+ * blur, inside the accepted palette. Only cards and their controls catch the pointer, so the
+ * stage stays playable around them. Type uses the shipped weights, Fredoka 400 and 600, and
+ * Literata for passages (ADR-0002). Sentence case throughout.
+ */
+.game {
+  position: fixed;
+  inset: 0;
+  /* clip, not hidden: nothing, not even focus, may scroll the world sideways. */
+  overflow: clip;
+  background: var(--cream);
+}
+.game .stage {
+  position: absolute;
+  inset: 0;
+  border-radius: 0;
+}
+.game .stage:focus-visible {
+  outline-offset: -4px;
+}
+/* The stage's key hints stay for screen readers; the HUD needs the room. */
+.game .stage-keys,
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.hud {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+.hud .card,
+.hud button,
+.hud input,
+.hud [tabindex] {
+  pointer-events: auto;
+}
+
+.game .card {
+  border: 2px solid var(--ink);
+  border-radius: 18px;
+  background: var(--cream);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.game .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: var(--ink);
+  color: var(--cream);
+  font-weight: 600;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease;
+}
+.game .btn:hover:not(:disabled) {
+  background: var(--dark);
+}
+.game .btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+.game .btn-light {
+  background: var(--cream);
+  color: var(--ink);
+}
+.game .btn-light:hover:not(:disabled) {
+  background: rgb(98 203 194 / 0.25);
+}
+.game .btn-icon {
+  width: 44px;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* Origin tags: a word or two in the origin's colour; ink text, so each reads at AA. */
+.origin-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  vertical-align: 0.1em;
+}
+.origin-tag-paper-derived {
+  background: var(--ink);
+  color: var(--cream);
+}
+.origin-tag-teaching-choice {
+  background: var(--aqua);
+}
+.origin-tag-computed-observation {
+  background: var(--lime);
+}
+.origin-tag-generated-inference {
+  border-style: dashed;
+  background: repeating-linear-gradient(135deg, var(--cream) 0 4px, rgb(82 106 102 / 0.22) 4px 6px);
+}
+/* Quiet tags in the guide and the level card: smaller and lighter, the same words and colours. */
+.origin-tag.origin-tag-quiet {
+  padding: 0 6px;
+  border-width: 1px;
+  font-size: 0.6875rem;
+  font-weight: 400;
+}
+.origin-tag.origin-tag-placeholder {
+  border-style: dashed;
+}
+.origin-tag-paper-derived.origin-tag-placeholder {
+  border-color: var(--ink);
+  background: var(--cream);
+  color: var(--ink);
+}
+.origin-tag-mark {
+  color: var(--sub);
+}
+
+/* The top row: the world, the level map, and the buttons. */
+.hud-top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+  gap: 12px;
+}
+.world-card {
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px 8px 10px;
+}
+.world-card h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.1;
+}
+.world-card p {
+  margin: 2px 0 0;
+  color: var(--sub);
+  font-size: 0.8125rem;
+}
+.bird-mark {
+  flex: none;
+}
+.hud-buttons {
+  justify-self: end;
+  display: flex;
+  gap: 10px;
+}
+
+.level-map {
+  justify-self: center;
+  padding: 5px;
+}
+.level-map ol {
+  display: flex;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.level-map button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 3px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-weight: 600;
+}
+.level-map button:disabled {
+  opacity: 1;
+  cursor: default;
+}
+.level-map .now button {
+  padding-right: 14px;
+  background: var(--ink);
+  color: var(--cream);
+}
+.level-map .dot {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  font-size: 0.8125rem;
+}
+.level-map .locked .dot {
+  border-style: dashed;
+  color: var(--sub);
+}
+.level-map .open .dot {
+  border-color: var(--ink);
+  background: var(--aqua);
+}
+.level-name {
+  white-space: nowrap;
+}
+
+/* Bottom left: the guide speaks just above the level card it reacts to. */
+.hud-bottom {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+}
+.what-if,
+.level-card {
+  width: min(460px, 100%);
+}
+
+.guide {
+  position: relative;
+}
+.guide-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--cream);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.guide-bubble {
+  position: absolute;
+  bottom: 0;
+  left: 58px;
+  width: min(400px, calc(100vw - 106px));
+  padding: 8px 14px;
+  border-radius: 18px 18px 18px 6px;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.35s ease,
+    visibility 0s linear 0.35s;
+}
+.guide[data-open="true"] .guide-bubble {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease;
+}
+.guide-bubble ul {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  line-height: 1.35;
+}
+.guide-bubble li .origin-tag {
+  margin-right: 4px;
+}
+
+.what-if {
+  padding: 14px 18px;
+}
+.what-if h2 {
+  margin: 0 0 6px;
+  font-size: 1.125rem;
+}
+.what-if p {
+  margin: 0 0 10px;
+  color: var(--sub);
+}
+
+/* The level card: in full on a desktop. */
+.level-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "kicker depth"
+    "title title"
+    "more more"
+    "slider slider"
+    "readout whatif"
+    "advanced advanced";
+  align-items: center;
+  column-gap: 12px;
+  padding: 14px 18px 16px;
+}
+.level-kicker {
+  grid-area: kicker;
+  margin: 0;
+  color: var(--sub);
+  font-size: 0.875rem;
+}
+.level-depth {
+  grid-area: depth;
+  justify-self: end;
+}
+.level-title {
+  grid-area: title;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+.level-title h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+.level-expand,
+.game .from-paper.from-paper-compact {
+  display: none;
+}
+.level-more {
+  grid-area: more;
+}
+.level-goal {
+  margin: 2px 0 0;
+  color: var(--sub);
+}
+.control-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+.control-line label {
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+.game .from-paper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  margin-left: auto;
+  padding: 0 12px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.game .from-paper:hover {
+  background: rgb(212 245 129 / 0.6);
+}
+.not-from-paper {
+  margin-left: auto;
+  color: var(--sub);
+  font-size: 0.8125rem;
+}
+.level-slider {
+  grid-area: slider;
+  margin-top: 4px;
+}
+.slider-track {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.slider-track input[type="range"] {
+  flex: 1;
+  min-width: 0;
+  height: 36px;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+.slider-track input[type="range"]::-webkit-slider-runnable-track {
+  height: 8px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--line);
+}
+.slider-track input[type="range"]::-webkit-slider-thumb {
+  width: 28px;
+  height: 28px;
+  margin-top: -12px;
+  appearance: none;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--aqua);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.slider-track input[type="range"]::-moz-range-track {
+  height: 8px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--line);
+}
+.slider-track input[type="range"]::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--aqua);
+}
+.value-pill {
+  min-width: 4.5ch;
+  padding: 2px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--aqua);
+  font-weight: 600;
+  text-align: center;
+}
+.slider-ends {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  color: var(--sub);
+  font-size: 0.8125rem;
+}
+.level-card:not([data-depth="beginner"]) .slider-ends {
+  margin-right: calc(4.5ch + 36px);
+}
+.level-readout {
+  grid-area: readout;
+  margin-top: 8px;
+}
+.level-whatif {
+  grid-area: whatif;
+  justify-self: end;
+  margin-top: 8px;
+}
+.level-advanced {
+  grid-area: advanced;
+  margin-top: 8px;
+  color: var(--sub);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+
+/* The heading compass: a ring of ticks and an arrow; its number on hover and focus, or always. */
+.compass {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.compass-dial {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+}
+.compass-dial:focus-visible {
+  outline: 3px solid var(--aqua);
+  outline-offset: 2px;
+}
+.compass-face {
+  fill: var(--cream);
+  stroke: var(--ink);
+  stroke-width: 0.08;
+}
+.compass-tick {
+  stroke: var(--ink);
+  stroke-width: 0.06;
+  stroke-linecap: round;
+  opacity: 0.55;
+}
+.compass-arrow {
+  stroke: var(--ink);
+  stroke-width: 0.14;
+  stroke-linecap: round;
+}
+.compass-head,
+.compass-hub {
+  fill: var(--ink);
+}
+.compass-number {
+  min-width: 3.5ch;
+  font-weight: 600;
+  font-size: 1.0625rem;
+}
+.compass:not(.with-number) .compass-number {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  padding: 2px 8px;
+  border: 1.5px solid var(--ink);
+  border-radius: 8px;
+  background: var(--cream);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+.compass:not(.with-number) .compass-dial:hover .compass-number,
+.compass:not(.with-number) .compass-dial:focus-visible .compass-number {
+  opacity: 1;
+}
+
+/* Depth: a small segmented toggle, in the level card and in the journal. */
+.depth-toggle {
+  display: inline-flex;
+  gap: 2px;
+  margin: 0;
+  padding: 2px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+}
+.depth-toggle label {
+  position: relative;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+.depth-toggle label.on {
+  background: var(--ink);
+  color: var(--cream);
+}
+.depth-toggle input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.depth-toggle label:has(input:focus-visible) {
+  outline: 3px solid var(--aqua);
+  outline-offset: 2px;
+}
+
+/* The paper journal: a slide-over on demand, never a permanent column. */
+.journal {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  bottom: 12px;
+  width: min(420px, calc(100% - 24px));
+  padding: 18px 20px 24px;
+  overflow-y: auto;
+  visibility: hidden;
+  transform: translateX(calc(100% + 24px));
+  transition:
+    transform 0.25s ease,
+    visibility 0s linear 0.25s;
+}
+.journal.open {
+  visibility: visible;
+  transform: none;
+  transition: transform 0.25s ease;
+}
+.journal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.journal h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+.journal-intro {
+  margin: 6px 0 12px;
+  color: var(--sub);
+}
+.pages {
+  display: grid;
+  gap: 14px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.page {
+  padding-top: 12px;
+  border-top: 2px dashed var(--line);
+}
+.page-level {
+  margin: 0 0 8px;
+  color: var(--sub);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.passage {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: var(--cream);
+  color: var(--ink);
+  text-align: left;
+}
+.page.highlighted .passage {
+  background: rgb(212 245 129 / 0.55);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.passage-head {
+  display: flex;
+  gap: 6px;
+}
+.passage-title {
+  font-weight: 600;
+}
+.passage-text {
+  font-family: var(--font-passage);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+.passage-locator {
+  color: var(--sub);
+  font-size: 0.8125rem;
+}
+.passage-try {
+  justify-self: start;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--cream);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.page-detail {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+  color: var(--sub);
+  font-size: 0.9375rem;
+}
+.page-detail p {
+  margin: 0;
+}
+.locked-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+.locked-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px 2px 3px;
+  border: 1.5px dashed var(--sub);
+  border-radius: 999px;
+  color: var(--sub);
+  font-size: 0.875rem;
+}
+.locked-list .dot {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1.5px dashed var(--sub);
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.locked-note {
+  margin: 0;
+  color: var(--sub);
+  font-size: 0.875rem;
+}
+.legend {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 2px solid var(--ink);
+}
+.legend h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+.legend ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.legend li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--sub);
+  font-size: 0.875rem;
+}
+
+/*
+ * Phones: the buttons keep only their icons and the map only its dots. The level card rests
+ * as one compact row (title over slider, compass, What if); its chevron opens the goal, the
+ * control's line and the depth toggle.
+ */
+@media (max-width: 760px) {
+  .hud {
+    gap: 8px;
+    padding-inline: 10px;
+  }
+  .hud-top {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+  .level-map {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .level-map .level-name,
+  .btn-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .level-map .now button {
+    padding-right: 3px;
+  }
+  .game .btn {
+    min-width: 44px;
+    padding: 0 12px;
+  }
+  .world-card {
+    padding: 6px 12px 6px 8px;
+  }
+  .world-card h1 {
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+  .world-card p {
+    display: none;
+  }
+  .hud-bottom {
+    justify-items: stretch;
+    gap: 8px;
+  }
+  .what-if,
+  .level-card {
+    width: 100%;
+  }
+  .guide-bubble {
+    width: calc(100vw - 88px);
+    font-size: 0.875rem;
+  }
+  .level-card {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas:
+      "title title whatif"
+      "slider readout whatif"
+      "more more more"
+      "kicker depth depth"
+      "advanced advanced advanced";
+    column-gap: 10px;
+    padding: 6px 12px 8px;
+  }
+  .level-readout .compass {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .level-readout svg {
+    width: 44px;
+    height: 44px;
+  }
+  .level-title {
+    margin-top: 0;
+    gap: 4px;
+  }
+  .level-title h2 {
+    font-size: 1rem;
+  }
+  .level-expand {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    margin-left: -4px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ink);
+  }
+  .game .from-paper.from-paper-compact {
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    min-height: 28px;
+    margin-left: 2px;
+    padding: 0;
+  }
+  .level-readout,
+  .level-whatif {
+    margin-top: 0;
+  }
+  .level-whatif .btn {
+    padding: 0 12px;
+  }
+  .level-card[data-expanded="false"] .level-more,
+  .level-card[data-expanded="false"] .level-kicker,
+  .level-card[data-expanded="false"] .level-depth,
+  .level-card[data-expanded="false"] .level-advanced,
+  .level-card[data-expanded="true"] .from-paper-compact {
+    display: none;
+  }
+  .level-card[data-expanded="true"] .level-kicker,
+  .level-card[data-expanded="true"] .level-depth {
+    margin-top: 10px;
+  }
+  .level-card[data-expanded="true"] .level-depth {
+    justify-self: end;
+  }
+  .slider-track input[type="range"] {
+    height: 30px;
+  }
+  .slider-ends {
+    font-size: 0.6875rem;
+    white-space: nowrap;
+  }
+  .compass-number {
+    font-size: 0.9375rem;
+  }
+  .journal {
+    top: 8px;
+    right: 8px;
+    bottom: 8px;
+    width: calc(100% - 16px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journal,
+  .journal.open,
+  .guide-bubble,
+  .guide[data-open="true"] .guide-bubble,
+  .game .btn {
+    transition: none;
+  }
+}

@@ -2,17 +2,20 @@ import { useEffect, useRef, type KeyboardEvent, type PointerEvent, type ReactNod
 import {
   DEFAULT_CAMERA,
   describeFrame,
+  fieldBoundsOnScreen,
   groundPointAt,
   nearestBird,
   orbit,
   pickBird,
   readoutDue,
   valleyDay,
+  windowFromRect,
   withViewport,
   zoom,
   type FrameDescription,
   type FrameEmphasis,
   type OrbitCamera,
+  type Rect,
   type StageInput,
   type StagePalette,
 } from "../stage-core/index.ts";
@@ -42,6 +45,13 @@ export interface WorldStageProps {
   readonly onTogglePlay?: () => void;
   /** Called at most ten times a second while the world changes, never once per frame. */
   readonly onReadout?: () => void;
+  /**
+   * The rectangle of the stage, in CSS pixels from its top left, that a HUD leaves free. The
+   * view is framed in it while the canvas still fills the stage (ADR-0008). Render-only.
+   */
+  readonly window?: Rect | null;
+  /** Called at most ten times a second when the camera turns, with its yaw, for a compass. */
+  readonly onView?: (view: { readonly yaw: number }) => void;
   /** Controls laid over the stage, such as tools and the transport. */
   readonly children?: ReactNode;
 }
@@ -72,6 +82,12 @@ interface ViewState {
 }
 
 const clamp = (value: number, size: number): number => Math.min(Math.max(value, 0), size - 1e-3);
+const roundRect = ({ x, y, width, height }: Rect): Rect => ({
+  x: Math.round(x * 10) / 10,
+  y: Math.round(y * 10) / 10,
+  width: Math.round(width * 10) / 10,
+  height: Math.round(height * 10) / 10,
+});
 
 /**
  * The world stage: a Three.js canvas over the run, with orbit and zoom by pointer and by
@@ -121,6 +137,10 @@ export function WorldStage(props: WorldStageProps) {
     let readAt: number | null = null;
     let drawn = -1;
     let reported = -1;
+    let viewAt: number | null = null;
+    let reportedYaw = Number.NaN;
+    let shownBounds = "";
+    let shownFree = "";
     let frames = 0;
     const loop = (now: number) => {
       const steps = driver.tick(last === null ? 0 : (now - last) / 1000);
@@ -128,11 +148,16 @@ export function WorldStage(props: WorldStageProps) {
       const version = driver.version();
       if (steps > 0 || version !== drawn || state.dirty) {
         const { width, height } = stage.viewport();
-        state.camera = withViewport(state.camera, width, height);
-        const { tool: active, palette } = latest.current;
+        const { tool: active, palette, window: free } = latest.current;
+        state.camera = { ...withViewport(state.camera, width, height), window: windowFromRect({ width, height }, free) };
         const cursor = state.keyboard && state.focused && active !== "look" ? state.cursor : null;
         state.frame = describeFrame(driver.stageInput(), state.camera, palette ?? valleyDay, { ...driver.emphasis(), cursor });
         stage.render(state.frame);
+        // Where the field lands, for tests and tools that check the HUD-aware fit.
+        const bounds = JSON.stringify(roundRect(fieldBoundsOnScreen(state.frame, { width, height })));
+        const freeText = JSON.stringify(free ? roundRect(free) : { x: 0, y: 0, width, height });
+        if (bounds !== shownBounds) element.dataset.fieldBounds = shownBounds = bounds;
+        if (freeText !== shownFree) element.dataset.freeRect = shownFree = freeText;
         drawn = version;
         state.dirty = false;
         frames += 1;
@@ -142,6 +167,11 @@ export function WorldStage(props: WorldStageProps) {
         readAt = now / 1000;
         reported = version;
         latest.current.onReadout?.();
+      }
+      if (state.camera.yaw !== reportedYaw && readoutDue(viewAt, now / 1000)) {
+        viewAt = now / 1000;
+        reportedYaw = state.camera.yaw;
+        latest.current.onView?.({ yaw: reportedYaw });
       }
       handle = requestAnimationFrame(loop);
     };

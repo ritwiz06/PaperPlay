@@ -8,6 +8,7 @@
     "./tokens": "./src/tokens.ts",
     "./fonts.css": "./src/fonts/fonts.css",
     "./components.css": "./src/react/components.css",
+    "./hud.css": "./src/react/hud.css",
     "./stage-core": "./src/stage-core/index.ts",
     "./three-adapter": "./src/three-adapter/index.ts",
     "./react": "./src/react/index.ts"
