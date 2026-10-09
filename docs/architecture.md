@@ -11,7 +11,7 @@ How PaperPlay fits together today. The concepts named here are explained in
 | `packages/primitives` | Deterministic, fixed-step scientific models, their registry, and run replay | `flockPlanarWeighted`, `flockNeighbours` (Q1), `flockHeadings` (Q2), `flockReadsAsOneGroup` (O1), `mulberry32`, `registry`, `runEvents`, `replayRecord` |
 | `packages/ui` | Design tokens, fonts, the stage, the bench and the game-first HUD | `@paperplay/ui/tokens`, `fonts.css`, `components.css`, `hud.css`, `stage-core`, `three-adapter`, `react` |
 | `packages/pipeline` | Agent roles, model adapters, checks, controller | `buildWorld`, the deterministic builder in `src/builder/` (ADR-0016); the agents and adapters arrive at G3 |
-| `apps/web` | React shell: owns the run, renders state, submits actions | `src/world/session.ts`, `src/world/LocalWorld.tsx` at `/world/local`, `src/world/local-world.ts`; `src/hook/HookWorld.tsx` at `/world/hook`, the hook level on the game-first shell, hard-coded until WorldSpec; the dev-only capture page `capture.html` with `src/capture/` (ADR-0010) |
+| `apps/web` | React shell: owns the run, renders state, submits actions | `src/world/session.ts`, `src/world/LocalWorld.tsx` at `/world/local`, `src/world/local-world.ts`; `src/world/authored-world.ts`, which builds `fixtures/worldspecs/flocking-reference.json` with the builder at start-up; `src/hook/HookWorld.tsx` at `/world/hook`, the six levels played from the built world, and `src/hook/guide.ts`, the guide from each level's script; the dev-only capture page `capture.html` with `src/capture/` (ADR-0010) |
 | `apps/api` | Fastify API: will hold secrets and run jobs | `GET /health` only, until G3 |
 | `scripts/` | Gate, docs checker, defaults sweep, hook seed, group-measure sweep, demo capture | `check-gate.ts`, `check-docs.ts`, `sweep-defaults.ts`, `hook-seed.ts`, `group-measure.ts`, `capture-demo.ts` |
 | `fixtures/oracles/` | Hand-derived expected behaviours for primitives | See `fixtures/oracles/README.md` |
@@ -34,6 +34,9 @@ Inside `packages/ui`:
   - From G1: WorldStage, LabBench, Readout, and the origin chip and legend (ADR-0007).
   - The game-first HUD (ADR-0008, ADR-0012), styled by `hud.css`: LevelCard, Guide,
     PaperJournal, LevelMap, DepthToggle, HeadingCompass, OriginTag and `useFreeRect`.
+  - Each level's readout, by its observable (ADR-0014): HeadingCompass, SpacingGauge and
+    GroupsCounter, sharing the `dial` styles. The level card shows and hides its elements by
+    the id a depth variant names (ADR-0016).
 
 ## Dependency directions
 
@@ -44,7 +47,10 @@ flowchart LR
   web["apps/web"] --> primitives["packages/primitives"]
   web --> react["packages/ui · react"]
   web --> stagecore["packages/ui · stage-core"]
-  web -.-> contracts
+  web --> pipeline["packages/pipeline · builder"]
+  web --> contracts
+  pipeline --> contracts
+  pipeline --> primitives
   react --> stagecore
   react --> adapter["packages/ui · three-adapter"]
   react -.-> contracts
@@ -64,9 +70,8 @@ Forbidden, and enforced (see the invariants table below):
 - `primitives` importing UI, apps, the pipeline or Node;
 - `stage-core` importing Three.js, React or DOM libraries, or importing simulation values;
 - `three-adapter` importing `primitives` or `contracts` in any form;
-- `react` (the components) importing simulation values: types only, and React, from outside its package.
-
-`packages/pipeline` has no imports yet.
+- `react` (the components) importing simulation values: types only, and React, from outside its package;
+- the builder (`packages/pipeline/src/builder/`) importing anything but `contracts` and `primitives`: no model client, network or UI.
 
 ## Data flow
 
@@ -127,6 +132,9 @@ flowchart LR
 | Every WorldSpec level has exactly one manipulable and one counterfactual; the hook comes first; paper-derived statements carry anchors; counterfactuals override parameters only; a bonus level claims nothing from the paper; a reviewed spec holds no placeholder | Zod refinements, with tests [R03] | `packages/contracts/src/worldspec.ts`, `packages/contracts/test/worldspec.test.ts` |
 | Each level's control moves its declared engine variable, its fork applies exactly its overrides, and its setup lands at step 0 | Hand-written binding fixtures, run through the engine and compared with the primitive stepped directly [R08] | `fixtures/bindings/`, `packages/pipeline/test/bindings.test.ts` |
 | The builder refuses what the registry contradicts and what the shell cannot draw, is deterministic, and calls no model | Tests [R08]; lint keeps it to contracts and primitives | `packages/pipeline/test/builder.test.ts`, `eslint.config.js` |
+| `/world/hook` plays the six levels in order, each opening only once the one before has been moved through its range, and each readout shows the primitive's own value | Browser tests [R06], compared with Node | `tests/e2e/levels.spec.ts` |
+| Each depth variant shows exactly the shell elements it names, and hides the rest | Browser test [R06] over every level and depth, read from the spec | `tests/e2e/levels.spec.ts` |
+| A level's setup is recorded as place events at step 0, so its run replays from its record | Tests [R07] | `apps/web/test/session.test.ts` |
 | The renderer never changes an observable, even with a bird picked, the view framed in a HUD's window, or the flock coloured by heading with wingbeats and trails | Test [R02]; in the browser, colour by heading records nothing and the run matches Node bit for bit [R02] | `packages/ui/test/render-invariance.test.ts`, `tests/e2e/world.spec.ts` |
 | Every colour on the heading wheel keeps 3:1 against the meadow; trails never cross a seam and stay under 3.5 units | Tests | `packages/ui/test/world-art.test.ts` |
 | The following camera keeps the flock's centre inside the HUD's free rectangle, and is the still overview under reduced motion | Browser tests | `tests/e2e/hook.spec.ts` |
@@ -246,3 +254,5 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 | 2026-10-09 | 0afc49d | `worldspec/1` in `packages/contracts`; `Action` is built by `actionWith(anchor)` |
 | 2026-10-09 | 211f13a | `fixtures/worldspecs/flocking-reference.json`, a draft |
 | 2026-10-09 | 4d942fd | The builder in `packages/pipeline/src/builder/`, a Vitest project for the pipeline, and `fixtures/bindings/` |
+| 2026-10-09 | d2e9f9f | The session takes a level's setup, and `load()`s another level on the same stage |
+| 2026-10-09 | e5c30b7 | `/world/hook` from the built world: `authored-world.ts`, the guide from scripts, SpacingGauge, GroupsCounter, the `dial` styles; `hook-content.ts` removed |

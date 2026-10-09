@@ -84,7 +84,9 @@ Next:
 - [ ] `flocking-reference.json` reviewed: real anchors from the source map, and the owner's
   answers on levels 2 and 4, whose expected effects did not hold when measured.
 - [x] The deterministic builder, with binding fixtures (2026-10-09, `4d942fd`, ADR-0016).
-- [ ] `/world/hook` driven by the WorldSpec through all six levels.
+- [x] `/world/hook` driven by the WorldSpec through all six levels: the level map, journal
+  pages unlocking, a readout per level, and depth variants by element id (2026-10-09,
+  `d2e9f9f`, `e5c30b7`).
 - [x] A design spike at `/world/hook` with hard-coded content, screenshotted on desktop
   and phone (2026-10-09, `5aadf22`). The owner reviewed it the same day; it is tagged
   `spike/hook-2026-10-09` and never merged (ADR-0008).
@@ -93,11 +95,12 @@ Next:
   HUD-aware camera fit (2026-10-09, `445912e`, ADR-0012). The readout is the heading
   compass.
 - [x] The PaperJournal, with two-way provenance: "From the paper" on every control,
-  passages unlocked level by level, and the origin legend (2026-10-09). The content is
-  hard-coded, with a placeholder passage; real passages arrive with the source map.
+  passages unlocked level by level, and the origin legend (2026-10-09). The content now
+  comes from the WorldSpec, with placeholder passages; real passages arrive with the source
+  map.
 - [x] The DepthToggle (Beginner / Intermediate / Advanced), in the level card and the
-  journal (2026-10-09). It switches words, numbers and the equation, hard-coded for now.
-  Showing and hiding by WorldSpec element id waits for WorldSpec.
+  journal (2026-10-09). It switches words, numbers, the equation and the analogy, by the
+  element ids each depth variant names (`e5c30b7`).
 - [ ] The split-screen ForkView: two synchronized worlds and one measured difference
   between them.
 - [ ] Guided exploration in the guide: predict, intervene, observe, explain, never scored.

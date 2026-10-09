@@ -15,27 +15,32 @@ every session.
     ADR-0011).
 - **Branches:** only `main`. Every slice this session merged fast-forward and was pushed
   (ADR-0009).
-- **Working commit:** `4d942fd` on `main`, the latest code commit there. `check:gate` passed
+- **Working commit:** `bd6ffa4` on `main`, the latest code commit there. `check:gate` passed
   G1 on it.
 - **Primitive:** `flock.planar.weighted@3.0.0`, with the owner's group measure (ADR-0015).
 - **WorldSpec:** `worldspec/1` and the builder exist (ADR-0016).
   `fixtures/worldspecs/flocking-reference.json` holds the six levels as a draft, with
-  placeholder anchors. `/world/hook` does not read it yet; that is the next branch.
+  placeholder anchors, and `/world/hook` plays it.
 - **Runtime:** Node 24.21.0, pinned in `.node-version`. Run tools through
   `fnm exec --using=24.21.0` when the shell's default Node differs.
 - **What a learner can do now:**
-  - **On `/world/hook`,** the hook level on the game-first shell, on seed 5 since flock
-    3.0.0. Content is hard-coded until
-    WorldSpec.
-    - Move "Move together".
+  - **On `/world/hook`,** the six levels of the authored WorldSpec on the game-first shell,
+    each opening on seed 5. Each level has:
+    - one control;
+    - one readout: the compass, the spacing gauge or the groups counter;
+    - its guide, journal page and What-if.
+
+    Level 5 has a rock in the flock's path. Level 6 is a bonus, beyond the paper. On every
+    level, as before:
+    - Move the level's control.
     - Watch the flock: birds with flapping wings, coloured by heading, with trails, in a
-      valley with a lake and groves. A camera follows, closer than before.
-    - Read the guide's "you did X, so Y", and the heading compass.
+      valley with a lake and groves. A camera follows.
+    - Read the guide's "you did X, so Y", and the readout.
     - Open the paper journal from "From the paper", at a placeholder passage. Try the
       control from there.
-    - Switch depth.
-    - Open What if.
-    - Unlock level 2 by sweeping the control's range.
+    - Switch depth: words, numbers, the equation, an analogy.
+    - Open What if. The split-screen fork comes next session.
+    - Unlock the next level by sweeping the control's range, and enter it from the map.
   - **On `/world/local`,** as at G1:
     - change the rules;
     - place and remove beacons and obstacles;

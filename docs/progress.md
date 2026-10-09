@@ -7,6 +7,33 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · The six levels from the WorldSpec
+
+- Branch: `g2/hook-levels`
+- Commits: `d2e9f9f`, `e5c30b7`, `bd6ffa4`
+- Shipped:
+  - **`/world/hook` plays the built world**, `fixtures/worldspecs/flocking-reference.json`,
+    through all six levels in order:
+    - each level opens once the one before has been moved through its range;
+    - the level map, with the bonus level marked;
+    - journal pages appear as levels are reached, with placeholder passages that say so, and
+      the bonus page cites Vicsek et al. as further reading;
+    - one readout per level: the compass, the new spacing gauge, or the new groups counter;
+    - the guide speaks from each level's script;
+    - What if shows each level's counterfactual, and "Both worlds restart" on the bonus
+      level;
+    - depth variants show and hide the shell's elements by id.
+  - **The session** takes a level's setup as place events at step 0, and loads a level on the
+    same stage.
+  - **An axe finding fixed:** the current level's name washed out on hover.
+- Evidence:
+  - R01 51, R02 6, R03 91, R04 18;
+  - ahead of their gate: R05 4, R06 5, R07 14, R08 41, R12 10;
+  - from 438 tests with none skipped;
+  - 4 of 4 bugs planted in the page caught by the level tests.
+- Screenshots: every level on desktop and phone, 18 s into each, in `captures/final/levels/`.
+- Gate: `check:gate` G1 passed at `bd6ffa4`.
+
 ## 2026-10-09 · WorldSpec and the builder
 
 - Branch: `g2/worldspec`
