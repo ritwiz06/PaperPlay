@@ -3,7 +3,7 @@
   "id": "flock.measure.mixed",
   "primitive": {
     "id": "flock.planar.weighted",
-    "version": "3.0.0"
+    "version": "3.1.0"
   },
   "basis": "derived",
   "kind": "measure",
@@ -14,7 +14,8 @@
     "Nearest neighbours: A→B 1; B→A 1; D→A 2, because 1 − 31 = −30 wraps to +2 (E1); C→B √(8² + 9²) = √145 = 12.041595 (C→A is 12.73, C→D is √202 = 14.21).",
     "meanNeighbourDistance = (1 + 1 + √145 + 2)/4 = 4.010399 (E13).",
     "Distances below 4.5 pair A–B (1), A–D (2) and B–D (3) across the seam (E1). A and B share heading (1, 0), so they link; D heads (−1, 0), 180° from both, so it links to neither (E14). C is 12 or more from everyone. The clusters {A, B}, {C} and {D} all have fewer than 4 birds: strays, not groups. clusterCount = 0.",
-    "Every bird is in a cluster smaller than 4, so all 4 are strays: strayShare = 1 (E18). No group: the flock does not read as one group (O1)."
+    "Every bird is in a cluster smaller than 4, so all 4 are strays: strayShare = 1 (E18). No group: the flock does not read as one group (O1).",
+    "No group (E14), so groupSpread = 0 (E19). No obstacles, so birdsAtObstacles = 0 (E20)."
   ],
   "state": {
     "width": 32,
@@ -53,7 +54,9 @@
     "directionalAgreement": 0.3535533905932738,
     "meanNeighbourDistance": 4.010398644698074,
     "clusterCount": 0,
-    "strayShare": 1.0
+    "strayShare": 1.0,
+    "groupSpread": 0,
+    "birdsAtObstacles": 0
   },
   "tolerance": 1e-12
 }

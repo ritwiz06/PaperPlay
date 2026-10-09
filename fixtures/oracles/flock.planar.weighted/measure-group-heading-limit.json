@@ -3,7 +3,7 @@
   "id": "flock.measure.group-heading-limit",
   "primitive": {
     "id": "flock.planar.weighted",
-    "version": "3.0.0"
+    "version": "3.1.0"
   },
   "basis": "derived",
   "kind": "measure",
@@ -15,7 +15,8 @@
     "Q4's heading is 46° from Q1–Q3: cos 46° = 0.694658 < cos 45°, so it does not link. Q1–Q3 are a cluster of 3 and Q4 a cluster of 1: strays. clusterCount = 1.",
     "Unit headings: six (1, 0), one at 44° and one at 46°. Their sum is (7.413998, 1.413998), so directionalAgreement = 0.943454 (E12).",
     "Every bird's nearest neighbour is 1 away, so meanNeighbourDistance = 1 (E13).",
-    "Strays: Q1, Q2, Q3 and Q4, 4 of 8 birds, so strayShare = 0.5 (E18). One group holding exactly half the birds: it reads as one group, since at least half is enough (O1)."
+    "Strays: Q1, Q2, Q3 and Q4, 4 of 8 birds, so strayShare = 0.5 (E18). One group holding exactly half the birds: it reads as one group, since at least half is enough (O1).",
+    "The group is the row y = 4 (x = 4 to 7); its centre is (5.5, 4). Offsets ±0.5, ±1.5, so groupSpread = √1.25 (E19). No obstacles: birdsAtObstacles = 0 (E20)."
   ],
   "state": {
     "width": 32,
@@ -78,7 +79,9 @@
     "directionalAgreement": 0.9434540902285101,
     "meanNeighbourDistance": 1,
     "clusterCount": 1,
-    "strayShare": 0.5
+    "strayShare": 0.5,
+    "groupSpread": 1.118033988749895,
+    "birdsAtObstacles": 0
   },
   "tolerance": 1e-12
 }

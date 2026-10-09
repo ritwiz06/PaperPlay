@@ -3,7 +3,7 @@
   "id": "flock.measure.chain-link-boundary",
   "primitive": {
     "id": "flock.planar.weighted",
-    "version": "3.0.0"
+    "version": "3.1.0"
   },
   "basis": "derived",
   "kind": "measure",
@@ -13,7 +13,8 @@
     "Consecutive gaps A–B, B–C and C–D are 4; D–E is exactly 4.5; E to A is 15.5 the short way round (E1).",
     "Nearest distances are 4, 4, 4, 4 and 4.5, so meanNeighbourDistance = 20.5/5 = 4.1 (E13).",
     "Links need a distance strictly below 4.5 and headings less than 45° apart (E14). Every heading here is the same, so A, B, C and D form one chain although A and D are 12 apart: 4 birds, one group. E is 4.5 from D, so it is not linked: a cluster of 1 is a stray, not a group. clusterCount = 1.",
-    "Strays: E alone, 1 of 5 birds, so strayShare = 0.2 (E18). One group holding 4 of 5 birds, at least half: the flock reads as one group (O1)."
+    "Strays: E alone, 1 of 5 birds, so strayShare = 0.2 (E18). One group holding 4 of 5 birds, at least half: the flock reads as one group (O1).",
+    "The one group is the four birds at x = 2, 6, 10, 14 on y = 16. Their circular-mean centre is (8, 16): the angles 2π·{2, 6, 10, 14}/32 sit symmetrically about 2π·8/32. Offsets -6, -2, 2, 6 and 0, so the mean squared distance is (36 + 4 + 4 + 36)/4 = 20 and groupSpread = √20 (E19). No obstacles: birdsAtObstacles = 0 (E20)."
   ],
   "state": {
     "width": 32,
@@ -58,7 +59,9 @@
     "directionalAgreement": 1,
     "meanNeighbourDistance": 4.1,
     "clusterCount": 1,
-    "strayShare": 0.2
+    "strayShare": 0.2,
+    "groupSpread": 4.47213595499958,
+    "birdsAtObstacles": 0
   },
   "tolerance": 1e-12
 }

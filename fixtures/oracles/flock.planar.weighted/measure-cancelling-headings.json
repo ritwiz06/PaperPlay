@@ -3,7 +3,7 @@
   "id": "flock.measure.cancelling-headings",
   "primitive": {
     "id": "flock.planar.weighted",
-    "version": "3.0.0"
+    "version": "3.1.0"
   },
   "basis": "derived",
   "kind": "measure",
@@ -12,7 +12,8 @@
     "A (5, 5) v (1, 0) and B (15, 5) v (−2, 0). Headings (1, 0) and (−1, 0) cancel, so directionalAgreement = 0: it measures heading, not speed (E12).",
     "Each bird's nearest neighbour is the other, 10 away: meanNeighbourDistance = 10 (E13).",
     "10 ≥ 4.5, so the birds are not linked; each is a cluster of 1, fewer than 4 birds, so a stray, and clusterCount = 0 (E14).",
-    "Both birds are strays: strayShare = 1 (E18). No group, so it does not read as one group (O1)."
+    "Both birds are strays: strayShare = 1 (E18). No group, so it does not read as one group (O1).",
+    "No group (E14), so groupSpread = 0 (E19). No obstacles, so birdsAtObstacles = 0 (E20)."
   ],
   "state": {
     "width": 32,
@@ -39,7 +40,9 @@
     "directionalAgreement": 0,
     "meanNeighbourDistance": 10,
     "clusterCount": 0,
-    "strayShare": 1.0
+    "strayShare": 1.0,
+    "groupSpread": 0,
+    "birdsAtObstacles": 0
   },
   "tolerance": 1e-12
 }

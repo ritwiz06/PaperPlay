@@ -3,7 +3,7 @@
   "id": "flock.measure.group-across-seam",
   "primitive": {
     "id": "flock.planar.weighted",
-    "version": "3.0.0"
+    "version": "3.1.0"
   },
   "basis": "derived",
   "kind": "measure",
@@ -12,7 +12,8 @@
     "Four birds on y = 10 at x = 30.5, 31.5, 0.5 and 1.5, all heading (1, 0), on a 32 × 32 world.",
     "31.5 to 0.5 is −31, which wraps to +1 (E1), so consecutive birds are 1 apart across the seam, with the same heading: one cluster of 4, one group (E14). clusterCount = 1.",
     "All headings agree: directionalAgreement = 1 (E12). Every nearest neighbour is 1 away: meanNeighbourDistance = 1 (E13).",
-    "No strays: strayShare = 0 (E18). One group holding every bird reads as one group (O1)."
+    "No strays: strayShare = 0 (E18). One group holding every bird reads as one group (O1).",
+    "The group spans the seam: x = 30.5, 31.5, 0.5, 1.5 sit symmetrically about 0 the short way round, so the centre is (0, 10). Offsets -1.5, -0.5, 0.5, 1.5, so the mean squared distance is 5/4 and groupSpread = √1.25 (E19). No obstacles: birdsAtObstacles = 0 (E20)."
   ],
   "state": {
     "width": 32,
@@ -51,7 +52,9 @@
     "directionalAgreement": 1,
     "meanNeighbourDistance": 1,
     "clusterCount": 1,
-    "strayShare": 0.0
+    "strayShare": 0.0,
+    "groupSpread": 1.118033988749895,
+    "birdsAtObstacles": 0
   },
   "tolerance": 1e-12
 }

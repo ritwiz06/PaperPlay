@@ -1,7 +1,7 @@
 {
   "about": "Binding fixtures for fixtures/worldspecs/flocking-reference.json, written by hand from the level script (docs/design/flocking-levels.md) and flock.planar.weighted's parameter table, never from the builder. For each level: the variable its one control must move, where it starts, a value to set it to, the fork's overrides, whether the fork restarts both worlds, and the level's setup. A test sets the control through the built world and checks the engine parameter, not the slider's label (R08).",
   "worldSpec": "fixtures/worldspecs/flocking-reference.json",
-  "primitive": { "id": "flock.planar.weighted", "version": "3.0.0" },
+  "primitive": { "id": "flock.planar.weighted", "version": "3.1.0" },
   "seed": 5,
   "steps": 120,
   "levels": [

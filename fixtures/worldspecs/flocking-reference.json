@@ -120,7 +120,7 @@
         "type": "primitive",
         "primitive": {
           "id": "flock.planar.weighted",
-          "version": "3.0.0"
+          "version": "3.1.0"
         },
         "params": {}
       },
@@ -279,7 +279,7 @@
         "type": "primitive",
         "primitive": {
           "id": "flock.planar.weighted",
-          "version": "3.0.0"
+          "version": "3.1.0"
         },
         "params": {}
       },
@@ -437,7 +437,7 @@
         "type": "primitive",
         "primitive": {
           "id": "flock.planar.weighted",
-          "version": "3.0.0"
+          "version": "3.1.0"
         },
         "params": {}
       },
@@ -596,7 +596,7 @@
         "type": "primitive",
         "primitive": {
           "id": "flock.planar.weighted",
-          "version": "3.0.0"
+          "version": "3.1.0"
         },
         "params": {}
       },
@@ -755,7 +755,7 @@
         "type": "primitive",
         "primitive": {
           "id": "flock.planar.weighted",
-          "version": "3.0.0"
+          "version": "3.1.0"
         },
         "params": {}
       },
@@ -922,7 +922,7 @@
         "type": "primitive",
         "primitive": {
           "id": "flock.planar.weighted",
-          "version": "3.0.0"
+          "version": "3.1.0"
         },
         "params": {}
       },
@@ -1065,7 +1065,7 @@
   "primitivesUsed": [
     {
       "id": "flock.planar.weighted",
-      "version": "3.0.0"
+      "version": "3.1.0"
     }
   ],
   "checks": {

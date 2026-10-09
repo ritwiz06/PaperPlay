@@ -1,0 +1,85 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.measure.spread-tie",
+  "primitive": {
+    "id": "flock.planar.weighted",
+    "version": "3.1.0"
+  },
+  "basis": "derived",
+  "kind": "measure",
+  "claim": "Two groups of the same size: the spread is that of the group holding the lowest-numbered bird.",
+  "derivation": [
+    "Birds 0–3: a row at x = 4, 5, 6, 7 on y = 4, heading (1, 0): one group of 4 (E14).",
+    "Birds 4–7: a square at (20, 20), (22, 20), (20, 22), (22, 22), heading (1, 0): one group of 4. The two are at least 16 apart. clusterCount = 2, strayShare = 0 (E18).",
+    "All eight headings are (1, 0): directionalAgreement = 1 (E12).",
+    "Nearest neighbours: 1 for each bird of the row, 2 for each bird of the square, so meanNeighbourDistance = (4·1 + 4·2)/8 = 1.5 (E13).",
+    "Both groups hold 4 birds; the tie goes to the group holding bird 0, the row. Its centre is (5.5, 4), offsets ±0.5, ±1.5: groupSpread = √1.25 (E19). The square's would have been √2.",
+    "No obstacles: birdsAtObstacles = 0 (E20)."
+  ],
+  "state": {
+    "width": 32,
+    "height": 32,
+    "stepIndex": 0,
+    "agents": [
+      {
+        "x": 4,
+        "y": 4,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 5,
+        "y": 4,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 6,
+        "y": 4,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 7,
+        "y": 4,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 20,
+        "y": 20,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 22,
+        "y": 20,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 20,
+        "y": 22,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 22,
+        "y": 22,
+        "vx": 1,
+        "vy": 0
+      }
+    ],
+    "beacons": [],
+    "obstacles": []
+  },
+  "expected": {
+    "directionalAgreement": 1,
+    "meanNeighbourDistance": 1.5,
+    "clusterCount": 2,
+    "strayShare": 0,
+    "groupSpread": 1.118033988749895,
+    "birdsAtObstacles": 0
+  },
+  "tolerance": 1e-12
+}

@@ -1,0 +1,91 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.measure.spread-largest-group",
+  "primitive": {
+    "id": "flock.planar.weighted",
+    "version": "3.1.0"
+  },
+  "basis": "derived",
+  "kind": "measure",
+  "claim": "The spread is the largest group's: its members' root-mean-square distance from their centre, the short way round.",
+  "derivation": [
+    "Group A: five birds at x = 10, 12, 14, 16, 18 on y = 10, heading (1, 0), each 2 from the next: linked, one group of 5 (E14).",
+    "Group B: four birds at (10, 24), (12, 24), (10, 26), (12, 26), heading (0, 1), at most 2√2 apart: one group of 4. A and B are at least 14 apart, so they stay separate. clusterCount = 2, strayShare = 0 (E18).",
+    "Headings: five (1, 0) and four (0, 1) sum to (5, 4), of length √41, over 9 birds: directionalAgreement = √41/9 (E12).",
+    "Every bird's nearest neighbour is 2 away (along A's row, or along B's sides): meanNeighbourDistance = 2 (E13).",
+    "The largest group is A. Its centre is (14, 10), the angles 2π·{10, …, 18}/32 being symmetric about 2π·14/32. Offsets -4, -2, 0, 2, 4, so the mean squared distance is 40/5 = 8 and groupSpread = √8 (E19).",
+    "No obstacles: birdsAtObstacles = 0 (E20)."
+  ],
+  "state": {
+    "width": 32,
+    "height": 32,
+    "stepIndex": 0,
+    "agents": [
+      {
+        "x": 10,
+        "y": 10,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 12,
+        "y": 10,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 14,
+        "y": 10,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 16,
+        "y": 10,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 18,
+        "y": 10,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 10,
+        "y": 24,
+        "vx": 0,
+        "vy": 1
+      },
+      {
+        "x": 12,
+        "y": 24,
+        "vx": 0,
+        "vy": 1
+      },
+      {
+        "x": 10,
+        "y": 26,
+        "vx": 0,
+        "vy": 1
+      },
+      {
+        "x": 12,
+        "y": 26,
+        "vx": 0,
+        "vy": 1
+      }
+    ],
+    "beacons": [],
+    "obstacles": []
+  },
+  "expected": {
+    "directionalAgreement": 0.7114582486036498,
+    "meanNeighbourDistance": 2,
+    "clusterCount": 2,
+    "strayShare": 0,
+    "groupSpread": 2.8284271247461903,
+    "birdsAtObstacles": 0
+  },
+  "tolerance": 1e-12
+}

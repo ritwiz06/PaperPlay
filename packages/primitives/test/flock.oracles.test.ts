@@ -43,7 +43,7 @@ const Transform = z.discriminatedUnion("type", [
 const common = {
   oracle: z.literal("oracle/1"),
   id: z.string().min(1),
-  primitive: z.strictObject({ id: z.literal("flock.planar.weighted"), version: z.literal("3.0.0") }),
+  primitive: z.strictObject({ id: z.literal("flock.planar.weighted"), version: z.literal("3.1.0") }),
   basis: z.enum(["derived", "expected-qualitative"]),
   claim: z.string().min(1),
   derivation: z.array(z.string().min(1)).min(1),
@@ -62,7 +62,7 @@ const Fixture = z.discriminatedUnion("kind", [
     ...common,
     kind: z.literal("measure"),
     state: StateJson,
-    expected: z.strictObject({ directionalAgreement: Num, meanNeighbourDistance: Num, clusterCount: z.int(), strayShare: Num }),
+    expected: z.strictObject({ directionalAgreement: Num, meanNeighbourDistance: Num, clusterCount: z.int(), strayShare: Num, groupSpread: Num, birdsAtObstacles: z.int() }),
     tolerance: Num,
   }),
   z.strictObject({
@@ -186,6 +186,8 @@ function runMeasure(f: Of<"measure">): void {
   expect(Math.abs(observed.meanNeighbourDistance - f.expected.meanNeighbourDistance)).toBeLessThanOrEqual(f.tolerance);
   expect(observed.clusterCount).toBe(f.expected.clusterCount);
   expect(observed.strayShare).toBeCloseTo(f.expected.strayShare, 12);
+  expect(Math.abs(observed.groupSpread - f.expected.groupSpread)).toBeLessThanOrEqual(f.tolerance);
+  expect(observed.birdsAtObstacles).toBe(f.expected.birdsAtObstacles);
   // O1: the flock reads as one group when it has exactly one group holding at least half the birds.
   expect(flockReadsAsOneGroup(observed)).toBe(f.expected.clusterCount === 1 && f.expected.strayShare <= 0.5);
 }

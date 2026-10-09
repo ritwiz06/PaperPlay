@@ -3,7 +3,7 @@
   "id": "flock.measure.group-strays-and-rest",
   "primitive": {
     "id": "flock.planar.weighted",
-    "version": "3.0.0"
+    "version": "3.1.0"
   },
   "basis": "derived",
   "kind": "measure",
@@ -14,7 +14,8 @@
     "The bird at rest has no heading, so it links to nobody although it is 1 from R's third bird. R is a cluster of 3 and the bird at rest a cluster of 1: strays. clusterCount = 1.",
     "Seven unit headings (0, 1); the bird at rest contributes nothing. The sum is (0, 7) over 8 birds: directionalAgreement = 0.875 (E12).",
     "Every bird's nearest neighbour is 1 away: meanNeighbourDistance = 1 (E13).",
-    "Strays: R's three birds and the bird at rest, 4 of 8, so strayShare = 0.5 (E18). One group holding half the birds reads as one group (O1)."
+    "Strays: R's three birds and the bird at rest, 4 of 8, so strayShare = 0.5 (E18). One group holding half the birds reads as one group (O1).",
+    "The group is row S (x = 20 to 23, y = 20); its centre is (21.5, 20). Offsets ±0.5, ±1.5, so groupSpread = √1.25 (E19). No obstacles: birdsAtObstacles = 0 (E20)."
   ],
   "state": {
     "width": 32,
@@ -77,7 +78,9 @@
     "directionalAgreement": 0.875,
     "meanNeighbourDistance": 1,
     "clusterCount": 1,
-    "strayShare": 0.5
+    "strayShare": 0.5,
+    "groupSpread": 1.118033988749895,
+    "birdsAtObstacles": 0
   },
   "tolerance": 1e-12
 }

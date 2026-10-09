@@ -1,4 +1,4 @@
-# flock.planar.weighted@3.0.0
+# flock.planar.weighted@3.1.0
 
 A planar, weighted-rule adaptation of local flocking in the spirit of Reynolds (1987),
 "Flocks, Herds, and Schools: A Distributed Behavioral Model". It is a teaching model:
@@ -22,7 +22,9 @@ headings to differ by less than 45°, and a cluster of fewer than 4 birds is str
 group. The steps and the state are those of 2.2.0, so runs are identical step for step. But
 `clusterCount` changes for the same state, so a 2.x record's observables no longer replay:
 a major version. It also adds the observable `strayShare` (E18) and the reading "one group"
-(O1).
+(O1). 3.1.0 (2026-10-09) adds two observables, `groupSpread` (E19) and `birdsAtObstacles`
+(E20), and the query Q3, for the level rule (ADR-0018). Nothing else changes: the steps, the
+state and every earlier observable are those of 3.0.0, bit for bit.
 
 ## Symbols
 
@@ -45,7 +47,8 @@ a major version. It also adds the observable `strayShare` (E18) and the reading 
 | R_o | `obstacleRadius` | world units | 3.4 | 0.1 – 10 | live |
 
 `minSpeed` must be below `maxSpeed`. Fixed constants: cohesion ease radius r_c = 3, beacon
-ease radius r_b = 2.5, cluster link distance L_c = 4.5 (world units), fixed timestep
+ease radius r_b = 2.5, cluster link distance L_c = 4.5, rock touch distance r_rock = 1 (world
+units), fixed timestep
 Δt = 1/60 s (any step from 0 to 0.05 s is accepted). Ranges are teaching choices carried
 over from the Murmuration Valley prototype, except alignment's, widened in 2.2.0; the four
 rule defaults come from a sweep (ADR-0003) and the rest from the prototype. None comes
@@ -113,6 +116,16 @@ for states read back from JSON.
   group when clusterCount = 1 and strayShare ≤ 1/2: exactly one group, holding at least
   half the birds. A chance cluster of four amid strays is one group, but not one flock.
   Level texts, the hook-seed rule and the group sweep all use this reading.
+- **E19 `groupSpread`** = how far the largest group spreads. Take the largest group of E14
+  (ties go to the group holding the lowest-numbered bird); with no group, groupSpread = 0.
+  - Its centre, axis by axis, is the circular mean c = wrap(L·atan2(Σ sin θ_i, Σ cos θ_i)/2π, L),
+    with θ_i = 2π x_i / L for x (L = W) and likewise for y (L = H), summed in list order.
+    When both sums are exactly 0, atan2 gives 0 and c = 0.
+  - groupSpread = √((1/|G|) Σ |δ(c → p_i)|²) over the group's birds, with E1's shortest
+    displacement, in world units.
+- **E20 `birdsAtObstacles`** = the number of birds closer than r_rock = 1 world unit to any
+  obstacle, by E1's distance. A bird near two rocks counts once. r_rock is about the size a rock
+  is drawn, and fixed, so counts compare across `obstacleRadius` settings.
 
 ## Edits (between steps, from learner events)
 
@@ -134,6 +147,9 @@ applied in order after any sample taken at s and before step s is taken.
   order (null for a bird with zero velocity), and the flock's mean heading atan2(Σ ŷ, Σ x̂)
   over E12's unit headings, summed in list order (null when both sums are exactly 0). The
   mean's length over n is E12's directional agreement. The heading compass shows both.
+- **Q3 Spread.** `spread(state)` returns E19's group as a list of bird indices in index order,
+  its centre (null with no group) and its radius, groupSpread. The ring drawn around the flock
+  shows it.
 
 ## Initial state
 

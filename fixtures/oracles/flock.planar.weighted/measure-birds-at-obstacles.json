@@ -1,0 +1,82 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.measure.birds-at-obstacles",
+  "primitive": {
+    "id": "flock.planar.weighted",
+    "version": "3.1.0"
+  },
+  "basis": "derived",
+  "kind": "measure",
+  "claim": "A bird counts as at a rock when it is closer than 1 world unit to any obstacle, the short way round; exactly 1 does not count, and a bird near two rocks counts once.",
+  "derivation": [
+    "Rocks: rock-1 at (16, 16), rock-2 at (0.5, 5), rock-3 at (17.7, 16). Birds, all heading (1, 0): P1 (16.9, 16), P2 (16, 17), P3 (15.5, 16.5), P4 (31.8, 5), P5 (5, 5).",
+    "P1 is 0.9 from rock-1 and 0.8 from rock-3: at a rock, counted once. P2 is exactly 1 from rock-1 and √3.89 from rock-3: not closer than 1, not counted. P3 is √0.5 from rock-1: counted. P4 is 0.7 from rock-2 the short way round (m(0.5 − 31.8, 32) = 0.7): counted. P5 is far from every rock. birdsAtObstacles = 3 (E20).",
+    "All headings are (1, 0): directionalAgreement = 1 (E12).",
+    "Nearest neighbours: P1–P2 √1.81, P1–P3 √2.21, P2–P3 √0.5, so P1's is √1.81 and P2's and P3's √0.5. P4 and P5 are 5.2 apart the short way round (m(5 − 31.8, 32) = 5.2) and far from the rest. meanNeighbourDistance = (√1.81 + 2√0.5 + 2·5.2)/5 (E13).",
+    "P1, P2 and P3 are linked (all within 4.5, same heading) into a cluster of 3: strays. P4 and P5 are 5.2 apart: not linked. No group: clusterCount = 0, strayShare = 1 (E18), groupSpread = 0 (E19)."
+  ],
+  "state": {
+    "width": 32,
+    "height": 32,
+    "stepIndex": 0,
+    "agents": [
+      {
+        "x": 16.9,
+        "y": 16,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 16,
+        "y": 17,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 15.5,
+        "y": 16.5,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 31.8,
+        "y": 5,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 5,
+        "y": 5,
+        "vx": 1,
+        "vy": 0
+      }
+    ],
+    "beacons": [],
+    "obstacles": [
+      {
+        "id": "rock-1",
+        "x": 16,
+        "y": 16
+      },
+      {
+        "id": "rock-2",
+        "x": 0.5,
+        "y": 5
+      },
+      {
+        "id": "rock-3",
+        "x": 17.7,
+        "y": 16
+      }
+    ]
+  },
+  "expected": {
+    "directionalAgreement": 1,
+    "meanNeighbourDistance": 2.6319151934160936,
+    "clusterCount": 0,
+    "strayShare": 1,
+    "groupSpread": 0,
+    "birdsAtObstacles": 3
+  },
+  "tolerance": 1e-12
+}

@@ -11,6 +11,7 @@ export {
   flockHeadings,
   flockNeighbours,
   flockReadsAsOneGroup,
+  flockSpread,
   FlockParams,
   flockPlanarWeighted,
   FlockStateSchema,
@@ -20,5 +21,6 @@ export {
   type FlockState,
   type Headings,
   type Neighbourhood,
+  type Spread,
   type Vec2,
 } from "./flock/index.ts";

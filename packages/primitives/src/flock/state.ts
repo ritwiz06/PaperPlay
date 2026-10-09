@@ -37,4 +37,8 @@ export type FlockObservables = {
   clusterCount: number;
   /** The share of birds that are strays, in no group (E18). */
   strayShare: number;
+  /** E19: the largest group's root-mean-square distance from its centre, in world units; 0 with no group. */
+  groupSpread: number;
+  /** E20: birds closer than 1 world unit to an obstacle. */
+  birdsAtObstacles: number;
 };

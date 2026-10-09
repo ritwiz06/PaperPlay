@@ -9,7 +9,7 @@ import type { FlockObservables, FlockState } from "./state.ts";
 import { FIXED_TIMESTEP, stepFlock } from "./step.ts";
 
 export { headingsOf as flockHeadings, type Headings } from "./headings.ts";
-export { readsAsOneGroup as flockReadsAsOneGroup } from "./measure.ts";
+export { readsAsOneGroup as flockReadsAsOneGroup, spreadOf as flockSpread, type Spread } from "./measure.ts";
 export { neighboursOf as flockNeighbours, type Neighbourhood } from "./neighbours.ts";
 export { flockDefaultParams, FlockParams } from "./params.ts";
 export { FlockStateSchema } from "./state-schema.ts";
@@ -36,6 +36,15 @@ const DESCRIPTION: PrimitiveDescription = deepFreeze({
       meaning:
         "Share of birds that are strays, in clusters of fewer than 4. The flock reads as one group when it has exactly one group and at most half its birds are strays.",
     },
+    groupSpread: {
+      unit: "world units",
+      meaning:
+        "How far the largest group spreads: the root-mean-square distance of its birds from its centre, measured the short way round the world. 0 when there is no group.",
+    },
+    birdsAtObstacles: {
+      unit: "birds",
+      meaning: "Birds closer than 1 world unit to a rock, about the size a rock is drawn: birds flying through it. Fixed, so counts compare across obstacleRadius settings.",
+    },
   },
   assumptions: [
     "A flat world that wraps around (a torus): a bird leaving one edge re-enters at the opposite edge, and every distance is measured the short way round.",
@@ -52,10 +61,10 @@ const DESCRIPTION: PrimitiveDescription = deepFreeze({
   ],
 });
 
-/** flock.planar.weighted@3.0.0, specified equation by equation in MODEL.md. */
+/** flock.planar.weighted@3.1.0, specified equation by equation in MODEL.md. */
 export const flockPlanarWeighted: EditablePrimitive<FlockParams, FlockState, FlockObservables> = Object.freeze({
   id: "flock.planar.weighted",
-  version: "3.0.0",
+  version: "3.1.0",
   fixedTimestep: FIXED_TIMESTEP,
   paramSchema: FlockParams,
   stateSchema: FlockStateSchema,
