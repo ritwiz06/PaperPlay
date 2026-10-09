@@ -53,12 +53,13 @@ const bitwise = (a: number[][], b: number[][]): boolean =>
   a.length === b.length && a.every((row, i) => row.length === b[i]?.length && row.every((value, k) => Object.is(value, b[i]?.[k])));
 
 const close = run({ camera: zoom(DEFAULT_CAMERA, 0.6), palette: valleyDay });
-const far = run({ camera: orbit(zoom(DEFAULT_CAMERA, 1.6), 2.2, 0.3), palette: dusk });
+// Framed off-centre in a HUD's free window, as the game-first shell frames it (ADR-0008).
+const far = run({ camera: { ...orbit(zoom(DEFAULT_CAMERA, 1.6), 2.2, 0.3), window: { left: 0.33, top: 0.1, width: 0.62, height: 0.8 } }, palette: dusk });
 const selecting = run({ camera: DEFAULT_CAMERA, palette: valleyDay, emphasise: true });
 const unseen = run(null);
 
 describe("[R02] model/render separation", () => {
-  it("gives bit-identical observables whatever camera or palette draws the flock, or none", () => {
+  it("gives bit-identical observables whatever camera, view window or palette draws the flock, or none", () => {
     expect(close.observables).toHaveLength(STEPS);
     expect(bitwise(close.observables, unseen.observables)).toBe(true);
     expect(bitwise(far.observables, unseen.observables)).toBe(true);

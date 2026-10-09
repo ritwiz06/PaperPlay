@@ -144,7 +144,9 @@ export function applyFrame(stage: StageScene, frame: FrameDescription): void {
   stage.camera.position.set(...camera.eye);
   stage.camera.up.set(...camera.up);
   stage.camera.lookAt(...camera.target);
-  stage.camera.updateProjectionMatrix();
+  // The frame's own projection, so an off-centre view (the HUD's free window) draws exactly as framed.
+  stage.camera.projectionMatrix.fromArray(camera.projection);
+  stage.camera.projectionMatrixInverse.copy(stage.camera.projectionMatrix).invert();
   const fog = stage.scene.fog as THREE.Fog;
   const centre = stage.camera.position.distanceTo(scratch.position.set(...camera.target));
   fog.near = centre + FOG_BAND[0];

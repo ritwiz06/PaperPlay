@@ -170,6 +170,17 @@ describe("Three.js stage adapter", () => {
     expectClose(stage.camera.matrixWorldInverse.elements, frame.camera.view, 9);
   });
 
+  it("draws an off-centre view exactly as the frame frames it, inside the HUD's free window", () => {
+    const stage = createStageScene();
+    const window = { left: 0.33, top: 0.09, width: 0.66, height: 0.88 };
+    const frame = frameOf(world(), valleyDay, { ...orbit(DEFAULT_CAMERA, 0.4, 0), window });
+    applyFrame(stage, frame);
+    stage.camera.updateMatrixWorld();
+
+    expectClose(stage.camera.projectionMatrix.elements, frame.camera.projection, 9);
+    expectClose(stage.camera.projectionMatrixInverse.clone().multiply(stage.camera.projectionMatrix).elements, new THREE.Matrix4().elements, 9);
+  });
+
   it("repaints the sky, fog, field and markers when the palette changes", () => {
     const stage = createStageScene();
     applyFrame(stage, frameOf(world({ beacons: [{ id: "beacon-1", x: 4, y: 28 }] })));

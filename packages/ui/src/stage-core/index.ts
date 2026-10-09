@@ -4,8 +4,10 @@
  */
 export * from "./camera.ts";
 export { contrastRatio, mixHex, relativeLuminance } from "./color.ts";
+export * from "./compass.ts";
 export * from "./fixed-step.ts";
 export * from "./frame.ts";
 export * from "./palettes.ts";
 export * from "./picking.ts";
+export * from "./screen.ts";
 export { transform4, transformPoint, type Mat4, type Vec3 } from "./vec.ts";

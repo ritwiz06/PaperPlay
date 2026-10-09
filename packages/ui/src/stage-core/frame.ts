@@ -1,5 +1,5 @@
 import type { FlockState } from "@paperplay/primitives";
-import { poseOf, projectionMatrix, viewMatrix, FAR, NEAR, type OrbitCamera } from "./camera.ts";
+import { FULL_WINDOW, poseOf, projectionMatrix, viewMatrix, FAR, NEAR, type OrbitCamera, type ViewWindow } from "./camera.ts";
 import type { StagePalette } from "./palettes.ts";
 import type { Mat4, Vec3 } from "./vec.ts";
 
@@ -76,6 +76,8 @@ export interface FrameCamera {
   readonly far: number;
   readonly view: Mat4;
   readonly projection: Mat4;
+  /** The part of the canvas the view is framed in. */
+  readonly window: ViewWindow;
 }
 
 /** Everything a renderer needs for one frame, as plain data. It holds no simulation state. */
@@ -153,6 +155,7 @@ export function describeFrame(input: StageInput, camera: OrbitCamera, palette: S
       far: FAR,
       view: viewMatrix(pose),
       projection: projectionMatrix(camera),
+      window: camera.window ?? FULL_WINDOW,
     },
     field: { width, depth: height, altitude: FLIGHT_ALTITUDE },
     palette,
