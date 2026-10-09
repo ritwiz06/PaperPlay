@@ -198,3 +198,43 @@ describe("[R04] local world session", () => {
     expect(seen.size).toBe(9);
   });
 });
+
+describe("[R07] a level's setup and loading the next level", () => {
+  const rock = { kind: "place", step: 0, entityId: "rock-in-path", entity: "obstacle", x: 15, y: 8.5 } as const;
+  const withRock = (playing = false) => createWorldSession({ seed: HOOK_SEED, params: flockDefaultParams, actions: LOCAL_ACTIONS, setup: [rock], playing });
+
+  it("applies the setup at step 0 as recorded place events, so the run replays from its record", () => {
+    const session = withRock();
+    expect(session.snapshot().obstacles).toEqual([{ id: "rock-in-path", x: 15, y: 8.5 }]);
+    expect(session.snapshot().events).toEqual([rock]);
+    session.setAction(PRIMARY_ACTION, 3);
+    run(session, 90);
+    const plan = session.plan();
+    expect(plan.events[0]).toEqual(rock);
+    expect(json(runEvents({ primitive: flock, params: plan.params, actions: LOCAL_ACTIONS }, plan).finalState)).toBe(json(session.state()));
+  });
+
+  it("keeps the setup on replaying the same seed and on the next seed", () => {
+    const session = withRock();
+    run(session, 30);
+    session.replaySameSeed();
+    expect(session.snapshot().obstacles).toEqual([{ id: "rock-in-path", x: 15, y: 8.5 }]);
+    session.nextSeed();
+    expect(session.snapshot().obstacles).toEqual([{ id: "rock-in-path", x: 15, y: 8.5 }]);
+    expect(session.snapshot().events).toEqual([rock]);
+  });
+
+  it("loads another level afresh: its seed, parameters, actions and setup, at step 0", () => {
+    const session = open();
+    session.setAction(PRIMARY_ACTION, 3.5);
+    run(session, 60);
+    const params = { ...flockDefaultParams, obstacleRadius: 5 };
+    session.load({ seed: HOOK_SEED, params, actions: { "obstacle-radius": "obstacleRadius" }, setup: [rock] });
+    const now = session.snapshot();
+    expect([now.step, now.params, now.events]).toEqual([0, params, [rock]]);
+    expect(json(session.state())).toBe(json(flock.apply(flock.init(params, HOOK_SEED), rock)));
+    session.setAction("obstacle-radius", 6);
+    expect(session.snapshot().params.obstacleRadius).toBe(6);
+    expect(() => session.setAction(PRIMARY_ACTION, 1)).toThrow(/no action alignment-strength/);
+  });
+});

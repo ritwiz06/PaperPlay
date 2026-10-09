@@ -7,7 +7,7 @@
  * Event order matches runEvents: an event made while the world stands at step s is recorded
  * at s and applied before step s is taken, so the session can always be replayed from its record.
  */
-import type { RunEvent } from "@paperplay/contracts";
+import type { PlaceEvent, RunEvent } from "@paperplay/contracts";
 import {
   flockHeadings,
   flockNeighbours,
@@ -27,6 +27,8 @@ export interface SessionOptions {
   readonly params: FlockParams;
   /** Each action id and the parameter it moves, in the order the defaults are restored. */
   readonly actions: Readonly<Record<string, keyof FlockParams>>;
+  /** A level's setup: placements at step 0, recorded as ordinary place events (ADR-0014). */
+  readonly setup?: readonly PlaceEvent[];
   readonly playing?: boolean;
 }
 
@@ -68,6 +70,8 @@ export interface WorldSession {
   plan(): RunPlan<FlockState> & { readonly params: FlockParams };
   /** Changes with every change, so a paused stage knows when to draw again. */
   version(): number;
+  /** Starts afresh on other options, such as the next level's, keeping the same stage. */
+  load(options: SessionOptions): void;
 }
 
 const TIMESTEP = flock.fixedTimestep;
@@ -80,7 +84,8 @@ const TRAIL_STEPS = 180;
 const TRAIL_STRIDE = 18;
 const PREFIX = { beacon: "beacon", obstacle: "rock" } as const;
 
-export function createWorldSession(options: SessionOptions): WorldSession {
+export function createWorldSession(first: SessionOptions): WorldSession {
+  let options = first;
   let seed = options.seed >>> 0;
   let initialParams = flock.paramSchema.parse(options.params);
   let params = initialParams;
@@ -89,7 +94,9 @@ export function createWorldSession(options: SessionOptions): WorldSession {
   let alpha = 0;
   let clock: StepClock = START_CLOCK;
   let playing = options.playing ?? false;
-  let events: RunEvent[] = [];
+  /** The setup's place events come first, at step 0, so replay and the next seed keep them. */
+  const setupEvents = (): RunEvent[] => (options.setup ?? []).map((event) => ({ ...event, step: 0 }));
+  let events: RunEvent[] = setupEvents();
   /** How many recorded events have been applied; fewer than all only during a replay. */
   let applied = 0;
   let placed = { beacon: 0, obstacle: 0 };
@@ -145,6 +152,8 @@ export function createWorldSession(options: SessionOptions): WorldSession {
     applyDue();
     changed();
   };
+
+  applyDue();
 
   return {
     snapshot: () => ({
@@ -226,7 +235,7 @@ export function createWorldSession(options: SessionOptions): WorldSession {
     nextSeed() {
       seed = (seed + 1) >>> 0;
       initialParams = params;
-      events = [];
+      events = setupEvents();
       placed = { beacon: 0, obstacle: 0 };
       selected = null;
       restart();
@@ -243,5 +252,15 @@ export function createWorldSession(options: SessionOptions): WorldSession {
       timestep: TIMESTEP,
     }),
     version: () => version,
+    load(next) {
+      options = next;
+      seed = next.seed >>> 0;
+      initialParams = flock.paramSchema.parse(next.params);
+      events = setupEvents();
+      placed = { beacon: 0, obstacle: 0 };
+      selected = null;
+      playing = next.playing ?? playing;
+      restart();
+    },
   };
 }
