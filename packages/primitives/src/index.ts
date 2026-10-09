@@ -8,6 +8,7 @@ export { createRegistry, registry, type PrimitiveRegistry } from "./registry.ts"
 export { replayRecord, runEvents, type ReplayReport, type RunPlan, type RunResult, type RunSetup } from "./replay.ts";
 export {
   flockDefaultParams,
+  flockHeadings,
   flockNeighbours,
   FlockParams,
   flockPlanarWeighted,
@@ -16,6 +17,7 @@ export {
   type Entity,
   type FlockObservables,
   type FlockState,
+  type Headings,
   type Neighbourhood,
   type Vec2,
 } from "./flock/index.ts";

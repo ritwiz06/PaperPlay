@@ -111,6 +111,10 @@ applied in order after any sample taken at s and before step s is taken.
 - **Q1 Neighbourhoods.** `neighbours(state, params, i)` returns N_i and S_i (E2) as lists of
   bird indices in list order. The selected-neighbour view shows them. A query adds no
   equation and changes no state, default or range, so it does not change the version.
+- **Q2 Headings.** `headings(state)` returns each bird's heading atan2(vy_i, vx_i), in list
+  order (null for a bird with zero velocity), and the flock's mean heading atan2(Σ ŷ, Σ x̂)
+  over E12's unit headings, summed in list order (null when both sums are exactly 0). The
+  mean's length over n is E12's directional agreement. The heading compass shows both.
 
 ## Initial state
 
