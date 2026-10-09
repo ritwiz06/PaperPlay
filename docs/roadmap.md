@@ -104,8 +104,8 @@ Next:
 - [x] The DepthToggle (Beginner / Intermediate / Advanced), in the level card and the
   journal (2026-10-09). It switches words, numbers, the equation and the analogy, by the
   element ids each depth variant names (`e5c30b7`).
-- [ ] The split-screen ForkView: two synchronized worlds and one measured difference
-  between them.
+- [x] The split-screen ForkView: two synchronized worlds and one measured difference
+  between them, charted; stacked on a phone (2026-10-09, `8d62794`, ADR-0019).
 - [ ] Guided exploration in the guide: predict, intervene, observe, explain, never scored.
 - [ ] `/world/local` moves into the shell as the free sandbox.
 - [ ] RunRecord export and import; `npm run replay` with a tolerance report; a replay test

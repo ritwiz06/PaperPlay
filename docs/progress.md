@@ -7,6 +7,22 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · The fork
+
+- Branch: `g2/fork-view`
+- Commits: `6c9a5a2`, `8d62794`
+- Shipped (ADR-0019):
+  - **What if now runs both worlds,** in step on one clock.
+    - The worlds branch from the moment the fork opens, or restart from the seed when the
+      What-if changes a start-up variable ("Both worlds restart").
+    - The fork charts the level's measured difference, and reports it, with the level's
+      statement, at the level's time.
+  - **The fork measures what the sweep measures:** opened at a level's start on seed 5, all six
+    levels match `eval/sweeps/levels.md`.
+  - **Layout:** side by side on a desktop, stacked on a phone.
+- Evidence: 10 fork unit tests and 6 browser tests, with axe on both sizes.
+- Gate: run with the guided exploration, below.
+
 ## 2026-10-09 · The level rule
 
 - Branch: `g2/level-rule`

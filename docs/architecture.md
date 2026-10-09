@@ -11,7 +11,7 @@ How PaperPlay fits together today. The concepts named here are explained in
 | `packages/primitives` | Deterministic, fixed-step scientific models, their registry, and run replay | `flockPlanarWeighted`, `flockNeighbours` (Q1), `flockHeadings` (Q2), `flockReadsAsOneGroup` (O1), `flockSpread` (Q3), `mulberry32`, `registry`, `runEvents`, `replayRecord` |
 | `packages/ui` | Design tokens, fonts, the stage, the bench and the game-first HUD | `@paperplay/ui/tokens`, `fonts.css`, `components.css`, `hud.css`, `stage-core`, `three-adapter`, `react` |
 | `packages/pipeline` | Agent roles, model adapters, checks, controller | `buildWorld`, the deterministic builder in `src/builder/` (ADR-0016); `summarise` and `claimHolds`, a fork's measured difference (ADR-0018); the agents and adapters arrive at G3 |
-| `apps/web` | React shell: owns the run, renders state, submits actions | `src/world/session.ts`, `src/world/LocalWorld.tsx` at `/world/local`, `src/world/local-world.ts`; `src/world/authored-world.ts`, which builds `fixtures/worldspecs/flocking-reference.json` with the builder at start-up; `src/hook/HookWorld.tsx` at `/world/hook`, the six levels played from the built world, and `src/hook/guide.ts`, the guide from each level's script; the dev-only capture page `capture.html` with `src/capture/` (ADR-0010) |
+| `apps/web` | React shell: owns the run, renders state, submits actions | `src/world/session.ts`, `src/world/LocalWorld.tsx` at `/world/local`, `src/world/local-world.ts`; `src/world/authored-world.ts`, which builds `fixtures/worldspecs/flocking-reference.json` with the builder at start-up; `src/hook/HookWorld.tsx` at `/world/hook`, the six levels played from the built world, and `src/hook/guide.ts`, the guide from each level's script; `src/world/fork.ts`, a level's fork (ADR-0019); the dev-only capture page `capture.html` with `src/capture/` (ADR-0010) |
 | `apps/api` | Fastify API: will hold secrets and run jobs | `GET /health` only, until G3 |
 | `scripts/` | Gate, docs checker, defaults sweep, hook seed, group-measure sweep, levels sweep, demo capture, the built app served as Vercel would | `check-gate.ts` (with `gate/worlds.ts`), `check-docs.ts`, `sweep-defaults.ts`, `hook-seed.ts`, `group-measure.ts`, `levels.ts`, `capture-demo.ts`, `serve-dist.ts`; `scripts/test/bundle.test.ts` builds the production bundle | `check-gate.ts`, `check-docs.ts`, `sweep-defaults.ts`, `hook-seed.ts`, `group-measure.ts`, `capture-demo.ts` |
 | `fixtures/oracles/` | Hand-derived expected behaviours for primitives | See `fixtures/oracles/README.md` |
@@ -34,8 +34,9 @@ Inside `packages/ui`:
   - From G1: WorldStage, LabBench, Readout, and the origin chip and legend (ADR-0007).
   - The game-first HUD (ADR-0008, ADR-0012), styled by `hud.css`: LevelCard, Guide,
     PaperJournal, LevelMap, DepthToggle, HeadingCompass, OriginTag and `useFreeRect`.
-  - Each level's readout, by its observable (ADR-0014): HeadingCompass, SpacingGauge and
-    GroupsCounter, sharing the `dial` styles. The level card shows and hides its elements by
+  - Each level's readout, by its observable (ADR-0014, ADR-0018): HeadingCompass,
+    SpacingGauge, SpreadDial and GroupsCounter, sharing the `dial` styles.
+  - The fork (ADR-0019): ForkView, with two WorldStages, and DifferenceChart. The level card shows and hides its elements by
     the id a depth variant names (ADR-0016).
 
 ## Dependency directions
@@ -138,6 +139,8 @@ flowchart LR
 | A gate's reviewed worlds are reviewed: G2 cannot pass while the flocking world is a draft or holds a placeholder anchor | `check:gate`, from `gates.json`; tests [R03] | `scripts/gate/worlds.ts`, `scripts/test/gate-worlds.test.ts` |
 | The built app runs under the deploy's Content-Security-Policy with no violation and no console error | Browser tests against the production build, served with `vercel.json`'s headers | `tests/e2e/csp.spec.ts`, `scripts/serve-dist.ts` (ADR-0017) |
 | A level's setup is recorded as place events at step 0, so its run replays from its record | Tests [R07] | `apps/web/test/session.test.ts` |
+| A fork's two worlds stay step for step together; opened at a level's start on seed 5, it measures exactly what the levels sweep records | Tests [R06], against direct runs and `eval/sweeps/levels.md` | `apps/web/test/fork.test.ts` |
+| The fork shows two worlds side by side on a desktop, stacked on a phone, with the measured difference charted, and passes axe on both | Browser tests [R06] [R12] | `tests/e2e/fork.spec.ts` |
 | The renderer never changes an observable, even with a bird picked, the spread ring drawn, the view framed in a HUD's window, or the flock coloured by heading with wingbeats and trails | Test [R02]; in the browser, colour by heading records nothing and the run matches Node bit for bit [R02] | `packages/ui/test/render-invariance.test.ts`, `tests/e2e/world.spec.ts` |
 | Every colour on the heading wheel keeps 3:1 against the meadow; trails never cross a seam and stay under 3.5 units | Tests | `packages/ui/test/world-art.test.ts` |
 | The following camera keeps the flock's centre inside the HUD's free rectangle, and is the still overview under reduced motion | Browser tests | `tests/e2e/hook.spec.ts` |
@@ -267,3 +270,5 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 | 2026-10-09 | 804038a | The spread ring (the frame's `spread` emphasis) and SpreadDial |
 | 2026-10-09 | e09ecd9 | `gates.json` `reviewedWorlds`; `scripts/gate/worlds.ts` |
 | 2026-10-09 | b4503a5 | The deploy's CSP and headers; `scripts/serve-dist.ts`; a second Playwright web server; `apps/web/src/strict-csp.ts` |
+| 2026-10-09 | 6c9a5a2 | The session's `start` and `stepBy` |
+| 2026-10-09 | 8d62794 | The fork: `src/world/fork.ts`, ForkView, DifferenceChart; WorldStage's `name` |
