@@ -15,12 +15,14 @@ every session.
     ADR-0011).
 - **Branches:** only `main`. Every slice this session merged fast-forward and was pushed
   (ADR-0009).
-- **Working commit:** `d786109` on `main`, the latest code commit there. `check:gate` passed
+- **Working commit:** `f37c9a9` on `main`, the latest code commit there. `check:gate` passed
   G1 on it.
+- **Primitive:** `flock.planar.weighted@3.0.0`, with the owner's group measure (ADR-0015).
 - **Runtime:** Node 24.21.0, pinned in `.node-version`. Run tools through
   `fnm exec --using=24.21.0` when the shell's default Node differs.
 - **What a learner can do now:**
-  - **On `/world/hook`,** the hook level on the game-first shell. Content is hard-coded until
+  - **On `/world/hook`,** the hook level on the game-first shell, on seed 5 since flock
+    3.0.0. Content is hard-coded until
     WorldSpec.
     - Move "Move together".
     - Watch the flock: birds with flapping wings, coloured by heading, with trails, in a
@@ -45,19 +47,19 @@ every session.
   - the screenshots in `captures/final/`;
   - the canonical capture in `captures/canonical/`.
 
-## Latest check:gate (G1), 2026-10-09, commit d786109
+## Latest check:gate (G1), 2026-10-09, commit f37c9a9
 
 ```
 check:gate G1 · Playable baseline · tag v0.1.0
   runtime    node 24.21.0 (pinned 24.21.0)  ok
   typecheck  ok      12.7 s
-  lint       ok      9.4 s
-  check:docs ok      0.3 s
-  test       ok      10.5 s
-  build      ok      0.6 s
-  test:e2e   ok      31.7 s
-  evidence   334 tests (vitest 302, playwright 32), 0 skipped
-    R01  Deterministic, oracle-checked primitives      47 passing
+  lint       ok      9.5 s
+  check:docs ok      0.2 s
+  test       ok      10.3 s
+  build      ok      0.7 s
+  test:e2e   ok      31.2 s
+  evidence   343 tests (vitest 311, playwright 32), 0 skipped
+    R01  Deterministic, oracle-checked primitives      51 passing
     R02  Model/render separation                       6 passing
     R03  Strict, versioned contracts                   49 passing
     R04  Playable local world                          18 passing
@@ -65,23 +67,18 @@ check:gate G1 · Playable baseline · tag v0.1.0
 G1 passed: every required check ran and every requirement has passing evidence.
 ```
 
-Ahead of their gate, from the same run's reports: R05 4, R06 1, R07 11, R12 8. CI on Linux
-passed the same gate at `2158335` (run 37976130520), with the same 334 tests.
+Ahead of their gate, from the same run's reports: R05 4, R06 1, R07 11, R12 8.
 
 ## Blockers
 
 - **The Reynolds PDF is missing from `reference/private/`,** and slice 1 (the source map)
-  needs it. Only the project handbook is there.
+  needs it. Only the project handbook is there. The owner chose to do slice 1 later; until
+  then, anchors are placeholders, clearly marked.
 
 ## Decisions waiting on the owner
 
-1. **The level script,** `docs/design/flocking-levels.md`. Its open questions:
-   - **Is Reynolds 1987 the source?**
-   - **The group measure,** which level 4 needs.
-   - **Two proposed readouts:** a spacing gauge and an agreement chart.
-   - **A level's setup placements,** such as level 5's rock. The brief's WorldSpec has no field
-     for them.
-   - **Level 6's fork restarts both worlds,** because it changes init-phase variables.
+1. **Level 4's one readout,** a groups counter by ADR-0015's measure: my reading, since the
+   owner named only the compass and the spacing gauge (ADR-0014).
 2. **The shell and the world art,** from the screenshots:
    - the bottom-left stack;
    - the compass;
@@ -92,19 +89,18 @@ passed the same gate at `2158335` (run 37976130520), with the same 334 tests.
 
 ## Next three actions
 
-1. Once the owner has reviewed it, turn the level script into the WorldSpec schema and
-   `fixtures/worldspecs/flocking-reference.json`.
-2. Settle the group measure, before level 4 is built.
-3. Write the source register and the flocking source map, so real passages replace the
-   placeholder.
+1. The WorldSpec schema [R03] and `fixtures/worldspecs/flocking-reference.json`, as a draft
+   with placeholder anchors until the source map exists.
+2. The deterministic builder, with binding fixtures [R08].
+3. `/world/hook` driven by the WorldSpec through all six levels.
 
 ## Recommendations
 
 In priority order:
 
-1. **Review the level script before any WorldSpec code.** Risk: WorldSpec fixes the content's
-   shape, and the script raises two contract gaps: setup placements, and forks that change
-   init-phase variables.
+1. **Add the Reynolds PDF before the reference fixture is marked reviewed.** Risk: a draft
+   with placeholder anchors is fine to build against, but no level may claim a passage it
+   cannot cite.
 2. **Add the cross-runtime capture check (option b) before publishing widely.** Risk: real
    drift between machines would hide inside "rendering noise" without a stated tolerance.
 3. **Profile on a phone's GPU before raising `agentCount`.** The M3 Pro holds 60 fps at 72

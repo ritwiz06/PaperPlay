@@ -1,6 +1,7 @@
 # ADR-0003: Teaching defaults for flock.planar.weighted
 
-- Status: accepted
+- Status: accepted. Follow-up 2's hook seed is amended by ADR-0015: under the new group
+  measure the same rule picks seed 5.
 - Date: 2026-09-30, with follow-ups decided on 2026-10-01
 - Decided by: the owner set the criterion and method, and a deterministic sweep picked the
   values. On 2026-10-01 the owner accepted them, chose the follow-ups below, and ruled out
@@ -120,6 +121,19 @@ widened alignment's range; see the follow-ups.)
 3. **Alignment's range widens to 0–4** in flock.planar.weighted 2.2.0, so the default of 2
    sits mid-range. Equations, defaults and the state contract are unchanged.
 4. **No further sweeps for now.** Options 3 and 5 stay open.
+
+## Follow-up on 2026-10-09: the group measure (ADR-0015)
+
+- **The measure changed in flock 3.0.0,** as the owner chose: links need headings within
+  45°, clusters under 4 birds are strays, and "one group" is O1, one group holding at least
+  half the birds. 0 of 10,000 random scatters read as one group under it.
+- **The same rule now picks seed 5:** one group from 12.95 s, ordered from 16.33 s. Seed 4
+  is one group only from 18.63 s. The owner chose to follow the rule, so `/world/hook` and
+  `/world/local` open on seed 5.
+- **The demo capture keeps seed 4** (ADR-0010).
+- **The defaults are unchanged.** Re-judged under O1, 14 of 20 sweep seeds still qualify
+  (`eval/sweeps/hook-seed.md`).
+- The numbers in the sections above are 2.2.0's, kept as the record of that decision.
 
 ## What the hook seed does not show
 

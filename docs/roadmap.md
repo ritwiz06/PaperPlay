@@ -72,8 +72,10 @@ Next:
   (R12) (2026-10-09, commit 3639dfb).
 - [ ] Source register, source map, reading notes and learning questions. The section files
   moved to G3 (see Plan changes, 2026-10-09).
-- [ ] Decide the group measure before any level teaches with it (owner, 2026-10-01). At the
-  default density, 17% of random scatters count as one group (ADR-0003).
+- [x] Decide the group measure before any level teaches with it (owner, 2026-10-01). At the
+  default density, 17% of random scatters counted as one group (ADR-0003). Done 2026-10-09:
+  flock 3.0.0 and `npm run sweep:groups`, with 0 of 10,000 scatters reading as one group
+  (`5d87b66`, `f37c9a9`, ADR-0015).
 - [x] The level script for the flocking world, `docs/design/flocking-levels.md`, for the
   owner's review before WorldSpec (2026-10-09).
 - [ ] The full WorldSpec schema and the hand-authored `flocking-reference.json`, from the
@@ -176,3 +178,6 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-09 | A world art pass before the capture is re-filmed | Owner: the world looked like a debug view (ADR-0013) |
 | 2026-10-09 | The four development and eight held-out section files move from G2 to after the authored world plays end to end, as G3's first item | Owner decision: G3 and G4 need them; G2's interface does not |
 | 2026-10-09 | A game-first interface replaces the brief's §6 layout. G2's interface items are renamed: LevelCard, Guide, PaperJournal, LevelMap, DepthToggle and a split-screen ForkView, plus a design spike first | Owner decision (ADR-0008): the §6 layout reads as a dashboard |
+| 2026-10-09 | The group measure links birds only with headings within 45°, counts clusters under 4 birds as strays, and reads "one group" as O1: one group holding at least half the birds (flock 3.0.0) | Owner decisions; the bare count failed the owner's 1% criterion (ADR-0015) |
+| 2026-10-09 | The hook seed moves from 4 to 5; the demo capture stays on seed 4 | Owner: follow ADR-0003's rule under the new measure (ADR-0015) |
+| 2026-10-09 | The source register and source map wait for the Reynolds PDF; the group measure, WorldSpec and the builder go first, with placeholder anchors clearly marked | Owner decision: the PDF is not on disk yet |

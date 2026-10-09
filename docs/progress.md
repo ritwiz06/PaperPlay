@@ -7,6 +7,25 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · The group measure
+
+- Branch: `g2/group-measure`
+- Commits: `5d87b66`, `f37c9a9`
+- Shipped (ADR-0015):
+  - `flock.planar.weighted@3.0.0`: groups link only birds whose headings differ by less
+    than 45°, clusters under 4 birds are strays (E14), the stray share (E18), and the
+    reading "one group" (O1), exported as `flockReadsAsOneGroup`;
+  - 4 new oracle fixtures written by hand before the code, and 3 re-derived;
+  - `npm run sweep:groups` and `eval/sweeps/group-measure.md`: 0 of 10,000 random scatters
+    read as one group (95% upper bound 0.038%), and seed 4 does from 18.63 s;
+  - the hook seed is now 5, by ADR-0003's rule; the demo capture names seed 4.
+- Evidence:
+  - R01 51, R02 6, R03 49, R04 18;
+  - from 343 tests with none skipped;
+  - 4 bugs planted in the measure: 3 caught at once, and the fourth, a 1% loosening at
+    exactly 45°, after the 44.9°/45.1° fixture was added.
+- Gate: `check:gate` G1 passed at `f37c9a9`. `5d87b66` alone passes its 307 unit tests.
+
 ## 2026-10-09 · The capture's scripted camera
 
 - Branch: `g2/capture-camera`

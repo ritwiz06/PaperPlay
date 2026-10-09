@@ -8,12 +8,12 @@ How PaperPlay fits together today. The concepts named here are explained in
 | Path | Job | Key exports or entry points |
 |---|---|---|
 | `packages/contracts` | Zod schemas and inferred types: the shared language | `Origin`, `Anchor`, `SourceManifest`, `PrimitiveRef`, `Action`, `RunEvent`, `RunRecord`, `JobState` |
-| `packages/primitives` | Deterministic, fixed-step scientific models, their registry, and run replay | `flockPlanarWeighted`, `flockNeighbours` (Q1), `flockHeadings` (Q2), `mulberry32`, `registry`, `runEvents`, `replayRecord` |
+| `packages/primitives` | Deterministic, fixed-step scientific models, their registry, and run replay | `flockPlanarWeighted`, `flockNeighbours` (Q1), `flockHeadings` (Q2), `flockReadsAsOneGroup` (O1), `mulberry32`, `registry`, `runEvents`, `replayRecord` |
 | `packages/ui` | Design tokens, fonts, the stage, the bench and the game-first HUD | `@paperplay/ui/tokens`, `fonts.css`, `components.css`, `hud.css`, `stage-core`, `three-adapter`, `react` |
 | `packages/pipeline` | Agent roles, model adapters, checks, controller | Empty until G3 |
 | `apps/web` | React shell: owns the run, renders state, submits actions | `src/world/session.ts`, `src/world/LocalWorld.tsx` at `/world/local`, `src/world/local-world.ts`; `src/hook/HookWorld.tsx` at `/world/hook`, the hook level on the game-first shell, hard-coded until WorldSpec; the dev-only capture page `capture.html` with `src/capture/` (ADR-0010) |
 | `apps/api` | Fastify API: will hold secrets and run jobs | `GET /health` only, until G3 |
-| `scripts/` | Gate, docs checker, defaults sweep, hook seed, demo capture | `check-gate.ts`, `check-docs.ts`, `sweep-defaults.ts`, `hook-seed.ts`, `capture-demo.ts` |
+| `scripts/` | Gate, docs checker, defaults sweep, hook seed, group-measure sweep, demo capture | `check-gate.ts`, `check-docs.ts`, `sweep-defaults.ts`, `hook-seed.ts`, `group-measure.ts`, `capture-demo.ts` |
 | `fixtures/oracles/` | Hand-derived expected behaviours for primitives | See `fixtures/oracles/README.md` |
 | `eval/` | Sweeps now; the frozen protocol and raw attempts from G4 | `eval/sweeps/` |
 | `tests/e2e/` | Playwright browser tests on Chromium | `world.spec.ts` [R04], `hook.spec.ts` [R05] [R06], `accessibility.spec.ts` [R12], `stage.spec.ts`, `fonts.spec.ts`, `smoke.spec.ts` |
@@ -107,7 +107,7 @@ flowchart LR
 | RunRecord, with RunEvent (`param` · `place` · `remove`) | `runrecord/2` | `packages/contracts/src/run.ts` |
 | Origin, Anchor, PrimitiveRef, Action, JobState | Versioned with the documents that embed them | `packages/contracts/src/` |
 | WorldSpec | `worldspec/1`, planned | G2 |
-| `flock.planar.weighted` | 2.2.0: equations E1–E17, defaults per ADR-0003, alignment range 0–4, and the read-only queries Q1 (neighbourhoods) and Q2 (headings), which do not change the version | `packages/primitives/src/flock/MODEL.md` |
+| `flock.planar.weighted` | 3.0.0: equations E1–E18, with the group measure of ADR-0015 (E14 groups, E18 stray share) and its reading O1, "one group"; defaults per ADR-0003, alignment range 0–4; and the read-only queries Q1 (neighbourhoods) and Q2 (headings), which do not change the version | `packages/primitives/src/flock/MODEL.md` |
 | Oracle fixtures | `oracle/1` | `fixtures/oracles/README.md` |
 | FrameDescription, with FrameEmphasis | Unversioned: in-process only, never persisted | `packages/ui/src/stage-core/frame.ts` |
 | Gate definitions | Requirements per gate | `gates.json` |
@@ -135,7 +135,8 @@ flowchart LR
 | Readouts update at most ten times a second, never once per frame | `readoutDue`, tested; the stage's loop calls it | `packages/ui/test/fixed-step.test.ts`, `packages/ui/src/react/WorldStage.tsx` |
 | The local world's controls are valid actions on the primitive's variables, within its ranges | Test | `apps/web/test/session.test.ts` |
 | The page's palette equals the stage's tokens | Test | `packages/ui/test/tokens.test.ts` |
-| The opening seed follows ADR-0003's rule | A test re-runs the rule | `scripts/test/hook-seed.test.ts` |
+| The opening seed follows ADR-0003's rule, under the group measure's reading O1 | A test re-runs the rule | `scripts/test/hook-seed.test.ts` |
+| The group measure meets the owner's criteria: random scatters read as one group in under 1% of seeds (95% upper bound), and seed 4 reads as one group at 20 s | A test re-runs the sweep, checks both, and holds `eval/sweeps/group-measure.md` to a fresh run byte for byte; its evaluation copy of the measure equals the primitive's | `scripts/test/group-measure.test.ts` |
 | Replay refuses another primitive version and out-of-range events | Tests [R07] | `packages/primitives/test/replay.test.ts` |
 | Evidence comes only from the pinned runtime | The gate's runtime check, locally and in CI | `scripts/check-gate.ts`, `.github/workflows/check-gate.yml` |
 | No skipped tests, no missing scripts, no pass-with-no-tests | The gate's evidence rules; Vitest (`passWithNoTests` and `allowOnly` both false); Playwright (`forbidOnly`, no retries) | `scripts/gate/evidence.ts`, `vitest.config.ts`, `playwright.config.ts` |
@@ -177,7 +178,8 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 - **Hold on both runtimes:** every test in the gate. That includes:
   - the bitwise determinism and replay tests, within a runtime (R01);
   - the oracle fixtures;
-  - the hook-seed rule (seed 4);
+  - the hook-seed rule (seed 5 since flock 3.0.0);
+  - the group measure's sweep;
   - the demo script's one-group property;
   - render invariance (R02);
   - the browser tests.
@@ -202,6 +204,7 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
   - `check:docs` checks the documentation;
   - `sweep:defaults` reproduces ADR-0003's sweep;
   - `choose:hook-seed` re-applies ADR-0003's hook-seed rule;
+  - `sweep:groups` re-runs ADR-0015's group-measure sweep, and exits 1 if a criterion fails;
   - `capture:demo` films the demo video into the git-ignored `captures/`, and with
     `-- --frames` a lossless PNG sequence too (ADR-0010).
 - **The local world's settings** live in `apps/web/src/world/local-world.ts`. They are
@@ -233,3 +236,5 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 | 2026-10-09 | 4d3bcce | The adapter's low-poly valley and birds: wings, trails, terrain, lake, trees, rocks, sky, sun |
 | 2026-10-09 | b27240e | WorldStage's `framing` and `look`; the session's trail history |
 | 2026-10-09 | 7c12a97 | The capture's scripted camera path; `StageDriver.camera()` |
+| 2026-10-09 | 5d87b66 | Flock 3.0.0: the group measure (E14, E18, O1); the hook seed moves to 5, and the demo capture names seed 4 (ADR-0015) |
+| 2026-10-09 | f37c9a9 | `npm run sweep:groups` and `eval/sweeps/group-measure.md` |

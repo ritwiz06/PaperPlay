@@ -75,12 +75,18 @@ shows how tightly the birds pack.
 
 ### Groups as connected components
 
-Link any two birds closer than 4.5 world units, and follow the links. Every set of birds
-that can reach each other is one group. The groups are counted with a union–find structure.
+Link two birds when they are closer than 4.5 world units and their headings differ by less
+than 45°, and follow the links. Every set of birds that can reach each other is a cluster,
+found with a union–find structure. A cluster of at least 4 birds is a group; smaller ones
+are strays. The flock reads as "one group" when it has exactly one group and at most half
+its birds are strays.
 
-- **Used in:** `packages/primitives/src/flock/measure.ts`
-- **Why here:** "One murmuration" needs a definition. The link distance is fixed, so counts
-  stay comparable when a learner changes how far birds can see.
+- **Used in:** `packages/primitives/src/flock/measure.ts` (E14, E18, O1),
+  `eval/sweeps/group-measure.md`, `docs/decisions/ADR-0015-group-measure.md`
+- **Why here:** "One murmuration" needs a definition that random noise cannot meet. The link
+  distance is fixed, so counts stay comparable when a learner changes how far birds can see.
+  The heading condition and the strays rule are the owner's; the sweep showed each half
+  alone is not enough.
 - **Learn more:** [Disjoint-set (union–find) data structure](https://en.wikipedia.org/wiki/Disjoint-set_data_structure)
 
 ### Percolation: when scattered points join up
@@ -89,10 +95,11 @@ Link every pair of points closer than a set distance. Below a critical density t
 form many small clusters; near it, one cluster suddenly spans the whole space. For points
 in a plane, that happens when each point has on average about 4.5 links.
 
-- **Used in:** `packages/primitives/src/flock/measure.ts`, `eval/sweeps/hook-seed.md`, `docs/decisions/ADR-0003-flock-defaults.md`
+- **Used in:** `scripts/sweep/group-measure.ts`, `eval/sweeps/group-measure.md`, `docs/decisions/ADR-0003-flock-defaults.md`
 - **Why here:** The default flock sits close to that threshold (about 4.4 links per bird).
-  So 17% of purely random scatters already count as "one group", which is why groups are
-  always read together with directional agreement.
+  So under distance alone, 17% of purely random scatters count as "one group". That is why
+  flock 3.0.0 also asks links to share a heading, and the flock to have few strays
+  (ADR-0015).
 - **Learn more:** [Percolation threshold](https://en.wikipedia.org/wiki/Percolation_threshold)
 
 ### Semi-implicit Euler integration
@@ -320,6 +327,18 @@ seeds it never saw. Choosing the best of many flatters it, a bias the held-out c
 - **Why here:** The defaults sweep picked 14 of 20, but the honest rate on unseen seeds was
   17 of 40, and ADR-0003 records both.
 - **Learn more:** [Cawley and Talbot 2010, "On Over-fitting in Model Selection"](https://jmlr.org/papers/v11/cawley10a.html)
+
+### An upper bound for a rare event (the Wilson score interval)
+
+When 0 of 10,000 trials succeed, the true rate is not proven to be 0; it is only likely to
+be small. The Wilson score interval gives a range for the true rate that is honest near 0%
+and 100%, where the textbook "p ± 1.96 standard errors" collapses to a single point.
+
+- **Used in:** `scripts/sweep/group-measure.ts`, `eval/sweeps/group-measure.md`
+- **Why here:** The owner's criterion is "under 1% of seeds". The sweep passes only when the
+  95% upper bound is under 1%, not the observed share. The bare count's 1.28% fails, and O1's
+  0 of 10,000 has an upper bound of 0.038%.
+- **Learn more:** [Binomial proportion confidence interval: Wilson score interval](https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval)
 
 ### Monorepo workspaces
 
