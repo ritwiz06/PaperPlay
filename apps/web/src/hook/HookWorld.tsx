@@ -188,7 +188,7 @@ export function HookWorld() {
         </header>
 
         <div className="hud-bottom">
-          <Guide lines={lines} cue={cue} />
+          <Guide lines={lines} cue={cue} quiet={whatIf} />
 
           {whatIf ? (
             <section id="what-if" className="card what-if" aria-labelledby="what-if-title" data-hud>

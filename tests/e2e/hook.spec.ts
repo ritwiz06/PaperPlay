@@ -142,6 +142,12 @@ test.describe("on a desktop", () => {
     await expect(bubble).toContainText("You raised Move together");
     await expect(bubble.locator(".origin-tag-computed-observation")).toBeVisible();
 
+    // It gives way to the What-if card, and comes back when the card closes.
+    await page.getByRole("button", { name: "What if" }).click();
+    await expect(bubble).toBeHidden();
+    await page.getByRole("button", { name: "Back to one world" }).click();
+    await expect(bubble).toBeVisible();
+
     await expect(bubble).toBeHidden({ timeout: 8000 });
     await page.getByRole("button", { name: "Show what the guide said last" }).click();
     await expect(bubble).toBeVisible();

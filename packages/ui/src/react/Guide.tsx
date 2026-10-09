@@ -14,6 +14,8 @@ export interface GuideProps {
   readonly cue: number;
   /** How long the guide stays before it fades, in milliseconds. */
   readonly showFor?: number;
+  /** Gives way to another card, such as What if: the bubble hides and its icon stays, so nothing reframes. */
+  readonly quiet?: boolean;
 }
 
 /** About six seconds: long enough to read two short sentences, short enough to give the world back. */
@@ -24,7 +26,7 @@ export const GUIDE_SHOW_MS = 6000;
  * origin. It appears after an interaction and fades after about 6 s; its icon brings back the
  * last thing it said. Under reduced motion it appears and disappears without animation (CSS).
  */
-export function Guide({ lines, cue, showFor = GUIDE_SHOW_MS }: GuideProps) {
+export function Guide({ lines, cue, showFor = GUIDE_SHOW_MS, quiet = false }: GuideProps) {
   const id = useId();
   const [seenCue, setSeenCue] = useState(cue);
   const [open, setOpen] = useState(false);
@@ -40,21 +42,22 @@ export function Guide({ lines, cue, showFor = GUIDE_SHOW_MS }: GuideProps) {
     return () => window.clearTimeout(timer);
   }, [open, seenCue, showFor]);
 
+  const shown = open && !quiet;
   return (
-    <div className="guide" data-open={open ? "true" : "false"}>
+    <div className="guide" data-open={shown ? "true" : "false"}>
       <button
         type="button"
         className="guide-icon"
-        aria-expanded={open}
+        aria-expanded={shown}
         aria-controls={id}
-        aria-label={open ? "Hide the guide" : "Show what the guide said last"}
+        aria-label={shown ? "Hide the guide" : "Show what the guide said last"}
         data-hud
         data-hud-frame
-        onClick={() => setOpen((shown) => !shown)}
+        onClick={() => setOpen(!shown)}
       >
         <BirdMark size={40} />
       </button>
-      <div id={id} className="card guide-bubble" data-hud={open ? "" : undefined} role="group" aria-label="Guide">
+      <div id={id} className="card guide-bubble" data-hud={shown ? "" : undefined} role="group" aria-label="Guide">
         <ul aria-live="polite">
           {lines.map((line) => (
             <li key={`${line.origin}:${line.text}`}>
