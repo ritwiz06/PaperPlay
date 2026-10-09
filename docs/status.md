@@ -1,64 +1,73 @@
 # Status
 
-Updated 2026-10-09, during the day's third session: the owner chose option a for the
-capture finding, and the slices resumed ([log](sessions/2026-10-09-3.md)). This file is
-rewritten every session.
+Updated 2026-10-09, at the end of the day's third session. The owner chose option a for the
+capture finding. Then came the game-first shell, the world art pass, the capture's scripted
+camera and the level script ([log](sessions/2026-10-09-3.md)). This file is rewritten
+every session.
 
 ## Where we are
 
 - **Gate:** G1 Playable baseline **passed**, and is tagged `v0.1.0` at `3448e5b`. G2 is in
   progress. `gates.json` keeps G1 current until G2's evidence exists (ADR-0009).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`.
-  - Pushed: `main`, `v0.1.0`, and `spike/hook-2026-10-09` (the spike's commit, `5aadf22`,
-    which `progress.md` names).
-  - The `g1/*` branches and the spike's branch are deleted; `main` and the tags hold all
-    of them.
-- **CI** (ADR-0011): `check:gate` runs on ubuntu-latest with Node 24.21.0 on every push and
-  pull request, and is green on Linux. A capture job films the demo on Linux on `main` and
-  on demand.
-- **Branches:**
-  - `g2/shell` holds slice 1 so far: `7b88705` (ADR-0008 records the spike's review), then a
-    local work-in-progress commit, `bc8c630`. It is unmerged and unpushed.
-  - This finding's docs are on `main` (`ff51afe`), and pushed.
-- **Working commit:** `8d36d62` on `main`, the latest code commit there (`capture:demo
-  --frames`). `check:gate` passed on it, with this finding's docs on top.
+  - Pushed: `main`, `v0.1.0` and `spike/hook-2026-10-09`.
+  - CI runs `check:gate` on ubuntu-latest on every push and pull request, and is green.
+  - CI's capture job, on a pinned `ubuntu-24.04`, makes the canonical capture (ADR-0010,
+    ADR-0011).
+- **Branches:** only `main`. Every slice this session merged fast-forward and was pushed
+  (ADR-0009).
+- **Working commit:** `d786109` on `main`, the latest code commit there. `check:gate` passed
+  G1 on it.
 - **Runtime:** Node 24.21.0, pinned in `.node-version`. Run tools through
-  `fnm exec --using=24.21.0` when the shell's default Node differs; `check:gate` refuses
-  evidence from any other version.
-- **What a learner can do now,** on `/world/local`, opened on seed 4:
-  - change the rules;
-  - place and remove beacons and obstacles;
-  - pick a bird and see the birds it sees;
-  - replay the same seed, or move to the next one.
+  `fnm exec --using=24.21.0` when the shell's default Node differs.
+- **What a learner can do now:**
+  - **On `/world/hook`,** the hook level on the game-first shell. Content is hard-coded until
+    WorldSpec.
+    - Move "Move together".
+    - Watch the flock: birds with flapping wings, coloured by heading, with trails, in a
+      valley with a lake and groves. A camera follows, closer than before.
+    - Read the guide's "you did X, so Y", and the heading compass.
+    - Open the paper journal from "From the paper", at a placeholder passage. Try the
+      control from there.
+    - Switch depth.
+    - Open What if.
+    - Unlock level 2 by sweeping the control's range.
+  - **On `/world/local`,** as at G1:
+    - change the rules;
+    - place and remove beacons and obstacles;
+    - pick a bird and see the birds it sees;
+    - replay the same seed, or move to the next one.
 
-  `/world/hook` on the shell exists only on `g2/shell` so far.
-- **What the owner can make:** `npm run capture:demo [-- --frames]` writes two 15 s videos of
-  seed 4 and a dragged beacon, and lossless PNG sequences, into the git-ignored `captures/`.
-  - The output is byte-identical on every run on one runtime.
-  - macOS and Linux give different bytes (ADR-0010; architecture.md, Claims per runtime).
+    Its new world can colour birds by heading, from Rules of this world.
+- **What the owner can make:** `npm run capture:demo [-- --frames]` films seed 4 forming a
+  murmuration, along a scripted camera path. The published copy comes from CI's capture job.
+- **For the owner's review:**
+  - `docs/design/flocking-levels.md`, the level script;
+  - the screenshots in `captures/final/`;
+  - the canonical capture in `captures/canonical/`.
 
-## Latest check:gate (G1), 2026-10-09, `main` at 1b27e33 plus this finding's docs (code as at 8d36d62)
+## Latest check:gate (G1), 2026-10-09, commit d786109
 
 ```
 check:gate G1 · Playable baseline · tag v0.1.0
   runtime    node 24.21.0 (pinned 24.21.0)  ok
-  typecheck  ok      11.8 s
-  lint       ok      8.7 s
+  typecheck  ok      12.7 s
+  lint       ok      9.4 s
   check:docs ok      0.3 s
-  test       ok      10.2 s
+  test       ok      10.5 s
   build      ok      0.6 s
-  test:e2e   ok      16.1 s
-  evidence   271 tests (vitest 257, playwright 14), 0 skipped
-    R01  Deterministic, oracle-checked primitives      43 passing
-    R02  Model/render separation                       5 passing
+  test:e2e   ok      31.7 s
+  evidence   334 tests (vitest 302, playwright 32), 0 skipped
+    R01  Deterministic, oracle-checked primitives      47 passing
+    R02  Model/render separation                       6 passing
     R03  Strict, versioned contracts                   49 passing
-    R04  Playable local world                          16 passing
+    R04  Playable local world                          18 passing
 
 G1 passed: every required check ran and every requirement has passing evidence.
 ```
 
-CI on Linux passed the same gate on `main` (run 37967849151). The four [R12] axe scans are
-among the 14 Playwright tests.
+Ahead of their gate, from the same run's reports: R05 4, R06 1, R07 11, R12 8. CI on Linux
+passed the same gate at `2158335` (run 37976130520), with the same 334 tests.
 
 ## Blockers
 
@@ -66,35 +75,43 @@ None.
 
 ## Decisions waiting on the owner
 
-None yet this session. On 2026-10-09 the owner chose option a for the capture finding:
-- published captures come from CI's capture job on a pinned `ubuntu-24.04`;
-- a cross-runtime check is a follow-up in the roadmap (ADR-0010).
+1. **The level script,** `docs/design/flocking-levels.md`. Its open questions:
+   - **Is Reynolds 1987 the source?**
+   - **The group measure,** which level 4 needs.
+   - **Two proposed readouts:** a spacing gauge and an agreement chart.
+   - **A level's setup placements,** such as level 5's rock. The brief's WorldSpec has no field
+     for them.
+   - **Level 6's fork restarts both worlds,** because it changes init-phase variables.
+2. **The shell and the world art,** from the screenshots:
+   - the bottom-left stack;
+   - the compass;
+   - the quiet chips;
+   - the following camera;
+   - colour by heading, trails and the valley.
+3. **The canonical capture,** in `captures/canonical/`, from CI.
 
 ## Next three actions
 
-1. On the owner's answer, finish slice 1:
-   - the Playwright tests for HUD coverage, the fit and R05 provenance;
-   - then the docs and the merge.
-2. Slice 2, the world art pass, then slice 3, the capture with a scripted camera. The capture
-   decision above shapes slice 3.
-3. Slice 4, the level script, `docs/design/flocking-levels.md`.
+1. Once the owner has reviewed it, turn the level script into the WorldSpec schema and
+   `fixtures/worldspecs/flocking-reference.json`.
+2. Settle the group measure, before level 4 is built.
+3. Write the source register and the flocking source map, so real passages replace the
+   placeholder.
 
 ## Recommendations
 
 In priority order:
 
-1. **Add the cross-runtime capture check (option b) before publishing widely.** Risk: real
+1. **Review the level script before any WorldSpec code.** Risk: WorldSpec fixes the content's
+   shape, and the script raises two contract gaps: setup placements, and forks that change
+   init-phase variables.
+2. **Add the cross-runtime capture check (option b) before publishing widely.** Risk: real
    drift between machines would hide inside "rendering noise" without a stated tolerance.
-2. **Settle the group measure early in G2, as the owner chose.** Risk: a learner reads
-   "Groups: 1" as "a murmuration formed" when a random scatter can show the same.
-3. **Code-split the Three.js stage before anyone tests on a phone.** Risk: 245 KB of gzipped
-   JavaScript (896 KB raw) loads before the first frame.
-4. **Profile before any level raises `agentCount`.** Risk: the neighbour search is O(N²).
+3. **Profile on a phone's GPU before raising `agentCount`.** The M3 Pro holds 60 fps at 72
+   birds, with a p99 frame of 16.8 ms. Risk: phones are slower, and the neighbour search is
+   O(N²).
+4. **Code-split the Three.js stage.** Risk: the bundle loads before the first frame.
 5. **Handle WebGL context loss in `mountStage`.** Risk: mobile browsers drop contexts in the
-   background, and the stage would stay blank.
-6. **Add dark mode with the shell.** The tokens, the stage's dusk palette and the reference's
-   dark HUD cards exist, but the page has no dark theme yet.
-7. **Revisit TypeScript 7 monthly.** Only typescript-eslint's support blocks the move
-   (ADR-0001).
-8. **Note the runner change:** ubuntu-latest moves to Ubuntu 26 from 2026-10-19 (CI's
-   annotation). The Linux capture's bytes may change with it.
+   background.
+6. **Add dark mode with the shell.** The dusk palette now has the valley's roles too.
+7. **Revisit TypeScript 7 monthly** (ADR-0001).

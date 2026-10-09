@@ -150,7 +150,7 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | Gate | Planned | Used so far |
 |---|---|---|
 | G1 | Days 1–7, 21–28 h | Days 1–4 (2026-09-28 to 2026-10-01), about 8.3 h of sessions: 1.4 h (09-28), 5.4 h (09-30) and 1.5 h (10-01). Under plan, because Claude Code did the building; the owner's own review time is not tracked |
-| G2 | Days 8–14, 21–28 h | G2's early RunRecord and replay work, then about 0.9 h of session on 2026-10-09 (00:51 to 01:45): `main` and the branching rule, ADR-0008, the axe scan, the demo capture, the hook spike and the plan change |
+| G2 | Days 8–14, 21–28 h | G2's early RunRecord and replay work. Then three sessions on 2026-10-09:<br>• 00:51 to 01:45, about 0.9 h: `main`, ADR-0008, the axe scan, the demo capture, the hook spike and the plan change.<br>• 10:25 to 11:05, about 0.7 h: `origin`, CI, `--frames` and the capture finding.<br>• 11:06 to about 12:05, about 1 h: the canonical capture, the shell, the world art, the capture's camera and the level script. |
 | G3–G5 | As in Gates | None yet |
 
 ## Plan changes
