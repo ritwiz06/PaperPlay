@@ -9,6 +9,13 @@
   - on phones, the worlds stacked, not side by side;
   - axe on both sizes.
 
+## Context
+
+Until now, What if showed only a card: the question, and what the level expected. The
+level rule (ADR-0018) gave every What-if a measured difference, checked on 20 skies. That
+difference had nowhere to be seen, and the expected effect could not be checked on the sky
+the learner was watching.
+
 ## Decision
 
 1. **When the two worlds start.**
