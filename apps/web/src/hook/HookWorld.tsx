@@ -6,13 +6,15 @@
  * every number shown comes from the primitive. A level opens once the one before has been moved
  * through its range: touched, never solved.
  */
-import { isPlaceholder, type AnchorRef, type PendingSource, type SourceManifest } from "@paperplay/contracts";
-import type { BuiltLevel } from "@paperplay/pipeline";
-import { flockDefaultParams, type FlockObservables } from "@paperplay/primitives";
+import { isPlaceholder, RULE_HOLDS, RULE_SEEDS, type AnchorRef, type PendingSource, type SourceManifest } from "@paperplay/contracts";
+import { SAMPLE_STEPS, type BuiltLevel } from "@paperplay/pipeline";
+import { flockDefaultParams, flockPlanarWeighted, type FlockObservables } from "@paperplay/primitives";
 import { DEFAULT_CAMERA } from "@paperplay/ui/stage-core";
 import {
   BirdMark,
   BookIcon,
+  DifferenceChart,
+  ForkView,
   Guide,
   GroupsCounter,
   HeadingCompass,
@@ -30,9 +32,11 @@ import {
   type GuideLine,
   type JournalPassage,
   type MapLevel,
+  type StageDriver,
 } from "@paperplay/ui/react";
 import { useRef, useState, type ReactNode } from "react";
 import { FLOCKING, sessionOptionsFor } from "../world/authored-world.ts";
+import { openFork, type Fork, type ForkSnapshot } from "../world/fork.ts";
 import { createWorldSession, type SessionSnapshot, type WorldSession } from "../world/session.ts";
 import { guideLines, trendOf, type Trend } from "./guide.ts";
 
@@ -40,6 +44,7 @@ const WORLD = FLOCKING;
 const LEVELS = WORLD.levels;
 const STAGE_LABEL = `${WORLD.title}: a flock of ${flockDefaultParams.agentCount} birds with no leader, each steering only by its near neighbours.`;
 const DEPTH_KEY = "paperplay.depth";
+const flockTimestep = flockPlanarWeighted.fixedTimestep;
 /** About a second and a half of readouts, for the guide's trend. */
 const TREND_SAMPLES = 15;
 
@@ -122,6 +127,33 @@ function nameOf(level: BuiltLevel, variable: string): string {
   return variable === level.action.variable ? `“${level.action.label}”` : variable.replace(/([A-Z])/g, " $1").toLowerCase();
 }
 
+/** What each metric is called on the fork's chart. Presentation: the shell's words for the primitive's observables. */
+const METRIC_NAMES: Readonly<Record<string, string>> = {
+  directionalAgreement: "Directional agreement",
+  meanNeighbourDistance: "Spacing",
+  groupSpread: "Spread of the largest group",
+  birdsAtObstacles: "Birds inside rocks",
+  clusterCount: "Groups",
+  strayShare: "Share of strays",
+};
+
+/** The top of the chart's value axis: 1 for a share, else a round number above everything drawn. */
+function chartTop(metric: string, values: readonly number[], threshold: number | undefined): number {
+  if (metric === "directionalAgreement" || metric === "strayShare") return 1;
+  const highest = Math.max(1, threshold ?? 0, ...values) * 1.15;
+  const step = 10 ** Math.floor(Math.log10(highest));
+  return Math.ceil(highest / step) * step;
+}
+
+/** A fork, and the two drivers its stages draw from: the first advances both worlds, the second only draws. */
+interface ForkRun {
+  readonly fork: Fork;
+  readonly here: StageDriver;
+  readonly there: StageDriver;
+  /** Whether the one world was playing when the fork opened, so it plays again when the fork closes. */
+  readonly resume: boolean;
+}
+
 /** The level's readout, chosen by its observable; it shows the primitive's own value. */
 function readoutFor(level: BuiltLevel, snapshot: SessionSnapshot, showNumber: boolean, yaw: number): ReactNode {
   const { observed } = snapshot;
@@ -160,6 +192,8 @@ export function HookWorld() {
   const [highlight, setHighlight] = useState<string | null>(null);
   const [whatIf, setWhatIf] = useState(false);
   const [yaw, setYaw] = useState(DEFAULT_CAMERA.yaw);
+  const [run, setRun] = useState<ForkRun | null>(null);
+  const [forkView, setForkView] = useState<ForkSnapshot | null>(null);
   const container = useRef<HTMLElement>(null);
   const free = useFreeRect(container);
   const samples = useRef<number[]>([]);
@@ -264,12 +298,117 @@ export function HookWorld() {
     requestAnimationFrame(() => slider.current?.focus({ preventScroll: true }));
   };
 
-  const fork = level.fork;
-  const overrides = fork.overrides.map((override) => `${nameOf(level, override.variable)} at ${override.to} (here ${override.from})`).join(" and ");
+  const whatIfSpec = level.fork;
+  const overrides = whatIfSpec.overrides.map((override) => `${nameOf(level, override.variable)} at ${override.to} (here ${override.from})`).join(" and ");
+  const overridesShort = whatIfSpec.overrides.map((override) => `${nameOf(level, override.variable)} at ${override.to}`).join(", ");
+
+  const openTheFork = () => {
+    const resume = session.snapshot().playing;
+    session.pause();
+    const fork = openFork(level, session, { playing: !prefersReducedMotion() });
+    setRun({
+      fork,
+      resume,
+      here: { tick: (seconds) => fork.tick(seconds), stageInput: () => fork.here.stageInput(), emphasis: () => fork.here.emphasis(), version: () => fork.here.version() },
+      there: { tick: () => 0, stageInput: () => fork.there.stageInput(), emphasis: () => fork.there.emphasis(), version: () => fork.there.version() },
+    });
+    setForkView(fork.snapshot());
+    setWhatIf(false);
+  };
+
+  const closeTheFork = () => {
+    if (run?.resume) session.play();
+    setRun(null);
+    setForkView(null);
+    setSnapshot(session.snapshot());
+    requestAnimationFrame(() => document.querySelector<HTMLButtonElement>(".level-whatif .btn")?.focus({ preventScroll: true }));
+  };
+
+  const toggleFork = () => {
+    if (!run) return;
+    if (run.fork.snapshot().playing) run.fork.pause();
+    else run.fork.play();
+    setForkView(run.fork.snapshot());
+  };
   const advanced = level.explanation.advanced;
 
+  const difference = whatIfSpec.difference;
+  const measured = (value: number): string => {
+    if (Number.isNaN(value)) return "not measured yet";
+    if (!Number.isFinite(value)) return forkView?.done ? `not within ${difference.seconds} s` : "not yet";
+    return difference.unit === "seconds" ? `${value.toFixed(1)} s` : `${value.toFixed(2)} ${difference.unit}`;
+  };
+  const threshold = difference.summary.kind === "first-reach" ? difference.summary.threshold : undefined;
+  const claim = difference.claim;
+  const acrossSkies =
+    claim.kind === "each"
+      ? `Across ${RULE_SEEDS} skies, the level's statement holds on at least ${RULE_HOLDS}.`
+      : `Across ${RULE_SEEDS} skies, the other world was ${claim.relation} by more than ${claim.by} ${difference.unit} on ${claim.holds}, and not on ${RULE_SEEDS - claim.holds}.`;
+  const forkPanel =
+    run && forkView ? (
+      <ForkView
+        title={whatIfSpec.prompt}
+        note={
+          <p>
+            <OriginTag origin="teaching-choice" quiet /> The other world runs with {overrides}.
+            {whatIfSpec.restarts ? <span data-restarts=""> Both worlds restart from the same seed.</span> : null}
+          </p>
+        }
+        here={{ label: "This world", name: "World stage, this world", driver: run.here }}
+        there={{ label: `What if: ${overridesShort}`, name: "World stage, what if", driver: run.there }}
+        stageLabel={STAGE_LABEL}
+        look={{ birdColor: "heading" }}
+        playing={forkView.playing}
+        done={forkView.done}
+        onTogglePlay={toggleFork}
+        onClose={closeTheFork}
+        onReadout={() => setForkView(run.fork.snapshot())}
+        chart={
+          <DifferenceChart
+            metricName={METRIC_NAMES[difference.metricId] ?? difference.metricId}
+            seconds={difference.seconds}
+            interval={SAMPLE_STEPS * flockTimestep}
+            here={forkView.samples.here}
+            there={forkView.samples.there}
+            top={chartTop(difference.metricId, [...forkView.samples.here, ...forkView.samples.there], threshold)}
+            {...(threshold === undefined ? {} : { threshold })}
+            hereName="This world"
+            thereName="What if"
+          />
+        }
+        result={
+          <>
+            <p data-measured="">
+              <OriginTag origin="computed-observation" quiet /> {difference.label}: this world {measured(forkView.summary.here)}, what if{" "}
+              {measured(forkView.summary.there)}.
+            </p>
+            {forkView.done ? (
+              <p data-holds={forkView.holds ? "yes" : "no"}>
+                <OriginTag origin="computed-observation" quiet />{" "}
+                {claim.kind === "each"
+                  ? forkView.holds
+                    ? "On this sky, the level's statement holds."
+                    : "On this sky, the level's statement does not hold."
+                  : `On this sky, the other world was ${forkView.holds ? "" : "not "}${claim.relation} by more than ${claim.by} ${difference.unit}.`}{" "}
+                {acrossSkies}
+              </p>
+            ) : (
+              <p>
+                Running: {(forkView.steps * flockTimestep).toFixed(1)} of {difference.seconds} s.
+              </p>
+            )}
+            <p data-effect="">
+              <OriginTag origin={whatIfSpec.origin} placeholder={placeholderOnly(whatIfSpec.anchors)} quiet /> The level states: {whatIfSpec.effect}
+            </p>
+          </>
+        }
+      />
+    ) : null;
+
   return (
-    <main ref={container} className="game" data-level={level.id} data-step={snapshot.step} data-depth={depth} data-journal={journal ? "open" : "closed"}>
+    <main ref={container} className="game" data-level={level.id} data-step={snapshot.step} data-depth={depth} data-journal={journal ? "open" : "closed"} data-fork={run ? "open" : "closed"}>
+      {forkPanel ?? (
+        <>
       <WorldStage
         driver={session}
         label={STAGE_LABEL}
@@ -323,17 +462,19 @@ export function HookWorld() {
 
           {whatIf ? (
             <section id="what-if" className="card what-if" aria-labelledby="what-if-title" data-hud>
-              <h2 id="what-if-title">{fork.prompt}</h2>
-              <p>
-                <OriginTag origin={fork.origin} placeholder={placeholderOnly(fork.anchors)} quiet /> {fork.effect}
-              </p>
+              <h2 id="what-if-title">{whatIfSpec.prompt}</h2>
               <p className="what-if-runs">
                 <OriginTag origin="teaching-choice" quiet /> The other world runs with {overrides}.
-                {fork.restarts ? <span data-restarts=""> Both worlds restart from the same seed.</span> : null}
+                {whatIfSpec.restarts ? <span data-restarts=""> Both worlds restart from the same seed.</span> : null}
               </p>
-              <button type="button" className="btn btn-light" onClick={() => setWhatIf(false)}>
-                Back to one world
-              </button>
+              <div className="what-if-buttons">
+                <button type="button" className="btn" onClick={openTheFork}>
+                  Run both worlds
+                </button>
+                <button type="button" className="btn btn-light" onClick={() => setWhatIf(false)}>
+                  Back to one world
+                </button>
+              </div>
             </section>
           ) : null}
 
@@ -377,6 +518,9 @@ export function HookWorld() {
           />
         </div>
       </div>
+
+        </>
+      )}
 
       <PaperJournal
         open={journal}

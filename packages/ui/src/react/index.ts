@@ -4,6 +4,8 @@
  * read simulation types, but never import simulation code.
  */
 export { Guide, GUIDE_SHOW_MS, type GuideLine, type GuideProps } from "./Guide.tsx";
+export { DifferenceChart, type DifferenceChartProps } from "./DifferenceChart.tsx";
+export { ForkView, type ForkPane, type ForkViewProps } from "./ForkView.tsx";
 export { GroupsCounter, type GroupsCounterProps } from "./GroupsCounter.tsx";
 export { HeadingCompass, type HeadingCompassProps } from "./HeadingCompass.tsx";
 export {

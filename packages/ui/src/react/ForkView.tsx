@@ -1,0 +1,99 @@
+import type { FrameLook } from "../stage-core/index.ts";
+import { useEffect, useRef, type ReactNode } from "react";
+import { PlayIcon } from "./hud-parts.tsx";
+import { WorldStage, type StageDriver } from "./WorldStage.tsx";
+
+export interface ForkPane {
+  /** Shown over the pane: "This world", "What if: Move together at 0". */
+  readonly label: string;
+  /** The pane's stage, as a screen reader names it. */
+  readonly name: string;
+  readonly driver: StageDriver;
+}
+
+export interface ForkViewProps {
+  /** The What-if, as a question. */
+  readonly title: string;
+  /** Under the title: what the other world changes, and whether both restart. */
+  readonly note: ReactNode;
+  readonly here: ForkPane;
+  readonly there: ForkPane;
+  /** A description of the flock both stages draw. */
+  readonly stageLabel: string;
+  readonly look?: FrameLook;
+  readonly chart: ReactNode;
+  /** The measured difference so far, and, once the level's time is up, the result. */
+  readonly result: ReactNode;
+  readonly playing: boolean;
+  readonly done: boolean;
+  readonly onTogglePlay: () => void;
+  readonly onClose: () => void;
+  /** Called at most ten times a second while the worlds change, to refresh the chart. */
+  readonly onReadout?: () => void;
+  /** More controls beside play, such as the speed. */
+  readonly controls?: ReactNode;
+  readonly children?: ReactNode;
+}
+
+/**
+ * The split-screen fork (ADR-0008): two worlds from the same moment, one with the What-if,
+ * side by side on a desktop and stacked on a phone, with the one measured difference between
+ * them charted beneath. The stages only draw; the app keeps both worlds in step.
+ */
+export function ForkView(props: ForkViewProps) {
+  const { title, note, here, there, stageLabel, look, chart, result, playing, done, onTogglePlay, onClose, onReadout, controls, children } = props;
+  const heading = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    heading.current?.focus({ preventScroll: true });
+  }, []);
+  return (
+    <section
+      className="fork"
+      aria-labelledby="fork-title"
+      onKeyDown={(event) => {
+        if (event.key === "Escape") onClose();
+      }}
+    >
+      <header className="card fork-head">
+        <div className="fork-title">
+          <h2 id="fork-title" ref={heading} tabIndex={-1}>
+            {title}
+          </h2>
+          <div className="fork-note">{note}</div>
+        </div>
+        <div className="fork-buttons">
+          <button type="button" className="btn btn-light" onClick={onTogglePlay} disabled={done}>
+            <PlayIcon playing={playing} />
+            <span className="btn-text">{done ? "Done" : playing ? "Pause" : "Play both"}</span>
+          </button>
+          {controls}
+          <button type="button" className="btn" onClick={onClose}>
+            Back to one world
+          </button>
+        </div>
+      </header>
+      <div className="fork-pane fork-here" data-pane="here">
+        <WorldStage
+          driver={here.driver}
+          name={here.name}
+          label={stageLabel}
+          tool="look"
+          framing="overview"
+          look={look ?? {}}
+          onTogglePlay={onTogglePlay}
+          {...(onReadout ? { onReadout } : {})}
+        />
+        <p className="card fork-label">{here.label}</p>
+      </div>
+      <div className="fork-pane fork-there" data-pane="there">
+        <WorldStage driver={there.driver} name={there.name} label={stageLabel} tool="look" framing="overview" look={look ?? {}} onTogglePlay={onTogglePlay} />
+        <p className="card fork-label">{there.label}</p>
+      </div>
+      <div className="card fork-result">
+        {chart}
+        <div className="fork-measure">{result}</div>
+      </div>
+      {children}
+    </section>
+  );
+}

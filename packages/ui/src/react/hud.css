@@ -297,6 +297,11 @@
   margin: 0 0 6px;
   font-size: 1.125rem;
 }
+.what-if-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 .what-if p {
   margin: 0 0 10px;
   color: var(--sub);
@@ -899,6 +904,182 @@
     right: 8px;
     bottom: 8px;
     width: calc(100% - 16px);
+  }
+}
+
+/*
+ * The split-screen fork (ADR-0008): two worlds side by side over their measured difference,
+ * stacked on a phone. It covers the HUD while it is open.
+ */
+.fork {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "head head"
+    "here there"
+    "result result";
+  gap: 12px;
+  padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+  background: var(--cream);
+}
+.fork-head {
+  grid-area: head;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 10px 16px;
+}
+.fork-head h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+.fork-head h2:focus-visible {
+  outline: 3px solid var(--aqua);
+  outline-offset: 2px;
+}
+.fork-note p {
+  margin: 4px 0 0;
+  color: var(--sub);
+}
+.fork-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.fork-pane {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-radius: 18px;
+}
+.fork-here {
+  grid-area: here;
+}
+.fork-there {
+  grid-area: there;
+}
+.fork-pane .stage {
+  position: absolute;
+  inset: 0;
+  border-radius: 0;
+}
+.fork .stage-keys {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.fork-label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  margin: 0;
+  padding: 3px 12px;
+  font-weight: 600;
+  pointer-events: none;
+}
+.fork-result {
+  grid-area: result;
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 8px 20px;
+  padding: 10px 16px;
+}
+.fork-measure p {
+  margin: 0 0 6px;
+  line-height: 1.35;
+}
+.difference-chart {
+  margin: 0;
+}
+.difference-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 150px;
+}
+.chart-axis {
+  stroke: var(--ink);
+  stroke-width: 1;
+}
+.chart-tick {
+  fill: var(--sub);
+  font-size: 9px;
+}
+.chart-here {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+.chart-there {
+  fill: none;
+  stroke: var(--sub);
+  stroke-width: 2.5;
+  stroke-dasharray: 6 4;
+}
+.chart-threshold {
+  stroke: var(--sub);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+}
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+  color: var(--sub);
+  font-size: 0.8125rem;
+}
+.chart-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  /* Each world keeps at least 200 px; a screen too short for all of it scrolls. */
+  .fork {
+    overflow-y: auto;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(200px, 1fr) minmax(200px, 1fr) auto;
+    grid-template-areas:
+      "head"
+      "here"
+      "there"
+      "result";
+    gap: 8px;
+    padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom));
+  }
+  .fork-head {
+    padding: 8px 12px;
+  }
+  .fork-head h2 {
+    font-size: 1rem;
+  }
+  .fork-note p {
+    font-size: 0.875rem;
+  }
+  .fork-result {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+    padding: 8px 12px;
+    font-size: 0.875rem;
+  }
+  .fork-measure p {
+    margin-bottom: 4px;
+  }
+  .difference-chart svg {
+    max-height: 84px;
   }
 }
 

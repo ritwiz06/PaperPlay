@@ -1,0 +1,128 @@
+/**
+ * A level's fork (ADR-0008, ADR-0018): two worlds from the same moment, one with the level's
+ * What-if applied, run on one clock so they stay step for step together. A What-if that changes
+ * only live variables branches both worlds from the moment the fork opens; one that changes a
+ * start-up variable restarts both from the seed, with the level's setup (the builder derives
+ * which). Both are sampled every SAMPLE_STEPS steps, as the levels sweep samples them, up to the
+ * level's time; the measured difference is summarised by the same functions.
+ *
+ * Framework-free, like the session, so it is tested in Node.
+ */
+import { claimHolds, SAMPLE_STEPS, summarise, type BuiltLevel } from "@paperplay/pipeline";
+import { flockPlanarWeighted as flock, type FlockObservables, type FlockParams } from "@paperplay/primitives";
+import { advance, START_CLOCK, type StepClock } from "@paperplay/ui/stage-core";
+import { createWorldSession, type SessionOptions, type WorldSession } from "./session.ts";
+
+const TIMESTEP = flock.fixedTimestep;
+
+export interface ForkSnapshot {
+  /** Steps since the fork opened, and the level's time in steps. */
+  readonly steps: number;
+  readonly totalSteps: number;
+  readonly done: boolean;
+  readonly playing: boolean;
+  readonly restarts: boolean;
+  /** The difference's metric, sampled every SAMPLE_STEPS steps from the fork's first step. */
+  readonly samples: { readonly here: readonly number[]; readonly there: readonly number[] };
+  /**
+   * Each world's summary so far. NaN until an "at" summary's time comes; Infinity while a
+   * threshold is not yet reached, and, once done, when it never was.
+   */
+  readonly summary: { readonly here: number; readonly there: number };
+  /** Whether the level's stated effect holds on this sky; null until the level's time is up. */
+  readonly holds: boolean | null;
+}
+
+export interface Fork {
+  readonly here: WorldSession;
+  readonly there: WorldSession;
+  /** Advances both worlds by the steps this much wall time allows; returns how many. */
+  tick(frameSeconds: number): number;
+  play(): void;
+  pause(): void;
+  snapshot(): ForkSnapshot;
+  version(): number;
+}
+
+/** The fork's two worlds' parameters: the learner's current ones, and those with the What-if applied. */
+export function forkParams(level: BuiltLevel, current: FlockParams): { readonly here: FlockParams; readonly there: FlockParams } {
+  const overrides = Object.fromEntries(level.fork.overrides.map((override) => [override.variable, override.to]));
+  return { here: current, there: flock.paramSchema.parse({ ...current, ...overrides }) };
+}
+
+export function openFork(level: BuiltLevel, from: WorldSession, options: { readonly playing: boolean }): Fork {
+  const { difference, restarts } = level.fork;
+  const now = from.snapshot();
+  const params = forkParams(level, now.params);
+  const base: Omit<SessionOptions, "params"> = {
+    seed: now.seed,
+    actions: level.actions as SessionOptions["actions"],
+    ring: level.observable.metricId === "groupSpread",
+    ...(restarts ? { setup: level.setup.map((placement) => placement.event) } : { start: from.state() }),
+  };
+  const here = createWorldSession({ ...base, params: params.here });
+  const there = createWorldSession({ ...base, params: params.there });
+  const totalSteps = Math.round(difference.seconds / TIMESTEP);
+  const metric = difference.metricId as keyof FlockObservables;
+  const samples = { here: [here.snapshot().observed[metric]], there: [there.snapshot().observed[metric]] };
+  let steps = 0;
+  let playing = options.playing;
+  let clock: StepClock = START_CLOCK;
+  let version = 0;
+
+  const take = (count: number): void => {
+    for (let i = 0; i < count && steps < totalSteps; i++) {
+      here.stepBy(1);
+      there.stepBy(1);
+      steps += 1;
+      if (steps % SAMPLE_STEPS === 0) {
+        samples.here.push(here.snapshot().observed[metric]);
+        samples.there.push(there.snapshot().observed[metric]);
+      }
+    }
+    if (steps >= totalSteps) playing = false;
+    version += 1;
+  };
+
+  return {
+    here,
+    there,
+    tick(frameSeconds) {
+      if (!playing || steps >= totalSteps) return 0;
+      const next = advance(clock, frameSeconds, TIMESTEP);
+      clock = next.clock;
+      const count = Math.min(next.steps, totalSteps - steps);
+      if (count > 0) take(count);
+      return count;
+    },
+    play() {
+      if (steps < totalSteps) playing = true;
+      version += 1;
+    },
+    pause() {
+      playing = false;
+      clock = START_CLOCK;
+      version += 1;
+    },
+    snapshot() {
+      const done = steps >= totalSteps;
+      const summarised = (values: readonly number[]): number => {
+        const { summary } = difference;
+        if (summary.kind === "at" && values.length <= Math.round(summary.seconds / (SAMPLE_STEPS * TIMESTEP))) return Number.NaN;
+        return summarise(difference, values, TIMESTEP);
+      };
+      const summary = { here: summarised(samples.here), there: summarised(samples.there) };
+      return {
+        steps,
+        totalSteps,
+        done,
+        playing,
+        restarts,
+        samples: { here: [...samples.here], there: [...samples.there] },
+        summary,
+        holds: done ? claimHolds(difference.claim, summary.here, summary.there) : null,
+      };
+    },
+    version: () => version,
+  };
+}

@@ -140,13 +140,14 @@ test("[R06] each level's depth variants show and hide the shell's elements by id
   }
 });
 
-test("[R06] What if names each level's counterfactual, and the bonus level's says both worlds restart", async ({ page }) => {
+test("[R06] What if names each level's counterfactual and what the other world changes, and the bonus level's says both worlds restart", async ({ page }) => {
   await openHook(page);
   for (const [at, level] of LEVELS.entries()) {
     await card(page).getByRole("button", { name: "What if" }).click();
     const whatIf = page.locator("#what-if");
     await expect(whatIf.getByRole("heading", { name: level.fork.prompt })).toBeVisible();
-    await expect(whatIf).toContainText(level.fork.effect);
+    await expect(whatIf).toContainText("The other world runs with");
+    await expect(whatIf.getByRole("button", { name: "Run both worlds" })).toBeVisible();
     await expect(whatIf.locator("[data-restarts]")).toHaveCount(level.fork.restarts ? 1 : 0);
     if (level.fork.restarts) await expect(whatIf).toContainText("Both worlds restart from the same seed.");
     await page.getByRole("button", { name: "Back to one world" }).click();

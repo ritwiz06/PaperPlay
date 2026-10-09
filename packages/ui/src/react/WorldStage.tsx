@@ -1,4 +1,4 @@
-import { useEffect, useRef, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
+import { useEffect, useId, useRef, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 import {
   DEFAULT_CAMERA,
   describeFrame,
@@ -49,6 +49,8 @@ export interface WorldStageProps {
   readonly driver: StageDriver;
   /** What the canvas shows, for people who cannot see it. */
   readonly label: string;
+  /** The stage's accessible name; "World stage" unless a page shows more than one. */
+  readonly name?: string;
   readonly tool: StageTool;
   readonly palette?: StagePalette;
   readonly onGround?: (tool: "beacon" | "obstacle", point: { readonly x: number; readonly y: number }) => void;
@@ -127,6 +129,7 @@ const roundRect = ({ x, y, width, height }: Rect): Rect => ({
  */
 export function WorldStage(props: WorldStageProps) {
   const { driver, label, tool, children } = props;
+  const keysId = useId();
   const host = useRef<HTMLDivElement>(null);
   const canvasHost = useRef<HTMLDivElement>(null);
   const latest = useRef(props);
@@ -351,8 +354,8 @@ export function WorldStage(props: WorldStageProps) {
       data-look={props.look?.birdColor ?? "plain"}
       data-framing={props.framing ?? "overview"}
       role="application"
-      aria-label="World stage"
-      aria-describedby="stage-keys"
+      aria-label={props.name ?? "World stage"}
+      aria-describedby={keysId}
       tabIndex={0}
       onKeyDown={onKeyDown}
       onFocus={(event) => {
@@ -373,7 +376,7 @@ export function WorldStage(props: WorldStageProps) {
         />
         {children}
       </div>
-      <p id="stage-keys" className="stage-keys">
+      <p id={keysId} className="stage-keys">
         {HINTS[tool]}
       </p>
     </div>

@@ -1,0 +1,116 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { AxeBuilder } from "@axe-core/playwright";
+import { buildWorld } from "@paperplay/pipeline";
+import { registry } from "@paperplay/primitives";
+import { expect, test, type Page } from "@playwright/test";
+
+// The split-screen fork on /world/hook (ADR-0008): two worlds from the same moment, side by
+// side on a desktop and stacked on a phone, with the measured difference charted beneath.
+
+const built = buildWorld(JSON.parse(readFileSync(fileURLToPath(new URL("../../fixtures/worldspecs/flocking-reference.json", import.meta.url)), "utf8")), registry);
+if (!built.ok) throw new Error("the reference world must build");
+const LEVELS = built.world.levels;
+const WCAG = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa"];
+
+const here = (page: Page) => page.getByRole("application", { name: "World stage, this world" });
+const there = (page: Page) => page.getByRole("application", { name: "World stage, what if" });
+const frames = async (page: Page, stage: ReturnType<typeof here>) => Number((await stage.getAttribute("data-frames")) ?? 0);
+
+async function openHook(page: Page): Promise<void> {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/world/hook");
+  await expect.poll(async () => Number((await page.getByRole("application", { name: "World stage" }).getAttribute("data-frames")) ?? 0)).toBeGreaterThan(0);
+}
+
+async function walkTo(page: Page, to: number): Promise<void> {
+  for (let at = 0; at < to; at++) {
+    const level = LEVELS[at];
+    const next = LEVELS[at + 1];
+    if (!level || !next) throw new Error(`no level ${at + 2}`);
+    await page.getByRole("slider", { name: level.action.label, exact: true }).focus();
+    await page.keyboard.press("Home");
+    await page.keyboard.press("End");
+    await page.locator(`.level-map li[data-level="${next.id}"] button`).click();
+  }
+}
+
+async function openFork(page: Page): Promise<void> {
+  await page.locator(".level-whatif").getByRole("button", { name: "What if" }).click();
+  await page.getByRole("button", { name: "Run both worlds" }).click();
+  await expect(page.locator("main")).toHaveAttribute("data-fork", "open");
+  await expect.poll(() => frames(page, here(page))).toBeGreaterThan(0);
+  await expect.poll(() => frames(page, there(page))).toBeGreaterThan(0);
+}
+
+async function violations(page: Page): Promise<string[]> {
+  const results = await new AxeBuilder({ page }).withTags(WCAG).analyze();
+  return results.violations.map((violation) => `${violation.id}: ${violation.help}. ${violation.nodes.map((node) => node.target.join(" ")).join("; ")}`);
+}
+
+test.describe("on a desktop", () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test("[R06] the fork shows two worlds side by side, names the What-if, and charts the measured difference as both play", async ({ page }) => {
+    await openHook(page);
+    const level = LEVELS[0];
+    if (!level) throw new Error("no hook");
+    await openFork(page);
+    const fork = page.getByRole("region", { name: level.fork.prompt });
+    await expect(fork.getByRole("heading", { name: level.fork.prompt })).toBeFocused();
+    await expect(fork).toContainText("The other world runs with “Move together” at 0 (here 2).");
+    await expect(fork.locator("[data-restarts]")).toHaveCount(0);
+    await expect(fork).toContainText(`The level states: ${level.fork.effect}`);
+
+    const [a, b] = [await here(page).boundingBox(), await there(page).boundingBox()];
+    expect(a && b && a.x + a.width <= b.x + 1 && Math.abs(a.y - b.y) < 2, JSON.stringify({ a, b })).toBe(true);
+
+    const chart = fork.locator(".difference-chart");
+    await expect(chart).toHaveAttribute("data-here-samples", "1");
+    await fork.getByRole("button", { name: "Play both" }).click();
+    await expect.poll(async () => Number(await chart.getAttribute("data-here-samples")), { timeout: 15_000 }).toBeGreaterThan(5);
+    // Both worlds are sampled together, sample for sample.
+    expect(await chart.getAttribute("data-there-samples")).toBe(await chart.getAttribute("data-here-samples"));
+    await expect(fork.locator("[data-measured]")).toContainText("Agreement after 20 seconds:");
+  });
+
+  test("[R06] a What-if that changes a start-up variable says both worlds restart", async ({ page }) => {
+    await openHook(page);
+    await walkTo(page, 5);
+    await openFork(page);
+    await expect(page.getByRole("region", { name: LEVELS[5]?.fork.prompt ?? "" }).locator("[data-restarts]")).toHaveText("Both worlds restart from the same seed.");
+  });
+
+  test("Escape closes the fork, back to the one world, with focus on What if", async ({ page }) => {
+    await openHook(page);
+    await openFork(page);
+    await page.keyboard.press("Escape");
+    await expect(page.locator("main")).toHaveAttribute("data-fork", "closed");
+    await expect(page.getByRole("application", { name: "World stage" })).toBeVisible();
+    await expect(page.locator(".level-whatif").getByRole("button", { name: "What if" })).toBeFocused();
+  });
+
+  test("[R12] the fork passes the axe scan, on a desktop", async ({ page }) => {
+    await openHook(page);
+    await openFork(page);
+    expect(await violations(page)).toEqual([]);
+  });
+});
+
+test.describe("on a phone", () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test("[R06] the fork stacks the two worlds, one above the other", async ({ page }) => {
+    await openHook(page);
+    await openFork(page);
+    const [a, b] = [await here(page).boundingBox(), await there(page).boundingBox()];
+    expect(a && b && a.y + a.height <= b.y + 1 && a.height > 150 && b.height > 150, JSON.stringify({ a, b })).toBe(true);
+    await expect(page.locator(".difference-chart")).toBeVisible();
+  });
+
+  test("[R12] the fork passes the axe scan, on a phone", async ({ page }) => {
+    await openHook(page);
+    await openFork(page);
+    expect(await violations(page)).toEqual([]);
+  });
+});
