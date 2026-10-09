@@ -151,3 +151,21 @@ test("[R04] replay same seed repeats the recorded run, and next seed starts afre
   expect(await observed(page, "directionalAgreement")).toBe(fresh.directionalAgreement);
   expect(errors).toEqual([]);
 });
+
+test("[R02] colouring birds by heading changes how the flock looks, never what it measures", async ({ page }) => {
+  const errors = collectErrors(page);
+  await openWorld(page);
+  const stage = page.getByRole("application", { name: "World stage" });
+  await expect(stage).toHaveAttribute("data-look", "plain");
+
+  await page.getByText("Rules of this world").click();
+  await page.getByRole("checkbox", { name: "Colour birds by heading" }).check();
+  await expect(stage).toHaveAttribute("data-look", "heading");
+  // A display option is not an action on the run: nothing is recorded.
+  expect(await attribute(page, "events")).toBe(0);
+
+  const steps = await playAtLeast(page, 90);
+  expect(await observed(page, "directionalAgreement")).toBe(expected(HOOK_SEED, steps, []).observed.directionalAgreement);
+  expect(await observed(page, "clusterCount")).toBe(expected(HOOK_SEED, steps, []).observed.clusterCount);
+  expect(errors).toEqual([]);
+});

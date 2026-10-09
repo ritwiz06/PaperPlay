@@ -244,3 +244,16 @@
   color: var(--sub);
   font-size: 0.8125rem;
 }
+
+.display-option label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+.display-option input[type="checkbox"] {
+  width: 1.125rem;
+  height: 1.125rem;
+  margin: 0;
+  accent-color: var(--dark);
+}

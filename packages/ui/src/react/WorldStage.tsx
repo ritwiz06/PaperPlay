@@ -3,10 +3,13 @@ import {
   DEFAULT_CAMERA,
   describeFrame,
   fieldBoundsOnScreen,
+  FLIGHT_ALTITUDE,
+  flockCentre,
   groundPointAt,
   nearestBird,
   orbit,
   pickBird,
+  projectToNdc,
   readoutDue,
   valleyDay,
   windowFromRect,
@@ -14,10 +17,12 @@ import {
   zoom,
   type FrameDescription,
   type FrameEmphasis,
+  type FrameLook,
   type OrbitCamera,
   type Rect,
   type StageInput,
   type StagePalette,
+  type Vec3,
 } from "../stage-core/index.ts";
 import { mountStage, type WebGLStage } from "../three-adapter/index.ts";
 
@@ -52,11 +57,29 @@ export interface WorldStageProps {
   readonly window?: Rect | null;
   /** Called at most ten times a second when the camera turns, with its yaw, for a compass. */
   readonly onView?: (view: { readonly yaw: number }) => void;
+  /** How the flock looks: one colour, or a colour per heading. Render-only. */
+  readonly look?: FrameLook;
+  /**
+   * "overview" frames the whole field and holds still. "follow" comes closer, eases toward
+   * the flock's centre and drifts slowly round it when left alone; under reduced motion it is
+   * the overview. Render-only.
+   */
+  readonly framing?: "overview" | "follow";
   /** Controls laid over the stage, such as tools and the transport. */
   readonly children?: ReactNode;
 }
 
 const ORBIT_PER_PIXEL = 0.006;
+/** The following camera stands at this share of the overview's distance, looking down this steeply. */
+const FOLLOW_ZOOM = 0.75;
+const FOLLOW_PITCH = 0.68;
+/** It closes most of the gap to the flock's centre in about this many seconds. */
+const FOLLOW_EASE_SECONDS = 1.6;
+/** It never looks further than this from the field's middle, in world units from each edge. */
+const FOLLOW_INSET = 5;
+/** After this long without a touch, it drifts round the flock at this rate. */
+const IDLE_MS = 6000;
+const DRIFT_PER_SECOND = 0.035;
 const KEY_ORBIT = 0.08;
 const KEY_ZOOM = 0.9;
 /** A press that moves less than this many pixels is a click, not a drag. */
@@ -79,6 +102,8 @@ interface ViewState {
   keyboard: boolean;
   focused: boolean;
   drag: { x: number; y: number; moved: number; id: number } | null;
+  /** When the learner last turned, zoomed or pressed a key on the stage, for the idle drift. */
+  lastInput: number;
 }
 
 const clamp = (value: number, size: number): number => Math.min(Math.max(value, 0), size - 1e-3);
@@ -108,6 +133,7 @@ export function WorldStage(props: WorldStageProps) {
     keyboard: false,
     focused: false,
     drag: null,
+    lastInput: 0,
   });
 
   useEffect(() => {
@@ -125,8 +151,14 @@ export function WorldStage(props: WorldStageProps) {
     if (stage.kind === "fallback") return () => stage.dispose();
     state.stage = stage;
 
+    const follow = latest.current.framing === "follow" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (follow) state.camera = { ...zoom(state.camera, FOLLOW_ZOOM), pitch: FOLLOW_PITCH };
+    state.lastInput = performance.now();
+    let shownFocus = "";
+
     const onWheel = (event: WheelEvent) => {
       event.preventDefault();
+      state.lastInput = performance.now();
       state.camera = zoom(state.camera, Math.exp(event.deltaY * 0.0015));
       state.dirty = true;
     };
@@ -143,21 +175,43 @@ export function WorldStage(props: WorldStageProps) {
     let shownFree = "";
     let frames = 0;
     const loop = (now: number) => {
-      const steps = driver.tick(last === null ? 0 : (now - last) / 1000);
+      const frameSeconds = last === null ? 0 : (now - last) / 1000;
+      const steps = driver.tick(frameSeconds);
       last = now;
+      if (follow && frameSeconds > 0) {
+        // Ease toward the flock's centre, taking the short way round the world.
+        const { current } = driver.stageInput();
+        const centre = flockCentre(current);
+        const from = state.camera.target ?? ([0, FLIGHT_ALTITUDE / 2, 0] as Vec3);
+        const nearest = (value: number, size: number) => value - size * Math.round(value / size);
+        const limit = (value: number, size: number) => Math.min(Math.max(value, -size / 2 + FOLLOW_INSET), size / 2 - FOLLOW_INSET);
+        const towardX = limit(from[0] + nearest(centre.x - current.width / 2 - from[0], current.width), current.width);
+        const towardZ = limit(from[2] + nearest(centre.y - current.height / 2 - from[2], current.height), current.height);
+        const share = 1 - Math.exp(-Math.min(frameSeconds, 0.1) / FOLLOW_EASE_SECONDS);
+        const target: Vec3 = [from[0] + (towardX - from[0]) * share, from[1], from[2] + (towardZ - from[2]) * share];
+        let yaw = state.camera.yaw;
+        if (now - state.lastInput > IDLE_MS) yaw += DRIFT_PER_SECOND * Math.min(frameSeconds, 0.1);
+        if (Math.abs(target[0] - from[0]) + Math.abs(target[2] - from[2]) > 1e-5 || yaw !== state.camera.yaw) {
+          state.camera = { ...state.camera, target, yaw };
+          state.dirty = true;
+        }
+      }
       const version = driver.version();
       if (steps > 0 || version !== drawn || state.dirty) {
         const { width, height } = stage.viewport();
         const { tool: active, palette, window: free } = latest.current;
         state.camera = { ...withViewport(state.camera, width, height), window: windowFromRect({ width, height }, free) };
         const cursor = state.keyboard && state.focused && active !== "look" ? state.cursor : null;
-        state.frame = describeFrame(driver.stageInput(), state.camera, palette ?? valleyDay, { ...driver.emphasis(), cursor });
+        state.frame = describeFrame(driver.stageInput(), state.camera, palette ?? valleyDay, { ...driver.emphasis(), cursor }, latest.current.look);
         stage.render(state.frame);
         // Where the field lands, for tests and tools that check the HUD-aware fit.
         const bounds = JSON.stringify(roundRect(fieldBoundsOnScreen(state.frame, { width, height })));
         const freeText = JSON.stringify(free ? roundRect(free) : { x: 0, y: 0, width, height });
         if (bounds !== shownBounds) element.dataset.fieldBounds = shownBounds = bounds;
         if (freeText !== shownFree) element.dataset.freeRect = shownFree = freeText;
+        const [fx, fy] = projectToNdc(state.frame.camera.view, state.frame.camera.projection, state.frame.camera.target);
+        const focus = JSON.stringify({ x: Math.round(((fx + 1) / 2) * width * 10) / 10, y: Math.round(((1 - fy) / 2) * height * 10) / 10 });
+        if (focus !== shownFocus) element.dataset.focus = shownFocus = focus;
         drawn = version;
         state.dirty = false;
         frames += 1;
@@ -199,6 +253,7 @@ export function WorldStage(props: WorldStageProps) {
 
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) return;
+    view.current.lastInput = performance.now();
     view.current.keyboard = false;
     view.current.dirty = true;
     view.current.drag = { x: event.clientX, y: event.clientY, moved: 0, id: event.pointerId };
@@ -258,6 +313,7 @@ export function WorldStage(props: WorldStageProps) {
     event.preventDefault();
     state.keyboard = true;
     state.dirty = true;
+    state.lastInput = performance.now();
   };
 
   return (
@@ -265,6 +321,8 @@ export function WorldStage(props: WorldStageProps) {
       ref={host}
       className="stage"
       data-tool={tool}
+      data-look={props.look?.birdColor ?? "plain"}
+      data-framing={props.framing ?? "overview"}
       role="application"
       aria-label="World stage"
       aria-describedby="stage-keys"

@@ -24,6 +24,8 @@ export interface LabBenchProps {
   readonly onChange: (actionId: string, value: number) => void;
   readonly onRestore: () => void;
   readonly canRestore: boolean;
+  /** Display options shown inside "Rules of this world", after the rules. Render-only. */
+  readonly display?: ReactNode;
   readonly children?: ReactNode;
 }
 
@@ -60,7 +62,7 @@ function Control({ control, primary, onChange }: { readonly control: BenchContro
 }
 
 /** The level's control, its reset, and the world's other rules, beside the stage. */
-export function LabBench({ primary, rules, onChange, onRestore, canRestore, children }: LabBenchProps) {
+export function LabBench({ primary, rules, onChange, onRestore, canRestore, display, children }: LabBenchProps) {
   return (
     <section className="lab-bench" aria-labelledby="lab-bench-title">
       <h2 id="lab-bench-title">Lab bench</h2>
@@ -73,6 +75,7 @@ export function LabBench({ primary, rules, onChange, onRestore, canRestore, chil
         {rules.map((rule) => (
           <Control key={rule.actionId} control={rule} onChange={onChange} />
         ))}
+        {display}
       </details>
       {children}
     </section>

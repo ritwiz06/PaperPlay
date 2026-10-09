@@ -71,6 +71,13 @@ export interface WorldSession {
 }
 
 const TIMESTEP = flock.fixedTimestep;
+/**
+ * Trails reach back this many steps (3 s), drawn through one state in every TRAIL_STRIDE. The
+ * flock often cruises near its minimum speed, so a shorter history would hide under each bird;
+ * the stage caps a trail's length for fast birds.
+ */
+const TRAIL_STEPS = 180;
+const TRAIL_STRIDE = 18;
 const PREFIX = { beacon: "beacon", obstacle: "rock" } as const;
 
 export function createWorldSession(options: SessionOptions): WorldSession {
@@ -87,6 +94,8 @@ export function createWorldSession(options: SessionOptions): WorldSession {
   let applied = 0;
   let placed = { beacon: 0, obstacle: 0 };
   let selected: number | null = null;
+  /** The states before the current one, oldest first, for trails: presentation only. */
+  let history: FlockState[] = [];
   let version = 0;
   const changed = () => void version++;
 
@@ -131,6 +140,7 @@ export function createWorldSession(options: SessionOptions): WorldSession {
     params = initialParams;
     alpha = 0;
     clock = START_CLOCK;
+    history = [];
     applied = 0;
     applyDue();
     changed();
@@ -152,7 +162,13 @@ export function createWorldSession(options: SessionOptions): WorldSession {
       headings: flockHeadings(current),
     }),
     state: () => current,
-    stageInput: () => ({ previous, current, alpha: playing ? alpha : 1, timestep: TIMESTEP }),
+    stageInput: () => ({
+      previous,
+      current,
+      alpha: playing ? alpha : 1,
+      timestep: TIMESTEP,
+      trail: history.filter((_, index) => (history.length - 1 - index) % TRAIL_STRIDE === 0),
+    }),
     emphasis: () =>
       selected === null ? {} : { selected, neighbours: flockNeighbours(current, params, selected).seen, reach: params.perceptionRadius },
     tick(frameSeconds) {
@@ -161,6 +177,8 @@ export function createWorldSession(options: SessionOptions): WorldSession {
       clock = next.clock;
       alpha = next.alpha;
       for (let i = 0; i < next.steps; i++) {
+        history.push(current);
+        if (history.length > TRAIL_STEPS) history.shift();
         previous = current;
         current = flock.step(current, params, TIMESTEP);
         applyDue();

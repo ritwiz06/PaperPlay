@@ -156,6 +156,16 @@ describe("[R04] local world session", () => {
     expect(session.snapshot().headings).toEqual(flockHeadings(session.state()));
   });
 
+  it("hands the stage a short history for trails: one state in eighteen over the last 3 s, oldest first, ending just before the current one", () => {
+    const session = open();
+    expect(session.stageInput().trail).toEqual([]);
+    run(session, 200);
+    const trail = session.stageInput().trail ?? [];
+    expect(trail.map((state) => state.stepIndex)).toEqual([37, 55, 73, 91, 109, 127, 145, 163, 181, 199]);
+    session.replaySameSeed();
+    expect(session.stageInput().trail).toEqual([]);
+  });
+
   it("restores the default rules with one event for each rule that had moved", () => {
     const session = open();
     session.setAction("alignment-strength", 4);

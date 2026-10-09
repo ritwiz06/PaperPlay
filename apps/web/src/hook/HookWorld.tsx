@@ -142,6 +142,8 @@ export function HookWorld() {
         label={STAGE_LABEL}
         tool="look"
         window={free}
+        framing="follow"
+        look={{ birdColor: "heading" }}
         onTogglePlay={togglePlay}
         onReadout={refresh}
         onView={(view) => setYaw(view.yaw)}

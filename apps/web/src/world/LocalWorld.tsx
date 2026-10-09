@@ -37,6 +37,7 @@ export function LocalWorld() {
   const [session] = useState(openSession);
   const [snapshot, setSnapshot] = useState<SessionSnapshot>(() => session.snapshot());
   const [tool, setTool] = useState<StageTool>("look");
+  const [byHeading, setByHeading] = useState(false);
   const refresh = useCallback(() => setSnapshot(session.snapshot()), [session]);
   const act = (change: () => void) => {
     change();
@@ -79,6 +80,7 @@ export function LocalWorld() {
           driver={session}
           label={STAGE_LABEL}
           tool={tool}
+          look={{ birdColor: byHeading ? "heading" : "plain" }}
           onGround={(kind, point) => act(() => void session.place(kind, point.x, point.y))}
           onBird={(index) => act(() => session.select(index))}
           onTogglePlay={togglePlay}
@@ -126,6 +128,17 @@ export function LocalWorld() {
           onChange={(actionId, value) => act(() => session.setAction(actionId, value))}
           onRestore={() => act(() => session.restoreDefaults())}
           canRestore={canRestore}
+          display={
+            <div className="control display-option">
+              <label>
+                <input type="checkbox" checked={byHeading} onChange={(event) => setByHeading(event.currentTarget.checked)} aria-describedby="by-heading-help" />{" "}
+                Colour birds by heading
+              </label>
+              <p id="by-heading-help" className="control-help">
+                Each bird takes the colour of the way it flies, so a flock that agrees turns one colour. It changes only how the birds look.
+              </p>
+            </div>
+          }
         />
 
         <section className="measured" aria-labelledby="measured-title">

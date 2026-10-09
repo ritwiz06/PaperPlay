@@ -149,6 +149,33 @@ test.describe("on a desktop", () => {
   });
 });
 
+test.describe("the following camera", () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test("comes closer and keeps the flock's centre inside the rectangle the HUD leaves free", async ({ page }) => {
+    await page.goto("/world/hook");
+    const view = stage(page);
+    await expect(view).toHaveAttribute("data-framing", "follow");
+    await expect(view).toHaveAttribute("data-look", "heading");
+    await expect.poll(async () => Number((await view.getAttribute("data-frames")) ?? 0), { timeout: 15_000 }).toBeGreaterThan(30);
+    const free = await rectOf(page, "data-free-rect");
+    const focus = JSON.parse((await view.getAttribute("data-focus")) ?? "null") as { x: number; y: number };
+    expect(inside(free, { ...focus, width: 0, height: 0 }), JSON.stringify({ free, focus })).toBe(true);
+    // Closer than the overview: the field now overflows the free rectangle.
+    const field = await rectOf(page, "data-field-bounds");
+    expect(field.width).toBeGreaterThan(free.width);
+  });
+
+  test("stays the still overview under reduced motion", async ({ page }) => {
+    await openHook(page);
+    const free = await rectOf(page, "data-free-rect");
+    const focus = JSON.parse((await stage(page).getAttribute("data-focus")) ?? "null") as { x: number; y: number };
+    // The view is centred in the free rectangle.
+    expect(Math.abs(focus.x - (free.x + free.width / 2))).toBeLessThan(2);
+    expect(Math.abs(focus.y - (free.y + free.height / 2))).toBeLessThan(2);
+  });
+});
+
 test.describe("on a phone", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
