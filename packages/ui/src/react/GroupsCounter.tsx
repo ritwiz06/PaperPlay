@@ -33,6 +33,8 @@ export function GroupsCounter({ groups, strayShare, birds, showNumber, size = 56
   const drawn = Math.min(groups, DRAWN);
   const strays = Math.round(strayShare * birds);
   const ring = drawn <= 1 ? 0 : 0.62;
+  // A lone group is drawn larger, filling the dial as one flock.
+  const scale = drawn === 1 ? 2.4 : 1;
   const label = `Groups counter: ${groups} ${groups === 1 ? "group" : "groups"}; ${strays} of ${birds} birds are strays`;
   return (
     <div className={showNumber ? "dial groups with-number" : "dial groups"}>
@@ -44,7 +46,9 @@ export function GroupsCounter({ groups, strayShare, birds, showNumber, size = 56
             : Array.from({ length: drawn }, (_, group) => {
                 const angle = (group / drawn) * 2 * Math.PI - Math.PI / 2;
                 const [cx, cy] = [ring * Math.cos(angle), ring * Math.sin(angle)];
-                return CLUSTER.map(([x, y], index) => <circle key={`${group}-${index}`} className="groups-bird" cx={cx + x} cy={cy + y} r="0.09" />);
+                return CLUSTER.map(([x, y], index) => (
+                  <circle key={`${group}-${index}`} className="groups-bird" cx={cx + x * scale} cy={cy + y * scale} r={0.09 * scale} />
+                ));
               })}
         </svg>
         <output className="dial-number" data-element="readout-number" data-observable="clusterCount" data-value={String(groups)}>
