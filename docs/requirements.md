@@ -22,7 +22,8 @@ Twelve requirements, R01–R12, and the evidence each has. Counts come from the 
 
 ## Evidence
 
-Counts as of 2026-10-09 (commit 3639dfb), from the `check:gate` run that passed G1.
+Counts as of 2026-10-09 (commit edfadad), from the `check:gate` run that passed G1. They are
+unchanged since `3639dfb`.
 
 | ID | Requirement | Issue | First gate | Checked by | Commit | Evidence | Status |
 |---|---|---|---|---|---|---|---|

@@ -7,6 +7,23 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · The hook design spike, for review
+
+- Branch: `g2/hook-spike`, unmerged until the owner reviews it (ADR-0009)
+- Commits: `5aadf22`
+- Shipped:
+  - `/world/hook`: the game-first HUD from ADR-0008, with hard-coded content over the live
+    flock on seed 4.
+  - Every element ADR-0008 lists: a world card, the level map, the guide, the level card
+    with the one control and "What if", the depth toggle, and the paper journal with a
+    placeholder passage and the legend.
+  - One round of critique and one iteration. Screenshots are in `captures/hook-spike/`.
+- Evidence:
+  - 6 unit tests for the guide's sentences, untagged.
+  - axe found no WCAG A or AA violation at 1440 × 900 or 390 × 844, with the journal shut
+    or open.
+- Gate: `check:gate` G1 passed at `5aadf22` with 275 tests.
+
 ## 2026-10-09 · The demo capture
 
 - Branch: `g2/capture-demo`

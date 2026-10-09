@@ -64,14 +64,15 @@ Done early:
 Next:
 - [x] First: add `@axe-core/playwright` (approved 2026-10-01) and the axe scan in `test:e2e`
   (R12) (2026-10-09, commit 3639dfb).
-- [ ] Source register, source map, four development and eight held-out section files,
-  reading notes and learning questions.
+- [ ] Source register, source map, reading notes and learning questions. The section files
+  moved to G3 (see Plan changes, 2026-10-09).
 - [ ] Decide the group measure before any level teaches with it (owner, 2026-10-01). At the
   default density, 17% of random scatters count as one group (ADR-0003).
 - [ ] The full WorldSpec schema and the hand-authored `flocking-reference.json`.
 - [ ] The deterministic builder, with binding fixtures.
-- [ ] A design spike at `/world/hook` with hard-coded content, screenshotted on desktop
-  and phone, for the owner's review (ADR-0008).
+- [x] A design spike at `/world/hook` with hard-coded content, screenshotted on desktop
+  and phone (2026-10-09, `5aadf22` on `g2/hook-spike`). It awaits the owner's review and
+  stays unmerged until then (ADR-0009).
 - [ ] The game-first shell (ADR-0008): a full-screen stage, with the LevelCard (the one
   control, its live readout and "What if"), the Guide and the LevelMap over it.
 - [ ] The PaperJournal, with two-way provenance: "From the paper" on every control,
@@ -95,6 +96,9 @@ Exit: one complete generated experience from a new development section, honest o
 the reviewer cannot bypass a failed check.
 
 Next:
+- [ ] First, once the authored world plays end to end: split the paper into the four
+  development and eight held-out section files (moved from G2 on 2026-10-09). G3 generates
+  from a development section, and G4 evaluates on the held-out ones.
 - [ ] `apps/api`: jobs, SSE events, JSON artifacts, secrets in `.env`, a bundle secret check,
   upload limits, and the paper-text sanitiser.
 - [ ] `packages/pipeline`: model adapters (mock first), Reader, Planner/Designer, Explainer,
@@ -131,7 +135,8 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | Gate | Planned | Used so far |
 |---|---|---|
 | G1 | Days 1–7, 21–28 h | Days 1–4 (2026-09-28 to 2026-10-01), about 8.3 h of sessions: 1.4 h (09-28), 5.4 h (09-30) and 1.5 h (10-01). Under plan, because Claude Code did the building; the owner's own review time is not tracked |
-| G2–G5 | As in Gates | None yet, apart from G2's early RunRecord and replay work |
+| G2 | Days 8–14, 21–28 h | G2's early RunRecord and replay work, then about 0.9 h of session on 2026-10-09 (00:51 to 01:45): `main` and the branching rule, ADR-0008, the axe scan, the demo capture, the hook spike and the plan change |
+| G3–G5 | As in Gates | None yet |
 
 ## Plan changes
 
@@ -152,4 +157,5 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-01 | The group measure is settled at G2 | Owner decision (ADR-0003) |
 | 2026-10-09 | `main` holds G1; work moves to short branches off `main` | Owner decision (ADR-0009) |
 | 2026-10-09 | `npm run capture:demo` added before G2's interface work | Owner request (ADR-0010) |
+| 2026-10-09 | The four development and eight held-out section files move from G2 to after the authored world plays end to end, as G3's first item | Owner decision: G3 and G4 need them; G2's interface does not |
 | 2026-10-09 | A game-first interface replaces the brief's §6 layout. G2's interface items are renamed: LevelCard, Guide, PaperJournal, LevelMap, DepthToggle and a split-screen ForkView, plus a design spike first | Owner decision (ADR-0008): the §6 layout reads as a dashboard |
