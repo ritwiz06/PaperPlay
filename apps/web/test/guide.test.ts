@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { describeReading, guideLines, trendOf, type GuideInput } from "../src/hook/guide.ts";
+import { describeReading, explorationLines, guideLines, trendOf, type GuideInput } from "../src/hook/guide.ts";
 import { FLOCKING } from "../src/world/authored-world.ts";
 
 const levelOf = (id: string) => {
@@ -90,5 +90,38 @@ describe("the guide's readings and trends", () => {
     expect(trendOf([0.5, 0.52, 0.51], 0.03)).toBe("steady");
     expect(trendOf([0.5], 0.03)).toBe("steady");
     expect(trendOf([1, 1, 2], 0.5)).toBe("rising");
+  });
+});
+
+describe("[R06] guided exploration, from level 2's script", () => {
+  const level = levelOf("background");
+  const exploration = level.exploration;
+  if (!exploration) throw new Error("level 2 asks for a prediction");
+  const claim = level.fork.difference.claim;
+  const lines = (state: Partial<Parameters<typeof explorationLines>[2]>) =>
+    explorationLines(exploration, claim, { predicted: 0, change: "How far a bird sees at 50", done: false, holdsHere: null, ...state });
+
+  it("asks before the fork, with choices none of which is marked right", () => {
+    expect(exploration.predictPrompt).toBe("If every bird could see the whole flock, would the flock come to agree faster?");
+    expect(exploration.choices).toEqual(["Faster", "About the same, or slower"]);
+    expect(Object.keys(exploration)).not.toContain("correct");
+  });
+
+  it("repeats the prediction and names the intervention while both worlds run", () => {
+    expect(lines({}).map((line) => line.text)).toEqual(["You predicted: Faster.", "Now both worlds run, the other with How far a bird sees at 50. Watch the chart."]);
+  });
+
+  it("reports this sky and the 20 skies as measured, then the paper, then the question, never scoring", () => {
+    const done = lines({ predicted: 0, done: true, holdsHere: false });
+    expect(done.map((line) => [line.origin, line.text])).toEqual([
+      ["teaching-choice", "You predicted: Faster."],
+      ["computed-observation", "On this sky: About the same, or slower."],
+      ["computed-observation", "Across 20 skies: Faster on 6, about the same, or slower on 14."],
+      ["paper-derived", "The paper argues that a bird perceives only the flockmates near it, and says why that locality matters."],
+      ["teaching-choice", "Why might seeing more birds not help a flock agree sooner?"],
+    ]);
+    expect(done[3]?.placeholder).toBe(true);
+    const words = done.map((line) => line.text).join(" ");
+    expect(words).not.toMatch(/\b(right|wrong|correct|incorrect|score|points?)\b/i);
   });
 });

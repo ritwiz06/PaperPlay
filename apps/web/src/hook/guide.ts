@@ -4,7 +4,7 @@
  * action, and says nothing it did not get from them. At Beginner it uses words only, as the
  * slider does. Its first line is a teaching choice, its second a computed observation.
  */
-import type { GuideScript, Observable } from "@paperplay/contracts";
+import { isPlaceholder, RULE_HOLDS, RULE_SEEDS, type DifferenceClaim, type GuidedExploration, type GuideScript, type Observable } from "@paperplay/contracts";
 import type { Depth, GuideLine } from "@paperplay/ui/react";
 
 export type Trend = "rising" | "falling" | "steady";
@@ -68,4 +68,42 @@ function sawLine(script: GuideScript, observable: Observable, { observed, trend,
 
 export function guideLines(script: GuideScript, control: GuideControl, observable: Observable, input: GuideInput): readonly [GuideLine, GuideLine] {
   return [didLine(script, control, input), sawLine(script, observable, input)];
+}
+
+/** Where a guided exploration stands: predicted, then watching both worlds, then done. */
+export interface ExplorationState {
+  /** The choice the learner made, by index. */
+  readonly predicted: number;
+  /** What the other world changes, in words: "How far a bird sees at 50". */
+  readonly change: string;
+  /** Whether the level's time is up. */
+  readonly done: boolean;
+  /** On this sky, whether the claim's relation held: the outcome the first choice names. */
+  readonly holdsHere: boolean | null;
+}
+
+/**
+ * The guide through predict, intervene, observe, explain (ADR-0018): it repeats the learner's
+ * prediction, names the intervention, then reports what was measured, here and across 20
+ * skies, and what the paper says. Never scored: nothing calls a prediction right or wrong.
+ */
+export function explorationLines(exploration: GuidedExploration, claim: DifferenceClaim, state: ExplorationState): GuideLine[] {
+  const choice = (index: number): string => exploration.choices[index] ?? "";
+  const lines: GuideLine[] = [{ text: `You predicted: ${choice(state.predicted)}.`, origin: "teaching-choice" }];
+  if (!state.done) {
+    lines.push({ text: `Now both worlds run, the other with ${state.change}. Watch the chart.`, origin: "teaching-choice" });
+    return lines;
+  }
+  lines.push({ text: `On this sky: ${choice(state.holdsHere ? 0 : 1)}.`, origin: "computed-observation" });
+  lines.push({
+    text:
+      claim.kind === "count"
+        ? `Across ${RULE_SEEDS} skies: ${choice(0)} on ${claim.holds}, ${choice(1).toLowerCase()} on ${RULE_SEEDS - claim.holds}.`
+        : `Across ${RULE_SEEDS} skies, the level's statement holds on at least ${RULE_HOLDS}.`,
+    origin: "computed-observation",
+  });
+  const { explanation } = exploration;
+  lines.push({ text: explanation.text, origin: explanation.origin, placeholder: explanation.anchors.length > 0 && explanation.anchors.every(isPlaceholder) });
+  lines.push({ text: exploration.explainPrompt, origin: "teaching-choice" });
+  return lines;
 }

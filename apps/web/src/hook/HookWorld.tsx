@@ -16,6 +16,7 @@ import {
   DifferenceChart,
   ForkView,
   Guide,
+  GuideNote,
   GroupsCounter,
   HeadingCompass,
   isDepth,
@@ -38,7 +39,7 @@ import { useRef, useState, type ReactNode } from "react";
 import { FLOCKING, sessionOptionsFor } from "../world/authored-world.ts";
 import { openFork, type Fork, type ForkSnapshot } from "../world/fork.ts";
 import { createWorldSession, type SessionSnapshot, type WorldSession } from "../world/session.ts";
-import { guideLines, trendOf, type Trend } from "./guide.ts";
+import { explorationLines, guideLines, trendOf, type Trend } from "./guide.ts";
 
 const WORLD = FLOCKING;
 const LEVELS = WORLD.levels;
@@ -193,6 +194,9 @@ export function HookWorld() {
   const [whatIf, setWhatIf] = useState(false);
   const [yaw, setYaw] = useState(DEFAULT_CAMERA.yaw);
   const [run, setRun] = useState<ForkRun | null>(null);
+  /** Each level's prediction, by the index of the choice made; asked once, before its fork. */
+  const [predictions, setPredictions] = useState<Readonly<Record<string, number>>>({});
+  const [asking, setAsking] = useState(false);
   const [forkView, setForkView] = useState<ForkSnapshot | null>(null);
   const container = useRef<HTMLElement>(null);
   const free = useFreeRect(container);
@@ -252,6 +256,7 @@ export function HookWorld() {
     setLastAction(null);
     setNotice(null);
     setWhatIf(false);
+    setAsking(false);
     setHighlight((shown) => (shown === null ? null : target.id));
     setSnapshot(session.snapshot());
     setTrend("steady");
@@ -344,6 +349,12 @@ export function HookWorld() {
     claim.kind === "each"
       ? `Across ${RULE_SEEDS} skies, the level's statement holds on at least ${RULE_HOLDS}.`
       : `Across ${RULE_SEEDS} skies, the other world was ${claim.relation} by more than ${claim.by} ${difference.unit} on ${claim.holds}, and not on ${RULE_SEEDS - claim.holds}.`;
+  const predicted = predictions[level.id];
+  const exploring = level.exploration !== null && predicted !== undefined;
+  const forkGuide =
+    level.exploration && predicted !== undefined && forkView
+      ? explorationLines(level.exploration, claim, { predicted, change: overridesShort, done: forkView.done, holdsHere: forkView.holds })
+      : null;
   const forkPanel =
     run && forkView ? (
       <ForkView
@@ -363,6 +374,7 @@ export function HookWorld() {
         onTogglePlay={toggleFork}
         onClose={closeTheFork}
         onReadout={() => setForkView(run.fork.snapshot())}
+        {...(forkGuide ? { guide: <GuideNote lines={forkGuide} /> } : {})}
         chart={
           <DifferenceChart
             metricName={METRIC_NAMES[difference.metricId] ?? difference.metricId}
@@ -382,7 +394,7 @@ export function HookWorld() {
               <OriginTag origin="computed-observation" quiet /> {difference.label}: this world {measured(forkView.summary.here)}, what if{" "}
               {measured(forkView.summary.there)}.
             </p>
-            {forkView.done ? (
+            {exploring ? null : forkView.done ? (
               <p data-holds={forkView.holds ? "yes" : "no"}>
                 <OriginTag origin="computed-observation" quiet />{" "}
                 {claim.kind === "each"
@@ -397,9 +409,11 @@ export function HookWorld() {
                 Running: {(forkView.steps * flockTimestep).toFixed(1)} of {difference.seconds} s.
               </p>
             )}
-            <p data-effect="">
-              <OriginTag origin={whatIfSpec.origin} placeholder={placeholderOnly(whatIfSpec.anchors)} quiet /> The level states: {whatIfSpec.effect}
-            </p>
+            {exploring && !forkView.done ? null : (
+              <p data-effect="">
+                <OriginTag origin={whatIfSpec.origin} placeholder={placeholderOnly(whatIfSpec.anchors)} quiet /> The level states: {whatIfSpec.effect}
+              </p>
+            )}
           </>
         }
       />
@@ -458,7 +472,24 @@ export function HookWorld() {
         </header>
 
         <div className="hud-bottom">
-          <Guide lines={lines} cue={cue} quiet={whatIf} />
+          <Guide
+            lines={lines}
+            cue={cue}
+            quiet={whatIf}
+            ask={
+              asking && level.exploration
+                ? {
+                    prompt: level.exploration.predictPrompt,
+                    choices: level.exploration.choices,
+                    onChoose: (index) => {
+                      setPredictions((made) => ({ ...made, [level.id]: index }));
+                      setAsking(false);
+                      openTheFork();
+                    },
+                  }
+                : null
+            }
+          />
 
           {whatIf ? (
             <section id="what-if" className="card what-if" aria-labelledby="what-if-title" data-hud>
@@ -513,7 +544,15 @@ export function HookWorld() {
             }
             whatIfOpen={whatIf}
             whatIfId="what-if"
-            onWhatIf={() => setWhatIf((shown) => !shown)}
+            onWhatIf={() => {
+              // A level that asks for a prediction asks it first, before its fork opens.
+              if (level.exploration && predictions[level.id] === undefined) {
+                setAsking((open) => !open);
+                setCue((count) => count + 1);
+              } else {
+                setWhatIf((shown) => !shown);
+              }
+            }}
             sliderRef={slider}
           />
         </div>

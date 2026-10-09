@@ -293,6 +293,35 @@
 .what-if {
   padding: 14px 18px;
 }
+
+/* A question the guide asks, and its choices: framing, never scored. */
+.guide-ask p {
+  margin: 0 0 8px;
+  line-height: 1.35;
+}
+.guide-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+/* The guide inside a card, such as the fork's. */
+.guide-note {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+}
+.guide-note ul {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  line-height: 1.35;
+}
+.fork-guide {
+  grid-column: 1 / -1;
+}
 .what-if h2 {
   margin: 0 0 6px;
   font-size: 1.125rem;

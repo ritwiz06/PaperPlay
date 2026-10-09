@@ -30,6 +30,8 @@ export interface ForkViewProps {
   readonly onClose: () => void;
   /** Called at most ten times a second while the worlds change, to refresh the chart. */
   readonly onReadout?: () => void;
+  /** The guide, inside the fork's result: guided exploration speaks here. */
+  readonly guide?: ReactNode;
   /** More controls beside play, such as the speed. */
   readonly controls?: ReactNode;
   readonly children?: ReactNode;
@@ -41,7 +43,7 @@ export interface ForkViewProps {
  * them charted beneath. The stages only draw; the app keeps both worlds in step.
  */
 export function ForkView(props: ForkViewProps) {
-  const { title, note, here, there, stageLabel, look, chart, result, playing, done, onTogglePlay, onClose, onReadout, controls, children } = props;
+  const { title, note, here, there, stageLabel, look, chart, result, playing, done, onTogglePlay, onClose, onReadout, guide, controls, children } = props;
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     heading.current?.focus({ preventScroll: true });
@@ -90,6 +92,7 @@ export function ForkView(props: ForkViewProps) {
         <p className="card fork-label">{there.label}</p>
       </div>
       <div className="card fork-result">
+        {guide ? <div className="fork-guide">{guide}</div> : null}
         {chart}
         <div className="fork-measure">{result}</div>
       </div>

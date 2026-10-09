@@ -1,10 +1,19 @@
 import type { Origin } from "@paperplay/contracts";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { BirdMark, OriginTag } from "./hud-parts.tsx";
 
 export interface GuideLine {
   readonly text: string;
   readonly origin: Origin;
+  /** A paper-derived line whose passage has not been mapped yet. */
+  readonly placeholder?: boolean;
+}
+
+/** A question the guide asks, with its choices: framing, never scored. */
+export interface GuideAsk {
+  readonly prompt: string;
+  readonly choices: readonly string[];
+  readonly onChoose: (index: number) => void;
 }
 
 export interface GuideProps {
@@ -16,6 +25,8 @@ export interface GuideProps {
   readonly showFor?: number;
   /** Gives way to another card, such as What if: the bubble hides and its icon stays, so nothing reframes. */
   readonly quiet?: boolean;
+  /** A question to ask instead: the bubble stays open, with a button for each choice, until one is chosen. */
+  readonly ask?: GuideAsk | null;
 }
 
 /** About six seconds: long enough to read two short sentences, short enough to give the world back. */
@@ -26,8 +37,9 @@ export const GUIDE_SHOW_MS = 6000;
  * origin. It appears after an interaction and fades after about 6 s; its icon brings back the
  * last thing it said. Under reduced motion it appears and disappears without animation (CSS).
  */
-export function Guide({ lines, cue, showFor = GUIDE_SHOW_MS, quiet = false }: GuideProps) {
+export function Guide({ lines, cue, showFor = GUIDE_SHOW_MS, quiet = false, ask = null }: GuideProps) {
   const id = useId();
+  const firstChoice = useRef<HTMLButtonElement>(null);
   const [seenCue, setSeenCue] = useState(cue);
   const [open, setOpen] = useState(false);
   // A new cue opens the guide. Adjusting state while rendering, when a prop changes, is React's
@@ -42,7 +54,13 @@ export function Guide({ lines, cue, showFor = GUIDE_SHOW_MS, quiet = false }: Gu
     return () => window.clearTimeout(timer);
   }, [open, seenCue, showFor]);
 
-  const shown = open && !quiet;
+  // A question takes the keyboard to its first choice, so it can be answered at once.
+  const asking = ask !== null;
+  useEffect(() => {
+    if (asking) firstChoice.current?.focus({ preventScroll: true });
+  }, [asking]);
+
+  const shown = asking || (open && !quiet);
   return (
     <div className="guide" data-open={shown ? "true" : "false"}>
       <button
@@ -58,14 +76,46 @@ export function Guide({ lines, cue, showFor = GUIDE_SHOW_MS, quiet = false }: Gu
         <BirdMark size={40} />
       </button>
       <div id={id} className="card guide-bubble" data-hud={shown ? "" : undefined} role="group" aria-label="Guide">
-        <ul aria-live="polite">
-          {lines.map((line) => (
-            <li key={`${line.origin}:${line.text}`}>
-              <OriginTag origin={line.origin} quiet /> <span>{line.text}</span>
-            </li>
-          ))}
-        </ul>
+        {ask ? (
+          <div className="guide-ask">
+            <p id={`${id}-ask`}>
+              <OriginTag origin="teaching-choice" quiet /> <span>{ask.prompt}</span>
+            </p>
+            <div className="guide-choices" role="group" aria-labelledby={`${id}-ask`}>
+              {ask.choices.map((choice, index) => (
+                <button key={choice} ref={index === 0 ? firstChoice : undefined} type="button" className="btn btn-light" onClick={() => ask.onChoose(index)}>
+                  {choice}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <GuideLines lines={lines} />
+        )}
       </div>
+    </div>
+  );
+}
+
+/** The guide's lines, each with its origin. */
+export function GuideLines({ lines }: { readonly lines: readonly GuideLine[] }) {
+  return (
+    <ul aria-live="polite">
+      {lines.map((line) => (
+        <li key={`${line.origin}:${line.text}`}>
+          <OriginTag origin={line.origin} placeholder={line.placeholder ?? false} quiet /> <span>{line.text}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** The guide as a note inside a card, such as the fork's: the same lines, without the bubble. */
+export function GuideNote({ lines }: { readonly lines: readonly GuideLine[] }) {
+  return (
+    <div className="guide-note" role="group" aria-label="Guide">
+      <BirdMark size={32} />
+      <GuideLines lines={lines} />
     </div>
   );
 }

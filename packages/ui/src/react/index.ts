@@ -3,7 +3,7 @@
  * (ADR-0008). They display what they are given and report what the learner does; they may
  * read simulation types, but never import simulation code.
  */
-export { Guide, GUIDE_SHOW_MS, type GuideLine, type GuideProps } from "./Guide.tsx";
+export { Guide, GuideLines, GuideNote, GUIDE_SHOW_MS, type GuideAsk, type GuideLine, type GuideProps } from "./Guide.tsx";
 export { DifferenceChart, type DifferenceChartProps } from "./DifferenceChart.tsx";
 export { ForkView, type ForkPane, type ForkViewProps } from "./ForkView.tsx";
 export { GroupsCounter, type GroupsCounterProps } from "./GroupsCounter.tsx";
