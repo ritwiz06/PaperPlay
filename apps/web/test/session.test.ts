@@ -264,3 +264,39 @@ describe("[R07] a branch, as a fork opens one", () => {
     expect(json(session.state())).toBe(json(state));
   });
 });
+
+describe("[R07] the speed control", () => {
+  /** Plays a session frame by frame at 60 frames a second, moving the control at step 120. */
+  function played(speed: 1 | 2 | 4, steps: number): WorldSession {
+    const session = open();
+    session.setSpeed(speed);
+    session.play();
+    let moved = false;
+    while (session.snapshot().step < steps) {
+      if (!moved && session.snapshot().step >= 120) {
+        session.setAction(PRIMARY_ACTION, 0.5);
+        moved = true;
+      }
+      session.tick(1 / 60);
+    }
+    return session;
+  }
+
+  it("takes speed times as many fixed steps per frame", () => {
+    const session = open();
+    session.setSpeed(4);
+    session.play();
+    expect(session.tick(1 / 60)).toBe(4);
+    expect(session.snapshot().speed).toBe(4);
+  });
+
+  it("gives a run at 4x that matches the same run at 1x bit for bit, and replays from its record", () => {
+    const slow = played(1, 480);
+    const fast = played(4, 480);
+    expect(fast.snapshot().step).toBe(480);
+    expect(json(fast.state())).toBe(json(slow.state()));
+    expect(fast.plan().events).toEqual(slow.plan().events);
+    const plan = fast.plan();
+    expect(json(runEvents({ primitive: flock, params: plan.params, actions: LOCAL_ACTIONS }, plan).finalState)).toBe(json(slow.state()));
+  });
+});

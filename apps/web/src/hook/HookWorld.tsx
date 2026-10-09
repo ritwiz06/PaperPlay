@@ -9,7 +9,7 @@
 import { isPlaceholder, RULE_HOLDS, RULE_SEEDS, type AnchorRef, type PendingSource, type SourceManifest } from "@paperplay/contracts";
 import { SAMPLE_STEPS, type BuiltLevel } from "@paperplay/pipeline";
 import { flockDefaultParams, flockPlanarWeighted, type FlockObservables } from "@paperplay/primitives";
-import { DEFAULT_CAMERA } from "@paperplay/ui/stage-core";
+import { DEFAULT_CAMERA, type Speed } from "@paperplay/ui/stage-core";
 import {
   BirdMark,
   BookIcon,
@@ -26,6 +26,7 @@ import {
   PaperJournal,
   PlayIcon,
   SpacingGauge,
+  SpeedButton,
   SpreadDial,
   useFreeRect,
   WorldStage,
@@ -197,6 +198,7 @@ export function HookWorld() {
   /** Each level's prediction, by the index of the choice made; asked once, before its fork. */
   const [predictions, setPredictions] = useState<Readonly<Record<string, number>>>({});
   const [asking, setAsking] = useState(false);
+  const [speed, setSpeedState] = useState<Speed>(1);
   const [forkView, setForkView] = useState<ForkSnapshot | null>(null);
   const container = useRef<HTMLElement>(null);
   const free = useFreeRect(container);
@@ -310,7 +312,7 @@ export function HookWorld() {
   const openTheFork = () => {
     const resume = session.snapshot().playing;
     session.pause();
-    const fork = openFork(level, session, { playing: !prefersReducedMotion() });
+    const fork = openFork(level, session, { playing: !prefersReducedMotion(), speed });
     setRun({
       fork,
       resume,
@@ -327,6 +329,12 @@ export function HookWorld() {
     setForkView(null);
     setSnapshot(session.snapshot());
     requestAnimationFrame(() => document.querySelector<HTMLButtonElement>(".level-whatif .btn")?.focus({ preventScroll: true }));
+  };
+
+  const setSpeed = (next: Speed) => {
+    setSpeedState(next);
+    session.setSpeed(next);
+    run?.fork.setSpeed(next);
   };
 
   const toggleFork = () => {
@@ -374,6 +382,7 @@ export function HookWorld() {
         onTogglePlay={toggleFork}
         onClose={closeTheFork}
         onReadout={() => setForkView(run.fork.snapshot())}
+        controls={<SpeedButton speed={speed} onChange={setSpeed} />}
         {...(forkGuide ? { guide: <GuideNote lines={forkGuide} /> } : {})}
         chart={
           <DifferenceChart
@@ -420,7 +429,7 @@ export function HookWorld() {
     ) : null;
 
   return (
-    <main ref={container} className="game" data-level={level.id} data-step={snapshot.step} data-depth={depth} data-journal={journal ? "open" : "closed"} data-fork={run ? "open" : "closed"}>
+    <main ref={container} className="game" data-level={level.id} data-step={snapshot.step} data-depth={depth} data-journal={journal ? "open" : "closed"} data-fork={run ? "open" : "closed"} data-speed={speed}>
       {forkPanel ?? (
         <>
       <WorldStage
@@ -458,6 +467,7 @@ export function HookWorld() {
               <PlayIcon playing={snapshot.playing} />
               <span className="btn-text">{snapshot.playing ? "Pause" : "Play"}</span>
             </button>
+            <SpeedButton speed={speed} onChange={setSpeed} />
             <button
               type="button"
               className="btn"

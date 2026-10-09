@@ -62,3 +62,25 @@ describe("fixed-step driver", () => {
     expect(due).toBe(10);
   });
 });
+
+describe("the speed control's clock", () => {
+  const dt = 1 / 60;
+
+  it("takes speed times as many fixed steps for the same frame", () => {
+    for (const speed of [1, 2, 4] as const) {
+      let clock: StepClock = START_CLOCK;
+      let steps = 0;
+      for (let frame = 0; frame < 60; frame++) {
+        const next = advance(clock, dt, dt, undefined, speed);
+        clock = next.clock;
+        steps += next.steps;
+      }
+      expect(steps, `${speed}x`).toBe(60 * speed);
+    }
+  });
+
+  it("scales the caps with the speed, so a slow frame at 4x is not cut to 1x's", () => {
+    expect(advance(START_CLOCK, 0.2, dt, undefined, 4).steps).toBe(MAX_STEPS_PER_FRAME * 4);
+    expect(advance(START_CLOCK, 0.2, dt).steps).toBe(MAX_STEPS_PER_FRAME);
+  });
+});

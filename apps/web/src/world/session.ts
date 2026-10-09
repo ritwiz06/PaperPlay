@@ -20,7 +20,7 @@ import {
   type Headings,
   type RunPlan,
 } from "@paperplay/primitives";
-import { advance, START_CLOCK, type FrameEmphasis, type StageInput, type StepClock } from "@paperplay/ui/stage-core";
+import { advance, START_CLOCK, type FrameEmphasis, type Speed, type StageInput, type StepClock } from "@paperplay/ui/stage-core";
 
 export interface SessionOptions {
   readonly seed: number;
@@ -42,6 +42,8 @@ export interface SessionSnapshot {
   readonly step: number;
   readonly seconds: number;
   readonly playing: boolean;
+  /** Fixed steps per frame, times 1, 2 or 4: how fast the run goes, never what it computes. */
+  readonly speed: Speed;
   /** True while a replay still has recorded events ahead of it. */
   readonly replaying: boolean;
   readonly params: FlockParams;
@@ -63,6 +65,8 @@ export interface WorldSession {
   tick(frameSeconds: number): number;
   /** Takes exactly this many fixed steps now, playing or not: a fork keeps two worlds in step this way. */
   stepBy(steps: number): void;
+  /** Runs at 1x, 2x or 4x: more fixed steps per frame, the same steps. */
+  setSpeed(speed: Speed): void;
   play(): void;
   pause(): void;
   setAction(actionId: string, value: number): void;
@@ -104,6 +108,7 @@ export function createWorldSession(first: SessionOptions): WorldSession {
   let alpha = 0;
   let clock: StepClock = START_CLOCK;
   let playing = options.playing ?? false;
+  let speed: Speed = 1;
   /** The setup's place events come first, at step 0, so replay and the next seed keep them. */
   const setupEvents = (): RunEvent[] => (options.setup ?? []).map((event) => ({ ...event, step: 0 }));
   let events: RunEvent[] = setupEvents();
@@ -182,6 +187,7 @@ export function createWorldSession(first: SessionOptions): WorldSession {
       step: current.stepIndex,
       seconds: current.stepIndex * TIMESTEP,
       playing,
+      speed,
       replaying: applied < events.length,
       params,
       observed: flock.measure(current),
@@ -206,13 +212,17 @@ export function createWorldSession(first: SessionOptions): WorldSession {
     },
     tick(frameSeconds) {
       if (!playing) return 0;
-      const next = advance(clock, frameSeconds, TIMESTEP);
+      const next = advance(clock, frameSeconds, TIMESTEP, undefined, speed);
       clock = next.clock;
       alpha = next.alpha;
       stepBy(next.steps);
       return next.steps;
     },
     stepBy,
+    setSpeed(next) {
+      speed = next;
+      changed();
+    },
     play() {
       playing = true;
       changed();

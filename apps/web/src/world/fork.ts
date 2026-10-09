@@ -10,7 +10,7 @@
  */
 import { claimHolds, SAMPLE_STEPS, summarise, type BuiltLevel } from "@paperplay/pipeline";
 import { flockPlanarWeighted as flock, type FlockObservables, type FlockParams } from "@paperplay/primitives";
-import { advance, START_CLOCK, type StepClock } from "@paperplay/ui/stage-core";
+import { advance, START_CLOCK, type Speed, type StepClock } from "@paperplay/ui/stage-core";
 import { createWorldSession, type SessionOptions, type WorldSession } from "./session.ts";
 
 const TIMESTEP = flock.fixedTimestep;
@@ -36,8 +36,10 @@ export interface ForkSnapshot {
 export interface Fork {
   readonly here: WorldSession;
   readonly there: WorldSession;
-  /** Advances both worlds by the steps this much wall time allows; returns how many. */
+  /** Advances both worlds by the steps this much wall time allows, at the fork's speed; returns how many. */
   tick(frameSeconds: number): number;
+  /** Runs both worlds at 1x, 2x or 4x: more fixed steps per frame, the same steps. */
+  setSpeed(speed: Speed): void;
   play(): void;
   pause(): void;
   snapshot(): ForkSnapshot;
@@ -50,7 +52,7 @@ export function forkParams(level: BuiltLevel, current: FlockParams): { readonly 
   return { here: current, there: flock.paramSchema.parse({ ...current, ...overrides }) };
 }
 
-export function openFork(level: BuiltLevel, from: WorldSession, options: { readonly playing: boolean }): Fork {
+export function openFork(level: BuiltLevel, from: WorldSession, options: { readonly playing: boolean; readonly speed?: Speed }): Fork {
   const { difference, restarts } = level.fork;
   const now = from.snapshot();
   const params = forkParams(level, now.params);
@@ -67,6 +69,7 @@ export function openFork(level: BuiltLevel, from: WorldSession, options: { reado
   const samples = { here: [here.snapshot().observed[metric]], there: [there.snapshot().observed[metric]] };
   let steps = 0;
   let playing = options.playing;
+  let speed: Speed = options.speed ?? 1;
   let clock: StepClock = START_CLOCK;
   let version = 0;
 
@@ -89,11 +92,15 @@ export function openFork(level: BuiltLevel, from: WorldSession, options: { reado
     there,
     tick(frameSeconds) {
       if (!playing || steps >= totalSteps) return 0;
-      const next = advance(clock, frameSeconds, TIMESTEP);
+      const next = advance(clock, frameSeconds, TIMESTEP, undefined, speed);
       clock = next.clock;
       const count = Math.min(next.steps, totalSteps - steps);
       if (count > 0) take(count);
       return count;
+    },
+    setSpeed(next) {
+      speed = next;
+      version += 1;
     },
     play() {
       if (steps < totalSteps) playing = true;

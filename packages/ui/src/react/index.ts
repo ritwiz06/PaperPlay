@@ -29,6 +29,7 @@ export { ORIGIN_LABELS, ORIGIN_MEANINGS, ORIGINS, OriginChip, OriginLegend } fro
 export { PaperJournal, type JournalPage, type JournalPassage, type PaperJournalProps } from "./PaperJournal.tsx";
 export { Readout, type ReadoutProps } from "./Readout.tsx";
 export { SpacingGauge, type SpacingGaugeProps } from "./SpacingGauge.tsx";
+export { SpeedButton, type SpeedButtonProps } from "./SpeedButton.tsx";
 export { SpreadDial, type SpreadDialProps } from "./SpreadDial.tsx";
 export { HUD_MARGIN, useFreeRect } from "./useFreeRect.ts";
 export { WorldStage, type StageDriver, type StageTool, type WorldStageProps } from "./WorldStage.tsx";

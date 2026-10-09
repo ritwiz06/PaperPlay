@@ -90,6 +90,35 @@ test.describe("on a desktop", () => {
     await expect(page.locator(".level-whatif").getByRole("button", { name: "What if" })).toBeFocused();
   });
 
+  test("[R06] the speed control cycles 1x, 2x, 4x, and the fork opens at the speed in use", async ({ page }) => {
+    await openHook(page);
+    const speed = page.locator(".hud-buttons .speed-button");
+    await expect(speed).toHaveText("1×");
+    await speed.click();
+    await expect(page.locator("main")).toHaveAttribute("data-speed", "2");
+    await speed.click();
+    await expect(speed).toHaveText("4×");
+    await expect(speed).toHaveAccessibleName("Speed 4×. Change to 1×");
+    await openFork(page);
+    await expect(page.locator(".fork .speed-button")).toHaveText("4×");
+  });
+
+  test("[R06] at 4x the fork runs to the level's time, measures this sky, and says whether the level's statement holds", async ({ page }) => {
+    await openHook(page);
+    await openFork(page);
+    const fork = page.locator(".fork");
+    await fork.locator(".speed-button").click();
+    await fork.locator(".speed-button").click();
+    await expect(fork.locator(".speed-button")).toHaveText("4×");
+    await fork.getByRole("button", { name: "Play both" }).click();
+    // Seed 5 at the level's start, as eval/sweeps/levels.md records it: 0.93 against 0.08, holds.
+    await expect(fork.locator("[data-holds]")).toHaveAttribute("data-holds", "yes", { timeout: 45_000 });
+    await expect(fork.locator("[data-measured]")).toContainText("this world 0.93");
+    await expect(fork.locator("[data-measured]")).toContainText("what if 0.08");
+    await expect(fork.locator(".difference-chart")).toHaveAttribute("data-here-samples", "201");
+    await expect(fork.getByRole("button", { name: "Done" })).toBeDisabled();
+  });
+
   test("[R12] the fork passes the axe scan, on a desktop", async ({ page }) => {
     await openHook(page);
     await openFork(page);

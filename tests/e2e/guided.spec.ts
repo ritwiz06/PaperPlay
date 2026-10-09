@@ -54,6 +54,26 @@ for (const size of SIZES) {
       await expect(page.locator("#what-if")).toBeVisible();
     });
 
+    test(`[R06] at the level's time the guide reports this sky and the 20 skies as measured, then the paper and a question, on a ${size.name}`, async ({ page }) => {
+      test.setTimeout(90_000);
+      await toLevel2(page);
+      await page.locator(".hud-buttons .speed-button").click();
+      await page.locator(".hud-buttons .speed-button").click();
+      await whatIf(page).click();
+      await page.getByRole("button", { name: "Faster" }).click();
+      await page.locator(".fork").getByRole("button", { name: "Play both" }).click();
+      const note = page.locator(".fork-guide");
+      await expect(note).toContainText("Across 20 skies: Faster on 6, about the same, or slower on 14.", { timeout: 75_000 });
+      await expect(note).toContainText("You predicted: Faster.");
+      // Seed 5: seeing the whole flock reaches agreement 0.9 at 19.6 s, against 17.7 s.
+      await expect(note).toContainText("On this sky: About the same, or slower.");
+      await expect(note).toContainText("The paper argues that a bird perceives only the flockmates near it");
+      await expect(note.locator(".origin-tag-placeholder")).toHaveCount(1);
+      await expect(note).toContainText("Why might seeing more birds not help a flock agree sooner?");
+      await expect(page.locator("[data-effect]")).toContainText("Seeing the whole flock does not reliably bring order sooner");
+      await expect(page.locator("main")).not.toContainText(/\b(right|wrong|correct|incorrect|score|points?)\b/i);
+    });
+
     test(`[R12] the guide's question passes the axe scan, on a ${size.name}`, async ({ page }) => {
       await toLevel2(page);
       await whatIf(page).click();

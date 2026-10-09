@@ -326,6 +326,11 @@
   margin: 0 0 6px;
   font-size: 1.125rem;
 }
+.speed-button {
+  min-width: 3.4em;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+}
 .what-if-buttons {
   display: flex;
   flex-wrap: wrap;
