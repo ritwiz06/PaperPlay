@@ -60,6 +60,12 @@ Done early:
 - [x] RunRecord v2 and the replay engine, part of R07 (2026-09-30).
 - [x] `npm run capture:demo`, a deterministic demo video, at the owner's request
   (2026-10-09, ADR-0010).
+- [x] The world art pass, at the owner's request:
+  - low-poly birds with flapping wings, colour by heading and trails;
+  - a valley with hills, a lake, trees, rocks, a sky and a sun;
+  - a following camera.
+
+  Done 2026-10-09, ADR-0013.
 
 Next:
 - [x] First: add `@axe-core/playwright` (approved 2026-10-01) and the axe scan in `test:e2e`
@@ -164,5 +170,6 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-09 | `main` holds G1; work moves to short branches off `main` | Owner decision (ADR-0009) |
 | 2026-10-09 | `npm run capture:demo` added before G2's interface work | Owner request (ADR-0010) |
 | 2026-10-09 | Published captures come from CI's capture job on a pinned `ubuntu-24.04`; a cross-runtime check is deferred | CI found a capture's bytes hold per runtime; owner chose option a (ADR-0010) |
+| 2026-10-09 | A world art pass before the capture is re-filmed | Owner: the world looked like a debug view (ADR-0013) |
 | 2026-10-09 | The four development and eight held-out section files move from G2 to after the authored world plays end to end, as G3's first item | Owner decision: G3 and G4 need them; G2's interface does not |
 | 2026-10-09 | A game-first interface replaces the brief's §6 layout. G2's interface items are renamed: LevelCard, Guide, PaperJournal, LevelMap, DepthToggle and a split-screen ForkView, plus a design spike first | Owner decision (ADR-0008): the §6 layout reads as a dashboard |

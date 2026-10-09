@@ -25,7 +25,9 @@ Inside `packages/ui`:
 - **`src/stage-core/`:** pure presentation; turns states into a `FrameDescription`. It also
   holds the view window and free rectangle (`screen.ts`) and the compass's geometry
   (`compass.ts`) (ADR-0012).
-- **`src/three-adapter/`:** turns a `FrameDescription` into a Three.js scene.
+- **`src/three-adapter/`:** turns a `FrameDescription` into a Three.js scene: birds as a
+  body and two hinged wings, trails as ribbons, and the valley with its meadow, lake, trees,
+  rocks, sky and sun (ADR-0013).
 - **`src/react/`:** they display what a driver gives them and report what the learner does.
   - From G1: WorldStage, LabBench, Readout, and the origin chip and legend (ADR-0007).
   - The game-first HUD (ADR-0008, ADR-0012), styled by `hud.css`: LevelCard, Guide,
@@ -120,7 +122,9 @@ flowchart LR
 | Primitive behaviour matches hand-derived equations | Oracle fixtures [R01] | `fixtures/oracles/`, `packages/primitives/test/flock.oracles.test.ts` |
 | Contracts depend only on zod | Lint | `eslint.config.js` |
 | Contracts reject unknown keys and enforce their refinements | Tests [R03] | `packages/contracts/test/` |
-| The renderer never changes an observable, even with a bird picked or the view framed in a HUD's window | Test [R02] | `packages/ui/test/render-invariance.test.ts` |
+| The renderer never changes an observable, even with a bird picked, the view framed in a HUD's window, or the flock coloured by heading with wingbeats and trails | Test [R02]; in the browser, colour by heading records nothing and the run matches Node bit for bit [R02] | `packages/ui/test/render-invariance.test.ts`, `tests/e2e/world.spec.ts` |
+| Every colour on the heading wheel keeps 3:1 against the meadow; trails never cross a seam and stay under 3.5 units | Tests | `packages/ui/test/world-art.test.ts` |
+| The following camera keeps the flock's centre inside the HUD's free rectangle, and is the still overview under reduced motion | Browser tests | `tests/e2e/hook.spec.ts` |
 | The HUD at rest covers at most 25% of 1440 × 900 and 35% of 390 × 844, and the stage frames the field inside the rectangle it leaves free | Browser tests that measure the HUD's boxes and read the stage's own fit; unit tests on the fit | `tests/e2e/hook.spec.ts`, `packages/ui/test/screen.test.ts` |
 | The compass's arrow is the primitive's mean heading (Q2) and agreement (E12), and its ticks point where the birds fly on screen | Tests | `packages/primitives/test/flock.headings.test.ts`, `packages/ui/test/compass.test.ts` |
 | The stage core is framework-free, with type-only simulation imports | A tsconfig without the DOM library; lint | `packages/ui/src/stage-core/tsconfig.json`, `eslint.config.js` |
@@ -225,3 +229,6 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 | 2026-10-09 | a7e30ce | Stage core: the view window, `screen.ts`, `compass.ts`; the adapter draws the frame's projection (ADR-0012) |
 | 2026-10-09 | 15673c8 | The game-first HUD in `packages/ui/src/react`, with `hud.css` (ADR-0008) |
 | 2026-10-09 | 445912e | `/world/hook` on the shell |
+| 2026-10-09 | 2d9768e | Stage core: colour by heading, wingbeats, trails, a camera target, `flockCentre` (ADR-0013) |
+| 2026-10-09 | 4d3bcce | The adapter's low-poly valley and birds: wings, trails, terrain, lake, trees, rocks, sky, sun |
+| 2026-10-09 | b27240e | WorldStage's `framing` and `look`; the session's trail history |

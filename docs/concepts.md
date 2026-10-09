@@ -477,10 +477,33 @@ object means changing its transform, and the library does the drawing.
 One shape drawn many times in a single call, each copy with its own position, rotation,
 size and colour.
 
-- **Used in:** `packages/ui/src/three-adapter/scene.ts`
-- **Why here:** All birds, up to 400, are drawn in one call, so the flock stays cheap even
-  in software rendering.
+- **Used in:** `packages/ui/src/three-adapter/scene.ts`, `packages/ui/src/three-adapter/apply-frame.ts`
+- **Why here:** All birds, up to 400, are drawn in three calls: their bodies, left wings and
+  right wings. Each wing's matrix is its bird's matrix times a hinge and a flap. Trees and
+  rocks are instanced too.
 - **Learn more:** [three.js: InstancedMesh](https://threejs.org/docs/#api/en/objects/InstancedMesh)
+
+### A cyclic colour map
+
+Colours arranged round a wheel, so a direction can be shown as a colour: a heading and the
+same heading a full turn later get the same colour, and nearby headings get nearby colours.
+
+- **Used in:** `packages/ui/src/stage-core/palettes.ts`, `packages/ui/src/stage-core/frame.ts`
+- **Why here:** Colour by heading lets learners see agreement: a flock that agrees turns one
+  colour. The wheel comes from the palette, so it trades hue for contrast against the
+  meadow, which a test holds at 3:1 (ADR-0013).
+- **Learn more:** [Kovesi, "Good colour maps: how to design them"](https://arxiv.org/abs/1509.03700)
+
+### Frame-rate-independent smoothing
+
+Easing a value toward a target by a share of the gap each frame. A share of
+1 − exp(−Δt / τ) makes it close the same gap in the same time at any frame rate.
+
+- **Used in:** `packages/ui/src/react/WorldStage.tsx`
+- **Why here:** The following camera eases toward the flock's centre without jolts, and
+  behaves the same on a fast or a slow screen.
+- **Learn more:** [Rory Driscoll, "Frame rate independent damping using lerp"](https://www.rorydriscoll.com/2016/03/07/frame-rate-independent-damping-using-lerp/) and
+  [Exponential smoothing](https://en.wikipedia.org/wiki/Exponential_smoothing)
 
 ### View and projection matrices
 

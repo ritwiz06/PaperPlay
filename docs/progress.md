@@ -7,6 +7,24 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · The world art pass
+
+- Branch: `g2/world-art`
+- Commits: `2d9768e`, `4d3bcce`, `b27240e`
+- Shipped (ADR-0013):
+  - birds with a body and flapping wings;
+  - colour by heading, on in the hook and a toggle on `/world/local`;
+  - trails;
+  - a valley with a meadow, hills, a lake, trees, rocks, a sky and a sun, with no wireframe
+    border;
+  - a following camera that drifts when idle.
+- Evidence:
+  - R01 47, R02 6, R03 49, R04 18;
+  - from 330 tests with none skipped;
+  - 2 of 2 planted bugs caught by the new browser tests.
+- Frame time: 60 fps on an M3 Pro GPU, p99 16.8 ms; 21 fps on SwiftShader.
+- Gate: `check:gate` G1 passed at `b27240e`.
+
 ## 2026-10-09 · The game-first shell
 
 - Branch: `g2/shell`
