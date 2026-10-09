@@ -7,6 +7,22 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · The speed control
+
+- Branch: `g2/speed`
+- Commits: `b6e00d3`, a fix to the fork's display, and `e452bc3`
+- Shipped (ADR-0020):
+  - **1x, 2x and 4x,** as more fixed steps per frame, in the HUD and in the fork.
+  - **A run at 4x matches the same run at 1x bit for bit,** and replays from its record.
+  - **At 4x the fork reaches a level's time** within the browser tests. It measures what the
+    sweep recorded for seed 5, and level 2's guide reports the 20 skies.
+  - **`e452bc3`** fixes a browser test that slice 3 broke on `main`.
+- Evidence:
+  - R01 58, R02 6, R03 102, R04 18;
+  - ahead of their gate: R05 4, R06 30, R07 18, R08 48, R12 14;
+  - from 506 tests with none skipped.
+- Gate: `check:gate` G1 passed at `e452bc3`.
+
 ## 2026-10-09 · Guided exploration
 
 - Branch: `g2/guided-exploration`

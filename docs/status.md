@@ -1,6 +1,6 @@
 # Status
 
-Updated 2026-10-09, during the day's fifth session: the level rule, then the fork, guided
+Updated 2026-10-09, at the close of the day's fifth session: the level rule, the fork, guided
 exploration and speed ([log](sessions/2026-10-09-5.md)). This file is rewritten every
 session.
 
@@ -15,8 +15,10 @@ session.
     ADR-0011).
 - **Branches:** only `main`. Every slice this session merged fast-forward and was pushed
   (ADR-0009).
-- **Working commit:** `b4503a5` on `main`, the latest code commit there. `check:gate` passed
+- **Working commit:** `e452bc3` on `main`, the latest code commit there. `check:gate` passed
   G1 on it.
+- **Two earlier `main` commits failed the gate** this session (`8634b2b` check:docs,
+  `85e43fe` to `4ad4925` test:e2e). Both are fixed; see the log.
 - **Bundle:** the entry chunk is 416 KB, and Three.js loads after it as its own 551 KB chunk.
   `vercel.json` is ready for a static deploy, with a Content-Security-Policy tested against
   the built app. The owner connects it (ADR-0017).
@@ -33,11 +35,12 @@ session.
   - **On `/world/hook`,** the six levels of the authored WorldSpec on the game-first shell,
     each opening on seed 5. Each level has:
     - one control;
-    - one readout: the compass, the spacing gauge or the groups counter;
+    - one readout: the compass, the spacing gauge, or the spread dial with its ring on the
+      ground;
     - its guide, journal page and What-if.
 
-    Level 5 has a rock in the flock's path. Level 6 is a bonus, beyond the paper. On every
-    level, as before:
+    Level 5 has four rocks across the valley. Level 6 is a bonus, beyond the paper. On every
+    level:
     - Move the level's control.
     - Watch the flock: birds with flapping wings, coloured by heading, with trails, in a
       valley with a lake and groves. A camera follows.
@@ -45,7 +48,10 @@ session.
     - Open the paper journal from "From the paper", at a placeholder passage. Try the
       control from there.
     - Switch depth: words, numbers, the equation, an analogy.
-    - Open What if. The split-screen fork comes next session.
+    - Open What if, and run both worlds side by side (stacked on a phone), with the level's
+      measured difference charted and reported at the level's time. Level 2 asks for a
+      prediction first.
+    - Run at 1x, 2x or 4x.
     - Unlock the next level by sweeping the control's range, and enter it from the map.
   - **On `/world/local`,** as at G1:
     - change the rules;
@@ -61,18 +67,18 @@ session.
   - the screenshots in `captures/final/`;
   - the canonical capture in `captures/canonical/`.
 
-## Latest check:gate (G1), 2026-10-09, commit b4503a5
+## Latest check:gate (G1), 2026-10-09, commit e452bc3
 
 ```
 check:gate G1 · Playable baseline · tag v0.1.0
   runtime    node 24.21.0 (pinned 24.21.0)  ok
-  typecheck  ok      14.7 s
-  lint       ok      10.0 s
-  check:docs ok      0.3 s
-  test       ok      39.2 s
+  typecheck  ok      14.8 s
+  lint       ok      10.5 s
+  check:docs ok      0.2 s
+  test       ok      39.6 s
   build      ok      0.6 s
-  test:e2e   ok      42.9 s
-  evidence   473 tests (vitest 431, playwright 42), 0 skipped
+  test:e2e   ok      67.8 s
+  evidence   506 tests (vitest 450, playwright 56), 0 skipped
     R01  Deterministic, oracle-checked primitives      58 passing
     R02  Model/render separation                       6 passing
     R03  Strict, versioned contracts                   102 passing
@@ -81,7 +87,7 @@ check:gate G1 · Playable baseline · tag v0.1.0
 G1 passed: every required check ran and every requirement has passing evidence.
 ```
 
-Ahead of their gate, from the same run's reports: R05 4, R06 8, R07 14, R08 48, R12 10.
+Ahead of their gate, from the same run's reports: R05 4, R06 30, R07 18, R08 48, R12 14.
 
 ## Blockers
 
@@ -91,24 +97,20 @@ Ahead of their gate, from the same run's reports: R05 4, R06 8, R07 14, R08 48, 
 ## Decisions waiting on the owner
 
 1. **The level rule's reworks** (ADR-0018):
-   - **Level 5** failed the rule and was reworked: four rocks, and "What if birds had no rule
-     for rocks?", holding on 20 of 20.
-   - **Level 4** is now about spread, with a ring on the ground.
-   - **Level 5's readout:** keep the compass, or show the birds at rocks?
-2. **How a stated effect is checked** (ADR-0018):
-   - a measured difference and claim per What-if;
-   - count claims only after a prediction;
-   - the sweep test in its own Node process.
+   - level 5: four rocks, and "no rule for rocks";
+   - level 4 as a level about spread;
+   - level 5's readout: the compass, or the birds at rocks.
+2. **The fork's choices** (ADR-0019), and the speed control's (ADR-0020).
 3. **The deploy:** the owner connects Vercel (ADR-0017). Then I check the CSP against the
    preview.
-4. **The shell and the world art,** from the screenshots in `captures/final/levels/`.
+4. **The shell and the world art,** from the screenshots in `captures/final/`.
 5. **The canonical capture,** in `captures/canonical/`, from CI.
 
 ## Next three actions
 
-1. The split-screen ForkView, with the level's measured difference as a chart.
-2. Guided exploration, with level 2's prediction first.
-3. The speed control, with 4x replaying bit for bit against 1x.
+1. The source map, once the Reynolds PDF is in `reference/private/`. G2 waits for it.
+2. The CSP checked against the first preview deploy, and tightened.
+3. Replay export and `npm run replay`, then the stale-evidence rule.
 
 ## Recommendations
 

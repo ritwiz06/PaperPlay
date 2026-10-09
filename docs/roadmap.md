@@ -108,6 +108,8 @@ Next:
   between them, charted; stacked on a phone (2026-10-09, `8d62794`, ADR-0019).
 - [x] Guided exploration in the guide: predict, intervene, observe, explain, never scored, with
   level 2's prediction first (2026-10-09, `85e43fe`).
+- [x] A speed control, 1x, 2x and 4x, with a run at 4x replaying bit for bit against 1x
+  (2026-10-09, `b6e00d3`, ADR-0020).
 - [ ] `/world/local` moves into the shell as the free sandbox.
 - [ ] RunRecord export and import; `npm run replay` with a tolerance report; a replay test
   on a fresh page load.
@@ -168,7 +170,7 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | Gate | Planned | Used so far |
 |---|---|---|
 | G1 | Days 1–7, 21–28 h | Days 1–4 (2026-09-28 to 2026-10-01), about 8.3 h of sessions: 1.4 h (09-28), 5.4 h (09-30) and 1.5 h (10-01). Under plan, because Claude Code did the building; the owner's own review time is not tracked |
-| G2 | Days 8–14, 21–28 h | G2's early RunRecord and replay work. Then four sessions on 2026-10-09:<br>• 00:51 to 01:45, about 0.9 h: `main`, ADR-0008, the axe scan, the demo capture, the hook spike and the plan change.<br>• 10:25 to 11:05, about 0.7 h: `origin`, CI, `--frames` and the capture finding.<br>• 11:06 to about 12:05, about 1 h: the canonical capture, the shell, the world art, the capture's camera and the level script.<br>• 12:08 to about 14:25, about 2.3 h: the group measure, WorldSpec and the builder, the six levels from the spec, the stage split and the deploy configuration. |
+| G2 | Days 8–14, 21–28 h | G2's early RunRecord and replay work. Then five sessions on 2026-10-09:<br>• 00:51 to 01:45, about 0.9 h: `main`, ADR-0008, the axe scan, the demo capture, the hook spike and the plan change.<br>• 10:25 to 11:05, about 0.7 h: `origin`, CI, `--frames` and the capture finding.<br>• 11:06 to about 12:05, about 1 h: the canonical capture, the shell, the world art, the capture's camera and the level script.<br>• 12:08 to about 14:25, about 2.3 h: the group measure, WorldSpec and the builder, the six levels from the spec, the stage split and the deploy configuration.<br>• 15:08 to about 16:20, about 1.2 h: the level rule, flock 3.1.0, the fork, guided exploration, the speed control and the CSP. |
 | G3–G5 | As in Gates | None yet |
 
 ## Plan changes
@@ -204,3 +206,4 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-09 | Level 2 becomes a prediction with a count stated exactly; level 4 becomes the flock's spread; level 5 gets four rocks and no rule for rocks; flock 3.1.0 adds E19 and E20 | The rule: level 4's groups and level 5's one rock failed it (ADR-0018) |
 | 2026-10-09 | G2 cannot pass while the flocking world is a draft or holds a placeholder | Owner decision |
 | 2026-10-09 | The deploy's Content-Security-Policy before the first deploy, tested against the built app | Owner decision (ADR-0017) |
+| 2026-10-09 | What if runs a split-screen fork whose chart is the level's measured difference; level 2 asks for a prediction first; a speed control | Owner's slices 2–4 (ADR-0019, ADR-0020) |

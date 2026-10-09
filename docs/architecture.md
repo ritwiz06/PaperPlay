@@ -37,7 +37,8 @@ Inside `packages/ui`:
   - Each level's readout, by its observable (ADR-0014, ADR-0018): HeadingCompass,
     SpacingGauge, SpreadDial and GroupsCounter, sharing the `dial` styles.
   - The fork (ADR-0019): ForkView, with two WorldStages, and DifferenceChart.
-  - The guide can ask a question with choices (`ask`), and speak inside a card (GuideNote). The level card shows and hides its elements by
+  - The guide can ask a question with choices (`ask`), and speak inside a card (GuideNote).
+  - SpeedButton, the speed control (ADR-0020); `advance` in `stage-core/fixed-step.ts` takes the speed. The level card shows and hides its elements by
     the id a depth variant names (ADR-0016).
 
 ## Dependency directions
@@ -143,6 +144,7 @@ flowchart LR
 | A fork's two worlds stay step for step together; opened at a level's start on seed 5, it measures exactly what the levels sweep records | Tests [R06], against direct runs and `eval/sweeps/levels.md` | `apps/web/test/fork.test.ts` |
 | The fork shows two worlds side by side on a desktop, stacked on a phone, with the measured difference charted, and passes axe on both | Browser tests [R06] [R12] | `tests/e2e/fork.spec.ts` |
 | A level that asks for a prediction asks it before its fork, and nothing scores it: no line calls a choice right or wrong | Tests [R06]; browser tests [R06] [R12] | `apps/web/test/guide.test.ts`, `tests/e2e/guided.spec.ts` |
+| A run at 4x is the same run as at 1x: the same states bit for bit, the same events, and it replays from its record | Tests [R07]; the clock's tests | `apps/web/test/session.test.ts`, `packages/ui/test/fixed-step.test.ts` |
 | The renderer never changes an observable, even with a bird picked, the spread ring drawn, the view framed in a HUD's window, or the flock coloured by heading with wingbeats and trails | Test [R02]; in the browser, colour by heading records nothing and the run matches Node bit for bit [R02] | `packages/ui/test/render-invariance.test.ts`, `tests/e2e/world.spec.ts` |
 | Every colour on the heading wheel keeps 3:1 against the meadow; trails never cross a seam and stay under 3.5 units | Tests | `packages/ui/test/world-art.test.ts` |
 | The following camera keeps the flock's centre inside the HUD's free rectangle, and is the still overview under reduced motion | Browser tests | `tests/e2e/hook.spec.ts` |
@@ -275,3 +277,4 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 | 2026-10-09 | 6c9a5a2 | The session's `start` and `stepBy` |
 | 2026-10-09 | 8d62794 | The fork: `src/world/fork.ts`, ForkView, DifferenceChart; WorldStage's `name` |
 | 2026-10-09 | 85e43fe | Guided exploration: the guide's `ask`, GuideNote, `explorationLines` |
+| 2026-10-09 | b6e00d3 | The speed control: `advance`'s speed, the session's and the fork's `setSpeed`, SpeedButton |
