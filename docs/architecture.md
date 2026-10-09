@@ -8,24 +8,28 @@ How PaperPlay fits together today. The concepts named here are explained in
 | Path | Job | Key exports or entry points |
 |---|---|---|
 | `packages/contracts` | Zod schemas and inferred types: the shared language | `Origin`, `Anchor`, `SourceManifest`, `PrimitiveRef`, `Action`, `RunEvent`, `RunRecord`, `JobState` |
-| `packages/primitives` | Deterministic, fixed-step scientific models, their registry, and run replay | `flockPlanarWeighted`, `flockNeighbours`, `mulberry32`, `registry`, `runEvents`, `replayRecord` |
-| `packages/ui` | Design tokens, fonts, the stage and the bench | `@paperplay/ui/tokens`, `fonts.css`, `components.css`, `stage-core`, `three-adapter`, `react` |
+| `packages/primitives` | Deterministic, fixed-step scientific models, their registry, and run replay | `flockPlanarWeighted`, `flockNeighbours` (Q1), `flockHeadings` (Q2), `mulberry32`, `registry`, `runEvents`, `replayRecord` |
+| `packages/ui` | Design tokens, fonts, the stage, the bench and the game-first HUD | `@paperplay/ui/tokens`, `fonts.css`, `components.css`, `hud.css`, `stage-core`, `three-adapter`, `react` |
 | `packages/pipeline` | Agent roles, model adapters, checks, controller | Empty until G3 |
-| `apps/web` | React shell: owns the run, renders state, submits actions | `src/world/session.ts`, `src/world/LocalWorld.tsx` at `/world/local`, `src/world/local-world.ts`; the dev-only capture page `capture.html` with `src/capture/` (ADR-0010) |
+| `apps/web` | React shell: owns the run, renders state, submits actions | `src/world/session.ts`, `src/world/LocalWorld.tsx` at `/world/local`, `src/world/local-world.ts`; `src/hook/HookWorld.tsx` at `/world/hook`, the hook level on the game-first shell, hard-coded until WorldSpec; the dev-only capture page `capture.html` with `src/capture/` (ADR-0010) |
 | `apps/api` | Fastify API: will hold secrets and run jobs | `GET /health` only, until G3 |
 | `scripts/` | Gate, docs checker, defaults sweep, hook seed, demo capture | `check-gate.ts`, `check-docs.ts`, `sweep-defaults.ts`, `hook-seed.ts`, `capture-demo.ts` |
 | `fixtures/oracles/` | Hand-derived expected behaviours for primitives | See `fixtures/oracles/README.md` |
 | `eval/` | Sweeps now; the frozen protocol and raw attempts from G4 | `eval/sweeps/` |
-| `tests/e2e/` | Playwright browser tests on Chromium | `world.spec.ts` [R04], `accessibility.spec.ts` [R12], `stage.spec.ts`, `fonts.spec.ts`, `smoke.spec.ts` |
+| `tests/e2e/` | Playwright browser tests on Chromium | `world.spec.ts` [R04], `hook.spec.ts` [R05] [R06], `accessibility.spec.ts` [R12], `stage.spec.ts`, `fonts.spec.ts`, `smoke.spec.ts` |
 
 Inside `packages/ui`:
 - **`src/tokens.ts`:** the accepted palette.
 - **`src/fonts/`:** the self-hosted typefaces, Fredoka and Literata, declared in
   `fonts.css` as `@paperplay/ui/fonts.css` (ADR-0002).
-- **`src/stage-core/`:** pure presentation; turns states into a `FrameDescription`.
+- **`src/stage-core/`:** pure presentation; turns states into a `FrameDescription`. It also
+  holds the view window and free rectangle (`screen.ts`) and the compass's geometry
+  (`compass.ts`) (ADR-0012).
 - **`src/three-adapter/`:** turns a `FrameDescription` into a Three.js scene.
-- **`src/react/`:** WorldStage, LabBench, Readout, and the origin chip and legend
-  (ADR-0007). They display what a driver gives them and report what the learner does.
+- **`src/react/`:** they display what a driver gives them and report what the learner does.
+  - From G1: WorldStage, LabBench, Readout, and the origin chip and legend (ADR-0007).
+  - The game-first HUD (ADR-0008, ADR-0012), styled by `hud.css`: LevelCard, Guide,
+    PaperJournal, LevelMap, DepthToggle, HeadingCompass, OriginTag and `useFreeRect`.
 
 ## Dependency directions
 
@@ -101,7 +105,7 @@ flowchart LR
 | RunRecord, with RunEvent (`param` · `place` · `remove`) | `runrecord/2` | `packages/contracts/src/run.ts` |
 | Origin, Anchor, PrimitiveRef, Action, JobState | Versioned with the documents that embed them | `packages/contracts/src/` |
 | WorldSpec | `worldspec/1`, planned | G2 |
-| `flock.planar.weighted` | 2.2.0: equations E1–E17, defaults per ADR-0003, alignment range 0–4, and the read-only query Q1 (neighbourhoods), which does not change the version | `packages/primitives/src/flock/MODEL.md` |
+| `flock.planar.weighted` | 2.2.0: equations E1–E17, defaults per ADR-0003, alignment range 0–4, and the read-only queries Q1 (neighbourhoods) and Q2 (headings), which do not change the version | `packages/primitives/src/flock/MODEL.md` |
 | Oracle fixtures | `oracle/1` | `fixtures/oracles/README.md` |
 | FrameDescription, with FrameEmphasis | Unversioned: in-process only, never persisted | `packages/ui/src/stage-core/frame.ts` |
 | Gate definitions | Requirements per gate | `gates.json` |
@@ -116,7 +120,9 @@ flowchart LR
 | Primitive behaviour matches hand-derived equations | Oracle fixtures [R01] | `fixtures/oracles/`, `packages/primitives/test/flock.oracles.test.ts` |
 | Contracts depend only on zod | Lint | `eslint.config.js` |
 | Contracts reject unknown keys and enforce their refinements | Tests [R03] | `packages/contracts/test/` |
-| The renderer never changes an observable, even with a bird picked | Test [R02] | `packages/ui/test/render-invariance.test.ts` |
+| The renderer never changes an observable, even with a bird picked or the view framed in a HUD's window | Test [R02] | `packages/ui/test/render-invariance.test.ts` |
+| The HUD at rest covers at most 25% of 1440 × 900 and 35% of 390 × 844, and the stage frames the field inside the rectangle it leaves free | Browser tests that measure the HUD's boxes and read the stage's own fit; unit tests on the fit | `tests/e2e/hook.spec.ts`, `packages/ui/test/screen.test.ts` |
+| The compass's arrow is the primitive's mean heading (Q2) and agreement (E12), and its ticks point where the birds fly on screen | Tests | `packages/primitives/test/flock.headings.test.ts`, `packages/ui/test/compass.test.ts` |
 | The stage core is framework-free, with type-only simulation imports | A tsconfig without the DOM library; lint | `packages/ui/src/stage-core/tsconfig.json`, `eslint.config.js` |
 | The adapter never reads or writes simulation state | Lint and an import test | `packages/ui/test/three-adapter.test.ts` |
 | The React stage and bench import no simulation code | Lint (types only) | `eslint.config.js` |
@@ -214,3 +220,8 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 | 2026-10-01 | 107a38a | `packages/ui/src/react` (WorldStage, LabBench, origins); the session and `/world/local` in `apps/web`; a Vitest project for `apps/web`; `src/stage/local-stage.ts` removed |
 | 2026-10-09 | 3639dfb | The axe scan in `test:e2e` [R12]; `npm run typecheck` covers `tests/e2e` |
 | 2026-10-09 | edfadad | `npm run capture:demo`: the dev-only capture page, the demo script, Playwright's ffmpeg (ADR-0010) |
+| 2026-10-09 | 0d740e4 | CI on GitHub Actions (ADR-0011) |
+| 2026-10-09 | 90fc458 | Flock query Q2, headings |
+| 2026-10-09 | a7e30ce | Stage core: the view window, `screen.ts`, `compass.ts`; the adapter draws the frame's projection (ADR-0012) |
+| 2026-10-09 | 15673c8 | The game-first HUD in `packages/ui/src/react`, with `hud.css` (ADR-0008) |
+| 2026-10-09 | 445912e | `/world/hook` on the shell |

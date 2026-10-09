@@ -7,6 +7,24 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · The game-first shell
+
+- Branch: `g2/shell`
+- Commits: `8ef57d9` (docs), `90fc458`, `a7e30ce`, `15673c8`, `445912e`
+- Shipped:
+  - `/world/hook` on the game-first shell (ADR-0008, ADR-0012), with the owner's review of
+    the spike;
+  - the HUD components in `packages/ui/src/react`;
+  - the HUD-aware camera fit;
+  - the heading compass, from the flock's new query Q2.
+- Evidence:
+  - R01 47, R02 5, R03 49, R04 17;
+  - ahead of their gate: R05 4, R06 1, R12 8;
+  - from 310 tests with none skipped;
+  - 7 of 7 planted bugs caught by the shell's browser tests.
+- HUD at rest: 15.1% of 1440 × 900 and 21.3% of 390 × 844.
+- Gate: `check:gate` G1 passed at `445912e`.
+
 ## 2026-10-09 · The hook design spike, for review
 
 - Branch: `g2/hook-spike`, unmerged until the owner reviews it (ADR-0009)

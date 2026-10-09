@@ -71,14 +71,18 @@ Next:
 - [ ] The full WorldSpec schema and the hand-authored `flocking-reference.json`.
 - [ ] The deterministic builder, with binding fixtures.
 - [x] A design spike at `/world/hook` with hard-coded content, screenshotted on desktop
-  and phone (2026-10-09, `5aadf22` on `g2/hook-spike`). It awaits the owner's review and
-  stays unmerged until then (ADR-0009).
-- [ ] The game-first shell (ADR-0008): a full-screen stage, with the LevelCard (the one
-  control, its live readout and "What if"), the Guide and the LevelMap over it.
-- [ ] The PaperJournal, with two-way provenance: "From the paper" on every control,
-  passages unlocked level by level, and the origin legend.
-- [ ] The DepthToggle (Beginner / Intermediate / Advanced), in the level card and the
-  journal, showing and hiding by element id.
+  and phone (2026-10-09, `5aadf22`). The owner reviewed it the same day; it is tagged
+  `spike/hook-2026-10-09` and never merged (ADR-0008).
+- [x] The game-first shell (ADR-0008): a full-screen stage, with the LevelCard (the one
+  control, its live readout and "What if"), the Guide and the LevelMap over it, and a
+  HUD-aware camera fit (2026-10-09, `445912e`, ADR-0012). The readout is the heading
+  compass.
+- [x] The PaperJournal, with two-way provenance: "From the paper" on every control,
+  passages unlocked level by level, and the origin legend (2026-10-09). The content is
+  hard-coded, with a placeholder passage; real passages arrive with the source map.
+- [x] The DepthToggle (Beginner / Intermediate / Advanced), in the level card and the
+  journal (2026-10-09). It switches words, numbers and the equation, hard-coded for now.
+  Showing and hiding by WorldSpec element id waits for WorldSpec.
 - [ ] The split-screen ForkView: two synchronized worlds and one measured difference
   between them.
 - [ ] Guided exploration in the guide: predict, intervene, observe, explain, never scored.

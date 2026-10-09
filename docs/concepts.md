@@ -120,10 +120,13 @@ measured how often local rules alone produce one ordered group within 20 seconds
 The average of many headings drawn at random is a short arrow. Its expected length shrinks
 like one over the square root of the number of birds.
 
-- **Used in:** `fixtures/oracles/flock.planar.weighted/rules-off-initial-agreement-low.json`
+- **Used in:** `fixtures/oracles/flock.planar.weighted/rules-off-initial-agreement-low.json`, `packages/primitives/src/flock/headings.ts`, `packages/ui/src/react/HeadingCompass.tsx`
 - **Why here:** It is why a freshly seeded flock starts with low agreement, and how the
-  oracle bounds that start with stated odds rather than a guess.
-- **Learn more:** [Directional statistics](https://en.wikipedia.org/wiki/Directional_statistics)
+  oracle bounds that start with stated odds rather than a guess. The heading compass draws
+  it: the arrow is the mean of the birds' unit headings, so it is short when they scatter
+  and nearly as long as the ring when they agree.
+- **Learn more:** [Directional statistics](https://en.wikipedia.org/wiki/Directional_statistics) and
+  [Circular mean](https://en.wikipedia.org/wiki/Circular_mean)
 
 ### Averaging conserves the total (consensus dynamics)
 
@@ -392,6 +395,38 @@ to check.
 - **Learn more:** [axe-core](https://github.com/dequelabs/axe-core) and
   [W3C, "Evaluating web accessibility"](https://www.w3.org/WAI/test-evaluate/)
 
+### A heads-up display (HUD)
+
+Game information drawn over the world rather than beside it: small cards at the screen's
+edges that leave the middle to the scene.
+
+- **Used in:** `packages/ui/src/react/hud.css`, `packages/ui/src/react/LevelCard.tsx`, `apps/web/src/hook/HookWorld.tsx`
+- **Why here:** ADR-0008 made PaperPlay game-first. The stage fills the screen, and the
+  level card, guide and level map lie over it. A test holds the HUD at rest to at most a
+  quarter of a desktop and a third of a phone.
+- **Learn more:** [HUD (video games)](https://en.wikipedia.org/wiki/HUD_(video_games))
+
+### The largest empty rectangle
+
+Given boxes on a screen, find the biggest rectangle that touches none of them. With a few
+boxes, every candidate's edges come from the screen's and the boxes' edges, so trying those
+candidates is enough.
+
+- **Used in:** `packages/ui/src/stage-core/screen.ts`, `packages/ui/src/react/useFreeRect.ts`
+- **Why here:** The stage frames the field in the room the HUD leaves. It scores each
+  candidate by how large the field would look in it, not by its area alone (ADR-0012).
+- **Learn more:** [Largest empty rectangle](https://en.wikipedia.org/wiki/Largest_empty_rectangle)
+
+### Adjusting state when a prop changes
+
+React can update a component's own state during rendering, when it sees a prop has changed,
+instead of in an effect. That avoids drawing one frame with stale state.
+
+- **Used in:** `packages/ui/src/react/Guide.tsx`
+- **Why here:** The guide opens whenever the learner acts. The page passes a cue that
+  changes with each action, and the guide opens in the same render that sees the new cue.
+- **Learn more:** [React, "You might not need an effect"](https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes)
+
 ### An animation loop outside React's state
 
 The browser calls a function before each repaint (`requestAnimationFrame`). The stage runs
@@ -496,6 +531,17 @@ the prototype's island.
 - **Used in:** `packages/ui/src/three-adapter/geometry.ts`
 - **Why here:** It matches the accepted visual direction and stays cheap to draw.
 - **Learn more:** [three.js: MeshStandardMaterial (flatShading)](https://threejs.org/docs/#api/en/materials/MeshStandardMaterial)
+
+### An off-centre (asymmetric) frustum
+
+A perspective projection whose centre is not the middle of the screen. The scene is framed as
+if the screen were only part of its real size, while the whole screen still draws.
+
+- **Used in:** `packages/ui/src/stage-core/camera.ts`, `packages/ui/src/three-adapter/apply-frame.ts`
+- **Why here:** The HUD covers parts of the screen, so the field is framed in the rectangle
+  they leave. The world still fills the screen behind the cards. Picking undoes the shift,
+  so a click lands where it should (ADR-0012).
+- **Learn more:** [three.js, PerspectiveCamera.setViewOffset](https://threejs.org/docs/#api/en/cameras/PerspectiveCamera.setViewOffset)
 
 ### Focus and context
 
