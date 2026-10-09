@@ -24,7 +24,7 @@ import {
   type StagePalette,
   type Vec3,
 } from "../stage-core/index.ts";
-import { mountStage, type WebGLStage } from "../three-adapter/index.ts";
+import type { mountStage as MountStage, WebGLStage } from "../three-adapter/index.ts";
 
 /** What the stage draws from. The app owns the run; the stage only advances it and draws its states. */
 export interface StageDriver {
@@ -152,97 +152,113 @@ export function WorldStage(props: WorldStageProps) {
     const target = canvasHost.current;
     if (!element || !target) return;
     const state = view.current;
-    const stage = mountStage(target, { label, onResize: () => void (state.dirty = true) });
-    element.dataset.webgl = stage.kind === "webgl" ? "on" : "off";
-    if (stage.kind === "fallback") return () => stage.dispose();
-    state.stage = stage;
 
-    const follow = latest.current.framing === "follow" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (follow) state.camera = { ...zoom(state.camera, FOLLOW_ZOOM), pitch: FOLLOW_PITCH };
-    state.lastInput = performance.now();
-    let shownFocus = "";
+    /** Mounts the Three.js stage and starts the loop; returns what undoes both. */
+    const start = (mountStage: typeof MountStage): (() => void) => {
+      const stage = mountStage(target, { label, onResize: () => void (state.dirty = true) });
+      element.dataset.webgl = stage.kind === "webgl" ? "on" : "off";
+      if (stage.kind === "fallback") return () => stage.dispose();
+      state.stage = stage;
 
-    const onWheel = (event: WheelEvent) => {
-      event.preventDefault();
+      const follow = latest.current.framing === "follow" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (follow) state.camera = { ...zoom(state.camera, FOLLOW_ZOOM), pitch: FOLLOW_PITCH };
       state.lastInput = performance.now();
-      state.camera = zoom(state.camera, Math.exp(event.deltaY * 0.0015));
-      state.dirty = true;
-    };
-    element.addEventListener("wheel", onWheel, { passive: false });
+      let shownFocus = "";
 
-    let handle = 0;
-    let last: number | null = null;
-    let readAt: number | null = null;
-    let drawn = -1;
-    let reported = -1;
-    let viewAt: number | null = null;
-    let reportedYaw = Number.NaN;
-    let shownBounds = "";
-    let shownFree = "";
-    let frames = 0;
-    const loop = (now: number) => {
-      const frameSeconds = last === null ? 0 : (now - last) / 1000;
-      const steps = driver.tick(frameSeconds);
-      last = now;
-      if (follow && frameSeconds > 0) {
-        // Ease toward the flock's centre, taking the short way round the world.
-        const { current } = driver.stageInput();
-        const centre = flockCentre(current);
-        const from = state.camera.target ?? ([0, FLIGHT_ALTITUDE / 2, 0] as Vec3);
-        const nearest = (value: number, size: number) => value - size * Math.round(value / size);
-        const limit = (value: number, size: number) => Math.min(Math.max(value, -size / 2 + FOLLOW_INSET), size / 2 - FOLLOW_INSET);
-        const towardX = limit(from[0] + nearest(centre.x - current.width / 2 - from[0], current.width), current.width);
-        const towardZ = limit(from[2] + nearest(centre.y - current.height / 2 - from[2], current.height), current.height);
-        const share = 1 - Math.exp(-Math.min(frameSeconds, 0.1) / FOLLOW_EASE_SECONDS);
-        const target: Vec3 = [from[0] + (towardX - from[0]) * share, from[1], from[2] + (towardZ - from[2]) * share];
-        let yaw = state.camera.yaw;
-        if (now - state.lastInput > IDLE_MS) yaw += DRIFT_PER_SECOND * Math.min(frameSeconds, 0.1);
-        if (Math.abs(target[0] - from[0]) + Math.abs(target[2] - from[2]) > 1e-5 || yaw !== state.camera.yaw) {
-          state.camera = { ...state.camera, target, yaw };
-          state.dirty = true;
+      const onWheel = (event: WheelEvent) => {
+        event.preventDefault();
+        state.lastInput = performance.now();
+        state.camera = zoom(state.camera, Math.exp(event.deltaY * 0.0015));
+        state.dirty = true;
+      };
+      element.addEventListener("wheel", onWheel, { passive: false });
+
+      let handle = 0;
+      let last: number | null = null;
+      let readAt: number | null = null;
+      let drawn = -1;
+      let reported = -1;
+      let viewAt: number | null = null;
+      let reportedYaw = Number.NaN;
+      let shownBounds = "";
+      let shownFree = "";
+      let frames = 0;
+      const loop = (now: number) => {
+        const frameSeconds = last === null ? 0 : (now - last) / 1000;
+        const steps = driver.tick(frameSeconds);
+        last = now;
+        if (follow && frameSeconds > 0) {
+          // Ease toward the flock's centre, taking the short way round the world.
+          const { current } = driver.stageInput();
+          const centre = flockCentre(current);
+          const from = state.camera.target ?? ([0, FLIGHT_ALTITUDE / 2, 0] as Vec3);
+          const nearest = (value: number, size: number) => value - size * Math.round(value / size);
+          const limit = (value: number, size: number) => Math.min(Math.max(value, -size / 2 + FOLLOW_INSET), size / 2 - FOLLOW_INSET);
+          const towardX = limit(from[0] + nearest(centre.x - current.width / 2 - from[0], current.width), current.width);
+          const towardZ = limit(from[2] + nearest(centre.y - current.height / 2 - from[2], current.height), current.height);
+          const share = 1 - Math.exp(-Math.min(frameSeconds, 0.1) / FOLLOW_EASE_SECONDS);
+          const target: Vec3 = [from[0] + (towardX - from[0]) * share, from[1], from[2] + (towardZ - from[2]) * share];
+          let yaw = state.camera.yaw;
+          if (now - state.lastInput > IDLE_MS) yaw += DRIFT_PER_SECOND * Math.min(frameSeconds, 0.1);
+          if (Math.abs(target[0] - from[0]) + Math.abs(target[2] - from[2]) > 1e-5 || yaw !== state.camera.yaw) {
+            state.camera = { ...state.camera, target, yaw };
+            state.dirty = true;
+          }
         }
-      }
-      const version = driver.version();
-      if (steps > 0 || version !== drawn || state.dirty) {
-        const { width, height } = stage.viewport();
-        const { tool: active, palette, window: free } = latest.current;
-        state.camera = { ...withViewport(state.camera, width, height), ...(driver.camera?.() ?? {}), window: windowFromRect({ width, height }, free) };
-        const cursor = state.keyboard && state.focused && active !== "look" ? state.cursor : null;
-        state.frame = describeFrame(driver.stageInput(), state.camera, palette ?? valleyDay, { ...driver.emphasis(), cursor }, latest.current.look);
-        stage.render(state.frame);
-        // Where the field lands, for tests and tools that check the HUD-aware fit.
-        const bounds = JSON.stringify(roundRect(fieldBoundsOnScreen(state.frame, { width, height })));
-        const freeText = JSON.stringify(free ? roundRect(free) : { x: 0, y: 0, width, height });
-        if (bounds !== shownBounds) element.dataset.fieldBounds = shownBounds = bounds;
-        if (freeText !== shownFree) element.dataset.freeRect = shownFree = freeText;
-        const [fx, fy] = projectToNdc(state.frame.camera.view, state.frame.camera.projection, state.frame.camera.target);
-        const focus = JSON.stringify({ x: Math.round(((fx + 1) / 2) * width * 10) / 10, y: Math.round(((1 - fy) / 2) * height * 10) / 10 });
-        if (focus !== shownFocus) element.dataset.focus = shownFocus = focus;
-        drawn = version;
-        state.dirty = false;
-        frames += 1;
-        element.dataset.frames = String(frames);
-      }
-      if (version !== reported && readoutDue(readAt, now / 1000)) {
-        readAt = now / 1000;
-        reported = version;
-        latest.current.onReadout?.();
-      }
-      if (state.camera.yaw !== reportedYaw && readoutDue(viewAt, now / 1000)) {
-        viewAt = now / 1000;
-        reportedYaw = state.camera.yaw;
-        latest.current.onView?.({ yaw: reportedYaw });
-      }
+        const version = driver.version();
+        if (steps > 0 || version !== drawn || state.dirty) {
+          const { width, height } = stage.viewport();
+          const { tool: active, palette, window: free } = latest.current;
+          state.camera = { ...withViewport(state.camera, width, height), ...(driver.camera?.() ?? {}), window: windowFromRect({ width, height }, free) };
+          const cursor = state.keyboard && state.focused && active !== "look" ? state.cursor : null;
+          state.frame = describeFrame(driver.stageInput(), state.camera, palette ?? valleyDay, { ...driver.emphasis(), cursor }, latest.current.look);
+          stage.render(state.frame);
+          // Where the field lands, for tests and tools that check the HUD-aware fit.
+          const bounds = JSON.stringify(roundRect(fieldBoundsOnScreen(state.frame, { width, height })));
+          const freeText = JSON.stringify(free ? roundRect(free) : { x: 0, y: 0, width, height });
+          if (bounds !== shownBounds) element.dataset.fieldBounds = shownBounds = bounds;
+          if (freeText !== shownFree) element.dataset.freeRect = shownFree = freeText;
+          const [fx, fy] = projectToNdc(state.frame.camera.view, state.frame.camera.projection, state.frame.camera.target);
+          const focus = JSON.stringify({ x: Math.round(((fx + 1) / 2) * width * 10) / 10, y: Math.round(((1 - fy) / 2) * height * 10) / 10 });
+          if (focus !== shownFocus) element.dataset.focus = shownFocus = focus;
+          drawn = version;
+          state.dirty = false;
+          frames += 1;
+          element.dataset.frames = String(frames);
+        }
+        if (version !== reported && readoutDue(readAt, now / 1000)) {
+          readAt = now / 1000;
+          reported = version;
+          latest.current.onReadout?.();
+        }
+        if (state.camera.yaw !== reportedYaw && readoutDue(viewAt, now / 1000)) {
+          viewAt = now / 1000;
+          reportedYaw = state.camera.yaw;
+          latest.current.onView?.({ yaw: reportedYaw });
+        }
+        handle = requestAnimationFrame(loop);
+      };
       handle = requestAnimationFrame(loop);
-    };
-    handle = requestAnimationFrame(loop);
 
+      return () => {
+        cancelAnimationFrame(handle);
+        element.removeEventListener("wheel", onWheel);
+        state.stage = null;
+        state.frame = null;
+        stage.dispose();
+      };
+    };
+
+    // Three.js arrives as its own chunk, after the page and its HUD have drawn; the stage mounts then.
+    let cancelled = false;
+    let stop: (() => void) | undefined;
+    element.dataset.webgl = "loading";
+    void import("../three-adapter/index.ts").then(({ mountStage }) => {
+      if (!cancelled) stop = start(mountStage);
+    });
     return () => {
-      cancelAnimationFrame(handle);
-      element.removeEventListener("wheel", onWheel);
-      state.stage = null;
-      state.frame = null;
-      stage.dispose();
+      cancelled = true;
+      stop?.();
     };
   }, [driver, label]);
 
