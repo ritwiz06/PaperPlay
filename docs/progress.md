@@ -7,6 +7,24 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · Guided exploration
+
+- Branch: `g2/guided-exploration`
+- Commits: `85e43fe`
+- Shipped:
+  - **Predict:** What if on level 2 makes the guide ask, "If every bird could see the whole
+    flock, would the flock come to agree faster?", with two choices, neither marked right.
+  - **Intervene:** the choice opens the fork.
+  - **Observe:** the fork's guide repeats the prediction and names the intervention.
+  - **Explain:** at the level's time, the guide reports two measurements:
+    - this sky;
+    - the 20 skies, faster on 6 and about the same or slower on 14.
+
+    Then the paper's point, a placeholder anchor, and a question to think about. The level's
+    surprise waits until then.
+- Evidence: 3 unit tests and 4 browser tests, with axe on both sizes.
+- Gate: run with the speed control, below.
+
 ## 2026-10-09 · The fork
 
 - Branch: `g2/fork-view`

@@ -106,7 +106,8 @@ Next:
   element ids each depth variant names (`e5c30b7`).
 - [x] The split-screen ForkView: two synchronized worlds and one measured difference
   between them, charted; stacked on a phone (2026-10-09, `8d62794`, ADR-0019).
-- [ ] Guided exploration in the guide: predict, intervene, observe, explain, never scored.
+- [x] Guided exploration in the guide: predict, intervene, observe, explain, never scored, with
+  level 2's prediction first (2026-10-09, `85e43fe`).
 - [ ] `/world/local` moves into the shell as the free sandbox.
 - [ ] RunRecord export and import; `npm run replay` with a tolerance report; a replay test
   on a fresh page load.

@@ -184,6 +184,19 @@ reported, so an injected script cannot run with the page's rights.
   eval, and is tested against the built app before the first deploy (ADR-0017).
 - **Learn more:** [MDN: Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
 
+### Predict, observe, explain
+
+A way of learning from an experiment: say what you expect before you look, watch what
+happens, then explain the gap. Committing to a prediction first makes a surprise noticeable,
+where watching alone lets it slide past.
+
+- **Used in:** `apps/web/src/hook/guide.ts`, `tests/e2e/guided.spec.ts`,
+  `fixtures/worldspecs/flocking-reference.json` (level 2)
+- **Why here:** Level 2's result is a surprise: seeing the whole flock does not bring order
+  sooner (faster on only 6 of 20 skies). The guide asks first, then reports what was
+  measured, and never scores the guess.
+- **Learn more:** [White and Gunstone 1992, *Probing Understanding*](https://www.taylorfrancis.com/books/mono/10.4324/9780203761342/probing-understanding-richard-gunstone-richard-white)
+
 ### Code splitting (loading a module on demand)
 
 A bundler normally puts every imported module into one file the browser must download before
