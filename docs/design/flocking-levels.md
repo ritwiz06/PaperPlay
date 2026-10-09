@@ -1,15 +1,19 @@
 # The flocking world: the level script
 
-Status: **draft for the owner's review**, 2026-10-09. Once the owner has reviewed it, it
-becomes `fixtures/worldspecs/flocking-reference.json`. Nothing here is quoted from a paper.
-Each level names the passage it needs, to be found and anchored when the source map is
-written (G2).
+Status: **reviewed by the owner** on 2026-10-09, and updated to the owner's decisions
+(ADR-0014). It becomes `fixtures/worldspecs/flocking-reference.json`. Nothing here is quoted
+from a paper. Each level names the passage it needs, anchored in
+`fixtures/papers/flocking/source-map.json`. Journal passages stay short and always
+attributed.
 
 ## What this script assumes
 
 - **The source:** Reynolds 1987, "Flocks, Herds, and Schools: A Distributed Behavioral
-  Model" (SIGGRAPH '87). It is the paper the flock primitive adapts. The owner confirms the
-  choice in the source register.
+  Model" (SIGGRAPH '87), confirmed by the owner. Its access and licence are in the source
+  register (`docs/papers/source-register.md`).
+- **Levels 1 to 5 follow the paper. Level 6 is a bonus level beyond it.**
+  - It is a teaching choice, and nothing in it is labelled paper-derived from Reynolds.
+  - Vicsek et al. 1995 is listed separately in the source register, as further reading.
 - **The primitive:** `flock.planar.weighted@2.2.0`, a two-dimensional teaching adaptation.
   - **Every What if is parameter overrides on it,** as the brief's `Counterfactual` requires
     (`altParams`): no new science.
@@ -23,12 +27,27 @@ written (G2).
   - a guide that never scores.
 - **The level opens** once the one before has been touched through its range, never because
   something was achieved.
-- **The group measure is not yet settled** (ADR-0003; the owner chose to settle it before any
-  level teaches with it). Level 4 needs it, and is marked.
-- **Readouts:**
-  - The heading compass shows directional agreement (E12).
-  - Two new readouts are proposed for levels that need them: a spacing gauge for the mean
-    nearest-neighbour distance (E13), and a groups counter (E14, once settled).
+- **The group measure** is the owner's (ADR-0015):
+  - two birds are linked when they are within the link radius and their headings differ by
+    less than 45°;
+  - clusters of fewer than 4 birds are strays, not groups.
+
+  It must pass its sweep before level 4 uses it.
+- **One readout per level** (owner):
+  - the heading compass for the levels about agreement (1, 2, 5 and 6);
+  - the spacing gauge for the separation level (3);
+  - a groups counter for the cohesion level (4). That is my reading: the owner named the
+    compass and the gauge, and the group measure is level 4's observable.
+
+  The agreement chart appears inside the fork, as its measured difference over time, never
+  on the level card.
+- **Setup:**
+  - A level may hold setup placements, such as level 5's rock. They are applied at step 0 as
+    ordinary place events, each with its origin, so replay keeps working.
+  - A What if stays parameter overrides only.
+- **Restarts:** a What if that overrides a start-up (init-phase) variable makes both worlds
+  restart from the same seed. The builder works that out from the primitive's parameter
+  schema, so no level states it, and the fork then says "Both worlds restart".
 
 The guide's lines follow the hook's pattern. The first line is "you did X, so Y", a teaching
 choice. The second is what was measured, a computed observation. At Beginner there are words
@@ -121,9 +140,6 @@ Below, ↑ means after raising the control and ↓ after lowering it.
 
 ## Level 4 · Method · Stay with the flock
 
-**Needs the group measure settled first** (ADR-0003). Until then, this level is drafted, not
-built.
-
 - **Afterwards, the learner understands that** the third urge, steering toward the middle of
   the birds you see, is what keeps a flock from drifting apart into separate flocks.
 - **The control:** `cohesionWeight`, called "Stay close".
@@ -132,25 +148,22 @@ built.
 - **What they watch:**
   - **On screen:** at 0, the flock frays into separate flocks that fly apart. Raised, the
     stragglers turn back in.
-  - **On the readout:** a groups counter, once the measure is settled, with the compass
-    beside it. Separate groups show as separate fans on the compass, so it helps even before
-    the counter exists.
+  - **On the readout:** the groups counter, by the owner's measure (ADR-0015). Strays, in
+    clusters of fewer than 4, are not counted.
 - **The guide:**
 
   | Depth | ↑ | ↓ |
   |---|---|---|
   | Beginner | "You strengthened the pull toward the middle, so stragglers turn back in." / "The flock is holding together." | "You weakened the pull toward the middle, so birds stop turning back." / "The flock is coming apart." |
-  | Intermediate | "…to 1.20, so…" / "Groups: 1." (wording waits on the measure) | "…to 0.00, so…" / "Groups: 4 and rising." |
-  | Advanced | "…w_c = 1.20: each bird steers toward the centre of the birds within R." / "Connected groups at link distance L_c: 1." | as Intermediate, with the measure named |
+  | Intermediate | "…to 1.20, so…" / "1 group, flying as one." | "…to 0.00, so…" / "4 groups and rising." |
+  | Advanced | "…w_c = 1.20: each bird steers toward the centre of the birds within R." / "Groups (linked within L_c, headings within 45°, 4 birds or more): 1." | as Intermediate, with the measure named |
 - **What if birds had no urge to stay together?**
   - The right world runs with "Stay close" at 0.
   - **The effect to show:** after 20 s the right world holds several small flocks, and the
     left one flock.
-  - **The one measured difference:** the number of groups after 20 s, by the settled
+  - **The one measured difference:** the number of groups after 20 s, by the owner's
     measure.
 - **The passage it needs:** the paper's description of flock centering.
-- **For the owner:** at the default density, 17% of random scatters count as one group
-  (ADR-0003). This level is where that matters.
 
 ## Level 5 · Evaluation · Does it behave like a flock?
 
@@ -161,8 +174,8 @@ built.
   - Range 1 to 6 world units, a teaching choice inside the primitive's 0.1 to 10. Starting
     at 3.4.
   - Beginner end words: "At the last moment" and "From far away".
-  - The level places one rock in the flock's path, as a teaching choice recorded as a
-    placement event at step 0.
+  - The level's `setup` places one rock in the flock's path. It is a teaching choice, applied
+    as a place event at step 0.
 - **What they watch:**
   - **On screen:** the flock reaching the rock, parting round it and rejoining. At a small
     radius, birds clip the rock and scatter. At a large one, the flock parts wide and
@@ -188,50 +201,51 @@ built.
   and do not steer birds away. The paper discusses that difference, and the level's
   Advanced text names it.
 
-## Level 6 · Result · Order from the bottom up
+## Level 6 · Result (bonus) · Order from the bottom up
+
+A bonus level, beyond the paper. Every statement in it is a teaching choice or a computed
+observation, and none is labelled paper-derived from Reynolds.
 
 - **Afterwards, the learner understands the result:** global order from local rules. Below a
   certain strength of following, the flock stays disordered. Above it, order appears fairly
   suddenly. That jump, and not the gradual change, is what makes it emergent.
 - **The control:** `alignmentWeight`, "Move together", again.
   - Range 0 to 4 per second, the same as level 1.
+  - Here its chip says teaching choice, not paper-derived.
   - Beginner end words: "Ignore neighbours" and "Follow closely".
-  - The level differs from level 1 by what it shows: every setting the learner tries is kept
-    as a point on a small chart, alignment against agreement after 10 s.
 - **What they watch:**
   - **On screen:** the flock at each setting.
-  - **On the compass:** the arrow's length at each setting. The chart builds the curve from
-    the learner's own tries: flat, then rising steeply, then flat.
+  - **On the compass:** the arrow's length at each setting. Just below some strength it
+    stays short; just above, it grows long.
 - **The guide:**
 
-  | Depth | Line |
-  |---|---|
-  | Beginner | "You tried Move together at 1.2. Most birds still fly their own way; try a little higher." / "Agreement jumped between your last two tries." |
-  | Intermediate | "…at 1.20: agreement 0.35 after 10 s." / "Between 1.0 and 1.5, agreement rose from 0.3 to 0.8." |
-  | Advanced | "…w_a = 1.20: directional agreement 0.35 after 10 s." / "A steep rise between two settings is the mark of a transition from disorder to order." |
+  | Depth | ↑ | ↓ |
+  |---|---|---|
+  | Beginner | "You raised Move together, so each bird follows its neighbours harder." / "Order is spreading through the flock." | "You lowered Move together, so each bird follows its neighbours less." / "The order is breaking up." |
+  | Intermediate | "…to 1.50, so…" / "Agreement 0.8 and rising." | "…to 0.80, so…" / "Agreement 0.3 and falling." |
+  | Advanced | "…w_a = 1.50: …" / "Directional agreement 0.81 and rising. A steep rise over a small change of w_a marks a transition from disorder to order." | as Intermediate, named |
 - **What if the flock were a quarter as dense?**
   - The right world runs with `worldWidth` and `worldHeight` at 64, double each side, with
-    the same 72 birds. These are parameter overrides on init-phase variables, so the fork
-    starts both worlds afresh from the same seed.
+    the same 72 birds.
+  - Those are start-up variables, so the builder makes both worlds restart from the same
+    seed, and the fork says "Both worlds restart".
   - **The effect to show:** the sparser flock needs a stronger Move together before order
-    appears, so its curve's rise sits further right.
-  - **The one measured difference:** agreement after 10 s at the learner's current setting.
+    appears.
+  - **The one measured difference:** directional agreement over time in both worlds, as the
+    fork's chart.
 - **What it needs:**
-  - **The passage:** the paper's conclusion that a flock's motion comes from its members'
-    simple local behaviours, with no central control.
-  - **The "transition" framing is a teaching choice.** The paper does not measure one. Later
-    physics work on self-driven particles (Vicsek et al. 1995) does, and the journal can
-    point to it as further reading, labelled as such.
+  - No passage from Reynolds.
+  - The journal page is labelled a bonus page, and cites Vicsek et al. 1995 as further
+    reading, as a teaching choice, with no quote.
 
-## Open questions for the owner
+## Settled by the owner (2026-10-09)
 
-1. **Is Reynolds 1987 the source?** All six passages assume it.
-2. **The group measure,** for level 4, and possibly for level 5's what-if.
-3. **The two proposed readouts:** the spacing gauge (level 3) and the agreement chart
-   (level 6).
-4. **Level 5's rock is a scripted placement at step 0.** A counterfactual is parameter
-   overrides only (`altParams`), so the rock has to come from the level's setup. The brief's
-   WorldSpec sketch has no field for that yet. Placements are recorded events, so replay
-   still holds.
-5. **Level 6's fork changes init-phase variables,** so both worlds restart. The fork view
-   must show that it restarted.
+The questions this script raised were answered, and are recorded in ADR-0014 and ADR-0015:
+- the source;
+- level 6 as a bonus level;
+- the group measure;
+- the readouts;
+- setup placements;
+- derived restarts.
+
+Still open: whether level 4's groups counter is the readout the owner wants (my reading).

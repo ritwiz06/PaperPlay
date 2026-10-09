@@ -1,8 +1,7 @@
 # Status
 
-Updated 2026-10-09, at the end of the day's third session. The owner chose option a for the
-capture finding. Then came the game-first shell, the world art pass, the capture's scripted
-camera and the level script ([log](sessions/2026-10-09-3.md)). This file is rewritten
+Updated 2026-10-09, during the day's fourth session: the level script's decisions, the
+group measure, sources and WorldSpec ([log](sessions/2026-10-09-4.md)). This file is rewritten
 every session.
 
 ## Where we are
@@ -71,7 +70,8 @@ passed the same gate at `2158335` (run 37976130520), with the same 334 tests.
 
 ## Blockers
 
-None.
+- **The Reynolds PDF is missing from `reference/private/`,** and slice 1 (the source map)
+  needs it. Only the project handbook is there.
 
 ## Decisions waiting on the owner
 
