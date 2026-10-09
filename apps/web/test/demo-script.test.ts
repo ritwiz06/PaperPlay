@@ -1,5 +1,6 @@
 import { flockDefaultParams, flockPlanarWeighted as flock, runEvents } from "@paperplay/primitives";
 import { describe, expect, it } from "vitest";
+import { flockCentre, DEFAULT_CAMERA } from "@paperplay/ui/stage-core";
 import { beaconAt, DEMO, scriptDemo } from "../src/capture/demo-script.ts";
 import { HOOK_SEED, LOCAL_ACTIONS } from "../src/world/local-world.ts";
 import { createWorldSession } from "../src/world/session.ts";
@@ -66,5 +67,50 @@ describe("the demo capture's script", () => {
     }
     expect(new Set(groups)).toEqual(new Set([1]));
     expect(session.snapshot().observed.directionalAgreement).toBeGreaterThan(0.95);
+  });
+});
+
+describe("the demo's camera path", () => {
+  const film = () => {
+    const session = open();
+    const demo = scriptDemo(session);
+    const shots = [];
+    for (let frame = 1; frame <= DEMO.frames; frame++) {
+      demo.next();
+      shots.push({ camera: demo.camera(), centre: flockCentre(session.state()) });
+    }
+    return shots;
+  };
+  const shots = film();
+  const at = (seconds: number) => shots[Math.round(seconds * DEMO.fps) - 1];
+
+  it("opens close on the flock, looking at its centre", () => {
+    const first = at(1 / DEMO.fps);
+    expect(first?.camera.distance).toBeLessThan(DEFAULT_CAMERA.distance / 2);
+    const target = first?.camera.target ?? [Number.NaN, 0, Number.NaN];
+    expect(target[0] + 16).toBeCloseTo(first?.centre.x ?? Number.NaN, 0);
+    expect(target[2] + 16).toBeCloseTo(first?.centre.y ?? Number.NaN, 0);
+  });
+
+  it("orbits slowly through the middle, then eases out to the whole valley, looking at the field's centre", () => {
+    const [start, end] = [at(3)?.camera.yaw ?? 0, at(10)?.camera.yaw ?? 0];
+    expect(end - start).toBeGreaterThan(0.6);
+    const last = shots.at(-1)?.camera;
+    expect(last?.distance).toBeGreaterThan(DEFAULT_CAMERA.distance);
+    expect(last?.target).toEqual([0, 1.6, 0]);
+  });
+
+  it("never jumps between frames, even when the flock crosses a seam", () => {
+    for (let i = 1; i < shots.length; i++) {
+      const [a, b] = [shots[i - 1]?.camera, shots[i]?.camera];
+      if (!a || !b) throw new Error("a frame has no camera");
+      expect(Math.abs(b.yaw - a.yaw), `yaw at frame ${i}`).toBeLessThan(0.02);
+      expect(Math.abs(b.distance - a.distance), `distance at frame ${i}`).toBeLessThan(0.6);
+      expect(Math.hypot(b.target[0] - a.target[0], b.target[2] - a.target[2]), `target at frame ${i}`).toBeLessThan(0.35);
+    }
+  });
+
+  it("is the same path every time: a function of the frame and the run alone", () => {
+    expect(JSON.stringify(film().map((shot) => shot.camera))).toBe(JSON.stringify(shots.map((shot) => shot.camera)));
   });
 });

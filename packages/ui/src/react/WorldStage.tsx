@@ -34,6 +34,12 @@ export interface StageDriver {
   emphasis(): FrameEmphasis;
   /** Changes whenever there is something new to draw. */
   version(): number;
+  /**
+   * A scripted camera, read just before each frame is drawn, which then overrides the stage's
+   * own: the demo capture's path. Asked of the driver, not passed as a prop, so a frame can
+   * never be drawn with the camera of the frame before.
+   */
+  camera?(): Partial<Pick<OrbitCamera, "yaw" | "pitch" | "distance" | "target">> | null;
 }
 
 /** What a click, or Enter at the keyboard cursor, does on the stage. */
@@ -200,7 +206,7 @@ export function WorldStage(props: WorldStageProps) {
       if (steps > 0 || version !== drawn || state.dirty) {
         const { width, height } = stage.viewport();
         const { tool: active, palette, window: free } = latest.current;
-        state.camera = { ...withViewport(state.camera, width, height), window: windowFromRect({ width, height }, free) };
+        state.camera = { ...withViewport(state.camera, width, height), ...(driver.camera?.() ?? {}), window: windowFromRect({ width, height }, free) };
         const cursor = state.keyboard && state.focused && active !== "look" ? state.cursor : null;
         state.frame = describeFrame(driver.stageInput(), state.camera, palette ?? valleyDay, { ...driver.emphasis(), cursor }, latest.current.look);
         stage.render(state.frame);

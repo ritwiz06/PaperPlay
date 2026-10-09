@@ -7,6 +7,7 @@
  * Every value here is a presentation choice for the video, not a claim from the paper.
  */
 import { flockPlanarWeighted as flock } from "@paperplay/primitives";
+import { FLIGHT_ALTITUDE, flockCentre, type Vec3 } from "@paperplay/ui/stage-core";
 import { HOOK_SEED } from "../world/local-world.ts";
 import type { WorldSession } from "../world/session.ts";
 
@@ -33,7 +34,49 @@ export const DEMO = Object.freeze({
 });
 
 /** Smoothstep: a hand that starts and stops gently. */
-const ease = (u: number): number => u * u * (3 - 2 * u);
+const ease = (u: number): number => {
+  const t = Math.min(Math.max(u, 0), 1);
+  return t * t * (3 - 2 * t);
+};
+
+/**
+ * The camera's path (ADR-0010): open close on the flock, orbit slowly while the murmuration
+ * forms, then ease out to the whole valley as its colours converge. Seconds of the video,
+ * with distances in world units and angles in radians. A presentation choice.
+ */
+export const CAMERA_PATH = Object.freeze({
+  /** Close on the flock until this second, then a slow orbit until `orbitUntil`. */
+  openUntil: 3,
+  orbitUntil: 10,
+  distance: Object.freeze({ open: 22, orbit: 30, valley: 74 }),
+  pitch: Object.freeze({ open: 0.5, orbit: 0.56, valley: 0.6 }),
+  yaw: Object.freeze({ start: -1.1, orbit: 0.9, drift: 0.25 }),
+  /** The camera closes most of the gap to the flock's centre in about this many seconds. */
+  followSeconds: 1.2,
+});
+
+export interface DemoCamera {
+  readonly yaw: number;
+  readonly pitch: number;
+  readonly distance: number;
+  readonly target: Vec3;
+}
+
+/** The camera at this second of the video, looking at `focus` until it eases out to the field's centre. */
+export function cameraAt(seconds: number, focus: Vec3): DemoCamera {
+  const { openUntil, orbitUntil, distance, pitch, yaw } = CAMERA_PATH;
+  const end = DEMO.frames / DEMO.fps;
+  const orbit = ease((seconds - openUntil) / (orbitUntil - openUntil));
+  const out = ease((seconds - orbitUntil) / (end - orbitUntil));
+  const centre: Vec3 = [0, FLIGHT_ALTITUDE / 2, 0];
+  const between = (a: number, b: number, t: number) => a + (b - a) * t;
+  return {
+    yaw: yaw.start + yaw.orbit * orbit + yaw.drift * out,
+    pitch: between(between(pitch.open, pitch.orbit, orbit), pitch.valley, out),
+    distance: between(between(distance.open, distance.orbit, orbit), distance.valley, out),
+    target: out >= 1 ? centre : [between(focus[0], centre[0], out), centre[1], between(focus[2], centre[2], out)],
+  };
+}
 
 /** Where the beacon is in this frame, or null while it is not on the field. */
 export function beaconAt(frame: number): { readonly x: number; readonly y: number } | null {
@@ -47,6 +90,8 @@ export function beaconAt(frame: number): { readonly x: number; readonly y: numbe
 export interface DemoRun {
   /** Moves the beacon for the next frame, takes that frame's steps, and returns how many frames have run. */
   next(): number;
+  /** The camera for the frame just run. */
+  camera(): DemoCamera;
 }
 
 /**
@@ -56,7 +101,28 @@ export interface DemoRun {
 export function scriptDemo(session: WorldSession): DemoRun {
   let frame = 0;
   let beacon: string | null = null;
+  // The camera follows the flock's centre, eased once per video frame and taken the short way
+  // round the world, so it never jumps when the flock crosses a seam.
+  const toWorld = (state: ReturnType<WorldSession["state"]>): Vec3 => {
+    const centre = flockCentre(state);
+    return [centre.x - state.width / 2, FLIGHT_ALTITUDE / 2, centre.y - state.height / 2];
+  };
+  let focus: Vec3 = toWorld(session.state());
+  const follow = (): void => {
+    const state = session.state();
+    const toward = toWorld(state);
+    const nearest = (offset: number, size: number) => offset - size * Math.round(offset / size);
+    // Like the live following camera, it stays over the field rather than follow a flock off its edge.
+    const limit = (value: number, size: number) => Math.min(Math.max(value, -size / 2 + 5), size / 2 - 5);
+    const share = 1 - Math.exp(-1 / DEMO.fps / CAMERA_PATH.followSeconds);
+    focus = [
+      limit(focus[0] + nearest(toward[0] - focus[0], state.width) * share, state.width),
+      focus[1],
+      limit(focus[2] + nearest(toward[2] - focus[2], state.height) * share, state.height),
+    ];
+  };
   return {
+    camera: () => cameraAt(frame / DEMO.fps, focus),
     next() {
       if (frame >= DEMO.frames) throw new Error(`the demo is ${DEMO.frames} frames long`);
       const point = beaconAt(frame);
@@ -67,6 +133,7 @@ export function scriptDemo(session: WorldSession): DemoRun {
       for (let i = 0; i < DEMO.stepsPerFrame; i++) steps += session.tick(flock.fixedTimestep);
       session.pause();
       if (steps !== DEMO.stepsPerFrame) throw new Error(`frame ${frame} took ${steps} steps, not ${DEMO.stepsPerFrame}`);
+      follow();
       return ++frame;
     },
   };

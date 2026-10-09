@@ -40,6 +40,8 @@ const driver: StageDriver = {
   stageInput: () => session.stageInput(),
   emphasis: () => ({}),
   version: () => session.version(),
+  // The scripted path for the frame just run (ADR-0010).
+  camera: () => demo.camera(),
 };
 
 const drawn = (): number => Number(document.querySelector<HTMLElement>(".stage")?.dataset["frames"] ?? 0);
@@ -61,5 +63,10 @@ if (!container) throw new Error("the capture page needs a #root element to mount
 
 // No StrictMode: its second mount in development would draw a frame the script did not ask for.
 createRoot(container).render(
-  <WorldStage driver={driver} label="Murmuration Valley: seed 4 forming a murmuration while a beacon is dragged through it." tool="look" />,
+  <WorldStage
+    driver={driver}
+    label="Murmuration Valley: seed 4 forming a murmuration while a beacon is dragged through it."
+    tool="look"
+    look={{ birdColor: "heading" }}
+  />,
 );
