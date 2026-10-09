@@ -60,8 +60,8 @@ Done early:
 - [x] RunRecord v2 and the replay engine, part of R07 (2026-09-30).
 
 Next:
-- [ ] First: add `@axe-core/playwright` (approved 2026-10-01) and the axe scan in `test:e2e`
-  (R12).
+- [x] First: add `@axe-core/playwright` (approved 2026-10-01) and the axe scan in `test:e2e`
+  (R12) (2026-10-09, commit 3639dfb).
 - [ ] Source register, source map, four development and eight held-out section files,
   reading notes and learning questions.
 - [ ] Decide the group measure before any level teaches with it (owner, 2026-10-01). At the

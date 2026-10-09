@@ -377,6 +377,21 @@ Tests drive a real browser through the app as a person would, and assert on what
   that the fallback explains itself.
 - **Learn more:** [Playwright](https://playwright.dev)
 
+### Automated accessibility checks (axe)
+
+A rules engine reads the page as assistive technology would, and reports each element that
+breaks a WCAG rule it can decide by itself: a button with no name, a field with no label,
+text too faint for its background. What it cannot decide, it marks incomplete, for a person
+to check.
+
+- **Used in:** `tests/e2e/accessibility.spec.ts`
+- **Why here:** R12 asks for an axe scan in `test:e2e`. It runs in the states a learner
+  reaches, at desktop and phone widths, and fails on any violation. It catches regressions
+  that no one looks for. It does not prove the page usable, which is why the keyboard paths
+  have their own tests.
+- **Learn more:** [axe-core](https://github.com/dequelabs/axe-core) and
+  [W3C, "Evaluating web accessibility"](https://www.w3.org/WAI/test-evaluate/)
+
 ### An animation loop outside React's state
 
 The browser calls a function before each repaint (`requestAnimationFrame`). The stage runs

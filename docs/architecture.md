@@ -16,7 +16,7 @@ How PaperPlay fits together today. The concepts named here are explained in
 | `scripts/` | Gate, docs checker, defaults sweep, hook seed | `check-gate.ts`, `check-docs.ts`, `sweep-defaults.ts`, `hook-seed.ts` |
 | `fixtures/oracles/` | Hand-derived expected behaviours for primitives | See `fixtures/oracles/README.md` |
 | `eval/` | Sweeps now; the frozen protocol and raw attempts from G4 | `eval/sweeps/` |
-| `tests/e2e/` | Playwright browser tests on Chromium | `world.spec.ts` [R04], `stage.spec.ts`, `fonts.spec.ts`, `smoke.spec.ts` |
+| `tests/e2e/` | Playwright browser tests on Chromium | `world.spec.ts` [R04], `accessibility.spec.ts` [R12], `stage.spec.ts`, `fonts.spec.ts`, `smoke.spec.ts` |
 
 Inside `packages/ui`:
 - **`src/tokens.ts`:** the accepted palette.
@@ -133,6 +133,7 @@ flowchart LR
 | Docs stay consistent with the repository | `check:docs`, inside `check:gate` | `scripts/docs/check.ts` |
 | Browser tests render WebGL in software | Launch flags, and a test that asserts SwiftShader was used | `playwright.config.ts`, `tests/e2e/stage.spec.ts` |
 | Fonts come from the page's own origin, and only the shipped weights are declared or rendered | A unit test on the font files; a browser test that blocks off-origin requests | `packages/ui/test/fonts.test.ts`, `tests/e2e/fonts.spec.ts` |
+| `/world/local` has no WCAG 2.x A or AA violation that axe can detect, in four states, at 1280 and 360 px | Browser tests [R12] | `tests/e2e/accessibility.spec.ts` |
 | Secrets stay server-side | Not yet enforced (G3) | — |
 
 ## Runtime and tooling
@@ -141,10 +142,11 @@ flowchart LR
   the gate's runtime check. Node runs TypeScript directly (type stripping), so scripts and
   the API need no build.
 - **TypeScript 6.0, strict and NodeNext.** Each workspace typechecks its source and its tests
-  separately. It is pinned below 6.1 for typescript-eslint (ADR-0001).
+  separately, and `npm run typecheck` covers the browser tests in `tests/e2e` too. It is pinned below 6.1 for typescript-eslint (ADR-0001).
 - **Web:** Vite 8, React 19.3, and Three.js 0.186 (ADR-0004).
 - **Tests and lint:** Vitest 5, with one project per workspace (`apps/web` included) and a JSON report. Playwright
-  1.63 runs on Chromium with forced SwiftShader. ESLint 10 has type-aware rules and the
+  1.63 runs on Chromium with forced SwiftShader, and `@axe-core/playwright` 4.13 runs the
+  axe scans. ESLint 10 has type-aware rules and the
   boundary rules above.
 - **Libraries:** Zod 4.6 for contracts, Fastify 5 for the API.
 - **Scripts:**
@@ -171,3 +173,4 @@ flowchart LR
 | 2026-10-01 | 109e9c6 | The read-only neighbourhood query `flockNeighbours` (Q1) |
 | 2026-10-01 | 73c491e | `FrameEmphasis`, picking, rings; the fit backs off in inverse proportion to the aspect; fog keeps its distance |
 | 2026-10-01 | 107a38a | `packages/ui/src/react` (WorldStage, LabBench, origins); the session and `/world/local` in `apps/web`; a Vitest project for `apps/web`; `src/stage/local-stage.ts` removed |
+| 2026-10-09 | 3639dfb | The axe scan in `test:e2e` [R12]; `npm run typecheck` covers `tests/e2e` |

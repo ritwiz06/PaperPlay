@@ -7,6 +7,20 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · The axe scan
+
+- Branch: `g2/axe-scan`
+- Commits: `3639dfb`
+- Shipped:
+  - `@axe-core/playwright` 4.13, approved on 2026-10-01.
+  - Four [R12] scans of `/world/local`, for WCAG 2.0 to 2.2 at A and AA. They run as the
+    page opens, and again with its rules open, a bird picked and a beacon placed, each at
+    1280 × 720 and 360 × 740.
+  - `npm run typecheck` now covers `tests/e2e`.
+- Evidence: R01 43, R02 5, R03 49, R04 16, R12 4 (ahead of its gate), from 260 tests with
+  none skipped. 4 of 4 planted violations were caught.
+- Gate: `check:gate` G1 passed at `3639dfb`.
+
 ## 2026-10-01 · G1 tagged v0.1.0
 
 - Branch: `g1/world-local`
