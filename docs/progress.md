@@ -7,6 +7,32 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · WorldSpec and the builder
+
+- Branch: `g2/worldspec`
+- Commits: `0afc49d`, `211f13a`, `4d942fd`
+- Shipped (ADR-0016):
+  - **`worldspec/1`,** with refinements:
+    - the hook first;
+    - exactly one manipulable and one counterfactual per level;
+    - anchors for every paper-derived statement;
+    - parameter-only what-ifs;
+    - setup placements;
+    - bonus levels that claim nothing from the paper;
+    - depth variants by element id;
+    - drafts with placeholder anchors.
+  - **`fixtures/worldspecs/flocking-reference.json`,** the six levels as a draft. Every
+    What-if's effect was checked against seed 5 first.
+  - **`buildWorld` in `packages/pipeline`.** It checks a spec against the registry and the
+    shell, and derives each level's parameters, setup events, fork and visible elements,
+    including whether the fork restarts.
+  - **Hand-written binding fixtures** in `fixtures/bindings/`.
+- Evidence:
+  - R01 51, R02 6, R03 91, R04 18; ahead of their gate, R08 41;
+  - from 426 tests with none skipped;
+  - planted bugs caught: 4 of 4 in the refinements, and 5 of 5 in the builder.
+- Gate: `check:gate` G1 passed at `4d942fd`.
+
 ## 2026-10-09 · The group measure
 
 - Branch: `g2/group-measure`

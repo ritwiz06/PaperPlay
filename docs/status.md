@@ -15,9 +15,12 @@ every session.
     ADR-0011).
 - **Branches:** only `main`. Every slice this session merged fast-forward and was pushed
   (ADR-0009).
-- **Working commit:** `f37c9a9` on `main`, the latest code commit there. `check:gate` passed
+- **Working commit:** `4d942fd` on `main`, the latest code commit there. `check:gate` passed
   G1 on it.
 - **Primitive:** `flock.planar.weighted@3.0.0`, with the owner's group measure (ADR-0015).
+- **WorldSpec:** `worldspec/1` and the builder exist (ADR-0016).
+  `fixtures/worldspecs/flocking-reference.json` holds the six levels as a draft, with
+  placeholder anchors. `/world/hook` does not read it yet; that is the next branch.
 - **Runtime:** Node 24.21.0, pinned in `.node-version`. Run tools through
   `fnm exec --using=24.21.0` when the shell's default Node differs.
 - **What a learner can do now:**
@@ -47,27 +50,27 @@ every session.
   - the screenshots in `captures/final/`;
   - the canonical capture in `captures/canonical/`.
 
-## Latest check:gate (G1), 2026-10-09, commit f37c9a9
+## Latest check:gate (G1), 2026-10-09, commit 4d942fd
 
 ```
 check:gate G1 · Playable baseline · tag v0.1.0
   runtime    node 24.21.0 (pinned 24.21.0)  ok
-  typecheck  ok      12.7 s
-  lint       ok      9.5 s
-  check:docs ok      0.2 s
-  test       ok      10.3 s
-  build      ok      0.7 s
-  test:e2e   ok      31.2 s
-  evidence   343 tests (vitest 311, playwright 32), 0 skipped
+  typecheck  ok      14.4 s
+  lint       ok      9.9 s
+  check:docs ok      0.3 s
+  test       ok      10.5 s
+  build      ok      0.6 s
+  test:e2e   ok      30.8 s
+  evidence   426 tests (vitest 394, playwright 32), 0 skipped
     R01  Deterministic, oracle-checked primitives      51 passing
     R02  Model/render separation                       6 passing
-    R03  Strict, versioned contracts                   49 passing
+    R03  Strict, versioned contracts                   91 passing
     R04  Playable local world                          18 passing
 
 G1 passed: every required check ran and every requirement has passing evidence.
 ```
 
-Ahead of their gate, from the same run's reports: R05 4, R06 1, R07 11, R12 8.
+Ahead of their gate, from the same run's reports: R05 4, R06 1, R07 11, R08 41, R12 8.
 
 ## Blockers
 
@@ -77,22 +80,27 @@ Ahead of their gate, from the same run's reports: R05 4, R06 1, R07 11, R12 8.
 
 ## Decisions waiting on the owner
 
-1. **Level 4's one readout,** a groups counter by ADR-0015's measure: my reading, since the
-   owner named only the compass and the spacing gauge (ADR-0014).
-2. **The shell and the world art,** from the screenshots:
+1. **Levels 2 and 4 of the level script,** whose expected effects did not hold when run on
+   the model (the level script's "Measured" lines):
+   - **Level 2:** seeing the whole flock does not bring order sooner.
+   - **Level 4:** removing cohesion does not split the flock. This also bears on level 4's
+     groups counter, my reading of its readout.
+2. **WorldSpec's shape beyond the brief** (ADR-0016), and the reference fixture kept as a
+   draft until real anchors exist.
+3. **The shell and the world art,** from the screenshots:
    - the bottom-left stack;
    - the compass;
    - the quiet chips;
    - the following camera;
    - colour by heading, trails and the valley.
-3. **The canonical capture,** in `captures/canonical/`, from CI.
+4. **The canonical capture,** in `captures/canonical/`, from CI.
 
 ## Next three actions
 
-1. The WorldSpec schema [R03] and `fixtures/worldspecs/flocking-reference.json`, as a draft
-   with placeholder anchors until the source map exists.
-2. The deterministic builder, with binding fixtures [R08].
-3. `/world/hook` driven by the WorldSpec through all six levels.
+1. `/world/hook` driven by the WorldSpec through all six levels, with the readout each level
+   names.
+2. Screenshots of every level on desktop and phone.
+3. Code-split the Three.js stage, then the static deploy (slice 4).
 
 ## Recommendations
 

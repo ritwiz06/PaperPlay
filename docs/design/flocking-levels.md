@@ -14,7 +14,7 @@ attributed.
 - **Levels 1 to 5 follow the paper. Level 6 is a bonus level beyond it.**
   - It is a teaching choice, and nothing in it is labelled paper-derived from Reynolds.
   - Vicsek et al. 1995 is listed separately in the source register, as further reading.
-- **The primitive:** `flock.planar.weighted@2.2.0`, a two-dimensional teaching adaptation.
+- **The primitive:** `flock.planar.weighted@3.0.0`, a two-dimensional teaching adaptation.
   - **Every What if is parameter overrides on it,** as the brief's `Counterfactual` requires
     (`altParams`): no new science.
   - **Its rules are summed with weights and capped.** The paper ranks its behaviours by
@@ -32,7 +32,8 @@ attributed.
     less than 45°;
   - clusters of fewer than 4 birds are strays, not groups.
 
-  It must pass its sweep before level 4 uses it.
+  It passed its sweep under the reading O1, one group holding at least half the birds
+  (`eval/sweeps/group-measure.md`).
 - **One readout per level** (owner):
   - the heading compass for the levels about agreement (1, 2, 5 and 6);
   - the spacing gauge for the separation level (3);
@@ -45,6 +46,10 @@ attributed.
   - A level may hold setup placements, such as level 5's rock. They are applied at step 0 as
     ordinary place events, each with its origin, so replay keeps working.
   - A What if stays parameter overrides only.
+- **Checked against the model.** Before the fixture was written, every What if was run on the
+  hook seed (5), and levels 1, 2 and 4 on seeds 1–20 as well. Where an expected effect did not
+  hold, the fixture says what the model does instead, and a "Measured" line below gives the
+  numbers. Levels 2 and 4 need the owner's decision.
 - **Restarts:** a What if that overrides a start-up (init-phase) variable makes both worlds
   restart from the same seed. The builder works that out from the primitive's parameter
   schema, so no level states it, and the fork then says "Both worlds restart".
@@ -78,6 +83,10 @@ Below, ↑ means after raising the control and ↓ after lowering it.
     confetti of colours.
   - **The one measured difference:** directional agreement after 10 s, for example 0.9
     against 0.2. The fixture records the real values.
+  - **Measured (2026-10-09):** at 10 s the flock has not ordered yet. On seed 5, agreement is
+    0.21 against 0.12. At 20 s it is 0.93 against 0.08, and the gap exceeds 0.5 on 19 of
+    seeds 1–20. **The difference is measured at 20 s,** and the fixture's effect says "within
+    20 seconds".
 - **The passage it needs:** the paper's description of velocity matching, a bird matching the
   velocity of the flockmates near it.
 
@@ -107,6 +116,16 @@ Below, ↑ means after raising the control and ↓ after lowering it.
   - **The effect to show:** the right flock snaps to one heading almost at once, more like a
     marching band than a murmuration. The left one ripples into order.
   - **The one measured difference:** seconds until directional agreement first reaches 0.9.
+  - **Measured (2026-10-09): the expected effect does not hold.**
+    - On seed 5, seeing the whole flock reaches 0.9 later: 19.5 s, against 17.7 s.
+    - Over seeds 1–20 it is sooner on only 7. With every bird seeing every other, a bird
+      matches the whole flock's mean velocity, which starts near zero.
+    - The fixture says so: seeing everyone does not bring order sooner in this model.
+    - **For the owner:**
+      - keep this What if, with the surprise as the lesson;
+      - or ask the opposite, "What if each bird saw only its nearest?" (radius 2). That
+        gives 0.93 against 0.74 at 20 s on seed 5, and a gap over 0.5 on only 9 of 20
+        seeds.
 - **The passage it needs:** the paper's argument that a flock member perceives only nearby
   flockmates, and why that locality matters.
 
@@ -135,6 +154,9 @@ Below, ↑ means after raising the control and ↓ after lowering it.
   - **The effect to show:** the right flock collapses into a few dense knots. The left one
     stays evenly spaced.
   - **The one measured difference:** mean nearest-neighbour distance after 10 s.
+  - **Measured (2026-10-09):** on seed 5, 1.85 against 1.17 world units at 10 s. The flock
+    bunches tighter, but "a few dense knots" was not checked. The fixture says the birds end
+    up much closer together.
 - **The passage it needs:** the paper's statement of its three behaviours, and its
   description of collision avoidance.
 
@@ -163,6 +185,15 @@ Below, ↑ means after raising the control and ↓ after lowering it.
     left one flock.
   - **The one measured difference:** the number of groups after 20 s, by the owner's
     measure.
+  - **Measured (2026-10-09): the expected effect does not hold.**
+    - On seed 5 both worlds are one group at 20 s and at 40 s.
+    - Over seeds 1–20, removing cohesion gives more groups at 20 s on only 2 seeds.
+    - A smaller sight radius in this level does not help either. At radius 3 to 6, it gives
+      more groups on 0 to 4 seeds of 20, and at radius 3 to 5 cohesion often gives more
+      groups, not fewer.
+    - In this model, at this density, alignment holds the flock together.
+    - The fixture says so. **For the owner:** the lesson of this level, and with it the groups
+      counter as its readout.
 - **The passage it needs:** the paper's description of flock centering.
 
 ## Level 5 · Evaluation · Does it behave like a flock?
@@ -195,6 +226,9 @@ Below, ↑ means after raising the control and ↓ after lowering it.
     agree again.
   - **The one measured difference:** the lowest directional agreement while passing the
     rock.
+  - **Measured (2026-10-09):** the rock is placed at (15, 8.5), ahead of seed 5's flock.
+    After 18 s, the lowest agreement is 0.29 with the strongest push, against 0.86 with the
+    default. Both agree again (0.97 and 0.98) by 30 s, so "far longer" is not claimed.
 - **The passage it needs:** the paper's discussion of avoiding environmental obstacles, and
   its observation that flocks split around obstacles and re-form.
 - **A teaching choice to state on screen:** the primitive's rocks push like a force field,
@@ -233,6 +267,11 @@ observation, and none is labelled paper-derived from Reynolds.
     appears.
   - **The one measured difference:** directional agreement over time in both worlds, as the
     fork's chart.
+  - **Measured (2026-10-09):**
+    - On seed 5 at Move together 2, the sparser world's agreement is 0.09 at 20 s, 0.57 at
+      40 s and 0.73 at 60 s. It is disordered at 20 s for every strength tried.
+    - In the default world, agreement at 20 s rises from 0.17 at 0.8 to 0.74 at 1 and 0.94
+      at 1.5. Below that it is noisy, so "fairly suddenly" became "over a fairly small range".
 - **What it needs:**
   - No passage from Reynolds.
   - The journal page is labelled a bonus page, and cites Vicsek et al. 1995 as further
@@ -248,4 +287,6 @@ The questions this script raised were answered, and are recorded in ADR-0014 and
 - setup placements;
 - derived restarts.
 
-Still open: whether level 4's groups counter is the readout the owner wants (my reading).
+Still open, for the owner:
+- whether level 4's groups counter is the readout the owner wants (my reading);
+- levels 2 and 4, whose expected effects did not hold when measured (above).

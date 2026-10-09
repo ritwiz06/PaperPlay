@@ -78,9 +78,13 @@ Next:
   (`5d87b66`, `f37c9a9`, ADR-0015).
 - [x] The level script for the flocking world, `docs/design/flocking-levels.md`, for the
   owner's review before WorldSpec (2026-10-09).
-- [ ] The full WorldSpec schema and the hand-authored `flocking-reference.json`, from the
-  reviewed level script.
-- [ ] The deterministic builder, with binding fixtures.
+- [x] The full WorldSpec schema and the hand-authored `flocking-reference.json`, from the
+  reviewed level script (2026-10-09, `0afc49d`, `211f13a`, ADR-0016). The fixture is a draft:
+  its anchors are placeholders until the source map exists.
+- [ ] `flocking-reference.json` reviewed: real anchors from the source map, and the owner's
+  answers on levels 2 and 4, whose expected effects did not hold when measured.
+- [x] The deterministic builder, with binding fixtures (2026-10-09, `4d942fd`, ADR-0016).
+- [ ] `/world/hook` driven by the WorldSpec through all six levels.
 - [x] A design spike at `/world/hook` with hard-coded content, screenshotted on desktop
   and phone (2026-10-09, `5aadf22`). The owner reviewed it the same day; it is tagged
   `spike/hook-2026-10-09` and never merged (ADR-0008).
@@ -181,3 +185,5 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-09 | The group measure links birds only with headings within 45°, counts clusters under 4 birds as strays, and reads "one group" as O1: one group holding at least half the birds (flock 3.0.0) | Owner decisions; the bare count failed the owner's 1% criterion (ADR-0015) |
 | 2026-10-09 | The hook seed moves from 4 to 5; the demo capture stays on seed 4 | Owner: follow ADR-0003's rule under the new measure (ADR-0015) |
 | 2026-10-09 | The source register and source map wait for the Reynolds PDF; the group measure, WorldSpec and the builder go first, with placeholder anchors clearly marked | Owner decision: the PDF is not on disk yet |
+| 2026-10-09 | WorldSpec gains a draft status with placeholder anchors and a pending source; Level gains a goal, a bonus flag, a slider, setup, a guide script and further reading; depth variants name a closed list of shell elements; equations are Unicode text; DesignSpec drops layout and typography | Building it for the game-first shell and the owner's level decisions, with no source in hand (ADR-0016) |
+| 2026-10-09 | Each What-if's expected effect is checked against the model before it is written into a fixture | Two of the level script's effects did not hold on seed 5 (levels 2 and 4) |

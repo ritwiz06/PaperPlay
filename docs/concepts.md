@@ -237,6 +237,20 @@ TypeScript then knows which fields exist in each case.
   them cannot mix the cases up.
 - **Learn more:** [TypeScript handbook: discriminated unions](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions)
 
+### A spec interpreted by a builder (data, not code)
+
+Instead of running code that a model or an author wrote, the system accepts only a document
+in a closed vocabulary: which primitive, which variable, which range, which elements to show.
+A small, trusted program, the builder, checks the document and turns it into a running
+world. Anything outside the vocabulary is refused, never executed.
+
+- **Used in:** `packages/contracts/src/worldspec.ts`, `packages/pipeline/src/builder/build.ts`,
+  `fixtures/worldspecs/flocking-reference.json`
+- **Why here:** Generated output is data, not code (CLAUDE.md, boundary 2). A WorldSpec can be
+  validated, diffed, replayed and reviewed. A mistake in it becomes a refusal with a path, not
+  a broken or unsafe page.
+- **Learn more:** [Interpreter pattern](https://en.wikipedia.org/wiki/Interpreter_pattern)
+
 ### Versioned documents
 
 A saved document records which schema version wrote it, for example `runrecord/2`.
@@ -273,9 +287,11 @@ them again reproduces the whole run.
 An oracle is an independent way to know the right answer. Here the answers are derived by
 hand from the written equations, before and apart from the code.
 
-- **Used in:** `fixtures/oracles/README.md`, `packages/primitives/test/flock.oracles.test.ts`
+- **Used in:** `fixtures/oracles/README.md`, `packages/primitives/test/flock.oracles.test.ts`;
+  the binding fixtures, `fixtures/bindings/` and `packages/pipeline/test/bindings.test.ts`
 - **Why here:** Numbers copied from the implementation would only test that the code
-  agrees with itself.
+  agrees with itself. The binding fixtures are written the same way: from the level script
+  and the parameter table, never from the builder's output.
 - **Learn more:** [Test oracle](https://en.wikipedia.org/wiki/Test_oracle)
 
 ### Metamorphic tests
