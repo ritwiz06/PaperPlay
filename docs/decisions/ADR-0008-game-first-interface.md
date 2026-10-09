@@ -4,7 +4,8 @@
 - Date: 2026-10-09
 - Decided by: the owner, on 2026-10-09, before G2's interface work. The mapping of each
   guarantee to its new element, and the readings marked "my reading" below, were written
-  while recording the decision. They are for the owner to review.
+  while recording the decision. The owner accepted them the same day, after reviewing the
+  design spike, with the changes in "The spike's review" below.
 - Supersedes: parts of the build brief (§1.3, §6.1, §6.2, §6.4 and §7 G2.4, listed below)
   and item 8 of ADR-0007.
 
@@ -152,6 +153,51 @@ Every guarantee stays. Only how each one appears changes.
 
 The HUD cards share an edge and a shadow, but differ in shape, size and role, so they never
 form a grid of identical cards (§6.3).
+
+## The spike's review (owner, 2026-10-09)
+
+The spike (`/world/hook`, round two) is tagged `spike/hook-2026-10-09` and never merged. The
+shell is built fresh in `packages/ui/src/react`, with the spike as a visual reference only.
+
+**Accepted:**
+- the bottom-left stack on desktop;
+- a readout in the level card, now the heading compass (change c);
+- the chip words "Paper", "Teaching choice", "Measured" and "Model's guess";
+- every "my reading" above.
+
+**Kept from the spike:**
+- the game-like HUD style;
+- the level map, with the current level's name on desktop;
+- the guide's "you did X, so Y" sentence, with its measured line;
+- the journal's passage card, with "Try it" and "Still to find".
+
+**Changed:**
+
+- **a. The HUD at rest covers at most 35% of a 390 × 844 screen and 25% of 1440 × 900.** A
+  Playwright test measures the HUD's bounding boxes.
+  - On a phone, the level card at rest is one compact row: title, slider and "What if". A
+    chevron expands it to show the goal and the depth toggle.
+  - The guide appears after an interaction and fades after about 6 s. Tapping its icon
+    brings back its last line. Under reduced motion it appears and disappears without
+    animation.
+  - The stage frames the field inside the screen rectangle that the HUD leaves free. This
+    is render-only (R02).
+- **b. A control's chip says where its rule comes from.**
+  - Alignment is paper-derived once it is anchored. Until the source map exists, its chip is
+    marked as a placeholder.
+  - The control's friendly name ("Move together") and its range are teaching choices. They
+    are shown in the journal's detail for that control, not as a second chip on the card.
+  - Chips in the guide and the level card are smaller and quieter. Their words are
+    unchanged, so R05 still holds.
+- **c. Readouts.**
+  - At Beginner, the slider shows words at its ends ("Ignore neighbours" to "Follow
+    closely") and no number. Numbers appear at Intermediate and Advanced.
+  - A heading compass replaces "Agreement 0.78 of 1". It is a ring with one tick per bird's
+    heading, and an arrow whose length is the directional agreement. It is labelled
+    Measured, and shows the number on hover and focus, and always from Intermediate up.
+  - The compass's arrow points along the flock's mean heading, which comes from the
+    primitive's read-only query Q2, as its length comes from E12. The compass shows the
+    field from above, turned to match the camera.
 
 ## Consequences
 
