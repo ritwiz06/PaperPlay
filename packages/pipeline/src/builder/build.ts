@@ -13,8 +13,10 @@ import {
   type DesignSpec,
   type Explanation,
   type GuideScript,
+  type GuidedExploration,
   type Level,
   type LevelKind,
+  type MeasuredDifference,
   type Observable,
   type Origin,
   type PendingSource,
@@ -77,6 +79,8 @@ export interface BuiltFork {
   readonly overrides: readonly BuiltOverride[];
   /** Derived: an override of a start-up (init-phase) variable makes both worlds restart from the same seed. */
   readonly restarts: boolean;
+  /** The one measured difference between the worlds, and the claim the level makes about it (ADR-0018). */
+  readonly difference: MeasuredDifference;
 }
 
 export interface BuiltPlacement {
@@ -108,6 +112,8 @@ export interface BuiltLevel {
   readonly explanation: Explanation;
   readonly caption: Level["caption"];
   readonly guide: GuideScript;
+  /** Predict, intervene, observe, explain, when the level asks for a prediction. */
+  readonly exploration: GuidedExploration | null;
   readonly furtherReading: readonly string[];
   readonly carryForward: string;
 }
@@ -212,6 +218,18 @@ function buildLevel(level: Level, at: (string | number)[], registry: PrimitiveRe
   if (!metric) problem([...at, "observable", "metricId"], `${primitive.id} does not measure ${observable.metricId}`);
   else if (observable.unit !== metric.unit) problem([...at, "observable", "unit"], `${observable.metricId} is measured in ${metric.unit}, not ${observable.unit}`);
 
+  // The fork's measured difference: a metric the primitive measures, in the unit its summary gives.
+  const { difference } = counterfactual;
+  const measured = observables[difference.metricId];
+  if (!measured) {
+    problem([...at, "counterfactual", "difference", "metricId"], `${primitive.id} does not measure ${difference.metricId}`);
+  } else {
+    const expected = difference.summary.kind === "first-reach" ? "seconds" : difference.summary.kind === "total" ? null : measured.unit;
+    if (expected !== null && difference.unit !== expected) {
+      problem([...at, "counterfactual", "difference", "unit"], `a ${difference.summary.kind} summary of ${difference.metricId} is in ${expected}, not ${difference.unit}`);
+    }
+  }
+
   for (const name of Object.keys(counterfactual.altParams)) {
     if (!(name in variables)) problem([...at, "counterfactual", "altParams", name], `${primitive.id} has no variable ${name}`);
   }
@@ -283,11 +301,13 @@ function buildLevel(level: Level, at: (string | number)[], registry: PrimitiveRe
       params: forkParams,
       overrides,
       restarts: overrides.some((override) => override.phase === "init"),
+      difference,
     },
     visible,
     explanation: level.explanation,
     caption: level.caption,
     guide: level.guide,
+    exploration: level.guidedExploration ?? null,
     furtherReading: level.furtherReading,
     carryForward: level.carryForward,
   };

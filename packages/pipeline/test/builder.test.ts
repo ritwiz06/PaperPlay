@@ -120,8 +120,9 @@ describe("[R08] the builder", () => {
   it("refuses a placement outside the world, in either world of the fork", () => {
     const outside = changed((draft) => void Object.assign((level(draft, 4).setup as unknown as Record<string, unknown>[])[0]!, { x: 32 }));
     expect(pathsOf(buildWorld(outside, registry))).toEqual(["levels.4.setup.0"]);
+    // Level 5's rocks stand at x and y of 8 and 24: in a 12 × 12 world, three lie outside.
     const shrunk = changed((draft) => void (level(draft, 4).counterfactual!.altParams = { worldWidth: 12, worldHeight: 12 }));
-    expect(pathsOf(buildWorld(shrunk, registry))).toEqual(["levels.4.setup.0"]);
+    expect(pathsOf(buildWorld(shrunk, registry))).toEqual(["levels.4.setup.1", "levels.4.setup.2", "levels.4.setup.3"]);
   });
 
   it("refuses a widget binding until the widget tier", () => {

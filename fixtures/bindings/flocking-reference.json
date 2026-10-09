@@ -15,9 +15,14 @@
       "variable": "obstacleRadius",
       "start": 3.4,
       "set": 6,
-      "fork": { "obstacleWeight": 20 },
+      "fork": { "obstacleWeight": 0 },
       "restarts": false,
-      "setup": [{ "entityId": "rock-in-path", "entity": "obstacle", "x": 15, "y": 8.5 }]
+      "setup": [
+        { "entityId": "rock-1", "entity": "obstacle", "x": 8, "y": 8 },
+        { "entityId": "rock-2", "entity": "obstacle", "x": 24, "y": 8 },
+        { "entityId": "rock-3", "entity": "obstacle", "x": 8, "y": 24 },
+        { "entityId": "rock-4", "entity": "obstacle", "x": 24, "y": 24 }
+      ]
     },
     { "levelId": "result", "actionId": "alignment-strength", "variable": "alignmentWeight", "start": 2, "set": 1, "fork": { "worldWidth": 64, "worldHeight": 64 }, "restarts": true, "setup": [] }
   ]

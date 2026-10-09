@@ -132,6 +132,7 @@ export function level(id: string, order: number, kind: string, overrides: Record
       origin: "teaching-choice",
       isSpeculative: false,
       anchors: [] as unknown[],
+      difference: difference(),
     },
     setup: [] as unknown[],
     explanation: explanation(),
@@ -145,7 +146,7 @@ export function level(id: string, order: number, kind: string, overrides: Record
 
 export function worldSpec() {
   return {
-    schemaVersion: "worldspec/1",
+    schemaVersion: "worldspec/2",
     status: "reviewed",
     title: "Walkers' Square",
     source: manifest(),
@@ -162,6 +163,28 @@ export function worldSpec() {
     primitivesUsed: [{ id: "example.walkers", version: "1.0.0" }],
     checks: { suiteIds: ["schema"], suiteVersions: { schema: "1" } as Record<string, string> },
     limitations: ["A synthetic world for contract tests."],
+  };
+}
+
+export function difference() {
+  return {
+    metricId: "agreement",
+    label: "Agreement after 20 seconds",
+    unit: "fraction",
+    summary: { kind: "at", seconds: 20 } as Record<string, unknown>,
+    seconds: 20,
+    claim: { kind: "each", relation: "lower", by: 0.5 } as Record<string, unknown>,
+  };
+}
+
+export function exploration() {
+  return {
+    predictPrompt: "Will walkers who see everyone agree faster?",
+    choices: ["Faster", "About the same, or slower"],
+    interveneActionId: "alignment-strength",
+    observeMetricId: "agreement",
+    explainPrompt: "Why might seeing everyone not help?",
+    explanation: { text: "The model's walkers see only neighbours.", origin: "paper-derived", anchors: [anchor()] as unknown[] },
   };
 }
 

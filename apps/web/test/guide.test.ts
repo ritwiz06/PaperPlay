@@ -60,11 +60,12 @@ describe("the guide, from the other levels' scripts", () => {
     expect(linesFor("idea", { ...input, depth: "beginner" })[1].text).toBe("Birds are flying close together, and they are bunching up.");
   });
 
-  it("counts groups in whole numbers on the cohesion level", () => {
-    const input = { lastAction: { from: 0.4, to: 0 }, value: 0, observed: 2, trend: "steady", playing: true, depth: "advanced" } as const;
+  it("reads the spread in world units on the cohesion level", () => {
+    const input = { lastAction: { from: 0.4, to: 0 }, value: 0, observed: 12.34, trend: "rising", playing: true, depth: "advanced" } as const;
     const [did, saw] = linesFor("method", input);
     expect(did.text).toBe("At 0, nothing pulls a bird back toward the others.");
-    expect(saw.text).toBe("Groups (birds linked within 4.5 world units and 45° of heading, 4 birds or more) 2 and holding: the flock has split in two.");
+    expect(saw.text).toBe("Spread of the largest group 12.3 and widening: the flock is spread across the valley.");
+    expect(linesFor("method", { ...input, depth: "intermediate", observed: 5.24, trend: "steady" })[1].text).toBe("Spread 5 and holding: the flock holds together.");
   });
 
   it("uses the slider's own step for the number it quotes", () => {

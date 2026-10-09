@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { WorldSpec } from "../src/index.ts";
-import { action, anchor, issuesOf, level, pendingSource, placeholder, worldSpec } from "./examples.ts";
+import { action, anchor, difference, exploration, issuesOf, level, pendingSource, placeholder, worldSpec } from "./examples.ts";
 
 type Spec = ReturnType<typeof worldSpec>;
 type Patch = Record<string, unknown>;
@@ -283,7 +283,7 @@ describe("[R03] WorldSpec: the level's other parts", () => {
   });
 
   it("rejects guided exploration on another action or another observable", () => {
-    const explore = { predictPrompt: "What will happen?", interveneActionId: "alignment-strength", observeMetricId: "agreement", explainPrompt: "Why?" };
+    const explore = exploration();
     expect(issuesOf(WorldSpec, withLevel(0, { guidedExploration: explore }))).toEqual([]);
     expect(issuesOf(WorldSpec, withLevel(0, { guidedExploration: { ...explore, interveneActionId: "other" } }))).toEqual([
       { code: "custom", path: "levels.0.guidedExploration.interveneActionId" },
@@ -327,5 +327,58 @@ describe("[R03] WorldSpec: its lists agree with its levels", () => {
     const spec = worldSpec();
     spec.digest.causalChain[0] = { ...spec.digest.causalChain[0]!, dependsOn: ["agree"] };
     expect(issuesOf(WorldSpec, spec)).toEqual([{ code: "custom", path: "digest.causalChain.0.dependsOn.0" }]);
+  });
+});
+
+describe("[R03] WorldSpec: each counterfactual's measured difference and claim (ADR-0018)", () => {
+  const forkWith = (patch: Record<string, unknown>) => ({ ...level("hook", 1, "hook").counterfactual, difference: { ...difference(), ...patch } });
+
+  it("requires a measured difference on every counterfactual", () => {
+    const { difference: _difference, ...bare } = level("hook", 1, "hook").counterfactual;
+    expect(paths(withLevel(0, { counterfactual: bare }))).toEqual(["levels.0.counterfactual.difference"]);
+  });
+
+  it("keeps the level's time to 80 seconds, 20 s of watching at 4x", () => {
+    expect(issuesOf(WorldSpec, withLevel(0, { counterfactual: forkWith({ seconds: 80, summary: { kind: "at", seconds: 80 } }) }))).toEqual([]);
+    expect(paths(withLevel(0, { counterfactual: forkWith({ seconds: 81 }) }))).toEqual(["levels.0.counterfactual.difference.seconds"]);
+  });
+
+  it("keeps a summary's times inside the level's time", () => {
+    expect(issuesOf(WorldSpec, withLevel(0, { counterfactual: forkWith({ summary: { kind: "at", seconds: 30 } }) }))).toEqual([
+      { code: "custom", path: "levels.0.counterfactual.difference.summary.seconds" },
+    ]);
+    expect(issuesOf(WorldSpec, withLevel(0, { counterfactual: forkWith({ summary: { kind: "lowest", from: 20 } }) }))).toEqual([
+      { code: "custom", path: "levels.0.counterfactual.difference.summary.from" },
+    ]);
+  });
+
+  it("accepts each kind of summary, and rejects an unknown one", () => {
+    for (const summary of [{ kind: "first-reach", threshold: 0.9 }, { kind: "lowest", from: 5 }, { kind: "total" }]) {
+      expect(issuesOf(WorldSpec, withLevel(0, { counterfactual: forkWith({ summary }) })), JSON.stringify(summary)).toEqual([]);
+    }
+    expect(paths(withLevel(0, { counterfactual: forkWith({ summary: { kind: "average" } }) }))).toEqual(["levels.0.counterfactual.difference.summary.kind"]);
+  });
+
+  it("accepts a claim that holds sky by sky, with a margin and an optional ratio", () => {
+    expect(issuesOf(WorldSpec, withLevel(0, { counterfactual: forkWith({ claim: { kind: "each", relation: "higher", by: 0, times: 3 } }) }))).toEqual([]);
+    expect(paths(withLevel(0, { counterfactual: forkWith({ claim: { kind: "each", relation: "higher", by: -1 } }) }))).toEqual(["levels.0.counterfactual.difference.claim.by"]);
+    expect(paths(withLevel(0, { counterfactual: forkWith({ claim: { kind: "each", relation: "sideways", by: 0 } }) }))).toEqual(["levels.0.counterfactual.difference.claim.relation"]);
+  });
+
+  it("allows a count claim only on a level that asks for a prediction first", () => {
+    const count = { kind: "count", relation: "lower", by: 1, holds: 6 };
+    expect(issuesOf(WorldSpec, withLevel(1, { counterfactual: forkWith({ claim: count }) }))).toEqual([{ code: "custom", path: "levels.1.counterfactual.difference.claim" }]);
+    expect(issuesOf(WorldSpec, withLevel(1, { counterfactual: forkWith({ claim: count }), guidedExploration: exploration() }))).toEqual([]);
+    expect(paths(withLevel(1, { counterfactual: forkWith({ claim: { ...count, holds: 21 } }), guidedExploration: exploration() }))).toEqual([
+      "levels.1.counterfactual.difference.claim.holds",
+    ]);
+  });
+
+  it("asks for two to four choices, none marked right, and anchors a paper-derived explanation", () => {
+    expect(paths(withLevel(0, { guidedExploration: { ...exploration(), choices: ["Faster"] } }))).toEqual(["levels.0.guidedExploration.choices"]);
+    expect(paths(withLevel(0, { guidedExploration: { ...exploration(), correct: 1 } }))).toEqual(["levels.0.guidedExploration"]);
+    expect(paths(withLevel(0, { guidedExploration: { ...exploration(), explanation: { text: "Local only.", origin: "paper-derived", anchors: [] } } }))).toEqual([
+      "levels.0.guidedExploration.explanation.anchors",
+    ]);
   });
 });

@@ -16,3 +16,4 @@ export {
   type BuiltWorld,
   type Depth,
 } from "./builder/build.ts";
+export { claimHolds, SAMPLE_STEPS, sampleCount, summarise } from "./builder/difference.ts";

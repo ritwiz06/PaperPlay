@@ -24,6 +24,7 @@
     "sweep:defaults": "node scripts/sweep-defaults.ts",
     "choose:hook-seed": "node scripts/hook-seed.ts",
     "sweep:groups": "node scripts/group-measure.ts",
+    "sweep:levels": "node scripts/levels.ts",
     "capture:demo": "node scripts/capture-demo.ts"
   },
   "devDependencies": {

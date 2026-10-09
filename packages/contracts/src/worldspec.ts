@@ -4,7 +4,9 @@ import { actionWith, ParameterName, PrimitiveRef } from "./primitive.ts";
 import { Anchor, Origin, SourceManifest } from "./provenance.ts";
 import { EntityKind } from "./run.ts";
 
-// worldspec/1: what an authored or generated world is, as data (brief §3, ADR-0014, ADR-0016).
+// worldspec/2: what an authored or generated world is, as data (brief §3, ADR-0014, ADR-0016,
+// ADR-0018). Version 2 adds each counterfactual's measured difference and its claim, and the
+// guided exploration's choices and explanation.
 // A deterministic builder interprets it against the primitive registry; checks that need the
 // registry (a variable exists, a value is in range, a placement is inside the world) live in
 // the builder, and everything a spec can be wrong about on its own is refined here.
@@ -107,6 +109,66 @@ export const Observable = z.strictObject({
 });
 export type Observable = z.infer<typeof Observable>;
 
+/** The level rule (ADR-0018): a stated effect is checked on this many skies (seeds 1 to 20)... */
+export const RULE_SEEDS = 20;
+/** ...must hold on at least this many of them... */
+export const RULE_HOLDS = 16;
+/** ...and show within this many simulated seconds: 20 s of watching at 4x. */
+export const RULE_MAX_SECONDS = 80;
+
+/** How each world's series of the metric becomes one number. */
+export const DifferenceSummary = z.discriminatedUnion("kind", [
+  /** The value at that time. */
+  z.strictObject({ kind: z.literal("at"), seconds: z.number().positive() }),
+  /** Seconds until the value first reaches the threshold; never, within the level's time, counts as later than any time. */
+  z.strictObject({ kind: z.literal("first-reach"), threshold: z.number() }),
+  /** The lowest value from `from` seconds to the level's time. */
+  z.strictObject({ kind: z.literal("lowest"), from: z.number().nonnegative() }),
+  /** The value summed over the level's time, times the timestep: birds at rocks become bird-seconds. */
+  z.strictObject({ kind: z.literal("total") }),
+]);
+export type DifferenceSummary = z.infer<typeof DifferenceSummary>;
+
+const Relation = z.enum(["higher", "lower"]);
+
+/**
+ * The effect a level states, as a check on each sky: the other world's summary is higher or
+ * lower than this world's by more than `by` (and, with `times`, more than `times` as much).
+ */
+export const DifferenceClaim = z.discriminatedUnion("kind", [
+  /** Holds sky by sky: it must hold on at least RULE_HOLDS of RULE_SEEDS. */
+  z.strictObject({ kind: z.literal("each"), relation: Relation, by: z.number().nonnegative(), times: z.number().min(1).optional() }),
+  /**
+   * A count stated exactly, for a result that is the surprise itself: the relation holds on
+   * exactly `holds` of RULE_SEEDS skies. Allowed only on a level that asks for a prediction.
+   */
+  z.strictObject({ kind: z.literal("count"), relation: Relation, by: z.number().nonnegative(), holds: z.int().min(0).max(RULE_SEEDS) }),
+]);
+export type DifferenceClaim = z.infer<typeof DifferenceClaim>;
+
+/** The one measured difference between the two worlds of a fork, and the claim the level makes about it (ADR-0018). */
+export const MeasuredDifference = z
+  .strictObject({
+    metricId: ParameterName,
+    /** How the fork view names it: "Agreement after 20 seconds". */
+    label: z.string().min(1),
+    /** The summary's unit: the metric's, seconds for first-reach, or the metric's times seconds for a total. */
+    unit: z.string().min(1),
+    summary: DifferenceSummary,
+    /** The level's time: how long both worlds run, in simulated seconds. */
+    seconds: z.number().positive().max(RULE_MAX_SECONDS),
+    claim: DifferenceClaim,
+  })
+  .refine((difference) => difference.summary.kind !== "at" || difference.summary.seconds <= difference.seconds, {
+    error: "the summary's time lies within the level's time",
+    path: ["summary", "seconds"],
+  })
+  .refine((difference) => difference.summary.kind !== "lowest" || difference.summary.from < difference.seconds, {
+    error: "the summary starts within the level's time",
+    path: ["summary", "from"],
+  });
+export type MeasuredDifference = z.infer<typeof MeasuredDifference>;
+
 /** The level's one "what if": parameter overrides on the same primitive, nothing else (ADR-0014). */
 export const Counterfactual = z
   .strictObject({
@@ -116,6 +178,7 @@ export const Counterfactual = z
     origin: Origin,
     isSpeculative: z.boolean(),
     anchors: z.array(AnchorRef),
+    difference: MeasuredDifference,
   })
   .refine(paperDerivedHasAnchors, NEEDS_ANCHOR);
 export type Counterfactual = z.infer<typeof Counterfactual>;
@@ -188,13 +251,21 @@ export const GuideScript = z.strictObject({
 });
 export type GuideScript = z.infer<typeof GuideScript>;
 
-/** Prompts for predict, intervene, observe, explain: framing, never scoring. */
+/**
+ * Predict, intervene, observe, explain: framing, never scoring. Nothing marks a choice right;
+ * the guide reports what was measured. With a count claim, the first choice names the outcome
+ * the count counts.
+ */
 export const GuidedExploration = z.strictObject({
   predictPrompt: z.string().min(1),
+  choices: z.array(z.string().min(1)).min(2).max(4),
   interveneActionId: Id,
   observeMetricId: ParameterName,
   explainPrompt: z.string().min(1),
+  /** What the guide says once the result is in, connecting it to the paper. */
+  explanation: z.strictObject({ text: z.string().min(1), origin: Origin, anchors: z.array(AnchorRef) }).refine(paperDerivedHasAnchors, NEEDS_ANCHOR),
 });
+export type GuidedExploration = z.infer<typeof GuidedExploration>;
 
 export const LevelKind = z.enum(["hook", "background", "idea", "method", "evaluation", "result"]);
 export type LevelKind = z.infer<typeof LevelKind>;
@@ -234,6 +305,10 @@ export const Level = z
     error: "exploration must observe the level's observable",
     path: ["guidedExploration", "observeMetricId"],
   })
+  .refine((level) => level.counterfactual.difference.claim.kind !== "count" || level.guidedExploration !== undefined, {
+    error: "a count claim states a surprise, so its level must ask for a prediction first",
+    path: ["counterfactual", "difference", "claim"],
+  })
   .refine((level) => new Set(level.setup.map((placement) => placement.entityId)).size === level.setup.length, {
     error: "setup entity ids must be unique",
     path: ["setup"],
@@ -245,7 +320,9 @@ export const Level = z
   .refine(
     (level) =>
       !level.bonus ||
-      ![level.manipulable, level.counterfactual, level.caption, ...Object.values(level.explanation), ...level.setup].some((item) => item.origin === "paper-derived"),
+      ![level.manipulable, level.counterfactual, level.caption, ...Object.values(level.explanation), ...level.setup, ...(level.guidedExploration ? [level.guidedExploration.explanation] : [])].some(
+        (item) => item.origin === "paper-derived",
+      ),
     { error: "a bonus level labels nothing paper-derived", path: ["bonus"] },
   );
 export type Level = z.infer<typeof Level>;
@@ -309,7 +386,7 @@ function anchorLists(value: unknown, path: Path, found: { anchors: unknown[]; pa
 
 export const WorldSpec = z
   .strictObject({
-    schemaVersion: z.literal("worldspec/1"),
+    schemaVersion: z.literal("worldspec/2"),
     /** A draft may hold placeholder anchors and a pending source; a reviewed spec may not (ADR-0016). */
     status: z.enum(["draft", "reviewed"]),
     /** The world's name, as its card shows it. */

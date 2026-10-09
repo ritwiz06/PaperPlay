@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "worldspec/1",
+  "schemaVersion": "worldspec/2",
   "status": "draft",
   "title": "Murmuration Valley",
   "source": {
@@ -78,27 +78,27 @@
     "sections": [
       {
         "levelId": "hook",
-        "chartType": "none",
+        "chartType": "line",
         "motion": "none"
       },
       {
         "levelId": "background",
-        "chartType": "none",
+        "chartType": "line",
         "motion": "none"
       },
       {
         "levelId": "idea",
-        "chartType": "none",
+        "chartType": "line",
         "motion": "none"
       },
       {
         "levelId": "method",
-        "chartType": "none",
+        "chartType": "line",
         "motion": "none"
       },
       {
         "levelId": "evaluation",
-        "chartType": "none",
+        "chartType": "line",
         "motion": "none"
       },
       {
@@ -163,10 +163,25 @@
         "altParams": {
           "alignmentWeight": 0
         },
-        "expectedQualitativeEffect": "Within 20 seconds the left flock turns one colour, while the right one stays a confetti of colours, each bird on its own heading.",
+        "expectedQualitativeEffect": "Within 20 seconds the left flock agrees on a heading far more than the right one: its agreement is higher by more than half the scale.",
         "origin": "teaching-choice",
         "isSpeculative": false,
-        "anchors": []
+        "anchors": [],
+        "difference": {
+          "metricId": "directionalAgreement",
+          "label": "Agreement after 20 seconds",
+          "unit": "fraction from 0 to 1",
+          "summary": {
+            "kind": "at",
+            "seconds": 20
+          },
+          "seconds": 20,
+          "claim": {
+            "kind": "each",
+            "relation": "lower",
+            "by": 0.5
+          }
+        }
       },
       "setup": [],
       "explanation": {
@@ -322,10 +337,26 @@
         "altParams": {
           "perceptionRadius": 50
         },
-        "expectedQualitativeEffect": "Seeing everyone does not bring order sooner in this model: on this seed the right flock agrees a little later than the left one.",
+        "expectedQualitativeEffect": "Seeing the whole flock does not reliably bring order sooner: on most skies it is about as fast, or slower.",
         "origin": "teaching-choice",
         "isSpeculative": false,
-        "anchors": []
+        "anchors": [],
+        "difference": {
+          "metricId": "directionalAgreement",
+          "label": "Seconds until agreement first reaches 0.9",
+          "unit": "seconds",
+          "summary": {
+            "kind": "first-reach",
+            "threshold": 0.9
+          },
+          "seconds": 40,
+          "claim": {
+            "kind": "count",
+            "relation": "lower",
+            "by": 1,
+            "holds": 6
+          }
+        }
       },
       "setup": [],
       "explanation": {
@@ -423,6 +454,27 @@
           "within": 0.03
         }
       },
+      "guidedExploration": {
+        "predictPrompt": "If every bird could see the whole flock, would the flock come to agree faster?",
+        "choices": [
+          "Faster",
+          "About the same, or slower"
+        ],
+        "interveneActionId": "perception-radius",
+        "observeMetricId": "directionalAgreement",
+        "explainPrompt": "Why might seeing more birds not help a flock agree sooner?",
+        "explanation": {
+          "text": "The paper argues that a bird perceives only the flockmates near it, and says why that locality matters.",
+          "origin": "paper-derived",
+          "anchors": [
+            {
+              "placeholder": true,
+              "sourceId": "reynolds1987",
+              "need": "The paper's argument that a flock member perceives only nearby flockmates, and why that locality matters."
+            }
+          ]
+        }
+      },
       "furtherReading": [],
       "carryForward": "Each bird sees only nearby birds, so order travels through the flock bird by bird."
     },
@@ -480,10 +532,25 @@
         "altParams": {
           "separationWeight": 0
         },
-        "expectedQualitativeEffect": "Without personal space the right flock bunches tighter: its birds end up much closer together than the left one's.",
+        "expectedQualitativeEffect": "Without personal space the right flock bunches far tighter: after 20 seconds its birds sit more than half a world unit closer to their nearest neighbours.",
         "origin": "teaching-choice",
         "isSpeculative": false,
-        "anchors": []
+        "anchors": [],
+        "difference": {
+          "metricId": "meanNeighbourDistance",
+          "label": "Spacing after 20 seconds",
+          "unit": "world units",
+          "summary": {
+            "kind": "at",
+            "seconds": 20
+          },
+          "seconds": 20,
+          "claim": {
+            "kind": "each",
+            "relation": "lower",
+            "by": 0.5
+          }
+        }
       },
       "setup": [],
       "explanation": {
@@ -590,7 +657,7 @@
       "order": 4,
       "kind": "method",
       "title": "Stay with the flock",
-      "goal": "Change how strongly birds stay close, and count the groups.",
+      "goal": "Change how strongly birds stay close, and watch how far the flock spreads.",
       "bonus": false,
       "binding": {
         "type": "primitive",
@@ -627,11 +694,11 @@
         ]
       },
       "observable": {
-        "metricId": "clusterCount",
-        "label": "Groups (birds linked within 4.5 world units and 45° of heading, 4 birds or more)",
-        "shortLabel": "Groups",
-        "unit": "groups",
-        "decimals": 0,
+        "metricId": "groupSpread",
+        "label": "Spread of the largest group",
+        "shortLabel": "Spread",
+        "unit": "world units",
+        "decimals": 1,
         "origin": "computed-observation"
       },
       "counterfactual": {
@@ -639,15 +706,30 @@
         "altParams": {
           "cohesionWeight": 0
         },
-        "expectedQualitativeEffect": "On this seed both worlds stay one group: in this model, matching headings holds the flock together even without the pull toward the middle.",
+        "expectedQualitativeEffect": "Without the pull toward the middle, the right flock spreads out across the valley: after 40 seconds its spread is more than 3 world units wider.",
         "origin": "teaching-choice",
         "isSpeculative": false,
-        "anchors": []
+        "anchors": [],
+        "difference": {
+          "metricId": "groupSpread",
+          "label": "Spread after 40 seconds",
+          "unit": "world units",
+          "summary": {
+            "kind": "at",
+            "seconds": 40
+          },
+          "seconds": 40,
+          "claim": {
+            "kind": "each",
+            "relation": "higher",
+            "by": 3
+          }
+        }
       },
       "setup": [],
       "explanation": {
         "beginner": {
-          "text": "The third urge: steer toward the middle of the birds you can see. It pulls stragglers back toward the others.",
+          "text": "The third urge: steer toward the middle of the birds you can see. It keeps the flock compact instead of spreading across the valley.",
           "show": [
             "range-words",
             "analogy"
@@ -663,7 +745,7 @@
           "anchors": []
         },
         "intermediate": {
-          "text": "Each step, a bird steers toward the centre of the birds within its sight. Stay close sets how quickly. A group is birds linked within 4.5 world units and flying within 45° of each other, 4 birds or more.",
+          "text": "Each step, a bird steers toward the centre of the birds within its sight. Stay close sets how quickly. The ring on the ground shows the flock's spread: how far, on average, the birds of its largest group are from its centre.",
           "show": [
             "control-value",
             "range-numbers",
@@ -678,7 +760,7 @@
           "anchors": []
         },
         "advanced": {
-          "text": "Cᵢ = w_c (v* cᵢ / max(|cᵢ|, r_c) − vᵢ), where cᵢ is the mean offset to the birds bird i sees: it steers toward their centre at rate w_c, which is Stay close, easing off within r_c.",
+          "text": "Cᵢ = w_c (v* cᵢ / max(|cᵢ|, r_c) − vᵢ), where cᵢ is the mean offset to the birds bird i sees: it steers toward their centre at rate w_c, which is Stay close, easing off within r_c. The spread is the root-mean-square distance of the largest group's birds from its centre, the short way round.",
           "show": [
             "control-value",
             "range-numbers",
@@ -712,44 +794,44 @@
         "atMinimum": "At 0, nothing pulls a bird back toward the others.",
         "readings": [
           {
-            "atLeast": 3,
-            "words": "the flock has broken into several groups"
+            "atLeast": 10,
+            "words": "the flock is spread across the valley"
           },
           {
-            "atLeast": 2,
-            "words": "the flock has split in two"
+            "atLeast": 7,
+            "words": "the flock is loose and wide"
           },
           {
-            "atLeast": 1,
-            "words": "one group has formed"
+            "atLeast": 4,
+            "words": "the flock holds together"
           },
           {
             "atLeast": 0,
-            "words": "no group has formed yet: birds fly alone or in small knots"
+            "words": "the flock is packed tight"
           }
         ],
         "trend": {
           "rising": {
-            "beginner": "and it is splitting further",
-            "measured": "rising"
+            "beginner": "and it is spreading out",
+            "measured": "widening"
           },
           "falling": {
-            "beginner": "and they are coming back together",
-            "measured": "falling"
+            "beginner": "and it is drawing in",
+            "measured": "narrowing"
           },
           "steady": "holding",
-          "within": 0.5
+          "within": 0.3
         }
       },
       "furtherReading": [],
-      "carryForward": "Steering toward the middle of the birds you see is the third urge."
+      "carryForward": "Steering toward the middle of the birds you see is the third urge: it keeps a flock compact."
     },
     {
       "id": "evaluation",
       "order": 5,
       "kind": "evaluation",
       "title": "Does it behave like a flock?",
-      "goal": "Change how early birds swerve, and watch the flock pass the rock.",
+      "goal": "Change how early birds swerve, and watch the flock pass the rocks.",
       "bonus": false,
       "binding": {
         "type": "primitive",
@@ -794,28 +876,67 @@
         "origin": "computed-observation"
       },
       "counterfactual": {
-        "prompt": "What if the rock pushed as hard as the model allows?",
+        "prompt": "What if birds had no rule for rocks?",
         "altParams": {
-          "obstacleWeight": 20
+          "obstacleWeight": 0
         },
-        "expectedQualitativeEffect": "The right flock bursts apart at the rock, and its headings scatter before they agree again.",
+        "expectedQualitativeEffect": "Without the rule, birds fly straight through the rocks: together they spend more than three times as long inside them as the left flock's birds.",
         "origin": "teaching-choice",
         "isSpeculative": false,
-        "anchors": []
+        "anchors": [],
+        "difference": {
+          "metricId": "birdsAtObstacles",
+          "label": "Time birds spend inside rocks over 20 seconds",
+          "unit": "bird-seconds",
+          "summary": {
+            "kind": "total"
+          },
+          "seconds": 20,
+          "claim": {
+            "kind": "each",
+            "relation": "higher",
+            "by": 0,
+            "times": 3
+          }
+        }
       },
       "setup": [
         {
-          "entityId": "rock-in-path",
+          "entityId": "rock-1",
           "entity": "obstacle",
-          "x": 15,
-          "y": 8.5,
+          "x": 8,
+          "y": 8,
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        {
+          "entityId": "rock-2",
+          "entity": "obstacle",
+          "x": 24,
+          "y": 8,
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        {
+          "entityId": "rock-3",
+          "entity": "obstacle",
+          "x": 8,
+          "y": 24,
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        {
+          "entityId": "rock-4",
+          "entity": "obstacle",
+          "x": 24,
+          "y": 24,
           "origin": "teaching-choice",
           "anchors": []
         }
       ],
       "explanation": {
         "beginner": {
-          "text": "One way to judge a flock model is to put a rock in its way and watch. Nothing in the rules mentions rocks except a push away from them.",
+          "text": "One way to judge a flock model is to put rocks in its way and watch. A real flock never flies through a rock. Nothing in these rules mentions rocks except a push away from them.",
           "show": [
             "range-words",
             "analogy"
@@ -831,7 +952,7 @@
           "anchors": []
         },
         "intermediate": {
-          "text": "A bird is pushed away from the rock once it comes within this distance. Nothing else is added: how the flock parts and re-forms comes from the three urges.",
+          "text": "A bird is pushed away from a rock once it comes within this distance. Nothing else is added: how the flock parts and re-forms comes from the three urges.",
           "show": [
             "control-value",
             "range-numbers",
@@ -874,9 +995,9 @@
         ]
       },
       "guide": {
-        "idle": "A rock stands in the flock's path.",
-        "raised": "You made birds swerve from further away{to}, so the flock parts more smoothly round the rock.",
-        "lowered": "You made birds swerve late{to}, so they come close to the rock before they turn.",
+        "idle": "Four rocks stand across the valley.",
+        "raised": "You made birds swerve from further away{to}, so the flock parts more smoothly round the rocks.",
+        "lowered": "You made birds swerve late{to}, so they come close to the rocks before they turn.",
         "readings": [
           {
             "atLeast": 0.9,
@@ -909,7 +1030,7 @@
         }
       },
       "furtherReading": [],
-      "carryForward": "A model is judged by how it behaves, such as how its flock passes an obstacle."
+      "carryForward": "A model is judged by how it behaves, such as whether its flock flies through rocks."
     },
     {
       "id": "result",
@@ -960,10 +1081,25 @@
           "worldWidth": 64,
           "worldHeight": 64
         },
-        "expectedQualitativeEffect": "The sparser flock takes far longer to agree: on this seed it is still disordered after 20 seconds.",
+        "expectedQualitativeEffect": "The sparser flock takes far longer to agree: at least 10 seconds longer to reach agreement 0.8, if it gets there within 40 seconds at all.",
         "origin": "teaching-choice",
         "isSpeculative": false,
-        "anchors": []
+        "anchors": [],
+        "difference": {
+          "metricId": "directionalAgreement",
+          "label": "Seconds until agreement first reaches 0.8",
+          "unit": "seconds",
+          "summary": {
+            "kind": "first-reach",
+            "threshold": 0.8
+          },
+          "seconds": 40,
+          "claim": {
+            "kind": "each",
+            "relation": "higher",
+            "by": 10
+          }
+        }
       },
       "setup": [],
       "explanation": {
