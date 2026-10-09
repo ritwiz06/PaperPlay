@@ -1,3 +1,5 @@
+// First, so no schema parses before Zod is told not to compile with eval (ADR-0017).
+import "./strict-csp.ts";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App.tsx";
