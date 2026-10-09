@@ -349,7 +349,9 @@ export function HookWorld() {
   const measured = (value: number): string => {
     if (Number.isNaN(value)) return "not measured yet";
     if (!Number.isFinite(value)) return forkView?.done ? `not within ${difference.seconds} s` : "not yet";
-    return difference.unit === "seconds" ? `${value.toFixed(1)} s` : `${value.toFixed(2)} ${difference.unit}`;
+    if (difference.unit === "seconds") return `${value.toFixed(1)} s`;
+    // A share reads as the number alone: "0.93", not "0.93 fraction from 0 to 1".
+    return difference.unit.startsWith("fraction") ? value.toFixed(2) : `${value.toFixed(2)} ${difference.unit}`;
   };
   const threshold = difference.summary.kind === "first-reach" ? difference.summary.threshold : undefined;
   const claim = difference.claim;
