@@ -4,7 +4,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
-import { flockPlanarWeighted, registry, type FlockParams, type FlockState } from "../src/index.ts";
+import { flockPlanarWeighted, flockReadsAsOneGroup, registry, type FlockParams, type FlockState } from "../src/index.ts";
 
 const flock = flockPlanarWeighted;
 const FIXTURES = new URL("../../../fixtures/oracles/flock.planar.weighted/", import.meta.url);
@@ -43,7 +43,7 @@ const Transform = z.discriminatedUnion("type", [
 const common = {
   oracle: z.literal("oracle/1"),
   id: z.string().min(1),
-  primitive: z.strictObject({ id: z.literal("flock.planar.weighted"), version: z.literal("2.2.0") }),
+  primitive: z.strictObject({ id: z.literal("flock.planar.weighted"), version: z.literal("3.0.0") }),
   basis: z.enum(["derived", "expected-qualitative"]),
   claim: z.string().min(1),
   derivation: z.array(z.string().min(1)).min(1),
@@ -62,7 +62,7 @@ const Fixture = z.discriminatedUnion("kind", [
     ...common,
     kind: z.literal("measure"),
     state: StateJson,
-    expected: z.strictObject({ directionalAgreement: Num, meanNeighbourDistance: Num, clusterCount: z.int() }),
+    expected: z.strictObject({ directionalAgreement: Num, meanNeighbourDistance: Num, clusterCount: z.int(), strayShare: Num }),
     tolerance: Num,
   }),
   z.strictObject({
@@ -185,6 +185,9 @@ function runMeasure(f: Of<"measure">): void {
   expect(Math.abs(observed.directionalAgreement - f.expected.directionalAgreement)).toBeLessThanOrEqual(f.tolerance);
   expect(Math.abs(observed.meanNeighbourDistance - f.expected.meanNeighbourDistance)).toBeLessThanOrEqual(f.tolerance);
   expect(observed.clusterCount).toBe(f.expected.clusterCount);
+  expect(observed.strayShare).toBeCloseTo(f.expected.strayShare, 12);
+  // O1: the flock reads as one group when it has exactly one group holding at least half the birds.
+  expect(flockReadsAsOneGroup(observed)).toBe(f.expected.clusterCount === 1 && f.expected.strayShare <= 0.5);
 }
 
 function runConservedVelocitySum(f: Of<"conserved-velocity-sum">): void {

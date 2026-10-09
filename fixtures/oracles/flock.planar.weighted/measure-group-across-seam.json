@@ -1,0 +1,57 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.measure.group-across-seam",
+  "primitive": {
+    "id": "flock.planar.weighted",
+    "version": "3.0.0"
+  },
+  "basis": "derived",
+  "kind": "measure",
+  "claim": "A group may straddle the seam: four birds at x = 30.5, 31.5, 0.5 and 1.5 are one group.",
+  "derivation": [
+    "Four birds on y = 10 at x = 30.5, 31.5, 0.5 and 1.5, all heading (1, 0), on a 32 × 32 world.",
+    "31.5 to 0.5 is −31, which wraps to +1 (E1), so consecutive birds are 1 apart across the seam, with the same heading: one cluster of 4, one group (E14). clusterCount = 1.",
+    "All headings agree: directionalAgreement = 1 (E12). Every nearest neighbour is 1 away: meanNeighbourDistance = 1 (E13).",
+    "No strays: strayShare = 0 (E18). One group holding every bird reads as one group (O1)."
+  ],
+  "state": {
+    "width": 32,
+    "height": 32,
+    "stepIndex": 0,
+    "agents": [
+      {
+        "x": 30.5,
+        "y": 10,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 31.5,
+        "y": 10,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 0.5,
+        "y": 10,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 1.5,
+        "y": 10,
+        "vx": 1,
+        "vy": 0
+      }
+    ],
+    "beacons": [],
+    "obstacles": []
+  },
+  "expected": {
+    "directionalAgreement": 1,
+    "meanNeighbourDistance": 1,
+    "clusterCount": 1,
+    "strayShare": 0.0
+  },
+  "tolerance": 1e-12
+}

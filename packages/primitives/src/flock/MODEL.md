@@ -1,4 +1,4 @@
-# flock.planar.weighted@2.2.0
+# flock.planar.weighted@3.0.0
 
 A planar, weighted-rule adaptation of local flocking in the spirit of Reynolds (1987),
 "Flocks, Herds, and Schools: A Distributed Behavioral Model". It is a teaching model:
@@ -17,6 +17,12 @@ the equations and the state contract are those of 2.0.0. 2.2.0 (2026-10-01) wide
 `alignmentWeight`'s range from 0–2 to 0–4, so its default of 2 sits mid-range and a
 learner can raise it as well as lower it (ADR-0003). Equations, defaults and the state
 contract are unchanged, so every value accepted by 2.1.0 behaves exactly as before.
+3.0.0 (2026-10-09) changes the group measure, E14 (ADR-0015). A link now also needs the two
+headings to differ by less than 45°, and a cluster of fewer than 4 birds is strays, not a
+group. The steps and the state are those of 2.2.0, so runs are identical step for step. But
+`clusterCount` changes for the same state, so a 2.x record's observables no longer replay:
+a major version. It also adds the observable `strayShare` (E18) and the reading "one group"
+(O1).
 
 ## Symbols
 
@@ -92,8 +98,21 @@ for states read back from JSON.
   (one shared heading). A bird with zero velocity contributes nothing.
 - **E13 `meanNeighbourDistance`** = (1/N) Σ over i of min over j ≠ i of |δ_ij|: the mean
   nearest-neighbour distance, measured across the torus seams.
-- **E14 `clusterCount`** = the number of connected groups when birds closer than L_c = 4.5
-  are linked, transitively. L_c is fixed so counts compare across perception settings.
+- **E14 `clusterCount`** = the number of groups. Link birds i and j when both:
+  - |δ_ij| < L_c = 4.5;
+  - their headings differ by less than 45°, i.e. v_i·v_j > 0 and 2(v_i·v_j)² >
+    |v_i|²|v_j|².
+
+  A bird with zero velocity has no heading and links to nobody. Links join birds
+  transitively into clusters, and a cluster of at least G_min = 4 birds is a group; smaller
+  clusters are strays. L_c, 45° and G_min are fixed, so counts compare across perception
+  settings. All three are the owner's (ADR-0015).
+- **E18 `strayShare`** = (the number of birds in clusters smaller than G_min) / N, from 0 to
+  1 (ADR-0015).
+- **O1 One group,** a reading of E14 and E18, not a new observable. The flock reads as one
+  group when clusterCount = 1 and strayShare ≤ 1/2: exactly one group, holding at least
+  half the birds. A chance cluster of four amid strays is one group, but not one flock.
+  Level texts, the hook-seed rule and the group sweep all use this reading.
 
 ## Edits (between steps, from learner events)
 

@@ -26,7 +26,7 @@ describe("hook seed", () => {
   });
 
   it("summarises a run: the sweep's criterion at the last step, and when one group formed for good", () => {
-    const run = { seed: 7, steps: 4, clusterCount: [3, 1, 2, 1, 1], agreement: [0.1, 0.5, 0.85, 0.79, 0.9] };
+    const run = { seed: 7, steps: 4, clusterCount: [3, 1, 2, 1, 1], strayShare: [0, 0, 0, 0, 0], agreement: [0.1, 0.5, 0.85, 0.79, 0.9] };
     expect(summarise(run)).toEqual({
       seed: 7,
       qualified: true,
@@ -39,7 +39,13 @@ describe("hook seed", () => {
   });
 
   it("does not qualify a seed whose flock ends in two groups, however well it agrees", () => {
-    const run = { seed: 2, steps: 2, clusterCount: [1, 1, 2], agreement: [0.9, 0.95, 0.99] };
+    const run = { seed: 2, steps: 2, clusterCount: [1, 1, 2], strayShare: [0, 0, 0], agreement: [0.9, 0.95, 0.99] };
+    expect(summarise(run)).toMatchObject({ qualified: false, firstSingleGroup: 0, singleGroupFrom: null, orderedFrom: null });
+  });
+
+  it("counts a single group as one flock only when it holds at least half the birds (O1, ADR-0015)", () => {
+    // One group each step, but at the last two steps most birds are strays: not one flock.
+    const run = { seed: 3, steps: 3, clusterCount: [1, 1, 1, 1], strayShare: [0.1, 0.5, 0.6, 0.9], agreement: [0.9, 0.9, 0.9, 0.9] };
     expect(summarise(run)).toMatchObject({ qualified: false, firstSingleGroup: 0, singleGroupFrom: null, orderedFrom: null });
   });
 
@@ -55,6 +61,7 @@ describe("hook seed", () => {
   it("records a run at every step from step 0, the same way every time", () => {
     const run = runSeed(flockDefaultParams, 3, 30);
     expect(run.clusterCount).toHaveLength(31);
+    expect(run.strayShare).toHaveLength(31);
     expect(run.agreement).toHaveLength(31);
     expect(runSeed(flockDefaultParams, 3, 30)).toEqual(run);
   });

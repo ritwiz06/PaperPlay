@@ -1,0 +1,83 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.measure.group-strays-and-rest",
+  "primitive": {
+    "id": "flock.planar.weighted",
+    "version": "3.0.0"
+  },
+  "basis": "derived",
+  "kind": "measure",
+  "claim": "A cluster of four is a group and a cluster of three is not; a bird at rest has no heading, so it links to nobody.",
+  "derivation": [
+    "Row R: (20, 4), (21, 4), (22, 4) heading (0, 1), and a bird at rest at (23, 4), v = (0, 0). Row S: (20, 20), (21, 20), (22, 20), (23, 20) heading (0, 1).",
+    "S's four birds are 1 apart with the same heading: one cluster of 4, one group (E14).",
+    "The bird at rest has no heading, so it links to nobody although it is 1 from R's third bird. R is a cluster of 3 and the bird at rest a cluster of 1: strays. clusterCount = 1.",
+    "Seven unit headings (0, 1); the bird at rest contributes nothing. The sum is (0, 7) over 8 birds: directionalAgreement = 0.875 (E12).",
+    "Every bird's nearest neighbour is 1 away: meanNeighbourDistance = 1 (E13).",
+    "Strays: R's three birds and the bird at rest, 4 of 8, so strayShare = 0.5 (E18). One group holding half the birds reads as one group (O1)."
+  ],
+  "state": {
+    "width": 32,
+    "height": 32,
+    "stepIndex": 0,
+    "agents": [
+      {
+        "x": 20,
+        "y": 4,
+        "vx": 0,
+        "vy": 1
+      },
+      {
+        "x": 21,
+        "y": 4,
+        "vx": 0,
+        "vy": 1
+      },
+      {
+        "x": 22,
+        "y": 4,
+        "vx": 0,
+        "vy": 1
+      },
+      {
+        "x": 23,
+        "y": 4,
+        "vx": 0,
+        "vy": 0
+      },
+      {
+        "x": 20,
+        "y": 20,
+        "vx": 0,
+        "vy": 1
+      },
+      {
+        "x": 21,
+        "y": 20,
+        "vx": 0,
+        "vy": 1
+      },
+      {
+        "x": 22,
+        "y": 20,
+        "vx": 0,
+        "vy": 1
+      },
+      {
+        "x": 23,
+        "y": 20,
+        "vx": 0,
+        "vy": 1
+      }
+    ],
+    "beacons": [],
+    "obstacles": []
+  },
+  "expected": {
+    "directionalAgreement": 0.875,
+    "meanNeighbourDistance": 1,
+    "clusterCount": 1,
+    "strayShare": 0.5
+  },
+  "tolerance": 1e-12
+}

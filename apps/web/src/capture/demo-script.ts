@@ -8,17 +8,18 @@
  */
 import { flockPlanarWeighted as flock } from "@paperplay/primitives";
 import { FLIGHT_ALTITUDE, flockCentre, type Vec3 } from "@paperplay/ui/stage-core";
-import { HOOK_SEED } from "../world/local-world.ts";
 import type { WorldSession } from "../world/session.ts";
 
 /**
  * The beacon is dragged in a straight line through the flock's starting centre. Of 432
  * straight drags tried (start 2–4 s, 4–7 s long, 12 headings, 12–24 units), this one gave
  * the highest agreement at 15 s among those that left one group for the last 3 s
- * (ADR-0010). Without a beacon, seed 4 becomes one group only at 10 s.
+ * (ADR-0010). Without a beacon, seed 4 becomes one group only at 10 s (by flock 2.x's
+ * measure; under 3.0.0's, at 18.6 s, ADR-0015).
  */
 export const DEMO = Object.freeze({
-  seed: HOOK_SEED,
+  /** Seed 4, as the owner asked for this capture. It was the hook seed then; since flock 3.0.0 the hook seed is 5 (ADR-0015). */
+  seed: 4,
   fps: 30,
   /** The flock steps at 60 Hz, so each frame shows 1/30 s of the world. */
   stepsPerFrame: 2,

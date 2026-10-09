@@ -10,6 +10,7 @@ export {
   flockDefaultParams,
   flockHeadings,
   flockNeighbours,
+  flockReadsAsOneGroup,
   FlockParams,
   flockPlanarWeighted,
   FlockStateSchema,

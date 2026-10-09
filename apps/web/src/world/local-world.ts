@@ -10,7 +10,7 @@ import { flockPlanarWeighted as flock } from "@paperplay/primitives";
  * becomes a single group soonest and stays one (eval/sweeps/hook-seed.md, `npm run
  * choose:hook-seed`). A test re-runs that rule and fails if this drifts from it.
  */
-export const HOOK_SEED = 4;
+export const HOOK_SEED = 5;
 
 /** Each control's action id, and the primitive variable it moves. The first is the level's one manipulable. */
 export const LOCAL_ACTIONS = {

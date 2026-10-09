@@ -1,15 +1,15 @@
-import { flockDefaultParams, flockPlanarWeighted as flock, runEvents } from "@paperplay/primitives";
+import { flockDefaultParams, flockPlanarWeighted as flock, flockReadsAsOneGroup, runEvents } from "@paperplay/primitives";
 import { describe, expect, it } from "vitest";
 import { flockCentre, DEFAULT_CAMERA } from "@paperplay/ui/stage-core";
 import { beaconAt, DEMO, scriptDemo } from "../src/capture/demo-script.ts";
-import { HOOK_SEED, LOCAL_ACTIONS } from "../src/world/local-world.ts";
+import { LOCAL_ACTIONS } from "../src/world/local-world.ts";
 import { createWorldSession } from "../src/world/session.ts";
 
 const open = () => createWorldSession({ seed: DEMO.seed, params: flockDefaultParams, actions: LOCAL_ACTIONS });
 
 describe("the demo capture's script", () => {
-  it("is 15 s of the hook seed at 30 frames a second, two fixed steps a frame", () => {
-    expect(DEMO.seed).toBe(HOOK_SEED);
+  it("is 15 s of seed 4, as the owner asked, at 30 frames a second, two fixed steps a frame", () => {
+    expect(DEMO.seed).toBe(4);
     expect(DEMO.frames / DEMO.fps).toBe(15);
     expect(DEMO.stepsPerFrame * flock.fixedTimestep * DEMO.fps).toBeCloseTo(1, 12);
   });
@@ -57,15 +57,16 @@ describe("the demo capture's script", () => {
 
   it("ends on one murmuration: one group for its last 3 s, nearly all heading the same way", () => {
     // A presentation property, re-run here so a change to the primitive cannot quietly spoil
-    // the video. Without the beacon, seed 4 becomes one group only at 10 s.
+    // the video. Without the beacon, seed 4 reads as one group only from 18.6 s (ADR-0015).
     const session = open();
     const demo = scriptDemo(session);
-    const groups: number[] = [];
+    const oneGroup: boolean[] = [];
     for (let frame = 1; frame <= DEMO.frames; frame++) {
       demo.next();
-      if (frame > DEMO.frames - 3 * DEMO.fps) groups.push(session.snapshot().observed.clusterCount);
+      if (frame > DEMO.frames - 3 * DEMO.fps) oneGroup.push(flockReadsAsOneGroup(session.snapshot().observed));
     }
-    expect(new Set(groups)).toEqual(new Set([1]));
+    // O1 (ADR-0015): one group, holding at least half the birds, on every one of those frames.
+    expect(new Set(oneGroup)).toEqual(new Set([true]));
     expect(session.snapshot().observed.directionalAgreement).toBeGreaterThan(0.95);
   });
 });

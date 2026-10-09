@@ -1,0 +1,82 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.measure.group-heading-boundary",
+  "primitive": {
+    "id": "flock.planar.weighted",
+    "version": "3.0.0"
+  },
+  "basis": "derived",
+  "kind": "measure",
+  "claim": "The 45° limit is sharp: 44.9° links, 45.1° does not.",
+  "derivation": [
+    "The layout of flock.measure.group-heading-limit, with P4 heading 44.9° and Q4 heading 45.1°.",
+    "cos 44.9° = 0.708340 > cos 45° = 0.707107, so P4 links (E14): P is one cluster of 4, one group. cos 45.1° = 0.705872 < cos 45°, so Q4 does not link: Q1–Q3 and Q4 are strays. clusterCount = 1.",
+    "Unit headings: six (1, 0), one at 44.9° and one at 45.1°. Their sum is (7.414211, 1.414211), so directionalAgreement = 0.943485 (E12).",
+    "Every bird's nearest neighbour is 1 away: meanNeighbourDistance = 1 (E13).",
+    "Strays: Q1, Q2, Q3 and Q4, 4 of 8 birds: strayShare = 0.5 (E18). One group holding half the birds reads as one group (O1)."
+  ],
+  "state": {
+    "width": 32,
+    "height": 32,
+    "stepIndex": 0,
+    "agents": [
+      {
+        "x": 4,
+        "y": 4,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 5,
+        "y": 4,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 6,
+        "y": 4,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 7,
+        "y": 4,
+        "vx": 0.7083398377245289,
+        "vy": 0.705871570678681
+      },
+      {
+        "x": 4,
+        "y": 20,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 5,
+        "y": 20,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 6,
+        "y": 20,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 7,
+        "y": 20,
+        "vx": 0.705871570678681,
+        "vy": 0.7083398377245288
+      }
+    ],
+    "beacons": [],
+    "obstacles": []
+  },
+  "expected": {
+    "directionalAgreement": 0.9434852668112564,
+    "meanNeighbourDistance": 1,
+    "clusterCount": 1,
+    "strayShare": 0.5
+  },
+  "tolerance": 1e-12
+}

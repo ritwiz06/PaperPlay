@@ -1,7 +1,7 @@
 {
   "oracle": "oracle/1",
   "id": "flock.alignment.conserves-velocity-sum",
-  "primitive": { "id": "flock.planar.weighted", "version": "2.2.0" },
+  "primitive": { "id": "flock.planar.weighted", "version": "3.0.0" },
   "basis": "derived",
   "kind": "conserved-velocity-sum",
   "claim": "When every bird sees every other and only alignment is on, the total velocity of the flock never changes.",

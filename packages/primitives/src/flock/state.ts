@@ -35,4 +35,6 @@ export type FlockObservables = {
   directionalAgreement: number;
   meanNeighbourDistance: number;
   clusterCount: number;
+  /** The share of birds that are strays, in no group (E18). */
+  strayShare: number;
 };

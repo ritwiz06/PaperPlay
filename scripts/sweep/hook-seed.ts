@@ -5,7 +5,7 @@
  * defaults on the sweep's own seeds, measuring every step instead of once a second.
  * Pure and deterministic.
  */
-import { flockPlanarWeighted as flock, type FlockParams } from "@paperplay/primitives";
+import { flockPlanarWeighted as flock, flockReadsAsOneGroup, type FlockParams } from "@paperplay/primitives";
 import { judge } from "./flock-sweep.ts";
 
 /** One seed's flock, measured at step 0 and after every step up to `steps`. */
@@ -13,6 +13,7 @@ export interface SeedRun {
   readonly seed: number;
   readonly steps: number;
   readonly clusterCount: readonly number[];
+  readonly strayShare: readonly number[];
   readonly agreement: readonly number[];
 }
 
@@ -33,14 +34,16 @@ export interface SeedSummary {
 export function runSeed(params: FlockParams, seed: number, steps: number): SeedRun {
   let state = flock.init(params, seed);
   const clusterCount: number[] = [];
+  const strayShare: number[] = [];
   const agreement: number[] = [];
   for (let t = 0; t <= steps; t++) {
     if (t > 0) state = flock.step(state, params, flock.fixedTimestep);
     const observed = flock.measure(state);
     clusterCount.push(observed.clusterCount);
+    strayShare.push(observed.strayShare);
     agreement.push(observed.directionalAgreement);
   }
-  return { seed, steps, clusterCount, agreement };
+  return { seed, steps, clusterCount, strayShare, agreement };
 }
 
 /** The first index from which every value is true; null when the last one is false (or there are none). */
@@ -51,8 +54,9 @@ export function holdsFrom(holds: readonly boolean[]): number | null {
 }
 
 export function summarise(run: SeedRun): SeedSummary {
-  const single = run.clusterCount.map((groups) => groups === 1);
-  const ordered = run.clusterCount.map((groups, index) => judge(run.agreement[index] ?? Number.NaN, groups));
+  // One group means O1 (ADR-0015): exactly one group, holding at least half the birds.
+  const single = run.clusterCount.map((groups, index) => flockReadsAsOneGroup({ clusterCount: groups, strayShare: run.strayShare[index] ?? 1 }));
+  const ordered = single.map((one, index) => one && judge(run.agreement[index] ?? Number.NaN, 1));
   const first = single.indexOf(true);
   return {
     seed: run.seed,
@@ -104,8 +108,9 @@ exploration keeps other seeds.
 
 - **Qualified:** the defaults sweep's criterion at 20 s (step 1200), meaning directional
   agreement ≥ 0.8 as a single group (\`eval/sweeps/flock-defaults.md\`).
-- **Forms a single group:** the first step from which the flock stays one group to 20 s. A
-  flock that is briefly one group and then splits has not formed one.
+- **Forms a single group:** the first step from which the flock reads as one group (O1,
+  ADR-0015) to 20 s: exactly one group, holding at least half the birds. A flock that is
+  briefly one group and then splits has not formed one.
 - **Ties:** go to the seed that stays ordered sooner, then to the lower seed.
 
 This re-runs the chosen defaults on the sweep's own seeds 1–${summaries.length}, measuring after every step rather

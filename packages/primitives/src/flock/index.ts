@@ -9,6 +9,7 @@ import type { FlockObservables, FlockState } from "./state.ts";
 import { FIXED_TIMESTEP, stepFlock } from "./step.ts";
 
 export { headingsOf as flockHeadings, type Headings } from "./headings.ts";
+export { readsAsOneGroup as flockReadsAsOneGroup } from "./measure.ts";
 export { neighboursOf as flockNeighbours, type Neighbourhood } from "./neighbours.ts";
 export { flockDefaultParams, FlockParams } from "./params.ts";
 export { FlockStateSchema } from "./state-schema.ts";
@@ -28,7 +29,12 @@ const DESCRIPTION: PrimitiveDescription = deepFreeze({
     clusterCount: {
       unit: "groups",
       meaning:
-        "Number of groups when birds closer than 4.5 world units are linked, directly or through others. The 4.5 is fixed so counts compare across settings.",
+        "Number of groups: birds closer than 4.5 world units whose headings differ by less than 45° are linked, directly or through others, and a cluster of fewer than 4 birds is strays, not a group. The thresholds are fixed so counts compare across settings.",
+    },
+    strayShare: {
+      unit: "fraction from 0 to 1",
+      meaning:
+        "Share of birds that are strays, in clusters of fewer than 4. The flock reads as one group when it has exactly one group and at most half its birds are strays.",
     },
   },
   assumptions: [
@@ -46,10 +52,10 @@ const DESCRIPTION: PrimitiveDescription = deepFreeze({
   ],
 });
 
-/** flock.planar.weighted@2.2.0, specified equation by equation in MODEL.md. */
+/** flock.planar.weighted@3.0.0, specified equation by equation in MODEL.md. */
 export const flockPlanarWeighted: EditablePrimitive<FlockParams, FlockState, FlockObservables> = Object.freeze({
   id: "flock.planar.weighted",
-  version: "2.2.0",
+  version: "3.0.0",
   fixedTimestep: FIXED_TIMESTEP,
   paramSchema: FlockParams,
   stateSchema: FlockStateSchema,

@@ -1,0 +1,84 @@
+{
+  "oracle": "oracle/1",
+  "id": "flock.measure.group-heading-limit",
+  "primitive": {
+    "id": "flock.planar.weighted",
+    "version": "3.0.0"
+  },
+  "basis": "derived",
+  "kind": "measure",
+  "claim": "Close birds link only when their headings differ by less than 45°: 44° joins a group of three into a group of four, 46° leaves three strays and a fourth.",
+  "derivation": [
+    "Two rows 16 apart on a 32 × 32 world. Row P: (4, 4), (5, 4), (6, 4) heading (1, 0), and P4 at (7, 4) heading 44°, v = (cos 44°, sin 44°). Row Q: (4, 20), (5, 20), (6, 20) heading (1, 0), and Q4 at (7, 20) heading 46°, v = (cos 46°, sin 46°).",
+    "Within a row, neighbours are 1 to 3 apart, below 4.5. Between rows the gap is 16, so no bird links across (E14).",
+    "P4's heading is 44° from P1–P3: cos 44° = 0.719340 > cos 45° = 0.707107, so it links, and P is one cluster of 4: one group.",
+    "Q4's heading is 46° from Q1–Q3: cos 46° = 0.694658 < cos 45°, so it does not link. Q1–Q3 are a cluster of 3 and Q4 a cluster of 1: strays. clusterCount = 1.",
+    "Unit headings: six (1, 0), one at 44° and one at 46°. Their sum is (7.413998, 1.413998), so directionalAgreement = 0.943454 (E12).",
+    "Every bird's nearest neighbour is 1 away, so meanNeighbourDistance = 1 (E13).",
+    "Strays: Q1, Q2, Q3 and Q4, 4 of 8 birds, so strayShare = 0.5 (E18). One group holding exactly half the birds: it reads as one group, since at least half is enough (O1)."
+  ],
+  "state": {
+    "width": 32,
+    "height": 32,
+    "stepIndex": 0,
+    "agents": [
+      {
+        "x": 4,
+        "y": 4,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 5,
+        "y": 4,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 6,
+        "y": 4,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 7,
+        "y": 4,
+        "vx": 0.7193398003386512,
+        "vy": 0.6946583704589973
+      },
+      {
+        "x": 4,
+        "y": 20,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 5,
+        "y": 20,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 6,
+        "y": 20,
+        "vx": 1,
+        "vy": 0
+      },
+      {
+        "x": 7,
+        "y": 20,
+        "vx": 0.6946583704589973,
+        "vy": 0.7193398003386511
+      }
+    ],
+    "beacons": [],
+    "obstacles": []
+  },
+  "expected": {
+    "directionalAgreement": 0.9434540902285101,
+    "meanNeighbourDistance": 1,
+    "clusterCount": 1,
+    "strayShare": 0.5
+  },
+  "tolerance": 1e-12
+}
