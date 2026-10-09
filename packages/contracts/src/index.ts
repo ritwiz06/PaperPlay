@@ -8,3 +8,4 @@ export * from "./job.ts";
 export * from "./primitive.ts";
 export * from "./provenance.ts";
 export * from "./run.ts";
+export * from "./worldspec.ts";
