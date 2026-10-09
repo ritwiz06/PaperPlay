@@ -74,7 +74,10 @@ Next:
   moved to G3 (see Plan changes, 2026-10-09).
 - [ ] Decide the group measure before any level teaches with it (owner, 2026-10-01). At the
   default density, 17% of random scatters count as one group (ADR-0003).
-- [ ] The full WorldSpec schema and the hand-authored `flocking-reference.json`.
+- [x] The level script for the flocking world, `docs/design/flocking-levels.md`, for the
+  owner's review before WorldSpec (2026-10-09).
+- [ ] The full WorldSpec schema and the hand-authored `flocking-reference.json`, from the
+  reviewed level script.
 - [ ] The deterministic builder, with binding fixtures.
 - [x] A design spike at `/world/hook` with hard-coded content, screenshotted on desktop
   and phone (2026-10-09, `5aadf22`). The owner reviewed it the same day; it is tagged
