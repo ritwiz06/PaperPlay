@@ -1,3 +1,4 @@
+import type { Origin } from "@paperplay/contracts";
 import { useEffect, useRef, type ReactNode } from "react";
 import { DepthToggle, OriginTag, type Depth } from "./hud-parts.tsx";
 import { ORIGIN_LABELS, ORIGIN_MEANINGS, ORIGINS } from "./origin.tsx";
@@ -5,8 +6,10 @@ import { ORIGIN_LABELS, ORIGIN_MEANINGS, ORIGINS } from "./origin.tsx";
 export interface JournalPassage {
   readonly title: string;
   readonly text: string;
-  /** Where in the source it stands: section and page. */
-  readonly locator: string;
+  /** Where in the source it stands: section and page. Left out for a page beyond the paper. */
+  readonly locator?: string;
+  /** Paper-derived unless the page goes beyond the paper, as a bonus level's does. */
+  readonly origin?: Origin;
   /** Not yet mapped to the source; says so on the page. */
   readonly placeholder?: boolean;
 }
@@ -83,11 +86,11 @@ export function PaperJournal({ open, onClose, depth, onDepth, pages, stillToFind
               onClick={() => onTryIt(page.id)}
             >
               <span className="passage-head">
-                <OriginTag origin="paper-derived" placeholder={page.passage.placeholder ?? false} />
+                <OriginTag origin={page.passage.origin ?? "paper-derived"} placeholder={page.passage.placeholder ?? false} />
               </span>
               <span className="passage-title">{page.passage.title}</span>
               <span className="passage-text">{page.passage.text}</span>
-              <span className="passage-locator">{page.passage.locator}</span>
+              {page.passage.locator ? <span className="passage-locator">{page.passage.locator}</span> : null}
               <span className="passage-try">Try it: {page.control}</span>
             </button>
             <div className="page-detail">{page.detail}</div>

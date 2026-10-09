@@ -78,6 +78,27 @@ for (const size of SIZES) {
       expect(await violations(page)).toEqual([]);
     });
 
+    test(`[R12] /world/hook passes the axe scan on its later levels: the spacing gauge, the groups counter, and the bonus level with What if open, on a ${size.name}`, async ({ page }) => {
+      await openHook(page);
+      const controls = ["Move together", "How far a bird sees", "Personal space", "Stay close", "How early birds swerve"];
+      const next = ["background", "idea", "method", "evaluation", "result"];
+      for (const [at, label] of controls.entries()) {
+        await page.getByRole("slider", { name: label, exact: true }).focus();
+        await page.keyboard.press("Home");
+        await page.keyboard.press("End");
+        await page.locator(`.level-map li[data-level="${next[at] ?? ""}"] button`).click();
+        await expect(page.locator("main")).toHaveAttribute("data-level", next[at] ?? "");
+        if (next[at] === "method" || next[at] === "evaluation") {
+          // Scanned with the pointer over the current level, whose name must stay readable on hover.
+          await page.locator(".level-map .now button").hover();
+          expect(await violations(page)).toEqual([]);
+        }
+      }
+      await page.getByRole("button", { name: "What if" }).click();
+      await expect(page.locator("[data-restarts]")).toBeVisible();
+      expect(await violations(page)).toEqual([]);
+    });
+
     test(`[R12] /world/hook passes the axe scan with the paper journal open, on a ${size.name}`, async ({ page }) => {
       await openHook(page);
       await page.getByRole("button", { name: "Journal" }).click();

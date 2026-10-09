@@ -1,16 +1,20 @@
 /**
- * /world/hook: the hook level on the game-first shell (ADR-0008), with hard-coded content
- * until WorldSpec. The stage fills the window and frames the field in the room the HUD leaves
- * free; the world card, level map, guide and level card lie over it, and the paper journal
- * slides over on demand. The control moves the real engine parameter, and every number shown
- * comes from the primitive.
+ * /world/hook: the flocking world on the game-first shell (ADR-0008), played from its WorldSpec
+ * as the builder made it (ADR-0016). The stage fills the window and frames the field in the room
+ * the HUD leaves free; the world card, level map, guide and level card lie over it, and the paper
+ * journal slides over on demand. Each level's one control moves its real engine variable, and
+ * every number shown comes from the primitive. A level opens once the one before has been moved
+ * through its range: touched, never solved.
  */
-import { flockDefaultParams } from "@paperplay/primitives";
+import { isPlaceholder, type AnchorRef, type PendingSource, type SourceManifest } from "@paperplay/contracts";
+import type { BuiltLevel } from "@paperplay/pipeline";
+import { flockDefaultParams, type FlockObservables } from "@paperplay/primitives";
 import { DEFAULT_CAMERA } from "@paperplay/ui/stage-core";
 import {
   BirdMark,
   BookIcon,
   Guide,
+  GroupsCounter,
   HeadingCompass,
   isDepth,
   LevelCard,
@@ -18,33 +22,33 @@ import {
   OriginTag,
   PaperJournal,
   PlayIcon,
+  SpacingGauge,
   useFreeRect,
   WorldStage,
   type Depth,
   type GuideLine,
+  type JournalPassage,
   type MapLevel,
 } from "@paperplay/ui/react";
-import { useCallback, useRef, useState } from "react";
-import { HOOK_SEED, LOCAL_ACTIONS, LOCAL_CONTROLS } from "../world/local-world.ts";
-import { createWorldSession, type WorldSession } from "../world/session.ts";
+import { useRef, useState, type ReactNode } from "react";
+import { FLOCKING, sessionOptionsFor } from "../world/authored-world.ts";
+import { createWorldSession, type SessionSnapshot, type WorldSession } from "../world/session.ts";
 import { guideLines, trendOf, type Trend } from "./guide.ts";
-import { HOOK, LEVELS, PASSAGE } from "./hook-content.ts";
 
-const STAGE_LABEL = `Murmuration Valley: a flock of ${flockDefaultParams.agentCount} birds with no leader, each steering only by its near neighbours.`;
+const WORLD = FLOCKING;
+const LEVELS = WORLD.levels;
+const STAGE_LABEL = `${WORLD.title}: a flock of ${flockDefaultParams.agentCount} birds with no leader, each steering only by its near neighbours.`;
 const DEPTH_KEY = "paperplay.depth";
 /** About a second and a half of readouts, for the guide's trend. */
 const TREND_SAMPLES = 15;
 
-const action = LOCAL_CONTROLS.find((entry) => entry.actionId === HOOK.control.actionId);
-if (!action) throw new Error(`the local world has no control ${HOOK.control.actionId}`);
-const [MIN, MAX] = action.range;
-const START = action.defaultValue;
-
 const prefersReducedMotion = (): boolean => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const narrow = (): boolean => window.matchMedia("(max-width: 760px)").matches;
 
-function openSession(): WorldSession {
-  return createWorldSession({ seed: HOOK_SEED, params: flockDefaultParams, actions: LOCAL_ACTIONS, playing: !prefersReducedMotion() });
+function levelAt(index: number): BuiltLevel {
+  const level = LEVELS[index];
+  if (!level) throw new Error(`the world has no level ${index + 1}`);
+  return level;
 }
 
 function readDepth(): Depth {
@@ -56,14 +60,98 @@ function readDepth(): Depth {
   }
 }
 
+interface Explored {
+  readonly low: number;
+  readonly high: number;
+}
+
+/** Whether a level's control has been moved through its range: to within a quarter of each end. */
+function exploredThrough(level: BuiltLevel, explored: Explored | undefined): boolean {
+  if (!explored) return false;
+  const [min, max] = level.action.range;
+  const span = max - min;
+  return explored.low <= min + span / 4 && explored.high >= max - span / 4;
+}
+
+/** Each level is open once every level before it has been moved through its range. */
+function openLevels(explored: Readonly<Record<string, Explored>>): boolean[] {
+  const open: boolean[] = [];
+  LEVELS.forEach((level, index) => {
+    const before = LEVELS[index - 1];
+    open.push(index === 0 || ((open[index - 1] ?? false) && before !== undefined && exploredThrough(before, explored[before.id])));
+  });
+  return open;
+}
+
+const placeholderOnly = (anchors: readonly AnchorRef[]): boolean => anchors.length > 0 && anchors.every(isPlaceholder);
+const lowerFirst = (text: string): string => text.charAt(0).toLowerCase() + text.slice(1);
+
+/** "Reynolds 1987": the attribution every passage carries. */
+function citationOf(source: SourceManifest | PendingSource): string {
+  const surname = source.authors[0]?.split(" ").at(-1) ?? source.title;
+  return `${surname}${source.authors.length > 1 ? " et al." : ""} ${source.year}`;
+}
+
+/** The journal's passage for a level: the anchored quote, a placeholder that says so, or a page beyond the paper. */
+function passageOf(level: BuiltLevel): JournalPassage {
+  const { caption } = level;
+  const anchor = caption.anchors[0];
+  const cite = citationOf(WORLD.source);
+  if (!anchor) return { title: caption.text, text: "A page beyond the paper: nothing here is quoted from it.", origin: caption.origin };
+  if (isPlaceholder(anchor)) {
+    return {
+      title: caption.text,
+      text: `Placeholder, quoting nothing yet. It will hold ${lowerFirst(anchor.need)}`,
+      locator: `${cite}. Its section and page arrive with the source map.`,
+      origin: caption.origin,
+      placeholder: true,
+    };
+  }
+  const section = "sections" in WORLD.source ? WORLD.source.sections.find((entry) => entry.id === anchor.sectionId) : undefined;
+  return {
+    title: caption.text,
+    text: `“${anchor.quote}”`,
+    locator: [cite, section?.title, anchor.page === undefined ? null : `page ${anchor.page}`].filter(Boolean).join(", "),
+    origin: caption.origin,
+  };
+}
+
+/** A variable's name in words: the control's own label, or the parameter spelled out. */
+function nameOf(level: BuiltLevel, variable: string): string {
+  return variable === level.action.variable ? `“${level.action.label}”` : variable.replace(/([A-Z])/g, " $1").toLowerCase();
+}
+
+/** The level's readout, chosen by its observable; it shows the primitive's own value. */
+function readoutFor(level: BuiltLevel, snapshot: SessionSnapshot, showNumber: boolean, yaw: number): ReactNode {
+  const { observed } = snapshot;
+  switch (level.observable.metricId) {
+    case "directionalAgreement":
+      return <HeadingCompass angles={snapshot.headings.angles} mean={snapshot.headings.mean} agreement={observed.directionalAgreement} yaw={yaw} showNumber={showNumber} />;
+    case "meanNeighbourDistance":
+      return <SpacingGauge spacing={observed.meanNeighbourDistance} showNumber={showNumber} />;
+    case "clusterCount":
+      return <GroupsCounter groups={observed.clusterCount} strayShare={observed.strayShare} birds={snapshot.headings.angles.length} showNumber={showNumber} />;
+    default: {
+      const value = observed[level.observable.metricId as keyof FlockObservables];
+      return (
+        <output className="dial-number" data-element="readout-number" data-observable={level.observable.metricId} data-value={String(value)}>
+          {value.toFixed(level.observable.decimals)}
+        </output>
+      );
+    }
+  }
+}
+
 export function HookWorld() {
-  const [session] = useState(openSession);
+  const [session] = useState<WorldSession>(() => createWorldSession(sessionOptionsFor(levelAt(0), !prefersReducedMotion())));
   const [snapshot, setSnapshot] = useState(() => session.snapshot());
+  const [index, setIndex] = useState(0);
+  const [visited, setVisited] = useState<ReadonlySet<string>>(() => new Set([levelAt(0).id]));
+  const [explored, setExplored] = useState<Readonly<Record<string, Explored>>>({});
   const [trend, setTrend] = useState<Trend>("steady");
   const [lastAction, setLastAction] = useState<{ from: number; to: number } | null>(null);
   const [cue, setCue] = useState(0);
   const [notice, setNotice] = useState<string | null>(null);
-  const [explored, setExplored] = useState(() => ({ low: snapshot.params.alignmentWeight, high: snapshot.params.alignmentWeight }));
   const [depth, setDepthState] = useState<Depth>(readDepth);
   const [journal, setJournal] = useState(false);
   const [highlight, setHighlight] = useState<string | null>(null);
@@ -75,21 +163,38 @@ export function HookWorld() {
   const slider = useRef<HTMLInputElement>(null);
   const opener = useRef<HTMLElement | null>(null);
 
-  const refresh = useCallback(() => {
-    const next = session.snapshot();
-    samples.current = [...samples.current, next.observed.directionalAgreement].slice(-TREND_SAMPLES);
-    setSnapshot(next);
-    setTrend(trendOf(samples.current));
-  }, [session]);
+  const level = levelAt(index);
+  const metric = level.observable.metricId as keyof FlockObservables;
+  const [min, max] = level.action.range;
+  const visible = level.visible[depth];
+  /** The level being played, set on entering one, for readouts that arrive while it loads. */
+  const entered = useRef(levelAt(0));
 
-  const value = snapshot.params.alignmentWeight;
-  const agreement = snapshot.observed.directionalAgreement;
-  const span = MAX - MIN;
-  // The next level opens once the control has been moved through its range: touched, not solved.
-  const unlocked = explored.low <= MIN + span / 4 && explored.high >= MAX - span / 4;
-  const [did, saw] = guideLines({ lastAction, alignment: value, agreement, trend, playing: snapshot.playing, depth });
+  const refresh = () => {
+    const now = entered.current;
+    const next = session.snapshot();
+    samples.current = [...samples.current, next.observed[now.observable.metricId as keyof FlockObservables]].slice(-TREND_SAMPLES);
+    setSnapshot(next);
+    setTrend(trendOf(samples.current, now.guide.trend.within));
+  };
+
+  const value = snapshot.params[level.action.variable as keyof SessionSnapshot["params"]];
+  const open = openLevels(explored);
+  const [did, saw] = guideLines(level.guide, { min, step: level.action.step }, level.observable, {
+    lastAction,
+    value,
+    observed: snapshot.observed[metric],
+    trend,
+    playing: snapshot.playing,
+    depth,
+  });
   const lines: readonly GuideLine[] = [notice ? { text: notice, origin: "teaching-choice" } : did, saw];
-  const levels: readonly MapLevel[] = LEVELS.map((level, index) => ({ ...level, state: index === 0 ? "now" : index === 1 && unlocked ? "open" : "locked" }));
+  const levels: readonly MapLevel[] = LEVELS.map((entry, at) => ({
+    id: entry.id,
+    title: entry.title,
+    bonus: entry.bonus,
+    state: at === index ? "now" : open[at] ? "open" : "locked",
+  }));
 
   const setDepth = (next: Depth) => {
     setDepthState(next);
@@ -100,13 +205,32 @@ export function HookWorld() {
     }
   };
 
-  const setAlignment = (next: number) => {
-    setLastAction({ from: value, to: next });
-    setExplored((range) => ({ low: Math.min(range.low, next), high: Math.max(range.high, next) }));
+  const enter = (next: number) => {
+    const target = levelAt(next);
+    entered.current = target;
+    session.load(sessionOptionsFor(target, session.snapshot().playing));
+    samples.current = [];
+    setIndex(next);
+    setVisited((seen) => new Set(seen).add(target.id));
+    setLastAction(null);
     setNotice(null);
+    setWhatIf(false);
+    setHighlight((shown) => (shown === null ? null : target.id));
+    setSnapshot(session.snapshot());
+    setTrend("steady");
+  };
+
+  const setControl = (next: number) => {
+    const range = explored[level.id] ?? { low: level.action.defaultValue, high: level.action.defaultValue };
+    const widened = { low: Math.min(range.low, next), high: Math.max(range.high, next) };
+    const following = LEVELS[index + 1];
+    const opensNext = following !== undefined && !exploredThrough(level, range) && exploredThrough(level, widened) && !open[index + 1];
+    setExplored((all) => ({ ...all, [level.id]: widened }));
+    setNotice(opensNext ? `${following.bonus ? "A bonus level" : `Level ${following.order}`} is open on the map: ${following.title}.` : null);
+    setLastAction({ from: value, to: next });
     setCue((count) => count + 1);
     samples.current = [];
-    session.setAction(HOOK.control.actionId, next);
+    session.setAction(level.action.actionId, next);
     refresh();
   };
 
@@ -118,7 +242,7 @@ export function HookWorld() {
 
   const openJournal = (from: HTMLElement, atPassage: boolean) => {
     opener.current = from;
-    setHighlight(atPassage ? HOOK.id : null);
+    setHighlight(atPassage ? level.id : null);
     setJournal(true);
   };
 
@@ -128,15 +252,21 @@ export function HookWorld() {
     opener.current?.focus({ preventScroll: true });
   };
 
-  // Tapping a passage focuses its control (R05); on a narrow screen the journal steps aside first.
-  const tryIt = () => {
+  // Tapping a passage focuses its control (R05), entering its level first; on a narrow screen the journal steps aside.
+  const tryIt = (pageId: string) => {
+    const at = LEVELS.findIndex((entry) => entry.id === pageId);
+    if (at >= 0 && at !== index) enter(at);
     if (narrow()) setJournal(false);
-    setHighlight(HOOK.id);
+    setHighlight(pageId);
     requestAnimationFrame(() => slider.current?.focus({ preventScroll: true }));
   };
 
+  const fork = level.fork;
+  const overrides = fork.overrides.map((override) => `${nameOf(level, override.variable)} at ${override.to} (here ${override.from})`).join(" and ");
+  const advanced = level.explanation.advanced;
+
   return (
-    <main ref={container} className="game" data-step={snapshot.step} data-depth={depth} data-journal={journal ? "open" : "closed"}>
+    <main ref={container} className="game" data-level={level.id} data-step={snapshot.step} data-depth={depth} data-journal={journal ? "open" : "closed"}>
       <WorldStage
         driver={session}
         label={STAGE_LABEL}
@@ -154,7 +284,7 @@ export function HookWorld() {
           <div className="card world-card" data-hud data-hud-frame>
             <BirdMark />
             <div>
-              <h1>Murmuration Valley</h1>
+              <h1>{WORLD.title}</h1>
               <p>A PaperPlay world about flocking</p>
             </div>
           </div>
@@ -162,10 +292,8 @@ export function HookWorld() {
           <LevelMap
             levels={levels}
             onEnter={(id) => {
-              if (id === HOOK.id) return;
-              const level = LEVELS.find((entry) => entry.id === id);
-              setNotice(`${level?.title ?? "That level"} comes with the authored world. Only the hook is built so far.`);
-              setCue((count) => count + 1);
+              const at = LEVELS.findIndex((entry) => entry.id === id);
+              if (at >= 0 && at !== index && open[at]) enter(at);
             }}
           />
 
@@ -192,9 +320,13 @@ export function HookWorld() {
 
           {whatIf ? (
             <section id="what-if" className="card what-if" aria-labelledby="what-if-title" data-hud>
-              <h2 id="what-if-title">{HOOK.whatIf.question}</h2>
+              <h2 id="what-if-title">{fork.prompt}</h2>
               <p>
-                <OriginTag origin="teaching-choice" quiet /> {HOOK.whatIf.answer}
+                <OriginTag origin={fork.origin} placeholder={placeholderOnly(fork.anchors)} quiet /> {fork.effect}
+              </p>
+              <p className="what-if-runs">
+                <OriginTag origin="teaching-choice" quiet /> The other world runs with {overrides}.
+                {fork.restarts ? <span data-restarts=""> Both worlds restart from the same seed.</span> : null}
               </p>
               <button type="button" className="btn btn-light" onClick={() => setWhatIf(false)}>
                 Back to one world
@@ -203,45 +335,41 @@ export function HookWorld() {
           ) : null}
 
           <LevelCard
-            kicker={`Level 1 of ${LEVELS.length}`}
-            title={HOOK.title}
-            goal={HOOK.goal}
+            key={level.id}
+            kicker={level.bonus ? `Bonus level, ${level.order} of ${LEVELS.length}` : `Level ${level.order} of ${LEVELS.length}`}
+            title={level.title}
+            goal={level.goal}
             control={{
-              label: HOOK.control.label,
-              min: MIN,
-              max: MAX,
-              step: HOOK.control.step,
+              label: level.action.label,
+              min,
+              max,
+              step: level.action.step,
               value,
-              unit: HOOK.control.unit,
-              ends: HOOK.control.ends,
-              origin: "paper-derived",
-              placeholder: PASSAGE.placeholder,
-              anchored: true,
+              unit: level.action.unit,
+              ends: level.action.ends,
+              origin: level.action.origin,
+              placeholder: placeholderOnly(level.action.anchors),
+              anchored: level.action.anchors.length > 0,
             }}
             depth={depth}
+            visible={visible}
             onDepth={setDepth}
-            onChange={setAlignment}
+            onChange={setControl}
             onControlFocus={() => {
-              if (journal) setHighlight(HOOK.id);
+              if (journal) setHighlight(level.id);
             }}
             onFromPaper={(from) => openJournal(from, true)}
-            readout={
-              <HeadingCompass
-                angles={snapshot.headings.angles}
-                mean={snapshot.headings.mean}
-                agreement={agreement}
-                yaw={yaw}
-                showNumber={depth !== "beginner"}
-              />
-            }
-            advanced={
-              <p>
-                <OriginTag origin="teaching-choice" quiet /> {HOOK.explain.advanced}
-              </p>
+            readout={readoutFor(level, snapshot, visible.has("readout-number"), yaw)}
+            equation={
+              advanced.equation ? (
+                <p>
+                  <OriginTag origin={advanced.origin} placeholder={placeholderOnly(advanced.anchors)} quiet /> {advanced.equation}
+                </p>
+              ) : null
             }
             whatIfOpen={whatIf}
             whatIfId="what-if"
-            onWhatIf={() => setWhatIf((open) => !open)}
+            onWhatIf={() => setWhatIf((shown) => !shown)}
             sliderRef={slider}
           />
         </div>
@@ -254,26 +382,52 @@ export function HookWorld() {
         onDepth={setDepth}
         highlighted={highlight}
         onTryIt={tryIt}
-        pages={[
-          {
-            id: HOOK.id,
-            heading: `Level 1 · ${HOOK.title}`,
-            passage: PASSAGE,
-            control: HOOK.control.label,
+        pages={LEVELS.filter((entry) => visited.has(entry.id)).map((entry) => {
+          const variant = entry.explanation[depth];
+          const shown = entry.visible[depth];
+          const nextOpen = open[entry.order] ?? false;
+          return {
+            id: entry.id,
+            heading: `Level ${entry.order} · ${entry.title}${entry.bonus ? " · a bonus page" : ""}`,
+            passage: passageOf(entry),
+            control: entry.action.label,
             detail: (
               <>
                 <p>
-                  <OriginTag origin="teaching-choice" quiet /> Called “{HOOK.control.label}” here. It runs from {MIN}, {HOOK.control.ends[0].toLowerCase()}, to{" "}
-                  {MAX}, {HOOK.control.ends[1].toLowerCase()}, {HOOK.control.unit}, and starts at {START}.
+                  <OriginTag origin="teaching-choice" quiet /> Called “{entry.action.label}” here. It runs from {entry.action.range[0]},{" "}
+                  {entry.action.ends[0].toLowerCase()}, to {entry.action.range[1]}, {entry.action.ends[1].toLowerCase()}, {entry.action.unit}, and starts at{" "}
+                  {entry.action.defaultValue}.
                 </p>
                 <p>
-                  <OriginTag origin="teaching-choice" quiet /> {HOOK.explain[depth]}
+                  <OriginTag origin={variant.origin} placeholder={placeholderOnly(variant.anchors)} quiet /> {variant.text}
                 </p>
+                {shown.has("analogy") && variant.analogy ? (
+                  <p data-element="analogy">
+                    <OriginTag origin="teaching-choice" quiet /> {variant.analogy}
+                  </p>
+                ) : null}
+                {entry.furtherReading.length > 0 ? (
+                  <div>
+                    <p>
+                      <OriginTag origin="teaching-choice" quiet /> Further reading, beyond the paper:
+                    </p>
+                    <ul>
+                      {entry.furtherReading.map((citation) => (
+                        <li key={citation}>{citation}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+                {nextOpen ? (
+                  <p>
+                    <OriginTag origin="teaching-choice" quiet /> Going on: {entry.carryForward}
+                  </p>
+                ) : null}
               </>
             ),
-          },
-        ]}
-        stillToFind={LEVELS.slice(1).map((level, index) => ({ number: index + 2, title: level.title }))}
+          };
+        })}
+        stillToFind={LEVELS.filter((entry) => !visited.has(entry.id)).map((entry) => ({ number: entry.order, title: entry.bonus ? `Bonus: ${entry.title}` : entry.title }))}
       />
     </main>
   );

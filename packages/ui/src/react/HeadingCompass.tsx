@@ -27,10 +27,10 @@ export function HeadingCompass({ angles, mean, agreement, yaw, showNumber, size 
   const value = agreement.toFixed(2);
   const head = arrow && Math.hypot(arrow.x, arrow.y) > 0.12 ? arrow : null;
   return (
-    <div className={showNumber ? "compass with-number" : "compass"}>
-      <div className="compass-dial" tabIndex={0} role="img" aria-label={`Heading compass: ${ticks.length} birds' headings; directional agreement ${value} of 1`}>
+    <div className={showNumber ? "dial compass with-number" : "dial compass"}>
+      <div className="dial-body compass-dial" tabIndex={0} role="img" aria-label={`Heading compass: ${ticks.length} birds' headings; directional agreement ${value} of 1`}>
         <svg width={size} height={size} viewBox="-1.25 -1.25 2.5 2.5" aria-hidden="true">
-          <circle r="1.12" className="compass-face" />
+          <circle r="1.12" className="dial-face" />
           {ticks.map((tick, index) => (
             <line key={index} className="compass-tick" x1={tick.x * TICK_INNER} y1={tick.y * TICK_INNER} x2={tick.x * 1.08} y2={tick.y * 1.08} />
           ))}
@@ -49,7 +49,7 @@ export function HeadingCompass({ angles, mean, agreement, yaw, showNumber, size 
           ) : null}
           <circle r="0.09" className="compass-hub" />
         </svg>
-        <output className="compass-number" data-observable="directionalAgreement" data-value={String(agreement)}>
+        <output className="dial-number compass-number" data-element="readout-number" data-observable="directionalAgreement" data-value={String(agreement)}>
           {value}
         </output>
       </div>

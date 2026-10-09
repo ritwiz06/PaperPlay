@@ -201,7 +201,9 @@
   opacity: 1;
   cursor: default;
 }
-.level-map .now button {
+/* The current level stays ink on hover too: the page's pale button hover would wash out its name. */
+.level-map .now button,
+.level-map .now button:hover:not(:disabled) {
   padding-right: 14px;
   background: var(--ink);
   color: var(--cream);
@@ -222,6 +224,12 @@
 .level-map .open .dot {
   border-color: var(--ink);
   background: var(--aqua);
+}
+/* A bonus level, beyond the paper: lime instead of aqua once it is open. */
+.level-map .bonus.open .dot,
+.level-map .bonus.now .dot {
+  background: var(--lime);
+  color: var(--ink);
 }
 .level-name {
   white-space: nowrap;
@@ -439,7 +447,7 @@
   color: var(--sub);
   font-size: 0.8125rem;
 }
-.level-card:not([data-depth="beginner"]) .slider-ends {
+.level-card[data-control-value="shown"] .slider-ends {
   margin-right: calc(4.5ch + 36px);
 }
 .level-readout {
@@ -459,28 +467,54 @@
   line-height: 1.4;
 }
 
-/* The heading compass: a ring of ticks and an arrow; its number on hover and focus, or always. */
-.compass {
+/*
+ * Readout dials: the heading compass, the spacing gauge and the groups counter. A small drawing
+ * on a ring, with its number beside it, or on hover and focus only where the depth hides it.
+ */
+.dial {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.compass-dial {
+.dial-body {
   position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
   border-radius: 999px;
 }
-.compass-dial:focus-visible {
+.dial-body:focus-visible {
   outline: 3px solid var(--aqua);
   outline-offset: 2px;
 }
-.compass-face {
+.dial-face {
   fill: var(--cream);
   stroke: var(--ink);
   stroke-width: 0.08;
 }
+.dial-number {
+  min-width: 3.5ch;
+  font-weight: 600;
+  font-size: 1.0625rem;
+}
+.dial:not(.with-number) .dial-number {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  padding: 2px 8px;
+  border: 1.5px solid var(--ink);
+  border-radius: 8px;
+  background: var(--cream);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+.dial:not(.with-number) .dial-body:hover .dial-number,
+.dial:not(.with-number) .dial-body:focus-visible .dial-number {
+  opacity: 1;
+}
+
+/* The heading compass: a tick per bird's heading, and an arrow as long as the agreement. */
 .compass-tick {
   stroke: var(--ink);
   stroke-width: 0.06;
@@ -496,26 +530,30 @@
 .compass-hub {
   fill: var(--ink);
 }
-.compass-number {
-  min-width: 3.5ch;
-  font-weight: 600;
-  font-size: 1.0625rem;
+
+/* The spacing gauge: two birds as far apart, on the dial, as the flock's mean nearest neighbour. */
+.gauge-span {
+  stroke: var(--sub);
+  stroke-width: 0.06;
+  stroke-dasharray: 0.12 0.1;
 }
-.compass:not(.with-number) .compass-number {
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 50%;
-  padding: 2px 8px;
-  border: 1.5px solid var(--ink);
-  border-radius: 8px;
-  background: var(--cream);
-  opacity: 0;
-  pointer-events: none;
-  transform: translateX(-50%);
+.gauge-bird {
+  fill: var(--aqua);
+  stroke: var(--ink);
+  stroke-width: 0.07;
 }
-.compass:not(.with-number) .compass-dial:hover .compass-number,
-.compass:not(.with-number) .compass-dial:focus-visible .compass-number {
-  opacity: 1;
+.gauge-scale {
+  stroke: var(--line);
+  stroke-width: 0.05;
+}
+
+/* The groups counter: one small cluster per group, up to six; scattered strays when there is none. */
+.groups-bird {
+  fill: var(--ink);
+}
+.groups-stray {
+  fill: var(--sub);
+  opacity: 0.6;
 }
 
 /* Depth: a small segmented toggle, in the level card and in the journal. */
@@ -648,6 +686,10 @@
   color: var(--sub);
   font-size: 0.9375rem;
 }
+.page-detail ul {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
 .page-detail p {
   margin: 0;
 }
@@ -775,7 +817,7 @@
     column-gap: 10px;
     padding: 6px 12px 8px;
   }
-  .level-readout .compass {
+  .level-readout .dial {
     flex-direction: column;
     gap: 2px;
   }
@@ -838,7 +880,7 @@
     font-size: 0.6875rem;
     white-space: nowrap;
   }
-  .compass-number {
+  .dial-number {
     font-size: 0.9375rem;
   }
   .journal {

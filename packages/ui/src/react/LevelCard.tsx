@@ -1,4 +1,4 @@
-import type { Origin } from "@paperplay/contracts";
+import type { DepthElement, Origin } from "@paperplay/contracts";
 import { useId, useState, type ReactNode, type Ref } from "react";
 import { BookIcon, ChevronIcon, DepthToggle, OriginTag, type Depth } from "./hud-parts.tsx";
 
@@ -29,15 +29,17 @@ export interface LevelCardProps {
   readonly goal: string;
   readonly control: LevelControl;
   readonly depth: Depth;
+  /** The elements the level's depth variant shows, by id; every other element is hidden. */
+  readonly visible: ReadonlySet<DepthElement>;
   readonly onDepth: (depth: Depth) => void;
   readonly onChange: (value: number) => void;
   readonly onControlFocus?: () => void;
   /** Opens the journal at the control's passage; `from` gets focus back when it closes. */
   readonly onFromPaper: (from: HTMLElement) => void;
-  /** The level's observable: the heading compass in the flocking world. */
+  /** The level's observable, as its readout shows it. */
   readonly readout: ReactNode;
-  /** Shown at Advanced only: the rule as its equation. */
-  readonly advanced?: ReactNode;
+  /** The rule as its equation, shown where the depth variant shows "equation". */
+  readonly equation?: ReactNode;
   readonly whatIfOpen: boolean;
   readonly whatIfId: string;
   readonly onWhatIf: () => void;
@@ -52,11 +54,11 @@ const decimalsOf = (step: number): number => Math.max(0, -Math.floor(Math.log10(
  * one compact row (title, slider, readout, What if) and a chevron opens the rest.
  */
 export function LevelCard(props: LevelCardProps) {
-  const { kicker, title, goal, control, depth, onDepth, onChange, onControlFocus, onFromPaper, readout, advanced, whatIfOpen, whatIfId, onWhatIf, sliderRef } = props;
+  const { kicker, title, goal, control, depth, visible, onDepth, onChange, onControlFocus, onFromPaper, readout, equation, whatIfOpen, whatIfId, onWhatIf, sliderRef } = props;
   const id = useId();
   const [expanded, setExpanded] = useState(false);
   const sliderId = `${id}-control`;
-  const numbers = depth !== "beginner";
+  const showValue = visible.has("control-value");
   const shown = control.value.toFixed(decimalsOf(control.step));
   const fromPaperLabel = control.anchored ? `From the paper: ${control.label}` : `${control.label} is not from the paper`;
   const fromPaper = (compact: boolean) =>
@@ -75,7 +77,15 @@ export function LevelCard(props: LevelCardProps) {
     );
 
   return (
-    <section className="card level-card" aria-labelledby={`${id}-title`} data-expanded={expanded ? "true" : "false"} data-depth={depth} data-hud data-hud-frame>
+    <section
+      className="card level-card"
+      aria-labelledby={`${id}-title`}
+      data-expanded={expanded ? "true" : "false"}
+      data-depth={depth}
+      data-control-value={showValue ? "shown" : "hidden"}
+      data-hud
+      data-hud-frame
+    >
       <p className="level-kicker">{kicker}</p>
       <div className="level-depth">
         <DepthToggle name={`${id}-depth`} value={depth} onChange={onDepth} />
@@ -120,16 +130,24 @@ export function LevelCard(props: LevelCardProps) {
             onChange={(event) => onChange(Number(event.currentTarget.value))}
             onFocus={onControlFocus}
           />
-          {numbers ? (
-            <output htmlFor={sliderId} className="value-pill">
+          {showValue ? (
+            <output htmlFor={sliderId} className="value-pill" data-element="control-value">
               {shown}
             </output>
           ) : null}
         </div>
-        <p className="slider-ends" aria-hidden="true">
-          <span>{numbers ? control.min : control.ends[0]}</span>
-          <span>{numbers ? control.max : control.ends[1]}</span>
-        </p>
+        {visible.has("range-words") ? (
+          <p className="slider-ends" aria-hidden="true" data-element="range-words">
+            <span>{control.ends[0]}</span>
+            <span>{control.ends[1]}</span>
+          </p>
+        ) : null}
+        {visible.has("range-numbers") ? (
+          <p className="slider-ends" aria-hidden="true" data-element="range-numbers">
+            <span>{control.min}</span>
+            <span>{control.max}</span>
+          </p>
+        ) : null}
       </div>
       <div className="level-readout">{readout}</div>
       <div className="level-whatif">
@@ -137,7 +155,11 @@ export function LevelCard(props: LevelCardProps) {
           What if
         </button>
       </div>
-      {depth === "advanced" && advanced ? <div className="level-advanced">{advanced}</div> : null}
+      {visible.has("equation") && equation ? (
+        <div className="level-advanced" data-element="equation">
+          {equation}
+        </div>
+      ) : null}
     </section>
   );
 }

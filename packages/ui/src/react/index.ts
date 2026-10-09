@@ -4,6 +4,7 @@
  * read simulation types, but never import simulation code.
  */
 export { Guide, GUIDE_SHOW_MS, type GuideLine, type GuideProps } from "./Guide.tsx";
+export { GroupsCounter, type GroupsCounterProps } from "./GroupsCounter.tsx";
 export { HeadingCompass, type HeadingCompassProps } from "./HeadingCompass.tsx";
 export {
   BirdMark,
@@ -25,5 +26,6 @@ export { LevelMap, type LevelMapProps, type MapLevel } from "./LevelMap.tsx";
 export { ORIGIN_LABELS, ORIGIN_MEANINGS, ORIGINS, OriginChip, OriginLegend } from "./origin.tsx";
 export { PaperJournal, type JournalPage, type JournalPassage, type PaperJournalProps } from "./PaperJournal.tsx";
 export { Readout, type ReadoutProps } from "./Readout.tsx";
+export { SpacingGauge, type SpacingGaugeProps } from "./SpacingGauge.tsx";
 export { HUD_MARGIN, useFreeRect } from "./useFreeRect.ts";
 export { WorldStage, type StageDriver, type StageTool, type WorldStageProps } from "./WorldStage.tsx";
