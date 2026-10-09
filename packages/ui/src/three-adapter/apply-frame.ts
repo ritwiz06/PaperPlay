@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import type { FrameDescription, MarkerPose, RingPose, StagePalette } from "../stage-core/index.ts";
-import { paintValley, valleyGeometry } from "./geometry.ts";
-import { BIRD_CAPACITY, disposeGeometries, type StageScene } from "./scene.ts";
+import type { FrameDescription, MarkerPose, RingPose, StagePalette, TrailPose } from "../stage-core/index.ts";
+import { lakeOf, paintSky, paintValley, scatter, valleyGeometry, waterGeometry, WING_ROOT } from "./geometry.ts";
+import { BIRD_CAPACITY, disposeGeometries, sceneryFor, SKY_RADIUS, TRAIL_POINTS, TRAIL_WIDTH, type StageScene } from "./scene.ts";
 
 const Y = new THREE.Vector3(0, 1, 0);
 const X = new THREE.Vector3(1, 0, 0);
@@ -13,55 +13,60 @@ const scratch = {
   size: new THREE.Vector3(),
   color: new THREE.Color(),
   sky: new THREE.Color(),
+  wing: new THREE.Matrix4(),
+  hinge: new THREE.Matrix4(),
+  flap: new THREE.Matrix4(),
 };
 const beaconPole = new THREE.CylinderGeometry(0.07, 0.07, 2.6, 6).translate(0, 1.3, 0);
 const beaconHead = new THREE.OctahedronGeometry(0.3, 0).translate(0, 2.85, 0);
 const beaconRing = new THREE.RingGeometry(0.95, 1.2, 24).rotateX(-Math.PI / 2).translate(0, 0.05, 0);
 const rock = new THREE.IcosahedronGeometry(1.1, 0).scale(1.2, 0.75, 1).translate(0, 0.45, 0);
 
-/** Rebuilds the valley and the outlined flight field when the field's size changes. */
+/**
+ * Rebuilds the valley, the lake, the trees and the rocks when the field's size changes. The
+ * field itself is the meadow painted on the ground, with a soft band at its edge, so no
+ * outline or posts are drawn; birds still fade out before the edge they wrap across.
+ */
 function showField(stage: StageScene, field: FrameDescription["field"]): void {
   const key = `${field.width}x${field.depth}@${field.altitude}`;
   if (stage.shown.field === key) return;
-  for (const old of [stage.shown.ground, stage.shown.outline]) {
+  for (const old of [stage.shown.ground, stage.shown.scenery]) {
     if (!old) continue;
     stage.scene.remove(old);
     disposeGeometries(old);
   }
   const ground = new THREE.Mesh(valleyGeometry(field.width, field.depth), stage.groundMaterial);
   ground.receiveShadow = true;
-
-  // The torus the birds fly on, drawn as a bounded field: an outline on the ground and four posts.
-  const [w, d] = [field.width / 2, field.depth / 2];
-  const corners = [new THREE.Vector3(-w, 0.08, -d), new THREE.Vector3(w, 0.08, -d), new THREE.Vector3(w, 0.08, d), new THREE.Vector3(-w, 0.08, d)];
-  const outline = new THREE.Group();
-  outline.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(corners), stage.fieldMaterial));
-  for (const corner of corners) {
-    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, field.altitude + 1, 6), stage.postMaterial);
-    post.position.set(corner.x, (field.altitude + 1) / 2, corner.z);
-    post.castShadow = true;
-    outline.add(post);
-  }
-  stage.scene.add(ground, outline);
+  const lake = lakeOf(field.width / 2, field.depth / 2);
+  const scenery = sceneryFor(stage, {
+    lake: { ...lake, geometry: waterGeometry(lake.radius) },
+    trees: scatter(field.width, field.depth, "tree"),
+    rocks: scatter(field.width, field.depth, "rock"),
+  });
+  stage.scene.add(ground, scenery);
   stage.shown.ground = ground;
-  stage.shown.outline = outline;
+  stage.shown.scenery = scenery;
   stage.shown.field = key;
   stage.shown.palette = null;
 }
 
-function paint(stage: StageScene, palette: StagePalette): void {
+function paint(stage: StageScene, palette: StagePalette, field: FrameDescription["field"]): void {
   if (stage.shown.palette === palette.name) return;
   (stage.scene.background as THREE.Color).set(palette.sky);
   (stage.scene.fog as THREE.Fog).color.set(palette.sky);
   stage.hemisphere.color.set(palette.sun);
   stage.hemisphere.groundColor.set(palette.shade);
   stage.sun.color.set(palette.sun);
-  stage.fieldMaterial.color.set(palette.field);
-  stage.postMaterial.color.set(palette.field);
   stage.beaconMaterial.color.set(palette.beacon);
   stage.beaconMaterial.emissive.set(palette.beacon);
   stage.obstacleMaterial.color.set(palette.obstacle);
-  if (stage.shown.ground) paintValley(stage.shown.ground.geometry, palette);
+  stage.waterMaterial.color.set(palette.water);
+  stage.crownMaterial.color.set(palette.foliage);
+  stage.trunkMaterial.color.set(palette.trunk);
+  stage.rockMaterial.color.set(palette.rock);
+  stage.sunDisc.material.color.set(palette.sunDisc);
+  paintSky(stage.sky.geometry, palette, SKY_RADIUS);
+  if (stage.shown.ground) paintValley(stage.shown.ground.geometry, palette, field);
   stage.shown.palette = palette.name;
 }
 
@@ -96,6 +101,46 @@ function showMarkers(stage: StageScene, beacons: readonly MarkerPose[], obstacle
     }
     marker.position.set(...pose.position);
   }
+}
+
+/** A trail's opacity at its newest end; it fades to nothing at its oldest. */
+const TRAIL_OPACITY = 0.85;
+
+function showTrails(stage: StageScene, trails: readonly TrailPose[]): void {
+  const position = stage.trails.geometry.getAttribute("position") as THREE.BufferAttribute;
+  const color = stage.trails.geometry.getAttribute("color") as THREE.BufferAttribute;
+  let vertex = 0;
+  const put = (x: number, y: number, z: number, alpha: number) => {
+    position.setXYZ(vertex, x, y, z);
+    color.setXYZW(vertex, scratch.color.r, scratch.color.g, scratch.color.b, alpha);
+    vertex++;
+  };
+  for (const trail of trails.slice(0, BIRD_CAPACITY)) {
+    scratch.color.set(trail.color);
+    const points = trail.points.slice(-TRAIL_POINTS);
+    const last = points.length - 1;
+    for (let k = 0; k < last; k++) {
+      const [a, b] = [points[k], points[k + 1]];
+      if (!a || !b) continue;
+      // Across the segment, on the ground plane, so the ribbon reads from above.
+      const [dx, dz] = [b[0] - a[0], b[2] - a[2]];
+      const length = Math.hypot(dx, dz) || 1;
+      const [px, pz] = [-dz / length, dx / length];
+      // Width and opacity grow quickly from the oldest point, so the part behind the bird reads.
+      const [ta, tb] = [Math.sqrt(k / last), Math.sqrt((k + 1) / last)];
+      const [wa, wb] = [(TRAIL_WIDTH / 2) * ta, (TRAIL_WIDTH / 2) * tb];
+      const [fa, fb] = [ta * TRAIL_OPACITY * trail.fade, tb * TRAIL_OPACITY * trail.fade];
+      put(a[0] + px * wa, a[1], a[2] + pz * wa, fa);
+      put(a[0] - px * wa, a[1], a[2] - pz * wa, fa);
+      put(b[0] + px * wb, b[1], b[2] + pz * wb, fb);
+      put(b[0] + px * wb, b[1], b[2] + pz * wb, fb);
+      put(a[0] - px * wa, a[1], a[2] - pz * wa, fa);
+      put(b[0] - px * wb, b[1], b[2] - pz * wb, fb);
+    }
+  }
+  stage.trails.geometry.setDrawRange(0, vertex);
+  position.needsUpdate = true;
+  color.needsUpdate = true;
 }
 
 /** Fog starts this far beyond the field's centre and is complete this far beyond it, wherever the camera stands. */
@@ -153,9 +198,10 @@ export function applyFrame(stage: StageScene, frame: FrameDescription): void {
   fog.far = centre + FOG_BAND[1];
 
   showField(stage, frame.field);
-  paint(stage, frame.palette);
+  paint(stage, frame.palette, frame.field);
 
   const count = Math.min(frame.birds.length, BIRD_CAPACITY);
+  const [left, right] = stage.wings;
   scratch.sky.set(frame.palette.sky);
   for (let i = 0; i < count; i++) {
     const bird = frame.birds[i];
@@ -163,12 +209,23 @@ export function applyFrame(stage: StageScene, frame: FrameDescription): void {
     scratch.rotation.setFromAxisAngle(Y, bird.yaw).multiply(scratch.bank.setFromAxisAngle(X, bird.bank));
     scratch.size.setScalar(bird.fade * bird.size);
     scratch.matrix.compose(scratch.position.set(...bird.position), scratch.rotation, scratch.size);
+    scratch.color.set(bird.color).lerp(scratch.sky, 1 - bird.fade);
     stage.birds.setMatrixAt(i, scratch.matrix);
-    stage.birds.setColorAt(i, scratch.color.set(bird.color).lerp(scratch.sky, 1 - bird.fade));
+    stage.birds.setColorAt(i, scratch.color);
+    // Each wing hinges at the body's side and swings about the bird's own nose: up is positive.
+    for (const [wing, side] of [[left, 1], [right, -1]] as const) {
+      scratch.hinge.makeTranslation(0, 0.03, WING_ROOT * side);
+      scratch.flap.makeRotationX(-bird.flap * side);
+      wing.setMatrixAt(i, scratch.wing.multiplyMatrices(scratch.matrix, scratch.hinge).multiply(scratch.flap));
+      wing.setColorAt(i, scratch.color);
+    }
   }
-  stage.birds.count = count;
-  stage.birds.instanceMatrix.needsUpdate = true;
-  if (stage.birds.instanceColor) stage.birds.instanceColor.needsUpdate = true;
+  for (const part of [stage.birds, left, right]) {
+    part.count = count;
+    part.instanceMatrix.needsUpdate = true;
+    if (part.instanceColor) part.instanceColor.needsUpdate = true;
+  }
+  showTrails(stage, frame.trails);
 
   showMarkers(stage, frame.beacons, frame.obstacles);
   showRings(stage, frame.rings);

@@ -5,4 +5,4 @@
 export { applyFrame } from "./apply-frame.ts";
 export { paintValley, valleyGeometry, valleyHeight } from "./geometry.ts";
 export { mountStage, webgl2Available, type FallbackStage, type MountedStage, type StageOptions, type WebGLStage } from "./mount.ts";
-export { BIRD_CAPACITY, createStageScene, type StageScene } from "./scene.ts";
+export { BIRD_CAPACITY, createStageScene, TRAIL_WIDTH, type StageScene } from "./scene.ts";

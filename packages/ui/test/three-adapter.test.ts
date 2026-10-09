@@ -3,7 +3,7 @@ import type { Agent, FlockState } from "@paperplay/primitives";
 import * as THREE from "three";
 import { describe, expect, it } from "vitest";
 import { DEFAULT_CAMERA, describeFrame, dusk, orbit, valleyDay, type FrameDescription, type StagePalette } from "../src/stage-core/index.ts";
-import { applyFrame, BIRD_CAPACITY, createStageScene } from "../src/three-adapter/index.ts";
+import { applyFrame, BIRD_CAPACITY, createStageScene, TRAIL_WIDTH } from "../src/three-adapter/index.ts";
 
 const agents: Agent[] = [
   { x: 8, y: 24, vx: 0, vy: 2 },
@@ -181,7 +181,7 @@ describe("Three.js stage adapter", () => {
     expectClose(stage.camera.projectionMatrixInverse.clone().multiply(stage.camera.projectionMatrix).elements, new THREE.Matrix4().elements, 9);
   });
 
-  it("repaints the sky, fog, field and markers when the palette changes", () => {
+  it("repaints the sky, fog, valley and markers when the palette changes", () => {
     const stage = createStageScene();
     applyFrame(stage, frameOf(world({ beacons: [{ id: "beacon-1", x: 4, y: 28 }] })));
     expect(hex(stage.scene.background as THREE.Color)).toBe(valleyDay.sky);
@@ -189,8 +189,83 @@ describe("Three.js stage adapter", () => {
     applyFrame(stage, frameOf(world({ beacons: [{ id: "beacon-1", x: 4, y: 28 }] }), dusk));
     expect(hex(stage.scene.background as THREE.Color)).toBe(dusk.sky);
     expect(hex((stage.scene.fog as THREE.Fog).color)).toBe(dusk.sky);
-    expect(hex(stage.fieldMaterial.color)).toBe(dusk.field);
+    expect(hex(stage.waterMaterial.color)).toBe(dusk.water);
+    expect(hex(stage.crownMaterial.color)).toBe(dusk.foliage);
+    expect(hex(stage.sunDisc.material.color)).toBe(dusk.sunDisc);
     expect(hex(stage.beaconMaterial.color)).toBe(dusk.beacon);
+  });
+
+  it("hinges each wing at its bird's side and raises it by the flap angle, both wings alike", () => {
+    const stage = createStageScene();
+    const frame = frameOf(world());
+    applyFrame(stage, { ...frame, birds: frame.birds.map((bird) => ({ ...bird, yaw: 0, bank: 0, flap: 0.5 })) });
+    const [body, wing, tip] = [new THREE.Matrix4(), new THREE.Matrix4(), new THREE.Vector3()];
+    stage.birds.getMatrixAt(1, body);
+    const centre = new THREE.Vector3().setFromMatrixPosition(body);
+    for (const [index, side] of [[0, 1], [1, -1]] as const) {
+      stage.wings[index].getMatrixAt(1, wing);
+      tip.set(-0.3, 0.04, 1.02 * side).applyMatrix4(wing);
+      expect(tip.y - centre.y, `wing ${index}`).toBeCloseTo(0.03 + Math.sin(0.5) * 1.02 + Math.cos(0.5) * 0.04, 4);
+      expect(Math.sign(tip.z - centre.z)).toBe(side);
+    }
+    expect(stage.wings.map((part) => part.count)).toEqual([3, 3]);
+  });
+
+  it("draws each trail as a flat ribbon that tapers and fades from nothing at the oldest point to its full width and opacity at the bird", () => {
+    const stage = createStageScene();
+    const frame = frameOf(world());
+    applyFrame(stage, { ...frame, trails: [{ points: [[0, 3, 0], [1, 3, 0], [2, 3, 0]], color: valleyDay.bird, fade: 1 }] });
+    // Two segments, two triangles each.
+    expect(stage.trails.geometry.drawRange.count).toBe(12);
+    const [position, color] = [stage.trails.geometry.getAttribute("position"), stage.trails.geometry.getAttribute("color")];
+    const vertices = [...Array(12).keys()].map((i) => ({ x: position.getX(i), z: position.getZ(i), alpha: color.getW(i) }));
+    const atOldest = vertices.filter((v) => Math.abs(v.x) < 1e-6);
+    const atBird = vertices.filter((v) => Math.abs(v.x - 2) < 1e-6);
+    expect(Math.max(...atOldest.map((v) => Math.abs(v.z)))).toBeCloseTo(0, 6);
+    expect(Math.max(...atOldest.map((v) => v.alpha))).toBe(0);
+    expect(Math.max(...atBird.map((v) => v.z)) - Math.min(...atBird.map((v) => v.z))).toBeCloseTo(TRAIL_WIDTH, 5);
+    expect(Math.max(...atBird.map((v) => v.alpha))).toBeCloseTo(0.85, 5);
+    for (const v of vertices) expect(position.getY(vertices.indexOf(v))).toBeCloseTo(3, 6);
+  });
+
+  it("puts the meadow under the flight field, and the lake, trees and rocks only outside it", () => {
+    const stage = createStageScene();
+    applyFrame(stage, frameOf(world()));
+    const ground = stage.shown.ground;
+    if (!ground) throw new Error("no ground was built");
+    const [position, color] = [ground.geometry.getAttribute("position"), ground.geometry.getAttribute("color")];
+    let checked = 0;
+    for (let vertex = 0; vertex < position.count; vertex += 3) {
+      if (Math.abs(position.getX(vertex)) > 10 || Math.abs(position.getZ(vertex)) > 10) continue;
+      expect(`#${new THREE.Color(color.getX(vertex), color.getY(vertex), color.getZ(vertex)).getHexString()}`).toBe(valleyDay.meadow);
+      checked++;
+    }
+    expect(checked).toBeGreaterThan(50);
+    const scenery = stage.shown.scenery;
+    if (!scenery) throw new Error("no scenery was built");
+    const matrix = new THREE.Matrix4();
+    let placed = 0;
+    scenery.traverse((object) => {
+      if (!(object instanceof THREE.InstancedMesh)) return;
+      for (let i = 0; i < object.count; i++) {
+        object.getMatrixAt(i, matrix);
+        const spot = new THREE.Vector3().setFromMatrixPosition(matrix);
+        expect(Math.max(Math.abs(spot.x), Math.abs(spot.z)), "a tree or rock on the field").toBeGreaterThan(16 + 2);
+        placed++;
+      }
+    });
+    expect(placed).toBeGreaterThan(100);
+    expect(scenery.children.some((child) => child instanceof THREE.Mesh && !(child instanceof THREE.InstancedMesh))).toBe(true);
+  });
+
+  it("colours the sky from the palette's horizon up to its zenith", () => {
+    const stage = createStageScene();
+    applyFrame(stage, frameOf(world()));
+    const [position, color] = [stage.sky.geometry.getAttribute("position"), stage.sky.geometry.getAttribute("color")];
+    const top = [...Array(position.count).keys()].reduce((best, i) => (position.getY(i) > position.getY(best) ? i : best), 0);
+    const low = [...Array(position.count).keys()].find((i) => Math.abs(position.getY(i)) < 1e-6) ?? 0;
+    expect(`#${new THREE.Color(color.getX(top), color.getY(top), color.getZ(top)).getHexString()}`).toBe(valleyDay.skyZenith);
+    expect(`#${new THREE.Color(color.getX(low), color.getY(low), color.getZ(low)).getHexString()}`).toBe(valleyDay.sky);
   });
 
   it("never imports simulation code: it can only draw what a frame description tells it", () => {
