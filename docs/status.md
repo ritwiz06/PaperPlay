@@ -1,8 +1,7 @@
 # Status
 
-Updated 2026-10-09, at the end of the session that moved G1 onto `main`, chose a
-game-first interface, and added the axe scan, the demo capture and the hook design spike
-([log](sessions/2026-10-09.md)). This file is rewritten every session.
+Updated 2026-10-09, during the day's second session: `origin`, CI, the shell, the world art
+pass, the capture and the level script ([log](sessions/2026-10-09-2.md)). This file is rewritten every session.
 
 ## Where we are
 

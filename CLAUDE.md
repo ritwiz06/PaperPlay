@@ -56,7 +56,7 @@ docs/               README (index), project-brief, roadmap, status, requirements
 - Work in short branches off the latest `main`, one coherent change each, named `<gate>/<topic>` (for example `g2/axe-scan`). Never start a branch on another unmerged branch.
 - When a branch's checks pass, rebase it onto `main` if `main` has moved, merge it with `git merge --ff-only` so history stays linear, and delete the branch.
 - A branch whose result the owner must see first, such as a design spike, stays unmerged until the owner says so.
-- `origin` is a private GitHub repository. Push only when the owner asks, and never force-push `main` or move a tag.
+- `origin` is the private `ritwiz06/PaperPlay`. CI runs `check:gate` on every push and pull request (ADR-0011), so push a branch to run CI on it, and push `main` after each merge. Never force-push `main` or move a tag.
 
 ## Working style
 - Smallest reviewable slice per change; one coherent change per branch.

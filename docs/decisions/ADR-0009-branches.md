@@ -1,6 +1,7 @@
 # ADR-0009: Short branches off main
 
-- Status: accepted
+- Status: accepted. Decision 4 is amended by ADR-0011: `origin` is `ritwiz06/PaperPlay`,
+  and pushes are routine so CI can run on them.
 - Date: 2026-10-09
 - Decided by: the owner, on 2026-10-09, before G2's interface work.
 

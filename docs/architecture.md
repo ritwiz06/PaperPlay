@@ -127,7 +127,7 @@ flowchart LR
 | The page's palette equals the stage's tokens | Test | `packages/ui/test/tokens.test.ts` |
 | The opening seed follows ADR-0003's rule | A test re-runs the rule | `scripts/test/hook-seed.test.ts` |
 | Replay refuses another primitive version and out-of-range events | Tests [R07] | `packages/primitives/test/replay.test.ts` |
-| Evidence comes only from the pinned runtime | The gate's runtime check | `scripts/check-gate.ts` |
+| Evidence comes only from the pinned runtime | The gate's runtime check, locally and in CI | `scripts/check-gate.ts`, `.github/workflows/check-gate.yml` |
 | No skipped tests, no missing scripts, no pass-with-no-tests | The gate's evidence rules; Vitest (`passWithNoTests` and `allowOnly` both false); Playwright (`forbidOnly`, no retries) | `scripts/gate/evidence.ts`, `vitest.config.ts`, `playwright.config.ts` |
 | Each gate requirement has passing tagged tests | `check:gate` | `gates.json` |
 | Docs stay consistent with the repository | `check:docs`, inside `check:gate` | `scripts/docs/check.ts` |
@@ -150,6 +150,14 @@ flowchart LR
   1.63 runs on Chromium with forced SwiftShader, and `@axe-core/playwright` 4.13 runs the
   axe scans. ESLint 10 has type-aware rules and the
   boundary rules above.
+- **CI:** `.github/workflows/check-gate.yml` runs `check:gate` on ubuntu-latest, with the
+  Node in `.node-version`, on every push and pull request. On `main` and on demand, a second
+  job films the demo capture on Linux, so its hashes can be compared with the Mac's
+  (ADR-0011). Every invariant below is checked on both runtimes:
+  - macOS on arm64, locally;
+  - Linux on x86-64, in CI.
+
+  A claim that holds on one runtime only says so.
 - **Libraries:** Zod 4.6 for contracts, Fastify 5 for the API.
 - **Scripts:**
   - `check:gate` runs typecheck, lint, check:docs, test, build and test:e2e, then checks
