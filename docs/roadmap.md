@@ -81,8 +81,11 @@ Next:
 - [x] The full WorldSpec schema and the hand-authored `flocking-reference.json`, from the
   reviewed level script (2026-10-09, `0afc49d`, `211f13a`, ADR-0016). The fixture is a draft:
   its anchors are placeholders until the source map exists.
-- [ ] `flocking-reference.json` reviewed: real anchors from the source map, and the owner's
-  answers on levels 2 and 4, whose expected effects did not hold when measured.
+- [x] The level rule (ADR-0018): every level's stated effect measured on 20 skies and recorded
+  in `eval/sweeps/levels.md`, re-run by a test; levels 2, 4 and 5 reworked to it (2026-10-09,
+  `3647ec5`).
+- [ ] `flocking-reference.json` reviewed: real anchors from the source map. Until then G2
+  cannot pass (`e09ecd9`).
 - [x] The deterministic builder, with binding fixtures (2026-10-09, `4d942fd`, ADR-0016).
 - [x] `/world/hook` driven by the WorldSpec through all six levels: the level map, journal
   pages unlocking, a readout per level, and depth variants by element id (2026-10-09,
@@ -112,8 +115,10 @@ Next:
 Later:
 - [x] Loading the Three.js stage as its own chunk (2026-10-09, ADR-0017): the entry chunk is
   416 KB, the stage chunk 551 KB.
-- [ ] Connect the static deploy (`vercel.json`, ADR-0017): the owner's account, then a
-  Content-Security-Policy tried against a preview.
+- [x] A Content-Security-Policy and security headers in `vercel.json`, tested against the
+  built app (2026-10-09, `b4503a5`).
+- [ ] Connect the static deploy (the owner), then check the policy against the preview and
+  tighten it.
 - A cross-runtime capture check: Mac and Linux frames agree within a stated pixel tolerance,
   with bird pixels overlapping (option b of the 2026-10-09 capture finding, ADR-0010).
 
@@ -194,3 +199,7 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-09 | WorldSpec gains a draft status with placeholder anchors and a pending source; Level gains a goal, a bonus flag, a slider, setup, a guide script and further reading; depth variants name a closed list of shell elements; equations are Unicode text; DesignSpec drops layout and typography | Building it for the game-first shell and the owner's level decisions, with no source in hand (ADR-0016) |
 | 2026-10-09 | Each What-if's expected effect is checked against the model before it is written into a fixture | Two of the level script's effects did not hold on seed 5 (levels 2 and 4) |
 | 2026-10-09 | The Three.js stage loads as its own chunk; a static deploy on Vercel is configured, waiting for the owner's account | Owner request (slice 4); Vercel protects pull-request previews by default (ADR-0017) |
+| 2026-10-09 | The level rule: every stated effect holds on at least 16 of 20 skies, measured before it enters a fixture, re-run by a test | Owner decision (ADR-0018) |
+| 2026-10-09 | Level 2 becomes a prediction with a count stated exactly; level 4 becomes the flock's spread; level 5 gets four rocks and no rule for rocks; flock 3.1.0 adds E19 and E20 | The rule: level 4's groups and level 5's one rock failed it (ADR-0018) |
+| 2026-10-09 | G2 cannot pass while the flocking world is a draft or holds a placeholder | Owner decision |
+| 2026-10-09 | The deploy's Content-Security-Policy before the first deploy, tested against the built app | Owner decision (ADR-0017) |

@@ -157,6 +157,33 @@ v·ω divided by gravity. Turning harder or faster means leaning further.
 
 ## Engineering
 
+### Radius of gyration, and a centre on a wrap-around world
+
+The radius of gyration of some points is how far, on average, they lie from their centre:
+the square root of the mean squared distance. On a torus, "the centre" needs care: averaging
+x = 31 and x = 1 gives 16, the wrong side of the world. The circular mean treats each
+coordinate as an angle round a circle and averages the angles instead, giving 0.
+
+- **Used in:** `packages/primitives/src/flock/measure.ts` (E19 and Q3), the spread ring and
+  dial
+- **Why here:** Level 4's lesson is how compact a flock stays. Without cohesion, the largest
+  group's radius grows from about 5 to about 12 world units, on every one of 20 skies
+  (ADR-0018).
+- **Learn more:** [Radius of gyration](https://en.wikipedia.org/wiki/Radius_of_gyration),
+  [Circular mean](https://en.wikipedia.org/wiki/Circular_mean)
+
+### A Content-Security-Policy
+
+A response header that tells the browser where a page may load scripts, styles, fonts and
+data from, and whether it may run inline code or `eval`. Anything else is blocked and
+reported, so an injected script cannot run with the page's rights.
+
+- **Used in:** `vercel.json`, `scripts/serve-dist.ts`, `tests/e2e/csp.spec.ts`,
+  `apps/web/src/strict-csp.ts`
+- **Why here:** The deploy is public. The policy allows only the page's own origin and no
+  eval, and is tested against the built app before the first deploy (ADR-0017).
+- **Learn more:** [MDN: Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
+
 ### Code splitting (loading a module on demand)
 
 A bundler normally puts every imported module into one file the browser must download before

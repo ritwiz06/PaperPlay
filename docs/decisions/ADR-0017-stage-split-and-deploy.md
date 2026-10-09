@@ -1,6 +1,7 @@
 # ADR-0017: The stage as its own chunk, and a static deploy on Vercel
 
-- Status: accepted for the code split. The deploy waits for the owner to connect an account.
+- Status: accepted. The owner connects the deploy. A Content-Security-Policy was added before
+  the first deploy (follow-up below).
 - Date: 2026-10-09
 - Decided by:
   - the owner asked for slice 4: "a Vercel/Netlify static deploy with PR previews, the
@@ -70,6 +71,35 @@
 
 Before connecting, check that publishing this build fits ASU's data guidance. The build
 holds no personal data and no secrets.
+
+## Follow-up on 2026-10-09: the Content-Security-Policy, before the first deploy
+
+The owner asked for the policy and the usual security headers before connecting, tested
+against the built app. `vercel.json` now sends:
+- **`Content-Security-Policy`:** `default-src 'self'`; scripts, styles, fonts and connections
+  from the page's own origin only; images also from `data:`; no workers, objects, base URI,
+  form targets or framing. No `'unsafe-inline'` and no `'unsafe-eval'`.
+- **`Strict-Transport-Security`:** two years, with subdomains.
+- **`Permissions-Policy`:** camera, microphone, geolocation, payment and USB, all off.
+- **`Cross-Origin-Opener-Policy`:** `same-origin`.
+- **Kept:** `nosniff`, the referrer policy and `X-Frame-Options: DENY`.
+
+How it was tested:
+- `scripts/serve-dist.ts` serves the production build as Vercel will: `vercel.json`'s header
+  rules and rewrites, nothing else.
+- The browser tests start it beside the dev server, and check that every header arrives.
+- They play `/world/hook` through four levels, the journal and What if, and open
+  `/world/local`. They require no policy violation and no console error.
+
+What the test found:
+- Zod 4 probes whether `new Function` works, and a strict policy reports the probe even
+  though Zod catches it.
+- The web app now sets Zod's `jitless` option in a module imported first, so nothing parses
+  before it is set. Zod then neither probes nor compiles parsers with eval, and its
+  interpreted parsers give the same results.
+
+Once the owner has connected the deploy, the policy is checked against the preview and
+tightened where the preview allows.
 
 ## Consequences
 

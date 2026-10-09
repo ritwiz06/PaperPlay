@@ -7,6 +7,28 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · The level rule
+
+- Branch: `g2/level-rule`
+- Commits: `7f9c547`, `3647ec5`, `804038a`, `e09ecd9`, `b4503a5`
+- Shipped (ADR-0018, ADR-0017):
+  - **Flock 3.1.0:** the largest group's spread (E19), birds at rocks (E20), and the spread
+    query (Q3), each derived by hand into the oracle fixtures first.
+  - **`worldspec/2`:** each What-if states its measured difference and claim.
+  - **`npm run sweep:levels`:** all six levels meet the rule, recorded in
+    `eval/sweeps/levels.md` and re-run by a test.
+    - Level 2's surprise is a count stated exactly, after a prediction: 6 of 20.
+    - Level 4 is the flock's spread, with a ring on the ground: 20 of 20.
+    - Level 5 has four rocks and no rule for rocks: 20 of 20.
+  - **G2 cannot pass** while the flocking world is a draft.
+  - **The deploy's Content-Security-Policy and headers,** tested against the built app.
+- Evidence:
+  - R01 58, R02 6, R03 102, R04 18;
+  - ahead of their gate: R05 4, R06 8, R07 14, R08 48, R12 10;
+  - from 473 tests with none skipped;
+  - 4 of 4 bugs planted in the new measures caught.
+- Gate: `check:gate` G1 passed at `b4503a5`.
+
 ## 2026-10-09 · The stage as its own chunk, and a deploy configuration
 
 - Branch: `g2/stage-split`

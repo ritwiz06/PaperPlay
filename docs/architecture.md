@@ -8,12 +8,12 @@ How PaperPlay fits together today. The concepts named here are explained in
 | Path | Job | Key exports or entry points |
 |---|---|---|
 | `packages/contracts` | Zod schemas and inferred types: the shared language | `Origin`, `Anchor`, `SourceManifest`, `PrimitiveRef`, `Action`, `RunEvent`, `RunRecord`, `JobState`, `WorldSpec` (with `Level`, `Counterfactual`, `DepthVariant`, `DesignSpec`, `PlaceholderAnchor`, `PendingSource`) |
-| `packages/primitives` | Deterministic, fixed-step scientific models, their registry, and run replay | `flockPlanarWeighted`, `flockNeighbours` (Q1), `flockHeadings` (Q2), `flockReadsAsOneGroup` (O1), `mulberry32`, `registry`, `runEvents`, `replayRecord` |
+| `packages/primitives` | Deterministic, fixed-step scientific models, their registry, and run replay | `flockPlanarWeighted`, `flockNeighbours` (Q1), `flockHeadings` (Q2), `flockReadsAsOneGroup` (O1), `flockSpread` (Q3), `mulberry32`, `registry`, `runEvents`, `replayRecord` |
 | `packages/ui` | Design tokens, fonts, the stage, the bench and the game-first HUD | `@paperplay/ui/tokens`, `fonts.css`, `components.css`, `hud.css`, `stage-core`, `three-adapter`, `react` |
-| `packages/pipeline` | Agent roles, model adapters, checks, controller | `buildWorld`, the deterministic builder in `src/builder/` (ADR-0016); the agents and adapters arrive at G3 |
+| `packages/pipeline` | Agent roles, model adapters, checks, controller | `buildWorld`, the deterministic builder in `src/builder/` (ADR-0016); `summarise` and `claimHolds`, a fork's measured difference (ADR-0018); the agents and adapters arrive at G3 |
 | `apps/web` | React shell: owns the run, renders state, submits actions | `src/world/session.ts`, `src/world/LocalWorld.tsx` at `/world/local`, `src/world/local-world.ts`; `src/world/authored-world.ts`, which builds `fixtures/worldspecs/flocking-reference.json` with the builder at start-up; `src/hook/HookWorld.tsx` at `/world/hook`, the six levels played from the built world, and `src/hook/guide.ts`, the guide from each level's script; the dev-only capture page `capture.html` with `src/capture/` (ADR-0010) |
 | `apps/api` | Fastify API: will hold secrets and run jobs | `GET /health` only, until G3 |
-| `scripts/` | Gate, docs checker, defaults sweep, hook seed, group-measure sweep, demo capture; `scripts/test/bundle.test.ts` builds the production bundle | `check-gate.ts`, `check-docs.ts`, `sweep-defaults.ts`, `hook-seed.ts`, `group-measure.ts`, `capture-demo.ts` |
+| `scripts/` | Gate, docs checker, defaults sweep, hook seed, group-measure sweep, levels sweep, demo capture, the built app served as Vercel would | `check-gate.ts` (with `gate/worlds.ts`), `check-docs.ts`, `sweep-defaults.ts`, `hook-seed.ts`, `group-measure.ts`, `levels.ts`, `capture-demo.ts`, `serve-dist.ts`; `scripts/test/bundle.test.ts` builds the production bundle | `check-gate.ts`, `check-docs.ts`, `sweep-defaults.ts`, `hook-seed.ts`, `group-measure.ts`, `capture-demo.ts` |
 | `fixtures/oracles/` | Hand-derived expected behaviours for primitives | See `fixtures/oracles/README.md` |
 | `fixtures/worldspecs/` | Authored WorldSpecs | `flocking-reference.json`, a draft with placeholder anchors until the source map exists |
 | `fixtures/bindings/` | Hand-written binding fixtures: the variable each level's control must move, its fork and setup | `flocking-reference.json` |
@@ -113,8 +113,8 @@ flowchart LR
 | SourceManifest | `sourcemanifest/1` | `packages/contracts/src/provenance.ts` |
 | RunRecord, with RunEvent (`param` · `place` · `remove`) | `runrecord/2` | `packages/contracts/src/run.ts` |
 | Origin, Anchor, PrimitiveRef, Action, JobState | Versioned with the documents that embed them | `packages/contracts/src/` |
-| WorldSpec, with Level, Counterfactual, DepthVariant, DesignSpec; drafts may hold placeholder anchors and a pending source | `worldspec/1` | `packages/contracts/src/worldspec.ts` (ADR-0016) |
-| `flock.planar.weighted` | 3.0.0: equations E1–E18, with the group measure of ADR-0015 (E14 groups, E18 stray share) and its reading O1, "one group"; defaults per ADR-0003, alignment range 0–4; and the read-only queries Q1 (neighbourhoods) and Q2 (headings), which do not change the version | `packages/primitives/src/flock/MODEL.md` |
+| WorldSpec, with Level, Counterfactual (and its MeasuredDifference and claim), DepthVariant, GuidedExploration, DesignSpec; drafts may hold placeholder anchors and a pending source | `worldspec/2` | `packages/contracts/src/worldspec.ts` (ADR-0016, ADR-0018) |
+| `flock.planar.weighted` | 3.1.0: equations E1–E20, with the group measure of ADR-0015 (E14 groups, E18 stray share) and its reading O1, "one group"; E19 the largest group's spread and E20 birds at rocks (ADR-0018); defaults per ADR-0003, alignment range 0–4; and the read-only queries Q1 (neighbourhoods), Q2 (headings) and Q3 (spread), which do not change the version | `packages/primitives/src/flock/MODEL.md` |
 | Oracle fixtures | `oracle/1` | `fixtures/oracles/README.md` |
 | FrameDescription, with FrameEmphasis | Unversioned: in-process only, never persisted | `packages/ui/src/stage-core/frame.ts` |
 | Gate definitions | Requirements per gate | `gates.json` |
@@ -134,8 +134,11 @@ flowchart LR
 | The builder refuses what the registry contradicts and what the shell cannot draw, is deterministic, and calls no model | Tests [R08]; lint keeps it to contracts and primitives | `packages/pipeline/test/builder.test.ts`, `eslint.config.js` |
 | `/world/hook` plays the six levels in order, each opening only once the one before has been moved through its range, and each readout shows the primitive's own value | Browser tests [R06], compared with Node | `tests/e2e/levels.spec.ts` |
 | Each depth variant shows exactly the shell elements it names, and hides the rest | Browser test [R06] over every level and depth, read from the spec | `tests/e2e/levels.spec.ts` |
+| Every level's stated effect holds on at least 16 of 20 skies, or, for a count claim after a prediction, is exactly right (the level rule) | A test re-runs `npm run sweep:levels` in its own Node process and holds `eval/sweeps/levels.md` to it byte for byte [R06] | `scripts/test/levels.test.ts`, `scripts/sweep/levels.ts` (ADR-0018) |
+| A gate's reviewed worlds are reviewed: G2 cannot pass while the flocking world is a draft or holds a placeholder anchor | `check:gate`, from `gates.json`; tests [R03] | `scripts/gate/worlds.ts`, `scripts/test/gate-worlds.test.ts` |
+| The built app runs under the deploy's Content-Security-Policy with no violation and no console error | Browser tests against the production build, served with `vercel.json`'s headers | `tests/e2e/csp.spec.ts`, `scripts/serve-dist.ts` (ADR-0017) |
 | A level's setup is recorded as place events at step 0, so its run replays from its record | Tests [R07] | `apps/web/test/session.test.ts` |
-| The renderer never changes an observable, even with a bird picked, the view framed in a HUD's window, or the flock coloured by heading with wingbeats and trails | Test [R02]; in the browser, colour by heading records nothing and the run matches Node bit for bit [R02] | `packages/ui/test/render-invariance.test.ts`, `tests/e2e/world.spec.ts` |
+| The renderer never changes an observable, even with a bird picked, the spread ring drawn, the view framed in a HUD's window, or the flock coloured by heading with wingbeats and trails | Test [R02]; in the browser, colour by heading records nothing and the run matches Node bit for bit [R02] | `packages/ui/test/render-invariance.test.ts`, `tests/e2e/world.spec.ts` |
 | Every colour on the heading wheel keeps 3:1 against the meadow; trails never cross a seam and stay under 3.5 units | Tests | `packages/ui/test/world-art.test.ts` |
 | The following camera keeps the flock's centre inside the HUD's free rectangle, and is the still overview under reduced motion | Browser tests | `tests/e2e/hook.spec.ts` |
 | The HUD at rest covers at most 25% of 1440 × 900 and 35% of 390 × 844, and the stage frames the field inside the rectangle it leaves free | Browser tests that measure the HUD's boxes and read the stage's own fit; unit tests on the fit | `tests/e2e/hook.spec.ts`, `packages/ui/test/screen.test.ts` |
@@ -259,3 +262,8 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 | 2026-10-09 | d2e9f9f | The session takes a level's setup, and `load()`s another level on the same stage |
 | 2026-10-09 | e5c30b7 | `/world/hook` from the built world: `authored-world.ts`, the guide from scripts, SpacingGauge, GroupsCounter, the `dial` styles; `hook-content.ts` removed |
 | 2026-10-09 | 2ce3b34 | WorldStage loads the Three.js adapter with `import()`; `vercel.json` (ADR-0017) |
+| 2026-10-09 | 7f9c547 | Flock 3.1.0: E19, E20 and Q3 |
+| 2026-10-09 | 3647ec5 | `worldspec/2`; `src/builder/difference.ts`; `npm run sweep:levels` and `eval/sweeps/levels.md` (ADR-0018) |
+| 2026-10-09 | 804038a | The spread ring (the frame's `spread` emphasis) and SpreadDial |
+| 2026-10-09 | e09ecd9 | `gates.json` `reviewedWorlds`; `scripts/gate/worlds.ts` |
+| 2026-10-09 | b4503a5 | The deploy's CSP and headers; `scripts/serve-dist.ts`; a second Playwright web server; `apps/web/src/strict-csp.ts` |

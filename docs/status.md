@@ -1,8 +1,8 @@
 # Status
 
-Updated 2026-10-09, at the close of the day's fourth session: the level script's decisions,
-the group measure, WorldSpec and the builder, the six levels, the stage split
-([log](sessions/2026-10-09-4.md)). This file is rewritten every session.
+Updated 2026-10-09, during the day's fifth session: the level rule, then the fork, guided
+exploration and speed ([log](sessions/2026-10-09-5.md)). This file is rewritten every
+session.
 
 ## Where we are
 
@@ -15,12 +15,16 @@ the group measure, WorldSpec and the builder, the six levels, the stage split
     ADR-0011).
 - **Branches:** only `main`. Every slice this session merged fast-forward and was pushed
   (ADR-0009).
-- **Working commit:** `2ce3b34` on `main`, the latest code commit there. `check:gate` passed
+- **Working commit:** `b4503a5` on `main`, the latest code commit there. `check:gate` passed
   G1 on it.
 - **Bundle:** the entry chunk is 416 KB, and Three.js loads after it as its own 551 KB chunk.
-  `vercel.json` is ready for a static deploy, and nothing is connected (ADR-0017).
-- **Primitive:** `flock.planar.weighted@3.0.0`, with the owner's group measure (ADR-0015).
-- **WorldSpec:** `worldspec/1` and the builder exist (ADR-0016).
+  `vercel.json` is ready for a static deploy, with a Content-Security-Policy tested against
+  the built app. The owner connects it (ADR-0017).
+- **Primitive:** `flock.planar.weighted@3.1.0`, with the owner's group measure (ADR-0015), the
+  spread and birds at rocks (ADR-0018).
+- **WorldSpec:** `worldspec/2` and the builder exist (ADR-0016, ADR-0018). Every level's
+  stated effect meets the level rule (`eval/sweeps/levels.md`). G2 cannot pass while the
+  fixture is a draft.
   `fixtures/worldspecs/flocking-reference.json` holds the six levels as a draft, with
   placeholder anchors, and `/world/hook` plays it.
 - **Runtime:** Node 24.21.0, pinned in `.node-version`. Run tools through
@@ -57,61 +61,54 @@ the group measure, WorldSpec and the builder, the six levels, the stage split
   - the screenshots in `captures/final/`;
   - the canonical capture in `captures/canonical/`.
 
-## Latest check:gate (G1), 2026-10-09, commit 4d942fd
+## Latest check:gate (G1), 2026-10-09, commit b4503a5
 
 ```
 check:gate G1 · Playable baseline · tag v0.1.0
   runtime    node 24.21.0 (pinned 24.21.0)  ok
-  typecheck  ok      14.4 s
-  lint       ok      9.9 s
+  typecheck  ok      14.7 s
+  lint       ok      10.0 s
   check:docs ok      0.3 s
-  test       ok      10.5 s
+  test       ok      39.2 s
   build      ok      0.6 s
-  test:e2e   ok      30.8 s
-  evidence   426 tests (vitest 394, playwright 32), 0 skipped
-    R01  Deterministic, oracle-checked primitives      51 passing
+  test:e2e   ok      42.9 s
+  evidence   473 tests (vitest 431, playwright 42), 0 skipped
+    R01  Deterministic, oracle-checked primitives      58 passing
     R02  Model/render separation                       6 passing
-    R03  Strict, versioned contracts                   91 passing
+    R03  Strict, versioned contracts                   102 passing
     R04  Playable local world                          18 passing
 
 G1 passed: every required check ran and every requirement has passing evidence.
 ```
 
-Ahead of their gate, from the same run's reports: R05 4, R06 1, R07 11, R08 41, R12 8.
+Ahead of their gate, from the same run's reports: R05 4, R06 8, R07 14, R08 48, R12 10.
 
 ## Blockers
 
-- **The Reynolds PDF is missing from `reference/private/`,** and slice 1 (the source map)
-  needs it. Only the project handbook is there. The owner chose to do slice 1 later; until
-  then, anchors are placeholders, clearly marked.
+- **The Reynolds PDF is not yet in `reference/private/`.** The source map waits for it, and G2
+  cannot pass until the flocking world's anchors are real.
 
 ## Decisions waiting on the owner
 
-1. **Levels 2 and 4 of the level script,** whose expected effects did not hold when run on
-   the model (the level script's "Measured" lines):
-   - **Level 2:** seeing the whole flock does not bring order sooner.
-   - **Level 4:** removing cohesion does not split the flock. This also bears on level 4's
-     groups counter, my reading of its readout.
-2. **WorldSpec's shape beyond the brief** (ADR-0016), and the reference fixture kept as a
-   draft until real anchors exist.
-3. **The deploy** (ADR-0017): connect Vercel with the steps given, or not. Decide first
-   whether a public production URL is acceptable; pull-request previews are protected by
-   default.
-4. **The shell and the world art,** from the screenshots, now with every level in
-   `captures/final/levels/`:
-   - the bottom-left stack;
-   - the compass;
-   - the quiet chips;
-   - the following camera;
-   - colour by heading, trails and the valley.
+1. **The level rule's reworks** (ADR-0018):
+   - **Level 5** failed the rule and was reworked: four rocks, and "What if birds had no rule
+     for rocks?", holding on 20 of 20.
+   - **Level 4** is now about spread, with a ring on the ground.
+   - **Level 5's readout:** keep the compass, or show the birds at rocks?
+2. **How a stated effect is checked** (ADR-0018):
+   - a measured difference and claim per What-if;
+   - count claims only after a prediction;
+   - the sweep test in its own Node process.
+3. **The deploy:** the owner connects Vercel (ADR-0017). Then I check the CSP against the
+   preview.
+4. **The shell and the world art,** from the screenshots in `captures/final/levels/`.
 5. **The canonical capture,** in `captures/canonical/`, from CI.
 
 ## Next three actions
 
-1. The owner's answers on levels 2 and 4, and the fixture updated to them.
-2. The source register and source map once the PDF is in `reference/private/`, then the
-   fixture reviewed.
-3. The ForkView, guided exploration and replay export (the next session).
+1. The split-screen ForkView, with the level's measured difference as a chart.
+2. Guided exploration, with level 2's prediction first.
+3. The speed control, with 4x replaying bit for bit against 1x.
 
 ## Recommendations
 
