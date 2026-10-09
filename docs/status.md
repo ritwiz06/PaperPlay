@@ -1,18 +1,16 @@
 # Status
 
-Updated 2026-10-01, at the end of the session that added the documentation system, carried
-out the owner's decisions and built the playable local world
-([log](sessions/2026-10-01.md)). This file is rewritten every session.
+Updated 2026-10-09, during the session that moved G1 onto `main` and began G2
+([log](sessions/2026-10-09.md)). This file is rewritten every session.
 
 ## Where we are
 
 - **Gate:** G1 Playable baseline **passed**, and is tagged `v0.1.0` at `3448e5b`, with the
   owner's go-ahead on 2026-10-01. The tag is local; nothing is pushed. G2 is next.
-- **Branches,** stacked, one coherent change each; nothing is pushed and there is no remote:
-  `g1/kickoff` → `g1/run-record-v2` → `g1/flock-defaults` → `g1/stage-three` →
-  `g1/docs-system` → `g1/layout` → `g1/hook-seed` → `g1/fonts` → `g1/world-local`.
-- **Working commit:** `3448e5b` on `g1/world-local`, tagged `v0.1.0`, where G1 passes. The
-  docs commit after it records the owner's answers and changes only documentation.
+- **Branches:** `main` holds G1. It was fast-forwarded through the nine stacked `g1/*`
+  branches to `3aa0ea5`, the tag plus its docs-only record. New work goes on short branches
+  off `main` (ADR-0009). Nothing is pushed yet: the repository's URL is still to come.
+- **Working commit:** `3aa0ea5` on `main`, where `check:gate` passed G1 again on 2026-10-09.
 - **Runtime:** Node 24.21.0, pinned in `.node-version`. An interactive shell switches to it
   on `cd` into the repo; `check:gate` refuses evidence from any other version.
 - **What a learner can do now,** on `/world/local`, opened on seed 4:

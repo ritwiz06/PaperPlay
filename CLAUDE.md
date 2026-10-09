@@ -51,6 +51,13 @@ docs/               README (index), project-brief, roadmap, status, requirements
 7. **Secrets live in `apps/api/.env` only.** A build step greps the client bundle for key prefixes and fails if found.
 8. **Every WorldSpec level has exactly one manipulable action and exactly one counterfactual.** This is enforced in Zod `.refine()`, not in prose.
 
+## Branches (ADR-0009)
+- `main` is the line of record: `npm run check:gate` passes on every commit it holds, and gate tags are cut on it.
+- Work in short branches off the latest `main`, one coherent change each, named `<gate>/<topic>` (for example `g2/axe-scan`). Never start a branch on another unmerged branch.
+- When a branch's checks pass, rebase it onto `main` if `main` has moved, merge it with `git merge --ff-only` so history stays linear, and delete the branch.
+- A branch whose result the owner must see first, such as a design spike, stays unmerged until the owner says so.
+- `origin` is a private GitHub repository. Push only when the owner asks, and never force-push `main` or move a tag.
+
 ## Working style
 - Smallest reviewable slice per change; one coherent change per branch.
 - Before implementing, restate the acceptance condition in plain language.
