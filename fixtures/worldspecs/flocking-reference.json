@@ -1,0 +1,1090 @@
+{
+  "schemaVersion": "worldspec/1",
+  "status": "draft",
+  "title": "Murmuration Valley",
+  "source": {
+    "pending": true,
+    "sourceId": "reynolds1987",
+    "title": "Flocks, Herds, and Schools: A Distributed Behavioral Model",
+    "authors": [
+      "Craig W. Reynolds"
+    ],
+    "year": 1987,
+    "venue": "Computer Graphics 21(4), SIGGRAPH '87 Conference Proceedings, 25–34",
+    "need": "The owner's PDF, for the source map: its digest, sections, pages and character ranges."
+  },
+  "digest": {
+    "question": "How can a flock move as one when no bird leads?",
+    "hookResult": {
+      "text": "Each bird follows a few simple rules about the birds near it, and the flock's motion emerges from them.",
+      "anchors": [
+        {
+          "placeholder": true,
+          "sourceId": "reynolds1987",
+          "need": "The paper's statement that flock motion emerges from each bird's local behaviours."
+        }
+      ]
+    },
+    "causalChain": [
+      {
+        "id": "local-perception",
+        "claim": "Each bird perceives only the flockmates near it.",
+        "dependsOn": [],
+        "anchors": [
+          {
+            "placeholder": true,
+            "sourceId": "reynolds1987",
+            "need": "The paper's argument that a flock member perceives only nearby flockmates, and why that locality matters."
+          }
+        ],
+        "origin": "paper-derived"
+      },
+      {
+        "id": "three-behaviours",
+        "claim": "Each bird balances three behaviours: avoid collisions, match velocity, and stay near the flock's centre.",
+        "dependsOn": [
+          "local-perception"
+        ],
+        "anchors": [
+          {
+            "placeholder": true,
+            "sourceId": "reynolds1987",
+            "need": "The paper's statement of its three behaviours, and its description of collision avoidance."
+          }
+        ],
+        "origin": "paper-derived"
+      },
+      {
+        "id": "emergent-flock",
+        "claim": "The flock's coordinated motion emerges from these local behaviours, with no leader.",
+        "dependsOn": [
+          "three-behaviours"
+        ],
+        "anchors": [
+          {
+            "placeholder": true,
+            "sourceId": "reynolds1987",
+            "need": "The paper's statement that flock motion emerges from each bird's local behaviours."
+          }
+        ],
+        "origin": "paper-derived"
+      }
+    ]
+  },
+  "design": {
+    "world": "valley",
+    "palette": "cream-teal",
+    "density": "comfortable",
+    "sections": [
+      {
+        "levelId": "hook",
+        "chartType": "none",
+        "motion": "none"
+      },
+      {
+        "levelId": "background",
+        "chartType": "none",
+        "motion": "none"
+      },
+      {
+        "levelId": "idea",
+        "chartType": "none",
+        "motion": "none"
+      },
+      {
+        "levelId": "method",
+        "chartType": "none",
+        "motion": "none"
+      },
+      {
+        "levelId": "evaluation",
+        "chartType": "none",
+        "motion": "none"
+      },
+      {
+        "levelId": "result",
+        "chartType": "line",
+        "motion": "none"
+      }
+    ]
+  },
+  "levels": [
+    {
+      "id": "hook",
+      "order": 1,
+      "kind": "hook",
+      "title": "A flock with no leader",
+      "goal": "Slide Move together, and watch the whole flock turn as one.",
+      "bonus": false,
+      "binding": {
+        "type": "primitive",
+        "primitive": {
+          "id": "flock.planar.weighted",
+          "version": "3.0.0"
+        },
+        "params": {}
+      },
+      "manipulable": {
+        "actionId": "alignment-strength",
+        "label": "Move together",
+        "targetVariable": "alignmentWeight",
+        "range": [
+          0,
+          4
+        ],
+        "unit": "per second",
+        "defaultValue": 2,
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "placeholder": true,
+            "sourceId": "reynolds1987",
+            "need": "The paper's description of velocity matching: a bird matching the velocity of the flockmates near it."
+          }
+        ]
+      },
+      "slider": {
+        "step": 0.05,
+        "ends": [
+          "Ignore neighbours",
+          "Follow closely"
+        ]
+      },
+      "observable": {
+        "metricId": "directionalAgreement",
+        "label": "Directional agreement",
+        "shortLabel": "Agreement",
+        "unit": "fraction from 0 to 1",
+        "decimals": 2,
+        "origin": "computed-observation"
+      },
+      "counterfactual": {
+        "prompt": "What if birds ignored their neighbours' headings?",
+        "altParams": {
+          "alignmentWeight": 0
+        },
+        "expectedQualitativeEffect": "Within 20 seconds the left flock turns one colour, while the right one stays a confetti of colours, each bird on its own heading.",
+        "origin": "teaching-choice",
+        "isSpeculative": false,
+        "anchors": []
+      },
+      "setup": [],
+      "explanation": {
+        "beginner": {
+          "text": "Each bird turns to match the way its neighbours are flying. No bird leads.",
+          "show": [
+            "range-words",
+            "analogy"
+          ],
+          "hide": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "analogy": "Like people leaving a stadium: each matches the pace and direction of those beside them, and nobody is in charge.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "intermediate": {
+          "text": "Each step, a bird steers toward the average heading of the birds it can see. Move together sets how hard it steers.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number"
+          ],
+          "hide": [
+            "range-words",
+            "equation",
+            "analogy"
+          ],
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "advanced": {
+          "text": "Aᵢ = w_a (ūᵢ − vᵢ): bird i accelerates toward ūᵢ, the mean velocity of the birds it sees, at rate w_a, which is Move together.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "hide": [
+            "range-words",
+            "analogy"
+          ],
+          "equation": "Aᵢ = w_a (ūᵢ − vᵢ)",
+          "origin": "teaching-choice",
+          "anchors": []
+        }
+      },
+      "caption": {
+        "text": "Matching the neighbours' heading",
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "placeholder": true,
+            "sourceId": "reynolds1987",
+            "need": "The paper's description of velocity matching: a bird matching the velocity of the flockmates near it."
+          }
+        ]
+      },
+      "guide": {
+        "idle": "No bird leads. Each one steers only by the few it can see.",
+        "raised": "You raised Move together{to}, so birds turn harder toward their neighbours' heading.",
+        "lowered": "You lowered Move together{to}, so birds care less which way their neighbours fly.",
+        "atMinimum": "At 0, no bird matches its neighbours' heading at all.",
+        "readings": [
+          {
+            "atLeast": 0.9,
+            "words": "nearly every bird heads the same way"
+          },
+          {
+            "atLeast": 0.6,
+            "words": "most birds head the same way"
+          },
+          {
+            "atLeast": 0.3,
+            "words": "headings are only partly shared"
+          },
+          {
+            "atLeast": 0,
+            "words": "headings are scattered"
+          }
+        ],
+        "trend": {
+          "rising": {
+            "beginner": "and more are joining in",
+            "measured": "rising"
+          },
+          "falling": {
+            "beginner": "and they are drifting apart",
+            "measured": "falling"
+          },
+          "steady": "holding",
+          "within": 0.03
+        }
+      },
+      "furtherReading": [],
+      "carryForward": "A flock can turn as one with no leader: each bird matches the few it sees."
+    },
+    {
+      "id": "background",
+      "order": 2,
+      "kind": "background",
+      "title": "Each bird sees only a little",
+      "goal": "Change how far a bird sees, and watch how order spreads.",
+      "bonus": false,
+      "binding": {
+        "type": "primitive",
+        "primitive": {
+          "id": "flock.planar.weighted",
+          "version": "3.0.0"
+        },
+        "params": {}
+      },
+      "manipulable": {
+        "actionId": "perception-radius",
+        "label": "How far a bird sees",
+        "targetVariable": "perceptionRadius",
+        "range": [
+          1,
+          16
+        ],
+        "unit": "world units",
+        "defaultValue": 9,
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "placeholder": true,
+            "sourceId": "reynolds1987",
+            "need": "The paper's argument that a flock member perceives only nearby flockmates, and why that locality matters."
+          }
+        ]
+      },
+      "slider": {
+        "step": 0.5,
+        "ends": [
+          "Only its nearest",
+          "Half the valley"
+        ]
+      },
+      "observable": {
+        "metricId": "directionalAgreement",
+        "label": "Directional agreement",
+        "shortLabel": "Agreement",
+        "unit": "fraction from 0 to 1",
+        "decimals": 2,
+        "origin": "computed-observation"
+      },
+      "counterfactual": {
+        "prompt": "What if every bird could see the whole flock?",
+        "altParams": {
+          "perceptionRadius": 50
+        },
+        "expectedQualitativeEffect": "Seeing everyone does not bring order sooner in this model: on this seed the right flock agrees a little later than the left one.",
+        "origin": "teaching-choice",
+        "isSpeculative": false,
+        "anchors": []
+      },
+      "setup": [],
+      "explanation": {
+        "beginner": {
+          "text": "No bird sees the whole flock. Each one reacts only to the birds near it, so a turn has to pass from bird to bird.",
+          "show": [
+            "range-words",
+            "analogy"
+          ],
+          "hide": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "analogy": "Like news in a crowd: each person hears only their neighbours, so it travels person to person.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "intermediate": {
+          "text": "Moving together and staying close count only the birds within this distance. At a small distance, patches form, each with its own heading.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number"
+          ],
+          "hide": [
+            "range-words",
+            "equation",
+            "analogy"
+          ],
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "advanced": {
+          "text": "Nᵢ = { j ≠ i : |δᵢⱼ| < R }: alignment and cohesion average only over the birds within R of bird i, measured the short way round the world. Separation uses its own, smaller radius.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "hide": [
+            "range-words",
+            "analogy"
+          ],
+          "equation": "Nᵢ = { j ≠ i : |δᵢⱼ| < R }",
+          "origin": "teaching-choice",
+          "anchors": []
+        }
+      },
+      "caption": {
+        "text": "Each bird perceives only its neighbours",
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "placeholder": true,
+            "sourceId": "reynolds1987",
+            "need": "The paper's argument that a flock member perceives only nearby flockmates, and why that locality matters."
+          }
+        ]
+      },
+      "guide": {
+        "idle": "Each bird reacts only to the birds within its sight.",
+        "raised": "You let each bird see further{to}, so news of a turn reaches more birds at once.",
+        "lowered": "You made each bird short-sighted{to}, so it only hears from its nearest neighbours.",
+        "readings": [
+          {
+            "atLeast": 0.9,
+            "words": "nearly every bird heads the same way"
+          },
+          {
+            "atLeast": 0.6,
+            "words": "most birds head the same way"
+          },
+          {
+            "atLeast": 0.3,
+            "words": "headings are only partly shared"
+          },
+          {
+            "atLeast": 0,
+            "words": "headings are scattered"
+          }
+        ],
+        "trend": {
+          "rising": {
+            "beginner": "and more are joining in",
+            "measured": "rising"
+          },
+          "falling": {
+            "beginner": "and they are drifting apart",
+            "measured": "falling"
+          },
+          "steady": "holding",
+          "within": 0.03
+        }
+      },
+      "furtherReading": [],
+      "carryForward": "Each bird sees only nearby birds, so order travels through the flock bird by bird."
+    },
+    {
+      "id": "idea",
+      "order": 3,
+      "kind": "idea",
+      "title": "Three urges, and the first: keep your distance",
+      "goal": "Change each bird's personal space, and watch the spacing.",
+      "bonus": false,
+      "binding": {
+        "type": "primitive",
+        "primitive": {
+          "id": "flock.planar.weighted",
+          "version": "3.0.0"
+        },
+        "params": {}
+      },
+      "manipulable": {
+        "actionId": "separation-strength",
+        "label": "Personal space",
+        "targetVariable": "separationWeight",
+        "range": [
+          0,
+          2
+        ],
+        "unit": "per second",
+        "defaultValue": 1.05,
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "placeholder": true,
+            "sourceId": "reynolds1987",
+            "need": "The paper's statement of its three behaviours, and its description of collision avoidance."
+          }
+        ]
+      },
+      "slider": {
+        "step": 0.05,
+        "ends": [
+          "Crowd in",
+          "Keep well apart"
+        ]
+      },
+      "observable": {
+        "metricId": "meanNeighbourDistance",
+        "label": "Mean nearest-neighbour distance",
+        "shortLabel": "Spacing",
+        "unit": "world units",
+        "decimals": 2,
+        "origin": "computed-observation"
+      },
+      "counterfactual": {
+        "prompt": "What if birds never kept their distance?",
+        "altParams": {
+          "separationWeight": 0
+        },
+        "expectedQualitativeEffect": "Without personal space the right flock bunches tighter: its birds end up much closer together than the left one's.",
+        "origin": "teaching-choice",
+        "isSpeculative": false,
+        "anchors": []
+      },
+      "setup": [],
+      "explanation": {
+        "beginner": {
+          "text": "A bird follows three urges: keep your distance, match your neighbours, stay with the flock. Personal space is the first. It stops collisions and sets how far apart birds fly.",
+          "show": [
+            "range-words",
+            "analogy"
+          ],
+          "hide": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "analogy": "Like people on a busy pavement, each keeping a step's distance from those around them.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "intermediate": {
+          "text": "A bird steers away from any neighbour closer than its separation radius, 1.55 world units here. Personal space sets how quickly it steers away.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number"
+          ],
+          "hide": [
+            "range-words",
+            "equation",
+            "analogy"
+          ],
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "advanced": {
+          "text": "Sᵢ = w_s (v* sᵢ / |sᵢ| − vᵢ), where sᵢ sums −δᵢⱼ / |δᵢⱼ|² over the neighbours closer than R_s: a bird turns away from crowding, hardest from the nearest, at rate w_s, which is Personal space.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "hide": [
+            "range-words",
+            "analogy"
+          ],
+          "equation": "Sᵢ = w_s (v* sᵢ / |sᵢ| − vᵢ)",
+          "origin": "teaching-choice",
+          "anchors": []
+        }
+      },
+      "caption": {
+        "text": "Three behaviours, and avoiding collisions",
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "placeholder": true,
+            "sourceId": "reynolds1987",
+            "need": "The paper's statement of its three behaviours, and its description of collision avoidance."
+          }
+        ]
+      },
+      "guide": {
+        "idle": "Each bird keeps a little space around itself.",
+        "raised": "You gave each bird more personal space{to}, so it swerves sooner from a bird that comes too close.",
+        "lowered": "You shrank each bird's personal space{to}, so birds let others crowd in.",
+        "atMinimum": "At 0, birds do nothing to keep apart.",
+        "readings": [
+          {
+            "atLeast": 1.8,
+            "words": "birds are spread out evenly"
+          },
+          {
+            "atLeast": 1.4,
+            "words": "birds keep a little space"
+          },
+          {
+            "atLeast": 1.0,
+            "words": "birds are flying close together"
+          },
+          {
+            "atLeast": 0,
+            "words": "birds are bunched into tight clumps"
+          }
+        ],
+        "trend": {
+          "rising": {
+            "beginner": "and they are spreading out",
+            "measured": "widening"
+          },
+          "falling": {
+            "beginner": "and they are bunching up",
+            "measured": "shrinking"
+          },
+          "steady": "holding",
+          "within": 0.03
+        }
+      },
+      "furtherReading": [],
+      "carryForward": "Keeping a distance is the first urge: it sets how far apart birds fly."
+    },
+    {
+      "id": "method",
+      "order": 4,
+      "kind": "method",
+      "title": "Stay with the flock",
+      "goal": "Change how strongly birds stay close, and count the groups.",
+      "bonus": false,
+      "binding": {
+        "type": "primitive",
+        "primitive": {
+          "id": "flock.planar.weighted",
+          "version": "3.0.0"
+        },
+        "params": {}
+      },
+      "manipulable": {
+        "actionId": "cohesion-strength",
+        "label": "Stay close",
+        "targetVariable": "cohesionWeight",
+        "range": [
+          0,
+          2
+        ],
+        "unit": "per second",
+        "defaultValue": 0.4,
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "placeholder": true,
+            "sourceId": "reynolds1987",
+            "need": "The paper's description of flock centering."
+          }
+        ]
+      },
+      "slider": {
+        "step": 0.05,
+        "ends": [
+          "Drift apart",
+          "Huddle together"
+        ]
+      },
+      "observable": {
+        "metricId": "clusterCount",
+        "label": "Groups (birds linked within 4.5 world units and 45° of heading, 4 birds or more)",
+        "shortLabel": "Groups",
+        "unit": "groups",
+        "decimals": 0,
+        "origin": "computed-observation"
+      },
+      "counterfactual": {
+        "prompt": "What if birds had no urge to stay together?",
+        "altParams": {
+          "cohesionWeight": 0
+        },
+        "expectedQualitativeEffect": "On this seed both worlds stay one group: in this model, matching headings holds the flock together even without the pull toward the middle.",
+        "origin": "teaching-choice",
+        "isSpeculative": false,
+        "anchors": []
+      },
+      "setup": [],
+      "explanation": {
+        "beginner": {
+          "text": "The third urge: steer toward the middle of the birds you can see. It pulls stragglers back toward the others.",
+          "show": [
+            "range-words",
+            "analogy"
+          ],
+          "hide": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "analogy": "Like friends in a crowd drifting back toward each other when they get separated.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "intermediate": {
+          "text": "Each step, a bird steers toward the centre of the birds within its sight. Stay close sets how quickly. A group is birds linked within 4.5 world units and flying within 45° of each other, 4 birds or more.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number"
+          ],
+          "hide": [
+            "range-words",
+            "equation",
+            "analogy"
+          ],
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "advanced": {
+          "text": "Cᵢ = w_c (v* cᵢ / max(|cᵢ|, r_c) − vᵢ), where cᵢ is the mean offset to the birds bird i sees: it steers toward their centre at rate w_c, which is Stay close, easing off within r_c.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "hide": [
+            "range-words",
+            "analogy"
+          ],
+          "equation": "Cᵢ = w_c (v* cᵢ / max(|cᵢ|, r_c) − vᵢ)",
+          "origin": "teaching-choice",
+          "anchors": []
+        }
+      },
+      "caption": {
+        "text": "Flock centering",
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "placeholder": true,
+            "sourceId": "reynolds1987",
+            "need": "The paper's description of flock centering."
+          }
+        ]
+      },
+      "guide": {
+        "idle": "Each bird steers gently toward the middle of the birds it can see.",
+        "raised": "You strengthened the pull toward the middle{to}, so stragglers turn back in.",
+        "lowered": "You weakened the pull toward the middle{to}, so birds stop turning back.",
+        "atMinimum": "At 0, nothing pulls a bird back toward the others.",
+        "readings": [
+          {
+            "atLeast": 3,
+            "words": "the flock has broken into several groups"
+          },
+          {
+            "atLeast": 2,
+            "words": "the flock has split in two"
+          },
+          {
+            "atLeast": 1,
+            "words": "one group has formed"
+          },
+          {
+            "atLeast": 0,
+            "words": "no group has formed yet: birds fly alone or in small knots"
+          }
+        ],
+        "trend": {
+          "rising": {
+            "beginner": "and it is splitting further",
+            "measured": "rising"
+          },
+          "falling": {
+            "beginner": "and they are coming back together",
+            "measured": "falling"
+          },
+          "steady": "holding",
+          "within": 0.5
+        }
+      },
+      "furtherReading": [],
+      "carryForward": "Steering toward the middle of the birds you see is the third urge."
+    },
+    {
+      "id": "evaluation",
+      "order": 5,
+      "kind": "evaluation",
+      "title": "Does it behave like a flock?",
+      "goal": "Change how early birds swerve, and watch the flock pass the rock.",
+      "bonus": false,
+      "binding": {
+        "type": "primitive",
+        "primitive": {
+          "id": "flock.planar.weighted",
+          "version": "3.0.0"
+        },
+        "params": {}
+      },
+      "manipulable": {
+        "actionId": "obstacle-radius",
+        "label": "How early birds swerve",
+        "targetVariable": "obstacleRadius",
+        "range": [
+          1,
+          6
+        ],
+        "unit": "world units",
+        "defaultValue": 3.4,
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "placeholder": true,
+            "sourceId": "reynolds1987",
+            "need": "The paper's discussion of avoiding environmental obstacles, and its observation that flocks split around obstacles and re-form."
+          }
+        ]
+      },
+      "slider": {
+        "step": 0.1,
+        "ends": [
+          "At the last moment",
+          "From far away"
+        ]
+      },
+      "observable": {
+        "metricId": "directionalAgreement",
+        "label": "Directional agreement",
+        "shortLabel": "Agreement",
+        "unit": "fraction from 0 to 1",
+        "decimals": 2,
+        "origin": "computed-observation"
+      },
+      "counterfactual": {
+        "prompt": "What if the rock pushed as hard as the model allows?",
+        "altParams": {
+          "obstacleWeight": 20
+        },
+        "expectedQualitativeEffect": "The right flock bursts apart at the rock, and its headings scatter before they agree again.",
+        "origin": "teaching-choice",
+        "isSpeculative": false,
+        "anchors": []
+      },
+      "setup": [
+        {
+          "entityId": "rock-in-path",
+          "entity": "obstacle",
+          "x": 15,
+          "y": 8.5,
+          "origin": "teaching-choice",
+          "anchors": []
+        }
+      ],
+      "explanation": {
+        "beginner": {
+          "text": "One way to judge a flock model is to put a rock in its way and watch. Nothing in the rules mentions rocks except a push away from them.",
+          "show": [
+            "range-words",
+            "analogy"
+          ],
+          "hide": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "analogy": "Like a stream flowing round a stone and joining up again behind it.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "intermediate": {
+          "text": "A bird is pushed away from the rock once it comes within this distance. Nothing else is added: how the flock parts and re-forms comes from the three urges.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number"
+          ],
+          "hide": [
+            "range-words",
+            "equation",
+            "analogy"
+          ],
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "advanced": {
+          "text": "Oᵢ = Σ w_o (R_o − |δᵢₒ|)(−δᵢₒ / |δᵢₒ|) over rocks closer than R_o: the push starts R_o from the rock and grows linearly toward it. The model's rocks push like a force field; they do not steer a bird away ahead of time.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "hide": [
+            "range-words",
+            "analogy"
+          ],
+          "equation": "Oᵢ = Σ w_o (R_o − |δᵢₒ|)(−δᵢₒ / |δᵢₒ|)",
+          "origin": "teaching-choice",
+          "anchors": []
+        }
+      },
+      "caption": {
+        "text": "Avoiding obstacles, splitting and re-forming",
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "placeholder": true,
+            "sourceId": "reynolds1987",
+            "need": "The paper's discussion of avoiding environmental obstacles, and its observation that flocks split around obstacles and re-form."
+          }
+        ]
+      },
+      "guide": {
+        "idle": "A rock stands in the flock's path.",
+        "raised": "You made birds swerve from further away{to}, so the flock parts more smoothly round the rock.",
+        "lowered": "You made birds swerve late{to}, so they come close to the rock before they turn.",
+        "readings": [
+          {
+            "atLeast": 0.9,
+            "words": "nearly every bird heads the same way"
+          },
+          {
+            "atLeast": 0.6,
+            "words": "most birds head the same way"
+          },
+          {
+            "atLeast": 0.3,
+            "words": "headings are only partly shared"
+          },
+          {
+            "atLeast": 0,
+            "words": "headings are scattered"
+          }
+        ],
+        "trend": {
+          "rising": {
+            "beginner": "and more are joining in",
+            "measured": "rising"
+          },
+          "falling": {
+            "beginner": "and they are drifting apart",
+            "measured": "falling"
+          },
+          "steady": "holding",
+          "within": 0.03
+        }
+      },
+      "furtherReading": [],
+      "carryForward": "A model is judged by how it behaves, such as how its flock passes an obstacle."
+    },
+    {
+      "id": "result",
+      "order": 6,
+      "kind": "result",
+      "title": "Order from the bottom up",
+      "goal": "Find the strength of Move together at which order appears.",
+      "bonus": true,
+      "binding": {
+        "type": "primitive",
+        "primitive": {
+          "id": "flock.planar.weighted",
+          "version": "3.0.0"
+        },
+        "params": {}
+      },
+      "manipulable": {
+        "actionId": "alignment-strength",
+        "label": "Move together",
+        "targetVariable": "alignmentWeight",
+        "range": [
+          0,
+          4
+        ],
+        "unit": "per second",
+        "defaultValue": 2,
+        "origin": "teaching-choice",
+        "anchors": []
+      },
+      "slider": {
+        "step": 0.05,
+        "ends": [
+          "Ignore neighbours",
+          "Follow closely"
+        ]
+      },
+      "observable": {
+        "metricId": "directionalAgreement",
+        "label": "Directional agreement",
+        "shortLabel": "Agreement",
+        "unit": "fraction from 0 to 1",
+        "decimals": 2,
+        "origin": "computed-observation"
+      },
+      "counterfactual": {
+        "prompt": "What if the flock were a quarter as dense?",
+        "altParams": {
+          "worldWidth": 64,
+          "worldHeight": 64
+        },
+        "expectedQualitativeEffect": "The sparser flock takes far longer to agree: on this seed it is still disordered after 20 seconds.",
+        "origin": "teaching-choice",
+        "isSpeculative": false,
+        "anchors": []
+      },
+      "setup": [],
+      "explanation": {
+        "beginner": {
+          "text": "Below some strength of following, the flock stays disordered. Above it, order appears, and the change comes over a fairly small range of the control. No bird plans it.",
+          "show": [
+            "range-words",
+            "analogy"
+          ],
+          "hide": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "analogy": "Like a crowd starting to clap in time: below some eagerness to follow it stays ragged, and above it a rhythm takes hold.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "intermediate": {
+          "text": "Change Move together a little at a time and watch the compass's arrow. A steep rise in agreement over a small change of the control marks a change from disorder to order.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number"
+          ],
+          "hide": [
+            "range-words",
+            "equation",
+            "analogy"
+          ],
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "advanced": {
+          "text": "φ = |(1/N) Σ vᵢ / |vᵢ||, the directional agreement. A steep rise of φ over a small change of w_a marks a transition from disorder to order.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "hide": [
+            "range-words",
+            "analogy"
+          ],
+          "equation": "φ = |(1/N) Σ vᵢ / |vᵢ||",
+          "origin": "teaching-choice",
+          "anchors": []
+        }
+      },
+      "caption": {
+        "text": "Order from the bottom up",
+        "origin": "teaching-choice",
+        "anchors": []
+      },
+      "guide": {
+        "idle": "Each bird follows its neighbours with the same strength.",
+        "raised": "You raised Move together{to}, so each bird follows its neighbours harder.",
+        "lowered": "You lowered Move together{to}, so each bird follows its neighbours less.",
+        "atMinimum": "At 0, no bird follows its neighbours at all.",
+        "readings": [
+          {
+            "atLeast": 0.9,
+            "words": "nearly every bird heads the same way"
+          },
+          {
+            "atLeast": 0.6,
+            "words": "most birds head the same way"
+          },
+          {
+            "atLeast": 0.3,
+            "words": "headings are only partly shared"
+          },
+          {
+            "atLeast": 0,
+            "words": "headings are scattered"
+          }
+        ],
+        "trend": {
+          "rising": {
+            "beginner": "and order is spreading through the flock",
+            "measured": "rising"
+          },
+          "falling": {
+            "beginner": "and the order is breaking up",
+            "measured": "falling"
+          },
+          "steady": "holding",
+          "within": 0.03
+        }
+      },
+      "furtherReading": [
+        "Vicsek, Czirók, Ben-Jacob, Cohen and Shochet (1995), “Novel type of phase transition in a system of self-driven particles”, Physical Review Letters 75, 1226–1229."
+      ],
+      "carryForward": "Order can appear from local rules alone, once following is strong enough."
+    }
+  ],
+  "primitivesUsed": [
+    {
+      "id": "flock.planar.weighted",
+      "version": "3.0.0"
+    }
+  ],
+  "checks": {
+    "suiteIds": [
+      "worldspec-schema",
+      "builder-bindings",
+      "flock-oracles"
+    ],
+    "suiteVersions": {
+      "worldspec-schema": "worldspec/1",
+      "builder-bindings": "1",
+      "flock-oracles": "oracle/1"
+    }
+  },
+  "limitations": [
+    "A two-dimensional teaching adaptation of the paper's model, not a reproduction of its system or its results.",
+    "The rules are summed with weights and capped, a teaching choice; the levels say where that matters.",
+    "Rocks push birds like a force field rather than steering them away ahead of time.",
+    "Every level opens on one seed, chosen by a rule (ADR-0003). One run shows what these rules can do, not what they usually do.",
+    "A draft: its anchors are placeholders until the source map exists, and no passage is quoted yet."
+  ]
+}
