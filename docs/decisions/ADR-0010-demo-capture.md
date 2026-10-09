@@ -74,7 +74,10 @@ events would also land on different steps from run to run, which changes the run
 
 ## Consequences
 
-- **Two runs on one machine give byte-identical videos.** The session log records the check.
+- **Two runs on one runtime give byte-identical videos,** on macOS arm64 and on Linux x86-64
+  alike. **The two runtimes give different bytes:** their frames differ by rendering noise,
+  while the run itself agrees. So the capture's byte-identity is a per-runtime claim
+  (architecture.md, Claims per runtime; found 2026-10-09).
 - **The capture is a WebM, and with `--frames` a PNG sequence too.**
   - Browsers, YouTube and most players take the WebM.
   - For MP4 (H.264), the owner encodes the PNG sequence elsewhere. The sequences are large:

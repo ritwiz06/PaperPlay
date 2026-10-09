@@ -574,7 +574,9 @@ frame rate. The film no longer depends on how fast the machine draws.
 - **Used in:** `scripts/capture-demo.ts`, `apps/web/src/capture/demo-script.ts`, `scripts/capture/ffmpeg.ts`
 - **Why here:** Screen recording films wall-clock time, so a slow frame skips part of the
   flock's flight. Each video frame here is exactly two simulation steps. Two runs gave
-  byte-identical videos, because the encoder is single-threaded and bit-exact too.
+  byte-identical videos on one runtime, because the encoder is single-threaded and bit-exact
+  too. Another CPU's software rasteriser draws slightly different pixels, so byte-identity
+  holds per runtime.
 - **Learn more:** [FFmpeg, "image2pipe"](https://ffmpeg.org/ffmpeg-formats.html#image2-1) and
   [Playwright, "Videos"](https://playwright.dev/docs/videos), the real-time recording this
   avoids

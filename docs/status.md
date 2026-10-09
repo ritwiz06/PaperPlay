@@ -1,57 +1,55 @@
 # Status
 
-Updated 2026-10-09, during the day's second session: `origin`, CI, the shell, the world art
-pass, the capture and the level script ([log](sessions/2026-10-09-2.md)). This file is rewritten every session.
+Updated 2026-10-09, during the day's second session. It set up `origin` and CI, and started
+the shell. It stopped early, as the owner asked, because CI found that the demo capture's
+bytes differ between macOS and Linux ([log](sessions/2026-10-09-2.md)). This file is
+rewritten every session.
 
 ## Where we are
 
 - **Gate:** G1 Playable baseline **passed**, and is tagged `v0.1.0` at `3448e5b`. G2 is in
   progress. `gates.json` keeps G1 current until G2's evidence exists (ADR-0009).
-- **Branches** (ADR-0009):
-  - `main` holds G1 and this session's merged work:
-    - ADR-0009, short branches;
-    - ADR-0008, the game-first interface;
-    - the axe scan;
-    - the demo capture;
-    - this plan change.
-  - `g2/hook-spike` (`5aadf22`) holds the design spike. It stays unmerged until the owner
-    reviews it.
-  - The nine `g1/*` branches are all ancestors of `main`.
-  - Nothing is pushed: `origin` waits for the repository's URL.
-- **Working commit:** `edfadad` on `main`, the latest code commit there, where `check:gate`
-  passed G1. Everything after it on `main` is documentation.
+- **Repository:** the private `ritwiz06/PaperPlay` is `origin`.
+  - Pushed: `main`, `v0.1.0`, and `spike/hook-2026-10-09` (the spike's commit, `5aadf22`,
+    which `progress.md` names).
+  - The `g1/*` branches and the spike's branch are deleted; `main` and the tags hold all
+    of them.
+- **CI** (ADR-0011): `check:gate` runs on ubuntu-latest with Node 24.21.0 on every push and
+  pull request, and is green on Linux. A capture job films the demo on Linux on `main` and
+  on demand.
+- **Branches:**
+  - `g2/shell` holds slice 1 so far: `7b88705` (ADR-0008 records the spike's review), then a
+    local work-in-progress commit, `bc8c630`. It is unmerged and unpushed.
+  - `g2/finding-capture` holds this finding's docs.
+- **Working commit:** `8d36d62` on `main`, the latest code commit there (`capture:demo
+  --frames`). `check:gate` passed on it, with this finding's docs on top.
 - **Runtime:** Node 24.21.0, pinned in `.node-version`. Run tools through
   `fnm exec --using=24.21.0` when the shell's default Node differs; `check:gate` refuses
   evidence from any other version.
-- **What a learner can do now:**
-  - **On `/world/local`,** opened on seed 4:
-    - change the rules;
-    - place and remove beacons and obstacles, by pointer or by keyboard;
-    - pick a bird and see the birds it sees;
-    - replay the same seed, or move to the next one;
-    - watch the readouts, labelled as computed observations.
-  - **On `/world/hook`,** on the spike branch only:
-    - play the hook level in the game-first HUD;
-    - move "Move together";
-    - read the guide's reaction;
-    - open the paper journal from "From the paper", at a placeholder passage;
-    - unlock level 2 by sweeping the control's range.
-- **What the owner can make:** `npm run capture:demo` writes two 15 s videos of seed 4 and a
-  dragged beacon into the git-ignored `captures/`. The output is byte-identical on every run
-  on this machine (ADR-0010).
+- **What a learner can do now,** on `/world/local`, opened on seed 4:
+  - change the rules;
+  - place and remove beacons and obstacles;
+  - pick a bird and see the birds it sees;
+  - replay the same seed, or move to the next one.
 
-## Latest check:gate (G1), 2026-10-09, commit edfadad
+  `/world/hook` on the shell exists only on `g2/shell` so far.
+- **What the owner can make:** `npm run capture:demo [-- --frames]` writes two 15 s videos of
+  seed 4 and a dragged beacon, and lossless PNG sequences, into the git-ignored `captures/`.
+  - The output is byte-identical on every run on one runtime.
+  - macOS and Linux give different bytes (ADR-0010; architecture.md, Claims per runtime).
+
+## Latest check:gate (G1), 2026-10-09, `main` at 1b27e33 plus this finding's docs (code as at 8d36d62)
 
 ```
 check:gate G1 · Playable baseline · tag v0.1.0
   runtime    node 24.21.0 (pinned 24.21.0)  ok
-  typecheck  ok      9.3 s
-  lint       ok      7.2 s
-  check:docs ok      0.2 s
-  test       ok      7.2 s
-  build      ok      0.4 s
-  test:e2e   ok      12.7 s
-  evidence   269 tests (vitest 255, playwright 14), 0 skipped
+  typecheck  ok      11.8 s
+  lint       ok      8.7 s
+  check:docs ok      0.3 s
+  test       ok      10.2 s
+  build      ok      0.6 s
+  test:e2e   ok      16.1 s
+  evidence   271 tests (vitest 257, playwright 14), 0 skipped
     R01  Deterministic, oracle-checked primitives      43 passing
     R02  Model/render separation                       5 passing
     R03  Strict, versioned contracts                   49 passing
@@ -60,76 +58,60 @@ check:gate G1 · Playable baseline · tag v0.1.0
 G1 passed: every required check ran and every requirement has passing evidence.
 ```
 
-The four [R12] axe scans are among the 14 Playwright tests. G1 does not list R12, so the
-summary leaves it out. On the spike branch, at `5aadf22`, the gate passed with 275 tests.
+CI on Linux passed the same gate on `main` (run 37967849151). The four [R12] axe scans are
+among the 14 Playwright tests.
 
 ## Blockers
 
-- **The push waits on the repository's URL.** The instructions held the placeholder
-  `<PASTE PRIVATE REPO URL>`, and the owner's GitHub account (`ritwiz06`) has no PaperPlay
-  repository yet.
+- **The capture finding waits on the owner** (the owner's rule for any capture result that
+  differs from the Mac).
+  - The demo capture is byte-identical run to run on each runtime, with two runs on each.
+  - macOS arm64 and Linux x86-64 give different bytes.
+  - The frames differ by rendering noise, and the run itself agrees (architecture.md,
+    Claims per runtime).
+  - Slices 1 to 4 wait for the owner's answer.
 
 ## Decisions waiting on the owner
 
-1. **The repository:** its URL, or the go-ahead to create a private `ritwiz06/PaperPlay`
-   with `gh`. Then `main` and `v0.1.0` are pushed.
-2. **The hook spike** (`g2/hook-spike`; screenshots in `captures/hook-spike/`). The owner
-   reviews it, and decides whether it merges, and what changes first. Choices the spike
-   made, for the owner to keep or change:
-   - **Chips use short words:**
-     - "Paper" for paper-derived;
-     - "Teaching choice";
-     - "Measured" for computed observation;
-     - "Model's guess" for generated inference.
-
-     The journal's legend gives each full name and meaning.
-   - **On desktop, the guide and level card sit bottom left,** not bottom centre, so the
-     field's middle stays clear.
-   - **The level card shows the level's readout,** and the equation only at Advanced.
-   - **The guide gives way to the What-if card** while that card is open.
-3. **ADR-0008's readings,** marked "my reading" in the ADR:
-   - the readout in the level card;
-   - guided exploration inside the guide;
-   - "Not from the paper" for controls with no anchor;
-   - "Rules of this world" off level screens;
-   - no Fredoka 700.
-4. **MP4 for the demo capture,** if social platforms need it. That needs an ffmpeg with H.264,
-   which is a new dependency.
-5. **The old `g1/*` branch names:** delete them, now that `main` holds them all?
+1. **The capture finding.** Options:
+   - **a.** Accept per-runtime byte-identity, and make one runtime canonical for published
+     videos. CI's Linux runner is the reproducible choice.
+   - **b.** Add a cross-runtime check: Mac and Linux frames must agree within a stated
+     pixel tolerance, and bird pixels must overlap. It would be a new test, not a loosened
+     one.
+   - **c.** Investigate further: compare the lossless PNG frames, to tell SwiftShader's
+     drawing from JPEG's encoding.
+2. **Whether to resume slice 1** from `bc8c630`. So far:
+   - the HUD covers 15.1% of 1440 × 900 and 21.3% of 390 × 844 at rest;
+   - the field lands inside the free rectangle on both;
+   - axe finds no violations.
 
 ## Next three actions
 
-1. Once the owner has reviewed the spike, build the shell properly:
-   - LevelCard, Guide, PaperJournal, LevelMap and DepthToggle, in `packages/ui/src/react`;
-   - a camera fit that frames the field in the space the HUD leaves.
-2. Write the source register and the flocking source map, so a real passage replaces the
-   placeholder.
-3. Settle the group measure before any level teaches with it.
+1. On the owner's answer, finish slice 1:
+   - the Playwright tests for HUD coverage, the fit and R05 provenance;
+   - then the docs and the merge.
+2. Slice 2, the world art pass, then slice 3, the capture with a scripted camera. The capture
+   decision above shapes slice 3.
+3. Slice 4, the level script, `docs/design/flocking-levels.md`.
 
 ## Recommendations
 
 In priority order:
 
-1. **Make the stage's camera fit respect the HUD before building the shell.** Risk: on a
-   phone, the guide and level card cover the bottom half of the screen. The fit centres
-   the field without knowing that, so the flock flies under the cards (spike, round 2).
-2. **Run `check:gate` in CI as soon as `origin` exists.** Risk: SwiftShader has only been
-   exercised on this Mac, and a GitHub Actions run would also be the first check off this
-   machine.
-3. **Settle the group measure early in G2, as the owner chose.** Risk: a learner reads
+1. **Choose option a, and keep b as a follow-up.** Risk: a video published from one machine
+   can't be reproduced bit for bit on another. A canonical runtime fixes that, and a
+   tolerance check would catch real drift.
+2. **Settle the group measure early in G2, as the owner chose.** Risk: a learner reads
    "Groups: 1" as "a murmuration formed" when a random scatter can show the same.
-4. **Give the demo capture a closer, scripted camera.** Risk: the default camera frames the
-   whole valley, so the flock is small in a phone-sized video. R02 keeps a camera change
-   from touching the run.
-5. **Code-split the Three.js stage before anyone tests on a phone.** Risk: 245 KB of gzipped
+3. **Code-split the Three.js stage before anyone tests on a phone.** Risk: 245 KB of gzipped
    JavaScript (896 KB raw) loads before the first frame.
-6. **Profile before any level raises `agentCount`.** Risk: the neighbour search is O(N²). At
-   the default settings, a step of 72 birds costs about 77 µs and a measurement 46 µs.
-7. **Handle WebGL context loss in `mountStage`.** Risk: mobile browsers drop contexts in the
+4. **Profile before any level raises `agentCount`.** Risk: the neighbour search is O(N²).
+5. **Handle WebGL context loss in `mountStage`.** Risk: mobile browsers drop contexts in the
    background, and the stage would stay blank.
-8. **Add dark mode with the G2 shell.** The tokens, the stage's dusk palette and the
-   reference's dark HUD cards exist, but the page has no dark theme yet.
-9. **Revisit TypeScript 7 monthly.** Only typescript-eslint's support blocks the move
+6. **Add dark mode with the shell.** The tokens, the stage's dusk palette and the reference's
+   dark HUD cards exist, but the page has no dark theme yet.
+7. **Revisit TypeScript 7 monthly.** Only typescript-eslint's support blocks the move
    (ADR-0001).
-10. **Treat the no-alignment oracle as a hypothesis.** It is expected-qualitative, so a
-    failure there is a finding, not a threshold to tune (`fixtures/oracles/README.md`).
+8. **Note the runner change:** ubuntu-latest moves to Ubuntu 26 from 2026-10-19 (CI's
+   annotation). The Linux capture's bytes may change with it.

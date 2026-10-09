@@ -134,7 +134,8 @@ flowchart LR
 | Browser tests render WebGL in software | Launch flags, and a test that asserts SwiftShader was used | `playwright.config.ts`, `tests/e2e/stage.spec.ts` |
 | Fonts come from the page's own origin, and only the shipped weights are declared or rendered | A unit test on the font files; a browser test that blocks off-origin requests | `packages/ui/test/fonts.test.ts`, `tests/e2e/fonts.spec.ts` |
 | `/world/local` has no WCAG 2.x A or AA violation that axe can detect, in four states, at 1280 and 360 px | Browser tests [R12] | `tests/e2e/accessibility.spec.ts` |
-| The demo capture advances a fixed two steps per video frame, replays from its own record, and ends on one group | Tests; two runs gave byte-identical videos (2026-10-09 log) | `apps/web/test/demo-script.test.ts`, `scripts/test/capture.test.ts` |
+| The demo capture advances a fixed two steps per video frame, replays from its own record, and ends on one group | Tests, on both runtimes | `apps/web/test/demo-script.test.ts`, `scripts/test/capture.test.ts` |
+| **Per runtime:** the demo capture's bytes are the same on every run | Two runs on macOS arm64 and two on Linux x86-64 in CI, each pair byte-identical. The two runtimes give different bytes (see Claims per runtime) | 2026-10-09 logs; `.github/workflows/check-gate.yml` (capture job) |
 | The capture page never ships | The production build has one entry, `index.html` | `apps/web/vite.config.ts` (Vite's default input) |
 | Secrets stay server-side | Not yet enforced (G3) | — |
 
@@ -158,6 +159,30 @@ flowchart LR
   - Linux on x86-64, in CI.
 
   A claim that holds on one runtime only says so.
+
+### Claims per runtime
+
+Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
+
+- **Hold on both runtimes:** every test in the gate. That includes:
+  - the bitwise determinism and replay tests, within a runtime (R01);
+  - the oracle fixtures;
+  - the hook-seed rule (seed 4);
+  - the demo script's one-group property;
+  - render invariance (R02);
+  - the browser tests.
+- **Per runtime: the demo capture's bytes.**
+  - Each runtime makes byte-identical frames and videos on every run.
+  - macOS arm64 and Linux x86-64 make different bytes from the same code, Chromium
+    153.0.8010.12 and SwiftShader.
+  - The frames differ by rendering noise only. Mean difference 0.14–0.23 of 255, at most
+    19, and under 0.07% of pixels differ by more than 8.
+  - Bird pixels overlap 99.3–99.6% at 0, 7.5 and 14.9 s, so the run itself agrees across
+    runtimes and the drawing differs. The likeliest cause is SwiftShader's code generation
+    on the two architectures.
+- **Not compared across runtimes:** R01's bit-identical observables are a within-runtime
+  claim, as R01 says ("on one runtime"). No test yet compares a Mac run with a Linux run
+  bit for bit.
 - **Libraries:** Zod 4.6 for contracts, Fastify 5 for the API.
 - **Scripts:**
   - `check:gate` runs typecheck, lint, check:docs, test, build and test:e2e, then checks
