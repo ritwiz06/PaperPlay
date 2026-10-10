@@ -3,7 +3,7 @@
  * the deterministic builder against the registry (ADR-0016). The app never reads the spec
  * directly; it plays what the builder made, and refuses to start if the spec does not build.
  */
-import type { FlockParams } from "@paperplay/primitives";
+import type { FlockParams } from "@paperplay/primitives/flock";
 import { buildWorld, type BuiltLevel, type BuiltWorld } from "@paperplay/pipeline";
 import { registry } from "@paperplay/primitives";
 import spec from "../../../../fixtures/worldspecs/flocking-reference.json";

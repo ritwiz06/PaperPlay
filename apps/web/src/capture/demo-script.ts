@@ -6,7 +6,7 @@
  *
  * Every value here is a presentation choice for the video, not a claim from the paper.
  */
-import { flockPlanarWeighted as flock } from "@paperplay/primitives";
+import { flockPlanarWeighted as flock } from "@paperplay/primitives/flock";
 import { FLIGHT_ALTITUDE, flockCentre, type Vec3 } from "@paperplay/ui/stage-core";
 import type { WorldSession } from "../world/session.ts";
 

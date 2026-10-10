@@ -1,6 +1,7 @@
 import { RunRecord, type RunEvent } from "@paperplay/contracts";
 import { describe, expect, it } from "vitest";
-import { flockDefaultParams, flockPlanarWeighted, replayRecord, runEvents, type FlockState, type RunPlan } from "../src/index.ts";
+import { replayRecord, runEvents, type RunPlan } from "../src/index.ts";
+import { flockDefaultParams, flockPlanarWeighted, type FlockState } from "../src/agents/flock/index.ts";
 
 const flock = flockPlanarWeighted;
 const setup = { primitive: flock, params: flockDefaultParams, actions: { "alignment-strength": "alignmentWeight" } };

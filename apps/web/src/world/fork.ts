@@ -9,7 +9,7 @@
  * Framework-free, like the session, so it is tested in Node.
  */
 import { claimHolds, SAMPLE_STEPS, summarise, type BuiltLevel } from "@paperplay/pipeline";
-import { flockPlanarWeighted as flock, type FlockObservables, type FlockParams } from "@paperplay/primitives";
+import { flockPlanarWeighted as flock, type FlockObservables, type FlockParams } from "@paperplay/primitives/flock";
 import { advance, START_CLOCK, type Speed, type StepClock } from "@paperplay/ui/stage-core";
 import { createWorldSession, type SessionOptions, type WorldSession } from "./session.ts";
 

@@ -7,7 +7,7 @@
  */
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { flockPlanarWeighted as flock } from "@paperplay/primitives";
+import { flockPlanarWeighted as flock } from "@paperplay/primitives/flock";
 import { CRITERION, murmuration, scatterSweep, toMarkdown } from "./sweep/group-measure.ts";
 
 const rows = scatterSweep();

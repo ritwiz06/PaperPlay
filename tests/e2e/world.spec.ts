@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import type { RunEvent } from "@paperplay/contracts";
-import { flockDefaultParams, flockNeighbours, flockPlanarWeighted as flock, runEvents, type FlockParams } from "@paperplay/primitives";
+import { runEvents } from "@paperplay/primitives";
+import { flockDefaultParams, flockNeighbours, flockPlanarWeighted as flock, type FlockParams } from "@paperplay/primitives/flock";
 import { HOOK_SEED, LOCAL_ACTIONS } from "../../apps/web/src/world/local-world.ts";
 
 // The local world, driven as a learner would. Each test emulates reduced motion, so the world

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { deepFreeze, defaultsOf, shapeOf, type VariableTable } from "../variables.ts";
+import { deepFreeze, defaultsOf, shapeOf, type VariableTable } from "../../variables.ts";
 
 // Ranges are teaching choices carried over from the Murmuration Valley prototype, except
 // alignment's, widened to 0–4 so its default sits mid-range (2.2.0). The four rule

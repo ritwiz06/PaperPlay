@@ -23,3 +23,6 @@ captures/
 
 # Owner-only reference material, such as the project handbook; never committed (ADR-0006)
 reference/private/
+
+# Claude Code agent worktrees: full copies of the repository
+.claude/worktrees/

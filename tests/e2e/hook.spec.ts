@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { flockDefaultParams, flockPlanarWeighted as flock } from "@paperplay/primitives";
+import { flockDefaultParams, flockPlanarWeighted as flock } from "@paperplay/primitives/flock";
 import { coveredFraction, type Rect } from "../../packages/ui/src/stage-core/index.ts";
 import { HOOK_SEED } from "../../apps/web/src/world/local-world.ts";
 

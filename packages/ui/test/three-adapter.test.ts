@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync } from "node:fs";
-import type { Agent, FlockState } from "@paperplay/primitives";
+import type { Agent, FlockState } from "@paperplay/primitives/flock";
 import * as THREE from "three";
 import { describe, expect, it } from "vitest";
 import { DEFAULT_CAMERA, describeFrame, dusk, orbit, valleyDay, type FrameDescription, type StagePalette } from "../src/stage-core/index.ts";

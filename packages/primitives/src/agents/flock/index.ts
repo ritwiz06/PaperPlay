@@ -1,8 +1,10 @@
-import type { EditablePrimitive, PrimitiveDescription } from "../types.ts";
-import { deepFreeze } from "../variables.ts";
+import type { EditablePrimitive, EntityDescription, PrimitiveDescription } from "../../types.ts";
+import { deepFreeze } from "../../variables.ts";
 import { applyFlockEdit } from "./edits.ts";
+import { headingsOf } from "./headings.ts";
 import { initFlock } from "./init.ts";
-import { measureFlock } from "./measure.ts";
+import { atRocksOf, measureFlock, spreadOf } from "./measure.ts";
+import { neighboursOf } from "./neighbours.ts";
 import { FLOCK_VARIABLES, FlockParams } from "./params.ts";
 import { FlockStateSchema } from "./state-schema.ts";
 import type { FlockObservables, FlockState } from "./state.ts";
@@ -61,11 +63,34 @@ const DESCRIPTION: PrimitiveDescription = deepFreeze({
   ],
 });
 
+/** The flock's read-only queries Q1–Q4 (MODEL.md), by name, for the flocking kit to draw. */
+export interface FlockQueries {
+  readonly neighbours: typeof neighboursOf;
+  readonly headings: typeof headingsOf;
+  readonly spread: (state: FlockState) => ReturnType<typeof spreadOf>;
+  readonly atRocks: typeof atRocksOf;
+}
+
+export type FlockPrimitive = EditablePrimitive<FlockParams, FlockState, FlockObservables> & {
+  readonly entities: Readonly<Record<"beacon" | "obstacle", EntityDescription>>;
+  readonly queries: FlockQueries;
+};
+
 /** flock.planar.weighted@3.1.0, specified equation by equation in MODEL.md. */
-export const flockPlanarWeighted: EditablePrimitive<FlockParams, FlockState, FlockObservables> = Object.freeze({
+export const flockPlanarWeighted: FlockPrimitive = Object.freeze({
   id: "flock.planar.weighted",
   version: "3.1.0",
+  family: "agents",
   fixedTimestep: FIXED_TIMESTEP,
+  // Seconds, watched at the wall clock's pace at 1x.
+  time: Object.freeze({ unit: "second", perWatchSecond: 1 }),
+  // A torus sized by the two start-up variables (E1, E10).
+  space: Object.freeze({ kind: "torus2d", width: "worldWidth", height: "worldHeight" }),
+  entities: Object.freeze({
+    beacon: Object.freeze({ meaning: "A point the birds steer toward, the nearest one only (E6)." }),
+    obstacle: Object.freeze({ meaning: "A rock that pushes birds away inside obstacleRadius (E7)." }),
+  }),
+  queries: Object.freeze({ neighbours: neighboursOf, headings: headingsOf, spread: (state: FlockState) => spreadOf(state), atRocks: atRocksOf }),
   paramSchema: FlockParams,
   stateSchema: FlockStateSchema,
   init: initFlock,

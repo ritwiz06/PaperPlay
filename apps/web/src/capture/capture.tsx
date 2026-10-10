@@ -4,7 +4,7 @@
  * the window with nothing over it, and nothing moves on its own. The capture script asks for
  * each frame through window.paperplayCapture, and waits for the stage to draw it.
  */
-import { flockDefaultParams } from "@paperplay/primitives";
+import { flockDefaultParams } from "@paperplay/primitives/flock";
 import { WorldStage, type StageDriver } from "@paperplay/ui/react";
 import { createRoot } from "react-dom/client";
 import { LOCAL_ACTIONS } from "../world/local-world.ts";

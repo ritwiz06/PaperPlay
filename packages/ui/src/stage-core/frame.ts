@@ -1,4 +1,4 @@
-import type { FlockState } from "@paperplay/primitives";
+import type { FlockState } from "@paperplay/primitives/flock";
 import { FULL_WINDOW, poseOf, projectionMatrix, viewMatrix, FAR, NEAR, type OrbitCamera, type ViewWindow } from "./camera.ts";
 import { headingColor, type StagePalette } from "./palettes.ts";
 import type { Mat4, Vec3 } from "./vec.ts";

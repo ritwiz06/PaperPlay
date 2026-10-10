@@ -1,6 +1,6 @@
 import type { FlockParams } from "./params.ts";
 import type { Agent, FlockState } from "./state.ts";
-import { shortestOffset, wrap } from "./torus.ts";
+import { shortestOffset, wrap } from "../../spaces/torus.ts";
 
 export const FIXED_TIMESTEP = 1 / 60;
 export const MAX_TIMESTEP = 0.05;

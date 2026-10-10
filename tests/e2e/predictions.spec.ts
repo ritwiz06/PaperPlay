@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { buildWorld, claimHolds, SAMPLE_STEPS, summarise, type BuiltLevel } from "@paperplay/pipeline";
-import { flockPlanarWeighted as flock, registry, type FlockObservables, type FlockParams } from "@paperplay/primitives";
+import { registry } from "@paperplay/primitives";
+import { flockPlanarWeighted as flock, type FlockObservables, type FlockParams } from "@paperplay/primitives/flock";
 import { expect, test, type Page } from "@playwright/test";
 
 // A prediction before every What-if (owner, 2026-10-09; ADR-0018): two choices, never scored.

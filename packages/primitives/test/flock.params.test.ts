@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { flockDefaultParams, flockPlanarWeighted } from "../src/index.ts";
+import { flockDefaultParams, flockPlanarWeighted } from "../src/agents/flock/index.ts";
 
 const schema = flockPlanarWeighted.paramSchema;
 const description = flockPlanarWeighted.describe();

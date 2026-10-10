@@ -8,21 +8,8 @@
  * at s and applied before step s is taken, so the session can always be replayed from its record.
  */
 import { RunRecord, type PlaceEvent, type Prediction, type RunEvent } from "@paperplay/contracts";
-import {
-  flockAtRocks,
-  flockHeadings,
-  flockNeighbours,
-  flockSpread,
-  flockPlanarWeighted as flock,
-  type AtRocks,
-  type Entity,
-  type FlockObservables,
-  type FlockParams,
-  type FlockState,
-  type Headings,
-  type RunPlan,
-  runEvents,
-} from "@paperplay/primitives";
+import { type RunPlan, runEvents } from "@paperplay/primitives";
+import { flockAtRocks, flockHeadings, flockNeighbours, flockSpread, flockPlanarWeighted as flock, type AtRocks, type Entity, type FlockObservables, type FlockParams, type FlockState, type Headings } from "@paperplay/primitives/flock";
 import { advance, START_CLOCK, type FrameEmphasis, type Speed, type StageInput, type StepClock } from "@paperplay/ui/stage-core";
 
 export interface SessionOptions {

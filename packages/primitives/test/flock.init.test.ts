@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { flockDefaultParams, flockPlanarWeighted } from "../src/index.ts";
+import { flockDefaultParams, flockPlanarWeighted } from "../src/agents/flock/index.ts";
 
 const flock = flockPlanarWeighted;
 const speedOf = (agent: { vx: number; vy: number }): number => Math.sqrt(agent.vx * agent.vx + agent.vy * agent.vy);

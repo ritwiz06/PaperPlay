@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { buildWorld, type BuiltLevel } from "@paperplay/pipeline";
-import { flockAtRocks, flockPlanarWeighted as flock, registry, type FlockParams, type FlockState } from "@paperplay/primitives";
+import { registry } from "@paperplay/primitives";
+import { flockAtRocks, flockPlanarWeighted as flock, type FlockParams, type FlockState } from "@paperplay/primitives/flock";
 import { expect, test, type Page } from "@playwright/test";
 
 // Level 5's readout (ADR-0018): the birds inside rocks, counted on the card, and the rocks that

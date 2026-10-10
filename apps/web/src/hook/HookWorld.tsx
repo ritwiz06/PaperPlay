@@ -8,7 +8,7 @@
  */
 import { isPlaceholder, RULE_HOLDS, RULE_SEEDS, type AnchorRef, type PendingSource, type SourceManifest } from "@paperplay/contracts";
 import { SAMPLE_STEPS, type BuiltLevel } from "@paperplay/pipeline";
-import { flockDefaultParams, flockPlanarWeighted, type FlockObservables } from "@paperplay/primitives";
+import { flockDefaultParams, flockPlanarWeighted, type FlockObservables } from "@paperplay/primitives/flock";
 import { DEFAULT_CAMERA, type Speed } from "@paperplay/ui/stage-core";
 import {
   BirdMark,

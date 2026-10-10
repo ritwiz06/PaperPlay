@@ -8,7 +8,7 @@
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { flockPlanarWeighted as flock } from "@paperplay/primitives";
+import { flockPlanarWeighted as flock } from "@paperplay/primitives/flock";
 import {
   chooseDefaults,
   mergeGrids,

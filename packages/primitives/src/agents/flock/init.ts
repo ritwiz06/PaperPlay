@@ -1,4 +1,4 @@
-import { mulberry32 } from "../prng.ts";
+import { mulberry32 } from "../../prng.ts";
 import type { FlockParams } from "./params.ts";
 import type { Agent, FlockState } from "./state.ts";
 

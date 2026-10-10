@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { flockDefaultParams } from "@paperplay/primitives";
+import { flockDefaultParams } from "@paperplay/primitives/flock";
 import { HOOK_SEED } from "../../apps/web/src/world/local-world.ts";
 import { BASE, SWEEP_SEEDS, WINDOW_STEPS } from "../sweep/flock-sweep.ts";
 import { chooseHookSeed, holdsFrom, runSeed, summarise, toMarkdown, type SeedSummary } from "../sweep/hook-seed.ts";

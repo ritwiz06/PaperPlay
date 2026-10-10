@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { flockDefaultParams, flockHeadings, flockPlanarWeighted as flock, type FlockState } from "../src/index.ts";
+import { flockDefaultParams, flockHeadings, flockPlanarWeighted as flock, type FlockState } from "../src/agents/flock/index.ts";
 
 // Hand-built from MODEL.md E12 and Q2: each bird's heading is atan2(vy, vx); the flock's mean
 // heading is the direction of the summed unit headings, in list order; a bird at rest has none.

@@ -11,7 +11,8 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { RULE_HOLDS, RULE_SEEDS, type PlaceEvent } from "@paperplay/contracts";
 import { buildWorld, claimHolds, SAMPLE_STEPS, sampleCount, summarise, type BuiltLevel, type BuiltWorld } from "@paperplay/pipeline";
-import { flockDefaultParams, flockPlanarWeighted as flock, registry, type FlockObservables, type FlockParams } from "@paperplay/primitives";
+import { registry } from "@paperplay/primitives";
+import { flockDefaultParams, flockPlanarWeighted as flock, type FlockObservables, type FlockParams } from "@paperplay/primitives/flock";
 
 export const SKIES: readonly number[] = Array.from({ length: RULE_SEEDS }, (_, index) => index + 1);
 export const FIXTURE = join(import.meta.dirname, "..", "..", "fixtures", "worldspecs", "flocking-reference.json");

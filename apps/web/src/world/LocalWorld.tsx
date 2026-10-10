@@ -1,5 +1,5 @@
 import type { Action } from "@paperplay/contracts";
-import { flockDefaultParams, type FlockParams } from "@paperplay/primitives";
+import { flockDefaultParams, type FlockParams } from "@paperplay/primitives/flock";
 import { LabBench, OriginChip, Readout, WorldStage, type BenchControl, type StageTool } from "@paperplay/ui/react";
 import { useCallback, useState } from "react";
 import { CONTROL_NOTES, HOOK_SEED, LOCAL_ACTIONS, LOCAL_CONTROLS, PRIMARY_ACTION, type LocalActionId } from "./local-world.ts";

@@ -1,4 +1,5 @@
-import { flockDefaultParams, flockPlanarWeighted as flock, flockReadsAsOneGroup, runEvents } from "@paperplay/primitives";
+import { runEvents } from "@paperplay/primitives";
+import { flockDefaultParams, flockPlanarWeighted as flock, flockReadsAsOneGroup } from "@paperplay/primitives/flock";
 import { describe, expect, it } from "vitest";
 import { flockCentre, DEFAULT_CAMERA } from "@paperplay/ui/stage-core";
 import { beaconAt, DEMO, scriptDemo } from "../src/capture/demo-script.ts";

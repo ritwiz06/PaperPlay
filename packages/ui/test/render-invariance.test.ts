@@ -1,6 +1,6 @@
 // R02: the renderer displays state; primitives compute state. Drawing the flock under any
 // camera or palette, or not at all, must leave every measured observable bit-identical.
-import { flockAtRocks, flockDefaultParams, flockNeighbours, flockPlanarWeighted as flock, flockSpread, type FlockState } from "@paperplay/primitives";
+import { flockAtRocks, flockDefaultParams, flockNeighbours, flockPlanarWeighted as flock, flockSpread, type FlockState } from "@paperplay/primitives/flock";
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_CAMERA,

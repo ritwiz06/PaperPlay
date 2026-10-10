@@ -1,4 +1,4 @@
-import type { Agent, FlockState } from "@paperplay/primitives";
+import type { Agent, FlockState } from "@paperplay/primitives/flock";
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_CAMERA,

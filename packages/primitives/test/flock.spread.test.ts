@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { flockPlanarWeighted as flock, flockSpread, type FlockState } from "../src/index.ts";
+import { flockPlanarWeighted as flock, flockSpread, type FlockState } from "../src/agents/flock/index.ts";
 
 const state = (agents: [number, number, number, number][]): FlockState => ({
   width: 32,

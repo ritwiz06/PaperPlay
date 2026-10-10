@@ -2,7 +2,8 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { DepthElement, WorldSpec } from "@paperplay/contracts";
 import { buildWorld } from "@paperplay/pipeline";
-import { flockPlanarWeighted as flock, registry, type FlockObservables, type FlockParams } from "@paperplay/primitives";
+import { registry } from "@paperplay/primitives";
+import { flockPlanarWeighted as flock, type FlockObservables, type FlockParams } from "@paperplay/primitives/flock";
 import { expect, test, type Page } from "@playwright/test";
 import { HOOK_SEED } from "../../apps/web/src/world/local-world.ts";
 

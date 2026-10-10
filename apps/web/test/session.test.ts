@@ -1,5 +1,6 @@
 import { Action, RunRecord } from "@paperplay/contracts";
-import { flockAtRocks, flockDefaultParams, flockHeadings, flockNeighbours, flockPlanarWeighted as flock, replayRecord, runEvents } from "@paperplay/primitives";
+import { replayRecord, runEvents } from "@paperplay/primitives";
+import { flockAtRocks, flockDefaultParams, flockHeadings, flockNeighbours, flockPlanarWeighted as flock } from "@paperplay/primitives/flock";
 import { describe, expect, it } from "vitest";
 import { HOOK_SEED, LOCAL_ACTIONS, LOCAL_CONTROLS, PRIMARY_ACTION } from "../src/world/local-world.ts";
 import { createWorldSession, type WorldSession } from "../src/world/session.ts";

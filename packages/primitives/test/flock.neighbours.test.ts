@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { flockDefaultParams, flockNeighbours, type FlockState } from "../src/index.ts";
+import { flockDefaultParams, flockNeighbours, type FlockState } from "../src/agents/flock/index.ts";
 
 // Hand-built from MODEL.md E1–E2 on a 10 × 10 torus with R = 3 and R_s = 1:
 // N_i = { j ≠ i : |δ_ij| < R } and S_i = { j ≠ i : 0 < |δ_ij| < R_s }, the short way round.

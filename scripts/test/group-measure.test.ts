@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { flockDefaultParams, flockPlanarWeighted as flock } from "@paperplay/primitives";
+import { flockDefaultParams, flockPlanarWeighted as flock } from "@paperplay/primitives/flock";
 import { describe, expect, it } from "vitest";
 import { CRITERION, groupsBy, murmuration, scatterSweep, toMarkdown } from "../sweep/group-measure.ts";
 

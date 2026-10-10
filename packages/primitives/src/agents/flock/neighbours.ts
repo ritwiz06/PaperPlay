@@ -1,6 +1,6 @@
 import type { FlockParams } from "./params.ts";
 import type { Agent, FlockState } from "./state.ts";
-import { shortestOffset } from "./torus.ts";
+import { shortestOffset } from "../../spaces/torus.ts";
 
 /** Which birds one bird sees (N_i, used by alignment and cohesion) and which crowd it (S_i, used by separation). */
 export interface Neighbourhood {

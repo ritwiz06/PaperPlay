@@ -1,4 +1,4 @@
-import { flockDefaultParams, flockPlanarWeighted as flock } from "@paperplay/primitives";
+import { flockDefaultParams, flockPlanarWeighted as flock } from "@paperplay/primitives/flock";
 import { describe, expect, it } from "vitest";
 import {
   coveredFraction,

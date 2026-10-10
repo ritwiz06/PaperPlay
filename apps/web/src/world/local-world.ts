@@ -3,7 +3,7 @@
  * Every value here is a teaching choice, not a claim from the paper (ADR-0003).
  */
 import type { Action } from "@paperplay/contracts";
-import { flockPlanarWeighted as flock } from "@paperplay/primitives";
+import { flockPlanarWeighted as flock } from "@paperplay/primitives/flock";
 
 /**
  * The opening seed: of the defaults sweep's seeds that qualified, the one whose flock

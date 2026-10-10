@@ -5,7 +5,7 @@
  * defaults on the sweep's own seeds, measuring every step instead of once a second.
  * Pure and deterministic.
  */
-import { flockPlanarWeighted as flock, flockReadsAsOneGroup, type FlockParams } from "@paperplay/primitives";
+import { flockPlanarWeighted as flock, flockReadsAsOneGroup, type FlockParams } from "@paperplay/primitives/flock";
 import { judge } from "./flock-sweep.ts";
 
 /** One seed's flock, measured at step 0 and after every step up to `steps`. */

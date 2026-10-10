@@ -2,7 +2,7 @@
  * A deterministic sweep of flock.planar.weighted's four rule parameters, used to choose
  * teaching defaults (ADR-0003). Pure: the same grid, seeds and steps give the same rows.
  */
-import { flockPlanarWeighted as flock, type FlockParams } from "@paperplay/primitives";
+import { flockPlanarWeighted as flock, type FlockParams } from "@paperplay/primitives/flock";
 
 /** The four parameters the sweep varies. */
 export interface SweepConfig {

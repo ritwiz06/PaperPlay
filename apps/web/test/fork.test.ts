@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { SAMPLE_STEPS, summarise } from "@paperplay/pipeline";
-import { flockPlanarWeighted as flock, type FlockObservables, type FlockParams } from "@paperplay/primitives";
+import { flockPlanarWeighted as flock, type FlockObservables, type FlockParams } from "@paperplay/primitives/flock";
 import { describe, expect, it } from "vitest";
 import { FLOCKING, sessionOptionsFor } from "../src/world/authored-world.ts";
 import { forkParams, openFork } from "../src/world/fork.ts";

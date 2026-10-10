@@ -1,6 +1,6 @@
 import type { EntityEdit } from "@paperplay/contracts";
 import type { Entity, FlockState } from "./state.ts";
-import { wrap } from "./torus.ts";
+import { wrap } from "../../spaces/torus.ts";
 
 const holds = (state: FlockState, id: string): boolean =>
   state.beacons.some((entity) => entity.id === id) || state.obstacles.some((entity) => entity.id === id);

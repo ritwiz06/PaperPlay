@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { flockDefaultParams, flockPlanarWeighted, type FlockState } from "../src/index.ts";
+import { flockDefaultParams, flockPlanarWeighted, type FlockState } from "../src/agents/flock/index.ts";
 
 const flock = flockPlanarWeighted;
 const dt = flock.fixedTimestep;

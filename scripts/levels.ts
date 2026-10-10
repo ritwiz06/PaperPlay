@@ -6,7 +6,7 @@
  */
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { flockPlanarWeighted as flock } from "@paperplay/primitives";
+import { flockPlanarWeighted as flock } from "@paperplay/primitives/flock";
 import { referenceWorld, rejoinCandidate, sweepLevels, toMarkdown } from "./sweep/levels.ts";
 
 const world = referenceWorld();

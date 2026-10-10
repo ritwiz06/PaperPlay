@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import type { RunEvent } from "@paperplay/contracts";
-import { flockPlanarWeighted as flock, registry, runEvents, type FlockParams, type FlockState } from "@paperplay/primitives";
+import { registry, runEvents } from "@paperplay/primitives";
+import { flockPlanarWeighted as flock, type FlockParams, type FlockState } from "@paperplay/primitives/flock";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import { buildWorld, type BuiltLevel } from "../src/index.ts";

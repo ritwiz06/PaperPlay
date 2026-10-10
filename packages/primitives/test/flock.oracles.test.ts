@@ -4,7 +4,8 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
-import { flockPlanarWeighted, flockReadsAsOneGroup, registry, type FlockParams, type FlockState } from "../src/index.ts";
+import { registry } from "../src/index.ts";
+import { flockPlanarWeighted, flockReadsAsOneGroup, type FlockParams, type FlockState } from "../src/agents/flock/index.ts";
 
 const flock = flockPlanarWeighted;
 const FIXTURES = new URL("../../../fixtures/oracles/flock.planar.weighted/", import.meta.url);

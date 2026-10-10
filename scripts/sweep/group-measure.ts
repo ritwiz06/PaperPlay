@@ -12,7 +12,7 @@
  * one would have said, so the report shows what each condition contributes. Those
  * comparison measures live here, in evaluation code, and never in the primitive.
  */
-import { flockDefaultParams, flockPlanarWeighted as flock, flockReadsAsOneGroup, type FlockState } from "@paperplay/primitives";
+import { flockDefaultParams, flockPlanarWeighted as flock, flockReadsAsOneGroup, type FlockState } from "@paperplay/primitives/flock";
 
 export const SCATTER_SEEDS = 10_000;
 export const MURMURATION_SEED = 4;

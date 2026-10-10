@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { flockAtRocks, flockDefaultParams, flockPlanarWeighted as flock, type FlockState } from "../src/index.ts";
+import { flockAtRocks, flockDefaultParams, flockPlanarWeighted as flock, type FlockState } from "../src/agents/flock/index.ts";
 import { deepFreeze } from "../src/variables.ts";
 
 const state = (agents: [number, number][], obstacles: [string, number, number][]): FlockState => ({

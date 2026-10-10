@@ -8,7 +8,7 @@
  */
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { flockDefaultParams, flockPlanarWeighted as flock } from "@paperplay/primitives";
+import { flockDefaultParams, flockPlanarWeighted as flock } from "@paperplay/primitives/flock";
 import { SWEEP_SEEDS, WINDOW_STEPS } from "./sweep/flock-sweep.ts";
 import { chooseHookSeed, runSeed, summarise, toMarkdown } from "./sweep/hook-seed.ts";
 

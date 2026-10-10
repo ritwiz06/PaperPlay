@@ -18,7 +18,7 @@ import { createRequire } from "node:module";
 import { homedir } from "node:os";
 import { dirname, join, relative } from "node:path";
 import { chromium } from "@playwright/test";
-import { flockPlanarWeighted as flock } from "@paperplay/primitives";
+import { flockPlanarWeighted as flock } from "@paperplay/primitives/flock";
 import { createServer } from "vite";
 import { DEMO } from "../apps/web/src/capture/demo-script.ts";
 import { encodeArgs, playwrightFfmpegPath } from "./capture/ffmpeg.ts";

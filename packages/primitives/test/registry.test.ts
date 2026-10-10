@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { createRegistry, flockPlanarWeighted, registry } from "../src/index.ts";
+import { createRegistry, registry } from "../src/index.ts";
+import { flockPlanarWeighted } from "../src/agents/flock/index.ts";
 
 describe("primitive registry", () => {
   it("holds flock.planar.weighted at version 3.1.0", () => {

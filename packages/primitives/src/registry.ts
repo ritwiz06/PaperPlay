@@ -1,5 +1,5 @@
 import type { PrimitiveRef } from "@paperplay/contracts";
-import { flockPlanarWeighted } from "./flock/index.ts";
+import { flockPlanarWeighted } from "./agents/flock/index.ts";
 import type { Primitive } from "./types.ts";
 
 export interface PrimitiveRegistry {

@@ -12,6 +12,8 @@ export default defineConfig(
     "test-results/",
     "playwright-report/",
     "reference/",
+    // Claude Code's agent worktrees: full copies of the repository, linted where they live.
+    "**/.claude/worktrees/",
   ]),
   js.configs.recommended,
   tseslint.configs.recommendedTypeChecked,
@@ -38,6 +40,9 @@ export default defineConfig(
     // Primitives compute science: seeded, clock-free, and unaware of any UI or runtime.
     files: ["packages/primitives/src/**/*.ts"],
     rules: {
+      // A model given as data is interpreted by closures, never compiled from text (the deploy's CSP forbids it too).
+      "no-eval": "error",
+      "no-new-func": "error",
       "no-restricted-properties": [
         "error",
         { object: "Math", property: "random", message: "Primitives are seeded: draw from mulberry32 in prng.ts." },
@@ -74,8 +79,9 @@ export default defineConfig(
             { name: "@paperplay/contracts", allowTypeImports: true, message: "The stage core reads contract types only." },
           ],
           patterns: [
+            { regex: "^@paperplay/primitives/", allowTypeImports: true, message: "The stage core reads a family's simulation types; it never runs the simulation." },
             {
-              regex: "^(?!@paperplay/(primitives|contracts)$|\\.{1,2}/)",
+              regex: "^(?!@paperplay/(primitives|contracts)(/[a-z]+)?$|\\.{1,2}/)",
               message: "The stage core is framework-free: no Three.js, React or DOM libraries.",
             },
           ],
@@ -113,8 +119,9 @@ export default defineConfig(
             { name: "@paperplay/contracts", allowTypeImports: true, message: "The React stage and bench read contract types only." },
           ],
           patterns: [
+            { regex: "^@paperplay/primitives/", allowTypeImports: true, message: "The React stage and bench read a family's simulation types; they never run the simulation." },
             {
-              regex: "^(?!react$|react/|@paperplay/(primitives|contracts)$|\\.{1,2}/)",
+              regex: "^(?!react$|react/|@paperplay/(primitives|contracts)(/[a-z]+)?$|\\.{1,2}/)",
               message: "The React layer imports React, its own package's modules, and simulation types only.",
             },
           ],

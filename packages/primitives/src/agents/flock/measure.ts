@@ -1,5 +1,5 @@
 import type { Agent, FlockObservables, FlockState } from "./state.ts";
-import { shortestOffset, wrap } from "./torus.ts";
+import { shortestOffset, wrap } from "../../spaces/torus.ts";
 
 /** L_c: birds closer than this may be linked into one group (E14). Fixed, not a parameter. */
 export const CLUSTER_LINK_DISTANCE = 4.5;
