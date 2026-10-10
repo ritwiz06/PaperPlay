@@ -115,7 +115,7 @@ flowchart LR
 | Contract | Version | Defined in |
 |---|---|---|
 | SourceManifest | `sourcemanifest/1` | `packages/contracts/src/provenance.ts` |
-| RunRecord, with RunEvent (`param` · `place` · `remove`) | `runrecord/2` | `packages/contracts/src/run.ts` |
+| RunRecord, with RunEvent (`param` · `place` · `remove`) and the learner's predictions | `runrecord/3` (ADR-0023) | `packages/contracts/src/run.ts` |
 | Origin, Anchor, PrimitiveRef, Action, JobState | Versioned with the documents that embed them | `packages/contracts/src/` |
 | WorldSpec, with Level, Counterfactual (and its MeasuredDifference and claim), DepthVariant, GuidedExploration, DesignSpec; drafts may hold placeholder anchors and a pending source | `worldspec/2` | `packages/contracts/src/worldspec.ts` (ADR-0016, ADR-0018) |
 | `flock.planar.weighted` | 3.1.0: equations E1–E20, with the group measure of ADR-0015 (E14 groups, E18 stray share) and its reading O1, "one group"; E19 the largest group's spread and E20 birds at rocks (ADR-0018); defaults per ADR-0003, alignment range 0–4; and the read-only queries Q1 (neighbourhoods), Q2 (headings), Q3 (spread) and Q4 (birds at rocks), which do not change the version | `packages/primitives/src/flock/MODEL.md` |
@@ -144,6 +144,8 @@ flowchart LR
 | A level's setup is recorded as place events at step 0, so its run replays from its record | Tests [R07] | `apps/web/test/session.test.ts` |
 | A fork's two worlds stay step for step together; opened at a level's start on seed 5, it measures exactly what the levels sweep records | Tests [R06], against direct runs and `eval/sweeps/levels.md` | `apps/web/test/fork.test.ts` |
 | The fork shows two worlds side by side on a desktop, stacked on a phone, with the measured difference charted, and passes axe on both | Browser tests [R06] [R12] | `tests/e2e/fork.spec.ts` |
+| Every level of the flocking world asks for a prediction, with two choices, before its fork; the guide reports this sky's result by the choice it bears out; nothing scores it | Tests [R06]; browser tests on every level, against Node's own result on seed 5 [R06] | `apps/web/test/guide.test.ts`, `tests/e2e/predictions.spec.ts` (ADR-0023) |
+| A prediction is saved in the run's record at its step, and changes nothing a record replays | Tests [R03] [R07] | `packages/contracts/test/run-record.test.ts`, `packages/primitives/test/replay.test.ts`, `apps/web/test/session.test.ts` |
 | A level that asks for a prediction asks it before its fork, and nothing scores it: no line calls a choice right or wrong | Tests [R06]; browser tests [R06] [R12] | `apps/web/test/guide.test.ts`, `tests/e2e/guided.spec.ts` |
 | A run at 4x is the same run as at 1x: the same states bit for bit, the same events, and it replays from its record | Tests [R07]; the clock's tests | `apps/web/test/session.test.ts`, `packages/ui/test/fixed-step.test.ts` |
 | Level 5's rocks counter shows the primitive's own count (E20) and rocks (Q4), and the stage lights exactly the rocks Q4 reports, in the one world and in both of the fork's | Tests on Q4 against E20 [R01]; the session; browser tests compared with Node [R06] | `packages/primitives/test/flock.rocks.test.ts`, `apps/web/test/session.test.ts`, `tests/e2e/rocks.spec.ts` |
@@ -290,3 +292,4 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 | 2026-10-09 | 3454a1d | `npm run land` and the pre-push hook on `main`: `scripts/land/`, `scripts/hooks/`, `.githooks/` (ADR-0009) |
 | 2026-10-09 | 29f9646 | Flock query Q4 (`flockAtRocks`); RocksCounter; the frame's touched rocks and the adapter's `touchedMaterial`; rock markers cast no shadow |
 | 2026-10-09 | 7c81d9f | `mountStage` handles context loss: the lost notice, restore, and "Tap to reload the world" (ADR-0022); DifferenceChart draws at its measured width; SpeedButton says "Speed 1×"; `tests/e2e/pixels.ts` |
+| 2026-10-09 | ea2fdf1 | `runrecord/3` with predictions; the session's `predict` and `record`; every level's guided exploration in the fixture (ADR-0023) |

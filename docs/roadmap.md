@@ -113,6 +113,8 @@ Next:
   between them, charted; stacked on a phone (2026-10-09, `8d62794`, ADR-0019).
 - [x] Guided exploration in the guide: predict, intervene, observe, explain, never scored, with
   level 2's prediction first (2026-10-09, `85e43fe`).
+- [x] A prediction before every What-if, two choices, never scored, reported afterwards and
+  saved in the run record, `runrecord/3` (2026-10-09, `ea2fdf1`, ADR-0023).
 - [x] A speed control, 1x, 2x and 4x, with a run at 4x replaying bit for bit against 1x
   (2026-10-09, `b6e00d3`, ADR-0020).
 - [x] Level 5's readout as the birds at rocks: a counter on the card, and rocks that light up
@@ -243,3 +245,4 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-09 | `main` moves only through `npm run land`, and a pre-push hook refuses any other push to `main` | Owner decision, after three broken states reached `main` (ADR-0009, amended) |
 | 2026-10-09 | PaperPlay builds for AI/ML, biomedical and scientific papers; the flocking world becomes the reference example; primitive families, scene kits, three routing tiers, the level rule as a pipeline stage, and ingest from arXiv source, PubMed Central XML and PDF. G3 and G4 are re-planned for the owner's review | Owner decision (ADR-0021) |
 | 2026-10-09 | Replay export UI and `/world/local` in the shell wait until after G3's first generated world; the stale-evidence rule moves into G3 | Owner decision, session 6 |
+| 2026-10-09 | A prediction before every What-if, saved in the run record (`runrecord/3`); the stated effects say "this world" and "the other world", not left and right | Owner request (ADR-0023); on a phone the two worlds stack |

@@ -560,6 +560,18 @@ gate locally and CI on that same commit. Land writes that record as it goes.
   and not followed. A check that runs itself cannot be forgotten.
 - **Learn more:** [Pro Git: Git Hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks)
 
+### A note in a record, not an event
+
+A run record keeps two kinds of thing. Events change the run: a parameter moved, a rock
+placed. Notes do not: a learner's prediction is kept at its step, but replaying the record
+ignores it, and the run comes out the same.
+
+- **Used in:** `packages/contracts/src/run.ts`, its Prediction schema;
+  `apps/web/src/world/session.ts`, its predict and record
+- **Why here:** the owner asked for every prediction to be saved in the run record. Keeping
+  it apart from the events means a prediction can never change what the run measured.
+- **Learn more:** [Martin Fowler: Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html)
+
 ## Graphics
 
 ### Scene graph (Three.js)

@@ -7,6 +7,22 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · A prediction before every What-if
+
+- Branch: `g2/predictions`
+- Commits: `ea2fdf1`
+- Shipped (ADR-0023):
+  - **Every level asks for a prediction before its What-if:** two choices, never scored. At the
+    level's time the guide reports this sky's result by the choice it bears out, the rule
+    across 20 skies, the paper's point and a question.
+  - **`runrecord/3`** keeps each prediction at its step, as a note that replay ignores. The
+    session builds the whole record with `record(identity)`.
+  - **The stated effects say "this world" and "the other world",** not left and right, which
+    were wrong on a phone.
+- Evidence: the browser tests on every level, compared with Node on seed 5; the gate's count is
+  in the session log.
+- Gate: land's `check:gate` run on this branch's tip, recorded in the session log.
+
 ## 2026-10-09 · The stage survives context loss; the fork's chart fits a phone
 
 - Branch: `g2/stage-resilience`

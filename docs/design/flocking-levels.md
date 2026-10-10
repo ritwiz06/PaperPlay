@@ -82,8 +82,8 @@ Below, ↑ means after raising the control and ↓ after lowering it.
   | Advanced | as Intermediate / "Directional agreement 0.83 and rising: …" | as Intermediate / "Directional agreement 0.31 and falling: …" |
 - **What if birds ignored their neighbours' headings?**
   - The right world runs with Move together at 0, from the same seed and the same events.
-  - **The effect, as the level states it:** "Within 20 seconds the left flock agrees on a
-    heading far more than the right one: its agreement is higher by more than half the
+  - **The effect, as the level states it:** "Within 20 seconds this world's flock agrees on
+    a heading far more than the other world's: its agreement is higher by more than half the
     scale."
   - **The measured difference:** directional agreement after 20 s. The claim is that the
     right world's is lower by more than 0.5. It holds on **19 of 20 skies**; seed 5 gives
@@ -154,7 +154,7 @@ Below, ↑ means after raising the control and ↓ after lowering it.
   | Advanced | "…w_s = 1.80: the push from neighbours closer than R_s = 1.55 is stronger." / "Mean nearest-neighbour distance 1.62 and widening." | "…w_s = 0.10: …" / "Mean nearest-neighbour distance 0.41 and shrinking." |
 - **What if birds never kept their distance?**
   - The right world runs with "Personal space" at 0.
-  - **The effect, as the level states it:** "Without personal space the right flock bunches
+  - **The effect, as the level states it:** "Without personal space the other world's flock bunches
     far tighter: after 20 seconds its birds sit more than half a world unit closer to their
     nearest neighbours."
   - **The measured difference:** the mean nearest-neighbour distance after 20 s. It holds on
@@ -180,8 +180,8 @@ Below, ↑ means after raising the control and ↓ after lowering it.
   spread across the valley.
 - **What if birds had no urge to stay together?**
   - The right world runs with "Stay close" at 0.
-  - **The effect, as the level states it:** "Without the pull toward the middle, the right
-    flock spreads out across the valley: after 40 seconds its spread is more than 3 world
+  - **The effect, as the level states it:** "Without the pull toward the middle, the other
+    world's flock spreads out across the valley: after 40 seconds its spread is more than 3 world
     units wider."
   - **The measured difference:** the spread after 40 s. It holds on **20 of 20 skies**,
     typically about 5 world units against about 12.
@@ -216,7 +216,7 @@ Below, ↑ means after raising the control and ↓ after lowering it.
   - The right world runs with `obstacleWeight` at 0: a parameter override, as a counterfactual
     must be.
   - **The effect, as the level states it:** "Without the rule, birds fly straight through the
-    rocks: together they spend more than three times as long inside them as the left flock's
+    rocks: together they spend more than three times as long inside them as this world's
     birds."
   - **The measured difference:** bird-seconds inside a rock (closer than 1 world unit, E20)
     over 20 s. It holds on **20 of 20 skies**; seed 5 gives 0.3 against 21.4.
@@ -270,6 +270,21 @@ observation, and none is labelled paper-derived from Reynolds.
   - No passage from Reynolds.
   - The journal page is labelled a bonus page, and cites Vicsek et al. 1995 as further
     reading, as a teaching choice, with no quote.
+
+## Predictions (owner, session 6; ADR-0023)
+
+Every level asks for a prediction before its What-if: two choices, the stated outcome first,
+never scored. At the level's time the guide reports this sky's result by the choice it bears
+out, then the rule across 20 skies, the paper's point and a question.
+
+| Level | The question | The two choices |
+|---|---|---|
+| 1 | If birds ignored their neighbours' headings, would the flock still come to fly one way? | It stays scattered · It still lines up |
+| 2 | If every bird could see the whole flock, would the flock come to agree faster? | Faster · About the same, or slower |
+| 3 | If birds never kept their distance, what would happen to the space between them? | They bunch up much tighter · They keep about the same spacing |
+| 4 | If birds had no urge to stay together, would the flock still hold together? | It spreads out across the valley · It stays about as tight |
+| 5 | If birds had no rule for rocks, would they still steer round them? | They fly straight through · They still find a way round |
+| 6 | If the flock were a quarter as dense, would it come to agree as quickly? | It takes far longer · About as quickly |
 
 ## Settled by the owner (2026-10-09)
 
