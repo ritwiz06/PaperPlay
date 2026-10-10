@@ -7,7 +7,8 @@ wrong.
 ## Rules for authoring one
 
 - Derive it from the primitive's written equations (for `flock.planar.weighted`, see
-  `packages/primitives/src/agents/flock/MODEL.md`). Never copy a number from running the
+  `packages/primitives/src/agents/flock/MODEL.md`; for `compartments.ode`,
+  `packages/primitives/src/compartments/MODEL.md`). Never copy a number from running the
   implementation. A calculator is fine; a result printed by `step` is not.
 - Put the derivation in the fixture, step by step, citing the equations it uses, so
   anyone can check it with pencil and paper.
@@ -29,3 +30,7 @@ wrong.
 | `metamorphic` | A symmetry of the equations (reflection, permutation, translation) |
 | `replay` | Identical seed and events give identical observables, bit for bit |
 | `known-answers` | Reference outputs of a generator (`prng.mulberry32.json`) |
+| `trajectory` | A model's compartments at chosen steps, against RK4's closed form or the exact solution, within a derived bound |
+| `conserved-invariant` | A stated invariant held over a run, and whether the conservation check proves it symbolically |
+| `accuracy-verdict` | Whether the accuracy check accepts a model at its declared step, or refuses it as stiff or unstable |
+| `steady-states` | Which stated steady states the steady-state check accepts, and which it refuses |

@@ -1,0 +1,46 @@
+{
+  "oracle": "oracle/1",
+  "id": "compartments.growth.rk4-steps",
+  "primitive": { "id": "compartments.ode", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "trajectory",
+  "claim": "Exponential growth: one RK4 step multiplies the cells by R(z) with z = r·Δt, N steps by R(z)^N, and N steps fall short of the exact x₀·e^(rt) by at most N·e^((N−1)z)·(z⁵/120)/(1 − z/6) of x₀.",
+  "derivation": [
+    "dx/dt = r·x with r = 0.3 per day, Δt = 0.25 day and x₀ = 50 cells: f is linear with λ = r, so z = λ·Δt = 0.075 (MODEL.md E3).",
+    "By E3, x′ = R(z)·x with R(0.075) = 1 + 0.075 + 0.0028125 + 0.0000703125 + 0.00000131836… = 1.077884130859375.",
+    "So x after n steps is 50·R(z)^n: 53.89420654296875 after 1 step and 1004.2760998493397 after 40 (t = 10 days), computed with exact fractions and rounded once.",
+    "Rounding: about ten roundings a step, each within 1.1e-16 of a value below 1005, so within about 1e-12 after one step (tolerance 1e-10) and 4.4e-11 after 40 (tolerance 1e-9). r = 0.3 is not exact in binary, but its error, 1.1e-17, moves x after 10 days by about 10 × 1.1e-17 of itself, 1.1e-13.",
+    "The exact solution at t = 10 days is 50·e³ = 1004.2768461593834.",
+    "e^z − R(z) = Σ over m ≥ 5 of z^m/m!, every term positive, each at most z/6 of the one before, so 0 < e^z − R(z) ≤ (z⁵/120)/(1 − z/6) = 2.00257e-8.",
+    "e^(Nz) − R^N = (e^z − R)·Σ_(j=0)^(N−1) e^(jz)·R^(N−1−j) ≤ N·(e^z − R)·e^((N−1)z), since 0 < R < e^z. With N = 40, e^(39 × 0.075) = e^2.925 = 18.635, so 0 < x₀e^(Nz) − x₀R^N ≤ 50 × 40 × 18.635 × 2.00257e-8 = 7.4633e-4. The tolerance, 7.47e-4, is that bound rounded up.",
+    "Calculator check with exact fractions: 50e³ − 50R⁴⁰ = 7.4631e-4, inside the bound and just under it, as it should be: e^(jz)R^(N−1−j) is close to e^((N−1)z) when R is close to e^z."
+  ],
+  "model": {
+    "timeUnit": "day",
+    "compartments": [
+      { "id": "x", "name": "Cells in the dish", "unit": { "cells": 1 }, "initial": { "p": "seeded" }, "nonNegative": true, "anchors": [] }
+    ],
+    "parameters": [
+      { "id": "r", "symbol": "r", "name": "Growth rate", "unit": { "time": -1 }, "range": [0, 1], "defaultValue": 0.3, "origin": "teaching-choice", "anchors": [] },
+      { "id": "seeded", "symbol": "x₀", "name": "Cells seeded", "unit": { "cells": 1 }, "range": [1, 100000], "defaultValue": 50, "origin": "teaching-choice", "anchors": [] }
+    ],
+    "equations": [
+      {
+        "of": "x",
+        "rate": { "op": "mul", "args": [{ "p": "r" }, { "c": "x" }] },
+        "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }]
+      }
+    ],
+    "invariants": [],
+    "steadyStates": [],
+    "observables": [{ "id": "cells", "label": "Cells in the dish", "expr": { "c": "x" }, "unit": { "cells": 1 } }],
+    "solver": { "dt": 0.25, "tolerance": 1e-6 }
+  },
+  "params": { "r": 0.3, "seeded": 50 },
+  "checkpoints": [
+    { "step": 0, "compartment": "x", "against": "rk4", "value": 50, "tolerance": 0 },
+    { "step": 1, "compartment": "x", "against": "rk4", "value": 53.89420654296875, "tolerance": 1e-10 },
+    { "step": 40, "compartment": "x", "against": "rk4", "value": 1004.2760998493397, "tolerance": 1e-9 },
+    { "step": 40, "compartment": "x", "against": "exact", "value": 1004.2768461593834, "tolerance": 7.47e-4 }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "oracle": "oracle/1",
+  "id": "compartments.logistic.exact-solution",
+  "primitive": { "id": "compartments.ode", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "trajectory",
+  "claim": "The logistic curve dx/dt = r·x·(1 − x/K) follows its exact solution K / (1 + ((K − x₀)/x₀)·e^(−rt)) to within ten times RK4's leading error term.",
+  "derivation": [
+    "r = 0.5 per day, K = 1000 people, x₀ = 10 people, Δt = 0.1 day; checked at t = 5, 10 and 20 days (steps 50, 100 and 200).",
+    "Exact: x(t) = 1000 / (1 + 99·e^(−t/2)): 109.57205155884768 at t = 5, 599.8596018130347 at t = 10 and 995.5255179295148 at t = 20.",
+    "RK4's error, derived. f(x) = r·x − (r/K)·x² is quadratic, so E3's one-step map is a polynomial in h, expanded with exact fractions. The exact solution's Taylor series at x has a₀ = x and (n + 1)·a_(n+1) = r·(a_n − (1/K)·Σ_(k=0)^n a_k·a_(n−k)). The two agree through h⁴, as a fourth-order method must, and their h⁵ coefficients differ by c₅(x) = a₅ − RK4₅: 0.0024518 at x = 10 and x = 990, 0.0040690 at x = 500.",
+    "Each step adds c₅(x)·h⁵ to the error, and the flow carries an error made at time s to time T multiplied by ∂x(T)/∂x(s) = f(x(T))/f(x(s)) (x′ obeys the variational equation, and so does f(x)). Summed over the steps along the exact solution, exact − RK4 ≈ 9.896e-6 at t = 5, 3.131e-5 at t = 10 and 1.380e-6 at t = 20 people.",
+    "Cross-check, with E3 transcribed into Python in 60-digit decimals (not this repository's TypeScript): exact − RK4 = 9.921e-6, 3.128e-5 and 1.379e-6, within 0.3% of the leading term.",
+    "Tolerance: ten times the leading term, rounded up to one figure: 1e-4, 4e-4 and 2e-5 people. The neglected terms are smaller by about r·h = 0.05; rounding adds at most 200 steps × ten roundings × 1.1e-16 × 1000 ≈ 2e-10."
+  ],
+  "model": {
+    "timeUnit": "day",
+    "compartments": [
+      { "id": "x", "name": "Population", "unit": { "people": 1 }, "initial": { "p": "founders" }, "nonNegative": true, "anchors": [] }
+    ],
+    "parameters": [
+      { "id": "r", "symbol": "r", "name": "Growth rate", "unit": { "time": -1 }, "range": [0, 2], "defaultValue": 0.5, "origin": "teaching-choice", "anchors": [] },
+      { "id": "capacity", "symbol": "K", "name": "Carrying capacity", "unit": { "people": 1 }, "range": [1, 1000000], "defaultValue": 1000, "origin": "teaching-choice", "anchors": [] },
+      { "id": "founders", "symbol": "x₀", "name": "Founding population", "unit": { "people": 1 }, "range": [1, 1000], "defaultValue": 10, "origin": "teaching-choice", "anchors": [] }
+    ],
+    "equations": [
+      {
+        "of": "x",
+        "rate": { "op": "mul", "args": [{ "p": "r" }, { "c": "x" }, { "op": "sub", "a": { "n": 1 }, "b": { "op": "div", "a": { "c": "x" }, "b": { "p": "capacity" } } }] },
+        "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }]
+      }
+    ],
+    "invariants": [],
+    "steadyStates": [],
+    "observables": [{ "id": "population", "label": "Population", "expr": { "c": "x" }, "unit": { "people": 1 } }],
+    "solver": { "dt": 0.1, "tolerance": 1e-6 }
+  },
+  "params": { "r": 0.5, "capacity": 1000, "founders": 10 },
+  "checkpoints": [
+    { "step": 0, "compartment": "x", "against": "exact", "value": 10, "tolerance": 0 },
+    { "step": 50, "compartment": "x", "against": "exact", "value": 109.57205155884768, "tolerance": 1e-4 },
+    { "step": 100, "compartment": "x", "against": "exact", "value": 599.8596018130347, "tolerance": 4e-4 },
+    { "step": 200, "compartment": "x", "against": "exact", "value": 995.5255179295148, "tolerance": 2e-5 }
+  ]
+}

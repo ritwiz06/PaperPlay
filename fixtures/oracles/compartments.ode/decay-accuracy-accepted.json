@@ -1,0 +1,38 @@
+{
+  "oracle": "oracle/1",
+  "id": "compartments.decay.accuracy-accepted",
+  "primitive": { "id": "compartments.ode", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "accuracy-verdict",
+  "claim": "The same decay at a step it suits, k = 0.5 per hour at Δt = 0.1 hour, passes the accuracy check: halving the step moves x by under 2e-5 molecules, 2% of what the check allows. So the refusal of the stiff decay is the check working, not a check that refuses everything.",
+  "derivation": [
+    "dx/dt = −k·x with k = 0.5 per hour, x₀ = 1000 molecules, Δt = 0.1 hour, tolerance 1e-6, over N = 20 coarse steps.",
+    "By E3 the coarse run after n steps is x₀·R(−0.05)^n and the fine run after 2n half steps is x₀·R(−0.025)^(2n).",
+    "Computed with exact fractions, the largest |R(−0.05)^n − R(−0.025)^(2n)| over n = 1 … 20 is 1.8753e-8, at n = 20: a deviation of 1.8753e-5 molecules. (Each run is within n·|z|⁵/120 of e^(−0.05n), 2.6e-9·n and 1.6e-10·n, so the deviation is about their difference.)",
+    "The scale is the coarse run's largest |x|, x₀ = 1000 at the start, so the allowance is 1e-6 × 1000 = 1e-3 molecules, and the worst deviation uses 1.9% of it. Rounding, under 1e-10, cannot change the verdict."
+  ],
+  "model": {
+    "timeUnit": "hour",
+    "compartments": [
+      { "id": "x", "name": "Drug in the blood", "unit": { "molecules": 1 }, "initial": { "p": "dose" }, "nonNegative": true, "anchors": [] }
+    ],
+    "parameters": [
+      { "id": "k", "symbol": "k", "name": "Elimination rate", "unit": { "time": -1 }, "range": [0, 2], "defaultValue": 0.5, "origin": "teaching-choice", "anchors": [] },
+      { "id": "dose", "symbol": "x₀", "name": "Starting amount", "unit": { "molecules": 1 }, "range": [0, 1000000], "defaultValue": 1000, "origin": "teaching-choice", "anchors": [] }
+    ],
+    "equations": [
+      {
+        "of": "x",
+        "rate": { "op": "neg", "a": { "op": "mul", "args": [{ "p": "k" }, { "c": "x" }] } },
+        "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }]
+      }
+    ],
+    "invariants": [],
+    "steadyStates": [],
+    "observables": [{ "id": "amount", "label": "Drug in the blood", "expr": { "c": "x" }, "unit": { "molecules": 1 } }],
+    "solver": { "dt": 0.1, "tolerance": 1e-6 }
+  },
+  "params": { "k": 0.5, "dose": 1000 },
+  "steps": 20,
+  "verdict": "accepted"
+}

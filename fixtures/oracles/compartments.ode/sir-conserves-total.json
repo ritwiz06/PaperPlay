@@ -1,0 +1,50 @@
+{
+  "oracle": "oracle/1",
+  "id": "compartments.sir.conserves-total",
+  "primitive": { "id": "compartments.ode", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "conserved-invariant",
+  "claim": "In SIR, s + i + r stays 1 at every step up to rounding, and the conservation check proves it symbolically.",
+  "derivation": [
+    "ds/dt = −β·s·i, di/dt = β·s·i − γ·i, dr/dt = γ·i, as fractions of one population: β = 0.4 and γ = 0.2 per day, i₀ = 0.001, so s₀ = 1 − i₀ and r₀ = 0, and s + i + r = 1 at the start (E5).",
+    "Symbolically (C3, P1): the invariant s + i + r is the sum of the compartments with coefficients 1, and every rate is a polynomial, so d(s + i + r)/dt = (−β·s·i) + (β·s·i − γ·i) + (γ·i), whose like terms cancel exactly: the check reports it proved symbolically.",
+    "Numerically, RK4 conserves it too: every stage k of E3 is a value of f, and f_s + f_i + f_r = 0 at every point, so k_s + k_i + k_r = 0 for each stage and a step changes s + i + r by (Δt/6)·(0 + 2·0 + 2·0 + 0) = 0 in exact arithmetic (E3).",
+    "Only rounding moves it: a step rounds each of s, i and r, values at most 1, within 1.1e-16 each, and the stages' cancellation within a few roundings of rates at most β + γ = 0.6, times Δt/6. That is under 5e-16 a step, so under 2.5e-12 over 5000 steps (500 days), even with every rounding in the same direction.",
+    "Tolerance: the family's own, 10⁻⁹ of the starting size 1 (C3), 400 times that worst case."
+  ],
+  "model": {
+    "timeUnit": "day",
+    "compartments": [
+      { "id": "s", "name": "Susceptible", "unit": {}, "initial": { "op": "sub", "a": { "n": 1 }, "b": { "p": "seeded" } }, "nonNegative": true, "anchors": [] },
+      { "id": "i", "name": "Infectious", "unit": {}, "initial": { "p": "seeded" }, "nonNegative": true, "anchors": [] },
+      { "id": "r", "name": "Recovered", "unit": {}, "initial": { "n": 0 }, "nonNegative": true, "anchors": [] }
+    ],
+    "parameters": [
+      { "id": "beta", "symbol": "β", "name": "Transmission rate", "unit": { "time": -1 }, "range": [0, 2], "defaultValue": 0.4, "origin": "teaching-choice", "anchors": [] },
+      { "id": "gamma", "symbol": "γ", "name": "Recovery rate", "unit": { "time": -1 }, "range": [0.01, 1], "defaultValue": 0.2, "origin": "teaching-choice", "anchors": [] },
+      { "id": "seeded", "symbol": "i₀", "name": "Share infectious at the start", "unit": {}, "range": [0, 0.1], "defaultValue": 0.001, "origin": "teaching-choice", "anchors": [] }
+    ],
+    "equations": [
+      { "of": "s", "rate": { "op": "neg", "a": { "op": "mul", "args": [{ "p": "beta" }, { "c": "s" }, { "c": "i" }] } }, "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }] },
+      {
+        "of": "i",
+        "rate": { "op": "sub", "a": { "op": "mul", "args": [{ "p": "beta" }, { "c": "s" }, { "c": "i" }] }, "b": { "op": "mul", "args": [{ "p": "gamma" }, { "c": "i" }] } },
+        "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }]
+      },
+      { "of": "r", "rate": { "op": "mul", "args": [{ "p": "gamma" }, { "c": "i" }] }, "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }] }
+    ],
+    "invariants": [{ "kind": "conserved", "expr": { "op": "add", "args": [{ "c": "s" }, { "c": "i" }, { "c": "r" }] }, "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }] }],
+    "steadyStates": [],
+    "observables": [
+      { "id": "infectious", "label": "Share infectious", "expr": { "c": "i" }, "unit": {} },
+      { "id": "recovered", "label": "Share recovered", "expr": { "c": "r" }, "unit": {} }
+    ],
+    "solver": { "dt": 0.1, "tolerance": 1e-6 }
+  },
+  "params": { "beta": 0.4, "gamma": 0.2, "seeded": 0.001 },
+  "steps": 5000,
+  "weights": { "s": 1, "i": 1, "r": 1 },
+  "value": 1,
+  "tolerance": 1e-9,
+  "method": "symbolic"
+}

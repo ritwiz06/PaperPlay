@@ -1,0 +1,43 @@
+{
+  "oracle": "oracle/1",
+  "id": "compartments.logistic.steady-states",
+  "primitive": { "id": "compartments.ode", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "steady-states",
+  "claim": "The steady-state check accepts the logistic curve's two steady states, x = 0 and x = K, and refuses a misprinted one, x = K/2.",
+  "derivation": [
+    "dx/dt = r·x·(1 − x/K) with r = 0.5 per day and K = 1000 people; tolerance 1e-6. The test is |f(x*)| ≤ τ·M(x*), M being the rate's size if no sum cancelled (C4).",
+    "Here M = |r|·|x|·M(1 − x/K) = r·|x|·(1 + |x|/K): a sub adds its operands' sizes, a div divides by the divisor's |value|.",
+    "At x = 0: f = 0.5·0·(1 − 0/1000) = 0 exactly, and M = 0.5·0·1 = 0. Every flow is zero, and so is the rate: it holds.",
+    "At x = K = 1000: 1000/1000 = 1 exactly, so 1 − 1 = 0 and f = 0 exactly; M = 0.5·1000·2 = 1000, and 0 ≤ 1e-6·1000. It holds.",
+    "At x = K/2 = 500, given here as a deliberate misprint: f = 0.5·500·(1 − 0.5) = 125 people per day and M = 0.5·500·1.5 = 375, so 125 > 1e-6·375 = 3.75e-4. It is refused, at steadyStates.2.at.x, and only there."
+  ],
+  "model": {
+    "timeUnit": "day",
+    "compartments": [
+      { "id": "x", "name": "Population", "unit": { "people": 1 }, "initial": { "p": "founders" }, "nonNegative": true, "anchors": [] }
+    ],
+    "parameters": [
+      { "id": "r", "symbol": "r", "name": "Growth rate", "unit": { "time": -1 }, "range": [0, 2], "defaultValue": 0.5, "origin": "teaching-choice", "anchors": [] },
+      { "id": "capacity", "symbol": "K", "name": "Carrying capacity", "unit": { "people": 1 }, "range": [1, 1000000], "defaultValue": 1000, "origin": "teaching-choice", "anchors": [] },
+      { "id": "founders", "symbol": "x₀", "name": "Founding population", "unit": { "people": 1 }, "range": [1, 1000], "defaultValue": 10, "origin": "teaching-choice", "anchors": [] }
+    ],
+    "equations": [
+      {
+        "of": "x",
+        "rate": { "op": "mul", "args": [{ "p": "r" }, { "c": "x" }, { "op": "sub", "a": { "n": 1 }, "b": { "op": "div", "a": { "c": "x" }, "b": { "p": "capacity" } } }] },
+        "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }]
+      }
+    ],
+    "invariants": [],
+    "steadyStates": [
+      { "label": "Extinct", "at": { "x": { "n": 0 } }, "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }] },
+      { "label": "At capacity", "at": { "x": { "p": "capacity" } }, "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }] },
+      { "label": "Half capacity, a deliberate misprint", "at": { "x": { "op": "div", "a": { "p": "capacity" }, "b": { "n": 2 } } }, "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }] }
+    ],
+    "observables": [{ "id": "population", "label": "Population", "expr": { "c": "x" }, "unit": { "people": 1 } }],
+    "solver": { "dt": 0.1, "tolerance": 1e-6 }
+  },
+  "params": { "r": 0.5, "capacity": 1000, "founders": 10 },
+  "problems": [{ "path": ["steadyStates", 2, "at", "x"] }]
+}

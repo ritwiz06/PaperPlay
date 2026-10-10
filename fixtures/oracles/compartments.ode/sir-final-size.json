@@ -1,0 +1,53 @@
+{
+  "oracle": "oracle/1",
+  "id": "compartments.sir.final-size",
+  "primitive": { "id": "compartments.ode", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "trajectory",
+  "claim": "SIR's epidemic ends where the final-size relation s∞ = s₀·exp(−R₀·(1 − s∞)) says, with R₀ = β/γ: for R₀ = 2 and s₀ = 0.999, a fifth of the population is never infected.",
+  "derivation": [
+    "ds/dt = −β·s·i, di/dt = β·s·i − γ·i, dr/dt = γ·i as fractions, s + i + r = 1, with β = 0.4 and γ = 0.2 per day, so R₀ = β/γ = 2; i₀ = 0.001, s₀ = 0.999 and r₀ = 0.",
+    "The relation: ds/dr = −(β/γ)·s, so s = s₀·exp(−R₀·r). As t → ∞, i → 0 and r → 1 − s∞, which gives s∞ = s₀·exp(−R₀·(1 − s∞)).",
+    "Solved by Newton's method on φ(s) = s − s₀·e^(−R₀(1 − s)), φ′(s) = 1 − R₀·s₀·e^(−R₀(1 − s)), from s = 0.2: φ = −1.695e-3, φ′ = 0.59661, next 0.20284041388232658; φ = −3.261e-6, next 0.20284590038208576; φ = −1.221e-11, next 0.20284590040263387; φ = −1.7e-22, unchanged. So s∞ = 0.20284590040263387 and r∞ = 1 − s∞ = 0.7971540995973661.",
+    "How small i is by day 500, from the first integral i = C − s + ln(s)/R₀ with C = i₀ + s₀ − ln(s₀)/R₀ = 1.000500250: i(0.9) = 0.047820, i(0.6) = 0.145087, i(0.3) = 0.098514. i is concave in s (its second derivative is −1/(R₀s²)) and falls as s rises above 1/R₀ = 0.5.",
+    "While s ≥ 0.9, di/dt ≥ (0.4·0.9 − 0.2)·i = 0.16·i and i ≤ i(0.9), so that phase lasts at most ln(0.047820/0.001)/0.16 = 24.17 days. While 0.3 ≤ s ≤ 0.9, i ≥ min(i(0.9), i(0.3)) = 0.047820 by concavity, so ds/dt ≤ −0.4·0.3·0.047820 and that phase lasts at most 0.6/0.005738 = 104.56 days. From then on s ≤ 0.3, di/dt ≤ (0.4·0.3 − 0.2)·i = −0.08·i from i ≤ 0.098514, so i(500) ≤ 0.098514·e^(−0.08·(500 − 128.73)) = 1.24e-14.",
+    "With i(500) that small, s(500) = s₀·exp(−R₀(1 − s(500) − i(500))) differs from s∞ by about R₀·s∞·i/(1 − R₀·s∞) ≤ 8.5e-15.",
+    "RK4's own error over 5000 steps of 0.1 day: E3 transcribed into Python in 50-digit decimals (not this repository's TypeScript) gives s(500) − s∞ = 2.6e-12 at Δt = 0.1, and halving the step changes s by 2.5e-12, Richardson's estimate of that error. Rounding in doubles adds at most 5000 steps × about 5e-16.",
+    "Tolerances: 1e-9 for s and r, about 400 times RK4's error; 1e-12 for i, whose exact value is below 1.24e-14 and whose RK4 value is of the same order or smaller."
+  ],
+  "model": {
+    "timeUnit": "day",
+    "compartments": [
+      { "id": "s", "name": "Susceptible", "unit": {}, "initial": { "op": "sub", "a": { "n": 1 }, "b": { "p": "seeded" } }, "nonNegative": true, "anchors": [] },
+      { "id": "i", "name": "Infectious", "unit": {}, "initial": { "p": "seeded" }, "nonNegative": true, "anchors": [] },
+      { "id": "r", "name": "Recovered", "unit": {}, "initial": { "n": 0 }, "nonNegative": true, "anchors": [] }
+    ],
+    "parameters": [
+      { "id": "beta", "symbol": "β", "name": "Transmission rate", "unit": { "time": -1 }, "range": [0, 2], "defaultValue": 0.4, "origin": "teaching-choice", "anchors": [] },
+      { "id": "gamma", "symbol": "γ", "name": "Recovery rate", "unit": { "time": -1 }, "range": [0.01, 1], "defaultValue": 0.2, "origin": "teaching-choice", "anchors": [] },
+      { "id": "seeded", "symbol": "i₀", "name": "Share infectious at the start", "unit": {}, "range": [0, 0.1], "defaultValue": 0.001, "origin": "teaching-choice", "anchors": [] }
+    ],
+    "equations": [
+      { "of": "s", "rate": { "op": "neg", "a": { "op": "mul", "args": [{ "p": "beta" }, { "c": "s" }, { "c": "i" }] } }, "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }] },
+      {
+        "of": "i",
+        "rate": { "op": "sub", "a": { "op": "mul", "args": [{ "p": "beta" }, { "c": "s" }, { "c": "i" }] }, "b": { "op": "mul", "args": [{ "p": "gamma" }, { "c": "i" }] } },
+        "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }]
+      },
+      { "of": "r", "rate": { "op": "mul", "args": [{ "p": "gamma" }, { "c": "i" }] }, "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }] }
+    ],
+    "invariants": [{ "kind": "conserved", "expr": { "op": "add", "args": [{ "c": "s" }, { "c": "i" }, { "c": "r" }] }, "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }] }],
+    "steadyStates": [],
+    "observables": [
+      { "id": "infectious", "label": "Share infectious", "expr": { "c": "i" }, "unit": {} },
+      { "id": "recovered", "label": "Share recovered", "expr": { "c": "r" }, "unit": {} }
+    ],
+    "solver": { "dt": 0.1, "tolerance": 1e-6 }
+  },
+  "params": { "beta": 0.4, "gamma": 0.2, "seeded": 0.001 },
+  "checkpoints": [
+    { "step": 5000, "compartment": "s", "against": "exact", "value": 0.20284590040263387, "tolerance": 1e-9 },
+    { "step": 5000, "compartment": "i", "against": "exact", "value": 0, "tolerance": 1e-12 },
+    { "step": 5000, "compartment": "r", "against": "exact", "value": 0.7971540995973661, "tolerance": 1e-9 }
+  ]
+}

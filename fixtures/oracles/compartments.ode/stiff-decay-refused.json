@@ -1,0 +1,40 @@
+{
+  "oracle": "oracle/1",
+  "id": "compartments.stiff-decay.refused",
+  "primitive": { "id": "compartments.ode", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "accuracy-verdict",
+  "claim": "A fast decay at too coarse a step, k = 1000 per second at Δt = 0.01 s, has |R(z)| = 291 ≫ 1: RK4 is unstable there, halving the step changes everything, and the accuracy check refuses the model rather than draw it wrong.",
+  "derivation": [
+    "dx/dt = −k·x with k = 1000 per second, x₀ = 1 molecule, a declared step Δt = 0.01 s and tolerance 1e-6. The exact solution decays as e^(−1000t): gone within a few milliseconds.",
+    "By E3 a step multiplies x by R(z). At Δt, z = −10 and R(−10) = 1 − 10 + 50 − 166.667 + 416.667 = 291. At Δt/2, z = −5 and R(−5) = 1 − 5 + 12.5 − 20.833 + 26.042 = 329/24 = 13.708. Both exceed 1, so the computed x grows by orders of magnitude while the true x vanishes: the mark of a stiff equation solved at too coarse a step.",
+    "C1 over N = 10 coarse steps: the coarse run reaches 291¹⁰ = 4.354e24 molecules at step 10, its scale. The fine run, after the same 0.1 s, reaches (329/24)²⁰ = 5.492e22. Their deviation there is 4.299e24, 0.987 of the scale, against an allowance of 1e-6 of it. Every earlier step is judged against the same scale, and at step 9 the deviation is already 3.4e-3 of it, so step 10 is the worst.",
+    "So the check reports one problem, for x (path compartments.0), the worst at step 10, and says the step is too coarse for a model that is stiff or unstable there, which PaperPlay will not draw.",
+    "Every value stays finite (4e24 is far below the largest double, 1.8e308), so the refusal comes from the comparison, not from an overflow."
+  ],
+  "model": {
+    "timeUnit": "second",
+    "compartments": [
+      { "id": "x", "name": "Fast-cleared drug", "unit": { "molecules": 1 }, "initial": { "p": "dose" }, "nonNegative": true, "anchors": [] }
+    ],
+    "parameters": [
+      { "id": "k", "symbol": "k", "name": "Elimination rate", "unit": { "time": -1 }, "range": [0, 2000], "defaultValue": 1000, "origin": "teaching-choice", "anchors": [] },
+      { "id": "dose", "symbol": "x₀", "name": "Starting amount", "unit": { "molecules": 1 }, "range": [0, 1000000], "defaultValue": 1, "origin": "teaching-choice", "anchors": [] }
+    ],
+    "equations": [
+      {
+        "of": "x",
+        "rate": { "op": "neg", "a": { "op": "mul", "args": [{ "p": "k" }, { "c": "x" }] } },
+        "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }]
+      }
+    ],
+    "invariants": [],
+    "steadyStates": [],
+    "observables": [{ "id": "amount", "label": "Fast-cleared drug", "expr": { "c": "x" }, "unit": { "molecules": 1 } }],
+    "solver": { "dt": 0.01, "tolerance": 1e-6 }
+  },
+  "params": { "k": 1000, "dose": 1 },
+  "steps": 10,
+  "verdict": "refused",
+  "path": ["compartments", 0]
+}

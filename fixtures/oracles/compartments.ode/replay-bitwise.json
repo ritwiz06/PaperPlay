@@ -1,0 +1,49 @@
+{
+  "oracle": "oracle/1",
+  "id": "compartments.replay.bitwise",
+  "primitive": { "id": "compartments.ode", "version": "1.0.0" },
+  "basis": "derived",
+  "kind": "replay",
+  "claim": "The same parameters and the same parameter changes at the same steps give identical observables, bit for bit, on one runtime.",
+  "derivation": [
+    "init depends only on the parameters (E5): the model has no randomness, and the seed changes nothing.",
+    "A step depends only on the previous state and the parameters (E2, E3), with a fixed order of operations (E1, E3) and no clock.",
+    "Applying the same changes before the same step indices therefore reproduces every state, and every observable, bit for bit. exp, log and pow are not used here, and even they are deterministic on one runtime (E1).",
+    "The changes must alter the run, or the replay would prove nothing: raising β to 0.6 at day 30 speeds the epidemic, and raising γ to 0.3 at day 90 shortens it."
+  ],
+  "model": {
+    "timeUnit": "day",
+    "compartments": [
+      { "id": "s", "name": "Susceptible", "unit": {}, "initial": { "op": "sub", "a": { "n": 1 }, "b": { "p": "seeded" } }, "nonNegative": true, "anchors": [] },
+      { "id": "i", "name": "Infectious", "unit": {}, "initial": { "p": "seeded" }, "nonNegative": true, "anchors": [] },
+      { "id": "r", "name": "Recovered", "unit": {}, "initial": { "n": 0 }, "nonNegative": true, "anchors": [] }
+    ],
+    "parameters": [
+      { "id": "beta", "symbol": "β", "name": "Transmission rate", "unit": { "time": -1 }, "range": [0, 2], "defaultValue": 0.4, "origin": "teaching-choice", "anchors": [] },
+      { "id": "gamma", "symbol": "γ", "name": "Recovery rate", "unit": { "time": -1 }, "range": [0.01, 1], "defaultValue": 0.2, "origin": "teaching-choice", "anchors": [] },
+      { "id": "seeded", "symbol": "i₀", "name": "Share infectious at the start", "unit": {}, "range": [0, 0.1], "defaultValue": 0.001, "origin": "teaching-choice", "anchors": [] }
+    ],
+    "equations": [
+      { "of": "s", "rate": { "op": "neg", "a": { "op": "mul", "args": [{ "p": "beta" }, { "c": "s" }, { "c": "i" }] } }, "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }] },
+      {
+        "of": "i",
+        "rate": { "op": "sub", "a": { "op": "mul", "args": [{ "p": "beta" }, { "c": "s" }, { "c": "i" }] }, "b": { "op": "mul", "args": [{ "p": "gamma" }, { "c": "i" }] } },
+        "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }]
+      },
+      { "of": "r", "rate": { "op": "mul", "args": [{ "p": "gamma" }, { "c": "i" }] }, "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }] }
+    ],
+    "invariants": [{ "kind": "conserved", "expr": { "op": "add", "args": [{ "c": "s" }, { "c": "i" }, { "c": "r" }] }, "anchors": [{ "placeholder": true, "sourceId": "oracle", "need": "None: a hand-built oracle model, taken from no paper." }] }],
+    "steadyStates": [],
+    "observables": [
+      { "id": "infectious", "label": "Share infectious", "expr": { "c": "i" }, "unit": {} },
+      { "id": "recovered", "label": "Share recovered", "expr": { "c": "r" }, "unit": {} }
+    ],
+    "solver": { "dt": 0.1, "tolerance": 1e-6 }
+  },
+  "params": { "beta": 0.4, "gamma": 0.2, "seeded": 0.001 },
+  "steps": 2000,
+  "events": [
+    { "step": 300, "variable": "beta", "value": 0.6 },
+    { "step": 900, "variable": "gamma", "value": 0.3 }
+  ]
+}
