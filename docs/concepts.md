@@ -12,7 +12,7 @@ Craig Reynolds showed in 1987 that a convincing flock needs no leader. Each bird
 few rules about its near neighbours only, and the flock-wide pattern emerges from those
 local decisions.
 
-- **Used in:** `packages/primitives/src/flock/MODEL.md`, `packages/primitives/src/flock/step.ts`
+- **Used in:** `packages/primitives/src/agents/flock/MODEL.md`, `packages/primitives/src/agents/flock/step.ts`
 - **Why here:** It is the mechanism of PaperPlay's first paper and the reason the world
   exists: learners change one local rule and watch the whole flock respond.
 - **Learn more:** [Reynolds 1987, "Flocks, Herds, and Schools"](https://www.red3d.com/cwr/papers/1987/boids.html)
@@ -26,7 +26,7 @@ Each rule names a velocity the bird would like to have:
 
 The bird turns toward each wish at a rate set by that rule's weight.
 
-- **Used in:** `packages/primitives/src/flock/step.ts`, `packages/primitives/src/flock/params.ts`
+- **Used in:** `packages/primitives/src/agents/flock/step.ts`, `packages/primitives/src/agents/flock/params.ts`
 - **Why here:** Steering toward a desired velocity gives every weight the same unit (per
   second). That makes the three sliders comparable, and the equations simple enough to
   check by hand.
@@ -37,7 +37,7 @@ The bird turns toward each wish at a rate set by that rule's weight.
 The flock lives on a rectangle whose opposite edges are joined. A bird that flies off the
 right edge comes back on the left, so no bird ever meets a wall.
 
-- **Used in:** `packages/primitives/src/flock/torus.ts`, `packages/ui/src/stage-core/frame.ts`
+- **Used in:** `packages/primitives/src/spaces/torus.ts`, `packages/ui/src/stage-core/frame.ts`
 - **Why here:** Walls would bend the flock and blur what the rules alone do. Without edges,
   every place in the world behaves the same, which also makes symmetry tests possible.
 - **Learn more:** [Periodic boundary conditions](https://en.wikipedia.org/wiki/Periodic_boundary_conditions)
@@ -47,7 +47,7 @@ right edge comes back on the left, so no bird ever meets a wall.
 On a torus there are several paths between two birds. The model always uses the shortest
 one: a bird at the far right edge is a close neighbour of a bird at the far left.
 
-- **Used in:** `packages/primitives/src/flock/torus.ts`, `packages/primitives/src/flock/measure.ts`
+- **Used in:** `packages/primitives/src/spaces/torus.ts`, `packages/primitives/src/agents/flock/measure.ts`
 - **Why here:** Without it, birds on either side of a seam would ignore each other, and
   the edges would come back in disguise.
 - **Learn more:** [Periodic boundary conditions: the minimum-image convention](https://en.wikipedia.org/wiki/Periodic_boundary_conditions)
@@ -57,7 +57,7 @@ one: a bird at the far right edge is a close neighbour of a bird at the far left
 Average every bird's heading as a unit arrow and measure the length of that average. Zero
 means the headings cancel out; one means every bird flies the same way.
 
-- **Used in:** `packages/primitives/src/flock/measure.ts`, `eval/sweeps/flock-defaults.md`
+- **Used in:** `packages/primitives/src/agents/flock/measure.ts`, `eval/sweeps/flock-defaults.md`
 - **Why here:** A single number shows whether a murmuration has formed. It is the readout
   learners watch when they change alignment.
 - **Learn more:** [Vicsek et al. 1995, "Novel type of phase transition in a system of self-driven particles"](https://doi.org/10.1103/PhysRevLett.75.1226)
@@ -67,7 +67,7 @@ means the headings cancel out; one means every bird flies the same way.
 For each bird, find the distance to its closest neighbour, then average over the flock. It
 shows how tightly the birds pack.
 
-- **Used in:** `packages/primitives/src/flock/measure.ts`
+- **Used in:** `packages/primitives/src/agents/flock/measure.ts`
 - **Why here:** It responds directly to separation and cohesion, so learners can see
   spacing change. Unlike a distance limited to the perception radius, it is defined for
   every flock.
@@ -81,7 +81,7 @@ found with a union–find structure. A cluster of at least 4 birds is a group; s
 are strays. The flock reads as "one group" when it has exactly one group and at most half
 its birds are strays.
 
-- **Used in:** `packages/primitives/src/flock/measure.ts` (E14, E18, O1),
+- **Used in:** `packages/primitives/src/agents/flock/measure.ts` (E14, E18, O1),
   `eval/sweeps/group-measure.md`, `docs/decisions/ADR-0015-group-measure.md`
 - **Why here:** "One murmuration" needs a definition that random noise cannot meet. The link
   distance is fixed, so counts stay comparable when a learner changes how far birds can see.
@@ -107,7 +107,7 @@ in a plane, that happens when each point has on average about 4.5 links.
 Each step updates a bird's velocity first, then moves it using the new velocity. It is the
 simplest stable way to advance a simulation by a fixed time step.
 
-- **Used in:** `packages/primitives/src/flock/step.ts`
+- **Used in:** `packages/primitives/src/agents/flock/step.ts`
 - **Why here:** It is cheap and stable at 1/60 s steps, and easy to reproduce by hand in
   the oracle fixtures.
 - **Learn more:** [Semi-implicit Euler method](https://en.wikipedia.org/wiki/Semi-implicit_Euler_method)
@@ -127,7 +127,7 @@ measured how often local rules alone produce one ordered group within 20 seconds
 The average of many headings drawn at random is a short arrow. Its expected length shrinks
 like one over the square root of the number of birds.
 
-- **Used in:** `fixtures/oracles/flock.planar.weighted/rules-off-initial-agreement-low.json`, `packages/primitives/src/flock/headings.ts`, `packages/ui/src/react/HeadingCompass.tsx`
+- **Used in:** `fixtures/oracles/flock.planar.weighted/rules-off-initial-agreement-low.json`, `packages/primitives/src/agents/flock/headings.ts`, `packages/ui/src/react/HeadingCompass.tsx`
 - **Why here:** It is why a freshly seeded flock starts with low agreement, and how the
   oracle bounds that start with stated odds rather than a guess. The heading compass draws
   it: the arrow is the mean of the birds' unit headings, so it is short when they scatter
@@ -164,7 +164,7 @@ the square root of the mean squared distance. On a torus, "the centre" needs car
 x = 31 and x = 1 gives 16, the wrong side of the world. The circular mean treats each
 coordinate as an angle round a circle and averages the angles instead, giving 0.
 
-- **Used in:** `packages/primitives/src/flock/measure.ts` (E19 and Q3), the spread ring and
+- **Used in:** `packages/primitives/src/agents/flock/measure.ts` (E19 and Q3), the spread ring and
   dial
 - **Why here:** Level 4's lesson is how compact a flock stays. Without cohesion, the largest
   group's radius grows from about 5 to about 12 world units, on every one of 20 skies
@@ -244,7 +244,7 @@ only integer operations, so every JavaScript engine agrees.
 Draw points in a square, keep only those inside the unit circle, and use their direction.
 Every heading is then equally likely, and no trigonometry is needed.
 
-- **Used in:** `packages/primitives/src/flock/init.ts`
+- **Used in:** `packages/primitives/src/agents/flock/init.ts`
 - **Why here:** Square roots and arithmetic give the same result on every engine, whereas
   sine and cosine may not.
 - **Learn more:** [Rejection sampling](https://en.wikipedia.org/wiki/Rejection_sampling)
@@ -254,7 +254,7 @@ Every heading is then equally likely, and no trigonometry is needed.
 Computers round every arithmetic result. The same operations in the same order give the
 same bits, but reordering them can change the last digit.
 
-- **Used in:** `packages/primitives/test/flock.determinism.test.ts`, `packages/primitives/src/flock/step.ts`
+- **Used in:** `packages/primitives/test/flock.determinism.test.ts`, `packages/primitives/src/agents/flock/step.ts`
 - **Why here:** Replay promises identical numbers, so sums run in a fixed order and both
   coordinates go through identical operations.
 - **Learn more:** [Goldberg, "What Every Computer Scientist Should Know About Floating-Point Arithmetic"](https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html)
@@ -318,7 +318,7 @@ Readers can then refuse versions they do not understand.
 Version numbers carry meaning. The major number changes when something breaks, the minor
 when something is added, and the patch for fixes.
 
-- **Used in:** `packages/primitives/src/flock/MODEL.md`, `packages/primitives/src/registry.ts`
+- **Used in:** `packages/primitives/src/agents/flock/MODEL.md`, `packages/primitives/src/registry.ts`
 - **Why here:** The registry looks primitives up by exact version. 2.0.0 changed the state
   format; 2.1.0 changed only the defaults.
 - **Learn more:** [Semantic Versioning 2.0.0](https://semver.org)

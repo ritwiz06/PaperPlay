@@ -23,7 +23,7 @@ repeating each other. A fresh session reads `status.md`, the newest session log 
 | [`../CLAUDE.md`](../CLAUDE.md) | Standing instructions, including the session protocol | The way of working changes |
 
 Elsewhere: each primitive's equations sit next to its code (for example
-`packages/primitives/src/flock/MODEL.md`), oracle fixture rules in
+`packages/primitives/src/agents/flock/MODEL.md`), oracle fixture rules in
 `fixtures/oracles/README.md`, and evaluation material in `eval/README.md`.
 
 ## How the docs are checked

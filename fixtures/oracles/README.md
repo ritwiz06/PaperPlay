@@ -7,7 +7,7 @@ wrong.
 ## Rules for authoring one
 
 - Derive it from the primitive's written equations (for `flock.planar.weighted`, see
-  `packages/primitives/src/flock/MODEL.md`). Never copy a number from running the
+  `packages/primitives/src/agents/flock/MODEL.md`). Never copy a number from running the
   implementation. A calculator is fine; a result printed by `step` is not.
 - Put the derivation in the fixture, step by step, citing the equations it uses, so
   anyone can check it with pencil and paper.

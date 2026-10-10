@@ -12,17 +12,18 @@ G3a.1 and G3a.2 ([log](sessions/2026-10-10.md)). This file is rewritten every se
   current until G2's evidence exists (ADR-0009).
 - **G3a.1, generalize, is in progress,** on short branches landed through `npm run land`:
   - **done:** records of the six levels on seed 5, made before the refactor, with a test that
-    holds the code to them (`fc3f828`);
-  - **next:** primitive families, scene kits, the generic session and fork, `worldspec/3`.
+    holds the code to them (`fc3f828`, `8de1c33`, landed at `f79ff76`);
+  - **landing:** primitive families (`f111195`, ADR-0025);
+  - **next:** scene kits and the generic session and fork, then `worldspec/3`.
 - **`main` moves only through `npm run land`** (ADR-0009, amended).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`. CI runs `check:gate` on every
   push and pull request.
-- **Branches:** `g3/records`, being landed again after CI found one ulp of difference on Linux
-  (the session log has the story).
-- **Working commit:** `8de1c33` on `g3/records`: the records test holds the flocking world's
-  records bit for bit on the Mac that made them, and state for state elsewhere. `check:gate`
-  passed G1 on `fc3f828`, its code before this fix.
-- **Primitive:** `flock.planar.weighted@3.1.0`, with queries Q1–Q4.
+- **Branches:** `g3/families`, being landed.
+- **Working commit:** `f111195` on `g3/families`: primitive families, the flock in the agents
+  family. Its land's `check:gate` is in the next session log entry; `main` is at `f79ff76`, whose
+  gate and CI passed.
+- **Primitive:** `flock.planar.weighted@3.1.0`, with queries Q1–Q4, the agents family's first,
+  at `@paperplay/primitives/flock` (ADR-0025).
 - **Contracts:** `worldspec/2` (ADR-0016, ADR-0018); `runrecord/3` (ADR-0023).
 - **Runtime:** Node 24.21.0, pinned in `.node-version`.
 - **What a learner can do** is unchanged since the sixth session of 2026-10-09: the six levels
@@ -80,4 +81,6 @@ In priority order:
 3. **Try context loss and level 5's fork on a real phone** once the deploy is live. Risk: the
    tests run on desktop Chromium with SwiftShader only.
 4. **Add the cross-runtime capture check before publishing widely** (ADR-0010).
-5. **Revisit TypeScript 7 monthly** (ADR-0001).
+5. **Look into level 1's first fork after a page load,** about 1.3 s to its first frames on
+   SwiftShader. Risk: on a slow phone it could feel stuck.
+6. **Revisit TypeScript 7 monthly** (ADR-0001).

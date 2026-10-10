@@ -7,6 +7,20 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-10 · Primitive families
+
+- Branch: `g3/families`
+- Commits: `f111195`
+- Shipped (ADR-0025):
+  - **The families' catalogue as data in contracts:** six families, their labels and how the
+    level rule varies their runs; the kinds of space; time units.
+  - **The primitive interface describes its family, time, space, entities and queries,** none
+    of which changes a run.
+  - **The flock is the agents family's first primitive,** at `@paperplay/primitives/flock`,
+    still 3.1.0; the torus is a shared space. Every other file changed only its imports.
+- Evidence: R01 65 (4 new), R03 108 (5 new); the records test passes on the moved flock.
+- Gate: land's `check:gate` on this branch's tip, recorded in the session log.
+
 ## 2026-10-10 · The flocking world recorded before G3a's refactor
 
 - Branch: `g3/records`

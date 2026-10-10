@@ -157,9 +157,10 @@ G3a.1, generalize, with no change in behaviour (14–20 h). Every existing test 
 its imports and paths changed; the six levels on seed 5 replay bit for bit against records
 made before the refactor; the Mac capture's frame hash matches its pre-refactor hash.
 - [x] Records of the six levels on seed 5, made before the refactor, and a test that holds the
-  code to them (2026-10-10, `fc3f828`).
-- [ ] Primitive families: the primitive interface (family, time, space, entities, queries);
-  the flock moved into the agents family; the torus a shared space.
+  code to them (2026-10-10, `fc3f828`, `8de1c33`).
+- [x] Primitive families: the primitive interface (family, time, space, entities, queries);
+  the flock moved into the agents family; the torus a shared space (2026-10-10, `f111195`,
+  ADR-0025).
 - [ ] Scene kits: the kit contract across the stage core, the adapter and React; a generic
   FrameDescription; the flocking kit.
 - [ ] The session and the fork made generic; a world loader with the spec's own seed.

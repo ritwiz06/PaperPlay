@@ -7,8 +7,8 @@ How PaperPlay fits together today. The concepts named here are explained in
 
 | Path | Job | Key exports or entry points |
 |---|---|---|
-| `packages/contracts` | Zod schemas and inferred types: the shared language | `Origin`, `Anchor`, `SourceManifest`, `PrimitiveRef`, `Action`, `RunEvent`, `RunRecord`, `JobState`, `WorldSpec` (with `Level`, `Counterfactual`, `DepthVariant`, `DesignSpec`, `PlaceholderAnchor`, `PendingSource`) |
-| `packages/primitives` | Deterministic, fixed-step scientific models, their registry, and run replay | `flockPlanarWeighted`, `flockNeighbours` (Q1), `flockHeadings` (Q2), `flockReadsAsOneGroup` (O1), `flockSpread` (Q3), `flockAtRocks` (Q4), `mulberry32`, `registry`, `runEvents`, `replayRecord` |
+| `packages/contracts` | Zod schemas and inferred types: the shared language, and the families' catalogue as data | `Origin`, `Anchor`, `SourceManifest`, `PrimitiveRef`, `Action`, `RunEvent`, `RunRecord`, `JobState`, `WorldSpec` (with `Level`, `Counterfactual`, `DepthVariant`, `DesignSpec`, `PlaceholderAnchor`, `PendingSource`); `FamilyId`, `FAMILIES`, `Variation`, `SpaceKind` and `TimeUnit` (ADR-0025) |
+| `packages/primitives` | Deterministic, fixed-step scientific models in families, their registry, and run replay | The root: the `Primitive` interface (with its `family`, `time`, `space`, `entities` and `queries`), `mulberry32`, `registry`, `runEvents`, `replayRecord`. `@paperplay/primitives/flock`, the agents family's flock in `src/agents/flock/`: `flockPlanarWeighted`, its queries Q1–Q4 by name and as `flockNeighbours`, `flockHeadings`, `flockSpread` and `flockAtRocks`, and `flockReadsAsOneGroup` (O1). `src/spaces/torus.ts`, the shared wrap-around space |
 | `packages/ui` | Design tokens, fonts, the stage, the bench and the game-first HUD | `@paperplay/ui/tokens`, `fonts.css`, `components.css`, `hud.css`, `stage-core`, `three-adapter`, `react` |
 | `packages/pipeline` | Agent roles, model adapters, checks, controller | `buildWorld`, the deterministic builder in `src/builder/` (ADR-0016); `summarise` and `claimHolds`, a fork's measured difference (ADR-0018); the agents and adapters arrive at G3 |
 | `apps/web` | React shell: owns the run, renders state, submits actions | `src/world/session.ts`, `src/world/LocalWorld.tsx` at `/world/local`, `src/world/local-world.ts`; `src/world/authored-world.ts`, which builds `fixtures/worldspecs/flocking-reference.json` with the builder at start-up; `src/hook/HookWorld.tsx` at `/world/hook`, the six levels played from the built world, and `src/hook/guide.ts`, the guide from each level's script; `src/world/fork.ts`, a level's fork (ADR-0019); `explorationLines` in `src/hook/guide.ts`, guided exploration; the dev-only capture page `capture.html` with `src/capture/` (ADR-0010) |
@@ -73,7 +73,7 @@ flowchart LR
 Forbidden, and enforced (see the invariants table below):
 - `contracts` importing anything but zod;
 - `primitives` importing UI, apps, the pipeline or Node;
-- `stage-core` importing Three.js, React or DOM libraries, or importing simulation values;
+- `stage-core` importing Three.js, React or DOM libraries, or importing simulation values (a family's types, such as `@paperplay/primitives/flock`'s, are allowed);
 - `three-adapter` importing `primitives` or `contracts` in any form;
 - `react` (the components) importing simulation values: types only, and React, from outside its package;
 - the builder (`packages/pipeline/src/builder/`) importing anything but `contracts` and `primitives`: no model client, network or UI.
@@ -119,7 +119,8 @@ flowchart LR
 | RunRecord, with RunEvent (`param` · `place` · `remove`) and the learner's predictions | `runrecord/3` (ADR-0023) | `packages/contracts/src/run.ts` |
 | Origin, Anchor, PrimitiveRef, Action, JobState | Versioned with the documents that embed them | `packages/contracts/src/` |
 | WorldSpec, with Level, Counterfactual (and its MeasuredDifference and claim), DepthVariant, GuidedExploration, DesignSpec; drafts may hold placeholder anchors and a pending source | `worldspec/2` | `packages/contracts/src/worldspec.ts` (ADR-0016, ADR-0018) |
-| `flock.planar.weighted` | 3.1.0: equations E1–E20, with the group measure of ADR-0015 (E14 groups, E18 stray share) and its reading O1, "one group"; E19 the largest group's spread and E20 birds at rocks (ADR-0018); defaults per ADR-0003, alignment range 0–4; and the read-only queries Q1 (neighbourhoods), Q2 (headings), Q3 (spread) and Q4 (birds at rocks), which do not change the version | `packages/primitives/src/flock/MODEL.md` |
+| `flock.planar.weighted` | 3.1.0: equations E1–E20, with the group measure of ADR-0015 (E14 groups, E18 stray share) and its reading O1, "one group"; E19 the largest group's spread and E20 birds at rocks (ADR-0018); defaults per ADR-0003, alignment range 0–4; and the read-only queries Q1 (neighbourhoods), Q2 (headings), Q3 (spread) and Q4 (birds at rocks), which do not change the version | `packages/primitives/src/agents/flock/MODEL.md` |
+| The families' catalogue (`FamilyId`, `FAMILIES`, `Variation`, `SpaceKind`) and `TimeUnit` | Unversioned data: a family, space or time unit is added by ADR | `packages/contracts/src/families.ts`, `packages/contracts/src/time.ts` (ADR-0025) |
 | Oracle fixtures | `oracle/1` | `fixtures/oracles/README.md` |
 | FrameDescription, with FrameEmphasis | Unversioned: in-process only, never persisted | `packages/ui/src/stage-core/frame.ts` |
 | Gate definitions | Requirements per gate | `gates.json` |
@@ -128,6 +129,8 @@ flowchart LR
 
 | Invariant | Enforced by | Where |
 |---|---|---|
+| Every registered primitive belongs to a catalogued family, counts its steps in a time unit, and sizes its space by its own start-up variables; the flock's named queries are its own Q1–Q4 | Tests [R01] | `packages/primitives/test/primitive-interface.test.ts` |
+| A model given as data is interpreted, never compiled from text: no `eval` or `new Function` in primitives | Lint | `eslint.config.js` |
 | Primitives are seeded and never read a clock | Lint (`Math.random`, `Date.now`, `performance.now` and `new Date` are banned); tests tagged [R01] | `eslint.config.js`, `packages/primitives/test/` |
 | Primitives never mutate their inputs | Tests on deep-frozen states | `packages/primitives/test/flock.step.test.ts`, `packages/primitives/test/flock.edits.test.ts` |
 | Same seed and events give bit-identical observables | The replay oracle and determinism tests [R01] | `packages/primitives/test/flock.determinism.test.ts` |
@@ -306,3 +309,4 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 | 2026-10-09 | ea2fdf1 | `runrecord/3` with predictions; the session's `predict` and `record`; every level's guided exploration in the fixture (ADR-0023) |
 | 2026-10-10 | fc3f828 | `fixtures/records/flocking-seed5/`, the six levels recorded before G3a, held to them by `apps/web/test/records.test.ts` |
 | 2026-10-10 | 8de1c33 | `fixtures/records/flocking-seed5/final-states.json`; the records test holds them bit for bit where they were made, and state for state everywhere |
+| 2026-10-10 | f111195 | Primitive families: `families.ts` and `time.ts` in contracts; the `Primitive` interface's `family`, `time`, `space`, `entities` and `queries`; the flock in `src/agents/flock/` as `@paperplay/primitives/flock`; the torus in `src/spaces/` (ADR-0025) |
