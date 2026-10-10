@@ -207,8 +207,11 @@ Below, ↑ means after raising the control and ↓ after lowering it.
   - The level's `setup` places **four rocks across the valley**, at x and y of 8 and 24, so
     every sky's flock meets one. A teaching choice, applied as place events at step 0.
 - **What they watch:**
-  - **On screen:** the flock reaching the rocks, parting round them and rejoining.
-  - **On the compass:** headings split briefly as the flock parts, then agree again.
+  - **On screen:** the flock reaching the rocks, parting round them and rejoining. A rock
+    lights up while a bird is inside it (Q4).
+  - **On the rocks counter,** the level's readout (owner, session 6): the birds inside rocks
+    right now (E20), and each of the four rocks, lit while a bird is at it. With the rule, it
+    mostly reads 0; in the What-if world the rocks light up again and again.
 - **What if birds had no rule for rocks?**
   - The right world runs with `obstacleWeight` at 0: a parameter override, as a counterfactual
     must be.
@@ -281,7 +284,7 @@ The questions this script raised were answered, and are recorded in ADR-0014 and
 Then, the same day, the level rule (ADR-0018), with level 2 kept as a prediction and level 4
 measured on two candidates.
 
-Still open, for the owner:
+Then, in the day's sixth session, the owner accepted:
 - level 5's rework: four rocks, and no rule for rocks;
 - level 4 as a level about spread, with the ring and the dial;
-- whether level 5's readout should become the birds at rocks, rather than the compass.
+- the birds at rocks as level 5's readout, rather than the compass (ADR-0018).

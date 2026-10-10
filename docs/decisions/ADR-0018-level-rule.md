@@ -1,7 +1,7 @@
 # ADR-0018: The level rule
 
-- Status: accepted. Interpretations 2–5 and the reworks of levels 4 and 5 are mine, for the
-  owner to confirm.
+- Status: accepted. The owner confirmed interpretations 2–5 and the reworks of levels 4 and 5
+  in the day's sixth session, and chose the birds at rocks as level 5's readout (below).
 - Date: 2026-10-09
 - Decided by: the owner, on 2026-10-09:
 
@@ -100,3 +100,23 @@ level 2's and level 4's. They had been written from intuition, then checked on o
   - level 5's rework;
   - level 4's lesson as a level about spread;
   - whether level 5's readout should become the birds at rocks.
+
+## Owner's confirmation, 2026-10-09 (session 6)
+
+- **Accepted:** the reworks of levels 4 and 5, level 4 as a level about spread, and
+  interpretations 2–5.
+- **Level 5's readout is the birds at rocks,** not the compass:
+  - a counter on the card;
+  - rocks that visibly react when a bird passes through, so the world with no rule for rocks
+    reads as intended.
+
+  Render-only, except the measurement.
+- **How it is built:**
+  - **The counter is E20,** the birds inside a rock right now, and the level's observable
+    became `birdsAtObstacles`.
+  - **Its rocks, and the rocks lit on the stage,** come from a read-only query, Q4. It shares
+    E20's test, so it cannot disagree with E20, and as a query it leaves the version at 3.1.0.
+  - **A lit rock uses a material of the same kind as a rock's,** so lighting one compiles no
+    new shader mid-run.
+  - **The What-if's measured difference is unchanged:** bird-seconds inside rocks over 20 s.
+    The levels sweep does not move.

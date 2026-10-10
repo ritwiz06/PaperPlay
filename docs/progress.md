@@ -7,6 +7,20 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · Level 5 reads as birds at rocks
+
+- Branch: `g2/level5-readout`
+- Commits: `29f9646`
+- Shipped (ADR-0018, owner's confirmation):
+  - **The rocks counter,** level 5's readout: the birds inside rocks right now (E20), and each
+    rock, lit while a bird is at it.
+  - **Rocks that light up on the stage** while a bird is inside them, from flock query Q4.
+    Presentation only, with a material that needs no new shader.
+  - **Level 5's fork no longer stalls:** its second frame comes at about 0.3 s, not 1.9 s.
+    Rock markers cast no shadow.
+- Evidence: 471 Vitest tests pass; the gate's count is in the session log.
+- Gate: land's `check:gate` run on this branch's tip, recorded in the session log.
+
 ## 2026-10-09 · A guard for main
 
 - Branch: `g2/land`

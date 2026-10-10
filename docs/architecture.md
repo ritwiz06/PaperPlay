@@ -8,7 +8,7 @@ How PaperPlay fits together today. The concepts named here are explained in
 | Path | Job | Key exports or entry points |
 |---|---|---|
 | `packages/contracts` | Zod schemas and inferred types: the shared language | `Origin`, `Anchor`, `SourceManifest`, `PrimitiveRef`, `Action`, `RunEvent`, `RunRecord`, `JobState`, `WorldSpec` (with `Level`, `Counterfactual`, `DepthVariant`, `DesignSpec`, `PlaceholderAnchor`, `PendingSource`) |
-| `packages/primitives` | Deterministic, fixed-step scientific models, their registry, and run replay | `flockPlanarWeighted`, `flockNeighbours` (Q1), `flockHeadings` (Q2), `flockReadsAsOneGroup` (O1), `flockSpread` (Q3), `mulberry32`, `registry`, `runEvents`, `replayRecord` |
+| `packages/primitives` | Deterministic, fixed-step scientific models, their registry, and run replay | `flockPlanarWeighted`, `flockNeighbours` (Q1), `flockHeadings` (Q2), `flockReadsAsOneGroup` (O1), `flockSpread` (Q3), `flockAtRocks` (Q4), `mulberry32`, `registry`, `runEvents`, `replayRecord` |
 | `packages/ui` | Design tokens, fonts, the stage, the bench and the game-first HUD | `@paperplay/ui/tokens`, `fonts.css`, `components.css`, `hud.css`, `stage-core`, `three-adapter`, `react` |
 | `packages/pipeline` | Agent roles, model adapters, checks, controller | `buildWorld`, the deterministic builder in `src/builder/` (ADR-0016); `summarise` and `claimHolds`, a fork's measured difference (ADR-0018); the agents and adapters arrive at G3 |
 | `apps/web` | React shell: owns the run, renders state, submits actions | `src/world/session.ts`, `src/world/LocalWorld.tsx` at `/world/local`, `src/world/local-world.ts`; `src/world/authored-world.ts`, which builds `fixtures/worldspecs/flocking-reference.json` with the builder at start-up; `src/hook/HookWorld.tsx` at `/world/hook`, the six levels played from the built world, and `src/hook/guide.ts`, the guide from each level's script; `src/world/fork.ts`, a level's fork (ADR-0019); `explorationLines` in `src/hook/guide.ts`, guided exploration; the dev-only capture page `capture.html` with `src/capture/` (ADR-0010) |
@@ -36,7 +36,7 @@ Inside `packages/ui`:
   - The game-first HUD (ADR-0008, ADR-0012), styled by `hud.css`: LevelCard, Guide,
     PaperJournal, LevelMap, DepthToggle, HeadingCompass, OriginTag and `useFreeRect`.
   - Each level's readout, by its observable (ADR-0014, ADR-0018): HeadingCompass,
-    SpacingGauge, SpreadDial and GroupsCounter, sharing the `dial` styles.
+    SpacingGauge, SpreadDial, GroupsCounter and RocksCounter, sharing the `dial` styles.
   - The fork (ADR-0019): ForkView, with two WorldStages, and DifferenceChart.
   - The guide can ask a question with choices (`ask`), and speak inside a card (GuideNote).
   - SpeedButton, the speed control (ADR-0020); `advance` in `stage-core/fixed-step.ts` takes the speed. The level card shows and hides its elements by
@@ -118,7 +118,7 @@ flowchart LR
 | RunRecord, with RunEvent (`param` · `place` · `remove`) | `runrecord/2` | `packages/contracts/src/run.ts` |
 | Origin, Anchor, PrimitiveRef, Action, JobState | Versioned with the documents that embed them | `packages/contracts/src/` |
 | WorldSpec, with Level, Counterfactual (and its MeasuredDifference and claim), DepthVariant, GuidedExploration, DesignSpec; drafts may hold placeholder anchors and a pending source | `worldspec/2` | `packages/contracts/src/worldspec.ts` (ADR-0016, ADR-0018) |
-| `flock.planar.weighted` | 3.1.0: equations E1–E20, with the group measure of ADR-0015 (E14 groups, E18 stray share) and its reading O1, "one group"; E19 the largest group's spread and E20 birds at rocks (ADR-0018); defaults per ADR-0003, alignment range 0–4; and the read-only queries Q1 (neighbourhoods), Q2 (headings) and Q3 (spread), which do not change the version | `packages/primitives/src/flock/MODEL.md` |
+| `flock.planar.weighted` | 3.1.0: equations E1–E20, with the group measure of ADR-0015 (E14 groups, E18 stray share) and its reading O1, "one group"; E19 the largest group's spread and E20 birds at rocks (ADR-0018); defaults per ADR-0003, alignment range 0–4; and the read-only queries Q1 (neighbourhoods), Q2 (headings), Q3 (spread) and Q4 (birds at rocks), which do not change the version | `packages/primitives/src/flock/MODEL.md` |
 | Oracle fixtures | `oracle/1` | `fixtures/oracles/README.md` |
 | FrameDescription, with FrameEmphasis | Unversioned: in-process only, never persisted | `packages/ui/src/stage-core/frame.ts` |
 | Gate definitions | Requirements per gate | `gates.json` |
@@ -146,8 +146,10 @@ flowchart LR
 | The fork shows two worlds side by side on a desktop, stacked on a phone, with the measured difference charted, and passes axe on both | Browser tests [R06] [R12] | `tests/e2e/fork.spec.ts` |
 | A level that asks for a prediction asks it before its fork, and nothing scores it: no line calls a choice right or wrong | Tests [R06]; browser tests [R06] [R12] | `apps/web/test/guide.test.ts`, `tests/e2e/guided.spec.ts` |
 | A run at 4x is the same run as at 1x: the same states bit for bit, the same events, and it replays from its record | Tests [R07]; the clock's tests | `apps/web/test/session.test.ts`, `packages/ui/test/fixed-step.test.ts` |
+| Level 5's rocks counter shows the primitive's own count (E20) and rocks (Q4), and the stage lights exactly the rocks Q4 reports, in the one world and in both of the fork's | Tests on Q4 against E20 [R01]; the session; browser tests compared with Node [R06] | `packages/primitives/test/flock.rocks.test.ts`, `apps/web/test/session.test.ts`, `tests/e2e/rocks.spec.ts` |
+| A rock casts no shadow, and a lit rock uses a material of a rock's own kind, so no rock makes a new stage compile shaders mid-run | Test | `packages/ui/test/three-adapter.test.ts` |
 | A disposed stage releases its WebGL context at once, so stages mounted later start as quickly | Browser test: a closed fork's two contexts are lost | `tests/e2e/fork.spec.ts`, `packages/ui/src/three-adapter/mount.ts` |
-| The renderer never changes an observable, even with a bird picked, the spread ring drawn, the view framed in a HUD's window, or the flock coloured by heading with wingbeats and trails | Test [R02]; in the browser, colour by heading records nothing and the run matches Node bit for bit [R02] | `packages/ui/test/render-invariance.test.ts`, `tests/e2e/world.spec.ts` |
+| The renderer never changes an observable, even with a bird picked, the spread ring drawn, rocks lit, the view framed in a HUD's window, or the flock coloured by heading with wingbeats and trails | Test [R02]; in the browser, colour by heading records nothing and the run matches Node bit for bit [R02] | `packages/ui/test/render-invariance.test.ts`, `tests/e2e/world.spec.ts` |
 | Every colour on the heading wheel keeps 3:1 against the meadow; trails never cross a seam and stay under 3.5 units | Tests | `packages/ui/test/world-art.test.ts` |
 | The following camera keeps the flock's centre inside the HUD's free rectangle, and is the still overview under reduced motion | Browser tests | `tests/e2e/hook.spec.ts` |
 | The HUD at rest covers at most 25% of 1440 × 900 and 35% of 390 × 844, and the stage frames the field inside the rectangle it leaves free | Browser tests that measure the HUD's boxes and read the stage's own fit; unit tests on the fit | `tests/e2e/hook.spec.ts`, `packages/ui/test/screen.test.ts` |
@@ -284,3 +286,4 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 | 2026-10-09 | b6e00d3 | The speed control: `advance`'s speed, the session's and the fork's `setSpeed`, SpeedButton |
 | 2026-10-09 | 92cb65f | A disposed stage releases its WebGL context (`forceContextLoss`) |
 | 2026-10-09 | 3454a1d | `npm run land` and the pre-push hook on `main`: `scripts/land/`, `scripts/hooks/`, `.githooks/` (ADR-0009) |
+| 2026-10-09 | 29f9646 | Flock query Q4 (`flockAtRocks`); RocksCounter; the frame's touched rocks and the adapter's `touchedMaterial`; rock markers cast no shadow |

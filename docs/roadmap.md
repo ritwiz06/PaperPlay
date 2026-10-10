@@ -115,6 +115,9 @@ Next:
   level 2's prediction first (2026-10-09, `85e43fe`).
 - [x] A speed control, 1x, 2x and 4x, with a run at 4x replaying bit for bit against 1x
   (2026-10-09, `b6e00d3`, ADR-0020).
+- [x] Level 5's readout as the birds at rocks: a counter on the card, and rocks that light up
+  while a bird is inside them (owner, 2026-10-09; `29f9646`, ADR-0018). Its fork no longer
+  stalls for 1.6 s after its first frame.
 - [ ] `/world/local` moves into the shell as the free sandbox.
 - [ ] RunRecord export and import; `npm run replay` with a tolerance report; a replay test
   on a fresh page load.

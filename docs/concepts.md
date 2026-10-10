@@ -705,6 +705,20 @@ the screen.
   and lets fading birds blend smoothly into the sky.
 - **Learn more:** [three.js manual: color management](https://threejs.org/manual/#en/color-management)
 
+### Shader programs, and the stall on first use
+
+A GPU draws with small programs, shaders, compiled for each kind of material and drawing
+pass. The browser compiles them, and the first time one is used, the page can wait for that
+compile to finish. A new canvas starts with none compiled. Software WebGL such as SwiftShader
+compiles slowly, so a new drawing state can freeze the page for a second or more.
+
+- **Used in:** `packages/ui/src/three-adapter/apply-frame.ts` (rocks cast no shadow),
+  `packages/ui/src/three-adapter/scene.ts` (`touchedMaterial`, a rock's own kind of material)
+- **Why here:** level 5's fork froze for 1.6 s after its first frame. Each new stage was
+  drawing its rocks into the shadow map for the first time. Without rock shadows, the freeze
+  went away; a lit rock reuses a rock's shader, so lighting one adds none.
+- **Learn more:** [MDN: WebGL best practices, compile shaders and link programs in parallel](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices)
+
 ### WebGL2
 
 The browser interface for drawing with the graphics card. Three.js requires version 2.
