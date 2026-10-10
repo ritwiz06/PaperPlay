@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { describeReading, explorationLines, guideLines, trendOf, type GuideInput } from "../src/hook/guide.ts";
+import { acrossWords, describeReading, explorationLines, guideLines, trendOf, type GuideInput } from "../src/hook/guide.ts";
 import { FLOCKING } from "../src/world/authored-world.ts";
 
 const levelOf = (id: string) => {
@@ -156,5 +156,12 @@ describe("[R06] guided exploration on every level", () => {
         ]);
       }
     }
+  });
+});
+
+describe("[R06] where the level rule checked a statement", () => {
+  it("says 20 skies for a flock, and the world's values and 19 near them for a model with no chance in it", () => {
+    expect(acrossWords({ one: "sky", many: "skies", on: "on" }, "seeds")).toBe("Across 20 skies");
+    expect(acrossWords({ one: "town", many: "towns", on: "in" }, "neighbourhood")).toBe("Across 20 towns, this world's values and 19 within a tenth of them");
   });
 });

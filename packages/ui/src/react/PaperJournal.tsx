@@ -25,6 +25,14 @@ export interface JournalPage {
   readonly detail: ReactNode;
 }
 
+/** One thing the world cannot show, with where the statement comes from. */
+export interface CannotShowItem {
+  readonly text: string;
+  readonly origin: Origin;
+  /** Paper-derived, but not yet mapped to the source. */
+  readonly placeholder?: boolean;
+}
+
 export interface PaperJournalProps {
   readonly open: boolean;
   readonly onClose: () => void;
@@ -38,14 +46,16 @@ export interface PaperJournalProps {
   readonly highlighted: string | null;
   /** Tapping a passage focuses its control (R05). */
   readonly onTryIt: (pageId: string) => void;
+  /** What the world cannot show (ADR-0027): its limits, and how its scene kit draws what it does not measure. Open from the start. */
+  readonly cannotShow?: readonly CannotShowItem[];
 }
 
 /**
  * The paper journal (ADR-0008): a slide-over, opened on demand, holding each reached level's
- * passage, the depth toggle and the origin legend. Opening it moves focus to the highlighted
+ * passage, the depth toggle, the page of what the world cannot show, and the origin legend. Opening it moves focus to the highlighted
  * passage, or to Close; Escape closes it.
  */
-export function PaperJournal({ open, onClose, depth, onDepth, pages, stillToFind, highlighted, onTryIt }: PaperJournalProps) {
+export function PaperJournal({ open, onClose, depth, onDepth, pages, stillToFind, highlighted, onTryIt, cannotShow = [] }: PaperJournalProps) {
   const closeButton = useRef<HTMLButtonElement>(null);
   const passages = useRef(new Map<string, HTMLButtonElement>());
   useEffect(() => {
@@ -113,6 +123,20 @@ export function PaperJournal({ open, onClose, depth, onDepth, pages, stillToFind
           </li>
         ) : null}
       </ol>
+
+      {cannotShow.length > 0 ? (
+        <section className="cannot-show" aria-labelledby="journal-cannot-show-title" data-section="cannot-show">
+          <h3 id="journal-cannot-show-title">What this world cannot show</h3>
+          <ul>
+            {cannotShow.map((item) => (
+              <li key={item.text}>
+                <OriginTag origin={item.origin} placeholder={item.placeholder ?? false} quiet />
+                <span>{item.text}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section className="legend" aria-labelledby="journal-legend-title">
         <h3 id="journal-legend-title">Where each statement comes from</h3>

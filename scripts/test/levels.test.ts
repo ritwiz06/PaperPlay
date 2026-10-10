@@ -36,3 +36,36 @@ describe("[R06] the levels sweep (ADR-0018)", () => {
     expect(RULE_SEEDS).toBe(20);
   });
 });
+
+// Threshold Town (ADR-0024, ADR-0028): no chance in the model, so the rule's 20 starts are the
+// world's own values and 19 within a tenth of them, and every run is held to the accuracy check.
+const town = readFileSync(join(root, "eval", "sweeps", "levels-kermack-mckendrick-1927.md"), "utf8");
+const townRows = (heading: string): string[][] =>
+  (town.split(`## ${heading}`)[1]?.split("\n## ")[0] ?? "")
+    .split("\n")
+    .filter((line) => /^\| \d · /.test(line))
+    .map((line) => line.split(" | "));
+
+describe("[R06] Threshold Town's levels sweep (ADR-0024)", () => {
+  it("re-runs on its 20 starts and matches eval/sweeps/levels-kermack-mckendrick-1927.md byte for byte", () => {
+    const fresh = execFileSync(process.execPath, [join(root, "scripts", "levels.ts"), "--print", "kermack-mckendrick-1927.json"], { cwd: root, encoding: "utf8" });
+    expect(fresh).toBe(town);
+  }, 120_000);
+
+  it("records five levels, each meeting the rule, and level 4's count of none exactly", () => {
+    const rows = townRows("Results");
+    expect(rows).toHaveLength(5);
+    for (const row of rows) {
+      expect(row.at(-1), row[0]).toBe("yes |");
+      const holds = Number(/^(\d+) of 20$/.exec(row.at(-2) ?? "")?.[1]);
+      if (row[0]?.includes("Where it starts hardly matters")) expect(holds).toBe(0);
+      else expect(holds, row[0]).toBeGreaterThanOrEqual(RULE_HOLDS);
+    }
+  });
+
+  it("records every level's runs passing the accuracy check, at both steps, on all 20 starts", () => {
+    const rows = townRows("The accuracy check");
+    expect(rows).toHaveLength(5);
+    for (const row of rows) expect(row.at(-1), row[0]).toBe("yes |");
+  });
+});

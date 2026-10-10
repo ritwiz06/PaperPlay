@@ -92,6 +92,8 @@ export interface WorldSession<P, S, O, Extra, Emphasis extends BaseEmphasis, Inp
   select(index: number | null): void;
   nextSeed(): void;
   replaySameSeed(): void;
+  /** Starts the run again on the same seed, from the parameters as they are now: a new run, with no events and no predictions yet. */
+  startAgain(): void;
   /** Records a prediction at the current step, before a level's What-if (ADR-0018). It changes nothing in the run. */
   predict(levelId: string, prompt: string, choice: number, choiceText: string): void;
   /** The run so far as a plan runEvents can replay, with the parameters it started from. */
@@ -109,6 +111,12 @@ export interface WorldSession<P, S, O, Extra, Emphasis extends BaseEmphasis, Inp
 /** What a record needs that the session cannot know: the run's name, its hashes and its runtime. */
 export type RunIdentity = Pick<RunRecord, "runId" | "worldSpecHash" | "codeHash" | "lockHash" | "runtime" | "tolerance">;
 
+/**
+ * How many seconds of watching one step takes at 1x: the model's step over how much of its time
+ * a second shows. The flock shows a second a second, so its step is its own, exactly.
+ */
+export const wallStepOf = (primitive: Primitive<unknown, unknown>): number => primitive.fixedTimestep / primitive.time.perWatchSecond;
+
 /** Steps between a record's samples: one sample for each second of watching at 1x (60 for the flock). */
 export const sampleIntervalOf = (primitive: Primitive<unknown, unknown>): number => Math.max(1, Math.round(primitive.time.perWatchSecond / primitive.fixedTimestep));
 
@@ -118,6 +126,8 @@ export function createSession<P, S extends Stepped, O extends Record<string, num
   first: SessionOptions<P, S>,
 ): WorldSession<P, S, O, Extra, Emphasis, Input> {
   const TIMESTEP = primitive.fixedTimestep;
+  /** A step's share of a second of watching at 1x: the flock's 1/60 s, an epidemic's tenth of a day at so many days a second. */
+  const WATCHED = wallStepOf(primitive);
   const SAMPLE_INTERVAL = sampleIntervalOf(primitive);
   const apply = (state: S, edit: Parameters<NonNullable<Primitive<P, S, O>["apply"]>>[1]): S => {
     if (!primitive.apply) throw new Error(`${primitive.id}@${primitive.version} has no entities to place or remove`);
@@ -196,6 +206,17 @@ export function createSession<P, S extends Stepped, O extends Record<string, num
     changed();
   };
 
+  /** A new run from the parameters as they are now: a branch belongs to its run, so it starts from its seed's own state. */
+  const afresh = (): void => {
+    options = { ...options, start: undefined };
+    initialParams = params;
+    events = setupEvents();
+    placed = {};
+    selected = null;
+    predictions = [];
+    restart();
+  };
+
   applyDue();
 
   const plan = (): RunPlan<S> & { readonly params: P } => ({
@@ -237,7 +258,7 @@ export function createSession<P, S extends Stepped, O extends Record<string, num
     emphasis: () => view.emphasis(current, params, selected, options.emphasise),
     tick(frameSeconds) {
       if (!playing) return 0;
-      const next = advance(clock, frameSeconds, TIMESTEP, undefined, speed);
+      const next = advance(clock, frameSeconds, WATCHED, undefined, speed);
       clock = next.clock;
       alpha = next.alpha;
       stepBy(next.steps);
@@ -290,14 +311,10 @@ export function createSession<P, S extends Stepped, O extends Record<string, num
     },
     nextSeed() {
       seed = (seed + 1) >>> 0;
-      // A branch belongs to its seed; the next seed starts from its own.
-      options = { ...options, start: undefined };
-      initialParams = params;
-      events = setupEvents();
-      placed = {};
-      selected = null;
-      predictions = [];
-      restart();
+      afresh();
+    },
+    startAgain() {
+      afresh();
     },
     replaySameSeed() {
       restart();

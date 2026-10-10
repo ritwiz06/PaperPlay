@@ -1,14 +1,14 @@
 /**
- * /world/hook: the flocking world on the game-first shell (ADR-0008), played from its WorldSpec
- * as the builder made it (ADR-0016). The stage fills the window and frames the field in the room
- * the HUD leaves free; the world card, level map, guide and level card lie over it, and the paper
- * journal slides over on demand. Each level's one control moves its real engine variable, and
- * every number shown comes from the primitive. A level opens once the one before has been moved
- * through its range: touched, never solved.
+ * A world on the game-first shell (ADR-0008), played from its WorldSpec as the builder made it
+ * (ADR-0016), in its own scene kit (ADR-0029); /world/hook plays the flocking world. The stage
+ * fills the window and frames the field in the room the HUD leaves free; the world card, level
+ * map, guide and level card lie over it, and the paper journal slides over on demand. Each
+ * level's one control moves its real engine variable, and every number shown comes from the
+ * primitive. A level opens once the one before has been moved through its range: touched,
+ * never solved.
  */
 import { isPlaceholder, RULE_HOLDS, RULE_SEEDS, TIME_WORDS, type AnchorRef, type PendingSource, type SourceManifest } from "@paperplay/contracts";
 import { SAMPLE_STEPS, type BuiltLevel } from "@paperplay/pipeline";
-import { flockDefaultParams, flockPlanarWeighted, type FlockObservables } from "@paperplay/primitives/flock";
 import { DEFAULT_CAMERA, type Speed } from "@paperplay/ui/stage-core";
 import {
   BookIcon,
@@ -22,38 +22,32 @@ import {
   OriginTag,
   PaperJournal,
   PlayIcon,
+  RestartIcon,
   SpeedButton,
   useFreeRect,
   WorldStage,
+  type CannotShowItem,
   type Depth,
   type GuideLine,
   type JournalPassage,
   type MapLevel,
   type StageDriver,
 } from "@paperplay/ui/react";
-import { BirdMark, GroupsCounter, HeadingCompass, RocksCounter, SpacingGauge, SpreadDial } from "@paperplay/ui/react/valley";
-import { valleyStage } from "@paperplay/ui/stage-core/valley";
-import { useRef, useState, type ReactNode } from "react";
-import { FLOCKING, sessionOptionsFor } from "../world/authored-world.ts";
+import { useRef, useState } from "react";
+import type { BuiltWorld } from "@paperplay/pipeline";
 import { openFork, type Fork, type ForkSnapshot } from "../world/fork.ts";
-import { createWorldSession, type FlockSession as WorldSession, type SessionSnapshot } from "../world/valley.ts";
-import { explorationLines, guideLines, trendOf, type Trend } from "./guide.ts";
+import type { PlayableWorld, PlaySession } from "../worlds/types.ts";
+import { acrossWords, explorationLines, guideLines, trendOf, type Trend } from "./guide.ts";
 
-const WORLD = FLOCKING;
-const LEVELS = WORLD.levels;
-/** The world's time unit in words, for its fork's chart and readings. */
-const timeWords = TIME_WORDS[WORLD.timeUnit];
-const STAGE_LABEL = `${WORLD.title}: a flock of ${flockDefaultParams.agentCount} birds with no leader, each steering only by its near neighbours.`;
 const DEPTH_KEY = "paperplay.depth";
-const flockTimestep = flockPlanarWeighted.fixedTimestep;
 /** About a second and a half of readouts, for the guide's trend. */
 const TREND_SAMPLES = 15;
 
 const prefersReducedMotion = (): boolean => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const narrow = (): boolean => window.matchMedia("(max-width: 760px)").matches;
 
-function levelAt(index: number): BuiltLevel {
-  const level = LEVELS[index];
+function levelOf(levels: readonly BuiltLevel[], index: number): BuiltLevel {
+  const level = levels[index];
   if (!level) throw new Error(`the world has no level ${index + 1}`);
   return level;
 }
@@ -81,10 +75,10 @@ function exploredThrough(level: BuiltLevel, explored: Explored | undefined): boo
 }
 
 /** Each level is open once every level before it has been moved through its range. */
-function openLevels(explored: Readonly<Record<string, Explored>>): boolean[] {
+function openLevels(levels: readonly BuiltLevel[], explored: Readonly<Record<string, Explored>>): boolean[] {
   const open: boolean[] = [];
-  LEVELS.forEach((level, index) => {
-    const before = LEVELS[index - 1];
+  levels.forEach((level, index) => {
+    const before = levels[index - 1];
     open.push(index === 0 || ((open[index - 1] ?? false) && before !== undefined && exploredThrough(before, explored[before.id])));
   });
   return open;
@@ -93,17 +87,19 @@ function openLevels(explored: Readonly<Record<string, Explored>>): boolean[] {
 const placeholderOnly = (anchors: readonly AnchorRef[]): boolean => anchors.length > 0 && anchors.every(isPlaceholder);
 const lowerFirst = (text: string): string => text.charAt(0).toLowerCase() + text.slice(1);
 
-/** "Reynolds 1987": the attribution every passage carries. */
+/** "Reynolds 1987", "Kermack and McKendrick 1927": the attribution every passage carries. */
 function citationOf(source: SourceManifest | PendingSource): string {
-  const surname = source.authors[0]?.split(" ").at(-1) ?? source.title;
-  return `${surname}${source.authors.length > 1 ? " et al." : ""} ${source.year}`;
+  const surname = (author: string | undefined): string => author?.split(" ").at(-1) ?? source.title;
+  const [first, second] = source.authors;
+  const names = source.authors.length === 2 ? `${surname(first)} and ${surname(second)}` : `${surname(first)}${source.authors.length > 2 ? " et al." : ""}`;
+  return `${names} ${source.year}`;
 }
 
 /** The journal's passage for a level: the anchored quote, a placeholder that says so, or a page beyond the paper. */
-function passageOf(level: BuiltLevel): JournalPassage {
+function passageOf(world: BuiltWorld, level: BuiltLevel): JournalPassage {
   const { caption } = level;
   const anchor = caption.anchors[0];
-  const cite = citationOf(WORLD.source);
+  const cite = citationOf(world.source);
   if (!anchor) return { title: caption.text, text: "A page beyond the paper: nothing here is quoted from it.", origin: caption.origin };
   if (isPlaceholder(anchor)) {
     return {
@@ -114,7 +110,7 @@ function passageOf(level: BuiltLevel): JournalPassage {
       placeholder: true,
     };
   }
-  const section = "sections" in WORLD.source ? WORLD.source.sections.find((entry) => entry.id === anchor.sectionId) : undefined;
+  const section = "sections" in world.source ? world.source.sections.find((entry) => entry.id === anchor.sectionId) : undefined;
   return {
     title: caption.text,
     text: `“${anchor.quote}”`,
@@ -128,60 +124,46 @@ function nameOf(level: BuiltLevel, variable: string): string {
   return variable === level.action.variable ? `“${level.action.label}”` : variable.replace(/([A-Z])/g, " $1").toLowerCase();
 }
 
-/** What each metric is called on the fork's chart. Presentation: the shell's words for the primitive's observables. */
-const METRIC_NAMES: Readonly<Record<string, string>> = {
-  directionalAgreement: "Directional agreement",
-  meanNeighbourDistance: "Spacing",
-  groupSpread: "Spread of the largest group",
-  birdsAtObstacles: "Birds inside rocks",
-  clusterCount: "Groups",
-  strayShare: "Share of strays",
-};
-
-/** The top of the chart's value axis: 1 for a share, else a round number above everything drawn. */
-function chartTop(metric: string, values: readonly number[], threshold: number | undefined): number {
-  if (metric === "directionalAgreement" || metric === "strayShare") return 1;
+/**
+ * The top of the chart's value axis: 1 for a share, measured as a fraction, else a round number
+ * above everything drawn, in steps of half a power of ten just above one, so 1,150 tops out at
+ * 1,500 rather than 2,000.
+ */
+function chartTop(share: boolean, values: readonly number[], threshold: number | undefined): number {
+  if (share) return 1;
   const highest = Math.max(1, threshold ?? 0, ...values) * 1.15;
-  const step = 10 ** Math.floor(Math.log10(highest));
+  const power = 10 ** Math.floor(Math.log10(highest));
+  const step = highest / power < 2 ? power / 2 : power;
   return Math.ceil(highest / step) * step;
 }
 
 /** A fork, and the two drivers its stages draw from: the first advances both worlds, the second only draws. */
 interface ForkRun {
-  readonly fork: Fork<WorldSession>;
+  readonly fork: Fork<PlaySession>;
   readonly here: StageDriver;
   readonly there: StageDriver;
   /** Whether the one world was playing when the fork opened, so it plays again when the fork closes. */
   readonly resume: boolean;
 }
 
-/** The level's readout, chosen by its observable; it shows the primitive's own value. */
-function readoutFor(level: BuiltLevel, snapshot: SessionSnapshot, showNumber: boolean, yaw: number): ReactNode {
-  const { observed } = snapshot;
-  switch (level.observable.metricId) {
-    case "directionalAgreement":
-      return <HeadingCompass angles={snapshot.headings.angles} mean={snapshot.headings.mean} agreement={observed.directionalAgreement} yaw={yaw} showNumber={showNumber} />;
-    case "meanNeighbourDistance":
-      return <SpacingGauge spacing={observed.meanNeighbourDistance} showNumber={showNumber} />;
-    case "groupSpread":
-      return <SpreadDial spread={observed.groupSpread} showNumber={showNumber} />;
-    case "clusterCount":
-      return <GroupsCounter groups={observed.clusterCount} strayShare={observed.strayShare} birds={snapshot.headings.angles.length} showNumber={showNumber} />;
-    case "birdsAtObstacles":
-      return <RocksCounter rocks={snapshot.rocks.rocks.map((rock) => ({ id: rock.id, birds: rock.birds.length }))} birds={observed.birdsAtObstacles} showNumber={showNumber} />;
-    default: {
-      const value = observed[level.observable.metricId as keyof FlockObservables];
-      return (
-        <output className="dial-number" data-element="readout-number" data-observable={level.observable.metricId} data-value={String(value)}>
-          {value.toFixed(level.observable.decimals)}
-        </output>
-      );
-    }
-  }
-}
+const capitalise = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
 
-export function HookWorld() {
-  const [session] = useState<WorldSession>(() => createWorldSession(sessionOptionsFor(levelAt(0), !prefersReducedMotion())));
+export function HookWorld({ play }: { readonly play: PlayableWorld }) {
+  const WORLD = play.world;
+  const LEVELS = WORLD.levels;
+  /** The world's time unit in words, for its fork's chart and readings. */
+  const timeWords = TIME_WORDS[WORLD.timeUnit];
+  /** What one run of the world is called: "On this sky", "Across 20 skies". */
+  const runWords = WORLD.kit.run;
+  /** Where the level rule checked each statement: across 20 skies, or a world's values and 19 near them. */
+  const across = acrossWords(runWords, WORLD.family.variation);
+  /** Whether a run is a story with an end, as an epidemic's is: it can be started again, and every fork tells it from its start. */
+  const ends = WORLD.family.forkFrom === "start";
+  /** What a restarting fork does, in words: a flock's restarts from its seed; a model with no chance in it starts again from time 0. */
+  const restartWords = WORLD.family.variation === "seeds" ? " Both worlds restart from the same seed." : ` Both worlds start again from ${timeWords.one} 0.`;
+  const Mark = play.mark;
+  const levelAt = (index: number): BuiltLevel => levelOf(LEVELS, index);
+  const [session] = useState<PlaySession>(() => play.createSession(play.options(levelAt(0), !prefersReducedMotion())));
   const [snapshot, setSnapshot] = useState(() => session.snapshot());
   const [index, setIndex] = useState(0);
   const [visited, setVisited] = useState<ReadonlySet<string>>(() => new Set([levelAt(0).id]));
@@ -207,8 +189,15 @@ export function HookWorld() {
   const slider = useRef<HTMLInputElement>(null);
   const opener = useRef<HTMLElement | null>(null);
 
+  /** What the world cannot show: the family's label, the spec's limits, then how its kit draws what it does not measure. */
+  const cannotShow: readonly CannotShowItem[] = [
+    ...(WORLD.family.label ? [{ text: `${capitalise(WORLD.family.label)}.`, origin: "teaching-choice" as const }] : []),
+    ...WORLD.limits.map((limit) => ({ text: limit.text, origin: limit.origin, placeholder: placeholderOnly(limit.anchors) })),
+    ...WORLD.kit.disclosures.map((text) => ({ text, origin: "teaching-choice" as const })),
+  ];
   const level = levelAt(index);
-  const metric = level.observable.metricId as keyof FlockObservables;
+  const metric = level.observable.metricId;
+  const timestep = level.primitive.fixedTimestep;
   const [min, max] = level.action.range;
   const visible = level.visible[depth];
   /** The level being played, set on entering one, for readouts that arrive while it loads. */
@@ -217,17 +206,17 @@ export function HookWorld() {
   const refresh = () => {
     const now = entered.current;
     const next = session.snapshot();
-    samples.current = [...samples.current, next.observed[now.observable.metricId as keyof FlockObservables]].slice(-TREND_SAMPLES);
+    samples.current = [...samples.current, next.observed[now.observable.metricId] ?? Number.NaN].slice(-TREND_SAMPLES);
     setSnapshot(next);
     setTrend(trendOf(samples.current, now.guide.trend.within));
   };
 
-  const value = snapshot.params[level.action.variable as keyof SessionSnapshot["params"]];
-  const open = openLevels(explored);
+  const value = snapshot.params[level.action.variable] ?? Number.NaN;
+  const open = openLevels(LEVELS, explored);
   const [did, saw] = guideLines(level.guide, { min, step: level.action.step }, level.observable, {
     lastAction,
     value,
-    observed: snapshot.observed[metric],
+    observed: snapshot.observed[metric] ?? Number.NaN,
     trend,
     playing: snapshot.playing,
     depth,
@@ -252,7 +241,7 @@ export function HookWorld() {
   const enter = (next: number) => {
     const target = levelAt(next);
     entered.current = target;
-    session.load(sessionOptionsFor(target, session.snapshot().playing));
+    session.load(play.options(target, session.snapshot().playing));
     samples.current = [];
     setIndex(next);
     setVisited((seen) => new Set(seen).add(target.id));
@@ -276,6 +265,14 @@ export function HookWorld() {
     setCue((count) => count + 1);
     samples.current = [];
     session.setAction(level.action.actionId, next);
+    refresh();
+  };
+
+  /** A run with an end starts again from the control as it is now, as a new run. */
+  const startAgain = () => {
+    session.startAgain();
+    samples.current = [];
+    setTrend("steady");
     refresh();
   };
 
@@ -358,45 +355,49 @@ export function HookWorld() {
   const claim = difference.claim;
   const acrossSkies =
     claim.kind === "each"
-      ? `Across ${RULE_SEEDS} skies, the level's statement holds on at least ${RULE_HOLDS}.`
-      : `Across ${RULE_SEEDS} skies, the other world was ${claim.relation} by more than ${claim.by} ${difference.unit} on ${claim.holds}, and not on ${RULE_SEEDS - claim.holds}.`;
+      ? `${across}, the level's statement holds on at least ${RULE_HOLDS}.`
+      : `${across}, the other world was ${claim.relation} by more than ${claim.by} ${difference.unit} on ${claim.holds}, and not on ${RULE_SEEDS - claim.holds}.`;
   const predicted = predictions[level.id];
   const exploring = level.exploration !== null && predicted !== undefined;
   const forkGuide =
     level.exploration && predicted !== undefined && forkView
-      ? explorationLines(level.exploration, claim, { predicted, change: overridesShort, done: forkView.done, holdsHere: forkView.holds })
+      ? explorationLines(level.exploration, claim, { predicted, change: overridesShort, done: forkView.done, holdsHere: forkView.holds }, runWords, across)
       : null;
   const forkPanel =
     run && forkView ? (
       <ForkView
-        kit={valleyStage}
+        kit={play.stage}
         title={whatIfSpec.prompt}
         note={
           <p>
             <OriginTag origin="teaching-choice" quiet /> The other world runs with {overrides}.
-            {whatIfSpec.restarts ? <span data-restarts=""> Both worlds restart from the same seed.</span> : null}
+            {whatIfSpec.restarts ? <span data-restarts="">{restartWords}</span> : null}
           </p>
         }
         here={{ label: "This world", name: "World stage, this world", driver: run.here }}
         there={{ label: `What if: ${overridesShort}`, name: "World stage, what if", driver: run.there }}
-        stageLabel={STAGE_LABEL}
-        look={{ birdColor: "heading" }}
+        stageLabel={play.stageLabel}
+        look={play.look}
         playing={forkView.playing}
         done={forkView.done}
         onTogglePlay={toggleFork}
         onClose={closeTheFork}
         onReadout={() => setForkView(run.fork.snapshot())}
         controls={<SpeedButton speed={speed} onChange={setSpeed} />}
-        {...(forkGuide ? { guide: <GuideNote lines={forkGuide} mark={BirdMark} /> } : {})}
+        {...(forkGuide ? { guide: <GuideNote lines={forkGuide} mark={play.mark} /> } : {})}
         chart={
           <DifferenceChart
-            metricName={METRIC_NAMES[difference.metricId] ?? difference.metricId}
+            metricName={play.chartName(level, difference.metricId)}
             duration={difference.time}
             unit={{ short: timeWords.short, words: timeWords.many }}
-            interval={SAMPLE_STEPS * flockTimestep}
+            interval={SAMPLE_STEPS * timestep}
             here={forkView.samples.here}
             there={forkView.samples.there}
-            top={chartTop(difference.metricId, [...forkView.samples.here, ...forkView.samples.there], threshold)}
+            top={chartTop(
+              level.primitive.describe().observables[difference.metricId]?.unit.startsWith("fraction") ?? false,
+              [...forkView.samples.here, ...forkView.samples.there],
+              threshold,
+            )}
             {...(threshold === undefined ? {} : { threshold })}
             hereName="This world"
             thereName="What if"
@@ -413,14 +414,14 @@ export function HookWorld() {
                 <OriginTag origin="computed-observation" quiet />{" "}
                 {claim.kind === "each"
                   ? forkView.holds
-                    ? "On this sky, the level's statement holds."
-                    : "On this sky, the level's statement does not hold."
-                  : `On this sky, the other world was ${forkView.holds ? "" : "not "}${claim.relation} by more than ${claim.by} ${difference.unit}.`}{" "}
+                    ? `${capitalise(runWords.on)} this ${runWords.one}, the level's statement holds.`
+                    : `${capitalise(runWords.on)} this ${runWords.one}, the level's statement does not hold.`
+                  : `${capitalise(runWords.on)} this ${runWords.one}, the other world was ${forkView.holds ? "" : "not "}${claim.relation} by more than ${claim.by} ${difference.unit}.`}{" "}
                 {acrossSkies}
               </p>
             ) : (
               <p>
-                Running: {(forkView.steps * flockTimestep).toFixed(1)} of {difference.time} {timeWords.short}.
+                Running: {(forkView.steps * timestep).toFixed(1)} of {difference.time} {timeWords.short}.
               </p>
             )}
             {exploring && !forkView.done ? null : (
@@ -448,13 +449,13 @@ export function HookWorld() {
       {forkPanel ?? (
         <>
       <WorldStage
-        kit={valleyStage}
+        kit={play.stage}
         driver={session}
-        label={STAGE_LABEL}
+        label={play.stageLabel}
         tool="look"
         window={free}
-        framing="follow"
-        look={{ birdColor: "heading" }}
+        framing={play.framing}
+        look={play.look}
         onTogglePlay={togglePlay}
         onReadout={refresh}
         onView={(view) => setYaw(view.yaw)}
@@ -463,10 +464,10 @@ export function HookWorld() {
       <div className="hud">
         <header className="hud-top">
           <div className="card world-card" data-hud data-hud-frame>
-            <BirdMark />
+            <Mark />
             <div>
               <h1>{WORLD.title}</h1>
-              <p>A PaperPlay world about flocking</p>
+              <p>A PaperPlay world about {play.about}</p>
             </div>
           </div>
 
@@ -483,6 +484,12 @@ export function HookWorld() {
               <PlayIcon playing={snapshot.playing} />
               <span className="btn-text">{snapshot.playing ? "Pause" : "Play"}</span>
             </button>
+            {ends ? (
+              <button type="button" className="btn btn-light" onClick={startAgain}>
+                <RestartIcon />
+                <span className="btn-text">Start again</span>
+              </button>
+            ) : null}
             <SpeedButton speed={speed} onChange={setSpeed} />
             <button
               type="button"
@@ -499,7 +506,7 @@ export function HookWorld() {
 
         <div className="hud-bottom">
           <Guide
-            mark={BirdMark}
+            mark={play.mark}
             lines={lines}
             cue={cue}
             quiet={whatIf}
@@ -527,7 +534,7 @@ export function HookWorld() {
               <h2 id="what-if-title">{whatIfSpec.prompt}</h2>
               <p className="what-if-runs">
                 <OriginTag origin="teaching-choice" quiet /> The other world runs with {overrides}.
-                {whatIfSpec.restarts ? <span data-restarts=""> Both worlds restart from the same seed.</span> : null}
+                {whatIfSpec.restarts ? <span data-restarts="">{restartWords}</span> : null}
               </p>
               <div className="what-if-buttons">
                 <button type="button" className="btn" onClick={openTheFork}>
@@ -565,7 +572,7 @@ export function HookWorld() {
               if (journal) setHighlight(level.id);
             }}
             onFromPaper={(from) => openJournal(from, true)}
-            readout={readoutFor(level, snapshot, visible.has("readout-number"), yaw)}
+            readout={play.readout(level, snapshot, visible.has("readout-number"), yaw)}
             equation={
               advanced.equation ? (
                 <p>
@@ -606,7 +613,7 @@ export function HookWorld() {
           return {
             id: entry.id,
             heading: `Level ${entry.order} · ${entry.title}${entry.bonus ? " · a bonus page" : ""}`,
-            passage: passageOf(entry),
+            passage: passageOf(WORLD, entry),
             control: entry.action.label,
             detail: (
               <>
@@ -645,6 +652,7 @@ export function HookWorld() {
           };
         })}
         stillToFind={LEVELS.filter((entry) => !visited.has(entry.id)).map((entry) => ({ number: entry.order, title: entry.bonus ? `Bonus: ${entry.title}` : entry.title }))}
+        cannotShow={cannotShow}
       />
     </main>
   );

@@ -34,6 +34,18 @@ export const SCENE_KITS: readonly SceneKitManifest[] = Object.freeze([
       "A bird fades out near the field's edge, so a wrap round the world does not look like a jump.",
     ]) as string[],
   }),
+  Object.freeze({
+    id: "town",
+    version: "1.0.0",
+    name: "A town, its people coloured by compartment",
+    draws: Object.freeze({ families: Object.freeze(["compartments"]) as FamilyId[], spaces: Object.freeze(["none"]) as SpaceKind[] }),
+    run: Object.freeze({ one: "town", many: "towns", on: "in" as const }),
+    disclosures: Object.freeze([
+      "The town's 120 figures are a picture of the model's shares, not people the model follows: each stands for one in 120 of the town, coloured by the compartment it is counted in.",
+      "The figures walk a pattern set by the model's time alone. Who walks near whom plays no part in the model, which treats the town as well mixed.",
+      "The houses, the plaza and the trees are scenery.",
+    ]) as string[],
+  }),
 ]);
 
 /** The scene kit with this id, if the shell has one. */

@@ -26,13 +26,20 @@ export interface Family {
   /** Shown on every world in the family and never dropped, when the family has one. */
   readonly label?: string;
   readonly variation: Variation;
+  /**
+   * Where a level's fork starts both worlds when its What-if changes only live variables: from the
+   * moment it opens, for a model that keeps going, like a flock; or from the start, for one whose
+   * run is a story with an end, like an epidemic, so the fork shows the difference the level
+   * rule checked.
+   */
+  readonly forkFrom: "now" | "start";
 }
 
 export const FAMILIES: Readonly<Record<FamilyId, Family>> = Object.freeze({
-  agents: Object.freeze({ id: "agents", name: "Agents that each follow local rules", variation: "seeds" }),
-  compartments: Object.freeze({ id: "compartments", name: "Compartment models, solved as equations", variation: "neighbourhood" }),
-  learning: Object.freeze({ id: "learning", name: "Learning toys", label: "miniature: the idea at toy scale", variation: "seeds" }),
-  "study-design": Object.freeze({ id: "study-design", name: "A study's design", label: "a model of how the study was designed, not its data", variation: "cohorts" }),
-  grids: Object.freeze({ id: "grids", name: "Fields on a grid", variation: "neighbourhood" }),
-  networks: Object.freeze({ id: "networks", name: "Networks", variation: "seeds" }),
+  agents: Object.freeze({ id: "agents", name: "Agents that each follow local rules", variation: "seeds", forkFrom: "now" }),
+  compartments: Object.freeze({ id: "compartments", name: "Compartment models, solved as equations", variation: "neighbourhood", forkFrom: "start" }),
+  learning: Object.freeze({ id: "learning", name: "Learning toys", label: "miniature: the idea at toy scale", variation: "seeds", forkFrom: "start" }),
+  "study-design": Object.freeze({ id: "study-design", name: "A study's design", label: "a model of how the study was designed, not its data", variation: "cohorts", forkFrom: "start" }),
+  grids: Object.freeze({ id: "grids", name: "Fields on a grid", variation: "neighbourhood", forkFrom: "start" }),
+  networks: Object.freeze({ id: "networks", name: "Networks", variation: "seeds", forkFrom: "start" }),
 });

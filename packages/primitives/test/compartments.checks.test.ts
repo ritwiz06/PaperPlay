@@ -1,6 +1,6 @@
 import type { ModelSpec } from "@paperplay/contracts";
 import { describe, expect, it } from "vitest";
-import { accuracy, compartmentModel, conservation, positivity, steadyStates } from "../src/compartments/index.ts";
+import { accuracy, accuracyReport, compartmentModel, conservation, positivity, steadyStates } from "../src/compartments/index.ts";
 import { add, c, compartment, decay, defaults, exp, log, model, mul, n, neg, p, parameter, pow, sirPeople, sirShares } from "./compartments.examples.ts";
 
 /** dx/dt = −ω y, dy/dt = ω x from (1, 0), whose invariant x² + y² is not linear. */
@@ -40,6 +40,17 @@ describe("[R01] compartments.ode checks: accuracy (MODEL.md C1)", () => {
     expect(accuracy(compartmentModel(spec), defaults(spec), 20)).toEqual([]);
     const strict = { ...spec, solver: { dt: 0.1, tolerance: 1e-9 } };
     expect(accuracy(compartmentModel(strict), defaults(strict), 20).map((problem) => problem.path)).toEqual([["compartments", 0]]);
+  });
+
+  it("measures how close a run comes to its allowance, and refuses exactly the runs that pass it", () => {
+    for (const [spec, steps] of [[sirPeople(), 1000], [decay(0.5, 0.1), 20], [{ ...decay(0.5, 0.1), solver: { dt: 0.1, tolerance: 1e-9 } }, 20], [decay(1000, 0.01, "second"), 10]] as const) {
+      const report = accuracyReport(compartmentModel(spec), defaults(spec), steps);
+      if ("failure" in report) throw new Error(report.failure);
+      expect(report.ratio).toBeCloseTo(report.deviation / report.allowance, 12);
+      expect(accuracy(compartmentModel(spec), defaults(spec), steps).length > 0).toBe(report.ratio > 1);
+    }
+    const passing = accuracyReport(compartmentModel(sirPeople()), defaults(sirPeople()), 1000);
+    expect("ratio" in passing && passing.ratio > 0 && passing.ratio <= 1).toBe(true);
   });
 
   it("refuses a run that stops being finite, saying where it broke down", () => {

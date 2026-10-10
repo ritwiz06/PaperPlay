@@ -22,6 +22,10 @@ describe("[R03] the primitive families' catalogue", () => {
     expect(FAMILIES["study-design"].variation).toBe("cohorts");
   });
 
+  it("tells every run from its start but a flock's, whose forks branch from the moment they open", () => {
+    expect(Object.values(FAMILIES).filter((family) => family.forkFrom === "now").map((family) => family.id)).toEqual(["agents"]);
+  });
+
   it("is frozen, so no caller can change a family's label", () => {
     expect(Object.isFrozen(FAMILIES)).toBe(true);
     expect(Object.values(FAMILIES).every((family) => Object.isFrozen(family))).toBe(true);

@@ -18,11 +18,14 @@ export const SKY_RADIUS = 330;
  * once per stage. It reads only frames, never simulation state, and adds no new kind of material
  * mid-run, so a new stage compiles every shader it needs before its first frames (2026-10-09).
  */
+/** The names a kit's own Three.js objects must not take: the stage's own, which they would shadow. */
+export type Unshadowed<Parts> = { readonly [K in keyof Parts & (keyof BaseScene | "kit")]: never };
+
 export interface ThreeKit<Parts extends object = object, Frame extends BaseFrame = BaseFrame> {
   /** The scene kit's id, as its pure half names it. */
   readonly id: string;
   /** Builds the kit's meshes and materials, adding to the scene what it draws from the start. */
-  create(scene: THREE.Scene): Parts;
+  create(scene: THREE.Scene): Parts & Unshadowed<Parts>;
   /** Shows one frame's layers: the kit's ground, forms and markers, and the kit's own colours. */
   draw(stage: StageScene<Parts, Frame>, frame: Frame): void;
   /** Frees the materials `create` made; the stage frees every geometry itself. */

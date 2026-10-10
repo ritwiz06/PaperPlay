@@ -81,45 +81,69 @@ function scales(model: CompartmentModel, states: readonly CompartmentState[]): n
 }
 
 /**
- * C1, the honest refusal: runs `steps` steps at the model's step and twice as many at half
- * of it, from the same start, and compares every compartment at every coarse step. A
- * compartment that moves by more than the model's tolerance of its scale, or a value that
- * stops being a finite number, means the step is too coarse for this model: it is stiff or
- * unstable there, and PaperPlay will not draw it. Reports the worst offender.
+ * C1 as a measurement: runs `steps` steps at the model's step and twice as many at half of it,
+ * from the same start, and finds the compartment that moves most when the step is halved, as a
+ * share of what the check allows it: its tolerance of the compartment's largest value. A ratio
+ * of at most 1 passes. A run that broke down instead says why.
  */
-export function accuracy(model: CompartmentModel, params: CompartmentParams, steps: number): CheckProblem[] {
+export type AccuracyReport =
+  | {
+      readonly ratio: number;
+      /** The compartment that moved most, by its place in the model's order, the step it did so at, and by how much. */
+      readonly compartment: number;
+      readonly step: number;
+      readonly deviation: number;
+      readonly allowance: number;
+      readonly scale: number;
+    }
+  | { readonly failure: string; readonly dt: number };
+
+export function accuracyReport(model: CompartmentModel, params: CompartmentParams, steps: number): AccuracyReport {
   const valid = prepare(model, params, steps);
   const { spec } = model;
-  const words = wordsFor(spec);
   const dt = model.fixedTimestep;
-  const refusal = `The solver's step is too coarse for this model, which is stiff or unstable at a step of ${words.duration(dt)}, so PaperPlay will not draw it.`;
-
   const coarse = run(model, valid, steps, dt);
   const fine = run(model, valid, 2 * steps, dt / 2);
-  const broken = coarse.failure !== undefined ? { dt, failure: coarse.failure } : fine.failure !== undefined ? { dt: dt / 2, failure: fine.failure } : undefined;
-  if (broken) return [{ check: "accuracy", message: `At a step of ${words.duration(broken.dt)} the run broke down: ${broken.failure}. ${refusal}` }];
+  if (coarse.failure !== undefined) return { failure: coarse.failure, dt };
+  if (fine.failure !== undefined) return { failure: fine.failure, dt: dt / 2 };
 
   const scale = scales(model, coarse.states);
-  let worst: { ratio: number; index: number; step: number; deviation: number; allowance: number } | undefined;
+  let worst = { ratio: 0, compartment: 0, step: 0, deviation: 0, allowance: spec.solver.tolerance * Math.max(scale[0] ?? 0, TINY), scale: scale[0] ?? 0 };
   for (let k = 1; k <= steps; k++) {
     const [a, b] = [coarse.states[k] as CompartmentState, fine.states[2 * k] as CompartmentState];
     spec.compartments.forEach((compartment, index) => {
       const deviation = Math.abs((a.compartments[compartment.id] ?? 0) - (b.compartments[compartment.id] ?? 0));
       const allowance = spec.solver.tolerance * Math.max(scale[index] ?? 0, TINY);
       const ratio = deviation / allowance;
-      if (ratio > 1 && (worst === undefined || ratio > worst.ratio)) worst = { ratio, index, step: k, deviation, allowance };
+      if (ratio > worst.ratio) worst = { ratio, compartment: index, step: k, deviation, allowance, scale: scale[index] ?? 0 };
     });
   }
-  if (!worst) return [];
-  const compartment = spec.compartments[worst.index];
+  return worst;
+}
+
+/**
+ * C1, the honest refusal: a compartment that moves by more than the model's tolerance of its
+ * scale when the step is halved, or a value that stops being a finite number, means the step is
+ * too coarse for this model: it is stiff or unstable there, and PaperPlay will not draw it.
+ * Reports the worst offender.
+ */
+export function accuracy(model: CompartmentModel, params: CompartmentParams, steps: number): CheckProblem[] {
+  const { spec } = model;
+  const words = wordsFor(spec);
+  const dt = model.fixedTimestep;
+  const refusal = `The solver's step is too coarse for this model, which is stiff or unstable at a step of ${words.duration(dt)}, so PaperPlay will not draw it.`;
+  const report = accuracyReport(model, params, steps);
+  if ("failure" in report) return [{ check: "accuracy", message: `At a step of ${words.duration(report.dt)} the run broke down: ${report.failure}. ${refusal}` }];
+  if (!(report.ratio > 1)) return [];
+  const compartment = spec.compartments[report.compartment];
   return [
     {
       check: "accuracy",
       message:
-        `Halving the solver's step from ${words.duration(dt)} to ${words.duration(dt / 2)} moves ${words.compartment(worst.index)} by ${figure(worst.deviation)} ` +
-        `${compartment ? words.unit(compartment.unit) : ""} at ${words.at(worst.step, dt)}, while the accuracy check allows ${figure(worst.allowance)}: ` +
-        `${figure(spec.solver.tolerance)} of its largest value, ${figure(scale[worst.index] ?? 0)}. ${refusal}`,
-      path: ["compartments", worst.index],
+        `Halving the solver's step from ${words.duration(dt)} to ${words.duration(dt / 2)} moves ${words.compartment(report.compartment)} by ${figure(report.deviation)} ` +
+        `${compartment ? words.unit(compartment.unit) : ""} at ${words.at(report.step, dt)}, while the accuracy check allows ${figure(report.allowance)}: ` +
+        `${figure(spec.solver.tolerance)} of its largest value, ${figure(report.scale)}. ${refusal}`,
+      path: ["compartments", report.compartment],
     },
   ];
 }

@@ -4,7 +4,7 @@
  * action, and says nothing it did not get from them. At Beginner it uses words only, as the
  * slider does. Its first line is a teaching choice, its second a computed observation.
  */
-import { isPlaceholder, RULE_HOLDS, RULE_SEEDS, type DifferenceClaim, type GuidedExploration, type GuideScript, type Observable } from "@paperplay/contracts";
+import { isPlaceholder, RULE_HOLDS, RULE_SEEDS, type DifferenceClaim, type GuidedExploration, type GuideScript, type Observable, type Variation } from "@paperplay/contracts";
 import type { Depth, GuideLine } from "@paperplay/ui/react";
 
 export type Trend = "rising" | "falling" | "steady";
@@ -82,24 +82,49 @@ export interface ExplorationState {
   readonly holdsHere: boolean | null;
 }
 
+/** What one run of a world is called, as its scene kit says: on this sky, across 20 skies. */
+export interface RunWords {
+  readonly one: string;
+  readonly many: string;
+  readonly on: string;
+}
+
+/**
+ * Where the level rule checked a statement, opening a sentence: across 20 skies, for a model
+ * with chance in it; for one with none, across the world's values and 19 near them (ADR-0024).
+ */
+export function acrossWords(run: RunWords, variation: Variation): string {
+  const across = `Across ${RULE_SEEDS} ${run.many}`;
+  return variation === "neighbourhood" ? `${across}, this world's values and ${RULE_SEEDS - 1} within a tenth of them` : across;
+}
+
 /**
  * The guide through predict, intervene, observe, explain (ADR-0018): it repeats the learner's
  * prediction, names the intervention, then reports what was measured, here and across 20
  * skies, and what the paper says. Never scored: nothing calls a prediction right or wrong.
  */
-export function explorationLines(exploration: GuidedExploration, claim: DifferenceClaim, state: ExplorationState): GuideLine[] {
+export function explorationLines(
+  exploration: GuidedExploration,
+  claim: DifferenceClaim,
+  state: ExplorationState,
+  /** What one run of the world is called, as its scene kit says: the valley's skies by default. */
+  run: RunWords = { one: "sky", many: "skies", on: "on" },
+  /** Where the level rule checked the statement: across 20 of those runs by default. */
+  across = `Across ${RULE_SEEDS} ${run.many}`,
+): GuideLine[] {
   const choice = (index: number): string => exploration.choices[index] ?? "";
   const lines: GuideLine[] = [{ text: `You predicted: ${choice(state.predicted)}.`, origin: "teaching-choice" }];
   if (!state.done) {
     lines.push({ text: `Now both worlds run, the other with ${state.change}. Watch the chart.`, origin: "teaching-choice" });
     return lines;
   }
-  lines.push({ text: `On this sky: ${choice(state.holdsHere ? 0 : 1)}.`, origin: "computed-observation" });
+  const on = run.on.charAt(0).toUpperCase() + run.on.slice(1);
+  lines.push({ text: `${on} this ${run.one}: ${choice(state.holdsHere ? 0 : 1)}.`, origin: "computed-observation" });
   lines.push({
     text:
       claim.kind === "count"
-        ? `Across ${RULE_SEEDS} skies: ${choice(0)} on ${claim.holds}, ${choice(1).toLowerCase()} on ${RULE_SEEDS - claim.holds}.`
-        : `Across ${RULE_SEEDS} skies, the level's statement holds on at least ${RULE_HOLDS}.`,
+        ? `${across}: ${choice(0)} on ${claim.holds}, ${choice(1).toLowerCase()} on ${RULE_SEEDS - claim.holds}.`
+        : `${across}, the level's statement holds on at least ${RULE_HOLDS}.`,
     origin: "computed-observation",
   });
   const { explanation } = exploration;

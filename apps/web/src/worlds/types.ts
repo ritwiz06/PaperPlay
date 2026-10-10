@@ -1,0 +1,36 @@
+/**
+ * A world the shell can play (ADR-0029): the world as built, and its scene kit's halves, readouts
+ * and words. The shell is written once against this; each world's binding supplies its own.
+ * Types are erased at this boundary: a binding makes its sessions and reads its own snapshots, so
+ * what it hands the shell and what the shell hands back always match.
+ */
+import type { BuiltLevel, BuiltWorld } from "@paperplay/pipeline";
+import type { KitMark } from "@paperplay/ui/react";
+import type { BaseEmphasis, BaseFrame, StageKit } from "@paperplay/ui/stage-core";
+import type { ReactNode } from "react";
+import type { CoreSnapshot, SessionOptions, Stepped, WorldSession } from "../world/session.ts";
+
+export type PlaySession = WorldSession<Record<string, number>, Stepped, Record<string, number>, unknown, BaseEmphasis, unknown>;
+export type PlaySnapshot = CoreSnapshot<Record<string, number>, Record<string, number>>;
+
+export interface PlayableWorld {
+  readonly world: BuiltWorld;
+  /** The scene kit's pure half, which the stage draws with. */
+  readonly stage: StageKit<unknown, BaseEmphasis, unknown, BaseFrame>;
+  /** How the kit draws the world, apart from emphasis. */
+  readonly look: unknown;
+  /** Whether the stage follows the kit's focus, or holds the whole field still. */
+  readonly framing: "follow" | "overview";
+  readonly mark: KitMark;
+  /** What the world is about, in words: "A PaperPlay world about {about}". */
+  readonly about: string;
+  /** What the stage shows, for people who cannot see it. */
+  readonly stageLabel: string;
+  /** A level's session options: its own parameters and setup, on the world's opening seed. */
+  options(level: BuiltLevel, playing: boolean): SessionOptions<Record<string, number>, Stepped>;
+  createSession(options: SessionOptions<Record<string, number>, Stepped>): PlaySession;
+  /** The level's readout, showing the primitive's own values. */
+  readout(level: BuiltLevel, snapshot: PlaySnapshot, showNumber: boolean, yaw: number): ReactNode;
+  /** What the fork's chart calls a metric. */
+  chartName(level: BuiltLevel, metricId: string): string;
+}

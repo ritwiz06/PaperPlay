@@ -58,6 +58,7 @@
 
 .game .btn {
   display: inline-flex;
+  white-space: nowrap;
   align-items: center;
   justify-content: center;
   gap: 6px;
@@ -586,6 +587,15 @@
   stroke-width: 0.05;
 }
 
+/* The town's shares bar: each compartment as wide as its share, in the figures' colours, the watched one outlined. */
+.shares-part {
+  stroke: var(--ink);
+  stroke-width: 0.04;
+}
+.shares-watched {
+  stroke-width: 0.12;
+}
+
 /* The spread dial: a ring as wide as the flock spreads, like the one on the ground. */
 .spread-ring {
   fill: none;
@@ -788,6 +798,31 @@
   color: var(--sub);
   font-size: 0.875rem;
 }
+/* What this world cannot show: its limits and its scene kit's disclosures, each with its origin. */
+.cannot-show {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 2px solid var(--ink);
+}
+.cannot-show h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+.cannot-show ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cannot-show li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
 .legend {
   margin-top: 20px;
   padding-top: 14px;
@@ -852,6 +887,13 @@
   .world-card h1 {
     font-size: 1rem;
     white-space: nowrap;
+  }
+  /* With a fourth button, such as a town's Start again, the title takes two lines rather than run under them. */
+  .hud-top:has(.hud-buttons > :nth-child(4)) .world-card {
+    min-width: 0;
+  }
+  .hud-top:has(.hud-buttons > :nth-child(4)) .world-card h1 {
+    white-space: normal;
   }
   .world-card p {
     display: none;

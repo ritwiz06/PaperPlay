@@ -95,7 +95,10 @@ export interface BuiltFork {
   /** The right-hand world's parameters: the level's, with the overrides applied. */
   readonly params: Readonly<Record<string, number>>;
   readonly overrides: readonly BuiltOverride[];
-  /** Derived: an override of a start-up (init-phase) variable makes both worlds restart from the same seed. */
+  /**
+   * Derived: both worlds restart from the same seed when an override changes a start-up
+   * (init-phase) variable, or when the primitive's family tells every run from its start.
+   */
   readonly restarts: boolean;
   /** The one measured difference between the worlds, and the claim the level makes about it (ADR-0018), in the world's time unit. */
   readonly difference: MeasuredDifferenceV3;
@@ -384,7 +387,7 @@ function buildLevel(level: LevelV3, at: (string | number)[], spec: WorldSpecV3, 
       anchors: counterfactual.anchors,
       params: forkParams,
       overrides,
-      restarts: overrides.some((override) => override.phase === "init"),
+      restarts: overrides.some((override) => override.phase === "init") || FAMILIES[primitive.family].forkFrom === "start",
       difference,
     },
     visible,

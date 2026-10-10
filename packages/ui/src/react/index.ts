@@ -16,6 +16,7 @@ export {
   ORIGIN_WORDS,
   OriginTag,
   PlayIcon,
+  RestartIcon,
   type Depth,
   type DepthToggleProps,
   type KitMark,
@@ -25,7 +26,7 @@ export { LabBench, type BenchControl, type LabBenchProps } from "./LabBench.tsx"
 export { LevelCard, type LevelCardProps, type LevelControl } from "./LevelCard.tsx";
 export { LevelMap, type LevelMapProps, type MapLevel } from "./LevelMap.tsx";
 export { ORIGIN_LABELS, ORIGIN_MEANINGS, ORIGINS, OriginChip, OriginLegend } from "./origin.tsx";
-export { PaperJournal, type JournalPage, type JournalPassage, type PaperJournalProps } from "./PaperJournal.tsx";
+export { PaperJournal, type CannotShowItem, type JournalPage, type JournalPassage, type PaperJournalProps } from "./PaperJournal.tsx";
 export { Readout, type ReadoutProps } from "./Readout.tsx";
 export { SpeedButton, type SpeedButtonProps } from "./SpeedButton.tsx";
 export { HUD_MARGIN, useFreeRect } from "./useFreeRect.ts";

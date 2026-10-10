@@ -88,6 +88,16 @@ describe("[R08] the builder on a model given as data", () => {
     expect(messagesOf(result)[0]).toMatch(/draws agents on torus2d, not compartments on none/);
   });
 
+  it("builds on the town kit, every fork telling the run from its start though its What-if changes only a live rate", () => {
+    const { limitations: _drop, ...spec } = world(undefined, "town");
+    const result = buildWorld(spec, registry);
+    if (!result.ok) throw new Error(JSON.stringify(result.problems));
+    for (const level of result.world.levels) {
+      expect(level.fork.overrides.map((override) => override.phase)).toEqual(["live"]);
+      expect(level.fork.restarts).toBe(true);
+    }
+  });
+
   it("refuses a model whose units disagree, naming the solver's reason", () => {
     const wrong = sir({ equations: [...sir().equations.slice(0, 2), { of: "r", rate: c("i"), anchors: placeholders }] });
     const { limitations: _drop, ...spec } = world(wrong);

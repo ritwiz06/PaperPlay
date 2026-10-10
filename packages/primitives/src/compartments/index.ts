@@ -8,9 +8,11 @@ import { compartmentModel, type ModelShowing } from "./primitive.ts";
 
 export {
   accuracy,
+  accuracyReport,
   conservation,
   positivity,
   steadyStates,
+  type AccuracyReport,
   type CheckName,
   type CheckProblem,
   type ConservationReport,

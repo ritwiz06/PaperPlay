@@ -96,6 +96,16 @@ export function PlayIcon({ playing }: { readonly playing: boolean }) {
   );
 }
 
+/** A turning arrow: start the run again. */
+export function RestartIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M3.5 8 A4.5 4.5 0 1 0 5 4.6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M2.6 2.4 L5.6 4.4 L3 6.8 Z" fill="currentColor" />
+    </svg>
+  );
+}
+
 export function ChevronIcon({ up }: { readonly up: boolean }) {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">

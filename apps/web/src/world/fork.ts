@@ -10,7 +10,7 @@
  */
 import { claimHolds, SAMPLE_STEPS, summarise, type BuiltLevel } from "@paperplay/pipeline";
 import { advance, START_CLOCK, type BaseEmphasis, type Speed, type StepClock } from "@paperplay/ui/stage-core";
-import type { SessionOptions, Stepped, WorldSession } from "./session.ts";
+import { wallStepOf, type SessionOptions, type Stepped, type WorldSession } from "./session.ts";
 
 export interface ForkSnapshot {
   /** Steps since the fork opened, and the level's time in steps. */
@@ -56,6 +56,7 @@ export function openFork<P, S extends Stepped, O extends Record<string, number>,
 ): Fork<WorldSession<P, S, O, Extra, Emphasis, Input>> {
   const { difference, restarts } = level.fork;
   const TIMESTEP = level.primitive.fixedTimestep;
+  const WATCHED = wallStepOf(level.primitive);
   const now = from.snapshot();
   const params = forkParams(level, now.params);
   const base: Omit<SessionOptions<P, S>, "params"> = {
@@ -95,7 +96,7 @@ export function openFork<P, S extends Stepped, O extends Record<string, number>,
     there,
     tick(frameSeconds) {
       if (!playing || steps >= totalSteps) return 0;
-      const next = advance(clock, frameSeconds, TIMESTEP, undefined, speed);
+      const next = advance(clock, frameSeconds, WATCHED, undefined, speed);
       clock = next.clock;
       const count = Math.min(next.steps, totalSteps - steps);
       if (count > 0) take(count);
