@@ -60,6 +60,8 @@ test("[R06] level 5's card counts the birds inside rocks and shows each rock, an
 });
 
 test("[R06] in level 5's fork, the world with no rule for rocks lights the rocks its birds fly through, and this world does not", async ({ page }) => {
+  // Walking to level 5 and running its fork at 4x took 16 s locally and over 30 s on CI's runner.
+  test.setTimeout(90_000);
   await openLevel(page);
   await page.locator(".level-whatif").getByRole("button", { name: "What if" }).click();
   const choice = page.locator(".guide-choices button").first();
