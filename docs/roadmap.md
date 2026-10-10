@@ -17,7 +17,7 @@ calendar promises.
 |---|---|---|---|---|
 | G1 Playable baseline | v0.1.0 | 21–28 h | R01–R04 | Passed and tagged v0.1.0 on 2026-10-01 |
 | G2 Verified authored world | v0.2.0 | 21–28 h | R01–R08, R12 | Its interface is done; it waits for the Reynolds PDF and the source map |
-| G3a Generalize, compartments, the pipeline on them | Chosen when it passes | 52–72 h | R01–R12 | G3a.1 in progress |
+| G3a Generalize, compartments, the pipeline on them | Chosen when it passes | 52–72 h | R01–R12 | G3a.1 and G3a.2 done; G3a.3, the pipeline, next |
 | G3b Routing, the explainer tier, learning toys | Chosen when it passes | 22–32 h | R01–R12 | Not started |
 | G4 Evaluation and feature freeze | v0.4.0 | 20–28 h | R01–R12, plus evaluation checks | Not started |
 | G5 Delivery | v1.0.0 | 9–12 h | R01–R12 | Not started |
@@ -172,10 +172,11 @@ G3a.2, the compartment family and Kermack and McKendrick by hand (14–20 h):
 - [x] The expression tree, its units, and the RK4 solver with its accuracy check (2026-10-10,
   `fcf7c71`, `32c7899`, ADR-0028).
 - [x] The family's checks and its hand-written oracles (2026-10-10, `7e20957`, `fcf7c71`).
-- [ ] The town scene kit.
-- [ ] The Kermack and McKendrick world, a draft until its anchors are real, every level
-  meeting the level rule.
-- [ ] Every world's journal page, "What this world cannot show".
+- [x] The town scene kit, and the shell playing any world (2026-10-10, `cf2551d`, ADR-0029).
+- [x] The Kermack and McKendrick world, Threshold Town, a draft until its anchors are real,
+  every level meeting the level rule over the world's values and 19 near them (2026-10-10,
+  `cf2551d`, `eval/sweeps/levels-kermack-mckendrick-1927.md`).
+- [x] Every world's journal page, "What this world cannot show" (2026-10-10, `cf2551d`).
 
 G3a.3, the pipeline on a known family (24–32 h):
 - [ ] `apps/api`: jobs, SSE events, JSON artifacts, secrets in `.env`, a bundle secret check,
@@ -236,7 +237,7 @@ commit times). The owner's own focused hours are not tracked unless logged.
 |---|---|---|
 | G1 | 21–28 h | 2026-09-28 to 2026-10-01, about 8.3 h of sessions: 1.4 h (09-28), 5.4 h (09-30) and 1.5 h (10-01). Under plan, because Claude Code did the building; the owner's own review time is not tracked |
 | G2 | 21–28 h | G2's early RunRecord and replay work. Then five sessions on 2026-10-09:<br>• 00:51 to 01:45, about 0.9 h: `main`, ADR-0008, the axe scan, the demo capture, the hook spike and the plan change.<br>• 10:25 to 11:05, about 0.7 h: `origin`, CI, `--frames` and the capture finding.<br>• 11:06 to about 12:05, about 1 h: the canonical capture, the shell, the world art, the capture's camera and the level script.<br>• 12:08 to about 14:25, about 2.3 h: the group measure, WorldSpec and the builder, the six levels from the spec, the stage split and the deploy configuration.<br>• 15:08 to about 16:20, about 1.2 h: the level rule, flock 3.1.0, the fork, guided exploration, the speed control and the CSP.<br>• 20:15 to about 22:10, about 1.9 h: `npm run land` and the hook, the direction (ADR-0021), level 5's readout and its fork's stall, context loss and the phone chart, a prediction before every What-if, and the plan for every paper. |
-| G3a | 52–72 h | From 2026-10-10; this session's time is added at its close |
+| G3a | 52–72 h | 2026-10-10, 00:13 to about 08:30, about 8.3 h of one session: the owner's answers, G3a.1 (records, families, scene kits, `worldspec/3`) and G3a.2 (the compartment family, the town kit, Threshold Town), each branch landed through `npm run land`. Its wall clock includes about 1.5 h of waiting on CI |
 | G3b–G5 | As in Gates | None yet |
 
 ## Plan changes
@@ -280,3 +281,5 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-10 | The plan for every paper is answered: the families' order, equations as data as tier A with an independent second transcription, the level rule over 20 starts for models with no randomness, three dependencies approved, the licence policy, PubMed Central's supported routes | Owner decisions (ADR-0024) |
 | 2026-10-10 | G3 is re-cut into G3a (generalize, compartments, the pipeline on them) and G3b (routing, the explainer tier, learning toys); the primitive-builder agent comes after G4; the roadmap gives gates and effort, with no day ranges | Owner decision (ADR-0024): G3 as written could not hold the work |
 | 2026-10-10 | G3a.1 starts with records of the six levels made before the refactor, so the refactor is held to them | The owner's acceptance condition for G3a.1 |
+| 2026-10-10 | A fork in every family but the agents' tells its run from the start, and a run with an end can start again | An epidemic opened after it ends shows nothing (ADR-0029) |
+| 2026-10-10 | The levels sweep runs every authored world, over its family's variation, and holds a compartment world's every run to the accuracy check | ADR-0024's level rule for models with no chance in them (ADR-0029) |

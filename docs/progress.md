@@ -7,6 +7,25 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-10 · The town kit and Threshold Town, and the end of G3a.2
+
+- Branch: `g3/kermack-mckendrick`
+- Commits: `cf2551d`
+- Shipped (ADR-0029):
+  - **The town kit, in three halves:** 120 figures coloured by compartment, a picture of the
+    solver's shares, the ill standing in rings; the shares bar; the kit's disclosures.
+  - **Threshold Town:** Kermack and McKendrick's special case of constant rates, by hand in
+    `worldspec/3`, a draft, five levels at `/world/epidemic`. Every level meets the rule over the
+    world's values and 19 within a tenth of them, and every run passes the accuracy check, the
+    worst at 7% of its allowance.
+  - **The shell plays any world,** its words following the world's family; a run with an end
+    can start again; a compartment fork tells its run from day 0.
+  - **The journal's page of what a world cannot show,** on both worlds.
+  - **The levels sweep runs every authored world;** the flock's record is byte-identical.
+- Evidence: R01 151, R02 9, R03 151, R05 5, R06 53, R08 59, R12 18.
+- Gate: `check:gate` passed G1 on the branch's code (746 tests, 0 skipped), recorded in the
+  session log; land's own run follows.
+
 ## 2026-10-10 · The compartment family
 
 - Branch: `g3/compartments`

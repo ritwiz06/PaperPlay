@@ -145,6 +145,31 @@ the two runs disagree, the step is too coarse for this model.
   drawn wrong. The accuracy check compares every compartment at dt and dt/2.
 - **Learn more:** [Wikipedia, "Stiff equation"](https://en.wikipedia.org/wiki/Stiff_equation)
 
+### The epidemic threshold
+
+In Kermack and McKendrick's model, the ill grow only while the number still well is above the
+rate of removal divided by the rate of infection, l/κ. Below it, each ill person passes the
+illness to fewer than one other before being removed, and the epidemic fades out. The same
+idea is now usually written as the basic reproduction number, R₀, being above 1.
+
+- **Used in:** `fixtures/worldspecs/kermack-mckendrick-1927.json`, Threshold Town's levels 3
+  to 5
+- **Why here:** It is the paper's central result, and it explains why the epidemic ends while
+  people are still well.
+- **Learn more:** [Wikipedia, "Basic reproduction number"](https://en.wikipedia.org/wiki/Basic_reproduction_number)
+
+### Checking a claim near its values (a parameter neighbourhood)
+
+A model with no chance in it gives one answer for one set of values, so running it 20 times
+on the same values proves nothing. Instead, a claim is checked on the world's own values and on
+19 others, each parameter nudged by up to a tenth. A claim that holds only at one exact point
+is fragile; one that holds across the neighbourhood is a property of the model there.
+
+- **Used in:** `scripts/sweep/levels.ts`
+- **Why here:** The owner's level rule for deterministic models (ADR-0024): the claim must
+  hold on at least 16 of the 20.
+- **Learn more:** [Wikipedia, "Sensitivity analysis"](https://en.wikipedia.org/wiki/Sensitivity_analysis)
+
 ### Emergence
 
 Order at the scale of the whole flock that no single bird plans. The defaults sweep
@@ -505,6 +530,17 @@ never by turning text into code. Nothing outside the grammar's few operations ca
   Content-Security-Policy refuses `eval` anyway; lint bans it in primitives.
 - **Learn more:** [Robert Nystrom, "Crafting Interpreters", "Evaluating Expressions"](https://craftinginterpreters.com/evaluating-expressions.html)
 
+
+### Shares into whole figures (the largest remainder method)
+
+Drawing 120 figures for shares such as 0.593, 0.302 and 0.105 needs whole numbers that still
+add up to 120. Each share first gets the whole part of its exact count; the figures left over
+go to the shares with the largest fractions left behind.
+
+- **Used in:** `packages/ui/src/stage-core/kits/town/frame.ts`
+- **Why here:** The town's figures are a picture of the model's shares, so their counts must
+  come from the shares alone and always add up.
+- **Learn more:** [Wikipedia, "Largest remainder method"](https://en.wikipedia.org/wiki/Largest_remainder_method)
 ### Lint-enforced boundaries
 
 Lint rules forbid specific imports and calls in specific folders. For example, primitives
