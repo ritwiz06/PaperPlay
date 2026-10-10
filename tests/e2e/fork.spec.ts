@@ -119,6 +119,21 @@ test.describe("on a desktop", () => {
     await expect(fork.getByRole("button", { name: "Done" })).toBeDisabled();
   });
 
+  test("closing the fork releases both of its stages' WebGL contexts at once", async ({ page }) => {
+    await openHook(page);
+    await openFork(page);
+    // Keep the fork's two canvases, close it, then ask each whether its context was released.
+    await page.evaluate(() => {
+      (window as unknown as { forkCanvases: HTMLCanvasElement[] }).forkCanvases = [...document.querySelectorAll<HTMLCanvasElement>(".fork canvas")];
+    });
+    await page.getByRole("button", { name: "Back to one world" }).click();
+    await expect(page.locator("main")).toHaveAttribute("data-fork", "closed");
+    const lost = await page.evaluate(() =>
+      (window as unknown as { forkCanvases: HTMLCanvasElement[] }).forkCanvases.map((canvas) => canvas.getContext("webgl2")?.isContextLost() ?? null),
+    );
+    expect(lost).toEqual([true, true]);
+  });
+
   test("[R12] the fork passes the axe scan, on a desktop", async ({ page }) => {
     await openHook(page);
     await openFork(page);

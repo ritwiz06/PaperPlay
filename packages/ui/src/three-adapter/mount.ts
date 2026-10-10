@@ -95,6 +95,9 @@ export function mountStage(container: HTMLElement, options: StageOptions): Mount
       observer.disconnect();
       stage.dispose();
       renderer.dispose();
+      // Release the WebGL context now, not when the garbage collector gets to it: a fork mounts
+      // two stages, and contexts left waiting made each later mount slower (2026-10-09).
+      renderer.forceContextLoss();
       canvas.remove();
     },
   };
