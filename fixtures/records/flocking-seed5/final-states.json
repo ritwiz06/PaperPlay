@@ -1,0 +1,23 @@
+{
+  "about": "SHA-256 of each record's final state, as JSON, replayed by the code at bdd7bd0 (the records' own code, f0bc31c, for every primitive file) on Node 24.21.0, darwin arm64",
+  "states": {
+    "hook-trunk": "291892e972d22e6540b9d8ff3a7f4305816c84188c5762e3209f61058896d473",
+    "hook-here": "a8bd785b8fc1b4e624e789567fb05c58560a8135a89b382a1e861d2529c8daef",
+    "hook-there": "85ecaba08ba792af56d62e44528287b81b92cd9fe8fef1d839229ca993ea14ad",
+    "background-trunk": "8108f0c12a93e8430f6817c18376d2849b635108ae4556233bc8751410937d8b",
+    "background-here": "cfda6f723292e894c39fe4f9a2e659039926185bb8f4b4be322d2fd2323542b2",
+    "background-there": "18e28ffc600d6ade3c75f554fe639774003d5f85b8eae40dcdbba9161a504ce6",
+    "idea-trunk": "44dc8235a0e2a5204a227dd5424ebc13f5affd560f365311cae74468d09d6222",
+    "idea-here": "a8bd785b8fc1b4e624e789567fb05c58560a8135a89b382a1e861d2529c8daef",
+    "idea-there": "fe206fd85668397e3b96bf3903efa54009c22f97e3d344f26530bb01fe8967ca",
+    "method-trunk": "8c86ef9a025dbaa98f8c41c1a3a13975a4219aed17230b40d15a0356797bdc71",
+    "method-here": "cfda6f723292e894c39fe4f9a2e659039926185bb8f4b4be322d2fd2323542b2",
+    "method-there": "7283bb0fa58bd37c37f52139827cd6625e98d3fb8e3b728ecb33125f1a0c68fd",
+    "evaluation-trunk": "0d27f7d8f0dc3909f0d31a05e6eee90eaa3ca41da0f09a0006525deedb11994e",
+    "evaluation-here": "6267a0434fb421976964e084dfd0f583f4813989f22d6de8f0eb3b6b02fe5bb8",
+    "evaluation-there": "ee607bafb40d647212e595cf58ff4ca46b918db72bcced3eb438be8235a42532",
+    "result-trunk": "291892e972d22e6540b9d8ff3a7f4305816c84188c5762e3209f61058896d473",
+    "result-here": "1113f94ba09842254a57e659e97773a7c7f4b5071afb847dff26f31a546bf4f2",
+    "result-there": "97334c2f0a7944c3a9ac4e22b121758c68b924d48c2d91e90e7b03025bebfada"
+  }
+}
