@@ -138,8 +138,8 @@ export default defineConfig(
         {
           patterns: [
             {
-              regex: "^(?!@paperplay/(contracts|primitives)$|\\.{1,2}/)",
-              message: "The builder may import only @paperplay/contracts, @paperplay/primitives and its own modules: no model client, network or UI.",
+              regex: "^(?!@paperplay/(contracts|primitives)(/[a-z]+)?$|\\.{1,2}/)",
+              message: "The builder may import only @paperplay/contracts, @paperplay/primitives (a family's entry point included) and its own modules: no model client, network or UI.",
             },
           ],
         },

@@ -40,6 +40,7 @@ import {
   type WorldSpecV3,
 } from "@paperplay/contracts";
 import type { Primitive, PrimitiveRegistry, VariableDescription } from "@paperplay/primitives";
+import { familyProblems } from "./families.ts";
 
 export type Depth = keyof Explanation;
 export const BUILD_DEPTHS: readonly Depth[] = ["beginner", "intermediate", "advanced"];
@@ -228,10 +229,28 @@ function buildLevel(level: LevelV3, at: (string | number)[], spec: WorldSpecV3, 
     problem([...at, "binding"], "widget bindings arrive with the widget tier (G3), behind FEATURE_WIDGETS=1 and in a sandboxed iframe");
     return null;
   }
-  const primitive = registry.get(binding.primitive);
-  if (!primitive) {
-    problem([...at, "binding", "primitive"], `the registry has no ${binding.primitive.id}@${binding.primitive.version}`);
-    return null;
+  const primitiveRef = binding.type === "primitive" ? binding.primitive : binding.solver;
+  let primitive: Primitive<unknown, unknown> | undefined;
+  if (binding.type === "primitive") {
+    primitive = registry.get(binding.primitive);
+    if (!primitive) {
+      problem([...at, "binding", "primitive"], `the registry has no ${binding.primitive.id}@${binding.primitive.version}`);
+      return null;
+    }
+  } else {
+    // A model given as data: its solver binds it, checking that its units agree, or refuses it.
+    const solver = registry.solver(binding.solver);
+    if (!solver) {
+      problem([...at, "binding", "solver"], `the registry has no solver ${binding.solver.id}@${binding.solver.version}`);
+      return null;
+    }
+    try {
+      primitive = solver.bind(binding.model, { perWatchSecond: binding.perWatchSecond });
+    } catch (error) {
+      if (!(error instanceof RangeError)) throw error;
+      problem([...at, "binding", "model"], error.message);
+      return null;
+    }
   }
   const { variables, observables } = primitive.describe();
   // Later steps need earlier ones to have passed, so each stops if this level has a problem.
@@ -291,6 +310,12 @@ function buildLevel(level: LevelV3, at: (string | number)[], spec: WorldSpecV3, 
   const forkParams = params ? validParams(primitive, { ...params, ...counterfactual.altParams }, [...at, "counterfactual", "altParams"], problem) : null;
   if (!params || !forkParams) return null;
 
+  // The family's checks, on both worlds of the fork, over the level's time.
+  const steps = Math.round(difference.time / primitive.fixedTimestep);
+  for (const [world, values] of [["this world", params], ["the other world", forkParams]] as const) {
+    for (const message of familyProblems(primitive, values, steps)) problem([...at, "binding", "model"], `In ${world}: ${message}`);
+  }
+
   const overrides = Object.entries(counterfactual.altParams).map(([name, to]) => ({
     variable: name,
     from: params[name] ?? Number.NaN,
@@ -330,7 +355,7 @@ function buildLevel(level: LevelV3, at: (string | number)[], spec: WorldSpecV3, 
     goal: level.goal,
     bonus: level.bonus,
     primitive,
-    primitiveRef: binding.primitive,
+    primitiveRef,
     params,
     action: {
       actionId: manipulable.actionId,

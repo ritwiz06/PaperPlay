@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { FamilyId } from "./families.ts";
 import { Id } from "./ids.ts";
+import { ModelSpec } from "./model.ts";
 import { actionWith, ParameterName, PrimitiveRef } from "./primitive.ts";
 import { Origin, SourceManifest } from "./provenance.ts";
 import { TimeUnit } from "./time.ts";
@@ -88,6 +89,27 @@ export const CounterfactualV3 = z
 export type CounterfactualV3 = z.infer<typeof CounterfactualV3>;
 
 /**
+ * A model given as data, and the trusted solver that runs it (docs/design/every-paper.md §2.2):
+ * the compartment family's binding. The builder binds the model with the solver, which checks its
+ * units, then runs the family's checks.
+ */
+export const EquationsBinding = z.strictObject({
+  type: z.literal("equations"),
+  /** The solver, such as compartments.ode@1.0.0. */
+  solver: PrimitiveRef,
+  /** The model, every equation anchored to the paper's own. */
+  model: ModelSpec,
+  params: z.record(ParameterName, z.number()),
+  /** How much of the model's time a second of watching shows at 1x, a teaching choice. */
+  perWatchSecond: z.number().positive(),
+});
+export type EquationsBinding = z.infer<typeof EquationsBinding>;
+
+/** A primitive with its parameters, a model with its solver, or a sandboxed widget. */
+export const BindingV3 = z.discriminatedUnion("type", [...Binding.options, EquationsBinding]);
+export type BindingV3 = z.infer<typeof BindingV3>;
+
+/**
  * Exactly one manipulable and exactly one counterfactual, each a single object, never a list,
  * and a prediction before the What-if, which version 3 requires of every level (ADR-0023).
  * Version 2's refinements, unchanged.
@@ -102,7 +124,7 @@ export const LevelV3 = z
     goal: z.string().min(1),
     /** Beyond the paper: nothing in a bonus level is labelled paper-derived (ADR-0014). */
     bonus: z.boolean(),
-    binding: Binding,
+    binding: BindingV3,
     manipulable: actionWith(AnchorRef),
     slider: Slider,
     observable: Observable,

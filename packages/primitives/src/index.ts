@@ -6,5 +6,5 @@
  */
 export * from "./types.ts";
 export { assertSeed, mulberry32, type Prng } from "./prng.ts";
-export { createRegistry, registry, type PrimitiveRegistry } from "./registry.ts";
+export { createRegistry, registry, type PrimitiveRegistry, type Solver } from "./registry.ts";
 export { replayRecord, runEvents, type ReplayReport, type RunPlan, type RunResult, type RunSetup } from "./replay.ts";

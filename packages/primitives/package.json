@@ -6,7 +6,8 @@
   "description": "Deterministic, fixed-step scientific primitives and their registry.",
   "exports": {
     ".": "./src/index.ts",
-    "./flock": "./src/agents/flock/index.ts"
+    "./flock": "./src/agents/flock/index.ts",
+    "./compartments": "./src/compartments/index.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json && tsc -p test/tsconfig.json"

@@ -269,3 +269,10 @@ describe("[R03] ModelSpec: limits", () => {
     expect(issuesOf(Expr, nested(100_000))).toEqual([{ code: "custom", path: "" }]);
   });
 });
+
+describe("[R03] ModelSpec: the accuracy check's tolerance", () => {
+  it("is at most a thousandth, so no spec can loosen the check until a stiff model passes it", () => {
+    expect(paths({ ...sirModel(), solver: { dt: 0.1, tolerance: 1e-3 } })).toEqual([]);
+    expect(paths({ ...sirModel(), solver: { dt: 0.1, tolerance: 0.01 } })).toEqual(["solver.tolerance"]);
+  });
+});

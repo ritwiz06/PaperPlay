@@ -114,13 +114,22 @@ function describeModel(spec: ModelSpec): PrimitiveDescription {
   };
 }
 
+/** How a world shows a model: how much of its time a second of watching shows at 1x, a teaching choice. */
+export interface ModelShowing {
+  readonly perWatchSecond: number;
+}
+
 /**
  * compartments.ode@1.0.0, specified in MODEL.md, bound to one model. The spec is validated and
  * copied first, so a caller's later edit cannot reach the model, and a model whose units
  * disagree (U8) is refused with a RangeError. Everything returned is frozen; nothing it is
- * given is written to.
+ * given is written to. It belongs to the compartments family, counts its time in the model's
+ * unit, and has no space and nothing to place.
  */
-export function compartmentModel(input: ModelSpec): CompartmentModel {
+export function compartmentModel(input: ModelSpec, showing: ModelShowing = { perWatchSecond: 1 }): CompartmentModel {
+  if (!(Number.isFinite(showing.perWatchSecond) && showing.perWatchSecond > 0)) {
+    throw new RangeError(`a second of watching must show a positive amount of the model's time, got ${showing.perWatchSecond}`);
+  }
   const spec = deepFreeze(ModelSpec.parse(input));
   const problems = checkUnits(spec);
   if (problems.length > 0) {
@@ -146,7 +155,10 @@ export function compartmentModel(input: ModelSpec): CompartmentModel {
   return Object.freeze({
     id: "compartments.ode",
     version: "1.0.0",
+    family: "compartments",
     fixedTimestep: spec.solver.dt,
+    time: Object.freeze({ unit: spec.timeUnit, perWatchSecond: showing.perWatchSecond }),
+    space: Object.freeze({ kind: "none" }),
     paramSchema,
     stateSchema,
     spec,

@@ -394,7 +394,8 @@ export interface WorldShape {
     readonly order: number;
     readonly kind: LevelKind;
     readonly bonus: boolean;
-    readonly binding: { readonly type: string; readonly primitive?: PrimitiveRef };
+    /** A primitive, or the solver that runs a model given as data. */
+    readonly binding: { readonly type: string; readonly primitive?: PrimitiveRef; readonly solver?: PrimitiveRef };
     readonly manipulable: { readonly actionId: string; readonly targetVariable: string };
   }[];
   readonly primitivesUsed: readonly PrimitiveRef[];
@@ -440,7 +441,10 @@ export function checkWorld(spec: WorldShape, issue: (message: string, input: unk
   const key = (ref: PrimitiveRef): string => `${ref.id}@${ref.version}`;
   const used = spec.primitivesUsed.map(key);
   if (new Set(used).size !== used.length) issue("primitivesUsed lists a primitive twice", spec.primitivesUsed, ["primitivesUsed"]);
-  const bound = new Set(levels.flatMap((level) => (level.binding.primitive ? [key(level.binding.primitive)] : [])));
+  const bound = new Set(levels.flatMap((level) => {
+    const ref = level.binding.primitive ?? level.binding.solver;
+    return ref ? [key(ref)] : [];
+  }));
   for (const ref of bound) if (!used.includes(ref)) issue(`a level binds ${ref}, which primitivesUsed does not list`, ref, ["primitivesUsed"]);
   for (const ref of used) if (!bound.has(ref)) issue(`primitivesUsed lists ${ref}, which no level binds`, ref, ["primitivesUsed"]);
 

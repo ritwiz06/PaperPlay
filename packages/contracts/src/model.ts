@@ -142,8 +142,11 @@ export type ModelObservable = z.infer<typeof ModelObservable>;
 export const ModelSolver = z.strictObject({
   /** The solver's fixed step, in the model's time unit. */
   dt: z.number().positive(),
-  /** The accuracy check's tolerance: halving the step may move a compartment by at most this fraction of its scale. */
-  tolerance: z.number().positive(),
+  /**
+   * The accuracy check's tolerance: halving the step may move a compartment by at most this
+   * fraction of its scale. At most a thousandth, so no spec can loosen the check until it passes.
+   */
+  tolerance: z.number().positive().max(1e-3),
 });
 export type ModelSolver = z.infer<typeof ModelSolver>;
 
