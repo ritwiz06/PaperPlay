@@ -5,6 +5,11 @@ finished slices are logged in [progress.md](progress.md). A gate is tagged only 
 `npm run check:gate` passes on the pinned runtime and status.md records that output;
 `gates.json` lists the requirements each gate enforces.
 
+**The direction changed on 2026-10-09 (ADR-0021).** PaperPlay builds for AI/ML, biomedical
+and scientific papers, with the flocking world as the reference example. G3 and G4 below are
+re-planned in [design/every-paper.md](design/every-paper.md), for the owner's review. This
+file takes the new plan once the owner accepts it.
+
 ## Gates
 
 | Gate | Days | Tag | Planned effort | Requirements enforced | State |
@@ -130,6 +135,17 @@ Later:
 Exit: one complete generated experience from a new development section, honest on failure;
 the reviewer cannot bypass a failed check.
 
+**Under re-planning (ADR-0021).** The direction makes G3 a sequence of steps:
+1. generalize the architecture;
+2. the compartment family and its scene kit;
+3. the pipeline on a known family;
+4. routing and tier C;
+5. the learning family;
+6. the primitive-builder agent.
+
+The re-plan, with effort per step, is in [design/every-paper.md](design/every-paper.md).
+Until the owner accepts it, the items below stand as written.
+
 Next:
 - [ ] First, once the authored world plays end to end: split the paper into the four
   development and eight held-out section files (moved from G2 on 2026-10-09). G3 generates
@@ -147,6 +163,10 @@ Later:
 - The widget tier, behind `FEATURE_WIDGETS=1` (stretch).
 
 ## G4 Evaluation and feature freeze
+
+**Under re-planning (ADR-0021).** G4 becomes an evaluation on a fixed set of papers from all
+three domains, against a single-pass baseline, instead of the flocking paper's held-out
+sections. See [design/every-paper.md](design/every-paper.md).
 
 Next:
 - [ ] Freeze the protocol at `eval/protocol.md`.
@@ -208,3 +228,4 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-09 | The deploy's Content-Security-Policy before the first deploy, tested against the built app | Owner decision (ADR-0017) |
 | 2026-10-09 | What if runs a split-screen fork whose chart is the level's measured difference; level 2 asks for a prediction first; a speed control | Owner's slices 2–4 (ADR-0019, ADR-0020) |
 | 2026-10-09 | `main` moves only through `npm run land`, and a pre-push hook refuses any other push to `main` | Owner decision, after three broken states reached `main` (ADR-0009, amended) |
+| 2026-10-09 | PaperPlay builds for AI/ML, biomedical and scientific papers; the flocking world becomes the reference example; primitive families, scene kits, three routing tiers, the level rule as a pipeline stage, and ingest from arXiv source, PubMed Central XML and PDF. G3 and G4 are re-planned for the owner's review | Owner decision (ADR-0021) |

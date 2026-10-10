@@ -13,13 +13,13 @@ session.
   - CI runs `check:gate` on ubuntu-latest on every push and pull request, and is green.
   - CI's capture job, on a pinned `ubuntu-24.04`, makes the canonical capture (ADR-0010,
     ADR-0011).
-- **Branches:** `main`, and `g2/land` landing through `npm run land`, the first branch to
-  use it. **From now on `main` moves only through `npm run land`** (ADR-0009, amended).
-- **Working commit:** `3454a1d` on `g2/land`, the latest code commit: land and the pre-push
-  hook. `check:gate` passed G1 on `cc3d4cf`, its version before an amend added one untagged
-  test.
-- **CI** passed both jobs on `3fea872` (run 38013059112), and on `1050043`, `main`'s latest
-  commit (run 38013940780).
+- **Branches:** `main`, and the branch landing on it. **`main` moves only through
+  `npm run land`** (ADR-0009, amended); the pre-push hook refuses anything else.
+- **Working commit:** `8c539c4` on `main`, which landed through `npm run land`: `check:gate`
+  passed G1 on it, and CI run 38020783647 passed on the same commit.
+- **Direction (ADR-0021):** PaperPlay builds for AI/ML, biomedical and scientific papers. The
+  flocking world is the reference example. The plan is `docs/design/every-paper.md`, for the
+  owner's review.
 - **Bundle:** the entry chunk is 416 KB, and Three.js loads after it as its own 551 KB chunk.
   `vercel.json` is ready for a static deploy, with a Content-Security-Policy tested against
   the built app. The owner connects it (ADR-0017).
@@ -68,21 +68,20 @@ session.
   - the screenshots in `captures/final/`;
   - the canonical capture in `captures/canonical/`.
 
-## Latest check:gate (G1), 2026-10-09, commit cc3d4cf
+## Latest check:gate (G1), 2026-10-09, commit 8c539c4
 
-`cc3d4cf` is `3454a1d` before an amend added one untagged test to `scripts/test/land.test.ts`.
-Land's own gate run, on `g2/land`'s tip, is recorded in the session log.
+Run by `npm run land` before it pushed `g2/land`:
 
 ```
 check:gate G1 · Playable baseline · tag v0.1.0
   runtime    node 24.21.0 (pinned 24.21.0)  ok
-  typecheck  ok      11.4 s
-  lint       ok      8.6 s
+  typecheck  ok      11.0 s
+  lint       ok      8.3 s
   check:docs ok      0.2 s
-  test       ok      28.6 s
+  test       ok      28.5 s
   build      ok      0.4 s
-  test:e2e   ok      63.3 s
-  evidence   521 tests (vitest 464, playwright 57), 0 skipped
+  test:e2e   ok      61.4 s
+  evidence   522 tests (vitest 465, playwright 57), 0 skipped
     R01  Deterministic, oracle-checked primitives      58 passing
     R02  Model/render separation                       6 passing
     R03  Strict, versioned contracts                   102 passing

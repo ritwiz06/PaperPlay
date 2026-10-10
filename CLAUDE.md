@@ -1,6 +1,6 @@
 # PaperPlay — standing instructions for Claude Code
 
-PaperPlay turns a research paper into a playable, explorable world: the paper is the storyline, each level has one thing you can manipulate and one "what if the authors had…" fork, and every control is tethered to the passage in the paper it came from. It is a **learning sandbox, not a simulation of the study**: no scores, no badges, no claims of reproducing the authors' results.
+PaperPlay turns a research paper into a playable, explorable world: the paper is the storyline, each level has one thing you can manipulate and one "what if the authors had…" fork, and every control is tethered to the passage in the paper it came from. It is a **learning sandbox, not a simulation of the study**: no scores, no badges, no claims of reproducing the authors' results. It is built for AI/ML, biomedical and scientific papers, with the flocking world as the reference example the generator imitates and is evaluated against (ADR-0021).
 
 Start every session with the session protocol below. The documentation index is `docs/README.md`; the full build brief is `docs/BUILD_PROMPT.md`.
 
