@@ -6,7 +6,8 @@ import { EntityKind } from "./run.ts";
 
 // worldspec/2: what an authored or generated world is, as data (brief §3, ADR-0014, ADR-0016,
 // ADR-0018). Version 2 adds each counterfactual's measured difference and its claim, and the
-// guided exploration's choices and explanation.
+// guided exploration's choices and explanation. Frozen since worldspec/3 (worldspec-v3.ts,
+// ADR-0027): still read, and upgraded to v3 before anything is built from it.
 // A deterministic builder interprets it against the primitive registry; checks that need the
 // registry (a variable exists, a value is in range, a placement is inside the world) live in
 // the builder, and everything a spec can be wrong about on its own is refined here.
@@ -41,15 +42,15 @@ export const PendingSource = z.strictObject({
 });
 export type PendingSource = z.infer<typeof PendingSource>;
 
-const paperDerivedHasAnchors = (item: { readonly origin: Origin; readonly anchors: readonly unknown[] }): boolean =>
+export const paperDerivedHasAnchors = (item: { readonly origin: Origin; readonly anchors: readonly unknown[] }): boolean =>
   item.origin !== "paper-derived" || item.anchors.length > 0;
-const NEEDS_ANCHOR = { error: "a paper-derived statement needs at least one anchor", path: ["anchors"] };
+export const NEEDS_ANCHOR = { error: "a paper-derived statement needs at least one anchor", path: ["anchors"] };
 
 /** The shell's elements a depth variant shows or hides, by id. */
 export const DepthElement = z.enum(["control-value", "range-numbers", "range-words", "readout-number", "equation", "analogy"]);
 export type DepthElement = z.infer<typeof DepthElement>;
 
-const wordCount = (text: string): number => text.split(/\s+/).filter((word) => word.length > 0).length;
+export const wordCount = (text: string): number => text.split(/\s+/).filter((word) => word.length > 0).length;
 
 /** One depth's explanation, and which of the shell's elements it shows and hides. */
 export const DepthVariant = z
@@ -129,7 +130,7 @@ export const DifferenceSummary = z.discriminatedUnion("kind", [
 ]);
 export type DifferenceSummary = z.infer<typeof DifferenceSummary>;
 
-const Relation = z.enum(["higher", "lower"]);
+export const Relation = z.enum(["higher", "lower"]);
 
 /**
  * The effect a level states, as a check on each sky: the other world's summary is higher or
@@ -327,7 +328,7 @@ export const Level = z
   );
 export type Level = z.infer<typeof Level>;
 
-const CausalClaim = z
+export const CausalClaim = z
   .strictObject({ id: Id, claim: z.string().min(1), dependsOn: z.array(Id), anchors: z.array(AnchorRef), origin: Origin })
   .refine(paperDerivedHasAnchors, NEEDS_ANCHOR);
 
@@ -373,7 +374,7 @@ export type DesignSpec = z.infer<typeof DesignSpec>;
 type Path = (string | number)[];
 
 /** Every anchor list in a value, wherever it sits, with its path. */
-function anchorLists(value: unknown, path: Path, found: { anchors: unknown[]; path: Path }[] = []): { anchors: unknown[]; path: Path }[] {
+export function anchorLists(value: unknown, path: Path, found: { anchors: unknown[]; path: Path }[] = []): { anchors: unknown[]; path: Path }[] {
   if (Array.isArray(value)) value.forEach((item, index) => anchorLists(item, [...path, index], found));
   else if (typeof value === "object" && value !== null) {
     for (const [key, child] of Object.entries(value)) {
@@ -384,7 +385,101 @@ function anchorLists(value: unknown, path: Path, found: { anchors: unknown[]; pa
   return found;
 }
 
-export const WorldSpec = z
+/** What every version of a WorldSpec holds, which `checkWorld` reads. */
+export interface WorldShape {
+  readonly status: "draft" | "reviewed";
+  readonly source: SourceManifest | PendingSource;
+  readonly levels: readonly {
+    readonly id: string;
+    readonly order: number;
+    readonly kind: LevelKind;
+    readonly bonus: boolean;
+    readonly binding: { readonly type: string; readonly primitive?: PrimitiveRef };
+    readonly manipulable: { readonly actionId: string; readonly targetVariable: string };
+  }[];
+  readonly primitivesUsed: readonly PrimitiveRef[];
+  readonly checks: { readonly suiteIds: readonly string[]; readonly suiteVersions: Readonly<Record<string, string>> };
+  readonly design: { readonly sections: readonly { readonly levelId: string }[] };
+}
+
+/**
+ * The checks a whole spec must pass, in every version: the hook first, levels in order, one
+ * action one variable, the primitives it lists, its check suites, its design's sections, and
+ * anchors into its own source, placeholders only in a draft.
+ */
+export function checkWorld(spec: WorldShape, issue: (message: string, input: unknown, path: Path) => void): void {
+  const { levels } = spec;
+
+  if (levels[0]?.kind !== "hook") issue("the first level must be the hook", levels[0]?.kind, ["levels", 0, "kind"]);
+  levels.forEach((level, index) => {
+    if (index > 0 && level.kind === "hook") issue("there is only one hook, and it comes first", level.kind, ["levels", index, "kind"]);
+    if (level.order !== index + 1) issue(`level ${level.id} must have order ${index + 1}, its place in the list`, level.order, ["levels", index, "order"]);
+    if (levels.findIndex((other) => other.id === level.id) !== index) issue(`level id ${level.id} is used twice`, level.id, ["levels", index, "id"]);
+    if (level.bonus && level.kind === "hook") issue("the hook is never a bonus level", level.bonus, ["levels", index, "bonus"]);
+    if (!level.bonus && levels.slice(0, index).some((earlier) => earlier.bonus)) {
+      issue("bonus levels come after every other level", level.bonus, ["levels", index, "bonus"]);
+    }
+  });
+
+  // One action id, one variable: a run's events must mean the same thing in every level.
+  const variableOf = new Map<string, string>();
+  levels.forEach((level, index) => {
+    const { actionId, targetVariable } = level.manipulable;
+    const known = variableOf.get(actionId);
+    if (known !== undefined && known !== targetVariable) {
+      issue(`action ${actionId} moves ${known} in an earlier level, so it cannot move ${targetVariable} here`, targetVariable, [
+        "levels",
+        index,
+        "manipulable",
+        "targetVariable",
+      ]);
+    }
+    variableOf.set(actionId, targetVariable);
+  });
+
+  const key = (ref: PrimitiveRef): string => `${ref.id}@${ref.version}`;
+  const used = spec.primitivesUsed.map(key);
+  if (new Set(used).size !== used.length) issue("primitivesUsed lists a primitive twice", spec.primitivesUsed, ["primitivesUsed"]);
+  const bound = new Set(levels.flatMap((level) => (level.binding.primitive ? [key(level.binding.primitive)] : [])));
+  for (const ref of bound) if (!used.includes(ref)) issue(`a level binds ${ref}, which primitivesUsed does not list`, ref, ["primitivesUsed"]);
+  for (const ref of used) if (!bound.has(ref)) issue(`primitivesUsed lists ${ref}, which no level binds`, ref, ["primitivesUsed"]);
+
+  const { suiteIds, suiteVersions } = spec.checks;
+  if (new Set(suiteIds).size !== suiteIds.length) issue("a check suite is listed twice", suiteIds, ["checks", "suiteIds"]);
+  const versioned = Object.keys(suiteVersions);
+  if (versioned.length !== suiteIds.length || !suiteIds.every((id) => versioned.includes(id))) {
+    issue("every check suite has exactly one version", suiteVersions, ["checks", "suiteVersions"]);
+  }
+
+  const levelIds = new Set(levels.map((level) => level.id));
+  spec.design.sections.forEach((section, index) => {
+    if (!levelIds.has(section.levelId)) issue(`the design names no level ${section.levelId}`, section.levelId, ["design", "sections", index, "levelId"]);
+    if (spec.design.sections.findIndex((other) => other.levelId === section.levelId) !== index) {
+      issue(`the design gives level ${section.levelId} two sections`, section.levelId, ["design", "sections", index, "levelId"]);
+    }
+  });
+
+  // Anchors point into this spec's own source; placeholders and a pending source only in a draft.
+  const pending = "pending" in spec.source;
+  const sections = "sections" in spec.source ? new Set(spec.source.sections.map((section) => section.id)) : new Set<string>();
+  if (spec.status === "reviewed" && pending) issue("a reviewed spec needs the source's manifest, not a pending source", spec.source, ["source"]);
+  for (const list of anchorLists(spec, [])) {
+    list.anchors.forEach((raw, index) => {
+      const anchor = raw as AnchorRef;
+      const path = [...list.path, index];
+      if (anchor.sourceId !== spec.source.sourceId) issue(`anchor points at ${anchor.sourceId}, not this spec's source ${spec.source.sourceId}`, anchor.sourceId, [...path, "sourceId"]);
+      if (isPlaceholder(anchor)) {
+        if (spec.status === "reviewed") issue("a reviewed spec holds no placeholder anchors", anchor, path);
+      } else if (pending) {
+        issue("a real anchor needs the source's manifest to check its section", anchor, path);
+      } else if (!sections.has(anchor.sectionId)) {
+        issue(`the source has no section ${anchor.sectionId}`, anchor.sectionId, [...path, "sectionId"]);
+      }
+    });
+  }
+}
+
+export const WorldSpecV2 = z
   .strictObject({
     schemaVersion: z.literal("worldspec/2"),
     /** A draft may hold placeholder anchors and a pending source; a reviewed spec may not (ADR-0016). */
@@ -399,77 +494,5 @@ export const WorldSpec = z
     checks: z.strictObject({ suiteIds: z.array(Id).min(1), suiteVersions: z.record(Id, z.string().min(1)) }),
     limitations: z.array(z.string().min(1)).min(1),
   })
-  .check((ctx) => {
-    const spec = ctx.value;
-    const issue = (message: string, input: unknown, path: Path): void => void ctx.issues.push({ code: "custom", message, input, path });
-    const { levels } = spec;
-
-    if (levels[0]?.kind !== "hook") issue("the first level must be the hook", levels[0]?.kind, ["levels", 0, "kind"]);
-    levels.forEach((level, index) => {
-      if (index > 0 && level.kind === "hook") issue("there is only one hook, and it comes first", level.kind, ["levels", index, "kind"]);
-      if (level.order !== index + 1) issue(`level ${level.id} must have order ${index + 1}, its place in the list`, level.order, ["levels", index, "order"]);
-      if (levels.findIndex((other) => other.id === level.id) !== index) issue(`level id ${level.id} is used twice`, level.id, ["levels", index, "id"]);
-      if (level.bonus && level.kind === "hook") issue("the hook is never a bonus level", level.bonus, ["levels", index, "bonus"]);
-      if (!level.bonus && levels.slice(0, index).some((earlier) => earlier.bonus)) {
-        issue("bonus levels come after every other level", level.bonus, ["levels", index, "bonus"]);
-      }
-    });
-
-    // One action id, one variable: a run's events must mean the same thing in every level.
-    const variableOf = new Map<string, string>();
-    levels.forEach((level, index) => {
-      const { actionId, targetVariable } = level.manipulable;
-      const known = variableOf.get(actionId);
-      if (known !== undefined && known !== targetVariable) {
-        issue(`action ${actionId} moves ${known} in an earlier level, so it cannot move ${targetVariable} here`, targetVariable, [
-          "levels",
-          index,
-          "manipulable",
-          "targetVariable",
-        ]);
-      }
-      variableOf.set(actionId, targetVariable);
-    });
-
-    const key = (ref: PrimitiveRef): string => `${ref.id}@${ref.version}`;
-    const used = spec.primitivesUsed.map(key);
-    if (new Set(used).size !== used.length) issue("primitivesUsed lists a primitive twice", spec.primitivesUsed, ["primitivesUsed"]);
-    const bound = new Set(levels.flatMap((level) => (level.binding.type === "primitive" ? [key(level.binding.primitive)] : [])));
-    for (const ref of bound) if (!used.includes(ref)) issue(`a level binds ${ref}, which primitivesUsed does not list`, ref, ["primitivesUsed"]);
-    for (const ref of used) if (!bound.has(ref)) issue(`primitivesUsed lists ${ref}, which no level binds`, ref, ["primitivesUsed"]);
-
-    const { suiteIds, suiteVersions } = spec.checks;
-    if (new Set(suiteIds).size !== suiteIds.length) issue("a check suite is listed twice", suiteIds, ["checks", "suiteIds"]);
-    const versioned = Object.keys(suiteVersions);
-    if (versioned.length !== suiteIds.length || !suiteIds.every((id) => versioned.includes(id))) {
-      issue("every check suite has exactly one version", suiteVersions, ["checks", "suiteVersions"]);
-    }
-
-    const levelIds = new Set(levels.map((level) => level.id));
-    spec.design.sections.forEach((section, index) => {
-      if (!levelIds.has(section.levelId)) issue(`the design names no level ${section.levelId}`, section.levelId, ["design", "sections", index, "levelId"]);
-      if (spec.design.sections.findIndex((other) => other.levelId === section.levelId) !== index) {
-        issue(`the design gives level ${section.levelId} two sections`, section.levelId, ["design", "sections", index, "levelId"]);
-      }
-    });
-
-    // Anchors point into this spec's own source; placeholders and a pending source only in a draft.
-    const pending = "pending" in spec.source;
-    const sections = "sections" in spec.source ? new Set(spec.source.sections.map((section) => section.id)) : new Set<string>();
-    if (spec.status === "reviewed" && pending) issue("a reviewed spec needs the source's manifest, not a pending source", spec.source, ["source"]);
-    for (const list of anchorLists(spec, [])) {
-      list.anchors.forEach((raw, index) => {
-        const anchor = raw as AnchorRef;
-        const path = [...list.path, index];
-        if (anchor.sourceId !== spec.source.sourceId) issue(`anchor points at ${anchor.sourceId}, not this spec's source ${spec.source.sourceId}`, anchor.sourceId, [...path, "sourceId"]);
-        if (isPlaceholder(anchor)) {
-          if (spec.status === "reviewed") issue("a reviewed spec holds no placeholder anchors", anchor, path);
-        } else if (pending) {
-          issue("a real anchor needs the source's manifest to check its section", anchor, path);
-        } else if (!sections.has(anchor.sectionId)) {
-          issue(`the source has no section ${anchor.sectionId}`, anchor.sectionId, [...path, "sectionId"]);
-        }
-      });
-    }
-  });
-export type WorldSpec = z.infer<typeof WorldSpec>;
+  .check((ctx) => checkWorld(ctx.value, (message, input, path) => void ctx.issues.push({ code: "custom", message, input, path })));
+export type WorldSpecV2 = z.infer<typeof WorldSpecV2>;

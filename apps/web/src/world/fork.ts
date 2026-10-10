@@ -66,7 +66,7 @@ export function openFork<P, S extends Stepped, O extends Record<string, number>,
   };
   const here = from.spawn({ ...base, params: params.here });
   const there = from.spawn({ ...base, params: params.there });
-  const totalSteps = Math.round(difference.seconds / TIMESTEP);
+  const totalSteps = Math.round(difference.time / TIMESTEP);
   const metric = difference.metricId;
   const observed = (world: WorldSession<P, S, O, Extra, Emphasis, Input>): number => world.snapshot().observed[metric] ?? Number.NaN;
   const samples = { here: [observed(here)], there: [observed(there)] };
@@ -118,7 +118,7 @@ export function openFork<P, S extends Stepped, O extends Record<string, number>,
       const done = steps >= totalSteps;
       const summarised = (values: readonly number[]): number => {
         const { summary } = difference;
-        if (summary.kind === "at" && values.length <= Math.round(summary.seconds / (SAMPLE_STEPS * TIMESTEP))) return Number.NaN;
+        if (summary.kind === "at" && values.length <= Math.round(summary.time / (SAMPLE_STEPS * TIMESTEP))) return Number.NaN;
         return summarise(difference, values, TIMESTEP);
       };
       const summary = { here: summarised(samples.here), there: summarised(samples.there) };

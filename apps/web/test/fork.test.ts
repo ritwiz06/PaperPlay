@@ -34,7 +34,7 @@ describe("[R06] the fork", () => {
       const fork = openFork(level, trunk, { playing: false });
       runOut(fork);
       const end = fork.snapshot();
-      expect(end.steps).toBe(Math.round(level.fork.difference.seconds / flock.fixedTimestep));
+      expect(end.steps).toBe(Math.round(level.fork.difference.time / flock.fixedTimestep));
       expect(end.playing).toBe(false);
 
       // The same two worlds, stepped directly from the primitive, sampled every 6 steps.
@@ -98,6 +98,6 @@ describe("[R06] the fork", () => {
     runOut(fork);
     fork.play();
     expect(fork.tick(1)).toBe(0);
-    expect(fork.snapshot().samples.here).toHaveLength(Math.round(level.fork.difference.seconds / 0.1) + 1);
+    expect(fork.snapshot().samples.here).toHaveLength(Math.round(level.fork.difference.time / 0.1) + 1);
   });
 });

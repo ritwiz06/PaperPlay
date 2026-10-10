@@ -4,14 +4,14 @@
  * included, up to the level's time; a summary turns one world's samples into one number, and
  * a claim compares the other world's summary with this world's.
  */
-import type { DifferenceClaim, MeasuredDifference } from "@paperplay/contracts";
+import type { DifferenceClaim, DifferenceSummary, DifferenceSummaryV3 } from "@paperplay/contracts";
 
 /** Samples every 6 steps: 0.1 s at 60 steps a second, as often as a readout updates. */
 export const SAMPLE_STEPS = 6;
 
-/** How many samples a level's time holds, step 0 and its last step included. */
-export function sampleCount(seconds: number, timestep: number): number {
-  return Math.floor(Math.round(seconds / timestep) / SAMPLE_STEPS) + 1;
+/** How many samples a level's time holds, step 0 and its last step included, the time in the model's own unit. */
+export function sampleCount(time: number, timestep: number): number {
+  return Math.floor(Math.round(time / timestep) / SAMPLE_STEPS) + 1;
 }
 
 /**
@@ -21,12 +21,13 @@ export function sampleCount(seconds: number, timestep: number): number {
  * - `lowest`: the lowest sample from `from` on;
  * - `total`: the samples before the level's time ends, each times the sampling interval.
  */
-export function summarise(difference: MeasuredDifference, samples: readonly number[], timestep: number): number {
+export function summarise(difference: { readonly summary: DifferenceSummary | DifferenceSummaryV3 }, samples: readonly number[], timestep: number): number {
   const interval = SAMPLE_STEPS * timestep;
   const { summary } = difference;
   switch (summary.kind) {
     case "at":
-      return samples[Math.round(summary.seconds / interval)] ?? Number.NaN;
+      // worldspec/3 counts the time in the model's unit; worldspec/2 counted it in seconds.
+      return samples[Math.round(("time" in summary ? summary.time : summary.seconds) / interval)] ?? Number.NaN;
     case "first-reach": {
       const index = samples.findIndex((value) => value >= summary.threshold);
       return index < 0 ? Number.POSITIVE_INFINITY : index * interval;

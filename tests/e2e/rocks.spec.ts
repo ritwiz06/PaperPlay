@@ -73,7 +73,7 @@ test("[R06] in level 5's fork, the world with no rule for rocks lights the rocks
   await fork.getByRole("button", { name: "Play both" }).click();
   await expect(fork.getByRole("button", { name: "Done" })).toBeDisabled({ timeout: 60_000 });
   // The fork opened at the level's start, so at its end both worlds have taken the level's time in steps.
-  const steps = Math.round(level.fork.difference.seconds / flock.fixedTimestep);
+  const steps = Math.round(level.fork.difference.time / flock.fixedTimestep);
   const overrides = Object.fromEntries(level.fork.overrides.map((override) => [override.variable, override.to]));
   const here = nodeRun(level.params as FlockParams, steps);
   const there = nodeRun({ ...(level.params as FlockParams), ...overrides }, steps);

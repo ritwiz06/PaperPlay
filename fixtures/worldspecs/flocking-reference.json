@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "worldspec/2",
+  "schemaVersion": "worldspec/3",
   "status": "draft",
   "title": "Murmuration Valley",
   "source": {
@@ -71,6 +71,14 @@
       }
     ]
   },
+  "routing": {
+    "tier": "A",
+    "family": "agents",
+    "reason": "Reynolds' boids are agents that each steer by rules about their near neighbours, which the agents family's flock models directly.",
+    "primitive": {
+      "status": "released"
+    }
+  },
   "design": {
     "world": "valley",
     "palette": "cream-teal",
@@ -108,6 +116,8 @@
       }
     ]
   },
+  "timeUnit": "second",
+  "openingSeed": 5,
   "levels": [
     {
       "id": "hook",
@@ -173,9 +183,9 @@
           "unit": "fraction from 0 to 1",
           "summary": {
             "kind": "at",
-            "seconds": 20
+            "time": 20
           },
-          "seconds": 20,
+          "time": 20,
           "claim": {
             "kind": "each",
             "relation": "lower",
@@ -370,7 +380,7 @@
             "kind": "first-reach",
             "threshold": 0.9
           },
-          "seconds": 40,
+          "time": 40,
           "claim": {
             "kind": "count",
             "relation": "lower",
@@ -563,9 +573,9 @@
           "unit": "world units",
           "summary": {
             "kind": "at",
-            "seconds": 20
+            "time": 20
           },
-          "seconds": 20,
+          "time": 20,
           "claim": {
             "kind": "each",
             "relation": "lower",
@@ -758,9 +768,9 @@
           "unit": "world units",
           "summary": {
             "kind": "at",
-            "seconds": 40
+            "time": 40
           },
-          "seconds": 40,
+          "time": 40,
           "claim": {
             "kind": "each",
             "relation": "higher",
@@ -954,7 +964,7 @@
           "summary": {
             "kind": "total"
           },
-          "seconds": 20,
+          "time": 20,
           "claim": {
             "kind": "each",
             "relation": "higher",
@@ -1173,7 +1183,7 @@
             "kind": "first-reach",
             "threshold": 0.8
           },
-          "seconds": 40,
+          "time": 40,
           "claim": {
             "kind": "each",
             "relation": "higher",
@@ -1311,11 +1321,31 @@
       "flock-oracles": "oracle/1"
     }
   },
-  "limitations": [
-    "A two-dimensional teaching adaptation of the paper's model, not a reproduction of its system or its results.",
-    "The rules are summed with weights and capped, a teaching choice; the levels say where that matters.",
-    "Rocks push birds like a force field rather than steering them away ahead of time.",
-    "Every level opens on one seed, chosen by a rule (ADR-0003). One run shows what these rules can do, not what they usually do.",
-    "A draft: its anchors are placeholders until the source map exists, and no passage is quoted yet."
+  "limits": [
+    {
+      "text": "A two-dimensional teaching adaptation of the paper's model, not a reproduction of its system or its results.",
+      "origin": "teaching-choice",
+      "anchors": []
+    },
+    {
+      "text": "The rules are summed with weights and capped, a teaching choice; the levels say where that matters.",
+      "origin": "teaching-choice",
+      "anchors": []
+    },
+    {
+      "text": "Rocks push birds like a force field rather than steering them away ahead of time.",
+      "origin": "teaching-choice",
+      "anchors": []
+    },
+    {
+      "text": "Every level opens on one seed, chosen by a rule (ADR-0003). One run shows what these rules can do, not what they usually do.",
+      "origin": "teaching-choice",
+      "anchors": []
+    },
+    {
+      "text": "A draft: its anchors are placeholders until the source map exists, and no passage is quoted yet.",
+      "origin": "teaching-choice",
+      "anchors": []
+    }
   ]
 }

@@ -6,7 +6,7 @@
  * every number shown comes from the primitive. A level opens once the one before has been moved
  * through its range: touched, never solved.
  */
-import { isPlaceholder, RULE_HOLDS, RULE_SEEDS, type AnchorRef, type PendingSource, type SourceManifest } from "@paperplay/contracts";
+import { isPlaceholder, RULE_HOLDS, RULE_SEEDS, TIME_WORDS, type AnchorRef, type PendingSource, type SourceManifest } from "@paperplay/contracts";
 import { SAMPLE_STEPS, type BuiltLevel } from "@paperplay/pipeline";
 import { flockDefaultParams, flockPlanarWeighted, type FlockObservables } from "@paperplay/primitives/flock";
 import { DEFAULT_CAMERA, type Speed } from "@paperplay/ui/stage-core";
@@ -41,6 +41,8 @@ import { explorationLines, guideLines, trendOf, type Trend } from "./guide.ts";
 
 const WORLD = FLOCKING;
 const LEVELS = WORLD.levels;
+/** The world's time unit in words, for its fork's chart and readings. */
+const timeWords = TIME_WORDS[WORLD.timeUnit];
 const STAGE_LABEL = `${WORLD.title}: a flock of ${flockDefaultParams.agentCount} birds with no leader, each steering only by its near neighbours.`;
 const DEPTH_KEY = "paperplay.depth";
 const flockTimestep = flockPlanarWeighted.fixedTimestep;
@@ -347,8 +349,8 @@ export function HookWorld() {
   const difference = whatIfSpec.difference;
   const measured = (value: number): string => {
     if (Number.isNaN(value)) return "not measured yet";
-    if (!Number.isFinite(value)) return forkView?.done ? `not within ${difference.seconds} s` : "not yet";
-    if (difference.unit === "seconds") return `${value.toFixed(1)} s`;
+    if (!Number.isFinite(value)) return forkView?.done ? `not within ${difference.time} ${timeWords.short}` : "not yet";
+    if (difference.unit === timeWords.many) return `${value.toFixed(1)} ${timeWords.short}`;
     // A share reads as the number alone: "0.93", not "0.93 fraction from 0 to 1".
     return difference.unit.startsWith("fraction") ? value.toFixed(2) : `${value.toFixed(2)} ${difference.unit}`;
   };
@@ -389,8 +391,8 @@ export function HookWorld() {
         chart={
           <DifferenceChart
             metricName={METRIC_NAMES[difference.metricId] ?? difference.metricId}
-            duration={difference.seconds}
-            unit={{ short: "s", words: "seconds" }}
+            duration={difference.time}
+            unit={{ short: timeWords.short, words: timeWords.many }}
             interval={SAMPLE_STEPS * flockTimestep}
             here={forkView.samples.here}
             there={forkView.samples.there}
@@ -418,7 +420,7 @@ export function HookWorld() {
               </p>
             ) : (
               <p>
-                Running: {(forkView.steps * flockTimestep).toFixed(1)} of {difference.seconds} s.
+                Running: {(forkView.steps * flockTimestep).toFixed(1)} of {difference.time} {timeWords.short}.
               </p>
             )}
             {exploring && !forkView.done ? null : (

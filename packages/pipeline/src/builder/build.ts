@@ -1,44 +1,61 @@
 /**
  * The deterministic builder (brief §5, R08): a WorldSpec in, a playable composition out, with
- * no model call. It validates the spec, then checks it against the primitive registry, which
- * the schema alone cannot see: every variable exists, every value is in range, units agree,
- * placements lie inside the world. It decides nothing a spec states, and derives what no spec
- * should state, such as whether a fork restarts both worlds (ADR-0014).
+ * no model call. It validates the spec, upgrades a worldspec/2 to worldspec/3, then checks it
+ * against the primitive registry and the scene kits, which the schema alone cannot see: every
+ * variable exists, every value is in range, units agree, the kit draws the primitive's family,
+ * the time is the primitive's, placements lie inside its space. It decides nothing a spec
+ * states, and derives what no spec should state, such as whether a fork restarts both worlds
+ * (ADR-0014).
  */
 import {
+  FAMILIES,
+  RULE_FASTEST_SPEED,
+  RULE_WATCH_SECONDS,
+  sceneKit,
+  SCENE_KITS,
+  TIME_WORDS,
+  upgradeWorldSpec,
   WorldSpec,
   type AnchorRef,
   type DepthElement,
   type Digest,
-  type DesignSpec,
+  type DesignSpecV3,
   type Explanation,
+  type Family,
   type GuideScript,
   type GuidedExploration,
-  type Level,
   type LevelKind,
-  type MeasuredDifference,
+  type LevelV3,
+  type Limit,
+  type MeasuredDifferenceV3,
   type Observable,
   type Origin,
   type PendingSource,
   type PlaceEvent,
   type PrimitiveRef,
+  type Routing,
+  type SceneKitManifest,
   type SourceManifest,
+  type TimeUnit,
+  type WorldSpecV3,
 } from "@paperplay/contracts";
 import type { Primitive, PrimitiveRegistry, VariableDescription } from "@paperplay/primitives";
 
 export type Depth = keyof Explanation;
 export const BUILD_DEPTHS: readonly Depth[] = ["beginner", "intermediate", "advanced"];
 
-/** What the game-first shell can draw today. A spec asking for more is refused, never quietly drawn otherwise. */
+/**
+ * What the game-first shell can draw today, beside its scene kits (SCENE_KITS). A spec asking
+ * for more is refused, never quietly drawn otherwise.
+ */
 export const SHELL = {
-  world: ["valley"],
   palette: ["cream-teal"],
   density: ["comfortable"],
   chartType: ["none", "line"],
   motion: ["none"],
-} as const satisfies { readonly [K in "world" | "palette" | "density"]: readonly DesignSpec[K][] } & {
-  readonly chartType: readonly DesignSpec["sections"][number]["chartType"][];
-  readonly motion: readonly DesignSpec["sections"][number]["motion"][];
+} as const satisfies { readonly [K in "palette" | "density"]: readonly DesignSpecV3[K][] } & {
+  readonly chartType: readonly DesignSpecV3["sections"][number]["chartType"][];
+  readonly motion: readonly DesignSpecV3["sections"][number]["motion"][];
 };
 
 export interface BuildProblem {
@@ -79,8 +96,8 @@ export interface BuiltFork {
   readonly overrides: readonly BuiltOverride[];
   /** Derived: an override of a start-up (init-phase) variable makes both worlds restart from the same seed. */
   readonly restarts: boolean;
-  /** The one measured difference between the worlds, and the claim the level makes about it (ADR-0018). */
-  readonly difference: MeasuredDifference;
+  /** The one measured difference between the worlds, and the claim the level makes about it (ADR-0018), in the world's time unit. */
+  readonly difference: MeasuredDifferenceV3;
 }
 
 export interface BuiltPlacement {
@@ -110,22 +127,32 @@ export interface BuiltLevel {
   /** The shell's elements shown at each depth, by id. */
   readonly visible: Readonly<Record<Depth, ReadonlySet<DepthElement>>>;
   readonly explanation: Explanation;
-  readonly caption: Level["caption"];
+  readonly caption: LevelV3["caption"];
   readonly guide: GuideScript;
-  /** Predict, intervene, observe, explain, when the level asks for a prediction. */
-  readonly exploration: GuidedExploration | null;
+  /** Predict, intervene, observe, explain: every level asks for a prediction before its What-if (ADR-0023). */
+  readonly exploration: GuidedExploration;
   readonly furtherReading: readonly string[];
   readonly carryForward: string;
 }
 
 export interface BuiltWorld {
   readonly title: string;
-  readonly status: WorldSpec["status"];
+  readonly status: WorldSpecV3["status"];
   readonly source: SourceManifest | PendingSource;
   readonly digest: Digest;
-  readonly design: DesignSpec;
+  readonly routing: Routing;
+  /** The family the world's primitive belongs to, with its label when it has one. */
+  readonly family: Family;
+  readonly design: DesignSpecV3;
+  /** The scene kit that draws it. */
+  readonly kit: SceneKitManifest;
+  readonly timeUnit: TimeUnit;
+  /** How much model time a second of watching shows at 1x: the primitive's own. */
+  readonly perWatchSecond: number;
+  readonly openingSeed: number;
   readonly levels: readonly BuiltLevel[];
-  readonly limitations: readonly string[];
+  /** What the world cannot show, for its journal page. */
+  readonly limits: readonly Limit[];
 }
 
 export type BuildResult = { readonly ok: true; readonly world: BuiltWorld } | { readonly ok: false; readonly problems: readonly BuildProblem[] };
@@ -138,11 +165,15 @@ export function buildWorld(input: unknown, registry: PrimitiveRegistry): BuildRe
   if (!parsed.success) {
     return { ok: false, problems: parsed.error.issues.map((issue) => ({ path: issue.path.join("."), message: issue.message })) };
   }
-  const spec = parsed.data;
+  const upgraded = upgradeWorldSpec(parsed.data);
+  if (!upgraded.ok) return { ok: false, problems: upgraded.problems };
+  const spec = upgraded.spec;
   const problems: BuildProblem[] = [];
   const problem: Report = (path, message) => void problems.push({ path: path.join("."), message });
 
-  for (const choice of ["world", "palette", "density"] as const) {
+  const kit = sceneKit(spec.design.world);
+  if (!kit) problem(["design", "world"], `the shell has no scene kit "${spec.design.world}"; it draws ${SCENE_KITS.map((known) => known.id).join(", ")}`);
+  for (const choice of ["palette", "density"] as const) {
     const allowed: readonly string[] = SHELL[choice];
     if (!allowed.includes(spec.design[choice])) problem(["design", choice], `the shell cannot draw ${choice} "${spec.design[choice]}" yet; it draws ${allowed.join(", ")}`);
   }
@@ -154,11 +185,20 @@ export function buildWorld(input: unknown, registry: PrimitiveRegistry): BuildRe
   });
 
   const levels = spec.levels.flatMap((level, index) => {
-    const built = buildLevel(level, ["levels", index], registry, problems);
+    const built = buildLevel(level, ["levels", index], spec, registry, problems);
     return built ? [built] : [];
   });
 
-  if (problems.length > 0) return { ok: false, problems };
+  // The world is one primitive's: its family, its kit's, and its time unit throughout.
+  const first = levels[0]?.primitive;
+  if (first && kit) {
+    if (!kit.draws.families.includes(first.family) || !kit.draws.spaces.includes(first.space.kind)) {
+      problem(["design", "world"], `the ${kit.id} kit draws ${kit.draws.families.join(", ")} on ${kit.draws.spaces.join(", ")}, not ${first.family} on ${first.space.kind}`);
+    }
+  }
+  if (first && first.time.unit !== spec.timeUnit) problem(["timeUnit"], `${first.id} counts its time in ${TIME_WORDS[first.time.unit].many}, not ${TIME_WORDS[spec.timeUnit].many}`);
+  if (first && spec.routing.family !== first.family) problem(["routing", "family"], `the paper is routed to ${spec.routing.family}, but ${first.id} belongs to ${first.family}`);
+  if (problems.length > 0 || !kit || !first) return { ok: false, problems };
   return {
     ok: true,
     world: deepFreeze({
@@ -166,16 +206,22 @@ export function buildWorld(input: unknown, registry: PrimitiveRegistry): BuildRe
       status: spec.status,
       source: spec.source,
       digest: spec.digest,
+      routing: spec.routing,
+      family: FAMILIES[first.family],
       design: spec.design,
+      kit,
+      timeUnit: spec.timeUnit,
+      perWatchSecond: first.time.perWatchSecond,
+      openingSeed: spec.openingSeed,
       levels,
-      limitations: spec.limitations,
+      limits: spec.limits,
     }),
   };
 }
 
 type Report = (path: (string | number)[], message: string) => void;
 
-function buildLevel(level: Level, at: (string | number)[], registry: PrimitiveRegistry, problems: BuildProblem[]): BuiltLevel | null {
+function buildLevel(level: LevelV3, at: (string | number)[], spec: WorldSpecV3, registry: PrimitiveRegistry, problems: BuildProblem[]): BuiltLevel | null {
   const problem: Report = (path, message) => void problems.push({ path: path.join("."), message });
   const { binding, manipulable, counterfactual, observable } = level;
   if (binding.type === "widget") {
@@ -190,6 +236,7 @@ function buildLevel(level: Level, at: (string | number)[], registry: PrimitiveRe
   const { variables, observables } = primitive.describe();
   // Later steps need earlier ones to have passed, so each stops if this level has a problem.
   const before = problems.length;
+
 
   for (const name of Object.keys(binding.params)) {
     if (!(name in variables)) problem([...at, "binding", "params", name], `${primitive.id} has no variable ${name}`);
@@ -224,10 +271,15 @@ function buildLevel(level: Level, at: (string | number)[], registry: PrimitiveRe
   if (!measured) {
     problem([...at, "counterfactual", "difference", "metricId"], `${primitive.id} does not measure ${difference.metricId}`);
   } else {
-    const expected = difference.summary.kind === "first-reach" ? "seconds" : difference.summary.kind === "total" ? null : measured.unit;
+    const expected = difference.summary.kind === "first-reach" ? TIME_WORDS[primitive.time.unit].many : difference.summary.kind === "total" ? null : measured.unit;
     if (expected !== null && difference.unit !== expected) {
       problem([...at, "counterfactual", "difference", "unit"], `a ${difference.summary.kind} summary of ${difference.metricId} is in ${expected}, not ${difference.unit}`);
     }
+  }
+  // The level rule: its time shows within 20 s of watching at 4x (ADR-0018), however the model counts time.
+  const watched = difference.time / primitive.time.perWatchSecond / RULE_FASTEST_SPEED;
+  if (watched > RULE_WATCH_SECONDS) {
+    problem([...at, "counterfactual", "difference", "time"], `the level's time takes ${watched} s to watch at ${RULE_FASTEST_SPEED}x, more than the level rule's ${RULE_WATCH_SECONDS} s`);
   }
 
   for (const name of Object.keys(counterfactual.altParams)) {
@@ -250,14 +302,21 @@ function buildLevel(level: Level, at: (string | number)[], registry: PrimitiveRe
   }
 
   if (level.setup.length > 0 && !primitive.apply) problem([...at, "setup"], `${primitive.id} has no entities to place`);
-  // A primitive with worldWidth and worldHeight variables bounds its placements by them, in both worlds of the fork.
+  const { space } = primitive;
+  // A primitive's declared space bounds its placements, in both worlds of the fork.
   level.setup.forEach((placement, index) => {
-    const outside = [params, forkParams].find((world) => {
-      const { worldWidth: width, worldHeight: height } = world;
-      return width !== undefined && height !== undefined && !(placement.x < width && placement.y < height);
-    });
+    if (primitive.apply && !primitive.entities?.[placement.entity]) {
+      problem([...at, "setup", index, "entity"], `${primitive.id} has no ${placement.entity} to place`);
+      return;
+    }
+    if (space.kind !== "torus2d") {
+      if (primitive.apply) problem([...at, "setup", index], `${primitive.id}'s world has no space to place ${placement.entityId} in`);
+      return;
+    }
+    const sized = [params, forkParams].map((world) => ({ width: world[space.width] ?? Number.NaN, height: world[space.height] ?? Number.NaN }));
+    const outside = sized.find(({ width, height }) => !(placement.x < width && placement.y < height));
     if (outside) {
-      problem([...at, "setup", index], `${placement.entityId} at (${placement.x}, ${placement.y}) lies outside a ${outside.worldWidth} × ${outside.worldHeight} world`);
+      problem([...at, "setup", index], `${placement.entityId} at (${placement.x}, ${placement.y}) lies outside a ${outside.width} × ${outside.height} world`);
     }
   });
   if (problems.length > before) return null;
@@ -307,7 +366,7 @@ function buildLevel(level: Level, at: (string | number)[], registry: PrimitiveRe
     explanation: level.explanation,
     caption: level.caption,
     guide: level.guide,
-    exploration: level.guidedExploration ?? null,
+    exploration: level.guidedExploration,
     furtherReading: level.furtherReading,
     carryForward: level.carryForward,
   };

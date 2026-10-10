@@ -7,7 +7,6 @@ import type { FlockParams } from "@paperplay/primitives/flock";
 import { buildWorld, type BuiltLevel, type BuiltWorld } from "@paperplay/pipeline";
 import { registry } from "@paperplay/primitives";
 import spec from "../../../../fixtures/worldspecs/flocking-reference.json";
-import { HOOK_SEED } from "./local-world.ts";
 import type { SessionOptions } from "./valley.ts";
 
 const built = buildWorld(spec, registry);
@@ -17,10 +16,10 @@ if (!built.ok) {
 
 export const FLOCKING: BuiltWorld = built.world;
 
-/** A level's session: every level opens on the hook seed, a teaching choice (ADR-0003), with its own parameters and setup. */
+/** A level's session: every level opens on the world's own opening seed, a teaching choice (ADR-0003), with its own parameters and setup. */
 export function sessionOptionsFor(level: BuiltLevel, playing: boolean): SessionOptions {
   return {
-    seed: HOOK_SEED,
+    seed: FLOCKING.openingSeed,
     params: level.params as FlockParams,
     actions: level.actions,
     setup: level.setup.map((placement) => placement.event),

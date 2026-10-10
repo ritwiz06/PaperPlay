@@ -19,7 +19,7 @@ const SCORING = /\b(right|wrong|correct|incorrect|score|points?)\b/i;
 /** Whether the level's stated effect holds on seed 5, from the level's start, as the fork measures it. */
 function holdsOnThisSky(level: BuiltLevel): boolean {
   const { difference } = level.fork;
-  const steps = Math.round(difference.seconds / flock.fixedTimestep);
+  const steps = Math.round(difference.time / flock.fixedTimestep);
   const metric = difference.metricId as keyof FlockObservables;
   const overrides = Object.fromEntries(level.fork.overrides.map((override) => [override.variable, override.to]));
   const summary = (params: FlockParams): number => {

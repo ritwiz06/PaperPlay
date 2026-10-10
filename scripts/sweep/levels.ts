@@ -82,8 +82,8 @@ export function sweepLevels(world: BuiltWorld = referenceWorld(), skies: readonl
   };
   for (const level of world.levels) {
     const setup = level.setup.map((placement) => placement.event);
-    note(level.params, setup, level.fork.difference.seconds);
-    note(level.fork.params, setup, level.fork.difference.seconds);
+    note(level.params, setup, level.fork.difference.time);
+    note(level.fork.params, setup, level.fork.difference.time);
   }
   const series = (params: Readonly<Record<string, number>>, setup: readonly PlaceEvent[], seed: number, seconds: number, metric: string): number[] => {
     const all = run(params as FlockParams, setup, seed, longest.get(JSON.stringify([params, setup])) ?? seconds);
@@ -94,8 +94,8 @@ export function sweepLevels(world: BuiltWorld = referenceWorld(), skies: readonl
     const { difference } = level.fork;
     const setup = level.setup.map((placement) => placement.event);
     const results = skies.map((seed) => {
-      const here = summarise(difference, series(level.params, setup, seed, difference.seconds, difference.metricId), flock.fixedTimestep);
-      const there = summarise(difference, series(level.fork.params, setup, seed, difference.seconds, difference.metricId), flock.fixedTimestep);
+      const here = summarise(difference, series(level.params, setup, seed, difference.time, difference.metricId), flock.fixedTimestep);
+      const there = summarise(difference, series(level.fork.params, setup, seed, difference.time, difference.metricId), flock.fixedTimestep);
       return { seed, here, there, holds: claimHolds(difference.claim, here, there) };
     });
     const holds = results.filter((result) => result.holds).length;
@@ -109,7 +109,7 @@ export function sweepLevels(world: BuiltWorld = referenceWorld(), skies: readonl
       label: difference.label,
       unit: difference.unit,
       claim: difference.claim,
-      seconds: difference.seconds,
+      seconds: difference.time,
       skies: results,
       holds,
       meets,
