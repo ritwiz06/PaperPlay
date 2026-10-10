@@ -334,6 +334,18 @@ them again reproduces the whole run.
   seed" on `/world/local` is this, live.
 - **Learn more:** [Glenn Fiedler, "Deterministic Lockstep"](https://gafferongames.com/post/deterministic_lockstep/)
 
+### Characterization records (golden files)
+
+Before changing how code is arranged, record what it does now, in files, and make the changed
+code reproduce those files exactly. The records describe the old behaviour; they are not a
+specification of what is right.
+
+- **Used in:** `apps/web/test/records.test.ts`, `fixtures/records/flocking-seed5/`
+- **Why here:** G3a.1 moves almost every file that touches the flocking world, and must change
+  nothing a learner sees or a record replays. Records made before the move, replayed at
+  tolerance 0 and made again byte for byte after it, turn "no change in behaviour" into a check.
+- **Learn more:** [Wikipedia, "Characterization test"](https://en.wikipedia.org/wiki/Characterization_test), the term from Michael Feathers' "Working Effectively with Legacy Code"
+
 ### Test oracles
 
 An oracle is an independent way to know the right answer. Here the answers are derived by

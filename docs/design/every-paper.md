@@ -1,7 +1,20 @@
 # Every paper: the generalization audit and the plan
 
-For the owner's review (ADR-0021). Docs only: no pipeline code until the owner has reviewed
-this plan. Written 2026-10-09, in the day's sixth session.
+Written 2026-10-09, in the day's sixth session, for the owner's review (ADR-0021).
+
+**Answered by the owner on 2026-10-10 (ADR-0024).** Every decision below is accepted, with
+these changes and additions:
+- equations as data are verified only when an independent second transcription agrees: a
+  separate model call re-extracts the equations, and the two expression trees match
+  structurally, up to renaming;
+- the level rule's 19 other starts lie within ±10% of each parameter and starting value;
+- Kermack and McKendrick 1927 is hand-authored as the compartment family's reference world,
+  and Elowitz and Leibler 2000 is the first paper the pipeline generates;
+- PubMed Central's OA Web Service and FTP files are gone, so ingest uses the PMC Cloud Service,
+  OAI-PMH, E-utilities or the BioC API;
+- the roadmap gives gates and effort, with no day ranges.
+
+The plan's text below is as written; where an answer changed it, ADR-0024 governs.
 
 PaperPlay is to turn AI/ML, biomedical and scientific papers into the best honest experience
 each allows. Today it plays one paper, Reynolds 1987, on one primitive. This document:

@@ -7,6 +7,22 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-10 · The flocking world recorded before G3a's refactor
+
+- Branch: `g3/records`
+- Commits: `fc3f828`
+- Shipped:
+  - **Eighteen run records** in `fixtures/records/flocking-seed5/`, made once by the code at
+    `f0bc31c`: each of the six levels as played on seed 5, and both worlds of its fork.
+  - **`apps/web/test/records.test.ts` [R07]** holds the code to them: each replays bit for bit
+    at tolerance 0 against the world as built today, and the app's own session and fork make
+    each again byte for byte. Two planted bugs caught: a nudged cohesion constant fails 17
+    replays and the remake; a control recorded a step late fails the remake only.
+  - **The owner's answers to the plan** (ADR-0024), and the roadmap re-cut into G3a and G3b,
+    with gates and effort and no day ranges.
+- Evidence: R07 40 (20 new); G1's four requirements as before.
+- Gate: G1 passed on `fc3f828`, 565 tests, 0 skipped.
+
 ## 2026-10-09 · The plan for every paper (for the owner's review)
 
 - Branch: `g2/every-paper`, docs only

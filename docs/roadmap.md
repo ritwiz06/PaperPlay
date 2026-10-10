@@ -6,19 +6,23 @@ finished slices are logged in [progress.md](progress.md). A gate is tagged only 
 `gates.json` lists the requirements each gate enforces.
 
 **The direction changed on 2026-10-09 (ADR-0021).** PaperPlay builds for AI/ML, biomedical
-and scientific papers, with the flocking world as the reference example. G3 and G4 below are
-re-planned in [design/every-paper.md](design/every-paper.md), for the owner's review. This
-file takes the new plan once the owner accepts it.
+and scientific papers, with the flocking world as the reference example. The plan for it,
+[design/every-paper.md](design/every-paper.md), was answered by the owner on 2026-10-10
+(ADR-0024): G3 is re-cut into G3a and G3b, and this roadmap gives gates and effort, with no
+calendar promises.
 
 ## Gates
 
-| Gate | Days | Tag | Planned effort | Requirements enforced | State |
-|---|---|---|---|---|---|
-| G1 Playable baseline | 1–7 | v0.1.0 | 21–28 h | R01–R04 | Passed and tagged v0.1.0 on 2026-10-01 |
-| G2 Verified authored world | 8–14 | v0.2.0 | 21–28 h | R01–R08, R12 | Early work done |
-| G3 Constrained generation | 15–21 | v0.3.0 | 21–28 h | R01–R12 | Not started |
-| G4 Evaluation and feature freeze | 22–27 | v0.4.0 | 18–24 h | R01–R12, plus evaluation checks | Not started |
-| G5 Delivery | 28–30 | v1.0.0 | 9–12 h | R01–R12 | Not started |
+| Gate | Tag | Planned effort | Requirements enforced | State |
+|---|---|---|---|---|
+| G1 Playable baseline | v0.1.0 | 21–28 h | R01–R04 | Passed and tagged v0.1.0 on 2026-10-01 |
+| G2 Verified authored world | v0.2.0 | 21–28 h | R01–R08, R12 | Its interface is done; it waits for the Reynolds PDF and the source map |
+| G3a Generalize, compartments, the pipeline on them | Chosen when it passes | 52–72 h | R01–R12 | G3a.1 in progress |
+| G3b Routing, the explainer tier, learning toys | Chosen when it passes | 22–32 h | R01–R12 | Not started |
+| G4 Evaluation and feature freeze | v0.4.0 | 20–28 h | R01–R12, plus evaluation checks | Not started |
+| G5 Delivery | v1.0.0 | 9–12 h | R01–R12 | Not started |
+
+The primitive-builder agent comes after G4 (ADR-0024), with 12–18 h of its own.
 
 ## G1 Playable baseline
 
@@ -143,45 +147,68 @@ Later:
 
 ## G3 Constrained generation
 
-Exit: one complete generated experience from a new development section, honest on failure;
-the reviewer cannot bypass a failed check.
+Exit, unchanged: one complete generated experience, honest on failure; the reviewer cannot
+bypass a failed check. Re-cut into two gates (ADR-0024), with effort from
+[design/every-paper.md](design/every-paper.md) §5.
 
-**Under re-planning (ADR-0021).** The direction makes G3 a sequence of steps:
-1. generalize the architecture;
-2. the compartment family and its scene kit;
-3. the pipeline on a known family;
-4. routing and tier C;
-5. the learning family;
-6. the primitive-builder agent.
+### G3a Generalize, the compartment family, and the pipeline on it
 
-The re-plan, with effort per step, is in [design/every-paper.md](design/every-paper.md).
-Until the owner accepts it, the items below stand as written.
+G3a.1, generalize, with no change in behaviour (14–20 h). Every existing test passes with only
+its imports and paths changed; the six levels on seed 5 replay bit for bit against records
+made before the refactor; the Mac capture's frame hash matches its pre-refactor hash.
+- [x] Records of the six levels on seed 5, made before the refactor, and a test that holds the
+  code to them (2026-10-10, `fc3f828`).
+- [ ] Primitive families: the primitive interface (family, time, space, entities, queries);
+  the flock moved into the agents family; the torus a shared space.
+- [ ] Scene kits: the kit contract across the stage core, the adapter and React; a generic
+  FrameDescription; the flocking kit.
+- [ ] The session and the fork made generic; a world loader with the spec's own seed.
+- [ ] `worldspec/3`: routing tier, scene kit, time unit, the opening seed, and what the world
+  cannot show; `worldspec/2` still read.
 
-Next:
-- [ ] The stale-evidence rule: a new primitive version or source hash resets the checks that
-  depend on it (moved from G2, 2026-10-09).
-- [ ] After the first generated world: replay export and import with `npm run replay`, and
-  `/world/local` in the shell (moved from G2, 2026-10-09).
-- [ ] First, once the authored world plays end to end: split the paper into the four
-  development and eight held-out section files (moved from G2 on 2026-10-09). G3 generates
-  from a development section, and G4 evaluates on the held-out ones.
+G3a.2, the compartment family and Kermack and McKendrick by hand (14–20 h):
+- [ ] The expression tree, its units, and the RK4 solver with its accuracy check.
+- [ ] The family's checks and its hand-written oracles.
+- [ ] The town scene kit.
+- [ ] The Kermack and McKendrick world, a draft until its anchors are real, every level
+  meeting the level rule.
+- [ ] Every world's journal page, "What this world cannot show".
+
+G3a.3, the pipeline on a known family (24–32 h):
 - [ ] `apps/api`: jobs, SSE events, JSON artifacts, secrets in `.env`, a bundle secret check,
   upload limits, and the paper-text sanitiser.
-- [ ] `packages/pipeline`: model adapters (mock first), Reader, Planner/Designer, Explainer,
-  checks, Semantic reviewer, and the controller with at most two scoped repairs.
+- [ ] Ingest from arXiv source and PDF, with the source register (ADR-0024's dependencies).
+- [ ] `packages/pipeline`: model adapters (mock first), the router (compartments only),
+  planner and designer, explainer, the level-rule sweep, checks, the second transcription,
+  reviewer, and the controller with at most two scoped repairs.
 - [ ] The `/create` storyboard with real job states (and StatusChip), and explicit failure
   outcomes.
-- [ ] End to end on a development section, with a mock-adapter test and one recorded
+- [ ] Elowitz and Leibler generated end to end: a mock-adapter test and one recorded
   real-provider run.
+
+After G3a's first generated world (owner, 2026-10-09):
+- [ ] Replay export and import with `npm run replay`, and `/world/local` in the shell.
+- [ ] The stale-evidence rule: a new primitive version or source hash resets the checks that
+  depend on it (moved from G2).
+
+### G3b Routing, the explainer tier, and the learning family
+
+- [ ] The router across families; `explainerspec/1` and its page; PubMed Central ingest by a
+  supported route, tested on one CC BY compartment-model paper (8–12 h).
+- [ ] Learning toys on the valley as a loss landscape: Adam beside SGD, then dropout on a tiny
+  network, with the miniature label enforced (14–20 h).
 
 Later:
 - The widget tier, behind `FEATURE_WIDGETS=1` (stretch).
+- The four development and eight held-out section files of the flocking paper (moved from G2 on
+  2026-10-09). G4 now evaluates on papers from three domains (ADR-0021), so whether they are
+  still needed is decided when G4's protocol is frozen.
 
 ## G4 Evaluation and feature freeze
 
-**Under re-planning (ADR-0021).** G4 becomes an evaluation on a fixed set of papers from all
-three domains, against a single-pass baseline, instead of the flocking paper's held-out
-sections. See [design/every-paper.md](design/every-paper.md).
+Re-planned (ADR-0021, ADR-0024): an evaluation on a fixed set of papers from all three
+domains, at least two each, against a single-pass baseline, instead of the flocking paper's
+held-out sections. See [design/every-paper.md](design/every-paper.md) §5.
 
 Next:
 - [ ] Freeze the protocol at `eval/protocol.md`.
@@ -199,14 +226,15 @@ Next:
 
 ## Effort
 
-"Used" counts calendar days and Claude Code session time (wall clock, from session logs and
+"Used" counts Claude Code session time (wall clock, from session logs and
 commit times). The owner's own focused hours are not tracked unless logged.
 
 | Gate | Planned | Used so far |
 |---|---|---|
-| G1 | Days 1–7, 21–28 h | Days 1–4 (2026-09-28 to 2026-10-01), about 8.3 h of sessions: 1.4 h (09-28), 5.4 h (09-30) and 1.5 h (10-01). Under plan, because Claude Code did the building; the owner's own review time is not tracked |
-| G2 | Days 8–14, 21–28 h | G2's early RunRecord and replay work. Then five sessions on 2026-10-09:<br>• 00:51 to 01:45, about 0.9 h: `main`, ADR-0008, the axe scan, the demo capture, the hook spike and the plan change.<br>• 10:25 to 11:05, about 0.7 h: `origin`, CI, `--frames` and the capture finding.<br>• 11:06 to about 12:05, about 1 h: the canonical capture, the shell, the world art, the capture's camera and the level script.<br>• 12:08 to about 14:25, about 2.3 h: the group measure, WorldSpec and the builder, the six levels from the spec, the stage split and the deploy configuration.<br>• 15:08 to about 16:20, about 1.2 h: the level rule, flock 3.1.0, the fork, guided exploration, the speed control and the CSP.<br>• 20:15 to about 22:10, about 1.9 h: `npm run land` and the hook, the direction (ADR-0021), level 5's readout and its fork's stall, context loss and the phone chart, a prediction before every What-if, and the plan for every paper. |
-| G3–G5 | As in Gates | None yet |
+| G1 | 21–28 h | 2026-09-28 to 2026-10-01, about 8.3 h of sessions: 1.4 h (09-28), 5.4 h (09-30) and 1.5 h (10-01). Under plan, because Claude Code did the building; the owner's own review time is not tracked |
+| G2 | 21–28 h | G2's early RunRecord and replay work. Then five sessions on 2026-10-09:<br>• 00:51 to 01:45, about 0.9 h: `main`, ADR-0008, the axe scan, the demo capture, the hook spike and the plan change.<br>• 10:25 to 11:05, about 0.7 h: `origin`, CI, `--frames` and the capture finding.<br>• 11:06 to about 12:05, about 1 h: the canonical capture, the shell, the world art, the capture's camera and the level script.<br>• 12:08 to about 14:25, about 2.3 h: the group measure, WorldSpec and the builder, the six levels from the spec, the stage split and the deploy configuration.<br>• 15:08 to about 16:20, about 1.2 h: the level rule, flock 3.1.0, the fork, guided exploration, the speed control and the CSP.<br>• 20:15 to about 22:10, about 1.9 h: `npm run land` and the hook, the direction (ADR-0021), level 5's readout and its fork's stall, context loss and the phone chart, a prediction before every What-if, and the plan for every paper. |
+| G3a | 52–72 h | From 2026-10-10; this session's time is added at its close |
+| G3b–G5 | As in Gates | None yet |
 
 ## Plan changes
 
@@ -246,3 +274,6 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-09 | PaperPlay builds for AI/ML, biomedical and scientific papers; the flocking world becomes the reference example; primitive families, scene kits, three routing tiers, the level rule as a pipeline stage, and ingest from arXiv source, PubMed Central XML and PDF. G3 and G4 are re-planned for the owner's review | Owner decision (ADR-0021) |
 | 2026-10-09 | Replay export UI and `/world/local` in the shell wait until after G3's first generated world; the stale-evidence rule moves into G3 | Owner decision, session 6 |
 | 2026-10-09 | A prediction before every What-if, saved in the run record (`runrecord/3`); the stated effects say "this world" and "the other world", not left and right | Owner request (ADR-0023); on a phone the two worlds stack |
+| 2026-10-10 | The plan for every paper is answered: the families' order, equations as data as tier A with an independent second transcription, the level rule over 20 starts for models with no randomness, three dependencies approved, the licence policy, PubMed Central's supported routes | Owner decisions (ADR-0024) |
+| 2026-10-10 | G3 is re-cut into G3a (generalize, compartments, the pipeline on them) and G3b (routing, the explainer tier, learning toys); the primitive-builder agent comes after G4; the roadmap gives gates and effort, with no day ranges | Owner decision (ADR-0024): G3 as written could not hold the work |
+| 2026-10-10 | G3a.1 starts with records of the six levels made before the refactor, so the refactor is held to them | The owner's acceptance condition for G3a.1 |

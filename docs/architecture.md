@@ -16,6 +16,7 @@ How PaperPlay fits together today. The concepts named here are explained in
 | `scripts/` | Gate, docs checker, land, defaults sweep, hook seed, group-measure sweep, levels sweep, demo capture, the built app served as Vercel would | `check-gate.ts` (with `gate/worlds.ts`), `check-docs.ts`, `land.ts` (with `land/land.ts` and `land/guard.ts`, ADR-0009), `hooks/pre-push.ts` and `hooks/install.ts`, `sweep-defaults.ts`, `hook-seed.ts`, `group-measure.ts`, `levels.ts`, `capture-demo.ts`, `serve-dist.ts`; `scripts/test/bundle.test.ts` builds the production bundle |
 | `fixtures/oracles/` | Hand-derived expected behaviours for primitives | See `fixtures/oracles/README.md` |
 | `fixtures/worldspecs/` | Authored WorldSpecs | `flocking-reference.json`, a draft with placeholder anchors until the source map exists |
+| `fixtures/records/` | Run records held bit for bit across a refactor | `flocking-seed5/`: the six levels on seed 5 and both worlds of each fork, made at `f0bc31c` before G3a's refactor |
 | `fixtures/bindings/` | Hand-written binding fixtures: the variable each level's control must move, its fork and setup | `flocking-reference.json` |
 | `eval/` | Sweeps now; the frozen protocol and raw attempts from G4 | `eval/sweeps/` |
 | `.githooks/` | The repository's git hooks, which npm's `prepare` script tells git to use | `pre-push`, which refuses any push that would move `main` to a commit land has not recorded (ADR-0009) |
@@ -161,6 +162,7 @@ flowchart LR
 | The stage core is framework-free, with type-only simulation imports | A tsconfig without the DOM library; lint | `packages/ui/src/stage-core/tsconfig.json`, `eslint.config.js` |
 | The adapter never reads or writes simulation state | Lint and an import test | `packages/ui/test/three-adapter.test.ts` |
 | The React stage and bench import no simulation code | Lint (types only) | `eslint.config.js` |
+| The flocking world's six levels on seed 5 replay bit for bit, at tolerance 0, against records made before G3a's refactor, and the app's own session and fork make each record again byte for byte | Tests [R07] | `apps/web/test/records.test.ts`, `fixtures/records/flocking-seed5/` |
 | A live session replays exactly from its own record | Test [R04]: `runEvents` on the session's plan reaches its state bit for bit | `apps/web/test/session.test.ts` |
 | A control moves the engine parameter, and readouts show the primitive's values | Browser tests [R04], compared with Node bit for bit | `tests/e2e/world.spec.ts` |
 | Readouts update at most ten times a second, never once per frame | `readoutDue`, tested; the stage's loop calls it | `packages/ui/test/fixed-step.test.ts`, `packages/ui/src/react/WorldStage.tsx` |
@@ -293,3 +295,4 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 | 2026-10-09 | 29f9646 | Flock query Q4 (`flockAtRocks`); RocksCounter; the frame's touched rocks and the adapter's `touchedMaterial`; rock markers cast no shadow |
 | 2026-10-09 | 7c81d9f | `mountStage` handles context loss: the lost notice, restore, and "Tap to reload the world" (ADR-0022); DifferenceChart draws at its measured width; SpeedButton says "Speed 1×"; `tests/e2e/pixels.ts` |
 | 2026-10-09 | ea2fdf1 | `runrecord/3` with predictions; the session's `predict` and `record`; every level's guided exploration in the fixture (ADR-0023) |
+| 2026-10-10 | fc3f828 | `fixtures/records/flocking-seed5/`, the six levels recorded before G3a, held to them by `apps/web/test/records.test.ts` |
