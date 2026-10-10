@@ -1,60 +1,80 @@
 /**
- * A live run of the local world: the fixed-step loop, the learner's actions recorded as
- * RunRecord events, replay of the same seed, and the next seed. Framework-free, so it is
- * tested in Node. It computes no science itself: every state comes from the primitive's
- * init, step and apply, and every number shown comes from its measure and its read-only queries.
+ * A live run of a world, for any primitive: the fixed-step loop, the learner's actions recorded as
+ * RunRecord events, replay of the same seed, and the next seed. Framework-free, so it is tested
+ * in Node. It computes no science itself: every state comes from the primitive's init, step and
+ * apply, and every number shown comes from its measure and its read-only queries, which a scene
+ * kit's view asks (ADR-0026).
  *
  * Event order matches runEvents: an event made while the world stands at step s is recorded
  * at s and applied before step s is taken, so the session can always be replayed from its record.
  */
-import { RunRecord, type PlaceEvent, type Prediction, type RunEvent } from "@paperplay/contracts";
-import { type RunPlan, runEvents } from "@paperplay/primitives";
-import { flockAtRocks, flockHeadings, flockNeighbours, flockSpread, flockPlanarWeighted as flock, type AtRocks, type Entity, type FlockObservables, type FlockParams, type FlockState, type Headings } from "@paperplay/primitives/flock";
-import { advance, START_CLOCK, type FrameEmphasis, type Speed, type StageInput, type StepClock } from "@paperplay/ui/stage-core";
+import { RunRecord, type EntityKind, type PlaceEvent, type Prediction, type RunEvent } from "@paperplay/contracts";
+import { runEvents, type Primitive, type RunPlan } from "@paperplay/primitives";
+import { advance, START_CLOCK, type BaseEmphasis, type Speed, type StepClock } from "@paperplay/ui/stage-core";
 
-export interface SessionOptions {
+/** A primitive state that counts its own steps, as every primitive's does. */
+export interface Stepped {
+  readonly stepIndex: number;
+}
+
+export interface SessionOptions<P, S> {
   readonly seed: number;
   /** The world's balanced rules: the parameters it opens with and restores. */
-  readonly params: FlockParams;
-  /** Each action id and the parameter it moves, in the order the defaults are restored. */
-  readonly actions: Readonly<Record<string, keyof FlockParams>>;
+  readonly params: P;
+  /** Each action id and the parameter it moves, in the order the defaults are restored. The primitive's schema checks the name. */
+  readonly actions: Readonly<Record<string, string>>;
   /** A level's setup: placements at step 0, recorded as ordinary place events (ADR-0014). */
   readonly setup?: readonly PlaceEvent[];
-  /** Draw the ring of the flock's spread (Q3) around its largest group. Presentation only. */
-  readonly ring?: boolean;
+  /** The observable the level watches, so the stage can emphasise it. Presentation only. */
+  readonly emphasise?: string;
   /** Start from this state instead of the seed's: a fork's branch from the moment it opens. */
-  readonly start?: FlockState;
+  readonly start?: S;
   readonly playing?: boolean;
 }
 
-export interface SessionSnapshot {
+/** What every session's snapshot holds, whatever its kit. */
+export interface CoreSnapshot<P, O> {
   readonly seed: number;
   readonly step: number;
-  readonly seconds: number;
+  /** The run's time, in the primitive's time unit. */
+  readonly time: number;
   readonly playing: boolean;
   /** Fixed steps per frame, times 1, 2 or 4: how fast the run goes, never what it computes. */
   readonly speed: Speed;
   /** True while a replay still has recorded events ahead of it. */
   readonly replaying: boolean;
-  readonly params: FlockParams;
-  readonly observed: FlockObservables;
+  readonly params: P;
+  readonly observed: O;
   readonly events: readonly RunEvent[];
-  readonly beacons: readonly Entity[];
-  readonly obstacles: readonly Entity[];
-  readonly selected: { readonly index: number; readonly seen: readonly number[]; readonly crowding: readonly number[] } | null;
-  /** Each bird's heading and the flock's mean heading, from the primitive's query (Q2), for the compass. */
-  readonly headings: Headings;
-  /** Each rock and the birds at it, from the primitive's query (Q4), for the rocks counter. */
-  readonly rocks: AtRocks;
   /** The learner's predictions in this run, in step order: notes, never events, never scored. */
   readonly predictions: readonly Prediction[];
 }
 
-export interface WorldSession {
-  snapshot(): SessionSnapshot;
-  state(): FlockState;
-  stageInput(): StageInput;
-  emphasis(): FrameEmphasis;
+/**
+ * A scene kit's view of a session (ADR-0026): what it reads from the primitive's queries for its
+ * readouts, what it emphasises on the stage, and what the stage draws from. Presentation only.
+ */
+export interface SessionView<P, S, Extra, Emphasis extends BaseEmphasis, Input> {
+  /** The snapshot's own part: the kit's readings, from the primitive's read-only queries. */
+  extras(state: S, params: P, picked: number | null): Extra;
+  emphasis(state: S, params: P, picked: number | null, emphasise: string | undefined): Emphasis;
+  /** What the stage draws: the two latest states, how far between them, and a short history. */
+  input(previous: S, current: S, alpha: number, timestep: number, history: readonly S[]): Input;
+  /** How many states back the history reaches; presentation only. */
+  readonly historySteps: number;
+  /** The names a placed entity of each kind is given, before its number: "beacon-1", "rock-1". */
+  readonly names: Readonly<Partial<Record<EntityKind, string>>>;
+  /** The ids of every entity in a state, so a new name never repeats one. */
+  entityIds(state: S): readonly string[];
+  /** Why a pick names nothing in this state, or null when it names something. */
+  unpickable(state: S, index: number): string | null;
+}
+
+export interface WorldSession<P, S, O, Extra, Emphasis extends BaseEmphasis, Input> {
+  snapshot(): CoreSnapshot<P, O> & Extra;
+  state(): S;
+  stageInput(): Input;
+  emphasis(): Emphasis;
   /** Takes the whole steps this much wall time allows while playing; returns how many. */
   tick(frameSeconds: number): number;
   /** Takes exactly this many fixed steps now, playing or not: a fork keeps two worlds in step this way. */
@@ -65,45 +85,50 @@ export interface WorldSession {
   pause(): void;
   setAction(actionId: string, value: number): void;
   restoreDefaults(): void;
-  /** Places a named beacon or obstacle at the current step; returns its name. */
-  place(entity: "beacon" | "obstacle", x: number, y: number): string;
+  /** Places a named entity of a kind the primitive declares, at the current step; returns its name. */
+  place(entity: EntityKind, x: number, y: number): string;
   remove(entityId: string): void;
+  /** Picks a thing by index, or lets it go. */
   select(index: number | null): void;
   nextSeed(): void;
   replaySameSeed(): void;
   /** Records a prediction at the current step, before a level's What-if (ADR-0018). It changes nothing in the run. */
   predict(levelId: string, prompt: string, choice: number, choiceText: string): void;
   /** The run so far as a plan runEvents can replay, with the parameters it started from. */
-  plan(): RunPlan<FlockState> & { readonly params: FlockParams };
+  plan(): RunPlan<S> & { readonly params: P };
   /** The run so far as a RunRecord (runrecord/3), its predictions included, given the identity the session cannot know. */
   record(identity: RunIdentity): RunRecord;
   /** Changes with every change, so a paused stage knows when to draw again. */
   version(): number;
   /** Starts afresh on other options, such as the next level's, keeping the same stage. */
-  load(options: SessionOptions): void;
+  load(options: SessionOptions<P, S>): void;
+  /** A new session of the same primitive and view: a fork's two worlds. */
+  spawn(options: SessionOptions<P, S>): WorldSession<P, S, O, Extra, Emphasis, Input>;
 }
 
 /** What a record needs that the session cannot know: the run's name, its hashes and its runtime. */
 export type RunIdentity = Pick<RunRecord, "runId" | "worldSpecHash" | "codeHash" | "lockHash" | "runtime" | "tolerance">;
 
-const TIMESTEP = flock.fixedTimestep;
-const SAMPLE_INTERVAL = 60;
-/**
- * Trails reach back this many steps (3 s), drawn through one state in every TRAIL_STRIDE. The
- * flock often cruises near its minimum speed, so a shorter history would hide under each bird;
- * the stage caps a trail's length for fast birds.
- */
-const TRAIL_STEPS = 180;
-const TRAIL_STRIDE = 18;
-const PREFIX = { beacon: "beacon", obstacle: "rock" } as const;
+/** Steps between a record's samples: one sample for each second of watching at 1x (60 for the flock). */
+export const sampleIntervalOf = (primitive: Primitive<unknown, unknown>): number => Math.max(1, Math.round(primitive.time.perWatchSecond / primitive.fixedTimestep));
 
-export function createWorldSession(first: SessionOptions): WorldSession {
+export function createSession<P, S extends Stepped, O extends Record<string, number>, Extra, Emphasis extends BaseEmphasis, Input>(
+  primitive: Primitive<P, S, O>,
+  view: SessionView<P, S, Extra, Emphasis, Input>,
+  first: SessionOptions<P, S>,
+): WorldSession<P, S, O, Extra, Emphasis, Input> {
+  const TIMESTEP = primitive.fixedTimestep;
+  const SAMPLE_INTERVAL = sampleIntervalOf(primitive);
+  const apply = (state: S, edit: Parameters<NonNullable<Primitive<P, S, O>["apply"]>>[1]): S => {
+    if (!primitive.apply) throw new Error(`${primitive.id}@${primitive.version} has no entities to place or remove`);
+    return primitive.apply(state, edit);
+  };
   let options = first;
   let seed = options.seed >>> 0;
-  let initialParams = flock.paramSchema.parse(options.params);
+  let initialParams = primitive.paramSchema.parse(options.params);
   let params = initialParams;
   /** The state the run starts from: the seed's, or a fork's branch. Events are counted in steps from it. */
-  const origin = (): FlockState => options.start ?? flock.init(initialParams, seed);
+  const origin = (): S => options.start ?? primitive.init(initialParams, seed);
   let current = origin();
   const stepsTaken = (): number => current.stepIndex - (options.start?.stepIndex ?? 0);
   let previous = current;
@@ -116,23 +141,23 @@ export function createWorldSession(first: SessionOptions): WorldSession {
   let events: RunEvent[] = setupEvents();
   /** How many recorded events have been applied; fewer than all only during a replay. */
   let applied = 0;
-  let placed = { beacon: 0, obstacle: 0 };
+  let placed: Partial<Record<EntityKind, number>> = {};
   let selected: number | null = null;
   let predictions: Prediction[] = [];
   /** The states before the current one, oldest first, for trails: presentation only. */
-  let history: FlockState[] = [];
+  let history: S[] = [];
   let version = 0;
   const changed = () => void version++;
 
-  const parameterOf = (actionId: string): keyof FlockParams => {
+  const parameterOf = (actionId: string): string => {
     const parameter = options.actions[actionId];
     if (parameter === undefined) throw new Error(`this world has no action ${actionId}`);
     return parameter;
   };
 
   const applyEvent = (event: RunEvent): void => {
-    if (event.kind === "param") params = flock.paramSchema.parse({ ...params, [parameterOf(event.actionId)]: event.value });
-    else current = flock.apply(current, event);
+    if (event.kind === "param") params = primitive.paramSchema.parse({ ...params, [parameterOf(event.actionId)]: event.value });
+    else current = apply(current, event);
   };
 
   /** Records an event at the current step, after it has been applied. Acting during a replay ends it. */
@@ -155,7 +180,7 @@ export function createWorldSession(first: SessionOptions): WorldSession {
 
   const setAction = (actionId: string, value: number): void => {
     const parameter = parameterOf(actionId);
-    params = flock.paramSchema.parse({ ...params, [parameter]: value });
+    params = primitive.paramSchema.parse({ ...params, [parameter]: value });
     record({ kind: "param", step: stepsTaken(), actionId, value });
   };
 
@@ -173,7 +198,7 @@ export function createWorldSession(first: SessionOptions): WorldSession {
 
   applyDue();
 
-  const plan = (): RunPlan<FlockState> & { readonly params: FlockParams } => ({
+  const plan = (): RunPlan<S> & { readonly params: P } => ({
     params: initialParams,
     initialState: origin(),
     events: events.slice(0, applied),
@@ -185,9 +210,9 @@ export function createWorldSession(first: SessionOptions): WorldSession {
   function stepBy(steps: number): void {
     for (let i = 0; i < steps; i++) {
       history.push(current);
-      if (history.length > TRAIL_STEPS) history.shift();
+      if (history.length > view.historySteps) history.shift();
       previous = current;
-      current = flock.step(current, params, TIMESTEP);
+      current = primitive.step(current, params, TIMESTEP);
       applyDue();
     }
     if (steps > 0) changed();
@@ -197,37 +222,19 @@ export function createWorldSession(first: SessionOptions): WorldSession {
     snapshot: () => ({
       seed,
       step: current.stepIndex,
-      seconds: current.stepIndex * TIMESTEP,
+      time: current.stepIndex * TIMESTEP,
       playing,
       speed,
       replaying: applied < events.length,
       params,
-      observed: flock.measure(current),
+      observed: primitive.measure(current),
       events: [...events],
-      beacons: current.beacons,
-      obstacles: current.obstacles,
-      selected: selected === null ? null : { index: selected, ...flockNeighbours(current, params, selected) },
-      headings: flockHeadings(current),
-      rocks: flockAtRocks(current),
       predictions: [...predictions],
+      ...view.extras(current, params, selected),
     }),
     state: () => current,
-    stageInput: () => ({
-      previous,
-      current,
-      alpha: playing ? alpha : 1,
-      timestep: TIMESTEP,
-      trail: history.filter((_, index) => (history.length - 1 - index) % TRAIL_STRIDE === 0),
-    }),
-    emphasis: () => {
-      const spread = options.ring === true ? flockSpread(current) : null;
-      const ring = spread?.centre ? { spread: { ...spread.centre, radius: spread.radius } } : {};
-      // Rocks with a bird at them light up (Q4): presentation only.
-      const lit = current.obstacles.length === 0 ? [] : flockAtRocks(current).rocks.filter((rock) => rock.birds.length > 0).map((rock) => rock.id);
-      const touched = lit.length === 0 ? {} : { touched: lit };
-      const shown = { ...ring, ...touched };
-      return selected === null ? shown : { ...shown, selected, neighbours: flockNeighbours(current, params, selected).seen, reach: params.perceptionRadius };
-    },
+    stageInput: () => view.input(previous, current, playing ? alpha : 1, TIMESTEP, history),
+    emphasis: () => view.emphasis(current, params, selected, options.emphasise),
     tick(frameSeconds) {
       if (!playing) return 0;
       const next = advance(clock, frameSeconds, TIMESTEP, undefined, speed);
@@ -252,29 +259,32 @@ export function createWorldSession(first: SessionOptions): WorldSession {
     },
     setAction,
     restoreDefaults() {
+      const now = params as Record<string, unknown>;
+      const balanced = options.params as Record<string, unknown>;
       for (const [actionId, parameter] of Object.entries(options.actions)) {
-        if (params[parameter] !== options.params[parameter]) setAction(actionId, options.params[parameter]);
+        if (now[parameter] !== balanced[parameter]) setAction(actionId, balanced[parameter] as number);
       }
     },
     place(entity, x, y) {
+      const prefix = view.names[entity];
+      if (prefix === undefined) throw new Error(`${primitive.id} has no ${entity} to place`);
       let entityId: string;
-      const taken = (id: string) => current.beacons.some((e) => e.id === id) || current.obstacles.some((e) => e.id === id);
-      do entityId = `${PREFIX[entity]}-${++placed[entity]}`;
-      while (taken(entityId));
+      const taken = new Set(view.entityIds(current));
+      do entityId = `${prefix}-${(placed[entity] = (placed[entity] ?? 0) + 1)}`;
+      while (taken.has(entityId));
       const event = { kind: "place", step: stepsTaken(), entityId, entity, x, y } as const;
-      current = flock.apply(current, event);
+      current = apply(current, event);
       record(event);
       return entityId;
     },
     remove(entityId) {
       const event = { kind: "remove", step: stepsTaken(), entityId } as const;
-      current = flock.apply(current, event);
+      current = apply(current, event);
       record(event);
     },
     select(index) {
-      if (index !== null && !(Number.isInteger(index) && index >= 0 && index < current.agents.length)) {
-        throw new RangeError(`there is no bird ${index}; this flock has birds 0 to ${current.agents.length - 1}`);
-      }
+      const why = index === null ? null : view.unpickable(current, index);
+      if (why !== null) throw new RangeError(why);
       selected = index;
       changed();
     },
@@ -284,7 +294,7 @@ export function createWorldSession(first: SessionOptions): WorldSession {
       options = { ...options, start: undefined };
       initialParams = params;
       events = setupEvents();
-      placed = { beacon: 0, obstacle: 0 };
+      placed = {};
       selected = null;
       predictions = [];
       restart();
@@ -299,11 +309,11 @@ export function createWorldSession(first: SessionOptions): WorldSession {
     plan,
     record(identity) {
       const run = plan();
-      const { observables } = runEvents({ primitive: flock, params: run.params, actions: options.actions }, run);
+      const { observables } = runEvents({ primitive, params: run.params, actions: options.actions }, run);
       return RunRecord.parse({
         schemaVersion: "runrecord/3",
         ...identity,
-        primitive: { id: flock.id, version: flock.version },
+        primitive: { id: primitive.id, version: primitive.version },
         seed,
         initialState: run.initialState,
         timestep: run.timestep,
@@ -320,13 +330,14 @@ export function createWorldSession(first: SessionOptions): WorldSession {
     load(next) {
       options = next;
       seed = next.seed >>> 0;
-      initialParams = flock.paramSchema.parse(next.params);
+      initialParams = primitive.paramSchema.parse(next.params);
       events = setupEvents();
-      placed = { beacon: 0, obstacle: 0 };
+      placed = {};
       selected = null;
       predictions = [];
       playing = next.playing ?? playing;
       restart();
     },
+    spawn: (next) => createSession(primitive, view, next),
   };
 }

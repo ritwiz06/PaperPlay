@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { contrastRatio, dusk, valleyDay } from "../src/stage-core/index.ts";
+import { contrastRatio } from "../src/stage-core/index.ts";
+import { dusk, valleyDay } from "../src/stage-core/kits/valley/index.ts";
 import { tokens } from "../src/tokens.ts";
 
 describe("stage palettes", () => {

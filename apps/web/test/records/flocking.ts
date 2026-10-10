@@ -17,7 +17,8 @@
 import type { RunRecord } from "@paperplay/contracts";
 import { FLOCKING, sessionOptionsFor } from "../../src/world/authored-world.ts";
 import { openFork } from "../../src/world/fork.ts";
-import { createWorldSession, type RunIdentity, type WorldSession } from "../../src/world/session.ts";
+import type { RunIdentity } from "../../src/world/session.ts";
+import { createWorldSession, type FlockSession as WorldSession } from "../../src/world/valley.ts";
 
 /** The commit whose code made the records: main before G3a.1. */
 export const RECORDED_AT = "f0bc31ceaf22e8e8378cbffdb1fab37b3116cb97";

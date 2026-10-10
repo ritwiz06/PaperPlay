@@ -10,8 +10,10 @@
     "./components.css": "./src/react/components.css",
     "./hud.css": "./src/react/hud.css",
     "./stage-core": "./src/stage-core/index.ts",
+    "./stage-core/valley": "./src/stage-core/kits/valley/index.ts",
     "./three-adapter": "./src/three-adapter/index.ts",
-    "./react": "./src/react/index.ts"
+    "./react": "./src/react/index.ts",
+    "./react/valley": "./src/react/kits/valley/index.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json && tsc -p src/stage-core/tsconfig.json && tsc -p src/three-adapter/tsconfig.json && tsc -p src/react/tsconfig.json && tsc -p test/tsconfig.json"

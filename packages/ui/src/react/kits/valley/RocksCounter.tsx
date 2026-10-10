@@ -1,4 +1,4 @@
-import { OriginTag } from "./hud-parts.tsx";
+import { OriginTag } from "../../hud-parts.tsx";
 
 export interface RocksCounterProps {
   /** Each rock, with how many birds are at it now (Q4). */

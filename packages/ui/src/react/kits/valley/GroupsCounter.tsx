@@ -1,4 +1,4 @@
-import { OriginTag } from "./hud-parts.tsx";
+import { OriginTag } from "../../hud-parts.tsx";
 
 export interface GroupsCounterProps {
   /** Groups, as the primitive counts them (E14): birds linked within 4.5 units and 45°, 4 or more. */

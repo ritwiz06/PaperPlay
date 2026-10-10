@@ -8,7 +8,7 @@ import { buildWorld, type BuiltLevel, type BuiltWorld } from "@paperplay/pipelin
 import { registry } from "@paperplay/primitives";
 import spec from "../../../../fixtures/worldspecs/flocking-reference.json";
 import { HOOK_SEED } from "./local-world.ts";
-import type { SessionOptions } from "./session.ts";
+import type { SessionOptions } from "./valley.ts";
 
 const built = buildWorld(spec, registry);
 if (!built.ok) {
@@ -22,9 +22,9 @@ export function sessionOptionsFor(level: BuiltLevel, playing: boolean): SessionO
   return {
     seed: HOOK_SEED,
     params: level.params as FlockParams,
-    actions: level.actions as Readonly<Record<string, keyof FlockParams>>,
+    actions: level.actions,
     setup: level.setup.map((placement) => placement.event),
-    ring: level.observable.metricId === "groupSpread",
+    emphasise: level.observable.metricId,
     playing,
   };
 }

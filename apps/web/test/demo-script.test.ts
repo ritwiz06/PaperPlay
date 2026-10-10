@@ -1,10 +1,11 @@
 import { runEvents } from "@paperplay/primitives";
 import { flockDefaultParams, flockPlanarWeighted as flock, flockReadsAsOneGroup } from "@paperplay/primitives/flock";
 import { describe, expect, it } from "vitest";
-import { flockCentre, DEFAULT_CAMERA } from "@paperplay/ui/stage-core";
+import { DEFAULT_CAMERA } from "@paperplay/ui/stage-core";
+import { flockCentre } from "@paperplay/ui/stage-core/valley";
 import { beaconAt, DEMO, scriptDemo } from "../src/capture/demo-script.ts";
 import { LOCAL_ACTIONS } from "../src/world/local-world.ts";
-import { createWorldSession } from "../src/world/session.ts";
+import { createWorldSession } from "../src/world/valley.ts";
 
 const open = () => createWorldSession({ seed: DEMO.seed, params: flockDefaultParams, actions: LOCAL_ACTIONS });
 

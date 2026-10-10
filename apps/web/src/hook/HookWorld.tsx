@@ -11,24 +11,18 @@ import { SAMPLE_STEPS, type BuiltLevel } from "@paperplay/pipeline";
 import { flockDefaultParams, flockPlanarWeighted, type FlockObservables } from "@paperplay/primitives/flock";
 import { DEFAULT_CAMERA, type Speed } from "@paperplay/ui/stage-core";
 import {
-  BirdMark,
   BookIcon,
   DifferenceChart,
   ForkView,
   Guide,
   GuideNote,
-  GroupsCounter,
-  HeadingCompass,
   isDepth,
   LevelCard,
   LevelMap,
   OriginTag,
   PaperJournal,
   PlayIcon,
-  RocksCounter,
-  SpacingGauge,
   SpeedButton,
-  SpreadDial,
   useFreeRect,
   WorldStage,
   type Depth,
@@ -37,10 +31,12 @@ import {
   type MapLevel,
   type StageDriver,
 } from "@paperplay/ui/react";
+import { BirdMark, GroupsCounter, HeadingCompass, RocksCounter, SpacingGauge, SpreadDial } from "@paperplay/ui/react/valley";
+import { valleyStage } from "@paperplay/ui/stage-core/valley";
 import { useRef, useState, type ReactNode } from "react";
 import { FLOCKING, sessionOptionsFor } from "../world/authored-world.ts";
 import { openFork, type Fork, type ForkSnapshot } from "../world/fork.ts";
-import { createWorldSession, type SessionSnapshot, type WorldSession } from "../world/session.ts";
+import { createWorldSession, type FlockSession as WorldSession, type SessionSnapshot } from "../world/valley.ts";
 import { explorationLines, guideLines, trendOf, type Trend } from "./guide.ts";
 
 const WORLD = FLOCKING;
@@ -150,7 +146,7 @@ function chartTop(metric: string, values: readonly number[], threshold: number |
 
 /** A fork, and the two drivers its stages draw from: the first advances both worlds, the second only draws. */
 interface ForkRun {
-  readonly fork: Fork;
+  readonly fork: Fork<WorldSession>;
   readonly here: StageDriver;
   readonly there: StageDriver;
   /** Whether the one world was playing when the fork opened, so it plays again when the fork closes. */
@@ -371,6 +367,7 @@ export function HookWorld() {
   const forkPanel =
     run && forkView ? (
       <ForkView
+        kit={valleyStage}
         title={whatIfSpec.prompt}
         note={
           <p>
@@ -388,11 +385,12 @@ export function HookWorld() {
         onClose={closeTheFork}
         onReadout={() => setForkView(run.fork.snapshot())}
         controls={<SpeedButton speed={speed} onChange={setSpeed} />}
-        {...(forkGuide ? { guide: <GuideNote lines={forkGuide} /> } : {})}
+        {...(forkGuide ? { guide: <GuideNote lines={forkGuide} mark={BirdMark} /> } : {})}
         chart={
           <DifferenceChart
             metricName={METRIC_NAMES[difference.metricId] ?? difference.metricId}
-            seconds={difference.seconds}
+            duration={difference.seconds}
+            unit={{ short: "s", words: "seconds" }}
             interval={SAMPLE_STEPS * flockTimestep}
             here={forkView.samples.here}
             there={forkView.samples.there}
@@ -448,6 +446,7 @@ export function HookWorld() {
       {forkPanel ?? (
         <>
       <WorldStage
+        kit={valleyStage}
         driver={session}
         label={STAGE_LABEL}
         tool="look"
@@ -498,6 +497,7 @@ export function HookWorld() {
 
         <div className="hud-bottom">
           <Guide
+            mark={BirdMark}
             lines={lines}
             cue={cue}
             quiet={whatIf}

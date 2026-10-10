@@ -1,5 +1,5 @@
-import { compassMarks } from "../stage-core/index.ts";
-import { OriginTag } from "./hud-parts.tsx";
+import { compassMarks } from "../../../stage-core/kits/valley/index.ts";
+import { OriginTag } from "../../hud-parts.tsx";
 
 export interface HeadingCompassProps {
   /** Each bird's heading in the field's coordinates, null for a bird at rest (the primitive's Q2). */

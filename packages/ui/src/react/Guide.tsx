@@ -1,6 +1,6 @@
 import type { Origin } from "@paperplay/contracts";
 import { useEffect, useId, useRef, useState } from "react";
-import { BirdMark, OriginTag } from "./hud-parts.tsx";
+import { OriginTag, type KitMark } from "./hud-parts.tsx";
 
 export interface GuideLine {
   readonly text: string;
@@ -27,6 +27,8 @@ export interface GuideProps {
   readonly quiet?: boolean;
   /** A question to ask instead: the bubble stays open, with a button for each choice, until one is chosen. */
   readonly ask?: GuideAsk | null;
+  /** The world's scene kit's mark, which the guide wears. */
+  readonly mark: KitMark;
 }
 
 /** About six seconds: long enough to read two short sentences, short enough to give the world back. */
@@ -37,7 +39,7 @@ export const GUIDE_SHOW_MS = 6000;
  * origin. It appears after an interaction and fades after about 6 s; its icon brings back the
  * last thing it said. Under reduced motion it appears and disappears without animation (CSS).
  */
-export function Guide({ lines, cue, showFor = GUIDE_SHOW_MS, quiet = false, ask = null }: GuideProps) {
+export function Guide({ lines, cue, showFor = GUIDE_SHOW_MS, quiet = false, ask = null, mark: Mark }: GuideProps) {
   const id = useId();
   const firstChoice = useRef<HTMLButtonElement>(null);
   const [seenCue, setSeenCue] = useState(cue);
@@ -73,7 +75,7 @@ export function Guide({ lines, cue, showFor = GUIDE_SHOW_MS, quiet = false, ask 
         data-hud-frame
         onClick={() => setOpen(!shown)}
       >
-        <BirdMark size={40} />
+        <Mark size={40} />
       </button>
       <div id={id} className="card guide-bubble" data-hud={shown ? "" : undefined} role="group" aria-label="Guide">
         {ask ? (
@@ -111,10 +113,10 @@ export function GuideLines({ lines }: { readonly lines: readonly GuideLine[] }) 
 }
 
 /** The guide as a note inside a card, such as the fork's: the same lines, without the bubble. */
-export function GuideNote({ lines }: { readonly lines: readonly GuideLine[] }) {
+export function GuideNote({ lines, mark: Mark }: { readonly lines: readonly GuideLine[]; readonly mark: KitMark }) {
   return (
     <div className="guide-note" role="group" aria-label="Guide">
-      <BirdMark size={32} />
+      <Mark size={32} />
       <GuideLines lines={lines} />
     </div>
   );

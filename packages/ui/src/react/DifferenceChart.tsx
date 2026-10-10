@@ -3,10 +3,12 @@ import { useLayoutEffect, useRef, useState } from "react";
 export interface DifferenceChartProps {
   /** What is charted, in words: "Directional agreement". */
   readonly metricName: string;
-  /** The level's time: the chart's width, in seconds. */
-  readonly seconds: number;
-  /** Seconds between samples. */
+  /** The level's time: the chart's width, in the world's time unit. */
+  readonly duration: number;
+  /** Time between samples, in the same unit. */
   readonly interval: number;
+  /** The time unit, as the axis writes it ("s") and as a sentence says it ("seconds"). */
+  readonly unit: { readonly short: string; readonly words: string };
   /** Each world's samples, from the fork's first step. */
   readonly here: readonly number[];
   readonly there: readonly number[];
@@ -33,7 +35,7 @@ const label = (value: number): string => (Number.isInteger(value) ? String(value
  * time, sample by sample, as the primitive measured it. This world is a solid line, the other a
  * dashed one, so the two differ without colour.
  */
-export function DifferenceChart({ metricName, seconds, interval, here, there, top, threshold, hereName, thereName }: DifferenceChartProps) {
+export function DifferenceChart({ metricName, duration, interval, unit, here, there, top, threshold, hereName, thereName }: DifferenceChartProps) {
   const figure = useRef<HTMLElement>(null);
   const [width, setWidth] = useState(320);
   useLayoutEffect(() => {
@@ -51,7 +53,7 @@ export function DifferenceChart({ metricName, seconds, interval, here, there, to
   const height = width < NARROW ? 120 : 140;
   const RIGHT = width - RIGHT_GAP;
   const BOTTOM = height - BOTTOM_GAP;
-  const x = (index: number): number => LEFT + ((index * interval) / seconds) * (RIGHT - LEFT);
+  const x = (index: number): number => LEFT + ((index * interval) / duration) * (RIGHT - LEFT);
   const y = (value: number): number => BOTTOM - (Math.min(Math.max(value, 0), top) / top) * (BOTTOM - TOP);
   const line = (values: readonly number[]): string => values.map((value, index) => `${x(index).toFixed(1)},${y(value).toFixed(1)}`).join(" ");
   const last = (values: readonly number[]): string => (values.length > 0 ? label(Number((values.at(-1) ?? 0).toFixed(2))) : "nothing yet");
@@ -63,7 +65,7 @@ export function DifferenceChart({ metricName, seconds, interval, here, there, to
         width={width}
         height={height}
         role="img"
-        aria-label={`${metricName} over ${seconds} seconds in both worlds. After ${elapsed.toFixed(1)} s, ${hereName} is at ${last(here)} and ${thereName} at ${last(there)}.`}
+        aria-label={`${metricName} over ${duration} ${unit.words} in both worlds. After ${elapsed.toFixed(1)} ${unit.short}, ${hereName} is at ${last(here)} and ${thereName} at ${last(there)}.`}
       >
         <line className="chart-axis" x1={LEFT} y1={BOTTOM} x2={RIGHT} y2={BOTTOM} />
         <line className="chart-axis" x1={LEFT} y1={TOP} x2={LEFT} y2={BOTTOM} />
@@ -72,9 +74,9 @@ export function DifferenceChart({ metricName, seconds, interval, here, there, to
             {label(value)}
           </text>
         ))}
-        {[0, seconds / 2, seconds].map((value) => (
-          <text key={`x${value}`} className="chart-tick" x={LEFT + (value / seconds) * (RIGHT - LEFT)} y={BOTTOM + 16} textAnchor={value === seconds ? "end" : value === 0 ? "start" : "middle"}>
-            {`${label(value)} s`}
+        {[0, duration / 2, duration].map((value) => (
+          <text key={`x${value}`} className="chart-tick" x={LEFT + (value / duration) * (RIGHT - LEFT)} y={BOTTOM + 16} textAnchor={value === duration ? "end" : value === 0 ? "start" : "middle"}>
+            {`${label(value)} ${unit.short}`}
           </text>
         ))}
         {threshold === undefined ? null : <line className="chart-threshold" x1={LEFT} y1={y(threshold)} x2={RIGHT} y2={y(threshold)} />}

@@ -2,8 +2,9 @@ import { readdirSync, readFileSync } from "node:fs";
 import type { Agent, FlockState } from "@paperplay/primitives/flock";
 import * as THREE from "three";
 import { describe, expect, it } from "vitest";
-import { DEFAULT_CAMERA, describeFrame, dusk, orbit, valleyDay, type FrameDescription, type StagePalette } from "../src/stage-core/index.ts";
-import { applyFrame, BIRD_CAPACITY, createStageScene, TRAIL_WIDTH } from "../src/three-adapter/index.ts";
+import { DEFAULT_CAMERA, orbit } from "../src/stage-core/index.ts";
+import { describeFrame, dusk, valleyDay, type FlockFrame as FrameDescription, type ValleyPalette as StagePalette } from "../src/stage-core/kits/valley/index.ts";
+import { applyFrame, BIRD_CAPACITY, createStageScene, TRAIL_WIDTH } from "../src/three-adapter/kits/valley/index.ts";
 
 const agents: Agent[] = [
   { x: 8, y: 24, vx: 0, vy: 2 },

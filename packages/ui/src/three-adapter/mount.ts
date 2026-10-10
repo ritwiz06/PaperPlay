@@ -1,13 +1,13 @@
 import * as THREE from "three";
-import type { FrameDescription } from "../stage-core/index.ts";
+import type { BaseFrame } from "../stage-core/index.ts";
 import { applyFrame } from "./apply-frame.ts";
-import { createStageScene } from "./scene.ts";
+import { createStageScene, type ThreeKit } from "./scene.ts";
 
-export interface WebGLStage {
+export interface WebGLStage<Frame extends BaseFrame = BaseFrame> {
   readonly kind: "webgl";
   readonly canvas: HTMLCanvasElement;
   viewport(): { width: number; height: number };
-  render(frame: FrameDescription): void;
+  render(frame: Frame): void;
   dispose(): void;
 }
 
@@ -17,7 +17,7 @@ export interface FallbackStage {
   dispose(): void;
 }
 
-export type MountedStage = WebGLStage | FallbackStage;
+export type MountedStage<Frame extends BaseFrame = BaseFrame> = WebGLStage<Frame> | FallbackStage;
 
 /** True when this browser can create a WebGL2 context, which Three.js needs. */
 export function webgl2Available(doc: Document): boolean {
@@ -30,7 +30,7 @@ export function webgl2Available(doc: Document): boolean {
   }
 }
 
-function fallback(doc: Document): HTMLElement {
+function fallback(doc: Document, words: string): HTMLElement {
   const section = doc.createElement("section");
   section.className = "stage-fallback";
   section.setAttribute("aria-labelledby", "stage-fallback-title");
@@ -38,8 +38,7 @@ function fallback(doc: Document): HTMLElement {
   title.id = "stage-fallback-title";
   title.textContent = "This world needs WebGL";
   const why = doc.createElement("p");
-  why.textContent =
-    "Your browser has WebGL turned off or cannot start it, so the valley and its flock cannot be drawn here. The flock's rules and measurements do not depend on drawing it.";
+  why.textContent = words;
   const next = doc.createElement("p");
   next.textContent =
     "Turning on hardware acceleration in your browser settings usually fixes this. Otherwise, open PaperPlay in a current version of Chrome, Edge, Firefox or Safari.";
@@ -47,15 +46,17 @@ function fallback(doc: Document): HTMLElement {
   return section;
 }
 
-export interface StageOptions {
+export interface StageOptions<Frame extends BaseFrame = BaseFrame> {
   /** What the canvas shows, for people who cannot see it. */
   readonly label: string;
+  /** The scene kit's Three.js half, which draws the frames this stage is given. */
+  readonly kit: ThreeKit<object, Frame>;
   /** Called after the canvas changes size, for callers that do not redraw every frame. */
   readonly onResize?: () => void;
 }
 
 /** What the stage says when the browser takes its WebGL context away, with a way back. */
-function lostNotice(doc: Document, onReload: () => void): HTMLElement {
+function lostNotice(doc: Document, words: string, onReload: () => void): HTMLElement {
   const section = doc.createElement("section");
   section.className = "stage-lost";
   section.setAttribute("aria-labelledby", "stage-lost-title");
@@ -64,8 +65,7 @@ function lostNotice(doc: Document, onReload: () => void): HTMLElement {
   title.textContent = "The world stopped drawing";
   const why = doc.createElement("p");
   why.setAttribute("role", "status");
-  why.textContent =
-    "The browser took back this world's graphics, as it can when a tab sits in the background. Only the drawing stopped: the flock's run and its measurements carry on.";
+  why.textContent = words;
   const reload = doc.createElement("button");
   reload.type = "button";
   reload.className = "btn";
@@ -83,15 +83,15 @@ function lostNotice(doc: Document, onReload: () => void): HTMLElement {
  * browser gives it back first, drawing resumes on its own. Either way the scene is kept, and
  * nothing about the run changes.
  */
-export function mountStage(container: HTMLElement, options: StageOptions): MountedStage {
+export function mountStage<Frame extends BaseFrame>(container: HTMLElement, options: StageOptions<Frame>): MountedStage<Frame> {
   const doc = container.ownerDocument;
   if (!webgl2Available(doc)) {
-    const element = fallback(doc);
+    const element = fallback(doc, options.kit.words.fallback);
     container.replaceChildren(element);
     return { kind: "fallback", element, dispose: () => element.remove() };
   }
 
-  const stage = createStageScene();
+  const stage = createStageScene(options.kit);
   let disposed = false;
   let notice: HTMLElement | null = null;
   const status = (value: "drawing" | "lost" | "restored" | "reloaded") => {
@@ -115,7 +115,7 @@ export function mountStage(container: HTMLElement, options: StageOptions): Mount
       event.preventDefault();
       if (disposed) return;
       status("lost");
-      if (!notice) container.append((notice = lostNotice(doc, reload)));
+      if (!notice) container.append((notice = lostNotice(doc, options.kit.words.lost, reload)));
     });
     canvas.addEventListener("webglcontextrestored", () => {
       if (disposed) return;

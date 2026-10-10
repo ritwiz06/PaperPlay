@@ -9,11 +9,8 @@
  * Framework-free, like the session, so it is tested in Node.
  */
 import { claimHolds, SAMPLE_STEPS, summarise, type BuiltLevel } from "@paperplay/pipeline";
-import { flockPlanarWeighted as flock, type FlockObservables, type FlockParams } from "@paperplay/primitives/flock";
-import { advance, START_CLOCK, type Speed, type StepClock } from "@paperplay/ui/stage-core";
-import { createWorldSession, type SessionOptions, type WorldSession } from "./session.ts";
-
-const TIMESTEP = flock.fixedTimestep;
+import { advance, START_CLOCK, type BaseEmphasis, type Speed, type StepClock } from "@paperplay/ui/stage-core";
+import type { SessionOptions, Stepped, WorldSession } from "./session.ts";
 
 export interface ForkSnapshot {
   /** Steps since the fork opened, and the level's time in steps. */
@@ -33,9 +30,9 @@ export interface ForkSnapshot {
   readonly holds: boolean | null;
 }
 
-export interface Fork {
-  readonly here: WorldSession;
-  readonly there: WorldSession;
+export interface Fork<Session> {
+  readonly here: Session;
+  readonly there: Session;
   /** Advances both worlds by the steps this much wall time allows, at the fork's speed; returns how many. */
   tick(frameSeconds: number): number;
   /** Runs both worlds at 1x, 2x or 4x: more fixed steps per frame, the same steps. */
@@ -47,26 +44,32 @@ export interface Fork {
 }
 
 /** The fork's two worlds' parameters: the learner's current ones, and those with the What-if applied. */
-export function forkParams(level: BuiltLevel, current: FlockParams): { readonly here: FlockParams; readonly there: FlockParams } {
+export function forkParams<P>(level: BuiltLevel, current: P): { readonly here: P; readonly there: P } {
   const overrides = Object.fromEntries(level.fork.overrides.map((override) => [override.variable, override.to]));
-  return { here: current, there: flock.paramSchema.parse({ ...current, ...overrides }) };
+  return { here: current, there: level.primitive.paramSchema.parse({ ...current, ...overrides }) as P };
 }
 
-export function openFork(level: BuiltLevel, from: WorldSession, options: { readonly playing: boolean; readonly speed?: Speed }): Fork {
+export function openFork<P, S extends Stepped, O extends Record<string, number>, Extra, Emphasis extends BaseEmphasis, Input>(
+  level: BuiltLevel,
+  from: WorldSession<P, S, O, Extra, Emphasis, Input>,
+  options: { readonly playing: boolean; readonly speed?: Speed },
+): Fork<WorldSession<P, S, O, Extra, Emphasis, Input>> {
   const { difference, restarts } = level.fork;
+  const TIMESTEP = level.primitive.fixedTimestep;
   const now = from.snapshot();
   const params = forkParams(level, now.params);
-  const base: Omit<SessionOptions, "params"> = {
+  const base: Omit<SessionOptions<P, S>, "params"> = {
     seed: now.seed,
-    actions: level.actions as SessionOptions["actions"],
-    ring: level.observable.metricId === "groupSpread",
+    actions: level.actions,
+    emphasise: level.observable.metricId,
     ...(restarts ? { setup: level.setup.map((placement) => placement.event) } : { start: from.state() }),
   };
-  const here = createWorldSession({ ...base, params: params.here });
-  const there = createWorldSession({ ...base, params: params.there });
+  const here = from.spawn({ ...base, params: params.here });
+  const there = from.spawn({ ...base, params: params.there });
   const totalSteps = Math.round(difference.seconds / TIMESTEP);
-  const metric = difference.metricId as keyof FlockObservables;
-  const samples = { here: [here.snapshot().observed[metric]], there: [there.snapshot().observed[metric]] };
+  const metric = difference.metricId;
+  const observed = (world: WorldSession<P, S, O, Extra, Emphasis, Input>): number => world.snapshot().observed[metric] ?? Number.NaN;
+  const samples = { here: [observed(here)], there: [observed(there)] };
   let steps = 0;
   let playing = options.playing;
   let speed: Speed = options.speed ?? 1;
@@ -79,8 +82,8 @@ export function openFork(level: BuiltLevel, from: WorldSession, options: { reado
       there.stepBy(1);
       steps += 1;
       if (steps % SAMPLE_STEPS === 0) {
-        samples.here.push(here.snapshot().observed[metric]);
-        samples.there.push(there.snapshot().observed[metric]);
+        samples.here.push(observed(here));
+        samples.there.push(observed(there));
       }
     }
     if (steps >= totalSteps) playing = false;

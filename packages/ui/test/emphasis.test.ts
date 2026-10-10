@@ -1,15 +1,7 @@
 import type { Agent, FlockState } from "@paperplay/primitives/flock";
 import { describe, expect, it } from "vitest";
-import {
-  CURSOR_RADIUS,
-  DEFAULT_CAMERA,
-  describeFrame,
-  dusk,
-  FLIGHT_ALTITUDE,
-  SELECTED_SIZE,
-  valleyDay,
-  type StageInput,
-} from "../src/stage-core/index.ts";
+import { DEFAULT_CAMERA } from "../src/stage-core/index.ts";
+import { CURSOR_RADIUS, describeFrame, dusk, FLIGHT_ALTITUDE, SELECTED_SIZE, valleyDay, type StageInput } from "../src/stage-core/kits/valley/index.ts";
 
 const dt = 1 / 60;
 const agents: Agent[] = [

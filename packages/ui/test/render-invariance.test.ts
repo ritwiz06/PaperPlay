@@ -2,17 +2,8 @@
 // camera or palette, or not at all, must leave every measured observable bit-identical.
 import { flockAtRocks, flockDefaultParams, flockNeighbours, flockPlanarWeighted as flock, flockSpread, type FlockState } from "@paperplay/primitives/flock";
 import { describe, expect, it } from "vitest";
-import {
-  DEFAULT_CAMERA,
-  describeFrame,
-  dusk,
-  orbit,
-  valleyDay,
-  zoom,
-  type FrameDescription,
-  type OrbitCamera,
-  type StagePalette,
-} from "../src/stage-core/index.ts";
+import { DEFAULT_CAMERA, orbit, zoom, type OrbitCamera } from "../src/stage-core/index.ts";
+import { describeFrame, dusk, valleyDay, type FlockFrame as FrameDescription, type ValleyPalette as StagePalette } from "../src/stage-core/kits/valley/index.ts";
 
 const STEPS = 600;
 

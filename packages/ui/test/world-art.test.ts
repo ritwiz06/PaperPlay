@@ -1,18 +1,7 @@
 import type { Agent, FlockState } from "@paperplay/primitives/flock";
 import { describe, expect, it } from "vitest";
-import {
-  contrastRatio,
-  DEFAULT_CAMERA,
-  describeFrame,
-  dusk,
-  FLAP_HZ,
-  flockCentre,
-  headingColor,
-  mixHex,
-  TRAIL_LENGTH,
-  valleyDay,
-  type StageInput,
-} from "../src/stage-core/index.ts";
+import { contrastRatio, DEFAULT_CAMERA, mixHex } from "../src/stage-core/index.ts";
+import { describeFrame, dusk, FLAP_HZ, flockCentre, headingColor, TRAIL_LENGTH, valleyDay, type StageInput } from "../src/stage-core/kits/valley/index.ts";
 
 const dt = 1 / 60;
 const world = (agents: Agent[], stepIndex = 0): FlockState => ({ width: 32, height: 32, stepIndex, agents, beacons: [], obstacles: [] });

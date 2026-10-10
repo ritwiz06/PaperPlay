@@ -3,6 +3,7 @@
  * They display what they are given and report what the learner does.
  */
 import type { Origin } from "@paperplay/contracts";
+import type { ReactNode } from "react";
 import { ORIGIN_LABELS, ORIGIN_MEANINGS } from "./origin.tsx";
 
 /** Each origin in a word or two, for the HUD. The journal's legend gives the full name and meaning. */
@@ -70,14 +71,8 @@ export function DepthToggle({ name, value, onChange }: DepthToggleProps) {
   );
 }
 
-export function BirdMark({ size = 34 }: { readonly size?: number }) {
-  return (
-    <svg className="bird-mark" width={size} height={size} viewBox="0 0 34 34" aria-hidden="true">
-      <circle cx="17" cy="17" r="15" fill="var(--aqua)" stroke="var(--ink)" strokeWidth="2" />
-      <path d="M9 20 L24 12 L19 22 L16 18 Z" fill="var(--ink)" />
-    </svg>
-  );
-}
+/** A scene kit's mark: the small round picture the guide and the world card wear. */
+export type KitMark = (props: { readonly size?: number }) => ReactNode;
 
 export function BookIcon() {
   return (

@@ -1,18 +1,7 @@
 import { flockDefaultParams, flockPlanarWeighted as flock } from "@paperplay/primitives/flock";
 import { describe, expect, it } from "vitest";
-import {
-  coveredFraction,
-  DEFAULT_CAMERA,
-  describeFrame,
-  fieldBoundsOnScreen,
-  groundPointAt,
-  largestFreeRect,
-  projectToNdc,
-  valleyDay,
-  windowFromRect,
-  withViewport,
-  type Rect,
-} from "../src/stage-core/index.ts";
+import { coveredFraction, DEFAULT_CAMERA, fieldBoundsOnScreen, groundPointAt, largestFreeRect, projectToNdc, windowFromRect, withViewport, type Rect } from "../src/stage-core/index.ts";
+import { describeFrame, valleyDay } from "../src/stage-core/kits/valley/index.ts";
 
 const state = flock.init(flockDefaultParams, 4);
 const input = { previous: state, current: state, alpha: 1, timestep: flock.fixedTimestep };

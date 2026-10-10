@@ -1,26 +1,28 @@
-import type { FrameLook } from "../stage-core/index.ts";
+import type { BaseEmphasis, BaseFrame, StageKit } from "../stage-core/index.ts";
 import { useEffect, useRef, type ReactNode } from "react";
 import { PlayIcon } from "./hud-parts.tsx";
 import { WorldStage, type StageDriver } from "./WorldStage.tsx";
 
-export interface ForkPane {
+export interface ForkPane<Input = unknown, Emphasis extends BaseEmphasis = BaseEmphasis> {
   /** Shown over the pane: "This world", "What if: Move together at 0". */
   readonly label: string;
   /** The pane's stage, as a screen reader names it. */
   readonly name: string;
-  readonly driver: StageDriver;
+  readonly driver: StageDriver<Input, Emphasis>;
 }
 
-export interface ForkViewProps {
+export interface ForkViewProps<Input, Emphasis extends BaseEmphasis, Look, Frame extends BaseFrame> {
+  /** The scene kit both stages draw with. */
+  readonly kit: StageKit<Input, Emphasis, Look, Frame>;
   /** The What-if, as a question. */
   readonly title: string;
   /** Under the title: what the other world changes, and whether both restart. */
   readonly note: ReactNode;
-  readonly here: ForkPane;
-  readonly there: ForkPane;
-  /** A description of the flock both stages draw. */
+  readonly here: ForkPane<Input, Emphasis>;
+  readonly there: ForkPane<Input, Emphasis>;
+  /** A description of the world both stages draw. */
   readonly stageLabel: string;
-  readonly look?: FrameLook;
+  readonly look?: Look;
   readonly chart: ReactNode;
   /** The measured difference so far, and, once the level's time is up, the result. */
   readonly result: ReactNode;
@@ -42,8 +44,8 @@ export interface ForkViewProps {
  * side by side on a desktop and stacked on a phone, with the one measured difference between
  * them charted beneath. The stages only draw; the app keeps both worlds in step.
  */
-export function ForkView(props: ForkViewProps) {
-  const { title, note, here, there, stageLabel, look, chart, result, playing, done, onTogglePlay, onClose, onReadout, guide, controls, children } = props;
+export function ForkView<Input, Emphasis extends BaseEmphasis, Look, Frame extends BaseFrame>(props: ForkViewProps<Input, Emphasis, Look, Frame>) {
+  const { kit, title, note, here, there, stageLabel, look, chart, result, playing, done, onTogglePlay, onClose, onReadout, guide, controls, children } = props;
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     heading.current?.focus({ preventScroll: true });
@@ -76,19 +78,20 @@ export function ForkView(props: ForkViewProps) {
       </header>
       <div className="fork-pane fork-here" data-pane="here">
         <WorldStage
+          kit={kit}
           driver={here.driver}
           name={here.name}
           label={stageLabel}
           tool="look"
           framing="overview"
-          look={look ?? {}}
+          {...(look === undefined ? {} : { look })}
           onTogglePlay={onTogglePlay}
           {...(onReadout ? { onReadout } : {})}
         />
         <p className="card fork-label">{here.label}</p>
       </div>
       <div className="fork-pane fork-there" data-pane="there">
-        <WorldStage driver={there.driver} name={there.name} label={stageLabel} tool="look" framing="overview" look={look ?? {}} onTogglePlay={onTogglePlay} />
+        <WorldStage kit={kit} driver={there.driver} name={there.name} label={stageLabel} tool="look" framing="overview" {...(look === undefined ? {} : { look })} onTogglePlay={onTogglePlay} />
         <p className="card fork-label">{there.label}</p>
       </div>
       <div className="card fork-result">

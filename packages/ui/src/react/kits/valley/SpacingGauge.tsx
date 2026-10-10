@@ -1,4 +1,4 @@
-import { OriginTag } from "./hud-parts.tsx";
+import { OriginTag } from "../../hud-parts.tsx";
 
 export interface SpacingGaugeProps {
   /** The mean nearest-neighbour distance, as the primitive measures it (E13), in world units. */

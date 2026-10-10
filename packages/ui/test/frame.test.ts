@@ -1,15 +1,7 @@
 import type { Agent, FlockState } from "@paperplay/primitives/flock";
 import { describe, expect, it } from "vitest";
-import {
-  DEFAULT_CAMERA,
-  describeFrame,
-  FLIGHT_ALTITUDE,
-  MAX_BANK,
-  poseOf,
-  valleyDay,
-  viewMatrix,
-  type StageInput,
-} from "../src/stage-core/index.ts";
+import { DEFAULT_CAMERA, poseOf, viewMatrix } from "../src/stage-core/index.ts";
+import { describeFrame, FLIGHT_ALTITUDE, MAX_BANK, valleyDay, type StageInput } from "../src/stage-core/kits/valley/index.ts";
 
 const dt = 1 / 60;
 const other: Agent = { x: 16, y: 16, vx: 1, vy: 0 };

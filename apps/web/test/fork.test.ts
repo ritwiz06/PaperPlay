@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import { FLOCKING, sessionOptionsFor } from "../src/world/authored-world.ts";
 import { forkParams, openFork } from "../src/world/fork.ts";
 import { HOOK_SEED } from "../src/world/local-world.ts";
-import { createWorldSession } from "../src/world/session.ts";
+import { createWorldSession } from "../src/world/valley.ts";
 
 const record = readFileSync(fileURLToPath(new URL("../../../eval/sweeps/levels.md", import.meta.url)), "utf8");
 /** Seed 5's row in a level's table of eval/sweeps/levels.md: this world, the other, holds. */

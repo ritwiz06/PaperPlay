@@ -7,8 +7,9 @@
  * Every value here is a presentation choice for the video, not a claim from the paper.
  */
 import { flockPlanarWeighted as flock } from "@paperplay/primitives/flock";
-import { FLIGHT_ALTITUDE, flockCentre, type Vec3 } from "@paperplay/ui/stage-core";
-import type { WorldSession } from "../world/session.ts";
+import type { Vec3 } from "@paperplay/ui/stage-core";
+import { FLIGHT_ALTITUDE, flockCentre } from "@paperplay/ui/stage-core/valley";
+import type { FlockSession as WorldSession } from "../world/valley.ts";
 
 /**
  * The beacon is dragged in a straight line through the flock's starting centre. Of 432

@@ -1,17 +1,7 @@
 import type { Agent, FlockState } from "@paperplay/primitives/flock";
 import { describe, expect, it } from "vitest";
-import {
-  DEFAULT_CAMERA,
-  describeFrame,
-  groundPointAt,
-  nearestBird,
-  orbit,
-  pickBird,
-  projectToNdc,
-  valleyDay,
-  type FrameDescription,
-  type Vec3,
-} from "../src/stage-core/index.ts";
+import { DEFAULT_CAMERA, groundPointAt, orbit, projectToNdc, type Vec3 } from "../src/stage-core/index.ts";
+import { describeFrame, nearestBird, pickBird, valleyDay, type FlockFrame as FrameDescription } from "../src/stage-core/kits/valley/index.ts";
 
 const agents: Agent[] = [
   { x: 8, y: 8, vx: 1, vy: 0 },

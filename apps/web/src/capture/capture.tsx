@@ -6,9 +6,10 @@
  */
 import { flockDefaultParams } from "@paperplay/primitives/flock";
 import { WorldStage, type StageDriver } from "@paperplay/ui/react";
+import { valleyStage, type FrameEmphasis, type StageInput } from "@paperplay/ui/stage-core/valley";
 import { createRoot } from "react-dom/client";
 import { LOCAL_ACTIONS } from "../world/local-world.ts";
-import { createWorldSession } from "../world/session.ts";
+import { createWorldSession } from "../world/valley.ts";
 import { DEMO, scriptDemo } from "./demo-script.ts";
 import "@paperplay/ui/components.css";
 import "./capture.css";
@@ -35,7 +36,7 @@ const session = createWorldSession({ seed: DEMO.seed, params: flockDefaultParams
 const demo = scriptDemo(session);
 
 // The stage draws whenever the session changes, and never advances it: tick takes no steps.
-const driver: StageDriver = {
+const driver: StageDriver<StageInput, FrameEmphasis> = {
   tick: () => 0,
   stageInput: () => session.stageInput(),
   emphasis: () => ({}),
@@ -64,6 +65,7 @@ if (!container) throw new Error("the capture page needs a #root element to mount
 // No StrictMode: its second mount in development would draw a frame the script did not ask for.
 createRoot(container).render(
   <WorldStage
+    kit={valleyStage}
     driver={driver}
     label="Murmuration Valley: seed 4 forming a murmuration while a beacon is dragged through it."
     tool="look"

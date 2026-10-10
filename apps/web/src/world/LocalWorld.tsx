@@ -1,11 +1,15 @@
 import type { Action } from "@paperplay/contracts";
 import { flockDefaultParams, type FlockParams } from "@paperplay/primitives/flock";
-import { LabBench, OriginChip, Readout, WorldStage, type BenchControl, type StageTool } from "@paperplay/ui/react";
+import { LabBench, OriginChip, Readout, WorldStage, type BenchControl } from "@paperplay/ui/react";
+import { VALLEY_TOOLS } from "@paperplay/ui/react/valley";
+import { valleyStage } from "@paperplay/ui/stage-core/valley";
 import { useCallback, useState } from "react";
 import { CONTROL_NOTES, HOOK_SEED, LOCAL_ACTIONS, LOCAL_CONTROLS, PRIMARY_ACTION, type LocalActionId } from "./local-world.ts";
-import { createWorldSession, type SessionSnapshot, type WorldSession } from "./session.ts";
+import { createWorldSession, type FlockSession as WorldSession, type SessionSnapshot } from "./valley.ts";
 
-const TOOLS: readonly { readonly tool: StageTool; readonly label: string }[] = [
+type Tool = "look" | keyof typeof VALLEY_TOOLS;
+
+const TOOLS: readonly { readonly tool: Tool; readonly label: string }[] = [
   { tool: "look", label: "Look around" },
   { tool: "beacon", label: "Place a beacon" },
   { tool: "obstacle", label: "Place an obstacle" },
@@ -36,7 +40,7 @@ function openSession(): WorldSession {
 export function LocalWorld() {
   const [session] = useState(openSession);
   const [snapshot, setSnapshot] = useState<SessionSnapshot>(() => session.snapshot());
-  const [tool, setTool] = useState<StageTool>("look");
+  const [tool, setTool] = useState<Tool>("look");
   const [byHeading, setByHeading] = useState(false);
   const refresh = useCallback(() => setSnapshot(session.snapshot()), [session]);
   const act = (change: () => void) => {
@@ -77,12 +81,14 @@ export function LocalWorld() {
     >
       <section className="stage-area" aria-label="The world">
         <WorldStage
+          kit={valleyStage}
           driver={session}
           label={STAGE_LABEL}
           tool={tool}
+          tools={VALLEY_TOOLS}
           look={{ birdColor: byHeading ? "heading" : "plain" }}
-          onGround={(kind, point) => act(() => void session.place(kind, point.x, point.y))}
-          onBird={(index) => act(() => session.select(index))}
+          onGround={(kind, point) => act(() => void session.place(kind === "beacon" ? "beacon" : "obstacle", point.x, point.y))}
+          onPick={(index) => act(() => session.select(index))}
           onTogglePlay={togglePlay}
           onReadout={refresh}
         >
@@ -99,7 +105,7 @@ export function LocalWorld() {
             {snapshot.playing ? "Pause" : "Play"}
           </button>
           <p className="transport-time">
-            <span>{snapshot.seconds.toFixed(1)} s</span> <span className="transport-step">step {snapshot.step}</span>
+            <span>{snapshot.time.toFixed(1)} s</span> <span className="transport-step">step {snapshot.step}</span>
           </p>
           <button type="button" onClick={() => act(() => session.replaySameSeed())}>
             Replay same seed

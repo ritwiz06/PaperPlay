@@ -1,37 +1,29 @@
 import { useEffect, useId, useRef, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 import {
   DEFAULT_CAMERA,
-  describeFrame,
   fieldBoundsOnScreen,
-  FLIGHT_ALTITUDE,
-  flockCentre,
   groundPointAt,
-  nearestBird,
   orbit,
-  pickBird,
   projectToNdc,
   readoutDue,
-  valleyDay,
   windowFromRect,
   withViewport,
   zoom,
-  type FrameDescription,
-  type FrameEmphasis,
-  type FrameLook,
+  type BaseEmphasis,
+  type BaseFrame,
   type OrbitCamera,
   type Rect,
-  type StageInput,
-  type StagePalette,
+  type StageKit,
   type Vec3,
 } from "../stage-core/index.ts";
-import type { mountStage as MountStage, WebGLStage } from "../three-adapter/index.ts";
+import type { mountStage as MountStage, ThreeKit, WebGLStage } from "../three-adapter/index.ts";
 
 /** What the stage draws from. The app owns the run; the stage only advances it and draws its states. */
-export interface StageDriver {
+export interface StageDriver<Input = unknown, Emphasis extends BaseEmphasis = BaseEmphasis> {
   /** Takes the whole fixed steps this much wall time allows; returns how many. */
   tick(frameSeconds: number): number;
-  stageInput(): StageInput;
-  emphasis(): FrameEmphasis;
+  stageInput(): Input;
+  emphasis(): Emphasis;
   /** Changes whenever there is something new to draw. */
   version(): number;
   /**
@@ -42,19 +34,29 @@ export interface StageDriver {
   camera?(): Partial<Pick<OrbitCamera, "yaw" | "pitch" | "distance" | "target">> | null;
 }
 
-/** What a click, or Enter at the keyboard cursor, does on the stage. */
-export type StageTool = "look" | "beacon" | "obstacle" | "bird";
+/** What a tool does when the learner clicks the stage, or presses Enter at the keyboard cursor, and how the stage says so. */
+export interface StageTool {
+  readonly does: "place" | "pick";
+  readonly hint: string;
+}
 
-export interface WorldStageProps {
-  readonly driver: StageDriver;
+export interface WorldStageProps<Input, Emphasis extends BaseEmphasis, Look, Frame extends BaseFrame> {
+  /** The scene kit's pure half, which turns the driver's states into frames (ADR-0026). */
+  readonly kit: StageKit<Input, Emphasis, Look, Frame>;
+  readonly driver: StageDriver<Input, Emphasis>;
   /** What the canvas shows, for people who cannot see it. */
   readonly label: string;
   /** The stage's accessible name; "World stage" unless a page shows more than one. */
   readonly name?: string;
-  readonly tool: StageTool;
-  readonly palette?: StagePalette;
-  readonly onGround?: (tool: "beacon" | "obstacle", point: { readonly x: number; readonly y: number }) => void;
-  readonly onBird?: (index: number | null) => void;
+  /** "look", or one of `tools`. */
+  readonly tool: string;
+  /** The tools this stage offers beyond looking around, by name. */
+  readonly tools?: Readonly<Record<string, StageTool>>;
+  readonly palette?: Frame["palette"];
+  /** A placing tool's click, at a point on the ground in simulation coordinates. */
+  readonly onGround?: (tool: string, point: { readonly x: number; readonly y: number }) => void;
+  /** A picking tool's click: the thing picked, by index, or null to let it go. */
+  readonly onPick?: (index: number | null) => void;
   readonly onTogglePlay?: () => void;
   /** Called at most ten times a second while the world changes, never once per frame. */
   readonly onReadout?: () => void;
@@ -65,11 +67,11 @@ export interface WorldStageProps {
   readonly window?: Rect | null;
   /** Called at most ten times a second when the camera turns, with its yaw, for a compass. */
   readonly onView?: (view: { readonly yaw: number }) => void;
-  /** How the flock looks: one colour, or a colour per heading. Render-only. */
-  readonly look?: FrameLook;
+  /** How the kit draws its world, apart from emphasis, such as a colour per heading. Render-only. */
+  readonly look?: Look;
   /**
    * "overview" frames the whole field and holds still. "follow" comes closer, eases toward
-   * the flock's centre and drifts slowly round it when left alone; under reduced motion it is
+   * the kit's focus and drifts slowly round it when left alone; under reduced motion it is
    * the overview. Render-only.
    */
   readonly framing?: "overview" | "follow";
@@ -93,18 +95,13 @@ const KEY_ZOOM = 0.9;
 /** A press that moves less than this many pixels is a click, not a drag. */
 const CLICK_SLOP = 5;
 
-const HINTS: Readonly<Record<StageTool, string>> = {
-  look: "Drag, or use the arrow keys, to look around. Scroll, or press + and −, to zoom. Space plays and pauses.",
-  beacon: "Click the field to place a beacon, or move the cursor with the arrow keys and press Enter.",
-  obstacle: "Click the field to place an obstacle, or move the cursor with the arrow keys and press Enter.",
-  bird: "Click a bird to pick it, or move the cursor with the arrow keys and press Enter. Escape lets it go.",
-};
+const LOOK_HINT = "Drag, or use the arrow keys, to look around. Scroll, or press + and −, to zoom. Space plays and pauses.";
 
-interface ViewState {
+interface ViewState<Frame extends BaseFrame> {
   camera: OrbitCamera;
   dirty: boolean;
-  frame: FrameDescription | null;
-  stage: WebGLStage | null;
+  frame: Frame | null;
+  stage: WebGLStage<Frame> | null;
   cursor: { x: number; y: number } | null;
   /** The cursor shows only while the stage has focus and the keyboard is in use. */
   keyboard: boolean;
@@ -125,15 +122,17 @@ const roundRect = ({ x, y, width, height }: Rect): Rect => ({
 /**
  * The world stage: a Three.js canvas over the run, with orbit and zoom by pointer and by
  * keyboard, and a click (or Enter) that places or picks. It draws on its own animation loop and
- * reports readouts at most ten times a second. It never reads or changes the simulation itself.
+ * reports readouts at most ten times a second. Its kit decides what the world looks like; it
+ * never reads or changes the simulation itself.
  */
-export function WorldStage(props: WorldStageProps) {
-  const { driver, label, tool, children } = props;
+export function WorldStage<Input, Emphasis extends BaseEmphasis, Look, Frame extends BaseFrame>(props: WorldStageProps<Input, Emphasis, Look, Frame>) {
+  const { kit, driver, label, tool, children } = props;
+  const action = tool === "look" ? undefined : props.tools?.[tool];
   const keysId = useId();
   const host = useRef<HTMLDivElement>(null);
   const canvasHost = useRef<HTMLDivElement>(null);
   const latest = useRef(props);
-  const view = useRef<ViewState>({
+  const view = useRef<ViewState<Frame>>({
     camera: DEFAULT_CAMERA,
     dirty: true,
     frame: null,
@@ -157,8 +156,8 @@ export function WorldStage(props: WorldStageProps) {
     const state = view.current;
 
     /** Mounts the Three.js stage and starts the loop; returns what undoes both. */
-    const start = (mountStage: typeof MountStage): (() => void) => {
-      const stage = mountStage(target, { label, onResize: () => void (state.dirty = true) });
+    const start = (mountStage: typeof MountStage, three: ThreeKit<object, Frame>): (() => void) => {
+      const stage = mountStage(target, { label, kit: three, onResize: () => void (state.dirty = true) });
       element.dataset.webgl = stage.kind === "webgl" ? "on" : "off";
       if (stage.kind === "fallback") return () => stage.dispose();
       state.stage = stage;
@@ -167,8 +166,7 @@ export function WorldStage(props: WorldStageProps) {
       if (follow) state.camera = { ...zoom(state.camera, FOLLOW_ZOOM), pitch: FOLLOW_PITCH };
       state.lastInput = performance.now();
       let shownFocus = "";
-      let shownRing = "";
-      let shownTouched = "";
+      const shownMarks: Record<string, string> = {};
 
       const onWheel = (event: WheelEvent) => {
         event.preventDefault();
@@ -192,15 +190,16 @@ export function WorldStage(props: WorldStageProps) {
         const frameSeconds = last === null ? 0 : (now - last) / 1000;
         const steps = driver.tick(frameSeconds);
         last = now;
-        if (follow && frameSeconds > 0) {
-          // Ease toward the flock's centre, taking the short way round the world.
-          const { current } = driver.stageInput();
-          const centre = flockCentre(current);
-          const from = state.camera.target ?? ([0, FLIGHT_ALTITUDE / 2, 0] as Vec3);
-          const nearest = (value: number, size: number) => value - size * Math.round(value / size);
+        const input = follow && frameSeconds > 0 ? driver.stageInput() : null;
+        const centre = input === null ? null : kit.focus(input);
+        if (input !== null && centre !== null) {
+          // Ease toward the kit's focus, taking the short way round a world that wraps.
+          const { width, height } = kit.extent(input);
+          const from = state.camera.target ?? kit.defaultTarget;
+          const nearest = (value: number, size: number) => (kit.wraps ? value - size * Math.round(value / size) : value);
           const limit = (value: number, size: number) => Math.min(Math.max(value, -size / 2 + FOLLOW_INSET), size / 2 - FOLLOW_INSET);
-          const towardX = limit(from[0] + nearest(centre.x - current.width / 2 - from[0], current.width), current.width);
-          const towardZ = limit(from[2] + nearest(centre.y - current.height / 2 - from[2], current.height), current.height);
+          const towardX = limit(from[0] + nearest(centre.x - width / 2 - from[0], width), width);
+          const towardZ = limit(from[2] + nearest(centre.y - height / 2 - from[2], height), height);
           const share = 1 - Math.exp(-Math.min(frameSeconds, 0.1) / FOLLOW_EASE_SECONDS);
           const target: Vec3 = [from[0] + (towardX - from[0]) * share, from[1], from[2] + (towardZ - from[2]) * share];
           let yaw = state.camera.yaw;
@@ -216,7 +215,7 @@ export function WorldStage(props: WorldStageProps) {
           const { tool: active, palette, window: free } = latest.current;
           state.camera = { ...withViewport(state.camera, width, height), ...(driver.camera?.() ?? {}), window: windowFromRect({ width, height }, free) };
           const cursor = state.keyboard && state.focused && active !== "look" ? state.cursor : null;
-          state.frame = describeFrame(driver.stageInput(), state.camera, palette ?? valleyDay, { ...driver.emphasis(), cursor }, latest.current.look);
+          state.frame = kit.describe(driver.stageInput(), state.camera, palette ?? kit.palette, { ...driver.emphasis(), cursor }, latest.current.look);
           stage.render(state.frame);
           // Where the field lands, for tests and tools that check the HUD-aware fit.
           const bounds = JSON.stringify(roundRect(fieldBoundsOnScreen(state.frame, { width, height })));
@@ -226,13 +225,10 @@ export function WorldStage(props: WorldStageProps) {
           const [fx, fy] = projectToNdc(state.frame.camera.view, state.frame.camera.projection, state.frame.camera.target);
           const focus = JSON.stringify({ x: Math.round(((fx + 1) / 2) * width * 10) / 10, y: Math.round(((1 - fy) / 2) * height * 10) / 10 });
           if (focus !== shownFocus) element.dataset.focus = shownFocus = focus;
-        // The spread ring as drawn, for tests: presentation only.
-        const ring = state.frame.rings.find((entry) => entry.key === "spread");
-        const ringText = ring ? JSON.stringify({ radius: ring.radius }) : "";
-        if (ringText !== shownRing) element.dataset.spreadRing = shownRing = ringText;
-        // The rocks drawn lit up, for tests: presentation only.
-        const lit = state.frame.obstacles.filter((rock) => rock.touched === true).map((rock) => rock.key).join(" ");
-        if (lit !== shownTouched) element.dataset.touchedRocks = shownTouched = lit;
+          // What the kit marks on the stage as drawn, for tests: presentation only.
+          for (const [name, value] of Object.entries(kit.marks?.(state.frame) ?? {})) {
+            if (value !== (shownMarks[name] ?? "")) element.dataset[name] = shownMarks[name] = value;
+          }
           drawn = version;
           state.dirty = false;
           frames += 1;
@@ -265,23 +261,25 @@ export function WorldStage(props: WorldStageProps) {
     let cancelled = false;
     let stop: (() => void) | undefined;
     element.dataset.webgl = "loading";
-    void import("../three-adapter/index.ts").then(({ mountStage }) => {
-      if (!cancelled) stop = start(mountStage);
+    void import("../three-adapter/index.ts").then(({ mountStage, THREE_KITS }) => {
+      const three = THREE_KITS[kit.id];
+      if (!three) throw new Error(`no Three.js half is registered for the scene kit ${kit.id}`);
+      if (!cancelled) stop = start(mountStage, three);
     });
     return () => {
       cancelled = true;
       stop?.();
     };
-  }, [driver, label]);
+  }, [driver, label, kit]);
 
   const act = (at: { readonly ndc: readonly [number, number] } | { readonly ground: { readonly x: number; readonly y: number } }) => {
     const frame = view.current.frame;
     if (!frame) return;
-    if (tool === "beacon" || tool === "obstacle") {
+    if (action?.does === "place") {
       const point = "ndc" in at ? groundPointAt(frame, at.ndc) : at.ground;
       if (point) props.onGround?.(tool, point);
-    } else if (tool === "bird") {
-      props.onBird?.("ndc" in at ? pickBird(frame, at.ndc) : nearestBird(frame, at.ground));
+    } else if (action?.does === "pick") {
+      props.onPick?.(("ndc" in at ? kit.pick?.(frame, at.ndc) : kit.nearest?.(frame, at.ground)) ?? null);
     }
   };
 
@@ -339,8 +337,8 @@ export function WorldStage(props: WorldStageProps) {
     } else if (event.key === "Enter" && cursor && tool !== "look") {
       state.cursor = cursor;
       act({ ground: cursor });
-    } else if (event.key === "Escape" && tool === "bird") {
-      props.onBird?.(null);
+    } else if (event.key === "Escape" && action?.does === "pick") {
+      props.onPick?.(null);
     } else {
       return;
     }
@@ -355,7 +353,7 @@ export function WorldStage(props: WorldStageProps) {
       ref={host}
       className="stage"
       data-tool={tool}
-      data-look={props.look?.birdColor ?? "plain"}
+      data-look={kit.lookName(props.look)}
       data-framing={props.framing ?? "overview"}
       role="application"
       aria-label={props.name ?? "World stage"}
@@ -381,7 +379,7 @@ export function WorldStage(props: WorldStageProps) {
         {children}
       </div>
       <p id={keysId} className="stage-keys">
-        {HINTS[tool]}
+        {action?.hint ?? LOOK_HINT}
       </p>
     </div>
   );

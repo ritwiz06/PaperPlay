@@ -1,4 +1,4 @@
-import { OriginTag } from "./hud-parts.tsx";
+import { OriginTag } from "../../hud-parts.tsx";
 
 export interface SpreadDialProps {
   /** How far the largest group spreads, as the primitive measures it (E19), in world units. */

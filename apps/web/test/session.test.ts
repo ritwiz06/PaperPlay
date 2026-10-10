@@ -3,7 +3,7 @@ import { replayRecord, runEvents } from "@paperplay/primitives";
 import { flockAtRocks, flockDefaultParams, flockHeadings, flockNeighbours, flockPlanarWeighted as flock } from "@paperplay/primitives/flock";
 import { describe, expect, it } from "vitest";
 import { HOOK_SEED, LOCAL_ACTIONS, LOCAL_CONTROLS, PRIMARY_ACTION } from "../src/world/local-world.ts";
-import { createWorldSession, type WorldSession } from "../src/world/session.ts";
+import { createWorldSession, type FlockSession as WorldSession } from "../src/world/valley.ts";
 
 const STEP = flock.fixedTimestep;
 const open = (playing = false) => createWorldSession({ seed: HOOK_SEED, params: flockDefaultParams, actions: LOCAL_ACTIONS, playing });

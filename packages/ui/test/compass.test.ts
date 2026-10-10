@@ -1,6 +1,7 @@
 import { flockDefaultParams, flockPlanarWeighted as flock } from "@paperplay/primitives/flock";
 import { describe, expect, it } from "vitest";
-import { compassMarks, DEFAULT_CAMERA, describeFrame, orbit, projectToNdc, valleyDay, withViewport } from "../src/stage-core/index.ts";
+import { DEFAULT_CAMERA, orbit, projectToNdc, withViewport } from "../src/stage-core/index.ts";
+import { compassMarks, describeFrame, valleyDay } from "../src/stage-core/kits/valley/index.ts";
 
 describe("the heading compass", () => {
   it("puts one tick per bird with a heading on the unit ring, and none for a bird at rest", () => {

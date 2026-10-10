@@ -4,7 +4,7 @@
  * the top left. Presentation only.
  */
 import { FIT_ASPECT, FULL_WINDOW, projectToNdc, type ViewWindow } from "./camera.ts";
-import type { FrameDescription } from "./frame.ts";
+import type { BaseFrame } from "./frame.ts";
 import type { Vec3 } from "./vec.ts";
 
 export interface Rect {
@@ -93,8 +93,8 @@ export function windowFromRect(screen: Size, rect: Rect | null | undefined): Vie
   return width > 0 && height > 0 ? { left, top, width, height } : FULL_WINDOW;
 }
 
-/** Where the flight field lands on a canvas of this size: the box around its corners on the ground and at flight height. */
-export function fieldBoundsOnScreen(frame: FrameDescription, screen: Size): Rect {
+/** Where the field lands on a canvas of this size: the box around its corners on the ground and at the height things are drawn. */
+export function fieldBoundsOnScreen(frame: BaseFrame, screen: Size): Rect {
   const { width, depth, altitude } = frame.field;
   const corners: Vec3[] = [-width / 2, width / 2].flatMap((x) => [-depth / 2, depth / 2].flatMap((z) => [[x, 0, z] as Vec3, [x, altitude, z] as Vec3]));
   const points = corners.map((corner) => {
