@@ -54,7 +54,35 @@ export interface StageOptions {
   readonly onResize?: () => void;
 }
 
-/** Puts a WebGL canvas in `container`, or a clear explanation when WebGL is unavailable. */
+/** What the stage says when the browser takes its WebGL context away, with a way back. */
+function lostNotice(doc: Document, onReload: () => void): HTMLElement {
+  const section = doc.createElement("section");
+  section.className = "stage-lost";
+  section.setAttribute("aria-labelledby", "stage-lost-title");
+  const title = doc.createElement("h2");
+  title.id = "stage-lost-title";
+  title.textContent = "The world stopped drawing";
+  const why = doc.createElement("p");
+  why.setAttribute("role", "status");
+  why.textContent =
+    "The browser took back this world's graphics, as it can when a tab sits in the background. Only the drawing stopped: the flock's run and its measurements carry on.";
+  const reload = doc.createElement("button");
+  reload.type = "button";
+  reload.className = "btn";
+  reload.textContent = "Tap to reload the world";
+  reload.addEventListener("click", onReload);
+  section.append(title, why, reload);
+  // A tap on the notice is not a tap on the world: it must not place, pick or orbit anything.
+  for (const type of ["pointerdown", "pointerup", "wheel"]) section.addEventListener(type, (event) => event.stopPropagation());
+  return section;
+}
+
+/**
+ * Puts a WebGL canvas in `container`, or a clear explanation when WebGL is unavailable. If the
+ * browser takes the context away, the stage says so and offers to reload the world; if the
+ * browser gives it back first, drawing resumes on its own. Either way the scene is kept, and
+ * nothing about the run changes.
+ */
 export function mountStage(container: HTMLElement, options: StageOptions): MountedStage {
   const doc = container.ownerDocument;
   if (!webgl2Available(doc)) {
@@ -63,16 +91,45 @@ export function mountStage(container: HTMLElement, options: StageOptions): Mount
     return { kind: "fallback", element, dispose: () => element.remove() };
   }
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(Math.min(doc.defaultView?.devicePixelRatio ?? 1, 2));
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFShadowMap;
-  const canvas = renderer.domElement;
-  canvas.setAttribute("role", "img");
-  canvas.setAttribute("aria-label", options.label);
-  container.replaceChildren(canvas);
-
   const stage = createStageScene();
+  let disposed = false;
+  let notice: HTMLElement | null = null;
+  const status = (value: "drawing" | "lost" | "restored" | "reloaded") => {
+    container.dataset.context = value;
+  };
+  const hideNotice = () => {
+    notice?.remove();
+    notice = null;
+  };
+
+  const create = (): { renderer: THREE.WebGLRenderer; canvas: HTMLCanvasElement } => {
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(doc.defaultView?.devicePixelRatio ?? 1, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
+    const canvas = renderer.domElement;
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", options.label);
+    // Three.js keeps its scene through a loss and rebuilds its GL state when the context returns.
+    canvas.addEventListener("webglcontextlost", (event) => {
+      event.preventDefault();
+      if (disposed) return;
+      status("lost");
+      if (!notice) container.append((notice = lostNotice(doc, reload)));
+    });
+    canvas.addEventListener("webglcontextrestored", () => {
+      if (disposed) return;
+      hideNotice();
+      status("restored");
+      options.onResize?.();
+    });
+    return { renderer, canvas };
+  };
+
+  let { renderer, canvas } = create();
+  container.replaceChildren(canvas);
+  status("drawing");
+
   const viewport = () => ({ width: container.clientWidth, height: container.clientHeight });
   const resize = () => {
     const { width, height } = viewport();
@@ -83,16 +140,33 @@ export function mountStage(container: HTMLElement, options: StageOptions): Mount
   observer.observe(container);
   resize();
 
+  /** A new renderer and canvas for the same scene, when the old context does not come back. */
+  function reload(): void {
+    renderer.dispose();
+    canvas.remove();
+    ({ renderer, canvas } = create());
+    container.prepend(canvas);
+    hideNotice();
+    status("reloaded");
+    resize();
+    // The button that was pressed is gone: keyboard focus goes back to the stage it reloaded.
+    container.closest<HTMLElement>("[tabindex]")?.focus({ preventScroll: true });
+  }
+
   return {
     kind: "webgl",
-    canvas,
+    get canvas() {
+      return canvas;
+    },
     viewport,
     render(frame) {
       applyFrame(stage, frame);
-      renderer.render(stage.scene, stage.camera);
+      if (!renderer.getContext().isContextLost()) renderer.render(stage.scene, stage.camera);
     },
     dispose() {
+      disposed = true;
       observer.disconnect();
+      hideNotice();
       stage.dispose();
       renderer.dispose();
       // Release the WebGL context now, not when the garbage collector gets to it: a fork mounts

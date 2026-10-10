@@ -1,3 +1,5 @@
+import { useLayoutEffect, useRef, useState } from "react";
+
 export interface DifferenceChartProps {
   /** What is charted, in words: "Directional agreement". */
   readonly metricName: string;
@@ -16,10 +18,13 @@ export interface DifferenceChartProps {
   readonly thereName: string;
 }
 
-const LEFT = 36;
-const RIGHT = 312;
+/** Room for the value labels, the axis labels below, and a little air. */
+const LEFT = 40;
+const RIGHT_GAP = 12;
 const TOP = 10;
-const BOTTOM = 104;
+const BOTTOM_GAP = 22;
+/** Drawn at its own width, one unit to a CSS pixel, so its text keeps its size on any screen. */
+const NARROW = 480;
 
 const label = (value: number): string => (Number.isInteger(value) ? String(value) : value.toFixed(value < 1 ? 2 : 1));
 
@@ -29,27 +34,46 @@ const label = (value: number): string => (Number.isInteger(value) ? String(value
  * dashed one, so the two differ without colour.
  */
 export function DifferenceChart({ metricName, seconds, interval, here, there, top, threshold, hereName, thereName }: DifferenceChartProps) {
+  const figure = useRef<HTMLElement>(null);
+  const [width, setWidth] = useState(320);
+  useLayoutEffect(() => {
+    const element = figure.current;
+    if (!element) return;
+    const measure = (): void => {
+      const measured = Math.round(element.clientWidth);
+      if (measured > 0) setWidth(measured);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+  const height = width < NARROW ? 120 : 140;
+  const RIGHT = width - RIGHT_GAP;
+  const BOTTOM = height - BOTTOM_GAP;
   const x = (index: number): number => LEFT + ((index * interval) / seconds) * (RIGHT - LEFT);
   const y = (value: number): number => BOTTOM - (Math.min(Math.max(value, 0), top) / top) * (BOTTOM - TOP);
   const line = (values: readonly number[]): string => values.map((value, index) => `${x(index).toFixed(1)},${y(value).toFixed(1)}`).join(" ");
   const last = (values: readonly number[]): string => (values.length > 0 ? label(Number((values.at(-1) ?? 0).toFixed(2))) : "nothing yet");
   const elapsed = Math.max(here.length - 1, 0) * interval;
   return (
-    <figure className="difference-chart" data-here-samples={here.length} data-there-samples={there.length}>
+    <figure ref={figure} className="difference-chart" data-here-samples={here.length} data-there-samples={there.length}>
       <svg
-        viewBox="0 0 320 128"
+        viewBox={`0 0 ${width} ${height}`}
+        width={width}
+        height={height}
         role="img"
         aria-label={`${metricName} over ${seconds} seconds in both worlds. After ${elapsed.toFixed(1)} s, ${hereName} is at ${last(here)} and ${thereName} at ${last(there)}.`}
       >
         <line className="chart-axis" x1={LEFT} y1={BOTTOM} x2={RIGHT} y2={BOTTOM} />
         <line className="chart-axis" x1={LEFT} y1={TOP} x2={LEFT} y2={BOTTOM} />
         {[0, top / 2, top].map((value) => (
-          <text key={`y${value}`} className="chart-tick" x={LEFT - 4} y={y(value) + 3} textAnchor="end">
+          <text key={`y${value}`} className="chart-tick" x={LEFT - 6} y={y(value) + 4} textAnchor="end">
             {label(value)}
           </text>
         ))}
         {[0, seconds / 2, seconds].map((value) => (
-          <text key={`x${value}`} className="chart-tick" x={LEFT + (value / seconds) * (RIGHT - LEFT)} y={BOTTOM + 13} textAnchor="middle">
+          <text key={`x${value}`} className="chart-tick" x={LEFT + (value / seconds) * (RIGHT - LEFT)} y={BOTTOM + 16} textAnchor={value === seconds ? "end" : value === 0 ? "start" : "middle"}>
             {`${label(value)} s`}
           </text>
         ))}

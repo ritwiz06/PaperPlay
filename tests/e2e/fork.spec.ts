@@ -93,14 +93,14 @@ test.describe("on a desktop", () => {
   test("[R06] the speed control cycles 1x, 2x, 4x, and the fork opens at the speed in use", async ({ page }) => {
     await openHook(page);
     const speed = page.locator(".hud-buttons .speed-button");
-    await expect(speed).toHaveText("1×");
+    await expect(speed).toHaveText("Speed 1×");
     await speed.click();
     await expect(page.locator("main")).toHaveAttribute("data-speed", "2");
     await speed.click();
-    await expect(speed).toHaveText("4×");
+    await expect(speed).toHaveText("Speed 4×");
     await expect(speed).toHaveAccessibleName("Speed 4×. Change to 1×");
     await openFork(page);
-    await expect(page.locator(".fork .speed-button")).toHaveText("4×");
+    await expect(page.locator(".fork .speed-button")).toHaveText("Speed 4×");
   });
 
   test("[R06] at 4x the fork runs to the level's time, measures this sky, and says whether the level's statement holds", async ({ page }) => {
@@ -109,7 +109,7 @@ test.describe("on a desktop", () => {
     const fork = page.locator(".fork");
     await fork.locator(".speed-button").click();
     await fork.locator(".speed-button").click();
-    await expect(fork.locator(".speed-button")).toHaveText("4×");
+    await expect(fork.locator(".speed-button")).toHaveText("Speed 4×");
     await fork.getByRole("button", { name: "Play both" }).click();
     // Seed 5 at the level's start, as eval/sweeps/levels.md records it: 0.93 against 0.08, holds.
     await expect(fork.locator("[data-holds]")).toHaveAttribute("data-holds", "yes", { timeout: 45_000 });
@@ -150,6 +150,29 @@ test.describe("on a phone", () => {
     const [a, b] = [await here(page).boundingBox(), await there(page).boundingBox()];
     expect(a && b && a.y + a.height <= b.y + 1 && a.height > 150 && b.height > 150, JSON.stringify({ a, b })).toBe(true);
     await expect(page.locator(".difference-chart")).toBeVisible();
+  });
+
+  test("[R12] the fork's chart spans its card and is drawn at its own size, so its labels stay readable, on a phone", async ({ page }) => {
+    await openHook(page);
+    await openFork(page);
+    const chart = await page.locator(".difference-chart").evaluate((figure) => {
+      const svg = figure.querySelector("svg");
+      const card = figure.closest(".fork-result");
+      const tick = figure.querySelector(".chart-tick");
+      if (!svg || !card || !tick) throw new Error("no chart");
+      const style = getComputedStyle(card);
+      const inner = card.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      return {
+        share: svg.getBoundingClientRect().width / inner,
+        scale: svg.getBoundingClientRect().width / svg.viewBox.baseVal.width,
+        tick: parseFloat(getComputedStyle(tick).fontSize),
+        tickHeight: tick.getBoundingClientRect().height,
+      };
+    });
+    expect(chart.share, JSON.stringify(chart)).toBeGreaterThan(0.98);
+    expect(chart.scale, JSON.stringify(chart)).toBeCloseTo(1, 2);
+    expect(chart.tick).toBeGreaterThanOrEqual(12);
+    expect(chart.tickHeight).toBeGreaterThanOrEqual(10);
   });
 
   test("[R12] the fork passes the axe scan, on a phone", async ({ page }) => {

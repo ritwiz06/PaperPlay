@@ -1052,7 +1052,6 @@
   display: block;
   width: 100%;
   height: auto;
-  max-height: 150px;
 }
 .chart-axis {
   stroke: var(--ink);
@@ -1060,7 +1059,8 @@
 }
 .chart-tick {
   fill: var(--sub);
-  font-size: 9px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
 }
 .chart-here {
   fill: none;
@@ -1123,9 +1123,6 @@
   }
   .fork-measure p {
     margin-bottom: 4px;
-  }
-  .difference-chart svg {
-    max-height: 84px;
   }
 }
 

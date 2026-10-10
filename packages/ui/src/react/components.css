@@ -118,6 +118,43 @@
   margin-top: 0;
   font-size: 1.25rem;
 }
+/* When the browser takes the world's graphics away: over the canvas, with a way back. */
+.stage-lost {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-content: center;
+  justify-items: start;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  background: color-mix(in srgb, var(--cream) 92%, transparent);
+  color: var(--ink);
+  line-height: 1.5;
+}
+.stage-lost h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+.stage-lost p {
+  max-width: 34rem;
+  margin: 0 0 0.5rem;
+}
+.stage-lost button {
+  min-height: 44px;
+  padding: 0 1rem;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: var(--ink);
+  color: var(--cream);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.stage-lost button:focus-visible {
+  outline: 3px solid var(--aqua);
+  outline-offset: 2px;
+}
 
 /* The lab bench */
 .lab-bench h2 {
