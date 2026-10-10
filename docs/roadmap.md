@@ -169,8 +169,9 @@ made before the refactor; the Mac capture's frame hash matches its pre-refactor 
   cannot show; `worldspec/2` still read (2026-10-10, `dde1cec`, ADR-0027).
 
 G3a.2, the compartment family and Kermack and McKendrick by hand (14–20 h):
-- [ ] The expression tree, its units, and the RK4 solver with its accuracy check.
-- [ ] The family's checks and its hand-written oracles.
+- [x] The expression tree, its units, and the RK4 solver with its accuracy check (2026-10-10,
+  `fcf7c71`, `32c7899`, ADR-0028).
+- [x] The family's checks and its hand-written oracles (2026-10-10, `7e20957`, `fcf7c71`).
 - [ ] The town scene kit.
 - [ ] The Kermack and McKendrick world, a draft until its anchors are real, every level
   meeting the level rule.

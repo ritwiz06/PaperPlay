@@ -16,17 +16,20 @@ G3a.1 and G3a.2 ([log](sessions/2026-10-10.md)). This file is rewritten every se
   - **done:** primitive families (`f111195`, ADR-0025, landed at `34e713a`);
   - **done:** scene kits and the generic session and fork (`ba1ac50`, ADR-0026, landed at
     `a0567bf`); the capture's frame hashes are `f0bc31c`'s;
-  - **landing:** `worldspec/3`, with `worldspec/2` still read (`dde1cec`, ADR-0027). It ends
-    G3a.1: on it the browser tests pass and the capture's hashes are `f0bc31c`'s.
-- **G3a.2, the compartment family,** next: its solver, checks and hand-written oracles are
-  written, on an agent's branch, for review and integration.
+  - **done:** `worldspec/3`, with `worldspec/2` still read (`dde1cec`, ADR-0027, landed at
+    `e049dad`). G3a.1 is complete: tests changed only their imports (and four lines their
+    field's name), the records replay bit for bit, the capture's hashes are `f0bc31c`'s.
+- **G3a.2 is in progress:**
+  - **landing:** the compartment family, `compartments.ode@1.0.0`, its checks and oracles, in the
+    registry and the builder (`32c7899`, ADR-0028);
+  - **next:** the town kit, then the Kermack and McKendrick world.
 - **`main` moves only through `npm run land`** (ADR-0009, amended).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`. CI runs `check:gate` on every
   push and pull request.
-- **Branches:** `g3/worldspec-3`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the
-  compartment family's core, unlanded.
-- **Working commit:** `dde1cec` on `g3/worldspec-3`: `worldspec/3`. `main` is at `a0567bf`, whose
-  `check:gate` passed G1 and whose CI passed.
+- **Branches:** `g3/compartments`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the
+  agent's own branch, whose three commits `g3/compartments` carries.
+- **Working commit:** `32c7899` on `g3/compartments`. `main` is at `e049dad`, whose `check:gate`
+  passed G1 and whose CI passed.
 - **Primitive:** `flock.planar.weighted@3.1.0`, with queries Q1–Q4, the agents family's first,
   at `@paperplay/primitives/flock` (ADR-0025).
 - **Contracts:** `worldspec/3`, with `worldspec/2` still read (ADR-0027); `runrecord/3`

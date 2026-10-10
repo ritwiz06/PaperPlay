@@ -7,6 +7,22 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-10 · The compartment family
+
+- Branch: `g3/compartments`
+- Commits: `021bff3`, `7e20957`, `fcf7c71` (a subagent's, reviewed), `32c7899`
+- Shipped (ADR-0028):
+  - **A compartment model as data:** the ModelSpec, its closed expression grammar, its units.
+  - **`compartments.ode@1.0.0`:** a closure interpreter, dimensional analysis, fixed-step RK4,
+    and four checks: accuracy at dt against dt/2, which refuses stiff or unstable models;
+    positivity; conservation, proved symbolically where it can be; steady states.
+  - **Nine oracles derived by hand:** decay, growth, the logistic curve, S + I + R conserved,
+    SIR's final size, a stiff decay refused, replay, and two more.
+  - **In the registry and the builder:** a solver binds a model; the builder runs the checks on
+    both worlds of every fork; the tolerance is capped at a thousandth.
+- Evidence: R01 150, R03 150, R08 57.
+- Gate: land's `check:gate` on this branch's tip, recorded in the session log.
+
 ## 2026-10-10 · worldspec/3, and the end of G3a.1
 
 - Branch: `g3/worldspec-3`

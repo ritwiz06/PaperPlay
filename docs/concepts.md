@@ -112,6 +112,39 @@ simplest stable way to advance a simulation by a fixed time step.
   the oracle fixtures.
 - **Learn more:** [Semi-implicit Euler method](https://en.wikipedia.org/wiki/Semi-implicit_Euler_method)
 
+### Compartment models (S, I and R)
+
+Split a population into a few groups, such as those who can still catch a disease (S), those who
+have it (I) and those who no longer do (R), and write how fast people move between them as
+equations. Each group is one number for the whole of it: nobody is followed one by one.
+
+- **Used in:** `packages/contracts/src/model.ts`, `packages/primitives/src/compartments/MODEL.md`
+- **Why here:** Kermack and McKendrick's 1927 model of an epidemic is three such equations. As
+  data, a ModelSpec, one trusted solver runs it and any other model like it (ADR-0028).
+- **Learn more:** [Wikipedia, "Compartmental models in epidemiology"](https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology)
+
+### Runge–Kutta integration (RK4)
+
+To follow a model through time, take small steps. RK4 looks at the rate four times within each
+step, at its start, twice at its middle and at its end, and takes a weighted average, so its error
+shrinks with the fourth power of the step.
+
+- **Used in:** `packages/primitives/src/compartments/rk4.ts`
+- **Why here:** One fixed-step RK4 solver runs every compartment model, its arithmetic in a fixed
+  order so a run replays bit for bit; the oracles check it against exact solutions.
+- **Learn more:** [Wikipedia, "Runge–Kutta methods"](https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods)
+
+### Stiff equations, and the step-halving check
+
+Some models change on two very different time scales at once. A fixed step that is fine for the
+slow part can make the fast part blow up. Running the model again at half the step shows it: if
+the two runs disagree, the step is too coarse for this model.
+
+- **Used in:** `packages/primitives/src/compartments/checks.ts`
+- **Why here:** The owner asked that a model the solver cannot follow be refused honestly, never
+  drawn wrong. The accuracy check compares every compartment at dt and dt/2.
+- **Learn more:** [Wikipedia, "Stiff equation"](https://en.wikipedia.org/wiki/Stiff_equation)
+
 ### Emergence
 
 Order at the scale of the whole flock that no single bird plans. The defaults sweep
@@ -450,6 +483,27 @@ Node 24 removes TypeScript's type annotations and runs the file, with no build s
 - **Why here:** Scripts and the API run from source, and every package is consumed from its
   `src/`.
 - **Learn more:** [Node.js: running TypeScript natively](https://nodejs.org/api/typescript.html)
+
+### Dimensional analysis (units as exponents)
+
+Write every unit as powers of a few base dimensions, such as people per day as people¹ time⁻¹.
+Adding needs equal units, multiplying adds the powers, and a rate must have its quantity's unit
+over time. An equation whose units do not agree is wrong, whatever its numbers.
+
+- **Used in:** `packages/primitives/src/compartments/units.ts`
+- **Why here:** Every compartment, parameter and observable declares its unit, and the solver
+  refuses a model whose units disagree before it runs a step.
+- **Learn more:** [Wikipedia, "Dimensional analysis"](https://en.wikipedia.org/wiki/Dimensional_analysis)
+
+### An interpreter instead of eval
+
+Run a formula given as data by walking its tree and building a small function for each node,
+never by turning text into code. Nothing outside the grammar's few operations can run.
+
+- **Used in:** `packages/primitives/src/compartments/expr.ts`
+- **Why here:** A generated model must not be able to run code, and the deploy's
+  Content-Security-Policy refuses `eval` anyway; lint bans it in primitives.
+- **Learn more:** [Robert Nystrom, "Crafting Interpreters", "Evaluating Expressions"](https://craftinginterpreters.com/evaluating-expressions.html)
 
 ### Lint-enforced boundaries
 
