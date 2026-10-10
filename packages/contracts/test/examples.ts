@@ -60,7 +60,7 @@ export function action() {
 
 export function runRecord() {
   return {
-    schemaVersion: "runrecord/2",
+    schemaVersion: "runrecord/3",
     runId: "run-0001",
     worldSpecHash: sha("b"),
     primitive: { id: "flock.planar.weighted", version: "2.0.0" },
@@ -77,6 +77,7 @@ export function runRecord() {
       { kind: "param", step: 60, actionId: "alignment-strength", value: 0 },
       { kind: "remove", step: 90, entityId: "beacon-1" },
     ],
+    predictions: [{ step: 45, levelId: "hook", prompt: "If birds ignored their neighbours' headings, would the flock still come to fly one way?", choice: 0, choiceText: "It stays scattered" }],
     observables: { directionalAgreement: [0.1, 0.4, 0.9], clusterCount: [5, 3, 1] },
     hashes: { "state@120": sha("e") },
     runtime: { engine: "node 24.21.0", os: "darwin arm64" },

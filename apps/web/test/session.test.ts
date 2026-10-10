@@ -1,5 +1,5 @@
-import { Action } from "@paperplay/contracts";
-import { flockAtRocks, flockDefaultParams, flockHeadings, flockNeighbours, flockPlanarWeighted as flock, runEvents } from "@paperplay/primitives";
+import { Action, RunRecord } from "@paperplay/contracts";
+import { flockAtRocks, flockDefaultParams, flockHeadings, flockNeighbours, flockPlanarWeighted as flock, replayRecord, runEvents } from "@paperplay/primitives";
 import { describe, expect, it } from "vitest";
 import { HOOK_SEED, LOCAL_ACTIONS, LOCAL_CONTROLS, PRIMARY_ACTION } from "../src/world/local-world.ts";
 import { createWorldSession, type WorldSession } from "../src/world/session.ts";
@@ -156,6 +156,31 @@ describe("[R04] local world session", () => {
     }
     // With no rule for rocks, birds fly through them: some rocks light up.
     expect(lit).toBeGreaterThan(0);
+  });
+
+  it("[R07] keeps each prediction at its step in the run's record, which replays bit for bit, the predictions changing nothing", () => {
+    const session = open();
+    run(session, 30);
+    session.predict("hook", "Would the flock still line up?", 0, "It stays scattered");
+    session.setAction("alignment-strength", 0.5);
+    run(session, 90);
+    session.predict("hook", "Would the flock still line up?", 1, "It still lines up");
+    run(session, 60);
+    expect(session.snapshot().predictions.map((prediction) => [prediction.step, prediction.choice])).toEqual([[30, 0], [120, 1]]);
+
+    const identity = { runId: "run-1", worldSpecHash: "a".repeat(64), codeHash: "b".repeat(64), lockHash: "c".repeat(64), runtime: { engine: "node", os: "test" }, tolerance: 0 };
+    const record = session.record(identity);
+    expect(RunRecord.parse(JSON.parse(JSON.stringify(record)))).toEqual(record);
+    expect(record.schemaVersion).toBe("runrecord/3");
+    expect(record.predictions).toEqual(session.snapshot().predictions);
+    expect(record.totalSteps).toBe(180);
+    const replayed = replayRecord(record, { primitive: flock, params: flockDefaultParams, actions: LOCAL_ACTIONS });
+    expect(replayed.matches).toBe(true);
+    expect(json(replayed.finalState)).toBe(json(session.state()));
+
+    // A new run starts with no predictions.
+    session.nextSeed();
+    expect(session.snapshot().predictions).toEqual([]);
   });
 
   it("shows a selected bird's neighbourhood exactly as the primitive's query reports it", () => {

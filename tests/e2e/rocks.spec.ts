@@ -63,15 +63,14 @@ test("[R06] in level 5's fork, the world with no rule for rocks lights the rocks
   // Walking to level 5 and running its fork at 4x took 16 s locally and over 30 s on CI's runner.
   test.setTimeout(90_000);
   await openLevel(page);
+  // The level asks for a prediction first; the answer opens its fork.
   await page.locator(".level-whatif").getByRole("button", { name: "What if" }).click();
-  const choice = page.locator(".guide-choices button").first();
-  if (await choice.isVisible()) await choice.click();
-  else await page.getByRole("button", { name: "Run both worlds" }).click();
+  await page.getByRole("button", { name: level.exploration?.choices[0] ?? "" }).click();
   const fork = page.locator(".fork");
   await fork.locator(".speed-button").click();
   await fork.locator(".speed-button").click();
   await fork.getByRole("button", { name: "Play both" }).click();
-  await expect(fork.locator("[data-holds]")).toHaveAttribute("data-holds", "yes", { timeout: 45_000 });
+  await expect(fork.getByRole("button", { name: "Done" })).toBeDisabled({ timeout: 60_000 });
   // The fork opened at the level's start, so at its end both worlds have taken the level's time in steps.
   const steps = Math.round(level.fork.difference.seconds / flock.fixedTimestep);
   const overrides = Object.fromEntries(level.fork.overrides.map((override) => [override.variable, override.to]));

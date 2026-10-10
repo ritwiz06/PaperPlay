@@ -39,6 +39,20 @@ export type RemoveEvent = z.infer<typeof RemoveEvent>;
 export const RunEvent = z.discriminatedUnion("kind", [ParamEvent, PlaceEvent, RemoveEvent]);
 export type RunEvent = z.infer<typeof RunEvent>;
 
+/**
+ * A learner's prediction before a level's What-if (ADR-0018): which choice they made, at which
+ * step. A note in the run, not an event: it shapes nothing, so replay ignores it. Never scored.
+ */
+export const Prediction = z.strictObject({
+  step: Step,
+  levelId: Id,
+  prompt: z.string().min(1),
+  choice: z.int().nonnegative(),
+  /** The words chosen, so the record reads on its own. */
+  choiceText: z.string().min(1),
+});
+export type Prediction = z.infer<typeof Prediction>;
+
 /** A world edit as a primitive applies it: a place or remove event, whatever its step. */
 export type EntityEdit = Omit<PlaceEvent, "step"> | Omit<RemoveEvent, "step">;
 
@@ -51,10 +65,11 @@ export function sampleCount(totalSteps: number, sampleInterval: number): number 
  * Everything needed to replay a run: identity hashes, the full initial state (a seed alone
  * is not enough), the fixed timestep, ordered events, and observables sampled at steps
  * 0, k, 2k, … ≤ totalSteps for sampleInterval k, each measured before that step's events.
+ * runrecord/3 adds the learner's predictions, ordered by step.
  */
 export const RunRecord = z
   .strictObject({
-    schemaVersion: z.literal("runrecord/2"),
+    schemaVersion: z.literal("runrecord/3"),
     runId: Id,
     worldSpecHash: Sha256Hex,
     primitive: PrimitiveRef,
@@ -66,6 +81,7 @@ export const RunRecord = z
     sampleInterval: z.int().positive(),
     totalSteps: z.int().nonnegative(),
     events: z.array(RunEvent),
+    predictions: z.array(Prediction),
     observables: z.record(z.string().min(1), z.array(z.number())),
     hashes: z.record(z.string().min(1), z.string().min(1)),
     runtime: z.strictObject({
@@ -80,7 +96,7 @@ export const RunRecord = z
     path: ["initialState"],
   })
   .check((ctx) => {
-    const { events, observables, sampleInterval, totalSteps } = ctx.value;
+    const { events, predictions, observables, sampleInterval, totalSteps } = ctx.value;
     const issue = (message: string, input: unknown, path: (string | number)[]): void => {
       ctx.issues.push({ code: "custom", message, input, path });
     };
@@ -107,6 +123,12 @@ export const RunRecord = z
         if (removed.has(event.entityId)) issue(`entity ${event.entityId} is removed twice`, event.entityId, ["events", index, "entityId"]);
         removed.add(event.entityId);
       }
+    });
+
+    predictions.forEach((prediction, index) => {
+      const previous = predictions[index - 1];
+      if (previous && prediction.step < previous.step) issue("predictions must be ordered by step", prediction.step, ["predictions", index, "step"]);
+      if (stepsKnown && prediction.step > totalSteps) issue("a prediction after the last step was not made in this run", prediction.step, ["predictions", index, "step"]);
     });
 
     const series = Object.entries(observables);

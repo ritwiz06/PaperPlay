@@ -26,7 +26,7 @@ function recorded(events: RunEvent[], overrides: Record<string, unknown> = {}): 
   const run = plan(events);
   const { observables } = runEvents(setup, run);
   const record = {
-    schemaVersion: "runrecord/2",
+    schemaVersion: "runrecord/3",
     runId: "replay-test",
     worldSpecHash: sha("a"),
     primitive: { id: flock.id, version: flock.version },
@@ -38,6 +38,7 @@ function recorded(events: RunEvent[], overrides: Record<string, unknown> = {}): 
     sampleInterval: run.sampleInterval,
     totalSteps: run.totalSteps,
     events: run.events,
+    predictions: [],
     observables,
     hashes: {},
     runtime: { engine: `node ${process.versions.node}`, os: process.platform },
@@ -63,6 +64,17 @@ describe("[R07] run replay", () => {
     expect(report.maxDeviation).toBe(0);
     expect(report.finalState.beacons).toEqual([]);
     expect(report.finalState.obstacles).toEqual([{ id: "rock-1", x: 20, y: 12 }]);
+  });
+
+  it("replays a record's run exactly the same whatever predictions it carries: a prediction shapes nothing", () => {
+    const predictions = [
+      { step: 10, levelId: "hook", prompt: "Would the flock still line up?", choice: 0, choiceText: "It stays scattered" },
+      { step: 300, levelId: "hook", prompt: "Would the flock still line up?", choice: 1, choiceText: "It still lines up" },
+    ];
+    const plain = replayRecord(recorded(placeThenRemove), setup);
+    const noted = replayRecord(recorded(placeThenRemove, { predictions }), setup);
+    expect(noted.matches).toBe(true);
+    expect(noted.finalState).toEqual(plain.finalState);
   });
 
   it("lets the placed beacon shape the run while it exists", () => {

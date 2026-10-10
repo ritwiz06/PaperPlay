@@ -163,7 +163,7 @@
         "altParams": {
           "alignmentWeight": 0
         },
-        "expectedQualitativeEffect": "Within 20 seconds the left flock agrees on a heading far more than the right one: its agreement is higher by more than half the scale.",
+        "expectedQualitativeEffect": "Within 20 seconds this world's flock agrees on a heading far more than the other world's: its agreement is higher by more than half the scale.",
         "origin": "teaching-choice",
         "isSpeculative": false,
         "anchors": [],
@@ -278,6 +278,27 @@
           },
           "steady": "holding",
           "within": 0.03
+        }
+      },
+      "guidedExploration": {
+        "predictPrompt": "If birds ignored their neighbours' headings, would the flock still come to fly one way?",
+        "choices": [
+          "It stays scattered",
+          "It still lines up"
+        ],
+        "interveneActionId": "alignment-strength",
+        "observeMetricId": "directionalAgreement",
+        "explainPrompt": "Why does copying the headings of nearby birds, and nothing more, line up the whole flock?",
+        "explanation": {
+          "text": "The paper says that matching the velocity of nearby flockmates is what keeps a flock flying the same way.",
+          "origin": "paper-derived",
+          "anchors": [
+            {
+              "placeholder": true,
+              "sourceId": "reynolds1987",
+              "need": "The paper's description of velocity matching, and how it keeps a flock flying the same way."
+            }
+          ]
         }
       },
       "furtherReading": [],
@@ -532,7 +553,7 @@
         "altParams": {
           "separationWeight": 0
         },
-        "expectedQualitativeEffect": "Without personal space the right flock bunches far tighter: after 20 seconds its birds sit more than half a world unit closer to their nearest neighbours.",
+        "expectedQualitativeEffect": "Without personal space the other world's flock bunches far tighter: after 20 seconds its birds sit more than half a world unit closer to their nearest neighbours.",
         "origin": "teaching-choice",
         "isSpeculative": false,
         "anchors": [],
@@ -649,6 +670,27 @@
           "within": 0.03
         }
       },
+      "guidedExploration": {
+        "predictPrompt": "If birds never kept their distance, what would happen to the space between them?",
+        "choices": [
+          "They bunch up much tighter",
+          "They keep about the same spacing"
+        ],
+        "interveneActionId": "separation-strength",
+        "observeMetricId": "meanNeighbourDistance",
+        "explainPrompt": "What does the urge to keep apart do for a flock?",
+        "explanation": {
+          "text": "The paper's first behaviour is collision avoidance: each bird keeps away from flockmates that come too close.",
+          "origin": "paper-derived",
+          "anchors": [
+            {
+              "placeholder": true,
+              "sourceId": "reynolds1987",
+              "need": "The paper's description of collision avoidance, the urge to keep away from nearby flockmates."
+            }
+          ]
+        }
+      },
       "furtherReading": [],
       "carryForward": "Keeping a distance is the first urge: it sets how far apart birds fly."
     },
@@ -706,7 +748,7 @@
         "altParams": {
           "cohesionWeight": 0
         },
-        "expectedQualitativeEffect": "Without the pull toward the middle, the right flock spreads out across the valley: after 40 seconds its spread is more than 3 world units wider.",
+        "expectedQualitativeEffect": "Without the pull toward the middle, the other world's flock spreads out across the valley: after 40 seconds its spread is more than 3 world units wider.",
         "origin": "teaching-choice",
         "isSpeculative": false,
         "anchors": [],
@@ -823,6 +865,27 @@
           "within": 0.3
         }
       },
+      "guidedExploration": {
+        "predictPrompt": "If birds had no urge to stay together, would the flock still hold together?",
+        "choices": [
+          "It spreads out across the valley",
+          "It stays about as tight"
+        ],
+        "interveneActionId": "cohesion-strength",
+        "observeMetricId": "groupSpread",
+        "explainPrompt": "Why does a flock need a pull toward its middle, as well as matching headings?",
+        "explanation": {
+          "text": "The paper's flock centering is the urge to stay close to nearby flockmates; without it, nothing pulls a straying bird back.",
+          "origin": "paper-derived",
+          "anchors": [
+            {
+              "placeholder": true,
+              "sourceId": "reynolds1987",
+              "need": "The paper's description of flock centering, the urge to stay close to nearby flockmates."
+            }
+          ]
+        }
+      },
       "furtherReading": [],
       "carryForward": "Steering toward the middle of the birds you see is the third urge: it keeps a flock compact."
     },
@@ -880,7 +943,7 @@
         "altParams": {
           "obstacleWeight": 0
         },
-        "expectedQualitativeEffect": "Without the rule, birds fly straight through the rocks: together they spend more than three times as long inside them as the left flock's birds.",
+        "expectedQualitativeEffect": "Without the rule, birds fly straight through the rocks: together they spend more than three times as long inside them as this world's birds.",
         "origin": "teaching-choice",
         "isSpeculative": false,
         "anchors": [],
@@ -1023,6 +1086,27 @@
           },
           "steady": "holding",
           "within": 1.5
+        }
+      },
+      "guidedExploration": {
+        "predictPrompt": "If birds had no rule for rocks, would they still steer round them?",
+        "choices": [
+          "They fly straight through",
+          "They still find a way round"
+        ],
+        "interveneActionId": "obstacle-radius",
+        "observeMetricId": "birdsAtObstacles",
+        "explainPrompt": "What would a flock model that ignores rocks fail to show about real flocks?",
+        "explanation": {
+          "text": "The paper treats avoiding obstacles as a behaviour of its own, added to the three urges: without it, nothing turns a bird from a rock.",
+          "origin": "paper-derived",
+          "anchors": [
+            {
+              "placeholder": true,
+              "sourceId": "reynolds1987",
+              "need": "The paper's discussion of avoiding environmental obstacles."
+            }
+          ]
         }
       },
       "furtherReading": [],
@@ -1186,6 +1270,21 @@
           },
           "steady": "holding",
           "within": 0.03
+        }
+      },
+      "guidedExploration": {
+        "predictPrompt": "If the flock were a quarter as dense, would it come to agree as quickly?",
+        "choices": [
+          "It takes far longer",
+          "About as quickly"
+        ],
+        "interveneActionId": "alignment-strength",
+        "observeMetricId": "directionalAgreement",
+        "explainPrompt": "Why would a sparser flock take longer to agree?",
+        "explanation": {
+          "text": "Each bird sees only the birds near it. Spread the same birds over four times the area and each sees fewer, so a shared heading has fewer paths to spread along.",
+          "origin": "teaching-choice",
+          "anchors": []
         }
       },
       "furtherReading": [

@@ -107,7 +107,12 @@ describe("[R08] the builder", () => {
   });
 
   it("refuses an observable the primitive does not measure, or in another unit", () => {
-    expect(pathsOf(buildWorld(changed((draft) => void (level(draft, 3).observable!.metricId = "groupCount")), registry))).toEqual(["levels.3.observable.metricId"]);
+    // The level's prediction observes its observable, so both change together.
+    const renamed = changed((draft) => {
+      level(draft, 3).observable!.metricId = "groupCount";
+      (level(draft, 3).guidedExploration as Record<string, unknown>).observeMetricId = "groupCount";
+    });
+    expect(pathsOf(buildWorld(renamed, registry))).toEqual(["levels.3.observable.metricId"]);
     expect(pathsOf(buildWorld(changed((draft) => void (level(draft, 3).observable!.unit = "flocks")), registry))).toEqual(["levels.3.observable.unit"]);
   });
 

@@ -7,7 +7,7 @@
  * Event order matches runEvents: an event made while the world stands at step s is recorded
  * at s and applied before step s is taken, so the session can always be replayed from its record.
  */
-import type { PlaceEvent, RunEvent } from "@paperplay/contracts";
+import { RunRecord, type PlaceEvent, type Prediction, type RunEvent } from "@paperplay/contracts";
 import {
   flockAtRocks,
   flockHeadings,
@@ -21,6 +21,7 @@ import {
   type FlockState,
   type Headings,
   type RunPlan,
+  runEvents,
 } from "@paperplay/primitives";
 import { advance, START_CLOCK, type FrameEmphasis, type Speed, type StageInput, type StepClock } from "@paperplay/ui/stage-core";
 
@@ -58,6 +59,8 @@ export interface SessionSnapshot {
   readonly headings: Headings;
   /** Each rock and the birds at it, from the primitive's query (Q4), for the rocks counter. */
   readonly rocks: AtRocks;
+  /** The learner's predictions in this run, in step order: notes, never events, never scored. */
+  readonly predictions: readonly Prediction[];
 }
 
 export interface WorldSession {
@@ -81,15 +84,23 @@ export interface WorldSession {
   select(index: number | null): void;
   nextSeed(): void;
   replaySameSeed(): void;
+  /** Records a prediction at the current step, before a level's What-if (ADR-0018). It changes nothing in the run. */
+  predict(levelId: string, prompt: string, choice: number, choiceText: string): void;
   /** The run so far as a plan runEvents can replay, with the parameters it started from. */
   plan(): RunPlan<FlockState> & { readonly params: FlockParams };
+  /** The run so far as a RunRecord (runrecord/3), its predictions included, given the identity the session cannot know. */
+  record(identity: RunIdentity): RunRecord;
   /** Changes with every change, so a paused stage knows when to draw again. */
   version(): number;
   /** Starts afresh on other options, such as the next level's, keeping the same stage. */
   load(options: SessionOptions): void;
 }
 
+/** What a record needs that the session cannot know: the run's name, its hashes and its runtime. */
+export type RunIdentity = Pick<RunRecord, "runId" | "worldSpecHash" | "codeHash" | "lockHash" | "runtime" | "tolerance">;
+
 const TIMESTEP = flock.fixedTimestep;
+const SAMPLE_INTERVAL = 60;
 /**
  * Trails reach back this many steps (3 s), drawn through one state in every TRAIL_STRIDE. The
  * flock often cruises near its minimum speed, so a shorter history would hide under each bird;
@@ -120,6 +131,7 @@ export function createWorldSession(first: SessionOptions): WorldSession {
   let applied = 0;
   let placed = { beacon: 0, obstacle: 0 };
   let selected: number | null = null;
+  let predictions: Prediction[] = [];
   /** The states before the current one, oldest first, for trails: presentation only. */
   let history: FlockState[] = [];
   let version = 0;
@@ -174,6 +186,15 @@ export function createWorldSession(first: SessionOptions): WorldSession {
 
   applyDue();
 
+  const plan = (): RunPlan<FlockState> & { readonly params: FlockParams } => ({
+    params: initialParams,
+    initialState: origin(),
+    events: events.slice(0, applied),
+    totalSteps: stepsTaken(),
+    sampleInterval: SAMPLE_INTERVAL,
+    timestep: TIMESTEP,
+  });
+
   function stepBy(steps: number): void {
     for (let i = 0; i < steps; i++) {
       history.push(current);
@@ -201,6 +222,7 @@ export function createWorldSession(first: SessionOptions): WorldSession {
       selected: selected === null ? null : { index: selected, ...flockNeighbours(current, params, selected) },
       headings: flockHeadings(current),
       rocks: flockAtRocks(current),
+      predictions: [...predictions],
     }),
     state: () => current,
     stageInput: () => ({
@@ -277,19 +299,36 @@ export function createWorldSession(first: SessionOptions): WorldSession {
       events = setupEvents();
       placed = { beacon: 0, obstacle: 0 };
       selected = null;
+      predictions = [];
       restart();
     },
     replaySameSeed() {
       restart();
     },
-    plan: () => ({
-      params: initialParams,
-      initialState: origin(),
-      events: events.slice(0, applied),
-      totalSteps: stepsTaken(),
-      sampleInterval: 60,
-      timestep: TIMESTEP,
-    }),
+    predict(levelId, prompt, choice, choiceText) {
+      predictions.push({ step: stepsTaken(), levelId, prompt, choice, choiceText });
+      changed();
+    },
+    plan,
+    record(identity) {
+      const run = plan();
+      const { observables } = runEvents({ primitive: flock, params: run.params, actions: options.actions }, run);
+      return RunRecord.parse({
+        schemaVersion: "runrecord/3",
+        ...identity,
+        primitive: { id: flock.id, version: flock.version },
+        seed,
+        initialState: run.initialState,
+        timestep: run.timestep,
+        sampleInterval: run.sampleInterval,
+        totalSteps: run.totalSteps,
+        events: run.events,
+        // A prediction made later than a replay has reached belongs to the run being replaced.
+        predictions: predictions.filter((prediction) => prediction.step <= run.totalSteps),
+        observables,
+        hashes: {},
+      });
+    },
     version: () => version,
     load(next) {
       options = next;
@@ -298,6 +337,7 @@ export function createWorldSession(first: SessionOptions): WorldSession {
       events = setupEvents();
       placed = { beacon: 0, obstacle: 0 };
       selected = null;
+      predictions = [];
       playing = next.playing ?? playing;
       restart();
     },

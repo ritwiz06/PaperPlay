@@ -141,6 +141,8 @@ test("[R06] each level's depth variants show and hide the shell's elements by id
 });
 
 test("[R06] What if names each level's counterfactual and what the other world changes, and the bonus level's says both worlds restart", async ({ page }) => {
+  // Every level now opens a fork, after its prediction: 24.8 s on CI's runner before that.
+  test.setTimeout(90_000);
   await openHook(page);
   for (const [at, level] of LEVELS.entries()) {
     await card(page).getByRole("button", { name: "What if" }).click();

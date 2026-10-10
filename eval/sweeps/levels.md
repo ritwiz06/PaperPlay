@@ -26,7 +26,7 @@ states the surprise itself, and must be exactly right.
 
 ## Level 1 · A flock with no leader
 
-What if birds ignored their neighbours' headings? The level states: “Within 20 seconds the left flock agrees on a heading far more than the right one: its agreement is higher by more than half the scale.”
+What if birds ignored their neighbours' headings? The level states: “Within 20 seconds this world's flock agrees on a heading far more than the other world's: its agreement is higher by more than half the scale.”
 
 | Sky | This world | Other world | Holds |
 |---|---|---|---|
@@ -80,7 +80,7 @@ What if every bird could see the whole flock? The level states: “Seeing the wh
 
 ## Level 3 · Three urges, and the first: keep your distance
 
-What if birds never kept their distance? The level states: “Without personal space the right flock bunches far tighter: after 20 seconds its birds sit more than half a world unit closer to their nearest neighbours.”
+What if birds never kept their distance? The level states: “Without personal space the other world's flock bunches far tighter: after 20 seconds its birds sit more than half a world unit closer to their nearest neighbours.”
 
 | Sky | This world | Other world | Holds |
 |---|---|---|---|
@@ -107,7 +107,7 @@ What if birds never kept their distance? The level states: “Without personal s
 
 ## Level 4 · Stay with the flock
 
-What if birds had no urge to stay together? The level states: “Without the pull toward the middle, the right flock spreads out across the valley: after 40 seconds its spread is more than 3 world units wider.”
+What if birds had no urge to stay together? The level states: “Without the pull toward the middle, the other world's flock spreads out across the valley: after 40 seconds its spread is more than 3 world units wider.”
 
 | Sky | This world | Other world | Holds |
 |---|---|---|---|
@@ -134,7 +134,7 @@ What if birds had no urge to stay together? The level states: “Without the pul
 
 ## Level 5 · Does it behave like a flock?
 
-What if birds had no rule for rocks? The level states: “Without the rule, birds fly straight through the rocks: together they spend more than three times as long inside them as the left flock's birds.”
+What if birds had no rule for rocks? The level states: “Without the rule, birds fly straight through the rocks: together they spend more than three times as long inside them as this world's birds.”
 
 | Sky | This world | Other world | Holds |
 |---|---|---|---|

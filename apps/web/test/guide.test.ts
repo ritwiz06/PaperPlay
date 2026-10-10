@@ -125,3 +125,36 @@ describe("[R06] guided exploration, from level 2's script", () => {
     expect(words).not.toMatch(/\b(right|wrong|correct|incorrect|score|points?)\b/i);
   });
 });
+
+describe("[R06] guided exploration on every level", () => {
+  const SCORING = /\b(right|wrong|correct|incorrect|score|points?)\b/i;
+
+  it("asks for a prediction before every What-if, with two choices, on the level's own control and readout", () => {
+    for (const level of FLOCKING.levels) {
+      const exploration = level.exploration;
+      expect(exploration, level.id).not.toBeNull();
+      expect(exploration?.choices, level.id).toHaveLength(2);
+      expect(exploration?.interveneActionId, level.id).toBe(level.action.actionId);
+      expect(exploration?.observeMetricId, level.id).toBe(level.observable.metricId);
+      expect([exploration?.predictPrompt, ...(exploration?.choices ?? []), exploration?.explainPrompt].join(" "), level.id).not.toMatch(SCORING);
+    }
+  });
+
+  it("reports a sky-by-sky claim as measured: this sky by the choice it bears out, then the rule across 20 skies", () => {
+    for (const level of FLOCKING.levels.filter((entry) => entry.fork.difference.claim.kind === "each")) {
+      const exploration = level.exploration;
+      if (!exploration) throw new Error(`${level.id} asks for a prediction`);
+      const [first, second] = exploration.choices;
+      for (const holdsHere of [true, false]) {
+        const done = explorationLines(exploration, level.fork.difference.claim, { predicted: 1, change: "x", done: true, holdsHere });
+        expect(done.map((line) => line.text), level.id).toEqual([
+          `You predicted: ${second ?? ""}.`,
+          `On this sky: ${(holdsHere ? first : second) ?? ""}.`,
+          "Across 20 skies, the level's statement holds on at least 16.",
+          exploration.explanation.text,
+          exploration.explainPrompt,
+        ]);
+      }
+    }
+  });
+});

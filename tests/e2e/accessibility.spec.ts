@@ -65,7 +65,7 @@ for (const size of SIZES) {
   test.describe(`/world/hook at ${size.width} × ${size.height}`, () => {
     test.use({ viewport: { width: size.width, height: size.height } });
 
-    test(`[R12] /world/hook passes the axe scan as it opens, after the control moves, and with What if open, on a ${size.name}`, async ({ page }) => {
+    test(`[R12] /world/hook passes the axe scan as it opens, after the control moves, with What if's prediction asked, and with its card open, on a ${size.name}`, async ({ page }) => {
       await openHook(page);
       expect(await violations(page)).toEqual([]);
       const slider = page.getByRole("slider", { name: "Move together" });
@@ -73,12 +73,19 @@ for (const size of SIZES) {
       await page.keyboard.press("End");
       await expect(page.getByRole("group", { name: "Guide" })).toBeVisible();
       expect(await violations(page)).toEqual([]);
+      // What if asks for a prediction first; the answer opens the fork.
+      await page.getByRole("button", { name: "What if" }).click();
+      await expect(page.getByRole("group", { name: /would the flock still come to fly one way\?/ })).toBeVisible();
+      expect(await violations(page)).toEqual([]);
+      await page.locator(".guide-choices button").first().click();
+      await page.getByRole("button", { name: "Back to one world" }).click();
+      // Asked once: What if then opens its card.
       await page.getByRole("button", { name: "What if" }).click();
       await expect(page.getByRole("heading", { name: /What if birds ignored/ })).toBeVisible();
       expect(await violations(page)).toEqual([]);
     });
 
-    test(`[R12] /world/hook passes the axe scan on its later levels: the spacing gauge, the groups counter, and the bonus level with What if open, on a ${size.name}`, async ({ page }) => {
+    test(`[R12] /world/hook passes the axe scan on its later levels: the spacing gauge, the groups counter, and the bonus level's fork, on a ${size.name}`, async ({ page }) => {
       await openHook(page);
       const controls = ["Move together", "How far a bird sees", "Personal space", "Stay close", "How early birds swerve"];
       const next = ["background", "idea", "method", "evaluation", "result"];
@@ -95,7 +102,8 @@ for (const size of SIZES) {
         }
       }
       await page.getByRole("button", { name: "What if" }).click();
-      await expect(page.locator("[data-restarts]")).toBeVisible();
+      await page.locator(".guide-choices button").first().click();
+      await expect(page.locator(".fork [data-restarts]")).toBeVisible();
       expect(await violations(page)).toEqual([]);
     });
 

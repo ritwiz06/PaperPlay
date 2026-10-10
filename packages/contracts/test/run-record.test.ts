@@ -11,10 +11,22 @@ describe("[R03] RunRecord", () => {
     expect(issuesOf(RunRecord, runRecord())).toEqual([]);
   });
 
-  it("requires schemaVersion runrecord/2", () => {
-    expect(issuesOf(RunRecord, { ...runRecord(), schemaVersion: "runrecord/1" })).toEqual([
-      { code: "invalid_value", path: "schemaVersion" },
-    ]);
+  it("requires schemaVersion runrecord/3", () => {
+    for (const schemaVersion of ["runrecord/1", "runrecord/2"]) {
+      expect(issuesOf(RunRecord, { ...runRecord(), schemaVersion })).toEqual([{ code: "invalid_value", path: "schemaVersion" }]);
+    }
+  });
+
+  it("keeps the learner's predictions in step order, within the run, each a choice by index and in words", () => {
+    const prediction = (step: number) => ({ step, levelId: "hook", prompt: "Would it?", choice: 1, choiceText: "It would" });
+    expect(issuesOf(RunRecord, { ...runRecord(), predictions: [] })).toEqual([]);
+    expect(issuesOf(RunRecord, { ...runRecord(), predictions: [prediction(10), prediction(10), prediction(120)] })).toEqual([]);
+    expect(issuesOf(RunRecord, { ...runRecord(), predictions: [prediction(40), prediction(20)] })).toEqual([{ code: "custom", path: "predictions.1.step" }]);
+    expect(issuesOf(RunRecord, { ...runRecord(), predictions: [prediction(121)] })).toEqual([{ code: "custom", path: "predictions.0.step" }]);
+    expect(issuesOf(RunRecord, { ...runRecord(), predictions: [{ ...prediction(1), choice: 0.5 }] })).toEqual([{ code: "invalid_type", path: "predictions.0.choice" }]);
+    expect(issuesOf(RunRecord, { ...runRecord(), predictions: [{ ...prediction(1), correct: true }] })).toEqual([{ code: "unrecognized_keys", path: "predictions.0" }]);
+    const { predictions: _predictions, ...without } = runRecord();
+    expect(issuesOf(RunRecord, without)).toEqual([{ code: "invalid_type", path: "predictions" }]);
   });
 
   it("rejects unknown keys at the top level, in every kind of event and in the runtime", () => {

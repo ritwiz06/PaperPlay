@@ -142,7 +142,19 @@ test.describe("on a desktop", () => {
     await expect(bubble).toContainText("You raised Move together");
     await expect(bubble.locator(".origin-tag-computed-observation")).toBeVisible();
 
-    // It gives way to the What-if card, and comes back when the card closes.
+    // The first time, What if asks for a prediction in the guide; the answer opens the fork,
+    // which covers the HUD, so the guide starts afresh when the fork closes.
+    await page.getByRole("button", { name: "What if" }).click();
+    await expect(bubble).toContainText("would the flock still come to fly one way?");
+    await page.locator(".guide-choices button").first().click();
+    await page.getByRole("button", { name: "Back to one world" }).click();
+    await expect(bubble).toBeHidden();
+    await slider.focus();
+    await page.keyboard.press("ArrowDown");
+    await expect(bubble).toBeVisible();
+    await expect(bubble).toContainText("You lowered Move together");
+
+    // Asked once, What if opens its card: the guide gives way to it, and comes back when it closes.
     await page.getByRole("button", { name: "What if" }).click();
     await expect(bubble).toBeHidden();
     await page.getByRole("button", { name: "Back to one world" }).click();
@@ -151,7 +163,7 @@ test.describe("on a desktop", () => {
     await expect(bubble).toBeHidden({ timeout: 8000 });
     await page.getByRole("button", { name: "Show what the guide said last" }).click();
     await expect(bubble).toBeVisible();
-    await expect(bubble).toContainText("You raised Move together");
+    await expect(bubble).toContainText("You lowered Move together");
   });
 });
 

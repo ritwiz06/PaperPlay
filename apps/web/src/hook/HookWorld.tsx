@@ -434,7 +434,17 @@ export function HookWorld() {
     ) : null;
 
   return (
-    <main ref={container} className="game" data-level={level.id} data-step={snapshot.step} data-depth={depth} data-journal={journal ? "open" : "closed"} data-fork={run ? "open" : "closed"} data-speed={speed}>
+    <main
+      ref={container}
+      className="game"
+      data-level={level.id}
+      data-step={snapshot.step}
+      data-depth={depth}
+      data-journal={journal ? "open" : "closed"}
+      data-fork={run ? "open" : "closed"}
+      data-speed={speed}
+      data-predictions={snapshot.predictions.map((prediction) => `${prediction.levelId}@${prediction.step}:${prediction.choice}`).join(" ")}
+    >
       {forkPanel ?? (
         <>
       <WorldStage
@@ -497,6 +507,10 @@ export function HookWorld() {
                     prompt: level.exploration.predictPrompt,
                     choices: level.exploration.choices,
                     onChoose: (index) => {
+                      const { exploration } = level;
+                      // Saved in the run's record at this step, as a note that changes nothing (ADR-0018).
+                      if (exploration) session.predict(level.id, exploration.predictPrompt, index, exploration.choices[index] ?? "");
+                      setSnapshot(session.snapshot());
                       setPredictions((made) => ({ ...made, [level.id]: index }));
                       setAsking(false);
                       openTheFork();

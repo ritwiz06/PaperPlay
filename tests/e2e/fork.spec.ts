@@ -35,9 +35,12 @@ async function walkTo(page: Page, to: number): Promise<void> {
   }
 }
 
-async function openFork(page: Page): Promise<void> {
+/** Opens the level's fork the first time: every level asks for a prediction first, and the answer opens it. */
+async function openFork(page: Page, choice = 0): Promise<void> {
   await page.locator(".level-whatif").getByRole("button", { name: "What if" }).click();
-  await page.getByRole("button", { name: "Run both worlds" }).click();
+  const ask = page.locator(".guide-choices button");
+  await expect(ask).toHaveCount(2);
+  await ask.nth(choice).click();
   await expect(page.locator("main")).toHaveAttribute("data-fork", "open");
   await expect.poll(() => frames(page, here(page))).toBeGreaterThan(0);
   await expect.poll(() => frames(page, there(page))).toBeGreaterThan(0);
@@ -60,7 +63,8 @@ test.describe("on a desktop", () => {
     await expect(fork.getByRole("heading", { name: level.fork.prompt })).toBeFocused();
     await expect(fork).toContainText("The other world runs with “Move together” at 0 (here 2).");
     await expect(fork.locator("[data-restarts]")).toHaveCount(0);
-    await expect(fork).toContainText(`The level states: ${level.fork.effect}`);
+    // After a prediction, the level's statement waits for the level's time.
+    await expect(fork.locator("[data-effect]")).toHaveCount(0);
 
     const [a, b] = [await here(page).boundingBox(), await there(page).boundingBox()];
     expect(a && b && a.x + a.width <= b.x + 1 && Math.abs(a.y - b.y) < 2, JSON.stringify({ a, b })).toBe(true);
@@ -103,7 +107,7 @@ test.describe("on a desktop", () => {
     await expect(page.locator(".fork .speed-button")).toHaveText("Speed 4×");
   });
 
-  test("[R06] at 4x the fork runs to the level's time, measures this sky, and says whether the level's statement holds", async ({ page }) => {
+  test("[R06] at 4x the fork runs to the level's time, measures this sky, and the guide says what this sky showed", async ({ page }) => {
     await openHook(page);
     await openFork(page);
     const fork = page.locator(".fork");
@@ -112,7 +116,8 @@ test.describe("on a desktop", () => {
     await expect(fork.locator(".speed-button")).toHaveText("Speed 4×");
     await fork.getByRole("button", { name: "Play both" }).click();
     // Seed 5 at the level's start, as eval/sweeps/levels.md records it: 0.93 against 0.08, holds.
-    await expect(fork.locator("[data-holds]")).toHaveAttribute("data-holds", "yes", { timeout: 45_000 });
+    // The level asked for a prediction, so the guide says so: by the choice that holds.
+    await expect(fork.locator(".fork-guide")).toContainText(`On this sky: ${LEVELS[0]?.exploration?.choices[0] ?? ""}.`, { timeout: 45_000 });
     await expect(fork.locator("[data-measured]")).toContainText("this world 0.93");
     await expect(fork.locator("[data-measured]")).toContainText("what if 0.08");
     await expect(fork.locator(".difference-chart")).toHaveAttribute("data-here-samples", "201");
