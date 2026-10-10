@@ -15,8 +15,10 @@ session.
     ADR-0011).
 - **Branches:** only `main`. Every slice this session merged fast-forward and was pushed
   (ADR-0009).
-- **Working commit:** `e452bc3` on `main`, the latest code commit there. `check:gate` passed
-  G1 on it.
+- **Working commit:** `92cb65f` on `main`, the latest code commit there. `check:gate` passed
+  G1 on it locally, with 507 tests.
+- **CI** failed on `7cdf2b8`. A leaked WebGL context slowed level 6's fork past the test's 5 s
+  on the Linux runner; `92cb65f` fixes it. See the log for CI's verdict on the fix.
 - **Two earlier `main` commits failed the gate** this session (`8634b2b` check:docs,
   `85e43fe` to `4ad4925` test:e2e). Both are fixed; see the log.
 - **Bundle:** the entry chunk is 416 KB, and Three.js loads after it as its own 551 KB chunk.
