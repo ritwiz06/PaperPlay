@@ -1,6 +1,7 @@
 # ADR-0020: The speed control
 
-- Status: accepted
+- Status: accepted, and confirmed by the owner in the day's sixth session, who asked that
+  the button show its current speed (below).
 - Date: 2026-10-09
 - Decided by: the owner asked for "a speed control (1x, 2x, 4x): more fixed steps per frame,
   results identical", with a test that a run at 4x replays bit for bit against the same run
@@ -38,3 +39,9 @@ mean more of them per frame, never a longer one.
   recorded for that sky.
 - **On a slow device, 4x can still drop frames' worth of time**, as 1x can. Dropped time is never
   simulated, so the run stays exact; it is only slower to watch.
+
+## Follow-up, 2026-10-09 (session 6): the button shows its speed
+
+The button showed a bare "1×", which can read as "change to 1×". It now says "Speed 1×", with
+the word hidden on a phone, as the HUD's other button labels are, so it reads "1×" there. Its
+accessible name is unchanged: "Speed 1×. Change to 2×".

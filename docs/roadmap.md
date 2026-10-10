@@ -118,10 +118,16 @@ Next:
 - [x] Level 5's readout as the birds at rocks: a counter on the card, and rocks that light up
   while a bird is inside them (owner, 2026-10-09; `29f9646`, ADR-0018). Its fork no longer
   stalls for 1.6 s after its first frame.
-- [ ] `/world/local` moves into the shell as the free sandbox.
-- [ ] RunRecord export and import; `npm run replay` with a tolerance report; a replay test
-  on a fresh page load.
-- [ ] The stale-evidence rule.
+- [x] WebGL context loss: the stage says so and offers "Tap to reload the world"; drawing
+  resumes by itself if the browser gives the context back (2026-10-09, `7c81d9f`, ADR-0022).
+- [x] The fork's chart spans its card and keeps 12 px labels on a phone (2026-10-09, `7c81d9f`,
+  ADR-0019).
+- [x] The speed button says "Speed 1×" (2026-10-09, `7c81d9f`, ADR-0020).
+
+Moved out of G2 (owner, 2026-10-09, session 6):
+- `/world/local` in the shell, and the replay export and import UI, wait until after G3's first
+  generated world. `npm run replay` and its tolerance report go with them.
+- The stale-evidence rule moves into G3, since generated worlds depend on primitive versions.
 
 Later:
 - [x] Loading the Three.js stage as its own chunk (2026-10-09, ADR-0017): the entry chunk is
@@ -150,6 +156,10 @@ The re-plan, with effort per step, is in [design/every-paper.md](design/every-pa
 Until the owner accepts it, the items below stand as written.
 
 Next:
+- [ ] The stale-evidence rule: a new primitive version or source hash resets the checks that
+  depend on it (moved from G2, 2026-10-09).
+- [ ] After the first generated world: replay export and import with `npm run replay`, and
+  `/world/local` in the shell (moved from G2, 2026-10-09).
 - [ ] First, once the authored world plays end to end: split the paper into the four
   development and eight held-out section files (moved from G2 on 2026-10-09). G3 generates
   from a development section, and G4 evaluates on the held-out ones.
@@ -232,3 +242,4 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-09 | What if runs a split-screen fork whose chart is the level's measured difference; level 2 asks for a prediction first; a speed control | Owner's slices 2–4 (ADR-0019, ADR-0020) |
 | 2026-10-09 | `main` moves only through `npm run land`, and a pre-push hook refuses any other push to `main` | Owner decision, after three broken states reached `main` (ADR-0009, amended) |
 | 2026-10-09 | PaperPlay builds for AI/ML, biomedical and scientific papers; the flocking world becomes the reference example; primitive families, scene kits, three routing tiers, the level rule as a pipeline stage, and ingest from arXiv source, PubMed Central XML and PDF. G3 and G4 are re-planned for the owner's review | Owner decision (ADR-0021) |
+| 2026-10-09 | Replay export UI and `/world/local` in the shell wait until after G3's first generated world; the stale-evidence rule moves into G3 | Owner decision, session 6 |

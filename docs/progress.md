@@ -7,6 +7,20 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · The stage survives context loss; the fork's chart fits a phone
+
+- Branch: `g2/stage-resilience`
+- Commits: `7c81d9f`
+- Shipped:
+  - **WebGL context loss** (ADR-0022): a notice over the canvas with "Tap to reload the
+    world", which builds a new renderer for the same scene. Drawing resumes by itself if the
+    browser gives the context back. The run never notices.
+  - **The fork's chart** spans its card and keeps 12 px labels on a phone (ADR-0019).
+  - **The speed button says "Speed 1×"** (ADR-0020).
+- Evidence: three context tests and a phone chart test, all in the browser; the gate's count is
+  in the session log.
+- Gate: land's `check:gate` run on this branch's tip, recorded in the session log.
+
 ## 2026-10-09 · Level 5 reads as birds at rocks
 
 - Branch: `g2/level5-readout`

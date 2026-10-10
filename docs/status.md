@@ -15,6 +15,7 @@ session.
     ADR-0011).
 - **Branches:** `main`, and the branch landing on it. **`main` moves only through
   `npm run land`** (ADR-0009, amended); the pre-push hook refuses anything else.
+- **Working commit (stage):** `7c81d9f` on `g2/stage-resilience`, landing: context loss and the phone chart.
 - **Working commit:** `29f9646` on `g2/level5-readout`, landing: level 5 reads as birds at
   rocks. `main` is at `45afde3`, landed with CI run 38021813577 green on it.
 - **Direction (ADR-0021):** PaperPlay builds for AI/ML, biomedical and scientific papers. The

@@ -1,6 +1,7 @@
 # ADR-0019: The fork view
 
-- Status: accepted. My choices within the owner's brief, for the owner to confirm.
+- Status: accepted. My choices within the owner's brief were confirmed by the owner in the
+  day's sixth session, which also asked for the chart to fit a phone (below).
 - Date: 2026-10-09
 - Decided by: the owner asked, on 2026-10-09, for:
   - two synchronized worlds on the same seed;
@@ -61,3 +62,13 @@ the learner was watching.
   while the fork is open, and mounted again on closing.
 - **The one world's stage, when mounted again, starts its camera afresh.**
 - **At 1x a level's time takes up to 40 s to watch.** The speed control (slice 4) shortens it.
+
+## Follow-up, 2026-10-09 (session 6): the chart on a phone
+
+The owner asked for the fork's chart to be full width and readable on a phone. It had a fixed
+320 × 128 viewBox: on a 390 px phone it was drawn at 1.08 times its units, its labels at 9 px,
+about 7 px tall. A desktop's 150 px height cap letterboxed it as well.
+
+The chart now draws at its own measured width, one unit to a CSS pixel: 140 px tall, or 120 px
+below 480 px wide. It spans its card, and its labels are 12 px on every screen. A browser test
+on the phone checks the span, the unit scale and the label size; it fails on the old chart.
