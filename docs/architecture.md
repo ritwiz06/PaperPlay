@@ -11,7 +11,7 @@ How PaperPlay fits together today. The concepts named here are explained in
 | `packages/primitives` | Deterministic, fixed-step scientific models in families, their registry, and run replay | The root: the `Primitive` interface (with its `family`, `time`, `space`, `entities` and `queries`), `mulberry32`, `registry`, `runEvents`, `replayRecord`. `@paperplay/primitives/flock`, the agents family's flock in `src/agents/flock/`: `flockPlanarWeighted`, its queries Q1–Q4 by name and as `flockNeighbours`, `flockHeadings`, `flockSpread` and `flockAtRocks`, and `flockReadsAsOneGroup` (O1). `src/spaces/torus.ts`, the shared wrap-around space |
 | `packages/ui` | Design tokens, fonts, the stage, the bench and the game-first HUD | `@paperplay/ui/tokens`, `fonts.css`, `components.css`, `hud.css`, `stage-core`, `three-adapter`, `react` |
 | `packages/pipeline` | Agent roles, model adapters, checks, controller | `buildWorld`, the deterministic builder in `src/builder/` (ADR-0016); `summarise` and `claimHolds`, a fork's measured difference (ADR-0018); the agents and adapters arrive at G3 |
-| `apps/web` | React shell: owns the run, renders state, submits actions | `src/world/session.ts`, `src/world/LocalWorld.tsx` at `/world/local`, `src/world/local-world.ts`; `src/world/authored-world.ts`, which builds `fixtures/worldspecs/flocking-reference.json` with the builder at start-up; `src/hook/HookWorld.tsx` at `/world/hook`, the six levels played from the built world, and `src/hook/guide.ts`, the guide from each level's script; `src/world/fork.ts`, a level's fork (ADR-0019); `explorationLines` in `src/hook/guide.ts`, guided exploration; the dev-only capture page `capture.html` with `src/capture/` (ADR-0010) |
+| `apps/web` | React shell: owns the run, renders state, submits actions | `src/world/session.ts`, the generic session (`createSession(primitive, view, options)`, ADR-0026), and `src/world/valley.ts`, the valley kit's view of it and the flocking world's `createWorldSession`; `src/world/LocalWorld.tsx` at `/world/local`, `src/world/local-world.ts`; `src/world/authored-world.ts`, which builds `fixtures/worldspecs/flocking-reference.json` with the builder at start-up; `src/hook/HookWorld.tsx` at `/world/hook`, the six levels played from the built world, and `src/hook/guide.ts`, the guide from each level's script; `src/world/fork.ts`, a level's fork (ADR-0019); `explorationLines` in `src/hook/guide.ts`, guided exploration; the dev-only capture page `capture.html` with `src/capture/` (ADR-0010) |
 | `apps/api` | Fastify API: will hold secrets and run jobs | `GET /health` only, until G3 |
 | `scripts/` | Gate, docs checker, land, defaults sweep, hook seed, group-measure sweep, levels sweep, demo capture, the built app served as Vercel would | `check-gate.ts` (with `gate/worlds.ts`), `check-docs.ts`, `land.ts` (with `land/land.ts` and `land/guard.ts`, ADR-0009), `hooks/pre-push.ts` and `hooks/install.ts`, `sweep-defaults.ts`, `hook-seed.ts`, `group-measure.ts`, `levels.ts`, `capture-demo.ts`, `serve-dist.ts`; `scripts/test/bundle.test.ts` builds the production bundle |
 | `fixtures/oracles/` | Hand-derived expected behaviours for primitives | See `fixtures/oracles/README.md` |
@@ -26,18 +26,29 @@ Inside `packages/ui`:
 - **`src/tokens.ts`:** the accepted palette.
 - **`src/fonts/`:** the self-hosted typefaces, Fredoka and Literata, declared in
   `fonts.css` as `@paperplay/ui/fonts.css` (ADR-0002).
-- **`src/stage-core/`:** pure presentation; turns states into a `FrameDescription`. It also
-  holds the view window and free rectangle (`screen.ts`) and the compass's geometry
-  (`compass.ts`) (ADR-0012).
-- **`src/three-adapter/`:** turns a `FrameDescription` into a Three.js scene: birds as a
-  body and two hinged wings, trails as ribbons, and the valley with its meadow, lake, trees,
-  rocks, sky and sun (ADR-0013).
+- **Scene kits (ADR-0026):** each kit has a half in each layer below, under `kits/<id>/`, so
+  the layer's lint rules and tsconfig cover it. The first is the valley kit (`kits/valley/`):
+  the flock over its valley.
+- **`src/stage-core/`:** pure presentation; turns states into a `FrameDescription` through a
+  kit's pure half (`StageKit`). The generic frame is the stage's part (camera, field box,
+  palette, rings) and the kit's own typed layers beside it. It also holds the view window and
+  free rectangle (`screen.ts`) and ground picking (`picking.ts`) (ADR-0012). The valley kit's
+  half, `@paperplay/ui/stage-core/valley`, holds the flock's frame, its palettes, bird picking
+  and the compass's geometry.
+- **`src/three-adapter/`:** turns a `FrameDescription` into a Three.js scene. The base makes
+  the scene, camera, fog, lights, sky, sun and rings, and keeps their creation order; a kit's
+  Three.js half (`ThreeKit`, registered in `THREE_KITS`) draws its layers. The valley kit's:
+  birds as a body and two hinged wings, trails as ribbons, beacons and rocks, and the valley
+  with its meadow, lake, trees and rocks (ADR-0013).
 - **`src/react/`:** they display what a driver gives them and report what the learner does.
+  WorldStage, ForkView and the guide take a kit; the valley kit's React half,
+  `@paperplay/ui/react/valley`, holds its mark, its tools and the flock's readouts.
   - From G1: WorldStage, LabBench, Readout, and the origin chip and legend (ADR-0007).
   - The game-first HUD (ADR-0008, ADR-0012), styled by `hud.css`: LevelCard, Guide,
-    PaperJournal, LevelMap, DepthToggle, HeadingCompass, OriginTag and `useFreeRect`.
-  - Each level's readout, by its observable (ADR-0014, ADR-0018): HeadingCompass,
-    SpacingGauge, SpreadDial, GroupsCounter and RocksCounter, sharing the `dial` styles.
+    PaperJournal, LevelMap, DepthToggle, OriginTag and `useFreeRect`.
+  - Each level's readout, by its observable (ADR-0014, ADR-0018), in the valley kit:
+    HeadingCompass, SpacingGauge, SpreadDial, GroupsCounter and RocksCounter, sharing the
+    `dial` styles.
   - The fork (ADR-0019): ForkView, with two WorldStages, and DifferenceChart.
   - The guide can ask a question with choices (`ask`), and speak inside a card (GuideNote).
   - SpeedButton, the speed control (ADR-0020); `advance` in `stage-core/fixed-step.ts` takes the speed. The level card shows and hides its elements by
@@ -92,7 +103,7 @@ flowchart LR
   state --> query["primitive neighbourhood query"]
   query --> emphasis["emphasis: picked bird and neighbours"]
   emphasis --> describe
-  state --> describe["stage-core.describeFrame<br/>(previous, current, alpha)"]
+  state --> describe["a kit's describe, in the stage core<br/>(previous, current, alpha)"]
   describe --> frame["FrameDescription"]
   frame --> apply["three-adapter.applyFrame"]
   apply --> canvas["WebGL canvas"]
@@ -122,7 +133,7 @@ flowchart LR
 | `flock.planar.weighted` | 3.1.0: equations E1–E20, with the group measure of ADR-0015 (E14 groups, E18 stray share) and its reading O1, "one group"; E19 the largest group's spread and E20 birds at rocks (ADR-0018); defaults per ADR-0003, alignment range 0–4; and the read-only queries Q1 (neighbourhoods), Q2 (headings), Q3 (spread) and Q4 (birds at rocks), which do not change the version | `packages/primitives/src/agents/flock/MODEL.md` |
 | The families' catalogue (`FamilyId`, `FAMILIES`, `Variation`, `SpaceKind`) and `TimeUnit` | Unversioned data: a family, space or time unit is added by ADR | `packages/contracts/src/families.ts`, `packages/contracts/src/time.ts` (ADR-0025) |
 | Oracle fixtures | `oracle/1` | `fixtures/oracles/README.md` |
-| FrameDescription, with FrameEmphasis | Unversioned: in-process only, never persisted | `packages/ui/src/stage-core/frame.ts` |
+| FrameDescription (the stage's part and a kit's layers), StageKit, ThreeKit; the valley kit's FlockFrame and FrameEmphasis | Unversioned: in-process only, never persisted | `packages/ui/src/stage-core/frame.ts`, `packages/ui/src/three-adapter/scene.ts`, `packages/ui/src/stage-core/kits/valley/frame.ts` (ADR-0026) |
 | Gate definitions | Requirements per gate | `gates.json` |
 
 ## Invariants and where they are enforced
@@ -164,6 +175,8 @@ flowchart LR
 | The compass's arrow is the primitive's mean heading (Q2) and agreement (E12), and its ticks point where the birds fly on screen | Tests | `packages/primitives/test/flock.headings.test.ts`, `packages/ui/test/compass.test.ts` |
 | The stage core is framework-free, with type-only simulation imports | A tsconfig without the DOM library; lint | `packages/ui/src/stage-core/tsconfig.json`, `eslint.config.js` |
 | The adapter never reads or writes simulation state | Lint and an import test | `packages/ui/test/three-adapter.test.ts` |
+| Every scene kit's pure half has its Three.js half registered under the same id; no kit's Three.js half imports simulation code; each says what carries on when the drawing is lost | Tests; lint covers every kit's half as it covers its layer | `packages/ui/test/kits.test.ts`, `eslint.config.js` (ADR-0026) |
+| Splitting the stage into a base and the valley kit changed no pixel: the demo capture's frame hashes are those of `f0bc31c` | The capture, filmed before and after (session log 2026-10-10) | `npm run capture:demo` |
 | The React stage and bench import no simulation code | Lint (types only) | `eslint.config.js` |
 | The flocking world's six levels on seed 5 replay bit for bit, at tolerance 0, against records made before G3a's refactor, and the app's own session and fork make each record again byte for byte, on the runtime that made them; on any other, state for state, with every observable but E19 bit for bit | Tests [R07] | `apps/web/test/records.test.ts`, `fixtures/records/flocking-seed5/` |
 | A live session replays exactly from its own record | Test [R04]: `runEvents` on the session's plan reaches its state bit for bit | `apps/web/test/session.test.ts` |
@@ -310,3 +323,4 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 | 2026-10-10 | fc3f828 | `fixtures/records/flocking-seed5/`, the six levels recorded before G3a, held to them by `apps/web/test/records.test.ts` |
 | 2026-10-10 | 8de1c33 | `fixtures/records/flocking-seed5/final-states.json`; the records test holds them bit for bit where they were made, and state for state everywhere |
 | 2026-10-10 | f111195 | Primitive families: `families.ts` and `time.ts` in contracts; the `Primitive` interface's `family`, `time`, `space`, `entities` and `queries`; the flock in `src/agents/flock/` as `@paperplay/primitives/flock`; the torus in `src/spaces/` (ADR-0025) |
+| 2026-10-10 | ba1ac50 | Scene kits (ADR-0026): the generic frame, `StageKit`, `ThreeKit` and `THREE_KITS`; the valley kit under `kits/valley/` in each layer; the generic session (`apps/web/src/world/session.ts`) and the valley's view (`valley.ts`); the fork on the level's own primitive |

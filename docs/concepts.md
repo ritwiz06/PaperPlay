@@ -127,7 +127,7 @@ measured how often local rules alone produce one ordered group within 20 seconds
 The average of many headings drawn at random is a short arrow. Its expected length shrinks
 like one over the square root of the number of birds.
 
-- **Used in:** `fixtures/oracles/flock.planar.weighted/rules-off-initial-agreement-low.json`, `packages/primitives/src/agents/flock/headings.ts`, `packages/ui/src/react/HeadingCompass.tsx`
+- **Used in:** `fixtures/oracles/flock.planar.weighted/rules-off-initial-agreement-low.json`, `packages/primitives/src/agents/flock/headings.ts`, `packages/ui/src/react/kits/valley/HeadingCompass.tsx`
 - **Why here:** It is why a freshly seeded flock starts with low agreement, and how the
   oracle bounds that start with stated odds rather than a guess. The heading compass draws
   it: the arrow is the mean of the birds' unit headings, so it is short when they scatter
@@ -448,6 +448,19 @@ cannot call `Math.random`, and the Three.js adapter cannot import simulation cod
 - **Why here:** Architecture written only in prose erodes, and a failing lint run does not.
 - **Learn more:** [ESLint: no-restricted-imports](https://eslint.org/docs/latest/rules/no-restricted-imports)
 
+### One interface, many implementations (scene kits)
+
+Write the part of a program that every case shares once, against a small interface, and let
+each case supply its own implementation of that interface. Adding a case then means writing
+one implementation, not changing the shared part.
+
+- **Used in:** `packages/ui/src/stage-core/frame.ts`, `packages/ui/src/three-adapter/scene.ts`, `apps/web/src/world/session.ts`
+- **Why here:** The stage, its Three.js adapter and the app's session were written for birds.
+  A scene kit (ADR-0026) is the interface between them and one family's look: the valley kit
+  draws the flock, and a town kit can draw an epidemic without touching the stage, the
+  adapter, the session or the fork.
+- **Learn more:** [Refactoring Guru, "Strategy"](https://refactoring.guru/design-patterns/strategy)
+
 ### Model/render separation
 
 The model computes states and the renderer only draws them. Changing how things look can
@@ -612,7 +625,7 @@ size and colour.
 Colours arranged round a wheel, so a direction can be shown as a colour: a heading and the
 same heading a full turn later get the same colour, and nearby headings get nearby colours.
 
-- **Used in:** `packages/ui/src/stage-core/palettes.ts`, `packages/ui/src/stage-core/frame.ts`
+- **Used in:** `packages/ui/src/stage-core/kits/valley/palettes.ts`, `packages/ui/src/stage-core/kits/valley/frame.ts`
 - **Why here:** Colour by heading lets learners see agreement: a flock that agrees turns one
   colour. The wheel comes from the palette, so it trades hue for contrast against the
   meadow, which a test holds at 3:1 (ADR-0013).
@@ -655,7 +668,7 @@ Turn a point on the screen back into a ray from the camera, and find where that 
 the ground plane. Picking a bird works the other way round: project every bird onto the
 screen and take the one drawn nearest the pointer.
 
-- **Used in:** `packages/ui/src/stage-core/camera.ts`, `packages/ui/src/stage-core/picking.ts`
+- **Used in:** `packages/ui/src/stage-core/camera.ts`, `packages/ui/src/stage-core/picking.ts`, `packages/ui/src/stage-core/kits/valley/picking.ts`
 - **Why here:** It is how a click becomes a beacon at the right spot in the world, or a
   picked bird. Both work on what is drawn, so picking never touches the simulation.
 - **Learn more:** [Scratchapixel: ray–plane intersection](https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection.html)
@@ -675,7 +688,7 @@ quaternions.
 Shapes made of few triangles, each lit as one flat face, which gives the faceted look of
 the prototype's island.
 
-- **Used in:** `packages/ui/src/three-adapter/geometry.ts`
+- **Used in:** `packages/ui/src/three-adapter/kits/valley/geometry.ts`
 - **Why here:** It matches the accepted visual direction and stays cheap to draw.
 - **Learn more:** [three.js: MeshStandardMaterial (flatShading)](https://threejs.org/docs/#api/en/materials/MeshStandardMaterial)
 
@@ -695,7 +708,7 @@ if the screen were only part of its real size, while the whole screen still draw
 Show the thing of interest in full detail and keep everything around it visible, but quieter.
 Nothing disappears, so the viewer keeps their bearings.
 
-- **Used in:** `packages/ui/src/stage-core/frame.ts`, `packages/ui/src/stage-core/palettes.ts`
+- **Used in:** `packages/ui/src/stage-core/kits/valley/frame.ts`, `packages/ui/src/stage-core/kits/valley/palettes.ts`
 - **Why here:** The selected-neighbour view enlarges the picked bird and keeps the birds it
   sees in ink. The rest are dimmed, which works with this palette where colour would not:
   aqua and lime have too little contrast against the cream sky.
@@ -724,7 +737,7 @@ Distant objects fade toward the sky colour.
 Colours are written in sRGB but blended and lit in linear light, then converted back for
 the screen.
 
-- **Used in:** `packages/ui/src/three-adapter/apply-frame.ts`, `packages/ui/src/stage-core/palettes.ts`
+- **Used in:** `packages/ui/src/three-adapter/apply-frame.ts`, `packages/ui/src/stage-core/kits/valley/palettes.ts`
 - **Why here:** It keeps the palette tokens looking the same on screen as in the design,
   and lets fading birds blend smoothly into the sky.
 - **Learn more:** [three.js manual: color management](https://threejs.org/manual/#en/color-management)

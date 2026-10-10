@@ -13,15 +13,17 @@ G3a.1 and G3a.2 ([log](sessions/2026-10-10.md)). This file is rewritten every se
 - **G3a.1, generalize, is in progress,** on short branches landed through `npm run land`:
   - **done:** records of the six levels on seed 5, made before the refactor, with a test that
     holds the code to them (`fc3f828`, `8de1c33`, landed at `f79ff76`);
-  - **landing:** primitive families (`f111195`, ADR-0025);
-  - **next:** scene kits and the generic session and fork, then `worldspec/3`.
+  - **done:** primitive families (`f111195`, ADR-0025, landed at `34e713a`);
+  - **landing:** scene kits and the generic session and fork (`ba1ac50`, ADR-0026); the
+    capture's frame hashes are `f0bc31c`'s;
+  - **next:** `worldspec/3`.
 - **`main` moves only through `npm run land`** (ADR-0009, amended).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`. CI runs `check:gate` on every
   push and pull request.
-- **Branches:** `g3/families`, being landed.
-- **Working commit:** `f111195` on `g3/families`: primitive families, the flock in the agents
-  family. Its land's `check:gate` is in the next session log entry; `main` is at `f79ff76`, whose
-  gate and CI passed.
+- **Branches:** `g3/scene-kits`, being landed.
+- **Working commit:** `ba1ac50` on `g3/scene-kits`: scene kits, and a generic stage, adapter
+  and session. `main` is at `34e713a`, whose `check:gate` passed G1 (574 tests) and whose CI
+  passed.
 - **Primitive:** `flock.planar.weighted@3.1.0`, with queries Q1–Q4, the agents family's first,
   at `@paperplay/primitives/flock` (ADR-0025).
 - **Contracts:** `worldspec/2` (ADR-0016, ADR-0018); `runrecord/3` (ADR-0023).

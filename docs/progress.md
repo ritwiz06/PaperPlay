@@ -7,6 +7,22 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-10 · Scene kits, and a generic stage and session
+
+- Branch: `g3/scene-kits`
+- Commits: `ba1ac50`
+- Shipped (ADR-0026):
+  - **A scene kit in three halves:** its pure half describes frames; its Three.js half draws
+    its layers; its React half shows its readouts, mark and tools.
+  - **A generic FrameDescription:** the stage's part (camera, field, palette, rings) and the
+    kit's own typed layers.
+  - **The valley kit,** moved unchanged. The capture's frame hashes are `f0bc31c`'s.
+  - **A generic session and fork:** `createSession(primitive, view, options)`, the valley's
+    view, and a fork that spawns its worlds on the level's own primitive.
+  - **Tests changed only their imports.**
+- Evidence: unchanged counts; `packages/ui/test/kits.test.ts` new.
+- Gate: land's `check:gate` on this branch's tip, recorded in the session log.
+
 ## 2026-10-10 · Primitive families
 
 - Branch: `g3/families`

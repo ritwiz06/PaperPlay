@@ -161,9 +161,10 @@ made before the refactor; the Mac capture's frame hash matches its pre-refactor 
 - [x] Primitive families: the primitive interface (family, time, space, entities, queries);
   the flock moved into the agents family; the torus a shared space (2026-10-10, `f111195`,
   ADR-0025).
-- [ ] Scene kits: the kit contract across the stage core, the adapter and React; a generic
-  FrameDescription; the flocking kit.
-- [ ] The session and the fork made generic; a world loader with the spec's own seed.
+- [x] Scene kits: the kit contract across the stage core, the adapter and React; a generic
+  FrameDescription; the flocking kit, called the valley kit (2026-10-10, `ba1ac50`, ADR-0026).
+- [x] The session and the fork made generic (2026-10-10, `ba1ac50`). The world loader with the
+  spec's own seed comes with `worldspec/3`.
 - [ ] `worldspec/3`: routing tier, scene kit, time unit, the opening seed, and what the world
   cannot show; `worldspec/2` still read.
 
