@@ -10,7 +10,7 @@ and the gate summary. Counts are passing tests tagged with each requirement.
 ## 2026-10-09 · Level 5 reads as birds at rocks
 
 - Branch: `g2/level5-readout`
-- Commits: `29f9646`
+- Commits: `29f9646`, `f849035` (the fork test's timeout, after CI failed on it)
 - Shipped (ADR-0018, owner's confirmation):
   - **The rocks counter,** level 5's readout: the birds inside rocks right now (E20), and each
     rock, lit while a bird is at it.
