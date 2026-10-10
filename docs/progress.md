@@ -10,7 +10,7 @@ and the gate summary. Counts are passing tests tagged with each requirement.
 ## 2026-10-10 · The flocking world recorded before G3a's refactor
 
 - Branch: `g3/records`
-- Commits: `fc3f828`
+- Commits: `fc3f828`, `8de1c33`
 - Shipped:
   - **Eighteen run records** in `fixtures/records/flocking-seed5/`, made once by the code at
     `f0bc31c`: each of the six levels as played on seed 5, and both worlds of its fork.
@@ -18,6 +18,12 @@ and the gate summary. Counts are passing tests tagged with each requirement.
     at tolerance 0 against the world as built today, and the app's own session and fork make
     each again byte for byte. Two planted bugs caught: a nudged cohesion constant fails 17
     replays and the remake; a control recorded a step late fails the remake only.
+  - **The first comparison of a Mac run with a Linux run, bit for bit.** CI's Linux x86-64
+    replayed every record state for state, and every observable bit for bit except one sample
+    of E19, the largest group's spread, one ulp off: its circular mean uses `Math.cos`,
+    `Math.sin` and `Math.atan2`, which engines may round their own way. Land refused the first
+    landing on it. The test now holds the records bit for bit on darwin arm64, where they were
+    made, and elsewhere state for state, by each final state's hash, with E19 within 1e-12.
   - **The owner's answers to the plan** (ADR-0024), and the roadmap re-cut into G3a and G3b,
     with gates and effort and no day ranges.
 - Evidence: R07 40 (20 new); G1's four requirements as before.

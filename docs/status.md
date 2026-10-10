@@ -17,9 +17,11 @@ G3a.1 and G3a.2 ([log](sessions/2026-10-10.md)). This file is rewritten every se
 - **`main` moves only through `npm run land`** (ADR-0009, amended).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`. CI runs `check:gate` on every
   push and pull request.
-- **Branches:** `g3/records`, being landed.
-- **Working commit:** `fc3f828` on `g3/records`: the flocking world recorded before G3a.
-  `check:gate` passed G1 on it.
+- **Branches:** `g3/records`, being landed again after CI found one ulp of difference on Linux
+  (the session log has the story).
+- **Working commit:** `8de1c33` on `g3/records`: the records test holds the flocking world's
+  records bit for bit on the Mac that made them, and state for state elsewhere. `check:gate`
+  passed G1 on `fc3f828`, its code before this fix.
 - **Primitive:** `flock.planar.weighted@3.1.0`, with queries Q1–Q4.
 - **Contracts:** `worldspec/2` (ADR-0016, ADR-0018); `runrecord/3` (ADR-0023).
 - **Runtime:** Node 24.21.0, pinned in `.node-version`.

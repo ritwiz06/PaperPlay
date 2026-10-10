@@ -162,7 +162,7 @@ flowchart LR
 | The stage core is framework-free, with type-only simulation imports | A tsconfig without the DOM library; lint | `packages/ui/src/stage-core/tsconfig.json`, `eslint.config.js` |
 | The adapter never reads or writes simulation state | Lint and an import test | `packages/ui/test/three-adapter.test.ts` |
 | The React stage and bench import no simulation code | Lint (types only) | `eslint.config.js` |
-| The flocking world's six levels on seed 5 replay bit for bit, at tolerance 0, against records made before G3a's refactor, and the app's own session and fork make each record again byte for byte | Tests [R07] | `apps/web/test/records.test.ts`, `fixtures/records/flocking-seed5/` |
+| The flocking world's six levels on seed 5 replay bit for bit, at tolerance 0, against records made before G3a's refactor, and the app's own session and fork make each record again byte for byte, on the runtime that made them; on any other, state for state, with every observable but E19 bit for bit | Tests [R07] | `apps/web/test/records.test.ts`, `fixtures/records/flocking-seed5/` |
 | A live session replays exactly from its own record | Test [R04]: `runEvents` on the session's plan reaches its state bit for bit | `apps/web/test/session.test.ts` |
 | A control moves the engine parameter, and readouts show the primitive's values | Browser tests [R04], compared with Node bit for bit | `tests/e2e/world.spec.ts` |
 | Readouts update at most ten times a second, never once per frame | `readoutDue`, tested; the stage's loop calls it | `packages/ui/test/fixed-step.test.ts`, `packages/ui/src/react/WorldStage.tsx` |
@@ -230,9 +230,18 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
     on the two architectures.
 - **Canonical for published captures:** CI's capture job on a pinned `ubuntu-24.04` image
   (owner, 2026-10-09; ADR-0010).
-- **Not compared across runtimes:** R01's bit-identical observables are a within-runtime
-  claim, as R01 says ("on one runtime"). No test yet compares a Mac run with a Linux run
-  bit for bit.
+- **Compared across runtimes, from 2026-10-10:** the flocking world's records, made on the Mac
+  (`apps/web/test/records.test.ts`). On Linux x86-64:
+  - every run is the same, state for state: each replay's final state has the SHA-256 the Mac
+    gave it;
+  - every observable is the same, bit for bit, except E19, the largest group's spread: one
+    sample of level 3's trunk differed in its last bit. Its circular mean calls `Math.cos`,
+    `Math.sin` and `Math.atan2`, which ECMAScript lets each engine round its own way; every
+    other observable is arithmetic and `Math.sqrt`, which it does not;
+  - so the records hold bit for bit on darwin arm64 only, and elsewhere state for state, with
+    E19 within 1e-12.
+
+  R01's bit-identical observables stay a within-runtime claim, as R01 says ("on one runtime").
 - **Libraries:** Zod 4.6 for contracts, Fastify 5 for the API.
 - **Scripts:**
   - `check:gate` runs typecheck, lint, check:docs, test, build and test:e2e, then checks
@@ -296,3 +305,4 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 | 2026-10-09 | 7c81d9f | `mountStage` handles context loss: the lost notice, restore, and "Tap to reload the world" (ADR-0022); DifferenceChart draws at its measured width; SpeedButton says "Speed 1×"; `tests/e2e/pixels.ts` |
 | 2026-10-09 | ea2fdf1 | `runrecord/3` with predictions; the session's `predict` and `record`; every level's guided exploration in the fixture (ADR-0023) |
 | 2026-10-10 | fc3f828 | `fixtures/records/flocking-seed5/`, the six levels recorded before G3a, held to them by `apps/web/test/records.test.ts` |
+| 2026-10-10 | 8de1c33 | `fixtures/records/flocking-seed5/final-states.json`; the records test holds them bit for bit where they were made, and state for state everywhere |
