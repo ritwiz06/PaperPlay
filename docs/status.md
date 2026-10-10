@@ -18,16 +18,17 @@ then G3a.1 and G3a.2 ([log](sessions/2026-10-10.md)). This file is rewritten eve
 - **G3a.2, the compartment family and Kermack and McKendrick by hand, is done:**
   - **landed:** `compartments.ode@1.0.0`, its checks and oracles, in the registry and the
     builder (`32c7899`, ADR-0028, landed at `8bd9a20`);
-  - **landing:** the town kit, the shell playing any world, and Threshold Town at
+  - **landed:** the town kit, the shell playing any world, and Threshold Town at
     `/world/epidemic`, every level meeting the rule over the world's values and 19 near them
-    (`cf2551d`, ADR-0029).
+    (`cf2551d`, ADR-0029, landed at `3acb157`, CI run 38062874878).
 - **`main` moves only through `npm run land`** (ADR-0009, amended).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`. CI runs `check:gate` on every
   push and pull request.
-- **Branches:** `g3/kermack-mckendrick`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the
-  compartment agent's own, whose three commits are on `main`.
-- **Working commit:** `cf2551d` on `g3/kermack-mckendrick`. `main` is at `8bd9a20`, whose
-  `check:gate` passed G1 and whose CI passed.
+- **Branches:** `g3/g3a2-close`, this closing record, being landed;
+  `worktree-agent-ab8301aef54d2fcc8`, the compartment agent's own, whose three commits are on
+  `main`.
+- **Working commit:** `3acb157`, where `main` is. Its `check:gate` passed G1 locally and on CI,
+  on the branch (run 38062874878) and on `main` itself (run 38064210620, its capture job too).
 - **Primitives:** `flock.planar.weighted@3.1.0`, with queries Q1–Q4, the agents family's
   first, at `@paperplay/primitives/flock` (ADR-0025); `compartments.ode@1.0.0`, the solver for
   every compartment model, at `@paperplay/primitives/compartments` (ADR-0028).
@@ -38,30 +39,29 @@ then G3a.1 and G3a.2 ([log](sessions/2026-10-10.md)). This file is rewritten eve
   on `/world/epidemic`, each with its control, readout, guide, journal page, prediction and
   fork; both journals now say what the world cannot show; a town can start again.
 
-## Latest check:gate (G1), 2026-10-10, commit 4a6849d
+## Latest check:gate (G1), 2026-10-10, commit 3acb157
 
-The code of `cf2551d` before its tests were retagged; land's own run on the branch's tip is in
-the session log.
+Land's own run, on `g3/kermack-mckendrick`'s tip, now `main`:
 
 ```
 check:gate G1 · Playable baseline · tag v0.1.0
   runtime    node 24.21.0 (pinned 24.21.0)  ok
-  typecheck  ok      18.1 s
-  lint       ok      13.9 s
+  typecheck  ok      19.2 s
+  lint       ok      12.9 s
   check:docs ok      0.3 s
-  test       ok      43.3 s
-  build      ok      0.6 s
-  test:e2e   ok      126.8 s
+  test       ok      44.2 s
+  build      ok      0.7 s
+  test:e2e   ok      123.6 s
   evidence   746 tests (vitest 671, playwright 75), 0 skipped
     R01  Deterministic, oracle-checked primitives      151 passing
-    R02  Model/render separation                       7 passing
+    R02  Model/render separation                       9 passing
     R03  Strict, versioned contracts                   151 passing
     R04  Playable local world                          20 passing
 
 G1 passed: every required check ran and every requirement has passing evidence.
 ```
 
-After retagging: R02 9. Ahead of their gate: R05 5, R06 53, R07 40, R08 59, R12 18.
+Ahead of their gate, from the same run's reports: R05 5, R06 53, R07 40, R08 59, R12 18.
 
 ## Blockers
 
@@ -83,11 +83,12 @@ After retagging: R02 9. Ahead of their gate: R05 5, R06 53, R07 40, R08 59, R12 
 
 ## Next three actions
 
-1. Land `g3/kermack-mckendrick`, then record the land and `main`'s CI.
-2. G3a.3, next session: `apps/api`'s jobs and events, ingest, and the pipeline on the
+1. G3a.3, next session: `apps/api`'s jobs and events, ingest, and the pipeline on the
    compartment family, with Elowitz and Leibler as its first generated world.
-3. When the PDFs arrive: the source registers and maps, then Threshold Town's and Murmuration
+2. When the PDFs arrive: the source registers and maps, then Threshold Town's and Murmuration
    Valley's anchors made real.
+3. A model binding for a whole world, so a compartment world states its model once (ADR-0029's
+   consequences).
 
 ## Recommendations
 
