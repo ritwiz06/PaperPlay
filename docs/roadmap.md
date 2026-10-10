@@ -163,10 +163,10 @@ made before the refactor; the Mac capture's frame hash matches its pre-refactor 
   ADR-0025).
 - [x] Scene kits: the kit contract across the stage core, the adapter and React; a generic
   FrameDescription; the flocking kit, called the valley kit (2026-10-10, `ba1ac50`, ADR-0026).
-- [x] The session and the fork made generic (2026-10-10, `ba1ac50`). The world loader with the
-  spec's own seed comes with `worldspec/3`.
-- [ ] `worldspec/3`: routing tier, scene kit, time unit, the opening seed, and what the world
-  cannot show; `worldspec/2` still read.
+- [x] The session and the fork made generic (2026-10-10, `ba1ac50`); each world opens on its
+  spec's own seed (`dde1cec`).
+- [x] `worldspec/3`: routing tier, scene kit, time unit, the opening seed, and what the world
+  cannot show; `worldspec/2` still read (2026-10-10, `dde1cec`, ADR-0027).
 
 G3a.2, the compartment family and Kermack and McKendrick by hand (14–20 h):
 - [ ] The expression tree, its units, and the RK4 solver with its accuracy check.

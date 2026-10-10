@@ -313,6 +313,18 @@ Readers can then refuse versions they do not understand.
   replay silently wrong.
 - **Learn more:** [Kleppmann, Designing Data-Intensive Applications, chapter 4](https://dataintensive.net)
 
+### Reading an old version (upgrade on read)
+
+When a document format gets a new version, keep reading the old one exactly as it was, then
+convert it to the new one in a single tested step before any code uses it. Everything after
+that step knows only the newest version.
+
+- **Used in:** `packages/contracts/src/worldspec-v3.ts`, `packages/pipeline/src/builder/build.ts`
+- **Why here:** `worldspec/3` adds routing, a scene kit, a time unit and limits. Old specs, and
+  the records that name them by hash, stay readable: `WorldSpec` checks a version 2 document by
+  version 2's own rules, and `upgradeWorldSpec` turns it into version 3 for the builder.
+- **Learn more:** [Martin Kleppmann, "Designing Data-Intensive Applications", chapter 4, "Encoding and Evolution"](https://dataintensive.net/)
+
 ### Semantic versioning
 
 Version numbers carry meaning. The major number changes when something breaks, the minor

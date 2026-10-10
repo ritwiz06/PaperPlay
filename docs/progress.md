@@ -7,6 +7,23 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-10 · worldspec/3, and the end of G3a.1
+
+- Branch: `g3/worldspec-3`
+- Commits: `dde1cec`
+- Shipped (ADR-0027):
+  - **`worldspec/3`:** routing, the scene kit by id, the time unit, the opening seed, a
+    prediction required of every level, and what the world cannot show.
+  - **`worldspec/2` is still read,** by its own schema, and upgraded to version 3 before
+    anything is built.
+  - **The builder on version 3,** checking kit, routing, time unit and the watching bound.
+  - **The flocking fixture migrated;** the levels sweep's record unchanged byte for byte.
+  - **G3a.1's acceptance:** tests changed only their imports, but for four lines that read the
+    level's time by its new name; the records replay bit for bit; the capture's frame hashes
+    are `f0bc31c`'s.
+- Evidence: R03 120 (12 new), R08 53 (5 new).
+- Gate: land's `check:gate` on this branch's tip, recorded in the session log.
+
 ## 2026-10-10 · Scene kits, and a generic stage and session
 
 - Branch: `g3/scene-kits`
