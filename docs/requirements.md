@@ -19,6 +19,8 @@ Twelve requirements, R01–R12, and the evidence each has. Counts come from the 
 - **Unnumbered rules:** the brief's tenth non-negotiable, "checks are real", is enforced by
   `check:gate` itself and tested in `scripts/test/gate-evidence.test.ts`. Documentation
   consistency is enforced by `check:docs`, tested in `scripts/test/check-docs.test.ts`.
+  That `main` moves only to a commit that passed the gate and CI is enforced by `npm run land`
+  and the pre-push hook, tested in `scripts/test/land.test.ts` (ADR-0009).
 
 ## Evidence
 

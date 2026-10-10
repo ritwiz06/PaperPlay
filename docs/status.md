@@ -1,7 +1,7 @@
 # Status
 
-Updated 2026-10-09, at the close of the day's fifth session: the level rule, the fork, guided
-exploration and speed ([log](sessions/2026-10-09-5.md)). This file is rewritten every
+Updated 2026-10-09, during the day's sixth session: a guard for `main`, G2's essentials,
+and the plan for every paper ([log](sessions/2026-10-09-6.md)). This file is rewritten every
 session.
 
 ## Where we are
@@ -13,15 +13,13 @@ session.
   - CI runs `check:gate` on ubuntu-latest on every push and pull request, and is green.
   - CI's capture job, on a pinned `ubuntu-24.04`, makes the canonical capture (ADR-0010,
     ADR-0011).
-- **Branches:** only `main`. Every slice this session merged fast-forward and was pushed
-  (ADR-0009).
-- **Working commit:** `92cb65f` on `main`, the latest code commit there. `check:gate` passed
-  G1 on it locally, with 507 tests.
-- **CI** failed on `7cdf2b8`. A leaked WebGL context slowed level 6's fork past the test's 5 s
-  on the Linux runner. `92cb65f` fixes it, and CI passed both jobs on `3fea872` (run
-  38013059112).
-- **Two earlier `main` commits failed the gate** this session (`8634b2b` check:docs,
-  `85e43fe` to `4ad4925` test:e2e). Both are fixed; see the log.
+- **Branches:** `main`, and `g2/land` landing through `npm run land`, the first branch to
+  use it. **From now on `main` moves only through `npm run land`** (ADR-0009, amended).
+- **Working commit:** `3454a1d` on `g2/land`, the latest code commit: land and the pre-push
+  hook. `check:gate` passed G1 on `cc3d4cf`, its version before an amend added one untagged
+  test.
+- **CI** passed both jobs on `3fea872` (run 38013059112), and on `1050043`, `main`'s latest
+  commit (run 38013940780).
 - **Bundle:** the entry chunk is 416 KB, and Three.js loads after it as its own 551 KB chunk.
   `vercel.json` is ready for a static deploy, with a Content-Security-Policy tested against
   the built app. The owner connects it (ADR-0017).
@@ -70,18 +68,21 @@ session.
   - the screenshots in `captures/final/`;
   - the canonical capture in `captures/canonical/`.
 
-## Latest check:gate (G1), 2026-10-09, commit e452bc3
+## Latest check:gate (G1), 2026-10-09, commit cc3d4cf
+
+`cc3d4cf` is `3454a1d` before an amend added one untagged test to `scripts/test/land.test.ts`.
+Land's own gate run, on `g2/land`'s tip, is recorded in the session log.
 
 ```
 check:gate G1 · Playable baseline · tag v0.1.0
   runtime    node 24.21.0 (pinned 24.21.0)  ok
-  typecheck  ok      14.8 s
-  lint       ok      10.5 s
+  typecheck  ok      11.4 s
+  lint       ok      8.6 s
   check:docs ok      0.2 s
-  test       ok      39.6 s
-  build      ok      0.6 s
-  test:e2e   ok      67.8 s
-  evidence   506 tests (vitest 450, playwright 56), 0 skipped
+  test       ok      28.6 s
+  build      ok      0.4 s
+  test:e2e   ok      63.3 s
+  evidence   521 tests (vitest 464, playwright 57), 0 skipped
     R01  Deterministic, oracle-checked primitives      58 passing
     R02  Model/render separation                       6 passing
     R03  Strict, versioned contracts                   102 passing
@@ -90,7 +91,7 @@ check:gate G1 · Playable baseline · tag v0.1.0
 G1 passed: every required check ran and every requirement has passing evidence.
 ```
 
-Ahead of their gate, from the same run's reports: R05 4, R06 30, R07 18, R08 48, R12 14.
+Ahead of their gate, from the 2026-10-09 run on `e452bc3`: R05 4, R06 30, R07 18, R08 48, R12 14.
 
 ## Blockers
 

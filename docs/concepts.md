@@ -547,6 +547,19 @@ or broken paths fail the build like a failing test.
   files, so those files must not drift.
 - **Learn more:** [Write the Docs: Docs as Code](https://www.writethedocs.org/guide/docs-as-code/)
 
+### A git hook, and a land record
+
+A git hook is a program git runs at a fixed moment. The pre-push hook runs before a push
+leaves the machine, sees which refs the push would move, and can refuse it. PaperPlay's hook
+refuses any push that would move `main`, unless a land record says the commit passed the
+gate locally and CI on that same commit. Land writes that record as it goes.
+
+- **Used in:** `.githooks/pre-push`, `scripts/hooks/pre-push.ts`, `scripts/land/guard.ts`,
+  `scripts/land/land.ts`
+- **Why here:** three broken states reached `main` in one day, each time with the rule known
+  and not followed. A check that runs itself cannot be forgotten.
+- **Learn more:** [Pro Git: Git Hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks)
+
 ## Graphics
 
 ### Scene graph (Three.js)

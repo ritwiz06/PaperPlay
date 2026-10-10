@@ -13,11 +13,12 @@ How PaperPlay fits together today. The concepts named here are explained in
 | `packages/pipeline` | Agent roles, model adapters, checks, controller | `buildWorld`, the deterministic builder in `src/builder/` (ADR-0016); `summarise` and `claimHolds`, a fork's measured difference (ADR-0018); the agents and adapters arrive at G3 |
 | `apps/web` | React shell: owns the run, renders state, submits actions | `src/world/session.ts`, `src/world/LocalWorld.tsx` at `/world/local`, `src/world/local-world.ts`; `src/world/authored-world.ts`, which builds `fixtures/worldspecs/flocking-reference.json` with the builder at start-up; `src/hook/HookWorld.tsx` at `/world/hook`, the six levels played from the built world, and `src/hook/guide.ts`, the guide from each level's script; `src/world/fork.ts`, a level's fork (ADR-0019); `explorationLines` in `src/hook/guide.ts`, guided exploration; the dev-only capture page `capture.html` with `src/capture/` (ADR-0010) |
 | `apps/api` | Fastify API: will hold secrets and run jobs | `GET /health` only, until G3 |
-| `scripts/` | Gate, docs checker, defaults sweep, hook seed, group-measure sweep, levels sweep, demo capture, the built app served as Vercel would | `check-gate.ts` (with `gate/worlds.ts`), `check-docs.ts`, `sweep-defaults.ts`, `hook-seed.ts`, `group-measure.ts`, `levels.ts`, `capture-demo.ts`, `serve-dist.ts`; `scripts/test/bundle.test.ts` builds the production bundle | `check-gate.ts`, `check-docs.ts`, `sweep-defaults.ts`, `hook-seed.ts`, `group-measure.ts`, `capture-demo.ts` |
+| `scripts/` | Gate, docs checker, land, defaults sweep, hook seed, group-measure sweep, levels sweep, demo capture, the built app served as Vercel would | `check-gate.ts` (with `gate/worlds.ts`), `check-docs.ts`, `land.ts` (with `land/land.ts` and `land/guard.ts`, ADR-0009), `hooks/pre-push.ts` and `hooks/install.ts`, `sweep-defaults.ts`, `hook-seed.ts`, `group-measure.ts`, `levels.ts`, `capture-demo.ts`, `serve-dist.ts`; `scripts/test/bundle.test.ts` builds the production bundle |
 | `fixtures/oracles/` | Hand-derived expected behaviours for primitives | See `fixtures/oracles/README.md` |
 | `fixtures/worldspecs/` | Authored WorldSpecs | `flocking-reference.json`, a draft with placeholder anchors until the source map exists |
 | `fixtures/bindings/` | Hand-written binding fixtures: the variable each level's control must move, its fork and setup | `flocking-reference.json` |
 | `eval/` | Sweeps now; the frozen protocol and raw attempts from G4 | `eval/sweeps/` |
+| `.githooks/` | The repository's git hooks, which npm's `prepare` script tells git to use | `pre-push`, which refuses any push that would move `main` to a commit land has not recorded (ADR-0009) |
 | `tests/e2e/` | Playwright browser tests on Chromium | `world.spec.ts` [R04], `hook.spec.ts` [R05] [R06], `accessibility.spec.ts` [R12], `stage.spec.ts`, `fonts.spec.ts`, `smoke.spec.ts` |
 
 Inside `packages/ui`:
@@ -166,6 +167,7 @@ flowchart LR
 | No skipped tests, no missing scripts, no pass-with-no-tests | The gate's evidence rules; Vitest (`passWithNoTests` and `allowOnly` both false); Playwright (`forbidOnly`, no retries) | `scripts/gate/evidence.ts`, `vitest.config.ts`, `playwright.config.ts` |
 | Each gate requirement has passing tagged tests | `check:gate` | `gates.json` |
 | Docs stay consistent with the repository | `check:docs`, inside `check:gate` | `scripts/docs/check.ts` |
+| `main` moves only to a commit that passed `check:gate` locally and CI on that same commit | `npm run land`, the only routine way `main` moves; the pre-push hook refuses any other push that would move or delete `main`; tests on throwaway repositories, a planted failing gate among them | `scripts/land/land.ts`, `scripts/land/guard.ts`, `.githooks/pre-push`, `scripts/test/land.test.ts` (ADR-0009) |
 | Browser tests render WebGL in software | Launch flags, and a test that asserts SwiftShader was used | `playwright.config.ts`, `tests/e2e/stage.spec.ts` |
 | Fonts come from the page's own origin, and only the shipped weights are declared or rendered | A unit test on the font files; a browser test that blocks off-origin requests | `packages/ui/test/fonts.test.ts`, `tests/e2e/fonts.spec.ts` |
 | `/world/local` has no WCAG 2.x A or AA violation that axe can detect, in four states, at 1280 and 360 px | Browser tests [R12] | `tests/e2e/accessibility.spec.ts` |
@@ -228,6 +230,7 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
   - `check:gate` runs typecheck, lint, check:docs, test, build and test:e2e, then checks
     the evidence;
   - `check:docs` checks the documentation;
+  - `land` lands the current branch on `main`, through the gate and CI (ADR-0009);
   - `sweep:defaults` reproduces ADR-0003's sweep;
   - `choose:hook-seed` re-applies ADR-0003's hook-seed rule;
   - `sweep:groups` re-runs ADR-0015's group-measure sweep, and exits 1 if a criterion fails;
@@ -280,3 +283,4 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 | 2026-10-09 | 85e43fe | Guided exploration: the guide's `ask`, GuideNote, `explorationLines` |
 | 2026-10-09 | b6e00d3 | The speed control: `advance`'s speed, the session's and the fork's `setSpeed`, SpeedButton |
 | 2026-10-09 | 92cb65f | A disposed stage releases its WebGL context (`forceContextLoss`) |
+| 2026-10-09 | 3454a1d | `npm run land` and the pre-push hook on `main`: `scripts/land/`, `scripts/hooks/`, `.githooks/` (ADR-0009) |

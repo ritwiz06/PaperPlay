@@ -207,3 +207,4 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-09 | G2 cannot pass while the flocking world is a draft or holds a placeholder | Owner decision |
 | 2026-10-09 | The deploy's Content-Security-Policy before the first deploy, tested against the built app | Owner decision (ADR-0017) |
 | 2026-10-09 | What if runs a split-screen fork whose chart is the level's measured difference; level 2 asks for a prediction first; a speed control | Owner's slices 2–4 (ADR-0019, ADR-0020) |
+| 2026-10-09 | `main` moves only through `npm run land`, and a pre-push hook refuses any other push to `main` | Owner decision, after three broken states reached `main` (ADR-0009, amended) |

@@ -24,6 +24,7 @@ Commit docs separately as "docs: …". `npm run check:docs`, which `check:gate` 
 - `npm run typecheck` · `npm run lint` · `npm run test` (Vitest) · `npm run test:e2e` (Playwright)
 - `npm run check:gate` — runs every check the current gate requires, `check:docs` included; must actually run tests (no `--passWithNoTests`, no silent skips)
 - `npm run check:docs` — checks the docs against the repository (rules in `docs/README.md`)
+- `npm run land` — lands the current branch on `main`: gate, push, CI green, fast-forward (ADR-0009). The only way `main` moves
 - `npm run sweep:defaults` — reproduces the flock defaults sweep (ADR-0003) · `npm run choose:hook-seed` — re-applies the hook-seed rule (ADR-0003)
 - `npm run replay -- <run.json>` — replays a run record and reports tolerance results (arrives at G2)
 
@@ -52,11 +53,11 @@ docs/               README (index), project-brief, roadmap, status, requirements
 8. **Every WorldSpec level has exactly one manipulable action and exactly one counterfactual.** This is enforced in Zod `.refine()`, not in prose.
 
 ## Branches (ADR-0009)
-- `main` is the line of record: `npm run check:gate` passes on every commit it holds, and gate tags are cut on it.
+- `main` is the line of record: every commit it points to passed `check:gate` locally and CI on that same commit, and gate tags are cut on it.
 - Work in short branches off the latest `main`, one coherent change each, named `<gate>/<topic>` (for example `g2/axe-scan`). Never start a branch on another unmerged branch.
-- When a branch's checks pass, rebase it onto `main` if `main` has moved, merge it with `git merge --ff-only` so history stays linear, and delete the branch.
-- A branch whose result the owner must see first, such as a design spike, stays unmerged until the owner says so.
-- `origin` is the private `ritwiz06/PaperPlay`. CI runs `check:gate` on every push and pull request (ADR-0011), so push a branch to run CI on it, and push `main` after each merge. Never force-push `main` or move a tag.
+- **`main` moves only through `npm run land`**, run on the branch. It refuses a dirty tree, runs `check:gate` and reads its exit status directly, pushes the branch, waits for CI with `gh run watch`, and only on green fast-forwards `main`, pushes it and deletes the branch. Rebase onto `main` first if it has moved. Never `git merge` into `main` or push `main` by hand; the pre-push hook refuses it (ADR-0009's amendment).
+- A branch whose result the owner must see first, such as a design spike, stays unmerged until the owner says so. Land refuses any branch not named `<gate>/<topic>`.
+- `origin` is the private `ritwiz06/PaperPlay`. CI runs `check:gate` on every push and pull request (ADR-0011). Never force-push `main`, move a tag or push with `--no-verify`.
 
 ## Working style
 - Smallest reviewable slice per change; one coherent change per branch.

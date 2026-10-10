@@ -7,6 +7,24 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · A guard for main
+
+- Branch: `g2/land`
+- Commits: `3454a1d`
+- Shipped (ADR-0009, amended):
+  - **`npm run land`, the only routine way `main` moves.** It refuses a dirty tree, main
+    itself, a spike branch, and a branch behind `main`. It runs `check:gate` and reads its exit
+    status directly, then pushes the branch and waits for CI on that exact commit with
+    `gh run watch`. Only on green does it fast-forward `main`, push it and delete the branch.
+  - **A pre-push hook** refuses any push that would move or delete `main`, unless land
+    recorded the commit as gate-passed and CI-green.
+  - **15 tests** on throwaway repositories, a planted failing gate among them. They catch four
+    planted bugs in land and the guard.
+- Evidence:
+  - R01 58, R02 6, R03 102, R04 18;
+  - from 521 tests with none skipped, on `cc3d4cf`, before an amend added one untagged test.
+- Gate: `check:gate` G1 passed on `cc3d4cf`. Land's own run is on this branch's tip.
+
 ## 2026-10-09 · The speed control
 
 - Branch: `g2/speed`
