@@ -10,9 +10,9 @@
 Month one was planned as one mechanism done properly: flocking, on one primitive, with one
 hand-authored world and one generated world from a new section of the same paper (G3). The
 architecture was called domain-agnostic, but only flocking has ever run through it. The
-audit in `docs/design/every-paper.md` finds 69 places in the code that assume flocking (birds,
+audit in `docs/design/every-paper.md` finds 66 places in the code that assume flocking (birds,
 headings, the torus, the valley, seconds as the only time unit), and three that are already
-general.
+general. (Corrected the same day: "69" was the number of findings, three of them general.)
 
 The owner wants an agentic application that turns papers in three domains into the best
 honest experience it can: AI and machine learning, biomedicine, and the sciences. One

@@ -7,6 +7,21 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-09 · The plan for every paper (for the owner's review)
+
+- Branch: `g2/every-paper`, docs only
+- Commits: this branch's single docs commit; the code it describes is at `ea2fdf1`
+- Shipped: `docs/design/every-paper.md`:
+  - the generalization audit: 66 places that assume flocking, and 3 already general;
+  - the general interfaces: primitive families, equations as data, scene kits, a generic
+    FrameDescription, `worldspec/3`;
+  - the agent pipeline, stage by stage;
+  - the order of families and the first test papers;
+  - the roadmap re-planned with effort;
+  - what will never work well, and how the app says so.
+- Evidence: none; it is a plan.
+- Gate: unchanged since `ac6f413`.
+
 ## 2026-10-09 · A prediction before every What-if
 
 - Branch: `g2/predictions`
