@@ -1,0 +1,5 @@
+#!/bin/sh
+# Refuses a push that would move or delete main, unless npm run land recorded the commit as
+# gate-passed and CI-green (ADR-0009). The rule lives in scripts/land/guard.ts. If node cannot
+# run it, the push is refused too.
+exec node "$(git rev-parse --show-toplevel)/scripts/hooks/pre-push.ts" "$@"
