@@ -1,6 +1,6 @@
 // R02: the renderer displays state; primitives compute state. Drawing the flock under any
 // camera or palette, or not at all, must leave every measured observable bit-identical.
-import { flockDefaultParams, flockNeighbours, flockPlanarWeighted as flock, flockSpread, type FlockState } from "@paperplay/primitives";
+import { flockAtRocks, flockDefaultParams, flockNeighbours, flockPlanarWeighted as flock, flockSpread, type FlockState } from "@paperplay/primitives";
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_CAMERA,
@@ -55,6 +55,8 @@ function run(view: { camera: OrbitCamera; palette: StagePalette; emphasise?: boo
             cursor: { x: t % 32, y: 16 },
             // The spread ring asks the primitive's read-only spread query (Q3), then draws its answer.
             spread: spreadRing(current),
+            // Rocks with a bird at them light up: the primitive's rocks query (Q4), then drawn.
+            touched: flockAtRocks(current).rocks.filter((rock) => rock.birds.length > 0).map((rock) => rock.id),
           }
         : {};
       // The world art: colour by heading, wingbeats, and trails through the last states.
@@ -83,7 +85,7 @@ describe("[R02] model/render separation", () => {
     expect(bitwise(far.observables, unseen.observables)).toBe(true);
   });
 
-  it("gives bit-identical observables while a bird is selected, its neighbours are shown, and the spread ring is drawn", () => {
+  it("gives bit-identical observables while a bird is selected, its neighbours are shown, the spread ring is drawn and rocks light up", () => {
     const keys = (frame: FrameDescription) => frame.rings.map((ring) => ring.key).sort();
     expect(selecting.frames.every((frame) => ["cursor,reach", "cursor,reach,spread"].includes(keys(frame).join(",")))).toBe(true);
     expect(selecting.frames.filter((frame) => keys(frame).includes("spread")).length).toBeGreaterThan(STEPS / 2);

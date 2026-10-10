@@ -58,6 +58,16 @@ describe("frame emphasis: the selected-neighbour view and the keyboard cursor", 
     expect({ ...emphasised, birds: [], rings: [] }).toEqual({ ...plain, birds: [], rings: [] });
   });
 
+  it("lights only the rocks the emphasis names, where they stand, changing nothing else", () => {
+    const rocky: FlockState = { ...world(), obstacles: [{ id: "rock-1", x: 8, y: 8 }, { id: "rock-2", x: 24, y: 24 }] };
+    const plain = describeFrame(still(rocky), DEFAULT_CAMERA, valleyDay);
+    const lit = describeFrame(still(rocky), DEFAULT_CAMERA, valleyDay, { touched: ["rock-2", "rock-9"] });
+    expect(plain.obstacles.map((rock) => [rock.key, rock.touched])).toEqual([["rock-1", false], ["rock-2", false]]);
+    expect(lit.obstacles.map((rock) => [rock.key, rock.touched])).toEqual([["rock-1", false], ["rock-2", true]]);
+    expect(lit.obstacles.map((rock) => rock.position)).toEqual(plain.obstacles.map((rock) => rock.position));
+    expect({ ...lit, obstacles: [] }).toEqual({ ...plain, obstacles: [] });
+  });
+
   it("ignores a selection that names no bird, rather than failing mid-frame", () => {
     const frame = describeFrame(still(world()), DEFAULT_CAMERA, valleyDay, { selected: 7, neighbours: [], reach: 9 });
     expect(frame.rings).toEqual([]);

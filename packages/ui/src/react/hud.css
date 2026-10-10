@@ -606,6 +606,18 @@
   opacity: 0.6;
 }
 
+/* The rocks counter: one rock per rock in the valley, lit while a bird is at it, as on the stage. */
+.rocks-rock {
+  fill: var(--sub);
+  stroke: var(--ink);
+  stroke-width: 0.04;
+  stroke-linejoin: round;
+}
+.rocks-lit {
+  fill: var(--aqua);
+  stroke-width: 0.07;
+}
+
 /* Depth: a small segmented toggle, in the level card and in the journal. */
 .depth-toggle {
   display: inline-flex;

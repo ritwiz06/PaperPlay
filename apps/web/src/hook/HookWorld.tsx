@@ -25,6 +25,7 @@ import {
   OriginTag,
   PaperJournal,
   PlayIcon,
+  RocksCounter,
   SpacingGauge,
   SpeedButton,
   SpreadDial,
@@ -168,6 +169,8 @@ function readoutFor(level: BuiltLevel, snapshot: SessionSnapshot, showNumber: bo
       return <SpreadDial spread={observed.groupSpread} showNumber={showNumber} />;
     case "clusterCount":
       return <GroupsCounter groups={observed.clusterCount} strayShare={observed.strayShare} birds={snapshot.headings.angles.length} showNumber={showNumber} />;
+    case "birdsAtObstacles":
+      return <RocksCounter rocks={snapshot.rocks.rocks.map((rock) => ({ id: rock.id, birds: rock.birds.length }))} birds={observed.birdsAtObstacles} showNumber={showNumber} />;
     default: {
       const value = observed[level.observable.metricId as keyof FlockObservables];
       return (

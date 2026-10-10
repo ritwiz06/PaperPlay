@@ -868,11 +868,11 @@
         ]
       },
       "observable": {
-        "metricId": "directionalAgreement",
-        "label": "Directional agreement",
-        "shortLabel": "Agreement",
-        "unit": "fraction from 0 to 1",
-        "decimals": 2,
+        "metricId": "birdsAtObstacles",
+        "label": "Birds inside rocks",
+        "shortLabel": "Birds at rocks",
+        "unit": "birds",
+        "decimals": 0,
         "origin": "computed-observation"
       },
       "counterfactual": {
@@ -995,38 +995,34 @@
         ]
       },
       "guide": {
-        "idle": "Four rocks stand across the valley.",
+        "idle": "Four rocks stand across the valley. A rock lights up while a bird is inside it.",
         "raised": "You made birds swerve from further away{to}, so the flock parts more smoothly round the rocks.",
         "lowered": "You made birds swerve late{to}, so they come close to the rocks before they turn.",
         "readings": [
           {
-            "atLeast": 0.9,
-            "words": "nearly every bird heads the same way"
+            "atLeast": 3,
+            "words": "several birds are flying through rocks"
           },
           {
-            "atLeast": 0.6,
-            "words": "most birds head the same way"
-          },
-          {
-            "atLeast": 0.3,
-            "words": "headings are only partly shared"
+            "atLeast": 1,
+            "words": "a bird or two are inside a rock"
           },
           {
             "atLeast": 0,
-            "words": "headings are scattered"
+            "words": "no bird is inside a rock"
           }
         ],
         "trend": {
           "rising": {
-            "beginner": "and more are joining in",
+            "beginner": "and more are flying in",
             "measured": "rising"
           },
           "falling": {
-            "beginner": "and they are drifting apart",
+            "beginner": "and they are getting out",
             "measured": "falling"
           },
           "steady": "holding",
-          "within": 0.03
+          "within": 1.5
         }
       },
       "furtherReading": [],

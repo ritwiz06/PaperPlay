@@ -9,7 +9,7 @@ import type { FlockObservables, FlockState } from "./state.ts";
 import { FIXED_TIMESTEP, stepFlock } from "./step.ts";
 
 export { headingsOf as flockHeadings, type Headings } from "./headings.ts";
-export { readsAsOneGroup as flockReadsAsOneGroup, spreadOf as flockSpread, type Spread } from "./measure.ts";
+export { atRocksOf as flockAtRocks, readsAsOneGroup as flockReadsAsOneGroup, spreadOf as flockSpread, type AtRocks, type Spread } from "./measure.ts";
 export { neighboursOf as flockNeighbours, type Neighbourhood } from "./neighbours.ts";
 export { flockDefaultParams, FlockParams } from "./params.ts";
 export { FlockStateSchema } from "./state-schema.ts";

@@ -7,6 +7,7 @@ export { assertSeed, mulberry32, type Prng } from "./prng.ts";
 export { createRegistry, registry, type PrimitiveRegistry } from "./registry.ts";
 export { replayRecord, runEvents, type ReplayReport, type RunPlan, type RunResult, type RunSetup } from "./replay.ts";
 export {
+  flockAtRocks,
   flockDefaultParams,
   flockHeadings,
   flockNeighbours,
@@ -16,6 +17,7 @@ export {
   flockPlanarWeighted,
   FlockStateSchema,
   type Agent,
+  type AtRocks,
   type Entity,
   type FlockObservables,
   type FlockState,

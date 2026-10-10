@@ -142,6 +142,26 @@ describe("Three.js stage adapter", () => {
     expect(stage.birds.count).toBe(400);
   });
 
+  it("lights a rock while a bird is at it, with a material of the same kind, so no new shader is needed, and casts no rock shadow", () => {
+    const stage = createStageScene();
+    const rocky = world({ obstacles: [{ id: "rock-1", x: 20, y: 10 }, { id: "rock-2", x: 4, y: 4 }] });
+    const lit = describeFrame({ previous: rocky, current: rocky, alpha: 0, timestep: 1 / 60 }, DEFAULT_CAMERA, valleyDay, { touched: ["rock-2"] });
+    applyFrame(stage, lit);
+    const parts = (key: string) => (stage.markers.get(key)?.children ?? []).filter((part): part is THREE.Mesh => part instanceof THREE.Mesh);
+    expect(parts("rock-1").map((part) => part.material)).toEqual([stage.obstacleMaterial]);
+    expect(parts("rock-2").map((part) => part.material)).toEqual([stage.touchedMaterial]);
+    expect(hex(stage.touchedMaterial.color)).toBe(valleyDay.touched);
+    expect(hex(stage.touchedMaterial.emissive)).toBe(valleyDay.touched);
+    // The same kind of material with the same settings shares one shader program.
+    const settings = (material: THREE.MeshStandardMaterial) => [material.type, material.flatShading, material.side, material.vertexColors, material.transparent];
+    expect(settings(stage.touchedMaterial)).toEqual(settings(stage.obstacleMaterial));
+    // A rock in the shadow pass stalled a new stage for 1.7 s (2026-10-09); rocks cast none.
+    expect([...parts("rock-1"), ...parts("rock-2")].every((part) => !part.castShadow && part.receiveShadow)).toBe(true);
+
+    applyFrame(stage, frameOf(rocky));
+    expect(parts("rock-2").map((part) => part.material)).toEqual([stage.obstacleMaterial]);
+  });
+
   it("adds, moves and removes beacons and obstacles by key", () => {
     const stage = createStageScene();
     applyFrame(stage, frameOf(world({ beacons: [{ id: "beacon-1", x: 4, y: 28 }], obstacles: [{ id: "rock-1", x: 20, y: 10 }] })));

@@ -88,11 +88,15 @@ export interface FrameEmphasis {
   readonly cursor?: { readonly x: number; readonly y: number } | null;
   /** The largest group's centre and spread, as the primitive's spread query reported them (Q3). */
   readonly spread?: { readonly x: number; readonly y: number; readonly radius: number } | null;
+  /** The rocks with a bird at them, by id, as the primitive's rocks query reported them (Q4). */
+  readonly touched?: readonly string[];
 }
 
 export interface MarkerPose {
   readonly key: string;
   readonly position: Vec3;
+  /** A rock with a bird at it lights up. Presentation only. */
+  readonly touched?: boolean;
 }
 
 export interface FrameCamera {
@@ -157,6 +161,7 @@ export function describeFrame(input: StageInput, camera: OrbitCamera, palette: S
   const selected =
     typeof emphasis.selected === "number" && emphasis.selected >= 0 && emphasis.selected < current.agents.length ? emphasis.selected : null;
   const neighbours = new Set(selected === null ? [] : (emphasis.neighbours ?? []));
+  const touched = new Set(emphasis.touched ?? []);
   const colorOf = (index: number, vx: number, vy: number): string => {
     if (selected === null) return look.birdColor === "heading" ? headingColor(palette, Math.atan2(vy, vx)) : palette.bird;
     if (index === selected) return palette.selected;
@@ -246,7 +251,7 @@ export function describeFrame(input: StageInput, camera: OrbitCamera, palette: S
     birds,
     trails,
     beacons: current.beacons.map((entity) => ({ key: entity.id, position: toWorld(entity.x, entity.y, 0) })),
-    obstacles: current.obstacles.map((entity) => ({ key: entity.id, position: toWorld(entity.x, entity.y, 0) })),
+    obstacles: current.obstacles.map((entity) => ({ key: entity.id, position: toWorld(entity.x, entity.y, 0), touched: touched.has(entity.id) })),
     rings,
   };
 }

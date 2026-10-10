@@ -98,7 +98,7 @@ describe("frame description", () => {
     const frame = describeFrame(still(state), DEFAULT_CAMERA, valleyDay);
 
     expect(frame.beacons).toEqual([{ key: "beacon-1", position: [-12, 0, 12] }]);
-    expect(frame.obstacles).toEqual([{ key: "rock-1", position: [4, 0, -6] }]);
+    expect(frame.obstacles).toEqual([{ key: "rock-1", position: [4, 0, -6], touched: false }]);
   });
 
   it("carries the palette and the camera's pose and matrices", () => {

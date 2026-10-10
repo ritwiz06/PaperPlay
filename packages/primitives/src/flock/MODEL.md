@@ -150,6 +150,10 @@ applied in order after any sample taken at s and before step s is taken.
 - **Q3 Spread.** `spread(state)` returns E19's group as a list of bird indices in index order,
   its centre (null with no group) and its radius, groupSpread. The ring drawn around the flock
   shows it.
+- **Q4 Birds at rocks.** `atRocks(state)` returns, for each obstacle in list order, its id and
+  the birds at it by E20's test, in index order, and the number of birds at one rock or more,
+  each counted once, which is E20. The rocks counter shows it, and a rock with a bird at it
+  lights up on the stage.
 
 ## Initial state
 

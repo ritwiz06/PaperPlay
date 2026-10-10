@@ -22,6 +22,8 @@ export interface StagePalette {
   readonly cursor: string;
   readonly beacon: string;
   readonly obstacle: string;
+  /** A rock with a bird at it, lit up (Q4). */
+  readonly touched: string;
   /** Directional light. */
   readonly sun: string;
   /** Hemisphere light from below. */
@@ -59,6 +61,7 @@ export const valleyDay: StagePalette = Object.freeze({
   cursor: tokens.dark,
   beacon: tokens.aqua,
   obstacle: tokens.sub,
+  touched: tokens.aqua,
   sun: tokens.cream,
   shade: mixHex(tokens.sub, tokens.line, 0.5),
   meadow: mixHex(tokens.cream, tokens.lime, 0.3),
@@ -88,6 +91,7 @@ export const dusk: StagePalette = Object.freeze({
   cursor: tokens.lime,
   beacon: tokens.lime,
   obstacle: tokens.line,
+  touched: tokens.lime,
   sun: mixHex(tokens.cream, tokens.aqua, 0.25),
   shade: tokens.dark,
   meadow: mixHex(tokens.dark, tokens.sub, 0.35),

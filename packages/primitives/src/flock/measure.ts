@@ -13,6 +13,42 @@ export const OBSTACLE_TOUCH_DISTANCE = 1;
 
 const TAU = 2 * Math.PI;
 
+/** E20's test: a bird is at a rock when it is closer than r_rock, the short way round the torus. */
+function atRock(bird: Agent, rock: { readonly x: number; readonly y: number }, width: number, height: number): boolean {
+  const dx = shortestOffset(rock.x - bird.x, width);
+  const dy = shortestOffset(rock.y - bird.y, height);
+  return Math.sqrt(dx * dx + dy * dy) < OBSTACLE_TOUCH_DISTANCE;
+}
+
+/** Each rock, and the birds at it. */
+export interface AtRocks {
+  /** For each obstacle in list order, its id and the birds at it, by index in index order. */
+  readonly rocks: readonly { readonly id: string; readonly birds: readonly number[] }[];
+  /** Birds at one rock or more, each counted once: E20, birdsAtObstacles. */
+  readonly birds: number;
+}
+
+/**
+ * Q4, a read-only query (MODEL.md): which birds are at which rock, by E20's test. A bird near
+ * two rocks is listed at both and counted once, so `birds` equals E20. It changes nothing, so it
+ * adds no equation and needs no new version. The rocks counter and the rocks on the stage show it.
+ */
+export function atRocksOf(state: FlockState): AtRocks {
+  const { agents, width, height, obstacles } = state;
+  const at = new Set<number>();
+  const rocks = obstacles.map((rock) => {
+    const birds: number[] = [];
+    agents.forEach((bird, index) => {
+      if (atRock(bird, rock, width, height)) {
+        birds.push(index);
+        at.add(index);
+      }
+    });
+    return { id: rock.id, birds };
+  });
+  return { rocks, birds: at.size };
+}
+
 // Headings differ by less than 45° when the velocities' dot product is positive and
 // 2·(v_i·v_j)² > |v_i|²·|v_j|², since cos² 45° = 1/2. A bird at rest has no heading.
 const headed = (a: Agent, b: Agent): boolean => {
@@ -123,12 +159,7 @@ export function measureFlock(state: FlockState): FlockObservables {
       if (d < nearest) nearest = d;
     }
     nearestSum += nearest;
-    const touching = obstacles.some((rock) => {
-      const dx = shortestOffset(rock.x - a.x, width);
-      const dy = shortestOffset(rock.y - a.y, height);
-      return Math.sqrt(dx * dx + dy * dy) < OBSTACLE_TOUCH_DISTANCE;
-    });
-    if (touching) atObstacles++;
+    if (obstacles.some((rock) => atRock(a, rock, width, height))) atObstacles++;
   }
 
   // E14 groups are clusters of at least CLUSTER_MIN_SIZE birds; smaller ones are strays (E18).

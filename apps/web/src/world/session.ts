@@ -2,17 +2,19 @@
  * A live run of the local world: the fixed-step loop, the learner's actions recorded as
  * RunRecord events, replay of the same seed, and the next seed. Framework-free, so it is
  * tested in Node. It computes no science itself: every state comes from the primitive's
- * init, step and apply, and every number shown comes from its measure and neighbourhood query.
+ * init, step and apply, and every number shown comes from its measure and its read-only queries.
  *
  * Event order matches runEvents: an event made while the world stands at step s is recorded
  * at s and applied before step s is taken, so the session can always be replayed from its record.
  */
 import type { PlaceEvent, RunEvent } from "@paperplay/contracts";
 import {
+  flockAtRocks,
   flockHeadings,
   flockNeighbours,
   flockSpread,
   flockPlanarWeighted as flock,
+  type AtRocks,
   type Entity,
   type FlockObservables,
   type FlockParams,
@@ -54,6 +56,8 @@ export interface SessionSnapshot {
   readonly selected: { readonly index: number; readonly seen: readonly number[]; readonly crowding: readonly number[] } | null;
   /** Each bird's heading and the flock's mean heading, from the primitive's query (Q2), for the compass. */
   readonly headings: Headings;
+  /** Each rock and the birds at it, from the primitive's query (Q4), for the rocks counter. */
+  readonly rocks: AtRocks;
 }
 
 export interface WorldSession {
@@ -196,6 +200,7 @@ export function createWorldSession(first: SessionOptions): WorldSession {
       obstacles: current.obstacles,
       selected: selected === null ? null : { index: selected, ...flockNeighbours(current, params, selected) },
       headings: flockHeadings(current),
+      rocks: flockAtRocks(current),
     }),
     state: () => current,
     stageInput: () => ({
@@ -208,7 +213,11 @@ export function createWorldSession(first: SessionOptions): WorldSession {
     emphasis: () => {
       const spread = options.ring === true ? flockSpread(current) : null;
       const ring = spread?.centre ? { spread: { ...spread.centre, radius: spread.radius } } : {};
-      return selected === null ? ring : { ...ring, selected, neighbours: flockNeighbours(current, params, selected).seen, reach: params.perceptionRadius };
+      // Rocks with a bird at them light up (Q4): presentation only.
+      const lit = current.obstacles.length === 0 ? [] : flockAtRocks(current).rocks.filter((rock) => rock.birds.length > 0).map((rock) => rock.id);
+      const touched = lit.length === 0 ? {} : { touched: lit };
+      const shown = { ...ring, ...touched };
+      return selected === null ? shown : { ...shown, selected, neighbours: flockNeighbours(current, params, selected).seen, reach: params.perceptionRadius };
     },
     tick(frameSeconds) {
       if (!playing) return 0;

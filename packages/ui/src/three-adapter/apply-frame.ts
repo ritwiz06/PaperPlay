@@ -60,6 +60,8 @@ function paint(stage: StageScene, palette: StagePalette, field: FrameDescription
   stage.beaconMaterial.color.set(palette.beacon);
   stage.beaconMaterial.emissive.set(palette.beacon);
   stage.obstacleMaterial.color.set(palette.obstacle);
+  stage.touchedMaterial.color.set(palette.touched);
+  stage.touchedMaterial.emissive.set(palette.touched);
   stage.waterMaterial.color.set(palette.water);
   stage.crownMaterial.color.set(palette.foliage);
   stage.trunkMaterial.color.set(palette.trunk);
@@ -75,7 +77,9 @@ function makeMarker(kind: "beacon" | "obstacle", stage: StageScene): THREE.Objec
   const parts = kind === "beacon" ? [beaconPole, beaconHead, beaconRing] : [rock];
   for (const geometry of parts) {
     const mesh = new THREE.Mesh(geometry, kind === "beacon" ? stage.beaconMaterial : stage.obstacleMaterial);
-    mesh.castShadow = true;
+    // A rock casts no shadow, like the valley's own rocks. Drawing one into a new stage's
+    // shadow map stalled level 5's fork for 1.7 s on SwiftShader (2026-10-09, session 6).
+    mesh.castShadow = kind === "beacon";
     mesh.receiveShadow = kind === "obstacle";
     group.add(mesh);
   }
@@ -100,6 +104,10 @@ function showMarkers(stage: StageScene, beacons: readonly MarkerPose[], obstacle
       stage.scene.add(marker);
     }
     marker.position.set(...pose.position);
+    if (kind === "obstacle") {
+      const material = pose.touched === true ? stage.touchedMaterial : stage.obstacleMaterial;
+      for (const part of marker.children) if (part instanceof THREE.Mesh) part.material = material;
+    }
   }
 }
 

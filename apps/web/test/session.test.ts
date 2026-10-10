@@ -1,5 +1,5 @@
 import { Action } from "@paperplay/contracts";
-import { flockDefaultParams, flockHeadings, flockNeighbours, flockPlanarWeighted as flock, runEvents } from "@paperplay/primitives";
+import { flockAtRocks, flockDefaultParams, flockHeadings, flockNeighbours, flockPlanarWeighted as flock, runEvents } from "@paperplay/primitives";
 import { describe, expect, it } from "vitest";
 import { HOOK_SEED, LOCAL_ACTIONS, LOCAL_CONTROLS, PRIMARY_ACTION } from "../src/world/local-world.ts";
 import { createWorldSession, type WorldSession } from "../src/world/session.ts";
@@ -134,6 +134,28 @@ describe("[R04] local world session", () => {
     expect(now.obstacles).toEqual([{ id: "rock-1", x: 4, y: 4 }]);
     expect(now.events.map((event) => event.kind)).toEqual(["place", "place", "remove", "place"]);
     expect(() => session.remove("beacon-1")).toThrow();
+  });
+
+  it("reports the birds at each rock, and lights the rocks with a bird at them, exactly as the primitive's query reports them", () => {
+    const rocks = [["rock-1", 8, 8], ["rock-2", 24, 8], ["rock-3", 8, 24], ["rock-4", 24, 24]] as const;
+    const session = createWorldSession({
+      seed: HOOK_SEED,
+      params: { ...flockDefaultParams, obstacleWeight: 0 },
+      actions: LOCAL_ACTIONS,
+      setup: rocks.map(([entityId, x, y]) => ({ kind: "place", step: 0, entityId, entity: "obstacle", x, y })),
+    });
+    let lit = 0;
+    for (let at = 0; at < 40; at++) {
+      run(session, 30);
+      const expected = flockAtRocks(session.state());
+      expect(session.snapshot().rocks).toEqual(expected);
+      expect(expected.birds).toBe(session.snapshot().observed.birdsAtObstacles);
+      const touched = expected.rocks.filter((rock) => rock.birds.length > 0).map((rock) => rock.id);
+      expect(session.emphasis().touched).toEqual(touched.length > 0 ? touched : undefined);
+      if (touched.length > 0) lit++;
+    }
+    // With no rule for rocks, birds fly through them: some rocks light up.
+    expect(lit).toBeGreaterThan(0);
   });
 
   it("shows a selected bird's neighbourhood exactly as the primitive's query reports it", () => {

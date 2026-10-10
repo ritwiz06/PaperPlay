@@ -31,6 +31,8 @@ export interface StageScene {
   readonly rings: Map<string, THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial>>;
   readonly beaconMaterial: THREE.MeshStandardMaterial;
   readonly obstacleMaterial: THREE.MeshStandardMaterial;
+  /** A rock with a bird at it. The same kind of material as obstacleMaterial, so it needs no new shader. */
+  readonly touchedMaterial: THREE.MeshStandardMaterial;
   readonly groundMaterial: THREE.MeshStandardMaterial;
   readonly waterMaterial: THREE.MeshStandardMaterial;
   readonly crownMaterial: THREE.MeshStandardMaterial;
@@ -108,6 +110,7 @@ export function createStageScene(): StageScene {
   const materials = {
     beaconMaterial: new THREE.MeshStandardMaterial({ roughness: 0.4, emissiveIntensity: 0.25 }),
     obstacleMaterial: new THREE.MeshStandardMaterial({ flatShading: true, roughness: 0.9 }),
+    touchedMaterial: new THREE.MeshStandardMaterial({ flatShading: true, roughness: 0.9, emissiveIntensity: 0.55 }),
     groundMaterial: new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 0.95 }),
     waterMaterial: new THREE.MeshStandardMaterial({ flatShading: true, roughness: 0.25, metalness: 0.05 }),
     crownMaterial: new THREE.MeshStandardMaterial({ flatShading: true, roughness: 0.9 }),

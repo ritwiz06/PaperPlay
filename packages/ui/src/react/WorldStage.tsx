@@ -168,6 +168,7 @@ export function WorldStage(props: WorldStageProps) {
       state.lastInput = performance.now();
       let shownFocus = "";
       let shownRing = "";
+      let shownTouched = "";
 
       const onWheel = (event: WheelEvent) => {
         event.preventDefault();
@@ -229,6 +230,9 @@ export function WorldStage(props: WorldStageProps) {
         const ring = state.frame.rings.find((entry) => entry.key === "spread");
         const ringText = ring ? JSON.stringify({ radius: ring.radius }) : "";
         if (ringText !== shownRing) element.dataset.spreadRing = shownRing = ringText;
+        // The rocks drawn lit up, for tests: presentation only.
+        const lit = state.frame.obstacles.filter((rock) => rock.touched === true).map((rock) => rock.key).join(" ");
+        if (lit !== shownTouched) element.dataset.touchedRocks = shownTouched = lit;
           drawn = version;
           state.dirty = false;
           frames += 1;

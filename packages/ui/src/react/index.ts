@@ -7,6 +7,7 @@ export { Guide, GuideLines, GuideNote, GUIDE_SHOW_MS, type GuideAsk, type GuideL
 export { DifferenceChart, type DifferenceChartProps } from "./DifferenceChart.tsx";
 export { ForkView, type ForkPane, type ForkViewProps } from "./ForkView.tsx";
 export { GroupsCounter, type GroupsCounterProps } from "./GroupsCounter.tsx";
+export { RocksCounter, type RocksCounterProps } from "./RocksCounter.tsx";
 export { HeadingCompass, type HeadingCompassProps } from "./HeadingCompass.tsx";
 export {
   BirdMark,
