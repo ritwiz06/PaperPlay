@@ -1,34 +1,29 @@
 # Status
 
-Updated 2026-10-10, at the end of the day's first session: the owner's answers to the plan,
-then G3a.1 and G3a.2 ([log](sessions/2026-10-10.md)). This file is rewritten every session.
+Updated 2026-10-14, during the day's first session: the model provider, Threshold Town's fixes,
+then G3a.3 ([log](sessions/2026-10-14.md)). This file is rewritten every session.
 
 ## Where we are
 
-- **The plan for every paper is answered** (ADR-0024). G3 is re-cut into G3a and G3b, and the
-  roadmap gives gates and effort, with no day ranges.
 - **Gate:** G1 Playable baseline **passed**, and is tagged `v0.1.0` at `3448e5b`. G2's
   interface is done; it waits for the Reynolds PDF and the source map. `gates.json` keeps G1
   current until G2's evidence exists (ADR-0009).
-- **G3a.1, generalize, is done,** on short branches landed through `npm run land`: records of
-  the six levels before the refactor (landed at `f79ff76`), primitive families (`34e713a`,
-  ADR-0025), scene kits and the generic session and fork (`a0567bf`, ADR-0026), `worldspec/3`
-  (`e049dad`, ADR-0027). Tests changed only their imports (and four lines their field's name),
-  the records replay bit for bit, and the capture's hashes are `f0bc31c`'s.
-- **G3a.2, the compartment family and Kermack and McKendrick by hand, is done:**
-  - **landed:** `compartments.ode@1.0.0`, its checks and oracles, in the registry and the
-    builder (`32c7899`, ADR-0028, landed at `8bd9a20`);
-  - **landed:** the town kit, the shell playing any world, and Threshold Town at
-    `/world/epidemic`, every level meeting the rule over the world's values and 19 near them
-    (`cf2551d`, ADR-0029, landed at `3acb157`, CI run 38062874878).
+- **G3a.1 and G3a.2 are done** (ADR-0025 to ADR-0029, last landed at `3acb157`): families, scene
+  kits, `worldspec/3`, the compartment family, the town kit and Threshold Town.
+- **The owner's answers (2026-10-14):** the model provider is ASU Research Computing's Voyager
+  gateway (ADR-0030); ADR-0029 is accepted with five fixes to Threshold Town.
+- **G3a.3, the pipeline on the compartment family, has started:**
+  - **landing:** the key in `apps/api/.env` only, and the bundle secret check in every
+    production build (`9251435`, ADR-0030);
+  - **next:** Threshold Town's fixes, then the Voyager adapter and its probe.
 - **`main` moves only through `npm run land`** (ADR-0009, amended).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`. CI runs `check:gate` on every
   push and pull request.
-- **Branches:** `g3/g3a2-close`, this closing record, being landed;
-  `worktree-agent-ab8301aef54d2fcc8`, the compartment agent's own, whose three commits are on
-  `main`.
-- **Working commit:** `3acb157`, where `main` is. Its `check:gate` passed G1 locally and on CI,
-  on the branch (run 38062874878) and on `main` itself (run 38064210620, its capture job too).
+- **Branches:** `g3/secrets`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the compartment
+  agent's own, whose three commits are on `main`.
+- **Working commit:** `9251435` on `g3/secrets`. `main` is at `e85e728`, whose CI passed.
+- **Model provider:** Voyager, `https://openai.rc.asu.edu/v1`, its key `VOYAGER_API_KEY` in
+  `apps/api/.env` only (ADR-0030). No adapter calls it yet.
 - **Primitives:** `flock.planar.weighted@3.1.0`, with queries Q1–Q4, the agents family's
   first, at `@paperplay/primitives/flock` (ADR-0025); `compartments.ode@1.0.0`, the solver for
   every compartment model, at `@paperplay/primitives/compartments` (ADR-0028).
@@ -75,20 +70,12 @@ Ahead of their gate, from the same run's reports: R05 5, R06 53, R07 40, R08 59,
    server too (ADR-0009's amendment).
 2. **The deploy:** the owner connects Vercel (ADR-0017). Then I check the CSP against the
    preview.
-3. **Threshold Town's design, to confirm (ADR-0029):** its five levels and their claims; four
-   days of the model a second at 1x; every value a teaching choice; forks told from day 0;
-   Start again.
-4. **The level rule's neighbourhood, to confirm:** factors from `mulberry32(k)` for starts 2
-   to 20, and the What-if's values held exact at every start.
 
 ## Next three actions
 
-1. G3a.3, next session: `apps/api`'s jobs and events, ingest, and the pipeline on the
-   compartment family, with Elowitz and Leibler as its first generated world.
-2. When the PDFs arrive: the source registers and maps, then Threshold Town's and Murmuration
-   Valley's anchors made real.
-3. A model binding for a whole world, so a compartment world states its model once (ADR-0029's
-   consequences).
+1. Threshold Town's fixes, with level 1's level rule re-run (`g3/town-fixes`).
+2. The Voyager adapter, its recordings, `npm run pipeline:live` and the capability probe.
+3. Ingest, the gold ModelSpecs for three CC BY papers, and the bake-off.
 
 ## Recommendations
 

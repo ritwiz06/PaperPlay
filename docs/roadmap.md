@@ -179,8 +179,9 @@ G3a.2, the compartment family and Kermack and McKendrick by hand (14–20 h):
 - [x] Every world's journal page, "What this world cannot show" (2026-10-10, `cf2551d`).
 
 G3a.3, the pipeline on a known family (24–32 h):
-- [ ] `apps/api`: jobs, SSE events, JSON artifacts, secrets in `.env`, a bundle secret check,
-  upload limits, and the paper-text sanitiser.
+- [x] The model gateway's key in `apps/api/.env` only, and the bundle secret check in every
+  production build (2026-10-14, `9251435`, ADR-0030).
+- [ ] `apps/api`: jobs, SSE events, JSON artifacts, upload limits, and the paper-text sanitiser.
 - [ ] Ingest from arXiv source and PDF, with the source register (ADR-0024's dependencies).
 - [ ] `packages/pipeline`: model adapters (mock first), the router (compartments only),
   planner and designer, explainer, the level-rule sweep, checks, the second transcription,
@@ -283,3 +284,4 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-10 | G3a.1 starts with records of the six levels made before the refactor, so the refactor is held to them | The owner's acceptance condition for G3a.1 |
 | 2026-10-10 | A fork in every family but the agents' tells its run from the start, and a run with an end can start again | An epidemic opened after it ends shows nothing (ADR-0029) |
 | 2026-10-10 | The levels sweep runs every authored world, over its family's variation, and holds a compartment world's every run to the accuracy check | ADR-0024's level rule for models with no chance in them (ADR-0029) |
+| 2026-10-14 | The model provider is ASU Research Computing's Voyager gateway, not the Anthropic SDK; tests and CI replay recorded calls; generation runs only locally | Owner decision (ADR-0030) |
