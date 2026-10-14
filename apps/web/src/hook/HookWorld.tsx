@@ -393,11 +393,10 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
             interval={SAMPLE_STEPS * timestep}
             here={forkView.samples.here}
             there={forkView.samples.there}
-            top={chartTop(
-              level.primitive.describe().observables[difference.metricId]?.unit.startsWith("fraction") ?? false,
-              [...forkView.samples.here, ...forkView.samples.there],
-              threshold,
-            )}
+            top={
+              play.chartTop?.(level) ??
+              chartTop(level.primitive.describe().observables[difference.metricId]?.unit.startsWith("fraction") ?? false, [...forkView.samples.here, ...forkView.samples.there], threshold)
+            }
             {...(threshold === undefined ? {} : { threshold })}
             hereName="This world"
             thereName="What if"

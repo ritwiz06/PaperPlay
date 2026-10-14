@@ -7,6 +7,10 @@ export const tokens = {
   lime: "#d4f581",
   line: "#d2ddd3",
   sub: "#526a66",
+  /** Warm orange, for the town's ill figures (owner, 2026-10-14; ADR-0029). */
+  ember: "#f6ae66",
+  /** Soft blue-grey, for the town's recovered or removed figures (owner, 2026-10-14; ADR-0029). */
+  mist: "#b3c4d2",
 } as const;
 
 export type Token = keyof typeof tokens;

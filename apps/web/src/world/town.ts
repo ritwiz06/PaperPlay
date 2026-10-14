@@ -10,10 +10,12 @@ import type { BaseEmphasis } from "@paperplay/ui/stage-core";
 import type { TownInput } from "@paperplay/ui/stage-core/town";
 import { createSession, type CoreSnapshot, type SessionOptions as Options, type SessionView, type WorldSession } from "./session.ts";
 
-/** One compartment as the shares bar shows it: its id, its name, and its share of the whole. */
+/** One compartment as the readout shows it: its id, its name, how many it holds, and its share of the whole. */
 export interface Share {
   readonly id: string;
   readonly name: string;
+  /** The compartment's own value, as the solver holds it. */
+  readonly value: number;
   readonly share: number;
 }
 
@@ -38,7 +40,7 @@ export function townView(model: CompartmentModel): SessionView<CompartmentParams
   return Object.freeze({
     extras: (state: CompartmentState): TownReadings => {
       const shares = sharesOf(model, state);
-      return { shares: names.map((named, index) => ({ ...named, share: shares[index] ?? 0 })) };
+      return { shares: names.map((named, index) => ({ ...named, value: state.compartments[named.id] ?? 0, share: shares[index] ?? 0 })) };
     },
     // The town emphasises nothing on its stage: the shares bar outlines the watched compartment.
     emphasis: (): BaseEmphasis => ({}),

@@ -113,7 +113,8 @@ export function explorationLines(
   across = `Across ${RULE_SEEDS} ${run.many}`,
 ): GuideLine[] {
   const choice = (index: number): string => exploration.choices[index] ?? "";
-  const lines: GuideLine[] = [{ text: `You predicted: ${choice(state.predicted)}.`, origin: "teaching-choice" }];
+  // The learner's own words: "You said", with no origin chip (owner, 2026-10-14).
+  const lines: GuideLine[] = [{ text: `You said: ${choice(state.predicted)}.`, origin: "learner" }];
   if (!state.done) {
     lines.push({ text: `Now both worlds run, the other with ${state.change}. Watch the chart.`, origin: "teaching-choice" });
     return lines;

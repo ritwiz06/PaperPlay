@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_CAMERA } from "../src/stage-core/index.ts";
-import { describeTown, FIGURES, figureCompartments, figureCounts, townDay, townStage, type TownInput } from "../src/stage-core/kits/town/index.ts";
+import { contrastRatio, DEFAULT_CAMERA, portraitFit, viewAspect } from "../src/stage-core/index.ts";
+import { describeTown, FIGURES, figureCompartments, figureCounts, shareInWords, townCamera, townDay, townStage, type TownInput } from "../src/stage-core/kits/town/index.ts";
 
 // The town kit's pure half (ADR-0029): a compartment model's shares as 120 figures. The figures
 // are a picture of the shares, never a second model: their counts come from the shares alone,
@@ -48,7 +48,33 @@ describe("the town kit's figures", () => {
   });
 });
 
+describe("the town kit's colours and words", () => {
+  it("keeps every figure's colour, and the ill figures' ring, at 3:1 against the ground and the plaza", () => {
+    for (const colour of [...townDay.figures, townDay.ring]) {
+      for (const behind of [townDay.ground, townDay.plaza]) expect(contrastRatio(colour, behind), `${colour} on ${behind}`).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it("paints the ill warm orange and the recovered or removed soft blue-grey, apart from the still well (owner, 2026-10-14)", () => {
+    expect(townDay.figures.slice(0, 3)).toEqual(["#f8faee", "#f6ae66", "#b3c4d2"]);
+  });
+
+  it("says a share in words at Beginner, from none to all", () => {
+    expect([0, 0.01, 0.1, 0.3, 0.5, 0.8, 0.95, 1].map(shareInWords)).toEqual(["none", "hardly any", "a few", "some", "about half", "most", "nearly all", "all"]);
+  });
+});
+
 describe("the town kit's frames", () => {
+  it("frame the town closer than the stage's back-off on a narrow screen, and leave a wide one as it is", () => {
+    const wide = { ...DEFAULT_CAMERA, aspect: 16 / 9 };
+    expect(townCamera(wide)).toEqual(wide);
+    const phone = { ...DEFAULT_CAMERA, aspect: 390 / 844 };
+    const backOff = portraitFit(viewAspect(phone));
+    expect(backOff).toBeGreaterThan(1);
+    expect(townCamera(phone).distance).toBeLessThan(phone.distance);
+    expect(townCamera(phone).distance * backOff).toBeGreaterThan(phone.distance);
+  });
+
   it("are pure: the same input gives the same frame, and the input is left as it was", () => {
     const given = input([0.7, 0.2, 0.1], 12.5);
     const copy = structuredClone(given);

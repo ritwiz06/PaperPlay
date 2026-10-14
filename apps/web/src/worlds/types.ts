@@ -33,4 +33,6 @@ export interface PlayableWorld {
   readout(level: BuiltLevel, snapshot: PlaySnapshot, showNumber: boolean, yaw: number): ReactNode;
   /** What the fork's chart calls a metric. */
   chartName(level: BuiltLevel, metricId: string): string;
+  /** The top of the fork chart's value axis, when the world knows it, such as a town's population; otherwise the shell rounds above what is drawn. */
+  chartTop?(level: BuiltLevel): number;
 }

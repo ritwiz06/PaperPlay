@@ -494,6 +494,17 @@
   grid-area: readout;
   margin-top: 8px;
 }
+/* A town's readout is a labelled bar: it takes the card's full width, and What if the row below. */
+.level-card:has(.compartments) {
+  grid-template-areas:
+    "kicker depth"
+    "title title"
+    "more more"
+    "slider slider"
+    "readout readout"
+    ". whatif"
+    "advanced advanced";
+}
 .level-whatif {
   grid-area: whatif;
   justify-self: end;
@@ -587,13 +598,65 @@
   stroke-width: 0.05;
 }
 
-/* The town's shares bar: each compartment as wide as its share, in the figures' colours, the watched one outlined. */
-.shares-part {
-  stroke: var(--ink);
-  stroke-width: 0.04;
+/* The town's readout: each compartment as wide as its share, in the figures' colours, labelled beneath; the watched one outlined. */
+.compartments {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px 10px;
+  width: 100%;
+  min-width: 0;
 }
-.shares-watched {
-  stroke-width: 0.12;
+.compartments-bar {
+  display: flex;
+  height: 18px;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  background: var(--line);
+}
+.compartments-part {
+  flex-basis: 0;
+  min-width: 0;
+}
+.compartments-part + .compartments-part {
+  border-left: 2px solid var(--ink);
+}
+.compartments-part.watched {
+  box-shadow: inset 0 0 0 3px var(--ink);
+}
+.compartments-legend {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8125rem;
+  line-height: 1.3;
+}
+.compartments-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--sub);
+}
+.compartments-legend li.watched {
+  color: var(--ink);
+  font-weight: 600;
+}
+.compartments-swatch {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+}
+.compartments-amount {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
 }
 
 /* The spread dial: a ring as wide as the flock spreads, like the one on the ground. */
@@ -920,6 +983,19 @@
       "advanced advanced advanced";
     column-gap: 10px;
     padding: 6px 12px 8px;
+  }
+  /* A town's readout is a labelled bar, too wide for the slider's row: it takes a row of its own. */
+  .level-card:has(.compartments) {
+    grid-template-areas:
+      "title title whatif"
+      "slider slider whatif"
+      "readout readout readout"
+      "more more more"
+      "kicker depth depth"
+      "advanced advanced advanced";
+  }
+  .level-card:has(.compartments) .level-readout {
+    margin-top: 4px;
   }
   .level-readout .dial {
     flex-direction: column;

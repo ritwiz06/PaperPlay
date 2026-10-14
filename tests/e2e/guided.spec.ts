@@ -42,7 +42,7 @@ for (const size of SIZES) {
       await choices.getByRole("button", { name: "About the same, or slower" }).click();
       await expect(page.locator("main")).toHaveAttribute("data-fork", "open");
       const note = page.locator(".fork-guide");
-      await expect(note).toContainText("You predicted: About the same, or slower.");
+      await expect(note).toContainText("You said: About the same, or slower.");
       await expect(note).toContainText("Now both worlds run, the other with “How far a bird sees” at 50.");
       // The surprise waits for the level's time.
       await expect(page.locator("[data-effect]")).toHaveCount(0);
@@ -64,7 +64,7 @@ for (const size of SIZES) {
       await page.locator(".fork").getByRole("button", { name: "Play both" }).click();
       const note = page.locator(".fork-guide");
       await expect(note).toContainText("Across 20 skies: Faster on 6, about the same, or slower on 14.", { timeout: 75_000 });
-      await expect(note).toContainText("You predicted: Faster.");
+      await expect(note).toContainText("You said: Faster.");
       // Seed 5: seeing the whole flock reaches agreement 0.9 at 19.6 s, against 17.7 s.
       await expect(note).toContainText("On this sky: About the same, or slower.");
       await expect(note).toContainText("The paper argues that a bird perceives only the flockmates near it");

@@ -433,7 +433,7 @@
           0.001
         ],
         "unit": "per person per day",
-        "defaultValue": 0.0003,
+        "defaultValue": 0.00017,
         "origin": "paper-derived",
         "anchors": [
           {
@@ -444,7 +444,7 @@
         ]
       },
       "slider": {
-        "step": 0.00005,
+        "step": 0.00001,
         "ends": [
           "Hardly at all",
           "Very easily"
@@ -463,30 +463,30 @@
         "altParams": {
           "removal": 0.05
         },
-        "expectedQualitativeEffect": "Ill twice as long, each person passes the illness to more of the town: by day 150 the other town has more than 20 fewer people still well.",
+        "expectedQualitativeEffect": "Ill twice as long, each person passes the illness to more of the town: by day 200 the other town has more than 100 fewer people still well.",
         "origin": "teaching-choice",
         "isSpeculative": false,
         "anchors": [],
         "difference": {
           "metricId": "stillWell",
-          "label": "People still well at day 150",
+          "label": "People still well at day 200",
           "unit": "people",
           "summary": {
             "kind": "at",
-            "time": 150
+            "time": 200
           },
-          "time": 150,
+          "time": 200,
           "claim": {
             "kind": "each",
             "relation": "lower",
-            "by": 20
+            "by": 100
           }
         }
       },
       "setup": [],
       "explanation": {
         "beginner": {
-          "text": "A few ill people arrive in a town where everyone else is well. The illness passes on when the ill meet the well, and in time the ill are removed: they recover, are isolated or die. Watch it spread, peak and fade. When it is over, some people never caught it.",
+          "text": "A few ill people arrive in a town where everyone else is well. The illness passes on when the ill meet the well, and in time the ill are removed: they recover, are isolated or die. Watch it spread, peak and fade. When it is over, many people never caught it.",
           "show": [
             "range-words",
             "analogy"
@@ -586,7 +586,7 @@
         }
       },
       "guidedExploration": {
-        "predictPrompt": "If the ill stayed infectious twice as long, how many people would still be well at day 150?",
+        "predictPrompt": "If the ill stayed infectious twice as long, how many people would still be well at day 200?",
         "choices": [
           "Far fewer",
           "About as many"

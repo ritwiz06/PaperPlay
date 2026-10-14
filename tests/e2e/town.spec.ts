@@ -43,7 +43,7 @@ test("[R02] draws Threshold Town: its figures in their compartments' colours, an
   const { variance, colours } = await pixelStats(page, await canvas.screenshot());
   expect(variance).toBeGreaterThan(64);
   expect(colours).toBeGreaterThan(16);
-  await expect(page.locator(".shares [data-observable='stillWell']")).toHaveAttribute("data-value", "995");
+  await expect(page.locator(".compartments [data-observable='stillWell']")).toHaveAttribute("data-value", "995");
   expect(errors).toEqual([]);
 });
 
@@ -73,7 +73,7 @@ test("[R06] at 4x level 1's fork tells both towns from day 0, measures them, and
   // The world's own values, the level rule's first start, as eval/sweeps/levels-kermack-mckendrick-1927.md records it.
   await expect(fork.locator(".fork-guide")).toContainText("In this town: Far fewer.", { timeout: 60_000 });
   await expect(fork.locator(".fork-guide")).toContainText("Across 20 towns, this world's values and 19 within a tenth of them, the level's statement holds on at least 16.");
-  await expect(fork.locator("[data-measured]")).toContainText("this world 59.17 people, what if 2.53 people");
+  await expect(fork.locator("[data-measured]")).toContainText("this world 306.11 people, what if 37.92 people");
 });
 
 test("[R05] the journal says what Threshold Town cannot show, each statement with its origin", async ({ page }) => {

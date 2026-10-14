@@ -85,7 +85,7 @@ for (const [index, level] of LEVELS.entries()) {
     await expect(page.locator("main")).toHaveAttribute("data-fork", "open");
     await expect(page.locator("main")).toHaveAttribute("data-predictions", `${level.id}@0:1`);
     const note = page.locator(".fork-guide");
-    await expect(note).toContainText(`You predicted: ${second}.`);
+    await expect(note).toContainText(`You said: ${second}.`);
 
     // At the level's time, what was measured: this sky, then across 20.
     await page.locator(".fork").getByRole("button", { name: "Play both" }).click();

@@ -108,13 +108,13 @@ describe("[R06] guided exploration, from level 2's script", () => {
   });
 
   it("repeats the prediction and names the intervention while both worlds run", () => {
-    expect(lines({}).map((line) => line.text)).toEqual(["You predicted: Faster.", "Now both worlds run, the other with How far a bird sees at 50. Watch the chart."]);
+    expect(lines({}).map((line) => line.text)).toEqual(["You said: Faster.", "Now both worlds run, the other with How far a bird sees at 50. Watch the chart."]);
   });
 
   it("reports this sky and the 20 skies as measured, then the paper, then the question, never scoring", () => {
     const done = lines({ predicted: 0, done: true, holdsHere: false });
     expect(done.map((line) => [line.origin, line.text])).toEqual([
-      ["teaching-choice", "You predicted: Faster."],
+      ["learner", "You said: Faster."],
       ["computed-observation", "On this sky: About the same, or slower."],
       ["computed-observation", "Across 20 skies: Faster on 6, about the same, or slower on 14."],
       ["paper-derived", "The paper argues that a bird perceives only the flockmates near it, and says why that locality matters."],
@@ -148,7 +148,7 @@ describe("[R06] guided exploration on every level", () => {
       for (const holdsHere of [true, false]) {
         const done = explorationLines(exploration, level.fork.difference.claim, { predicted: 1, change: "x", done: true, holdsHere });
         expect(done.map((line) => line.text), level.id).toEqual([
-          `You predicted: ${second ?? ""}.`,
+          `You said: ${second ?? ""}.`,
           `On this sky: ${(holdsHere ? first : second) ?? ""}.`,
           "Across 20 skies, the level's statement holds on at least 16.",
           exploration.explanation.text,

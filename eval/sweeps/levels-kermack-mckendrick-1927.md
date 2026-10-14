@@ -45,7 +45,7 @@ parameters' alphabetical order, each between 0.9 and 1.1.
 
 | Level | What if | Measured difference | Level's time | Claim | Holds | Meets the rule |
 |---|---|---|---|---|---|---|
-| 1 · An epidemic that ends by itself | What if the ill stayed infectious twice as long? | People still well at day 150 (people) | 150 days | the other world lower by more than 20, on at least 16 of 20 starts | 20 of 20 | yes |
+| 1 · An epidemic that ends by itself | What if the ill stayed infectious twice as long? | People still well at day 200 (people) | 200 days | the other world lower by more than 100, on at least 16 of 20 starts | 20 of 20 | yes |
 | 2 · Still well, ill, removed | What if the illness passed on twice as easily? | Days until 100 people are ill at once (days) | 60 days | the other world lower by more than 5, on at least 16 of 20 starts | 20 of 20 | yes |
 | 3 · A threshold for the town | What if the town had 300 people instead of 1,000? | Days until 25 people are ill at once (days) | 120 days | the other world higher by more than 30, on at least 16 of 20 starts | 20 of 20 | yes |
 | 4 · Where it starts hardly matters | What if ten times as many were ill at the start? | People still well at day 150 (people) | 150 days | the other world lower by more than 10 on exactly 0 of 20 starts, stated as a count | 0 of 20 | yes |
@@ -59,7 +59,7 @@ of what the check allows it: below 1 passes. A model that failed would be refuse
 
 | Level | Most moved | Allowed there | Share of the allowance | Where | Passes |
 |---|---|---|---|---|---|
-| 1 · An epidemic that ends by itself | 2.75 × 10⁻⁶ | 5.91 × 10⁻⁴ | 0.00464 | Ill (y), day 17.0, start 10, the other world | yes |
+| 1 · An epidemic that ends by itself | 1.06 × 10⁻⁷ | 4.04 × 10⁻⁴ | 2.63 × 10⁻⁴ | Ill (y), day 31.8, start 10, the other world | yes |
 | 2 · Still well, ill, removed | 3.95 × 10⁻⁵ | 6.03 × 10⁻⁴ | 0.0655 | Ill (y), day 9.1, start 7, the other world | yes |
 | 3 · A threshold for the town | 6.12 × 10⁻⁷ | 3.36 × 10⁻⁴ | 0.00182 | Ill (y), day 18.6, start 10, this world | yes |
 | 4 · Where it starts hardly matters | 6.12 × 10⁻⁷ | 3.36 × 10⁻⁴ | 0.00182 | Ill (y), day 18.6, start 10, this world | yes |
@@ -67,30 +67,30 @@ of what the check allows it: below 1 passes. A model that failed would be refuse
 
 ## Level 1 · An epidemic that ends by itself
 
-What if the ill stayed infectious twice as long? The level states: “Ill twice as long, each person passes the illness to more of the town: by day 150 the other town has more than 20 fewer people still well.”
+What if the ill stayed infectious twice as long? The level states: “Ill twice as long, each person passes the illness to more of the town: by day 200 the other town has more than 100 fewer people still well.”
 
 | Start | This world | Other world | Holds |
 |---|---|---|---|
-| 1 | 59.17 | 2.53 | yes |
-| 2 | 75.65 | 3.86 | yes |
-| 3 | 62.09 | 4.63 | yes |
-| 4 | 56.58 | 4.07 | yes |
-| 5 | 61.57 | 2.46 | yes |
-| 6 | 63.53 | 4.01 | yes |
-| 7 | 74.19 | 2.79 | yes |
-| 8 | 68.24 | 2.68 | yes |
-| 9 | 69.17 | 2.45 | yes |
-| 10 | 49.95 | 1.23 | yes |
-| 11 | 58.51 | 2.19 | yes |
-| 12 | 100.40 | 3.95 | yes |
-| 13 | 58.56 | 4.57 | yes |
-| 14 | 55.95 | 2.74 | yes |
-| 15 | 63.86 | 3.14 | yes |
-| 16 | 62.58 | 3.08 | yes |
-| 17 | 57.11 | 3.58 | yes |
-| 18 | 43.59 | 2.17 | yes |
-| 19 | 80.37 | 3.28 | yes |
-| 20 | 52.55 | 2.64 | yes |
+| 1 | 306.11 | 37.92 | yes |
+| 2 | 361.84 | 48.55 | yes |
+| 3 | 316.84 | 55.17 | yes |
+| 4 | 291.95 | 49.92 | yes |
+| 5 | 309.77 | 36.39 | yes |
+| 6 | 325.68 | 51.18 | yes |
+| 7 | 370.20 | 41.68 | yes |
+| 8 | 335.72 | 38.66 | yes |
+| 9 | 335.74 | 36.06 | yes |
+| 10 | 274.03 | 24.76 | yes |
+| 11 | 305.44 | 34.91 | yes |
+| 12 | 453.96 | 50.38 | yes |
+| 13 | 296.94 | 53.13 | yes |
+| 14 | 294.35 | 39.88 | yes |
+| 15 | 321.99 | 43.00 | yes |
+| 16 | 323.35 | 43.67 | yes |
+| 17 | 299.23 | 47.13 | yes |
+| 18 | 246.69 | 34.57 | yes |
+| 19 | 382.04 | 44.38 | yes |
+| 20 | 282.76 | 39.23 | yes |
 
 ## Level 2 · Still well, ill, removed
 

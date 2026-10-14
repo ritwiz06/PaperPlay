@@ -4,7 +4,8 @@ import { OriginTag, type KitMark } from "./hud-parts.tsx";
 
 export interface GuideLine {
   readonly text: string;
-  readonly origin: Origin;
+  /** Where the line comes from; "learner" for the learner's own words, which carry no chip. */
+  readonly origin: Origin | "learner";
   /** A paper-derived line whose passage has not been mapped yet. */
   readonly placeholder?: boolean;
 }
@@ -105,7 +106,12 @@ export function GuideLines({ lines }: { readonly lines: readonly GuideLine[] }) 
     <ul aria-live="polite">
       {lines.map((line) => (
         <li key={`${line.origin}:${line.text}`}>
-          <OriginTag origin={line.origin} placeholder={line.placeholder ?? false} quiet /> <span>{line.text}</span>
+          {line.origin === "learner" ? null : (
+            <>
+              <OriginTag origin={line.origin} placeholder={line.placeholder ?? false} quiet />{" "}
+            </>
+          )}
+          <span>{line.text}</span>
         </li>
       ))}
     </ul>

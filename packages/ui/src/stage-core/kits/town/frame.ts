@@ -5,7 +5,7 @@
  * infects or cures another. Where they walk is a pattern of the model's time alone. Presentation
  * only.
  */
-import type { OrbitCamera } from "../../camera.ts";
+import { portraitFit, viewAspect, type OrbitCamera } from "../../camera.ts";
 import { frameCamera, type BaseEmphasis, type FrameDescription, type StageKit } from "../../frame.ts";
 import type { Vec3 } from "../../vec.ts";
 import { townDay, type TownPalette } from "./palettes.ts";
@@ -137,6 +137,18 @@ export function figureCompartments(counts: readonly number[]): number[] {
   return of;
 }
 
+/** A share in words, as Beginner says it: a picture of the count, never a second measurement. */
+export function shareInWords(share: number): string {
+  if (!(share > 0)) return "none";
+  if (share < 0.02) return "hardly any";
+  if (share < 0.15) return "a few";
+  if (share < 0.35) return "some";
+  if (share < 0.65) return "about half";
+  if (share < 0.9) return "most";
+  if (share < 0.995) return "nearly all";
+  return "all";
+}
+
 /** The houses round the plaza: where each stands, facing the middle, and its roof. */
 function housesOf(palette: TownPalette): HousePose[] {
   return Array.from({ length: HOUSES }, (_, index) => {
@@ -148,6 +160,19 @@ function housesOf(palette: TownPalette): HousePose[] {
       roof: palette.roofs[index % palette.roofs.length] ?? palette.wall,
     };
   });
+}
+
+/** The share of a narrow screen's back-off, as a power, the town takes back. */
+const PORTRAIT_TAKE_BACK = 0.6;
+
+/**
+ * How far the camera stands, for the town: the stage backs off on a narrow screen so the flock's
+ * whole valley fits, but the town is far smaller, so it takes back most of that back-off and a
+ * phone frames the town close. A wide screen is unchanged. Presentation only.
+ */
+export function townCamera(camera: OrbitCamera): OrbitCamera {
+  const backOff = portraitFit(viewAspect(camera));
+  return backOff === 1 ? camera : { ...camera, distance: camera.distance / backOff ** PORTRAIT_TAKE_BACK };
 }
 
 /** (shares, camera, palette, emphasis, look) → frame. Pure: reads its inputs, writes nothing. */
@@ -173,7 +198,7 @@ export function describeTown(input: TownInput, camera: OrbitCamera, palette: Tow
   });
   const rings = emphasis.cursor ? [{ key: "cursor", position: [emphasis.cursor.x - TOWN_SIZE / 2, 0, emphasis.cursor.y - TOWN_SIZE / 2] as Vec3, radius: 1.2, color: palette.cursor }] : [];
   return {
-    camera: frameCamera(camera, camera.target ?? [0, FIGURE_HEIGHT / 2, 0]),
+    camera: frameCamera(townCamera(camera), camera.target ?? [0, FIGURE_HEIGHT / 2, 0]),
     field: { width: TOWN_SIZE, depth: TOWN_SIZE, altitude: FIGURE_HEIGHT },
     palette,
     figures,

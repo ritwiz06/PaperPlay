@@ -14,14 +14,14 @@ export interface TownPalette extends StagePalette {
   readonly trunk: string;
   /**
    * The figures, by the model's compartments in their order: still well, ill, removed, and any
-   * further one. Every colour keeps 3:1 against the ground.
+   * further one. Every colour keeps 3:1 against the ground and the plaza.
    */
   readonly figures: readonly [string, string, string, string];
   /** The ring an ill figure stands in, so illness never shows by colour alone. */
   readonly ring: string;
 }
 
-/** By day: cream sky, a muted green town, cream, lime and ink figures. */
+/** By day: cream sky, a deep green town, and cream, warm orange and soft blue-grey figures. */
 export const townDay: TownPalette = Object.freeze({
   name: "town-day",
   sky: tokens.cream,
@@ -30,12 +30,13 @@ export const townDay: TownPalette = Object.freeze({
   sun: tokens.cream,
   shade: mixHex(tokens.sub, tokens.line, 0.5),
   cursor: tokens.dark,
-  ground: mixHex(tokens.sub, tokens.lime, 0.2),
-  plaza: mixHex(tokens.line, tokens.cream, 0.5),
+  // Deep enough that orange and blue-grey figures keep 3:1 against it, as cream does.
+  ground: mixHex(mixHex(tokens.sub, tokens.lime, 0.2), tokens.ink, 0.4),
+  plaza: mixHex(tokens.sub, tokens.ink, 0.55),
   wall: tokens.cream,
   roofs: [tokens.ink, tokens.aqua, tokens.sub] as const,
   foliage: mixHex(tokens.lime, tokens.sub, 0.6),
   trunk: mixHex(tokens.sub, tokens.ink, 0.35),
-  figures: [tokens.cream, tokens.lime, tokens.ink, mixHex(tokens.aqua, tokens.cream, 0.7)] as const,
-  ring: tokens.lime,
+  figures: [tokens.cream, tokens.ember, tokens.mist, mixHex(tokens.aqua, tokens.cream, 0.7)] as const,
+  ring: tokens.ember,
 });

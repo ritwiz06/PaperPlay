@@ -1,0 +1,480 @@
+/**
+ * Threshold Town, hand-authored (ADR-0029): Kermack and McKendrick's special case of constant
+ * rates, as the WorldSpec in fixtures/worldspecs/kermack-mckendrick-1927.json. Written here once,
+ * so its model, the same in every level's binding, is stated once; `npm run fixture:threshold-town`
+ * writes the JSON, and a test holds the JSON to it. A draft until the source map exists: every
+ * anchor is a placeholder naming the passage it needs.
+ */
+
+const SOURCE = "kermack1927";
+const need = (text: string) => [{ placeholder: true, sourceId: SOURCE, need: text }];
+const NEEDS = {
+  equations: "The paper's equations for its special case of constant infection and removal rates, for those not yet infected, the infected and the removed.",
+  total: "The paper's statement that the total of those not yet infected, the infected and the removed stays constant.",
+  infection: "The paper's rate of infection in its special case, new infections in proportion to the number infected times the number not yet infected.",
+  removal: "The paper's rate of removal, by recovery, isolation or death, constant in its special case.",
+  groups: "The paper's division of the population into those not yet infected, those infected, and those removed by recovery or death.",
+  threshold: "The paper's threshold: an epidemic occurs only when the population's density exceeds the rate of removal divided by the rate of infection.",
+  endsEarly: "The paper's statement that an epidemic may end before every susceptible person has been infected.",
+  finalSize: "The paper's relation between the number never infected at the end of an epidemic and the population's density at its start.",
+  density: "The paper's result that above the threshold, the denser the population, the larger the share an epidemic reaches.",
+  bombay: "The paper's comparison of its theory with the deaths from plague in Bombay in 1905 and 1906.",
+};
+
+const c = (id: string) => ({ c: id });
+const p = (id: string) => ({ p: id });
+const meet = { op: "mul", args: [p("kappa"), c("x"), c("y")] };
+const MODEL = {
+  timeUnit: "day",
+  compartments: [
+    { id: "x", name: "Still well", unit: { people: 1 }, initial: { op: "sub", a: p("population"), b: p("firstIll") }, nonNegative: true, anchors: need(NEEDS.groups) },
+    { id: "y", name: "Ill", unit: { people: 1 }, initial: p("firstIll"), nonNegative: true, anchors: need(NEEDS.groups) },
+    { id: "z", name: "Removed", unit: { people: 1 }, initial: { n: 0 }, nonNegative: true, anchors: need(NEEDS.groups) },
+  ],
+  parameters: [
+    { id: "kappa", symbol: "κ", name: "Infection rate", unit: { people: -1, time: -1 }, range: [0, 0.002], defaultValue: 0.0003, origin: "teaching-choice", anchors: [] },
+    { id: "removal", symbol: "l", name: "Removal rate", unit: { time: -1 }, range: [0.01, 1], defaultValue: 0.1, origin: "teaching-choice", anchors: [] },
+    { id: "population", symbol: "N", name: "People in the town", unit: { people: 1 }, range: [10, 5000], defaultValue: 1000, origin: "teaching-choice", anchors: [] },
+    { id: "firstIll", symbol: "y₀", name: "People ill at the start", unit: { people: 1 }, range: [1, 100], defaultValue: 5, origin: "teaching-choice", anchors: [] },
+  ],
+  equations: [
+    { of: "x", rate: { op: "neg", a: meet }, anchors: need(NEEDS.equations) },
+    { of: "y", rate: { op: "sub", a: meet, b: { op: "mul", args: [p("removal"), c("y")] } }, anchors: need(NEEDS.equations) },
+    { of: "z", rate: { op: "mul", args: [p("removal"), c("y")] }, anchors: need(NEEDS.equations) },
+  ],
+  invariants: [{ kind: "conserved", expr: { op: "add", args: [c("x"), c("y"), c("z")] }, anchors: need(NEEDS.total) }],
+  steadyStates: [],
+  observables: [
+    { id: "stillWell", label: "People still well, never yet ill", expr: c("x"), unit: { people: 1 } },
+    { id: "ill", label: "People ill", expr: c("y"), unit: { people: 1 } },
+    { id: "removed", label: "People removed", expr: c("z"), unit: { people: 1 } },
+  ],
+  solver: { dt: 0.1, tolerance: 1e-6 },
+};
+const binding = () => ({ type: "equations", solver: { id: "compartments.ode", version: "1.0.0" }, model: MODEL, params: {}, perWatchSecond: 4 });
+
+const ELEMENTS = ["control-value", "range-numbers", "range-words", "readout-number", "equation", "analogy"];
+const variant = (text: string, show: string[], extra: Record<string, unknown> = {}) => ({ text, show, hide: ELEMENTS.filter((element) => !show.includes(element)), ...extra });
+const beginner = (text: string, analogy: string) => variant(text, ["range-words", "analogy"], { analogy, origin: "teaching-choice", anchors: [] });
+const intermediate = (text: string) => variant(text, ["control-value", "range-numbers", "readout-number"], { origin: "teaching-choice", anchors: [] });
+const advanced = (text: string, equation: string, origin: string, anchors: unknown[]) => variant(text, ["control-value", "range-numbers", "readout-number", "equation"], { equation, origin, anchors });
+
+const INFECTION = {
+  actionId: "infection-rate",
+  label: "How easily it passes on",
+  targetVariable: "kappa",
+  range: [0.0001, 0.001],
+  unit: "per person per day",
+  defaultValue: 0.0003,
+  origin: "paper-derived",
+  anchors: need(NEEDS.infection),
+};
+const INFECTION_SLIDER = { step: 0.00005, ends: ["Hardly at all", "Very easily"] };
+const REMOVAL = {
+  actionId: "removal-rate",
+  label: "How fast the ill are removed",
+  targetVariable: "removal",
+  range: [0.02, 0.5],
+  unit: "per day",
+  defaultValue: 0.1,
+  origin: "paper-derived",
+  anchors: need(NEEDS.removal),
+};
+const REMOVAL_SLIDER = { step: 0.01, ends: ["Slowly", "Quickly"] };
+const STILL_WELL = { metricId: "stillWell", label: "People still well, never yet ill", shortLabel: "Still well", unit: "people", decimals: 0, origin: "computed-observation" };
+const ILL = { metricId: "ill", label: "People ill", shortLabel: "Ill", unit: "people", decimals: 0, origin: "computed-observation" };
+
+const STILL_WELL_GUIDE = {
+  readings: [
+    { atLeast: 900, words: "nearly everyone is still well" },
+    { atLeast: 500, words: "more than half the town is still well" },
+    { atLeast: 100, words: "most of the town has been ill" },
+    { atLeast: 0, words: "fewer than one in ten has never been ill" },
+  ],
+  trend: {
+    rising: { beginner: "and the number is growing", measured: "rising" },
+    falling: { beginner: "and the illness is still reaching more people", measured: "falling" },
+    steady: "holding",
+    within: 2,
+  },
+};
+const ILL_GUIDE = {
+  readings: [
+    { atLeast: 300, words: "nearly a third of the town is ill at once" },
+    { atLeast: 100, words: "one in ten or more is ill" },
+    { atLeast: 30, words: "dozens of people are ill" },
+    { atLeast: 5, words: "a few people are ill" },
+    { atLeast: 0, words: "almost no one is ill" },
+  ],
+  trend: {
+    rising: { beginner: "and more are falling ill", measured: "rising" },
+    falling: { beginner: "and fewer are ill each day", measured: "falling" },
+    steady: "holding",
+    within: 2,
+  },
+};
+const INFECTION_GUIDE = {
+  raised: "You made the illness pass on more easily{to}, so more meetings of the ill and the well pass it on.",
+  lowered: "You made the illness pass on less easily{to}, so fewer meetings of the ill and the well pass it on.",
+};
+const REMOVAL_GUIDE = {
+  raised: "You removed the ill faster{to}, so each one is ill, and can pass it on, for less time.",
+  lowered: "You removed the ill more slowly{to}, so each one is ill, and can pass it on, for longer.",
+};
+const atDay150 = (claim: Record<string, unknown>) => ({ metricId: "stillWell", label: "People still well at day 150", unit: "people", summary: { kind: "at", time: 150 }, time: 150, claim });
+
+const levels = [
+  {
+    id: "hook",
+    order: 1,
+    kind: "hook",
+    title: "An epidemic that ends by itself",
+    goal: "Change how easily the illness passes on, and watch how many are still well when it ends.",
+    bonus: false,
+    binding: binding(),
+    // About three in ten of the town are still well when it ends, so the end is easy to see (owner, 2026-10-14).
+    manipulable: { ...INFECTION, defaultValue: 0.00017 },
+    slider: { ...INFECTION_SLIDER, step: 0.00001 },
+    observable: STILL_WELL,
+    counterfactual: {
+      prompt: "What if the ill stayed infectious twice as long?",
+      altParams: { removal: 0.05 },
+      expectedQualitativeEffect: "Ill twice as long, each person passes the illness to more of the town: by day 200 the other town has more than 100 fewer people still well.",
+      origin: "teaching-choice",
+      isSpeculative: false,
+      anchors: [],
+      difference: { metricId: "stillWell", label: "People still well at day 200", unit: "people", summary: { kind: "at", time: 200 }, time: 200, claim: { kind: "each", relation: "lower", by: 100 } },
+    },
+    setup: [],
+    explanation: {
+      beginner: beginner(
+        "A few ill people arrive in a town where everyone else is well. The illness passes on when the ill meet the well, and in time the ill are removed: they recover, are isolated or die. Watch it spread, peak and fade. When it is over, many people never caught it.",
+        "Like a fire in a dry field that burns out with patches left unburnt, once the flames are too far apart to jump.",
+      ),
+      intermediate: intermediate(
+        "The infection rate sets how often a meeting of an ill person and a well one passes the illness on. The epidemic grows while the ill infect others faster than they are removed, and fades once too few people are still well for that to go on. It ends with people who were never ill.",
+      ),
+      advanced: advanced(
+        "In the paper's special case of constant rates, x counts those still well, y the ill and z the removed; κ is the rate of infection and l the rate of removal. x only falls, and it stops falling once y has fallen to nothing, which happens while x is still above 0.",
+        "dx/dt = −κxy,  dy/dt = κxy − ly,  dz/dt = ly",
+        "paper-derived",
+        need(NEEDS.equations),
+      ),
+    },
+    caption: { text: "An epidemic may end before everyone has been ill", origin: "paper-derived", anchors: need(NEEDS.endsEarly) },
+    guide: { idle: "A few people arrive ill. Watch the illness spread through the town, and fade.", ...INFECTION_GUIDE, ...STILL_WELL_GUIDE },
+    guidedExploration: {
+      predictPrompt: "If the ill stayed infectious twice as long, how many people would still be well at day 200?",
+      choices: ["Far fewer", "About as many"],
+      interveneActionId: "infection-rate",
+      observeMetricId: "stillWell",
+      explainPrompt: "Why does the epidemic stop while people are still well?",
+      explanation: {
+        text: "The paper shows that an epidemic can end before everyone has been ill: it fades once the ill are removed faster than they infect the few still well.",
+        origin: "paper-derived",
+        anchors: need(NEEDS.endsEarly),
+      },
+    },
+    furtherReading: [],
+    carryForward: "An epidemic fades once the ill are removed faster than they infect others, and that happens before everyone has been ill.",
+  },
+  {
+    id: "background",
+    order: 2,
+    kind: "background",
+    title: "Still well, ill, removed",
+    goal: "Change how fast the ill are removed, and watch how many are ill at once.",
+    bonus: false,
+    binding: binding(),
+    manipulable: REMOVAL,
+    slider: REMOVAL_SLIDER,
+    observable: ILL,
+    counterfactual: {
+      prompt: "What if the illness passed on twice as easily?",
+      altParams: { kappa: 0.0006 },
+      expectedQualitativeEffect: "Passing on twice as easily, the illness spreads faster: the other town has 100 people ill at once more than 5 days sooner.",
+      origin: "teaching-choice",
+      isSpeculative: false,
+      anchors: [],
+      difference: {
+        metricId: "ill",
+        label: "Days until 100 people are ill at once",
+        unit: "days",
+        summary: { kind: "first-reach", threshold: 100 },
+        time: 60,
+        claim: { kind: "each", relation: "lower", by: 5 },
+      },
+    },
+    setup: [],
+    explanation: {
+      beginner: beginner(
+        "Everyone in the town is in one of three groups: still well, ill, or removed. The ill can pass the illness on. The removed cannot: they have recovered, been isolated or died. No one moves back, so people only go from well, to ill, to removed.",
+        "Like guests at a party who arrive, dance and leave: no one who has left comes back in.",
+      ),
+      intermediate: intermediate(
+        "The paper sorts a population into those not yet infected, the infected, and those removed by recovery, isolation or death. Removal takes the ill out of the spread: the faster it is, the shorter each person's illness, and the fewer are ill at once.",
+      ),
+      advanced: advanced(
+        "Each of the y ill is removed at rate l, so an illness lasts 1/l days on average. x + y + z = N stays constant: no one enters or leaves the town, and people move only from x to y to z.",
+        "dz/dt = ly,  x + y + z = N",
+        "paper-derived",
+        [...need(NEEDS.removal), ...need(NEEDS.total)],
+      ),
+    },
+    caption: { text: "Those not yet infected, the infected, and the removed", origin: "paper-derived", anchors: need(NEEDS.groups) },
+    guide: { idle: "Everyone is still well, ill or removed, and the town's total stays the same.", ...REMOVAL_GUIDE, ...ILL_GUIDE },
+    guidedExploration: {
+      predictPrompt: "If the illness passed on twice as easily, would 100 people be ill at once sooner?",
+      choices: ["Sooner", "About as soon"],
+      interveneActionId: "removal-rate",
+      observeMetricId: "ill",
+      explainPrompt: "Why does passing on more easily speed the whole epidemic up?",
+      explanation: {
+        text: "In the paper's equations, new infections come from meetings of the ill and the well, so twice the rate of infection makes twice as many while the ill are still few.",
+        origin: "paper-derived",
+        anchors: need(NEEDS.infection),
+      },
+    },
+    furtherReading: [],
+    carryForward: "People only move from still well, to ill, to removed, and the town's total never changes.",
+  },
+  {
+    id: "idea",
+    order: 3,
+    kind: "idea",
+    title: "A threshold for the town",
+    goal: "Change how fast the ill are removed, and find where the illness no longer takes off.",
+    bonus: false,
+    binding: binding(),
+    manipulable: REMOVAL,
+    slider: REMOVAL_SLIDER,
+    observable: ILL,
+    counterfactual: {
+      prompt: "What if the town had 300 people instead of 1,000?",
+      altParams: { population: 300 },
+      expectedQualitativeEffect: "In a town of 300, the illness fades out instead of spreading: within 120 days the other town never has 25 people ill at once.",
+      origin: "teaching-choice",
+      isSpeculative: false,
+      anchors: [],
+      difference: {
+        metricId: "ill",
+        label: "Days until 25 people are ill at once",
+        unit: "days",
+        summary: { kind: "first-reach", threshold: 25 },
+        time: 120,
+        claim: { kind: "each", relation: "higher", by: 30 },
+      },
+    },
+    setup: [],
+    explanation: {
+      beginner: beginner(
+        "Whether an epidemic starts depends on how many people the ill can meet. In a big town, each ill person passes the illness to more than one other before being removed, and it spreads. In a small one, each passes it to fewer than one, and it fades out.",
+        "Like a rumour in a small village: if each person tells fewer than one other, it dies out.",
+      ),
+      intermediate: intermediate(
+        "The paper finds a threshold: an epidemic grows only if more people can catch the illness than the rate of removal divided by the rate of infection. In this world that is about 333 people at the start. Remove the ill fast enough, or have few enough people, and the illness fades however it begins.",
+      ),
+      advanced: advanced(
+        "dy/dt = (κx − l) y, so the ill grow only while x is above l/κ, the threshold. At the start nearly everyone is still well, so an epidemic takes off only in a town of more than l/κ people.",
+        "dy/dt = (κx − l) y,  growing only while x > l/κ",
+        "paper-derived",
+        need(NEEDS.threshold),
+      ),
+    },
+    caption: { text: "An epidemic occurs only above a threshold density", origin: "paper-derived", anchors: need(NEEDS.threshold) },
+    guide: {
+      idle: "Each ill person infects others until removed. Does each infect more than one?",
+      ...REMOVAL_GUIDE,
+      ...ILL_GUIDE,
+    },
+    guidedExploration: {
+      predictPrompt: "If the town had 300 people instead of 1,000, would the illness still take off?",
+      choices: ["No, it would fade out", "Yes, only more slowly"],
+      interveneActionId: "removal-rate",
+      observeMetricId: "ill",
+      explainPrompt: "Why can a smaller town escape an epidemic altogether?",
+      explanation: {
+        text: "The paper's threshold: an epidemic occurs only when more people can catch the illness than the rate of removal divided by the rate of infection.",
+        origin: "paper-derived",
+        anchors: need(NEEDS.threshold),
+      },
+    },
+    furtherReading: [],
+    carryForward: "An epidemic takes off only when more people can catch it than the rate of removal over the rate of infection.",
+  },
+  {
+    id: "evaluation",
+    order: 4,
+    kind: "evaluation",
+    title: "Where it starts hardly matters",
+    goal: "Change how easily the illness passes on, then see whether more ill people at the start change how it ends.",
+    bonus: false,
+    binding: binding(),
+    manipulable: INFECTION,
+    slider: INFECTION_SLIDER,
+    observable: STILL_WELL,
+    counterfactual: {
+      prompt: "What if ten times as many were ill at the start?",
+      altParams: { firstIll: 50 },
+      expectedQualitativeEffect: "Ten times as many ill at the start barely moves the end: in none of 20 towns does the other have more than 10 fewer people still well at day 150.",
+      origin: "teaching-choice",
+      isSpeculative: false,
+      anchors: [],
+      difference: atDay150({ kind: "count", relation: "lower", by: 10, holds: 0 }),
+    },
+    setup: [],
+    explanation: {
+      beginner: beginner(
+        "Start with five ill people, or fifty: with more, the epidemic comes sooner, but it ends in nearly the same place. How many escape is set by how easily the illness passes on, how fast the ill are removed and how many live in the town, much more than by how it began.",
+        "Like a ball rolled into a valley: start it higher or lower on the slope, and it still comes to rest near the bottom.",
+      ),
+      intermediate: intermediate(
+        "How many are never ill is set mostly by the two rates and the town's size. More ill people at the start bring the peak sooner, but change the end by only a few people, as long as they are a small part of the town.",
+      ),
+      advanced: advanced(
+        "With no one removed at the start, the run ends where x∞ = x₀ exp(−κ(N − x∞)/l), a consequence of the paper's equations. x₀ = N − y₀ enters only through a factor close to 1 while y₀ is small next to N.",
+        "x∞ = x₀ · exp(−κ (N − x∞) / l)",
+        "teaching-choice",
+        [],
+      ),
+    },
+    caption: { text: "How many an epidemic leaves untouched", origin: "paper-derived", anchors: need(NEEDS.finalSize) },
+    guide: { idle: "The illness starts with a few ill people. Does how many change how it ends?", ...INFECTION_GUIDE, ...STILL_WELL_GUIDE },
+    guidedExploration: {
+      predictPrompt: "If ten times as many were ill at the start, would far fewer people be still well at day 150?",
+      choices: ["Far fewer", "About as many"],
+      interveneActionId: "infection-rate",
+      observeMetricId: "stillWell",
+      explainPrompt: "Why does the start barely change the end?",
+      explanation: {
+        text: "The paper's equations tie how an epidemic ends to the town's size and its two rates; a few more ill people at the start move the end only a little.",
+        origin: "teaching-choice",
+        anchors: [],
+      },
+    },
+    furtherReading: [],
+    carryForward: "How an epidemic ends is set by its rates and the town's size, much more than by how it starts.",
+  },
+  {
+    id: "result",
+    order: 5,
+    kind: "result",
+    title: "A bigger town, a bigger epidemic",
+    goal: "Change how fast the ill are removed, then compare a town twice the size.",
+    bonus: false,
+    binding: binding(),
+    manipulable: REMOVAL,
+    slider: REMOVAL_SLIDER,
+    observable: STILL_WELL,
+    counterfactual: {
+      prompt: "What if the town had twice as many people?",
+      altParams: { population: 2000 },
+      expectedQualitativeEffect: "In a town of 2,000 the illness reaches nearly everyone: by day 150 it has more than 20 fewer people still well than this town of 1,000, not more.",
+      origin: "teaching-choice",
+      isSpeculative: false,
+      anchors: [],
+      difference: atDay150({ kind: "each", relation: "lower", by: 20 }),
+    },
+    setup: [],
+    explanation: {
+      beginner: beginner(
+        "Twice the people means each ill person meets twice as many who are still well, so the illness spreads faster and further. A bigger town ends with fewer people who never caught it: not just a smaller share, but fewer people.",
+        "Like a spark in a packed hall rather than a half-empty one.",
+      ),
+      intermediate: intermediate(
+        "New infections come from meetings of the ill and the well, so they grow with the number of people. In a town of 2,000 the epidemic is far above its threshold: it reaches more of the town, and leaves fewer people untouched, counted in people, not only as a share.",
+      ),
+      advanced: advanced(
+        "κxy doubles when x does, so at the start the ill grow at κN − l, the infection term twice as large in a town twice the size. The end, x∞ = x₀ exp(−κ(N − x∞)/l), falls fast as N grows.",
+        "dy/dt = (κx − l) y",
+        "teaching-choice",
+        [],
+      ),
+    },
+    caption: { text: "The denser the population, the more an epidemic reaches", origin: "paper-derived", anchors: need(NEEDS.density) },
+    guide: { idle: "How many people a town has decides how far the illness can reach.", ...REMOVAL_GUIDE, ...STILL_WELL_GUIDE },
+    guidedExploration: {
+      predictPrompt: "If the town had twice as many people, would more of them, or fewer, still be well at day 150?",
+      choices: ["Fewer", "More"],
+      interveneActionId: "removal-rate",
+      observeMetricId: "stillWell",
+      explainPrompt: "Why does a bigger town have fewer people left untouched, not more?",
+      explanation: {
+        text: "The paper finds that above its threshold, the denser a population, the larger the share of it an epidemic reaches.",
+        origin: "paper-derived",
+        anchors: need(NEEDS.density),
+      },
+    },
+    furtherReading: [],
+    carryForward: "The more people the ill can meet, the further an epidemic reaches.",
+  },
+];
+
+/** The WorldSpec, as plain data for the builder to check. */
+export const thresholdTown = () => ({
+  schemaVersion: "worldspec/3",
+  status: "draft",
+  title: "Threshold Town",
+  source: {
+    pending: true,
+    sourceId: SOURCE,
+    title: "A contribution to the mathematical theory of epidemics",
+    authors: ["William Ogilvy Kermack", "Anderson Gray McKendrick"],
+    year: 1927,
+    venue: "Proceedings of the Royal Society of London, Series A 115(772), 700–721",
+    need: "The owner's PDF, for the source map: its digest, sections, pages and character ranges.",
+  },
+  digest: {
+    question: "Why does an epidemic end before everyone has caught it?",
+    hookResult: {
+      text: "An epidemic can end while many people are still well: it fades once too few are left for the ill to keep it spreading, not once everyone has been ill.",
+      anchors: need(NEEDS.endsEarly),
+    },
+    causalChain: [
+      { id: "infection", claim: "New infections arise in proportion to the number ill times the number still well.", dependsOn: [], anchors: need(NEEDS.infection), origin: "paper-derived" },
+      { id: "removal", claim: "The ill are removed, by recovery, isolation or death, at a constant rate in the paper's special case.", dependsOn: [], anchors: need(NEEDS.removal), origin: "paper-derived" },
+      {
+        id: "threshold",
+        claim: "An epidemic grows only while more people are still well than the rate of removal divided by the rate of infection.",
+        dependsOn: ["infection", "removal"],
+        anchors: need(NEEDS.threshold),
+        origin: "paper-derived",
+      },
+      { id: "ends-early", claim: "So an epidemic ends while people are still well, once too few are left for it to grow.", dependsOn: ["threshold"], anchors: need(NEEDS.endsEarly), origin: "paper-derived" },
+    ],
+  },
+  routing: {
+    tier: "A",
+    family: "compartments",
+    reason: "Kermack and McKendrick's special case of constant rates is three compartments joined by differential equations, which the compartment family solves as data.",
+    primitive: { status: "released" },
+  },
+  design: { world: "town", palette: "cream-teal", density: "comfortable", sections: levels.map((level) => ({ levelId: level.id, chartType: "line", motion: "none" })) },
+  timeUnit: "day",
+  openingSeed: 0,
+  levels,
+  primitivesUsed: [{ id: "compartments.ode", version: "1.0.0" }],
+  checks: {
+    suiteIds: ["worldspec-schema", "builder-bindings", "compartment-checks"],
+    suiteVersions: { "worldspec-schema": "worldspec/3", "builder-bindings": "1", "compartment-checks": "1" },
+  },
+  limits: [
+    {
+      text: "A teaching adaptation of the paper's special case, in which the rates of infection and removal are constants. The paper's general theory, where both may change with how long someone has been ill, is not shown.",
+      origin: "teaching-choice",
+      anchors: [],
+    },
+    { text: "The paper counts people per unit of area, a density. This world counts the people in one town, the same model with the town's area fixed.", origin: "teaching-choice", anchors: [] },
+    { text: "Every value here, of the two rates, the town's size and the ill at the start, is a teaching choice, not the paper's.", origin: "teaching-choice", anchors: [] },
+    { text: "The paper compares its theory with the deaths from plague in Bombay in 1905 and 1906. This world reproduces neither that comparison nor any of the paper's data.", origin: "paper-derived", anchors: need(NEEDS.bombay) },
+    {
+      text: "The model has no chance in it: a town with the same values always runs the same way. So each level's statement is checked on the world's own values and on 19 others, each within a tenth of them, not on 20 seeds.",
+      origin: "teaching-choice",
+      anchors: [],
+    },
+    { text: "A draft: its anchors are placeholders until the source map exists, and no passage is quoted yet.", origin: "teaching-choice", anchors: [] },
+  ],
+});
+
+/** The fixture's text, as `npm run fixture:threshold-town` writes it. */
+export const thresholdTownJson = (): string => `${JSON.stringify(thresholdTown(), null, 2)}\n`;
