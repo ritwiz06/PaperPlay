@@ -1,9 +1,10 @@
-import { mkdtempSync, readdirSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { build } from "vite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { findSecrets, secretValues } from "../bundle/secrets.ts";
 
 // The production bundle, built for real into a scratch folder: the Three.js stage arrives as its
 // own chunk, after the page and its HUD, so the first chunk a learner downloads holds no Three.js.
@@ -34,6 +35,15 @@ describe("the production bundle", () => {
   });
 });
 
+describe("[R09] the production bundle's secrets", () => {
+  it("holds no key, key variable or model gateway, nor any value from apps/api/.env where it is present (ADR-0030)", () => {
+    const envFile = fileURLToPath(new URL("../../apps/api/.env", import.meta.url));
+    const values = existsSync(envFile) ? secretValues(readFileSync(envFile, "utf8")) : [];
+    const html = readFileSync(join(out, "index.html"), "utf8");
+    expect(findSecrets([...chunks, { name: "index.html", text: html }], values)).toEqual([]);
+  });
+});
+
 describe("the static deploy configuration (ADR-0017)", () => {
   const root = fileURLToPath(new URL("../../", import.meta.url));
   const deploy = JSON.parse(readFileSync(join(root, "vercel.json"), "utf8")) as Record<string, unknown>;
@@ -42,7 +52,8 @@ describe("the static deploy configuration (ADR-0017)", () => {
   it("builds the app with the repository's own build, from a clean install, into Vite's output folder", () => {
     expect(deploy.installCommand).toBe("npm ci");
     expect(deploy.buildCommand).toBe("npm run build");
-    expect(scripts.build).toBe("npm run build --workspace @paperplay/web");
+    // The build is the web app's, then the bundle secret check, so the deploy fails on a leak too (ADR-0030).
+    expect(scripts.build).toBe("npm run build --workspace @paperplay/web && node scripts/check-bundle.ts");
     expect(deploy.outputDirectory).toBe("apps/web/dist");
   });
 
