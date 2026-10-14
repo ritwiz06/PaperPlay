@@ -17,3 +17,4 @@ export {
   type Depth,
 } from "./builder/build.ts";
 export { claimHolds, SAMPLE_STEPS, sampleCount, summarise } from "./builder/difference.ts";
+export { NEIGHBOURHOOD, SKIES, startsOf, sweepAccuracy, sweepLevels, worldsAt, type AccuracyResult, type LevelResult, type SkyResult, type Start } from "./rule/sweep.ts";
