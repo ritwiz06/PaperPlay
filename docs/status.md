@@ -13,15 +13,16 @@ then G3a.3 ([log](sessions/2026-10-14.md)). This file is rewritten every session
 - **The owner's answers (2026-10-14):** the model provider is ASU Research Computing's Voyager
   gateway (ADR-0030); ADR-0029 is accepted with five fixes to Threshold Town.
 - **G3a.3, the pipeline on the compartment family, has started:**
-  - **landing:** the key in `apps/api/.env` only, and the bundle secret check in every
-    production build (`9251435`, ADR-0030);
-  - **next:** Threshold Town's fixes, then the Voyager adapter and its probe.
+  - **landed:** the key in `apps/api/.env` only, and the bundle secret check in every
+    production build (`9251435`, ADR-0030, landed at `3e1f855`);
+  - **landing:** Threshold Town's five fixes (`eac3826`, ADR-0029's amendment);
+  - **next:** the Voyager adapter and its probe.
 - **`main` moves only through `npm run land`** (ADR-0009, amended).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`. CI runs `check:gate` on every
   push and pull request.
-- **Branches:** `g3/secrets`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the compartment
+- **Branches:** `g3/town-fixes`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the compartment
   agent's own, whose three commits are on `main`.
-- **Working commit:** `9251435` on `g3/secrets`. `main` is at `e85e728`, whose CI passed.
+- **Working commit:** `eac3826` on `g3/town-fixes`. `main` is at `3e1f855`, whose CI passed.
 - **Model provider:** Voyager, `https://openai.rc.asu.edu/v1`, its key `VOYAGER_API_KEY` in
   `apps/api/.env` only (ADR-0030). No adapter calls it yet.
 - **Primitives:** `flock.planar.weighted@3.1.0`, with queries Q1–Q4, the agents family's
@@ -73,7 +74,7 @@ Ahead of their gate, from the same run's reports: R05 5, R06 53, R07 40, R08 59,
 
 ## Next three actions
 
-1. Threshold Town's fixes, with level 1's level rule re-run (`g3/town-fixes`).
+1. Land Threshold Town's fixes.
 2. The Voyager adapter, its recordings, `npm run pipeline:live` and the capability probe.
 3. Ingest, the gold ModelSpecs for three CC BY papers, and the bake-off.
 

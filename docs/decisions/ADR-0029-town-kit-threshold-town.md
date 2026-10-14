@@ -80,3 +80,31 @@ after the epidemic has burned out shows nothing, and an epidemic has to be start
 - **Claims to check against the PDF:** the anchors' needs name the passages expected, among them
   the threshold, the epidemic ending before everyone is infected, and the comparison with
   plague in Bombay. Any the source map cannot find are reworded or cut.
+
+## Amendment, 2026-10-14: accepted, with five fixes
+
+The owner accepted this decision, and as it stands: day-0 restarts for compartment forks, Start
+again, four days a second, the ±10% starts from `mulberry32(k)` with the What-if's values exact,
+and level 4's count claim. Five things changed, at the owner's request (`eac3826`):
+
+1. **Colours:** ill figures warm orange (`ember`, `#f6ae66`), removed figures soft blue-grey
+   (`mist`, `#b3c4d2`), two colours added to the tokens for them. Both are as light as cream is
+   not, so the ground deepened (sub and lime, then 40% ink) and the plaza turned dark: every
+   figure, and the ill figures' ring, keeps 3:1 against both, which a test holds. Orange and
+   blue-grey are close in lightness; they differ in hue, warm against cool, and the ill also
+   stand in a ring.
+2. **Level 1's values:** an infection rate of 0.00017 a person a day, so about three in ten,
+   306 of 1,000, are still well when the epidemic ends, by day 200. The level's time is 200
+   days; its claim is that ill twice as long leaves more than 100 fewer still well. It holds on
+   20 of 20 starts, the smallest gap 212 people.
+3. **The readout:** a three-part bar, each part as wide as its compartment's share, labelled
+   beneath with its count, or at Beginner with words ("most", "a few"). At Beginner the removed
+   are "Recovered or removed". On a town's card the readout takes a full row.
+4. **"You said":** the learner's own prediction reads "You said: …", with no origin chip, in
+   every world. A guide line's origin may be "learner", for the learner's own words only.
+5. **The fork chart and the phone:** a world may set its chart's top, and a town's is its
+   population, the larger of the two towns'. On a narrow screen the town kit takes back most of
+   the stage's back-off, which is sized for the flock's valley, so the town is framed close.
+
+Threshold Town is now authored in `scripts/fixtures/threshold-town.ts`, and a test holds the
+fixture to it.
