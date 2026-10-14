@@ -113,7 +113,8 @@ describe("[R09] the live client", () => {
     expect(liveRefusal({ VITEST: "true", npm_lifecycle_event: "pipeline:live" })).toMatch(/never run under a test/);
     expect(liveRefusal({ npm_lifecycle_event: "test" })).toMatch(/only through npm run pipeline:live/);
     expect(liveRefusal({ npm_lifecycle_event: "pipeline:live" })).toBeNull();
-    expect(() => liveClient()).toThrow(/never run under a test/);
+    // Here, the test runner or CI refuses it, whichever the environment shows first.
+    expect(() => liveClient()).toThrow(/never run (under a test|on CI)/);
   });
 
   it("reads the key from an env file, quoted or not, and names a missing one without a value", () => {
