@@ -149,13 +149,13 @@ describe("licences and fetching", () => {
     expect(() => parseArxivId("2101.01234")).toThrow(/with its version/);
   });
 
-  /** A network that answers each URL it knows. */
+  /** A network that answers each URL it knows, with a copy of its bytes: a Node Buffer's own may share a pooled block. */
   const network =
     (pages: Readonly<Record<string, Uint8Array | string>>): Fetch =>
     (url) => {
       const page = pages[url];
       const bytes = typeof page === "string" ? encode(page) : page;
-      return Promise.resolve({ ok: bytes !== undefined, status: bytes ? 200 : 404, arrayBuffer: () => Promise.resolve((bytes ?? new Uint8Array()).slice().buffer), text: () => Promise.resolve(page === undefined ? "" : String(page)) });
+      return Promise.resolve({ ok: bytes !== undefined, status: bytes ? 200 : 404, arrayBuffer: () => Promise.resolve(Uint8Array.from(bytes ?? new Uint8Array()).buffer), text: () => Promise.resolve(page === undefined ? "" : String(page)) });
     };
 
   it("fetches an arXiv paper's record and source, and registers it with its licence; CC BY text is kept", async () => {
