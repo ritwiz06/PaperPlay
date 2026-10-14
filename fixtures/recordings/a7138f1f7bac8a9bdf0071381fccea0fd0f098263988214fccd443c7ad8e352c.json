@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "gemma4-31b-it",
+  "promptHash": "a7138f1f7bac8a9bdf0071381fccea0fd0f098263988214fccd443c7ad8e352c",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"compartments\":[{\"symbol\":\"S\",\"name\":\"susceptible people\"},{\"symbol\":\"I\",\"name\":\"infected people\"},{\"symbol\":\"R\",\"name\":\"recovered people\"}],\"recoveryRatePerDay\":0.2}",
+    "usage": {
+      "promptTokens": 244,
+      "completionTokens": 43,
+      "totalTokens": 287
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:04:11.069Z"
+}

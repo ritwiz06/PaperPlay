@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "muse-glimmer-30b",
+  "promptHash": "fefed2e80ca5667a0e6ebb00146e930b90a196ecc771e1fa5d04f7591507a31e",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "- S: susceptible people\n- I: infected people\n- R: recovered people\n\nRecovery rate per day: Infected people recover at a constant rate gamma. gamma = 0.2 per day",
+    "usage": {
+      "promptTokens": 115,
+      "completionTokens": 611,
+      "totalTokens": 726
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:04:03.106Z"
+}

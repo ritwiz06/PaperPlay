@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "muse-glimmer-30b",
+  "promptHash": "791fbebe80e7171ff206ff96da4c53e654fd2af7551be5e8adb1f8f4dfbf7b06",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"compartments\":[{\"symbol\":\"S\",\"name\":\"susceptible people\"},{\"symbol\":\"I\",\"name\":\"infected people\"},{\"symbol\":\"R\",\"name\":\"recovered people\"}],\"recoveryRatePerDay\":0.2}",
+    "usage": {
+      "promptTokens": 248,
+      "completionTokens": 539,
+      "totalTokens": 787
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:04:46.504Z"
+}

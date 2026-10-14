@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "mimo-v2-6-flash",
+  "promptHash": "b07226ed5d3397d9908569094b9f3bbbff23de473617f36e02f2fb8d4fcd0d59",
+  "response": {
+    "model": "mimo-v2-6-flash",
+    "text": "{\"compartments\":[{\"symbol\":\"S\",\"name\":\"susceptible people\"},{\"symbol\":\"I\",\"name\":\"infected people\"},{\"symbol\":\"R\",\"name\":\"recovered people\"}],\"recoveryRatePerDay\":0.2}",
+    "usage": {
+      "promptTokens": 235,
+      "completionTokens": 96,
+      "totalTokens": 331
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:04:25.214Z"
+}

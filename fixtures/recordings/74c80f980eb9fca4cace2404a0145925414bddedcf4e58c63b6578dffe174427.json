@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "olmo3-7b",
+  "promptHash": "74c80f980eb9fca4cace2404a0145925414bddedcf4e58c63b6578dffe174427",
+  "response": {
+    "model": "olmo3-7b-instruct",
+    "text": "{\"compartments\":[{\"symbol\":\"S\",\"name\":\"Susceptible\"},{\"symbol\":\"I\",\"name\":\"Infected\"},{\"symbol\":\"R\",\"name\":\"Recovered\"}],\"recoveryRatePerDay\":0.2}",
+    "usage": {
+      "promptTokens": 236,
+      "completionTokens": 44,
+      "totalTokens": 280
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:04:25.723Z"
+}

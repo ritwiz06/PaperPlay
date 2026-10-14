@@ -27,6 +27,7 @@
     "sweep:groups": "node scripts/group-measure.ts",
     "sweep:levels": "node scripts/levels.ts",
     "fixture:threshold-town": "node scripts/threshold-town.ts",
+    "pipeline:live": "node scripts/pipeline-live.ts",
     "capture:demo": "node scripts/capture-demo.ts",
     "prepare": "node scripts/hooks/install.ts"
   },

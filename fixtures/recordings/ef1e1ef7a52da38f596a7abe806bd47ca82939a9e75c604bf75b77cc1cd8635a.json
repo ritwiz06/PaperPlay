@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "north-mini-code-glm",
+  "promptHash": "ef1e1ef7a52da38f596a7abe806bd47ca82939a9e75c604bf75b77cc1cd8635a",
+  "response": {
+    "model": "north-mini-code-glm",
+    "text": "The user is asking me to extract facts from the text exactly as stated, and to output a single JSON object matching the given schema. The text states:\n\n- S = susceptible people\n- I = infected people  \n- R = recovered people\n- gamma = 0.2 per day (recovery rate)\n\nSo the JSON should be:\n```json\n{\n  \"compartments\": [\n    {\"symbol\": \"S\", \"name\": \"susceptible people\"},\n    {\"symbol\": \"I\", \"name\": \"infected people\"},\n    {\"symbol\": \"R\", \"name\": \"recovered people\"}\n  ],\n  \"recoveryRatePerDay\": 0.2\n}\n```",
+    "usage": {
+      "promptTokens": 449,
+      "completionTokens": 139,
+      "totalTokens": 588
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:04:41.699Z"
+}

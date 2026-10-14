@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "glm-4-5v",
+  "promptHash": "c54a765b82bea1aa1161a5f54f61c942209343ac1b7279b27926d6a82e6949ce",
+  "response": {
+    "model": "glm-4-5v",
+    "text": "{\n  \"compartments\": [\n    {\n      \"name\": \"susceptible people\",\n      \"symbol\": \"S\"\n    },\n    {\n      \"name\": \"infected people\",\n      \"symbol\": \"I\"\n    },\n    {\n      \"name\": \"recovered people\",\n      \"symbol\": \"R\"\n    }\n  ],\n  \"recoveryRatePerDay\": 0.2\n}",
+    "usage": {
+      "promptTokens": 97,
+      "completionTokens": 862,
+      "totalTokens": 959
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:03:57.763Z"
+}

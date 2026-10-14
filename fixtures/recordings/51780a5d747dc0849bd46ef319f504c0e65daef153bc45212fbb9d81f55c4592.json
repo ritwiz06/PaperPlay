@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "north-mini-code-glm",
+  "promptHash": "51780a5d747dc0849bd46ef319f504c0e65daef153bc45212fbb9d81f55c4592",
+  "response": {
+    "model": "north-mini-code-glm",
+    "text": "The text states:\n- S = susceptible people\n- I = infected people  \n- R = recovered people\n- gamma = 0.2 per day (recovery rate)\n\nThe recovery rate is given as gamma = 0.2 per day, so recoveryRatePerDay = 0.2.\n\nThe compartments array should contain three objects with symbol and name properties.",
+    "usage": {
+      "promptTokens": 337,
+      "completionTokens": 75,
+      "totalTokens": 412
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:04:25.143Z"
+}

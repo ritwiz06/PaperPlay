@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "granite41-30b",
+  "promptHash": "8d788f65574d398a2dff62534ab903c96ae12456ad51554b49329c291dfaedbe",
+  "response": {
+    "model": "granite41-30b",
+    "text": "{  \n  \"compartments\": [  \n    {  \n      \"name\": \"susceptible people\",  \n      \"symbol\": \"S\"  \n    },  \n    {  \n      \"name\": \"infected people\",  \n      \"symbol\": \"I\"  \n    },  \n    {  \n      \"name\": \"recovered people\",  \n      \"symbol\": \"R\"  \n    }  \n  ],  \n  \"recoveryRatePerDay\": 0.2  \n}",
+    "usage": {
+      "promptTokens": 102,
+      "completionTokens": 102,
+      "totalTokens": 204
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:03:40.791Z"
+}

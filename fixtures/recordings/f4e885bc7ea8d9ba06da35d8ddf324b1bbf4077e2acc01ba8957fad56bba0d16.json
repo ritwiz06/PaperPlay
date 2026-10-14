@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "minimax-m3",
+  "promptHash": "f4e885bc7ea8d9ba06da35d8ddf324b1bbf4077e2acc01ba8957fad56bba0d16",
+  "response": {
+    "model": "minimax-m3-mxfp4",
+    "text": "{\"compartments\":[{\"symbol\":\"S\",\"name\":\"susceptible people\"},{\"symbol\":\"I\",\"name\":\"infected people\"},{\"symbol\":\"R\",\"name\":\"recovered people\"}],\"recoveryRatePerDay\":0.2}",
+    "usage": {
+      "promptTokens": 390,
+      "completionTokens": 125,
+      "totalTokens": 515
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:04:29.529Z"
+}

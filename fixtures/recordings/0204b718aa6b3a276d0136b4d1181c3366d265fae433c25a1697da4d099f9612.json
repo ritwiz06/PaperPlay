@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "llama3-groq-70b-tool-use",
+  "promptHash": "0204b718aa6b3a276d0136b4d1181c3366d265fae433c25a1697da4d099f9612",
+  "response": {
+    "model": "llama3-groq-70b-tool-use",
+    "text": "{ \"compartments\": [ { \"name\": \"susceptible people\", \"symbol\": \"S\" }, { \"name\": \"infected people\", \"symbol\": \"I\" }, { \"name\": \"recovered people\", \"symbol\": \"R\" } ], \"recoveryRatePerDay\": 0.2 }",
+    "usage": {
+      "promptTokens": 104,
+      "completionTokens": 70,
+      "totalTokens": 174
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:03:44.323Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "north-mini-code",
+  "promptHash": "6707ac66473f2138d6eae3400288f4af0a54d6a4fd5d16df10e36f4a9a5e6fde",
+  "response": {
+    "model": "north-mini-code",
+    "text": "- **S** – susceptible people  \n- **I** – infected people (recovery rate: 0.2 per day)  \n- **R** – recovered people",
+    "usage": {
+      "promptTokens": 208,
+      "completionTokens": 275,
+      "totalTokens": 483
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:03:57.174Z"
+}

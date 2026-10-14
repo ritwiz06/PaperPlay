@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "devstral2-123b",
+  "promptHash": "35b5a0dde8917488b2a4f62d53cbbede913fba4d63b39db6e38d895d1977a5c2",
+  "response": {
+    "model": "devstral2-123b",
+    "text": "```json\n{\n  \"compartments\": [\n    {\n      \"symbol\": \"S\",\n      \"name\": \"susceptible people\"\n    },\n    {\n      \"symbol\": \"I\",\n      \"name\": \"infected people\"\n    },\n    {\n      \"symbol\": \"R\",\n      \"name\": \"recovered people\"\n    }\n  ],\n  \"recoveryRatePerDay\": 0.2\n}\n```",
+    "usage": {
+      "promptTokens": 230,
+      "completionTokens": 89,
+      "totalTokens": 319
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:04:11.026Z"
+}

@@ -5,16 +5,15 @@
   "type": "module",
   "description": "Agent roles, model adapters, independent checks and the controller state machine.",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./models": "./src/models/index.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json && tsc -p test/tsconfig.json"
   },
   "dependencies": {
     "@paperplay/contracts": "*",
-    "@paperplay/primitives": "*"
-  },
-  "devDependencies": {
+    "@paperplay/primitives": "*",
     "zod": "^4.6.5"
   }
 }

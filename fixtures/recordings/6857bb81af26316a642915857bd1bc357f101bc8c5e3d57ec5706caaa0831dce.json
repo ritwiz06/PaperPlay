@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "north-mini-code",
+  "promptHash": "6857bb81af26316a642915857bd1bc357f101bc8c5e3d57ec5706caaa0831dce",
+  "response": {
+    "model": "north-mini-code",
+    "text": "{\"compartments\":[{\"symbol\":\"S\",\"name\":\"susceptible people\"},{\"symbol\":\"I\",\"name\":\"infected people\"},{\"symbol\":\"R\",\"name\":\"recovered people\"}],\"recoveryRatePerDay\":0.2}",
+    "usage": {
+      "promptTokens": 337,
+      "completionTokens": 315,
+      "totalTokens": 652
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:04:31.251Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "deepseek-v4-1-flash",
+  "promptHash": "3b9c3de23be7d70e093d0ff8a6463b7f156edb33c894e9bfaa8b157a714ce8dc",
+  "response": {
+    "model": "deepseek-v4-1-flash",
+    "text": "{ \"compartments\": [ { \"name\": \"susceptible people\", \"symbol\": \"S\" }, { \"name\": \"infected people\", \"symbol\": \"I\" }, { \"name\": \"recovered people\", \"symbol\": \"R\" } ], \"recoveryRatePerDay\": 0.2 }",
+    "usage": {
+      "promptTokens": 658,
+      "completionTokens": 131,
+      "totalTokens": 789
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:03:37.599Z"
+}

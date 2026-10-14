@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "qwen3-235b-a22b",
+  "promptHash": "c84c155caced3077190d73c4c4e88b0715aba661bfd695702bfca63242935803",
+  "response": {
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "text": "{\"compartments\":[{\"symbol\":\"S\",\"name\":\"susceptible people\"},{\"symbol\":\"I\",\"name\":\"infected people\"},{\"symbol\":\"R\",\"name\":\"recovered people\"}],\"recoveryRatePerDay\":0.2}",
+    "usage": {
+      "promptTokens": 237,
+      "completionTokens": 48,
+      "totalTokens": 285
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:04:48.493Z"
+}

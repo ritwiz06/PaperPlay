@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "kimi-k2-7-code",
+  "promptHash": "c10b6b65b515f05880ed3b52f8cc2b8c04be75ef608c2ec24a40da91d3f25453",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " { \"compartments\": [ { \"name\": \"susceptible people\", \"symbol\": \"S\" }, { \"name\": \"infected people\", \"symbol\": \"I\" }, { \"name\": \"recovered people\", \"symbol\": \"R\" } ], \"recoveryRatePerDay\": 0.2 }",
+    "usage": {
+      "promptTokens": 100,
+      "completionTokens": 165,
+      "totalTokens": 265
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:03:45.363Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "llama4-maverick-17b",
+  "promptHash": "63051a28a9d650bec75906ed807491e8d22992ddc4e42d0b8d2d21476a765079",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"compartments\":[{\"symbol\":\"S\",\"name\":\"susceptible people\"},{\"symbol\":\"I\",\"name\":\"infected people\"},{\"symbol\":\"R\",\"name\":\"recovered people\"}],\"recoveryRatePerDay\":0.2}",
+    "usage": {
+      "promptTokens": 237,
+      "completionTokens": 47,
+      "totalTokens": 284
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:04:18.109Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "ornith-1-5-35b-a3b",
+  "promptHash": "5e0414d3e8ef76e87383e77dd2dd7180516974654a20127cc01630cadca8b1a7",
+  "response": {
+    "model": "ornith-1-5-35b-a3b",
+    "text": "{\n  \"compartments\": [\n    {\n      \"name\": \"Susceptible people\",\n      \"symbol\": \"S\"\n    },\n    {\n      \"name\": \"Infected people\",\n      \"symbol\": \"I\"\n    },\n    {\n      \"name\": \"Recovered people\",\n      \"symbol\": \"R\"\n    }\n  ],\n  \"recoveryRatePerDay\": 0.2\n}",
+    "usage": {
+      "promptTokens": 106,
+      "completionTokens": 190,
+      "totalTokens": 296
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:04:02.079Z"
+}

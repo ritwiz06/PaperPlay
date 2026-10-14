@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "probe",
+  "model": "hemmingway-1",
+  "promptHash": "e84de5efe3fe3c4a269bafa66880667cac2d4cbe288810caffda2541e1a123b7",
+  "response": {
+    "model": "hemmingway-1",
+    "text": "\n\n{\"compartments\":[{\"symbol\":\"S\",\"name\":\"susceptible people\"},{\"symbol\":\"I\",\"name\":\"infected people\"},{\"symbol\":\"R\",\"name\":\"recovered people\"}],\"recoveryRatePerDay\":0.2}",
+    "usage": {
+      "promptTokens": 242,
+      "completionTokens": 128,
+      "totalTokens": 370
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T17:04:19.867Z"
+}
