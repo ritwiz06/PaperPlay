@@ -17,15 +17,17 @@ then G3a.3 ([log](sessions/2026-10-14.md)). This file is rewritten every session
     production build (`9251435`, ADR-0030, landed at `3e1f855`);
   - **landed:** Threshold Town's five fixes (`eac3826`, ADR-0029's amendment, landed at
     `9dd66e1`);
-  - **landing:** the Voyager adapter, recordings, `npm run pipeline:live` and the capability
-    probe of all 39 chat models (`796fdc4`);
-  - **next:** ingest, the gold ModelSpecs and the bake-off.
+  - **landed:** the Voyager adapter, recordings, `npm run pipeline:live` and the capability
+    probe of all 39 chat models (`796fdc4`, landed at `1af26c8`);
+  - **landing:** ingest by restricted readers, the source register and the sanitiser
+    (`3aead5f`, ADR-0031), with three CC BY papers;
+  - **next:** the gold answers and the bake-off.
 - **`main` moves only through `npm run land`** (ADR-0009, amended).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`. CI runs `check:gate` on every
   push and pull request.
-- **Branches:** `g3/model-adapter`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the compartment
+- **Branches:** `g3/ingest`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the compartment
   agent's own, whose three commits are on `main`.
-- **Working commit:** `796fdc4` on `g3/model-adapter`. `main` is at `9dd66e1`, whose CI passed.
+- **Working commit:** `3aead5f` on `g3/ingest`. `main` is at `1af26c8`, whose CI passed.
 - **Model provider:** Voyager, `https://openai.rc.asu.edu/v1`, its key `VOYAGER_API_KEY` in
   `apps/api/.env` only (ADR-0030); called only by `npm run pipeline:live`.
 - **Primitives:** `flock.planar.weighted@3.1.0`, with queries Q1–Q4, the agents family's
@@ -80,8 +82,8 @@ Ahead of their gate, from the same run's reports: R05 5, R06 53, R07 40, R08 59,
 
 ## Next three actions
 
-1. Ingest: arXiv LaTeX source and PubMed Central's JATS, with the source register.
-2. The gold ModelSpecs for three CC BY papers, and the bake-off.
+1. The gold answers for three CC BY papers, and the bake-off.
+2. The planner, the explainer and the reviewer, on the builder and the level rule.
 3. `apps/api`'s jobs and the pipeline's stages.
 
 ## Recommendations

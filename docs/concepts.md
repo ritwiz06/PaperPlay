@@ -216,6 +216,18 @@ v·ω divided by gravity. Turning harder or faster means leaning further.
 ## Engineering
 
 
+### Restricted readers for untrusted files
+
+A file from outside can be built to attack whatever reads it: an archive whose paths climb out of
+its folder, a LaTeX macro that runs a command, an XML entity that pulls in a local file. A
+restricted reader understands only what it needs, refuses the rest, and never runs or fetches
+anything a file asks for.
+
+- **Used in:** `packages/pipeline/src/ingest/archive.ts`, `packages/pipeline/src/ingest/latex.ts`,
+  `packages/pipeline/src/ingest/xml.ts`
+- **Why here:** A paper is untrusted input (CLAUDE.md boundary 4).
+- **Learn more:** [OWASP, "XML External Entity Prevention"](https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html)
+
 ### Record and replay (recorded test doubles)
 
 A test that calls a live service is slow, costly and different every run. Instead, every live

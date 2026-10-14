@@ -185,7 +185,9 @@ G3a.3, the pipeline on a known family (24–32 h):
   token budget, every call recorded, replay in tests, `npm run pipeline:live` and the capability
   probe (2026-10-14, `796fdc4`, ADR-0030).
 - [ ] `apps/api`: jobs, SSE events, JSON artifacts, upload limits, and the paper-text sanitiser.
-- [ ] Ingest from arXiv source and PDF, with the source register (ADR-0024's dependencies).
+- [x] Ingest from arXiv's LaTeX source and PubMed Central's JATS, with the source register and
+  the sanitiser (2026-10-14, `3aead5f`, ADR-0031).
+- [ ] Ingest from PDF text.
 - [ ] `packages/pipeline`: model adapters (mock first), the router (compartments only),
   planner and designer, explainer, the level-rule sweep, checks, the second transcription,
   reviewer, and the controller with at most two scoped repairs.
