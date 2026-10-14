@@ -23,8 +23,10 @@ then G3a.3 ([log](sessions/2026-10-14.md)). This file is rewritten every session
     (`3aead5f`, ADR-0031, landed at `1c2d7a6`), with three CC BY papers;
   - **landing:** transcriptions, their structural match and three gold answers (`2577025`,
     ADR-0032);
-  - **next:** the pipeline's stages and controller, the API's jobs, `/create`, the bake-off's
-    table and the first generated world, each on its own branch.
+  - **next to land:** the pipeline's stages and controller, and the API's jobs (`16dac04`,
+    ADR-0033);
+  - **then:** `/create`, the bake-off's table and the first generated world, each on its own
+    branch.
 - **`main` moves only through `npm run land`** (ADR-0009, amended).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`. CI runs `check:gate` on every
   push and pull request.

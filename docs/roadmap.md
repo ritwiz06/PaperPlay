@@ -184,17 +184,23 @@ G3a.3, the pipeline on a known family (24–32 h):
 - [x] The Voyager adapter: per-stage models in configuration, timeouts, retries, a rate limit, a
   token budget, every call recorded, replay in tests, `npm run pipeline:live` and the capability
   probe (2026-10-14, `796fdc4`, ADR-0030).
-- [ ] `apps/api`: jobs, SSE events, JSON artifacts, upload limits, and the paper-text sanitiser.
+- [x] `apps/api`: jobs, SSE events, JSON artifacts, upload limits, and the paper-text sanitiser
+  (2026-10-14, `16dac04`, ADR-0033).
 - [x] Ingest from arXiv's LaTeX source and PubMed Central's JATS, with the source register and
   the sanitiser (2026-10-14, `3aead5f`, ADR-0031).
 - [ ] Ingest from PDF text.
-- [ ] `packages/pipeline`: model adapters (mock first), the router (compartments only),
-  planner and designer, explainer, the level-rule sweep, checks, the second transcription,
-  reviewer, and the controller with at most two scoped repairs.
+- [x] Transcriptions, their structural match and three gold answers (2026-10-14, `2577025`,
+  ADR-0032).
+- [x] `packages/pipeline`: the router (compartments only), reader, two transcriptions, planner,
+  explainer, the level-rule sweep, checks, reviewer, and the controller with at most two scoped
+  repairs (2026-10-14, `16dac04`, ADR-0033).
+- [ ] The bake-off per stage against the gold answers, in `eval/models.md`, and each stage's
+  model chosen from it.
 - [ ] The `/create` storyboard with real job states (and StatusChip), and explicit failure
   outcomes.
-- [ ] Elowitz and Leibler generated end to end: a mock-adapter test and one recorded
-  real-provider run.
+- [ ] The first generated world, from one of the three gold papers, end to end: one recorded
+  live run, replayed in tests (the owner's G3a.3 request replaced Elowitz and Leibler with a
+  compartment paper, 2026-10-14).
 
 After G3a's first generated world (owner, 2026-10-09):
 - [ ] Replay export and import with `npm run replay`, and `/world/local` in the shell.
