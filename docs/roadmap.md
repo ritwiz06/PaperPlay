@@ -181,6 +181,9 @@ G3a.2, the compartment family and Kermack and McKendrick by hand (14–20 h):
 G3a.3, the pipeline on a known family (24–32 h):
 - [x] The model gateway's key in `apps/api/.env` only, and the bundle secret check in every
   production build (2026-10-14, `9251435`, ADR-0030).
+- [x] The Voyager adapter: per-stage models in configuration, timeouts, retries, a rate limit, a
+  token budget, every call recorded, replay in tests, `npm run pipeline:live` and the capability
+  probe (2026-10-14, `796fdc4`, ADR-0030).
 - [ ] `apps/api`: jobs, SSE events, JSON artifacts, upload limits, and the paper-text sanitiser.
 - [ ] Ingest from arXiv source and PDF, with the source register (ADR-0024's dependencies).
 - [ ] `packages/pipeline`: model adapters (mock first), the router (compartments only),

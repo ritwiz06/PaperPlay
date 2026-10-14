@@ -15,16 +15,19 @@ then G3a.3 ([log](sessions/2026-10-14.md)). This file is rewritten every session
 - **G3a.3, the pipeline on the compartment family, has started:**
   - **landed:** the key in `apps/api/.env` only, and the bundle secret check in every
     production build (`9251435`, ADR-0030, landed at `3e1f855`);
-  - **landing:** Threshold Town's five fixes (`eac3826`, ADR-0029's amendment);
-  - **next:** the Voyager adapter and its probe.
+  - **landed:** Threshold Town's five fixes (`eac3826`, ADR-0029's amendment, landed at
+    `9dd66e1`);
+  - **landing:** the Voyager adapter, recordings, `npm run pipeline:live` and the capability
+    probe of all 39 chat models (`796fdc4`);
+  - **next:** ingest, the gold ModelSpecs and the bake-off.
 - **`main` moves only through `npm run land`** (ADR-0009, amended).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`. CI runs `check:gate` on every
   push and pull request.
-- **Branches:** `g3/town-fixes`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the compartment
+- **Branches:** `g3/model-adapter`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the compartment
   agent's own, whose three commits are on `main`.
-- **Working commit:** `eac3826` on `g3/town-fixes`. `main` is at `3e1f855`, whose CI passed.
+- **Working commit:** `796fdc4` on `g3/model-adapter`. `main` is at `9dd66e1`, whose CI passed.
 - **Model provider:** Voyager, `https://openai.rc.asu.edu/v1`, its key `VOYAGER_API_KEY` in
-  `apps/api/.env` only (ADR-0030). No adapter calls it yet.
+  `apps/api/.env` only (ADR-0030); called only by `npm run pipeline:live`.
 - **Primitives:** `flock.planar.weighted@3.1.0`, with queries Q1–Q4, the agents family's
   first, at `@paperplay/primitives/flock` (ADR-0025); `compartments.ode@1.0.0`, the solver for
   every compartment model, at `@paperplay/primitives/compartments` (ADR-0028).
@@ -67,6 +70,9 @@ Ahead of their gate, from the same run's reports: R05 5, R06 53, R07 40, R08 59,
 
 ## Decisions waiting on the owner
 
+0. **Which models the Voyager portal marks "Testing in progress".** The gateway's API does not
+   say; no model is chosen for a stage until the owner names them (ADR-0030).
+
 1. **Paid branch protection on GitHub,** which would refuse unlanded pushes to `main` on the
    server too (ADR-0009's amendment).
 2. **The deploy:** the owner connects Vercel (ADR-0017). Then I check the CSP against the
@@ -74,9 +80,9 @@ Ahead of their gate, from the same run's reports: R05 5, R06 53, R07 40, R08 59,
 
 ## Next three actions
 
-1. Land Threshold Town's fixes.
-2. The Voyager adapter, its recordings, `npm run pipeline:live` and the capability probe.
-3. Ingest, the gold ModelSpecs for three CC BY papers, and the bake-off.
+1. Ingest: arXiv LaTeX source and PubMed Central's JATS, with the source register.
+2. The gold ModelSpecs for three CC BY papers, and the bake-off.
+3. `apps/api`'s jobs and the pipeline's stages.
 
 ## Recommendations
 

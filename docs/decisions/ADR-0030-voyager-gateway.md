@@ -51,6 +51,20 @@ repository's root; the brief keeps secrets in `apps/api/.env` only.
    never holds the key, the API, or a working `/create`; the public site only plays worlds built
    beforehand.
 
+## Implementation, 2026-10-14
+
+- `@paperplay/pipeline/models` (`796fdc4`): the client interface, recording and replay, the budget
+  and trace, structured replies. `apps/api/src/models/`: the Voyager client, its configuration in
+  `apps/api/models.json`, and the live client.
+- **The probe** (`eval/models-probe.md`): all 39 of the gateway's chat models. 36 held a reply to
+  the schema at their first reply and answered correctly. `minimax-m3` returned no message when
+  sent a schema; `muse-glimmer-30b` and `north-mini-code` did not hold to it. Every model but
+  `router-classifier-v2`, whose context is 4,096 tokens, gave valid plain JSON. Many models the
+  gateway lists as not supporting schemas held to one here: the probe, not the list, decides.
+- **"Testing in progress":** the gateway's model list does not show it; the Voyager portal does,
+  behind ASU's login. No model is left out by the probe, and the owner names the marked ones
+  before any is chosen for a stage.
+
 ## Consequences
 
 - **ADR-0024's "per-job token and cost budget" becomes a token budget:** the gateway charges

@@ -215,6 +215,37 @@ v·ω divided by gravity. Turning harder or faster means leaning further.
 
 ## Engineering
 
+
+### Record and replay (recorded test doubles)
+
+A test that calls a live service is slow, costly and different every run. Instead, every live
+call is saved once, as the response under a hash of the request; tests answer each call from that
+recording, so they run offline and always see the same reply. A changed request has a new hash and
+no recording, which fails loudly rather than calling out.
+
+- **Used in:** `packages/pipeline/src/models/recording.ts`
+- **Why here:** The owner asked that tests and CI never call the model gateway (ADR-0030).
+- **Learn more:** [Martin Fowler, "Self-Initializing Fake"](https://martinfowler.com/bliki/SelfInitializingFake.html)
+
+### Exponential backoff
+
+When a server is busy, a client that retries at once makes it busier. Waiting longer after each
+failure, doubling the wait, gives it room to recover; a server that says how long to wait, in a
+Retry-After header, is believed.
+
+- **Used in:** `apps/api/src/models/voyager.ts`
+- **Why here:** The gateway rate-limits, and some of its models are slow under load.
+- **Learn more:** [Wikipedia, "Exponential backoff"](https://en.wikipedia.org/wiki/Exponential_backoff)
+
+### Structured output (a reply held to a JSON Schema)
+
+A language model writes text. Asked for data, it can be held to a JSON Schema by the server, or
+asked for JSON and checked afterwards. Either way the reply is validated before anything uses it,
+and a reply that fails is sent back once with the error.
+
+- **Used in:** `packages/pipeline/src/models/structured.ts`, `scripts/live/probe.ts`
+- **Why here:** Every stage's output must be data the builder can check, never free text (R08).
+- **Learn more:** [JSON Schema, "Getting started"](https://json-schema.org/learn/getting-started-step-by-step)
 ### Radius of gyration, and a centre on a wrap-around world
 
 The radius of gyration of some points is how far, on average, they lie from their centre:
