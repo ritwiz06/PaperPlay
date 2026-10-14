@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { contrastRatio } from "../src/stage-core/index.ts";
+import { townDay } from "../src/stage-core/kits/town/palettes.ts";
 import { dusk, valleyDay } from "../src/stage-core/kits/valley/index.ts";
 import { tokens } from "../src/tokens.ts";
 
@@ -30,6 +31,14 @@ describe("stage palettes", () => {
     for (const palette of [valleyDay, dusk]) {
       expect(contrastRatio(palette.cursor, palette.groundLow), palette.name).toBeGreaterThanOrEqual(3);
     }
+  });
+
+  it("[R12] keeps every one of the town's six figure colours at 3:1 or better against its ground and its plaza, and each distinct", () => {
+    for (const color of townDay.figures) {
+      expect(contrastRatio(color, townDay.ground), color).toBeGreaterThanOrEqual(3);
+      expect(contrastRatio(color, townDay.plaza), color).toBeGreaterThanOrEqual(3);
+    }
+    expect(new Set(townDay.figures).size).toBe(townDay.figures.length);
   });
 
   it("draws birds in ink by day and cream at dusk, not the prototype's coral", () => {

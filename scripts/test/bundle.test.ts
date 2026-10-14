@@ -14,7 +14,14 @@ const out = mkdtempSync(join(tmpdir(), "paperplay-bundle-"));
 let chunks: { name: string; text: string }[] = [];
 
 beforeAll(async () => {
-  await build({ root: web, configFile: join(web, "vite.config.ts"), logLevel: "silent", build: { outDir: out, emptyOutDir: true } });
+  // Built as the deploy builds it: Vitest sets NODE_ENV to "test", which would make a development build.
+  const environment = process.env.NODE_ENV;
+  process.env.NODE_ENV = "production";
+  try {
+    await build({ root: web, configFile: join(web, "vite.config.ts"), logLevel: "silent", mode: "production", build: { outDir: out, emptyOutDir: true } });
+  } finally {
+    process.env.NODE_ENV = environment;
+  }
   const assets = join(out, "assets");
   chunks = readdirSync(assets)
     .filter((name) => name.endsWith(".js"))
@@ -41,6 +48,16 @@ describe("[R09] the production bundle's secrets", () => {
     const values = existsSync(envFile) ? secretValues(readFileSync(envFile, "utf8")) : [];
     const html = readFileSync(join(out, "index.html"), "utf8");
     expect(findSecrets([...chunks, { name: "index.html", text: html }], values)).toEqual([]);
+  });
+});
+
+describe("[R09] the production bundle's reach", () => {
+  it("holds no /create page and calls no API: the public site only plays worlds built beforehand (ADR-0030)", () => {
+    for (const chunk of chunks) {
+      expect(chunk.text, chunk.name).not.toContain("/api/");
+      expect(chunk.text, chunk.name).not.toContain("Make a world from a paper");
+      expect(chunk.text, chunk.name).not.toContain("EventSource");
+    }
   });
 });
 

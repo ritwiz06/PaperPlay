@@ -1,17 +1,14 @@
 /**
  * Threshold Town as the shell plays it (ADR-0029): Kermack and McKendrick's special case of
  * constant rates, fixtures/worldspecs/kermack-mckendrick-1927.json, built by the deterministic
- * builder and drawn in the town kit. Its readout is the shares bar, whose number is the solver's
- * own measurement. It refuses to start if the spec does not build.
+ * builder and drawn in the town kit. It refuses to start if the spec does not build.
  */
 import { buildWorld, type BuiltLevel, type BuiltWorld } from "@paperplay/pipeline";
 import { registry } from "@paperplay/primitives";
-import type { CompartmentModel } from "@paperplay/primitives/compartments";
-import { CompartmentBar, TownMark } from "@paperplay/ui/react/town";
-import { FIGURES, townStage } from "@paperplay/ui/stage-core/town";
 import spec from "../../../../fixtures/worldspecs/kermack-mckendrick-1927.json";
-import { createTownSession, type SessionOptions, type TownSnapshot } from "../world/town.ts";
-import type { PlayableWorld, PlaySnapshot } from "./types.ts";
+import type { SessionOptions } from "../world/town.ts";
+import { townWorld } from "./town-world.tsx";
+import type { PlayableWorld } from "./types.ts";
 
 const built = buildWorld(spec, registry);
 if (!built.ok) {
@@ -19,59 +16,8 @@ if (!built.ok) {
 }
 export const THRESHOLD_TOWN: BuiltWorld = built.world;
 
-/** The model every level binds. The session keeps one model across levels, so every level must bind the same one. */
-const modelOf = (level: BuiltLevel): CompartmentModel => level.primitive as CompartmentModel;
-const MODEL = modelOf(THRESHOLD_TOWN.levels[0] as BuiltLevel);
-for (const level of THRESHOLD_TOWN.levels) {
-  if (JSON.stringify(modelOf(level).spec) !== JSON.stringify(MODEL.spec)) throw new Error(`level ${level.id} binds a model of its own; Threshold Town plays one model throughout`);
-}
+/** The removed have recovered, been isolated or died; at Beginner they are "Recovered or removed". */
+export const THRESHOLD_TOWN_PLAY: PlayableWorld = townWorld(THRESHOLD_TOWN, { about: "epidemics", beginnerNames: { z: "Recovered or removed" }, ringed: ["y"] });
 
 /** A level's session: its own parameters, on the world's opening seed, which changes nothing in a model with no chance in it. */
-export function townOptionsFor(level: BuiltLevel, playing: boolean): SessionOptions {
-  return { seed: THRESHOLD_TOWN.openingSeed, params: level.params, actions: level.actions, emphasise: level.observable.metricId, playing };
-}
-
-/** The compartment an observable is, when it is one compartment alone, by its place in the model's order. */
-function compartmentOf(metricId: string): number | null {
-  const expr = MODEL.spec.observables.find((observable) => observable.id === metricId)?.expr;
-  const at = expr && "c" in expr ? MODEL.spec.compartments.findIndex((compartment) => compartment.id === expr.c) : -1;
-  return at < 0 ? null : at;
-}
-
-/** Beginner's names for compartments whose name is a term of art: the removed have recovered, been isolated or died. */
-const BEGINNER_NAMES: Readonly<Record<string, string>> = { z: "Recovered or removed" };
-
-function readoutFor(level: BuiltLevel, snapshot: TownSnapshot, showNumber: boolean) {
-  const { metricId } = level.observable;
-  // Beginner shows words and plain names; Intermediate and Advanced, counts and the model's names.
-  const compartments = snapshot.shares.map((share) => ({ ...share, name: showNumber ? share.name : (BEGINNER_NAMES[share.id] ?? share.name) }));
-  return (
-    <CompartmentBar
-      compartments={compartments}
-      observable={{ metricId, value: snapshot.observed[metricId] ?? Number.NaN, decimals: level.observable.decimals }}
-      watched={compartmentOf(metricId)}
-      showNumber={showNumber}
-    />
-  );
-}
-
-/** How many people a world's town holds: its compartments at the start, which the model keeps constant. */
-const populationOf = (params: Readonly<Record<string, number>>): number =>
-  Object.values(MODEL.init(params, THRESHOLD_TOWN.openingSeed).compartments).reduce((sum, value) => sum + value, 0);
-
-export const THRESHOLD_TOWN_PLAY: PlayableWorld = {
-  world: THRESHOLD_TOWN,
-  stage: townStage,
-  look: {},
-  framing: "overview",
-  mark: TownMark,
-  about: "epidemics",
-  stageLabel: `${THRESHOLD_TOWN.title}: ${FIGURES} figures, each standing for one in ${FIGURES} of the town's people, coloured by whether they are still well, ill or removed.`,
-  options: townOptionsFor,
-  // This binding made the session, so its options and snapshots are the town's own.
-  createSession: (options) => createTownSession(MODEL, options as SessionOptions),
-  readout: (level, snapshot: PlaySnapshot, showNumber) => readoutFor(level, snapshot as unknown as TownSnapshot, showNumber),
-  chartName: (_level, metricId) => MODEL.spec.observables.find((observable) => observable.id === metricId)?.label ?? metricId,
-  // Every observable counts people, so the chart runs from none to the larger town's population.
-  chartTop: (level) => Math.max(populationOf(level.params), populationOf(level.fork.params)),
-};
+export const townOptionsFor = (level: BuiltLevel, playing: boolean): SessionOptions => THRESHOLD_TOWN_PLAY.options(level, playing) as SessionOptions;

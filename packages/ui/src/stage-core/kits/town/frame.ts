@@ -43,7 +43,7 @@ export interface FigurePose {
   /** The compartment it is counted in, by its place in the model's order. */
   readonly compartment: number;
   readonly color: string;
-  /** Whether it stands in a ring: the second compartment's figures, ill, so the cue is not colour alone. */
+  /** Whether it stands in a ring, as the ill do, so the cue is not colour alone. */
   readonly ring: boolean;
 }
 
@@ -53,8 +53,11 @@ export interface HousePose {
   readonly roof: string;
 }
 
-/** The town's look, apart from emphasis: none yet beyond its palette. */
-export type TownLook = Readonly<Record<string, never>>;
+/** The town's look, apart from emphasis: which compartments' figures stand in a ring, as the ill do. */
+export interface TownLook {
+  /** By place in the model's order; the second compartment alone when not given, as in Threshold Town. */
+  readonly ringed?: readonly number[];
+}
 
 export type TownFrame = FrameDescription<
   {
@@ -176,7 +179,8 @@ export function townCamera(camera: OrbitCamera): OrbitCamera {
 }
 
 /** (shares, camera, palette, emphasis, look) → frame. Pure: reads its inputs, writes nothing. */
-export function describeTown(input: TownInput, camera: OrbitCamera, palette: TownPalette, emphasis: BaseEmphasis = {}): TownFrame {
+export function describeTown(input: TownInput, camera: OrbitCamera, palette: TownPalette, emphasis: BaseEmphasis = {}, look: TownLook = {}): TownFrame {
+  const ringed = look.ringed ?? [1];
   const { previous, current, alpha } = input;
   const shares = current.map((share, index) => (previous[index] ?? share) + alpha * (share - (previous[index] ?? share)));
   const counts = figureCounts(shares);
@@ -193,7 +197,7 @@ export function describeTown(input: TownInput, camera: OrbitCamera, palette: Tow
       yaw: -turn,
       compartment,
       color: palette.figures[Math.min(compartment, palette.figures.length - 1)] ?? palette.wall,
-      ring: compartment === 1,
+      ring: ringed.includes(compartment),
     };
   });
   const rings = emphasis.cursor ? [{ key: "cursor", position: [emphasis.cursor.x - TOWN_SIZE / 2, 0, emphasis.cursor.y - TOWN_SIZE / 2] as Vec3, radius: 1.2, color: palette.cursor }] : [];
@@ -214,7 +218,7 @@ export const townStage: StageKit<TownInput, BaseEmphasis, TownLook, TownFrame> =
   palette: townDay,
   defaultTarget: [0, FIGURE_HEIGHT / 2, 0] as Vec3,
   wraps: false,
-  describe: (input: TownInput, camera: OrbitCamera, palette: TownPalette, emphasis?: BaseEmphasis) => describeTown(input, camera, palette, emphasis),
+  describe: (input: TownInput, camera: OrbitCamera, palette: TownPalette, emphasis?: BaseEmphasis, look?: TownLook) => describeTown(input, camera, palette, emphasis, look),
   extent: () => ({ width: TOWN_SIZE, height: TOWN_SIZE }),
   // The town holds still: there is no flock to follow.
   focus: () => null,

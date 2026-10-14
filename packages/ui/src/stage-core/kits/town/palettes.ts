@@ -13,10 +13,10 @@ export interface TownPalette extends StagePalette {
   readonly foliage: string;
   readonly trunk: string;
   /**
-   * The figures, by the model's compartments in their order: still well, ill, removed, and any
-   * further one. Every colour keeps 3:1 against the ground and the plaza.
+   * The figures, by the model's compartments in their order: still well, ill, removed, then three
+   * more for larger models. Every colour keeps 3:1 against the ground and the plaza.
    */
-  readonly figures: readonly [string, string, string, string];
+  readonly figures: readonly [string, string, string, string, string, string];
   /** The ring an ill figure stands in, so illness never shows by colour alone. */
   readonly ring: string;
 }
@@ -37,6 +37,7 @@ export const townDay: TownPalette = Object.freeze({
   roofs: [tokens.ink, tokens.aqua, tokens.sub] as const,
   foliage: mixHex(tokens.lime, tokens.sub, 0.6),
   trunk: mixHex(tokens.sub, tokens.ink, 0.35),
-  figures: [tokens.cream, tokens.ember, tokens.mist, mixHex(tokens.aqua, tokens.cream, 0.7)] as const,
+  // A fourth to sixth for models with more compartments, each keeping 3:1 against the ground.
+  figures: [tokens.cream, tokens.ember, tokens.mist, mixHex(tokens.aqua, tokens.cream, 0.7), tokens.lime, mixHex(tokens.mist, tokens.ember, 0.5)] as const,
   ring: tokens.ember,
 });
