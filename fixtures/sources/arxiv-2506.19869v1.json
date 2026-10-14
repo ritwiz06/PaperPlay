@@ -1,0 +1,628 @@
+{
+  "schemaVersion": "sourcetext/1",
+  "sourceId": "arxiv-2506.19869v1",
+  "sha256": "b1a95c072c8001a1611f1300100dd44b773dee3f9a4b1a6343e29af3f5096e84",
+  "text": "Modeling Transmission Dynamics of Tuberculosis: Parameter Estimation and Sensitivity Analysis Using Real-World Data\n\nAbstract\n\nTuberculosis (TB) continues to pose a major public health challenge, particularly in high-burden regions such as Ethiopia, necessitating a more profound understanding of its transmission dynamics. In this study, we developed an SVEITRS compartmental model to investigate the transmission dynamics of TBs, utilizing real data from Ethiopia from 2011–2021. Model parameters were estimated via two methods: nonlinear least squares and maximum likelihood, with maximum likelihood providing more accurate and reliable results, as confirmed by a test case. The model's stability analysis indicated that there is a disease-free equilibrium in areas where the basic reproduction number ($\\mathscr{R}_0$) is less than one. The results suggest that optimal conditions could lead to the elimination of TB. On the other hand, there is an endemic equilibrium in areas where $\\mathscr{R}_0$ is greater than one, which means that the disease is still present. Sensitivity analysis revealed important factors affecting TB levels: higher natural death rates, vaccination rates, treatment rates, and disease-related death rates lower TB cases, whereas higher recruitment rates, contact rates, infection rates, and loss of vaccine protection increase its spread. These findings highlights to the necessity of enhancing vaccination, treatment, and recovery strategies while addressing drivers of transmission to achieve TB control in Ethiopia. This study provides useful advice for guiding TB control efforts and public health interventions in Ethiopia and similar regions.\n\nKeywords: TB; basic reproduction number; sensitivity analysis; stability; parameter estimation; Ethiopia\n\nIntroduction\n\nMycobacterium tuberculosis is the bacterium that causes tuberculosis (TB), a chronic infectious disease. TB bacteria typically target the lungs (pulmonary TB), but they can also impact other body parts such as the brain, spine, bones, joints, central nervous system, circulatory system, and even the skin. Lung infections account for 75% of TB cases. [citation]. When someone with tuberculosis coughs, sneezes, or speaks, bacteria are released into the air, which can potentially infect those in close proximity. This infectious disease spreads through the air and is still a leading cause of morbidity and death in many worldwide. Prior to the coronavirus disease 2019 (COVID-19) pandemic, TB was the most common infectious agent-related cause of death, surpassing HIV/AIDS [citation]. As a result, it was the second most common cause of infectious disease-related deaths, impacting numerous nations, particularly those in low-resource regions of Asia and Africa [citation]. According to estimates by [citation], TB killed almost twice as many people as HIV/AIDS did in 2023, and after COVID-19 temporarily surpassed it as the most common infectious cause of death for three years, it most likely reclaimed that title. An estimated 25% of people worldwide are thought to have TB. [citation]. Fever, weight loss, chest pain, blood in the cough, constant fatigue, night sweats, and appetite loss are signs of active tuberculosis [citation]. According to Global TB 2023 report by the World Health Organization (WHO) [citation], the number of individuals with active TB increased from 10.0 million in 2020 to 10.3 million in 2021 and then to an estimated 10.6 million in 2022. Adults (aged $\\geq$ 15 years) accounted for 88% of these cases. Although tuberculosis affects people of all ages worldwide, adults are most likely to contract the disease in each nation. TB kills one person worldwide every 15 seconds, and the disease infects one person every second [citation]. The WHO has therefore set a goal that has been embraced by all UN and WHO member states, requiring immediate action to end the global TB epidemic by 2030.\n\nIn Ethiopia, TB is one of the primary public health problems, killing more than 19 thousand people in 2022, as reported in the WHO 2023 report [citation]. Poverty, undernutrition, overcrowded living conditions, and a lack of knowledge about the disease are known to increase the risk of bacteria1 spread and the risk of developing the disease.\n\nTuberculosis is treated by killing bacteria with antibiotics. The treatment usually lasts at least 6 months and sometimes longer, up to 24 months. Different antibiotics are used to increase effectiveness while preventing bacteria from becoming resistant to medicines. The most common medicines used to treat tuberculosis are isoniazid, rifampin, ethambutol, and pyrazinamide [citation]. Bacillus Calmette-Gu'erin (BCG) is the only licensed vaccine against TB. Some field trials of the vaccine have indicated protection rates as high as 70% to 80%, whereas others have shown it to be a completely ineffective vaccine for the prevention of TB [citation]. However, BCG has variable efficacy and cannot completely prevent TB infection and transmission [citation]. Protecting against the infection itself is not the primary goal of the vaccine. Instead, the vaccine somewhat lowers the risk of contracting the disease's active form, but its effects are temporary and wear off over time. Therefore, the vaccine alone will not be enough to stop the disease's epidemic [citation]. To efficiently control and prevent infectious diseases, one needs to be adequately informed about the mechanisms of the spread and transmission dynamics of such infectious diseases.\n\nMany studies have been performed on modeling the transmission dynamics of TBs to better understand transmission dynamics and propose corresponding possible control strategies, mainly following [citation]'s 1962 study on the use of mathematical models for TB dynamics and [citation]'s 1996 study on modeling TB dynamics. Mathematical models in epidemiology provide convenient frameworks for improving our understanding of the patterns of infection and the effects of preventive measures on tuberculosis [citation]. In the last two decades, numerous mathematical models have been developed to study the transmission dynamics of TB across different regions in the world, including Ethiopia. The basic models, like susceptible-infectious-recovered (SIR) and its variants (SEIR, SVEIR), have been changed and expanded to include new factors such as treatment, vaccination, and disease-related deaths. This has given us a more complete picture of how TB spreads and how to prevent it [citation]. [citation] [citation], for example, presented an SVEIR model of tuberculosis transmission by specifically considering the total number of people who have recovered, whether naturally or as a result of vaccination. Using numerical examples, they demonstrated how vaccination can prevent the disease from spreading.\n\n[citation] [citation] and others studied on how tuberculosis spreads in Khyber Pakhtunkhwa, Pakistan. They used a deterministic model called Susceptible slow-Exposed fast-Exposed Infected Treated Recovered ($\\mathrm{SE_1E_2ITR}$) to do this. They used local data from 2002-2017 for model parameter estimation and obtained a basic reproduction number, $\\mathscr{R}_O= 1.38$, indicating the persistence of the disease in the region. However, many such studies have either relied on data from countries with more robust health infrastructure or have focused on theoretical applications rather than incorporating region-specific epidemiological data. Therefore, in many studies, especially in places with many TB cases, such as Ethiopia, models do not fully show how the disease spreads, what happens when people who have recovered lose their immunity over time, how important vaccinations are, or how treatment interventions help lower the disease burden. Some studies, such as those by [citation] and [citation], provided us useful information about how TB spreads in certain Ethiopian communities. These studies focused on the basic reproduction number $\\mathscr{R}_0$ and revealed patterns of endemic transmission. However, these studies did not incorporate factors such as the disease-induced death rate, immune loss in recovered individuals, or vaccination class, which are crucial for accurately capturing TB transmission dynamics throughout Ethiopia.\n\nWhile the literature has made significant contributions, there remains a critical gap in modeling the full spectrum of TB dynamics in resource-limited such as Ethiopia, where healthcare challenges and socioeconomic factors complicate disease control. Many studies, including [citation] and [citation], have analyzed the role of treatment in reducing the TB burden but often overlooked the impact of vaccination or immune loss in recovered individuals. Early detection, treatment, and vaccination are some of the control strategies that have been explored in studies such as [citation] and [citation]. However, these studies do not consider all the important components, such as the treatment class or the resusceptibility of recovered individuals. Furthermore, many models, such as those by [citation], do not explore the disease-induced death rate, a critical factor for regions with high mortality rates. Moreover, while some studies have attempted parameter estimation, they often fall to consider the unique temporal and socioeconomic factors that shape TB transmission in settings such as Ethiopia. These limitations underscore the need for more comprehensive models that incorporate these missing dynamics to offer more effective TB control strategies in high-burden areas such as Ethiopia.\n\nTo address these gaps, our study develops and analyzes a more comprehensive SVEITRS model that includes the loss of immunity in recovered individuals, treatment interventions, and the disease-induced death rate. This model not only adds the vaccination class, which was missing in previous models but also, introduces a more detailed representation of the various interventions needed to control TB spread effectively. For the estimation of the model parameters and the solution of the model, we used the corresponding Ethiopian data for the period 2011-2021 from [citation]. By utilizing both nonlinear least squares and maximum likelihood estimation methods for parameter estimation, we compare the accuracy of these techniques in capturing local TB dynamics. After the parameters are estimated, we use the model to predict the spread of tuberculosis and determine the likely number of infections and fatalities. Additionally, we use a synthetic example case to validate the model's performance in terms of parameter estimation and prediction accuracy, ensuring that the model can provide reliable insights for controlling TB in the Ethiopian context. This study thus fills a crucial gap in the literature by providing a more accurate, data-driven framework for TB transmission dynamics in Ethiopia, one that accounts for the full range of epidemiological factors and offers new insights into potential control strategies.\n\nThe remainder of this paper is arranged as follows. Section [sec_two] presents the models used to study tuberculosis. We analyze the models in Section [sec_three]. We estimate the values of the parameters in section [sec_seven]. The results and discussion are presented in Section [sec_eight]. The final conclusion and remarks are provided in section [sec_nine].\n\nModel Formulation\n\nIn this section, we discuss the epidemiological model formulation for the transmission dynamics of TB in Ethiopia. We consider the following simplifying assumption in the construction of the model:\n\n- The total population is divided into six distinct compartments: susceptible $S(t)$, vaccinated $V(t)$, exposed $E(t)$, infectious $I(t)$, treated, $T(t)$ and recovered $R(t)$.\n\n- Susceptible individuals are people of all ages who can contract tuberculosis. The susceptible population is assumed to increase in size through the recruitment of individuals into the population at a constant rate $\\Lambda$.\n\n- A fraction of the susceptible population is vaccinated, and individuals who have received vaccinations have partial immunity against TB. Some susceptible individuals who have been successfully vaccinated lose their vaccine-induced immunity and join the susceptible compartment again [citation]. Thus, the efficacy of the vaccine is assumed to be incomplete such that some portion of vaccinated individuals will be susceptible to bacteria at a rate $\\theta$.\n\n- An infected individual has a latency period before becoming infectious. Thus, exposed individuals are TB-infected but not yet infectious and do not show symptoms of the disease.\n\n- We assume that after interaction with an infected individual with a susceptible one with a contact rate $\\beta$, a susceptible person moves into the exposed class. Infectious individuals have the ability to spread the disease.\n\n- Individuals in the population follow homogeneous mixing, where every susceptible individual has an equal likelihood of being infected when they come into sufficient contact with infectious individuals.\n\n- Treated individuals have received treatment for the disease, and recovered individuals are people who are cured of the disease.\n\n- The infectious class and treated class have an additional death rate due to the disease, and we denote these mortality rates as $\\tau$ and $\\omega$, respectively.\n\n- Due to loss of immunity, we assume that recovered individuals move to the susceptible class at rate $\\eta$.\n\n- Treated individuals are recovered at a constant rate $\\alpha$, and we assume that the natural death rate is the same for all classes and is denoted by $\\mu$.\n\nOn the basis of the assumptions, descriptions, and interrelationships between the states and the parameters defined above, we illustrate the transmission dynamics of the TB model via a flowchart of the model dynamics among the different compartments, as shown in Figure [fig:D_123].\n\n[h]\n\nflow_diagram.png\n\nCaption: Flowchart for the TB transmission model.\n\nAccording to the above hypotheses, the dynamics of disease within a specific population can be represented via the following set of nonlinear differential equations:\n\\begin{split}\n\\frac{dS}{dt} &= \\Lambda + \\eta R + \\theta V - (\\beta I + \\pi + \\mu)S \\\\\n\\frac{dV}{dt} &= \\pi S - (\\theta + \\mu)V \\\\\n\\frac{dE}{dt} &= \\beta SI - (\\gamma + \\mu)E \\\\\n\\frac{dI}{dt} &= \\gamma E - (\\delta + \\tau + \\mu)I \\\\\n\\frac{dT}{dt} &= \\delta I - (\\alpha + \\omega + \\mu)T \\\\\n\\frac{dR}{dt} &= \\alpha T - (\\eta + \\mu)R\n\\end{split}\nwith nonnegative initial conditions given by $S(0) = S_0 > 0$, $V(0) = V_0 \\geq 0$, $E(0) = E_0 \\geq 0$, $I(0) = I_0 \\geq 0$, $T(0) = T_0 \\geq 0$, & $R(0) = R_0\\geq 0$. All model parameters of the system in equation (1) are assumed to be positive for all times $t > 0$ and are described in Table [tab.1].\n\n[htbp]\n\nwidth=\nParameter |  |  |  |  |  | Description\n$\\varLambda$ |  |  |  |  |  | Recruitment rate of susceptible individuals due to birth.\n$\\beta$ |  |  |  |  |  | Contact rate.\n$\\gamma$ |  |  |  |  |  | The rate at which exposed individuals become infectious.\n$\\mu$ |  |  |  |  |  | Natural death rates of all individuals.\n$\\pi$ |  |  |  |  |  | Vaccination rate.\n$\\eta$ |  |  |  |  |  | The rate at which the recovery loses its immunity.\n$\\theta$ |  |  |  |  |  | Loss rate of immunity by vaccinated individuals.\n$\\delta$ |  |  |  |  |  | Treatment rate for infectious individuals.\n$\\tau$ |  |  |  |  |  | TB-induced death rate for infected individuals.\n$\\alpha$ |  |  |  |  |  | Recovery rate for treated individuals.\n$\\omega$ |  |  |  |  |  | TB-induced death rate for treated individuals.\n\nCaption: Model parameters description\n\nModel Analysis\n\nPositivity of Solutions\n\nThe proposed TB transmission dynamics model provided in equation $\\left( \\ref{eq:4.1} \\right)$ is epidemiologically meaningful if we can show that the solution of the system with nonnegative initial conditions will remain nonnegative for all $t > 0$.\n\nLet $S(0)\\geq 0, V(0) \\geq 0, E(0) \\geq 0, I(0) \\geq 0, T(0) \\geq 0$, and $R(0) \\geq 0$, then the solutions $S(t), V(t), E(t), I(t), T(t), R(t)$ of the system of equations in (1) are nonnegative for all $ t \\geq 0$.\n\nConsider $(S(t), V(t), E(t), I(t), T(t), R(t))$ to be the solution of the system of equations with the initial conditions $(S(0), V(0), E(0), I(0), T(0), R(0))$. Now, from the first equation of the system in (1), we initially have\n\\displaystyle\\frac{dS}{dt} = \\Lambda + \\eta R + \\theta V-(\\beta I + \\pi + \\mu)S  \\geq - (\\beta I + \\pi + \\mu)S.\nUsing techniques of separation of variables, we obtain\n\\displaystyle\\frac{dS}{S}\\geq - (\\beta I + \\pi + \\mu)dt.\nIntegrating both sides of Equation (2) and solving for $S(t)$ yields\nS(t)\\geq S(0) \\cdot e^{\\displaystyle-\\left(\\beta I + \\pi + \\mu\\right)t} > 0.\nSimilarly, for $V(t), E(t), I(t), T(t)$ and $R(t)$, we obtain\nV(t) &\\geq V(0) \\cdot e^{\\displaystyle -\\left(\\theta + \\mu\\right)t} \\geq 0,~ E(t) \\geq E(0) \\cdot e^{\\displaystyle -\\left(\\gamma +  \\mu\\right)t} \\geq 0,\\\\\nI(t) &\\geq I(0) \\cdot e^{\\displaystyle -\\left(\\delta + \\tau + \\mu\\right)t} \\geq 0,~T(t) \\geq T(0) \\cdot e^{\\displaystyle -\\left(\\alpha + \\omega + \\mu\\right)t}\\geq 0,~ \\text{and}\\\\\nR(t) &\\geq R(0) \\cdot e^{\\displaystyle -\\left(\\eta +  \\mu\\right)t}\\geq 0\n\nInvariant Region (Boundedness of the solution)\n\nAll the solutions $N(t) = S(t) + V(t) + E(t) + I(t) +T(t) + R(t)$ of the system of the model equation (1) are bounded.\n\nTo show that the population size of each compartment is bounded, we prefer to show that the total population size at time $t$ of the whole system $N(t)$ is bounded. The total population size $N$ at any time $t$ can be given by:\nN(t) = S(t) + V(t) + E(t) + I(t) + T(t) + R(t).\nDifferentiating with respect to time $t$ and using the system of equations of the model, we obtain:\n\\displaystyle\\frac{dN}{dt} = \\displaystyle\\frac{dS}{dt} + \\displaystyle\\frac{dV}{dt} + \\displaystyle\\frac{dE}{dt} + \\displaystyle\\frac{dI}{dt} + \\displaystyle\\frac{dT}{dt} +\n\\displaystyle\\frac{dR}{dt}.\nSubstituting the differential equation (1) into Equation (3), we obtain\n\\displaystyle \\frac{dN}{dt} = \\Lambda - \\mu N - \\tau I - \\omega T.\nUsing the standard comparison theorem, if there is no disease-induced death rate of individuals in the population (i.e., $\\tau$, $\\omega$ = 0), Equation (4) becomes\n\\displaystyle\\frac{dN}{\\Lambda - \\mu N} \\leq dt.\nBy integrating both sides of Equation (5) and solving it, we obtain\n\\Lambda - \\mu N \\geq N(0)e^{-\\mu t}.\nSince $\\lim_{t \\to \\infty} \\displaystyle e^{\\displaystyle -\\mu t} = 0$, Equation (6) can be simplified as\n\\Lambda - \\mu N \\geq  0 \\Longrightarrow N \\leq \\displaystyle\\frac{\\varLambda}{\\mu},\nwhere $N$ is the total number of the human population. Therefore, the feasible solution set of equation (1) is bounded and remains in the following region\n\\Omega = \\bigg\\{(S,V,E,I,T,R) \\in \\mathbb{R}^6_+:0 \\leq N \\leq \\displaystyle\\frac{\\varLambda}{\\mu}\\bigg\\}.\n\nAnalysis of Disease-Free Equilibrium $(\\mathscr{E}_0)$, and Basic Reproduction Number $(\\mathscr{R}_0)$\n\nThe mathematical expression $\\mathscr{E}_0$ represents for the disease-free equilibrium point (DFEP), where there are no diseases in the human population. To obtain the disease-free equilibrium point, take the derivatives in the model equation $\\left( \\ref{eq:4.1} \\right)$ to zero and evaluate it at $E = I = T = R = 0$. Then, we are left with susceptible and vaccinated individuals from the model equation $\\left( \\ref{eq:4.1} \\right)$.\n\n\\left\\{\n\\begin{aligned}\n\\frac{dS}{dt} &= \\Lambda + \\eta R + \\theta V - (\\beta I + \\pi + \\mu)S \\\\\n\\frac{dV}{dt} &= \\pi S - (\\theta + \\mu)V .\n\\end{aligned}\n\\right.\n\nThus, the disease-free equilibrium point (DFEP), which is given by\n\\mathscr{E}_0 = \\left( \\displaystyle\\frac{\\varLambda(\\theta + \\mu)}{\\mu(\\theta + \\pi + \\mu)}, \\frac{\\varLambda\\pi}{\\mu(\\theta + \\pi + \\mu)}, 0, 0, 0, 0 \\right)\n\nBasic Reproductive Number\n\nThe average number of secondary infections caused by a single infectious individual in a population that is completely susceptible during the mean infectious period is known as the basic reproduction number, denoted by $\\mathscr{R}_0$ [citation].To obtain it, considering the model equations containing the infected compartments in general, i.e., $E$, $I$, and $T$, as shown in equation [eq:3] below, we used the next generation matrix method [citation].\n\\left\\{\n\\begin{aligned}\n\\frac{dE}{dt} &= \\beta SI - (\\gamma + \\mu)E \\\\\n\\frac{dI}{dt} &= \\gamma E  -(\\delta +\\tau + \\mu)I \\\\\n\\frac{dT}{dt} &= \\delta I  -(\\alpha +\\omega + \\mu)T \\\\\n\\end{aligned}\n\\right.\n\nSplitting the right-hand side of equation (8) as $\\mathscr{F}-\\mathscr{V}$, where $\\mathscr{F}$ is the matrix of the new infection terms and $\\mathscr{V}$ is the matrix of the transition terms in compartments $E ,I \\& T$. Now, computing the Jacobian matrix $\\mathscr{F}$ and $\\mathscr{V}$ with respect to $E, I\\ \\&\\ T$ and evaluating them at the disease-free equilibrium point (DFEP), $\\mathscr{E}_0$, gives\n\n$F=\\begin{bmatrix} 0 & \\quad\\displaystyle\\frac{\\varLambda\\beta(\\theta + \\mu)}{\\mu(\\theta + \\pi + \\mu)}&\\quad0 \\\\ 0 & 0 &\\quad 0\\\\ 0 & 0 &\\quad 0 \\end{bmatrix}$ and $V=\\begin{bmatrix} (\\gamma + \\mu) & 0& 0 \\\\ -\\gamma & (\\delta + \\tau + \\mu)& 0 \\\\ 0 & - \\delta& (\\alpha+\\omega+\\mu) \\end{bmatrix}$.\n\nHence, following [citation], the reproduction number of the model in equation (1), defined as the highest eigenvalue of $FV^{-1}$ given by $\\mathscr{R}_0 = \\rho(FV^{-1})$, is obtained as\n\n\\mathscr{R}_v = \\frac{\\varLambda \\beta \\gamma (\\theta + \\mu)}{\\mu (\\delta + \\tau + \\mu)(\\theta + \\pi + \\mu)(\\gamma + \\mu)}\n\nThe threshold quantity $\\mathscr{R}_V$ given in (9) is known as the effective reproduction number, also called the control reproduction number. It calculates the typical number of new secondary infections that one infected person can spread over the course of an infection in a population that is totally vulnerable even with control measures in place [citation]. In this way, the number $\\mathscr{R}_v$ in (9) shows how many new TB cases one infected person is likely to cause in a population that is completely susceptible and has a vaccination program. A similar threshold quantity identified as the basic reproduction number can be obtained by setting the control measure and its parameters to zero (i.e., $\\theta = \\pi = 0$), such that\n\n\\mathscr{R}_0 = \\frac{\\varLambda \\beta \\gamma}{\\mu (\\delta + \\tau + \\mu)(\\gamma + \\mu)}\n\nNotably, the basic reproduction number $\\mathscr{R}_0$ measures the average number of secondary cases produced by a single infected individual in a population that is completely susceptible, in a population without any control measure (see, for example, [citation], [citation]).\n\nStability Analysis\n\nStability analysis can predict the long-term behavior of the model solution. We employ two types of stability analysis: local and global stability. Local stability is concerned with the behavior of the solution near the equilibrium points, whereas global stability can describe the behavior of the solution in the whole domain.\n\nLocal Stability of the Disease-Free Equilibrium Point\n\nThe DFEP $(\\mathscr{E}_0)$ is said to be locally asymptotically stable if the real parts of the eigenvalue are all negative and unstable if at least one of the real parts of the eigenvalue is positive. If $\\mathscr{R}_v< 1$, then the disease-free equilibrium point is locally asymptotically stable, i.e., no tuberculosis epidemic can develop in the population. If $\\mathscr{R}_v> 1$, then the disease-free equilibrium point is unstable.\n\nThe disease-free equilibrium point for model equation (1) is locally asymptotically stable if $\\mathscr{R}_v< 1$ and unstable if $\\mathscr{R}_v> 1$.\n\nThe Jacobian matrix of the model equation (1) at the disease free equilibrium point $\\mathscr{E}_0$ is given by\nJ(\\mathscr{E}_0)=\\begin{bmatrix} -(\\pi + \\mu) & \\theta &  0 & \\frac{-\\varLambda \\beta(\\theta + \\mu)}{\\mu(\\theta + \\pi + \\mu)} & 0 &  \\eta\\\\ \n\\pi &  -(\\theta + \\mu) &  0 &\\quad  0 &  0 & 0\\\\ \n0  &  0 &  -(\\gamma + \\mu) &   \\frac{\\varLambda \\beta(\\theta + \\mu)}{\\mu(\\theta + \\pi + \\mu)} &  0 & 0\\\\  \n0 &  0 &  \\gamma &  -(\\delta + \\tau + \\mu) & 0 &  0\\\\ \n0 &  0 &  0 &  \\delta &  -(\\alpha + \\omega + \\mu) & 0\\\\\n0 &  0 &  0 & 0 &  \\alpha & -(\\eta + \\mu)\\\\ \n\\end{bmatrix}.\n\nThe eigenvalues of $J(\\mathscr{E}_0)$ can be obtained from $|J(\\mathscr{E}_0) - \\lambda I_6| = 0$, where $I_6$ is the identity matrix of order 6. Then we have\n\n\\begin{bmatrix} \n-(\\pi\\! +\\! \\mu\\! +\\! \\lambda) & \\theta &  0 & \\frac{-\\varLambda \\beta(\\theta\\! +\\! \\mu\\! +\\! \\lambda)}{\\mu(\\theta\\! +\\! \\pi\\! +\\! \\mu)} & 0 &  \\eta\\\\\n\\pi &  -(\\theta\\! +\\! \\mu\\! +\\! \\lambda) &  0 &\\quad  0 &  0 & 0\\\\ \n0  &  0 &  -(\\gamma\\! +\\! \\mu\\! +\\! \\lambda) &   \\frac{\\varLambda \\beta(\\theta\\! +\\! \\mu)}{\\mu(\\theta\\! +\\! \\pi\\! +\\! \\mu)} &  0 & 0\\\\  \n0 &  0 &  \\gamma &  -(\\delta\\! +\\! \\tau\\! +\\! \\mu \\!+\\! \\lambda) & 0 &  0\\\\ \n0 &  0 &  0 &  \\delta &  -(\\alpha\\! +\\! \\omega\\! +\\! \\mu\\! +\\! \\lambda) & 0\\\\\n0 &  0 &  0 & 0 &  \\alpha & -(\\eta\\! +\\! \\mu\\! +\\! \\lambda)\\\\ \n\\end{bmatrix}\\!=\\!0\n\nFrom the matrix in Equation (11), we obtain the characteristic equation given by\n\\big[(\\pi +\\mu + \\lambda)(\\theta + \\mu +\\lambda) - \\theta\\pi\\big]\\big[(\\eta+ \\mu+ \\lambda)(\\alpha + \\omega + \\mu +\\lambda)\\big] \\bigg[(\\gamma +\\mu + \\lambda)(\\delta + \\tau + \\mu + \\lambda)-\\displaystyle\\frac{\\varLambda \\beta\\gamma(\\theta + \\mu)}{\\mu(\\theta + \\pi + \\mu)}\\bigg] = 0.\nObviously, $\\lambda_1$, $\\lambda_2$, $\\lambda_3$, and $\\lambda_4$ are negative, and for stability, all the real parts of the eigenvalues must be negative, which means\n(\\gamma +\\mu)(\\delta + \\tau + \\mu)-\\displaystyle\\frac{\\varLambda \\beta\\gamma(\\theta + \\mu)}{\\mu(\\theta + \\pi + \\mu)} < 0 \\Longrightarrow  \\frac{\\varLambda \\beta\\gamma(\\theta + \\mu)}{\\mu(\\theta + \\pi + \\mu)(\\gamma +\\mu)(\\delta + \\tau + \\mu)} < 1.\nHence, $\\displaystyle\\mathscr{R}_v < 1$, and therefore, the disease-free equilibrium point $\\mathscr{E}_0$ is locally asymptotically stable if $\\mathscr{R}_v<1$.\n\nGlobal Stability of the Disease-Free Equilibrium Point\n\nThis section examines the global stability of the equilibrium points of the ordinary differential equation (ODE) in (1). We analyzed the global stability of the disease-free equilibrium point via the Castillo-Chavez approach [citation]. The Castillo-Chavez approach claims globally asymptotic stability of the disease-free equilibrium point if two specific conditions (specified below) are met when $\\mathscr{R}_v < 1$. First, Equation (1) can be restated in the following manner:\n\n\\begin{cases}\n\\frac{dX}{dt} = F(X,Z) \\\\\n\\frac{dZ}{dt} = G(X,Z); \\quad G(X,0) = 0\n\\end{cases}\n\nwhere $X =(S, V, R) \\in \\mathbb{R}^3_+$ represents the class of uninfected individuals and where $Z = (E, I, T)\\in \\mathbb{R}^3_+$ represents the class of infected individuals. Thus, $\\mathscr{E}_0 = (x^*, 0)$ denotes the disease-free equilibrium of the system in equation (18). The specific conditions, I and II, are defined below and must be satisfied to guarantee local asymptotic stability:\n\n- I . For $\\frac{dX}{dt} = F(X, 0), \\mathscr{E}_0$ is globally asymptotically stable.\n\n- II . $G(X, Z) = AZ - \\hat{G}(X, Z), \\hat{G}(X, Z) \\geq 0$ for all $(X , Z)$ $\\in \\mathbb{R} $, where $A = D_Z G(\\mathscr{E}_0)$ is an M-matrix (the off-diagonal elements $A$ are nonnegative) and $\\mathbb{R}$ is the region where the model makes biological sense. If System (18) satisfies the above two conditions, then the following theorem holds [citation]:\n\n[ Castillo-Chavez Theorem ] The fixed point $\\mathscr{E}_0 = (x^*, 0)$ is a globally asymptotic stable equilibrium of (18), provided that $\\mathscr{R}_0<1$ under assumptions I and II are satisfied.\n\nNow, an application of theorem [CC] for System (1) yields:\nX =(S, V, R)^T \\in \\mathbb{R}^3_+, Z = (E, I,  T)^T\\in \\mathbb{R}^3_+, \\mathscr{E}_0 = (x^*, 0) = (S_0, V_0, 0).\nAs $t\\rightarrow\\infty$, $(S(t), V(t), R(t)) \\rightarrow$ $(\\frac{\\Lambda(\\theta + \\mu)}{\\mu(\\theta + \\pi + \\mu)}$, $ \\frac{\\Lambda\\pi}{\\mu(\\theta + \\pi + \\mu)}, 0) = \\mathscr{E}_0 = (x^*, 0)$ is globally asymptotically stable. Moreover,\n\n$A= \\begin{pmatrix} -(\\gamma + \\mu) &\\frac{\\Lambda\\beta(\\theta + \\mu)}{\\mu(\\theta + \\pi + \\mu)} & 0 \\\\ \\gamma & -(\\delta + \\tau + \\mu) & 0 \\\\ 0 & \\delta & -(\\alpha + \\omega + \\mu) \\end{pmatrix}\\quad\\&\\quad \\hat{G}(X, Z) = \\begin{pmatrix} \\beta I[S_0-S] \\\\ 0 \\\\ 0 \\end{pmatrix}$\n\nFor System (1), $S_0=\\frac{\\Lambda(\\theta+\\mu)}{\\mu(\\theta+\\pi+\\mu)}$, since $\\frac{\\Lambda}{\\mu}$ represents the upper bound of the total population. Hence, $S_0 > S$, which leads to $\\hat{G}(X, Z) \\geq 0$ for all $(X,Z) \\in \\mathbb{R}^6_+$. Thus, the assumptions, I and II , of the Castillo-Chavez theorem are satisfied for System (1), hence, the theorem follows.\n\nEndemic Equilibrium Point $(\\mathscr{E}^*)$, and Sensitivity Analysis\n\nThe endemic equilibrium point (EEP) $\\mathscr{E^*}=(S^*, V^*, E^*, I^*, T^*, R^*)$ is the point at which the disease remains alive in the population when at least one of the infected classes of the model is nonzero. To obtain the endemic equilibrium point, we equate all expressions of model equations $\\left( \\ref{eq:4.1} \\right)$ of the derivative to zero. From the system of equations $\\left( \\ref{eq:4.1} \\right)$, we get the following simplified endemic equilibrium point:\nS^* &= \\frac{\\varLambda(\\theta + \\mu)}{ \\mu(\\theta + \\tau + \\mu)\\mathscr R_0},~ V^* = \\frac{\\varLambda\\pi}{\\mu(\\theta + \\pi + \\mu)\\mathscr R_0} \\\\\nE^* &= \\frac{\\mu(\\eta + \\mu)(\\alpha +\\omega +\\mu)(\\gamma + \\mu)(\\theta + \\pi +\\mu)(\\delta + \\tau + \\mu)^2(\\mathscr{R}_0 -1)}{\\beta\\gamma(\\theta + \\mu)[(\\delta + \\tau + \\mu)(\\alpha + \\omega + \\mu)(\\gamma + \\mu)(\\eta + \\mu) - \\eta\\delta\\gamma\\alpha]},\\\\ \nI^* &= \\frac{\\mu(\\eta + \\mu)(\\alpha +\\omega +\\mu)(\\delta + \\tau + \\mu)(\\gamma + \\mu)(\\theta + \\pi +\\mu)(\\mathscr{R}_0 -1)}{\\beta(\\theta + \\mu)[(\\delta + \\tau + \\mu)(\\alpha + \\omega + \\mu)(\\gamma + \\mu)(\\eta + \\mu) - \\eta\\delta\\gamma\\alpha]}, \\\\\nT^* &= \\frac{\\delta\\mu(\\eta + \\mu)(\\delta + \\tau + \\mu)(\\gamma + \\mu)(\\theta + \\pi +\\mu)(\\mathscr{R}_0 -1)}{\\beta(\\theta + \\mu)[(\\delta + \\tau + \\mu)(\\alpha + \\omega + \\mu)(\\gamma + \\mu)(\\eta + \\mu) - \\eta\\delta\\gamma\\alpha]},~ \\text{and}\\\\ \nR^* &= \\frac{\\alpha\\delta\\mu(\\delta + \\tau + \\mu)(\\gamma + \\mu)(\\theta + \\pi +\\mu)(\\mathscr{R}_0 -1)}{\\beta(\\theta + \\mu)[(\\delta + \\tau + \\mu)(\\alpha + \\omega + \\mu)(\\gamma + \\mu)(\\eta + \\mu) - \\eta\\delta\\gamma\\alpha]}.\n\nLocal Stability of the Endemic Equilibrium Point\n\nThe endemic equilibrium point of the system of equations in (1) is locally asymptotically stable if $\\mathscr{R}_0>1$ and unstable if $\\mathscr{R}_0<1$.\n\nThe stability of the endemic equilibrium point is then determined on the bases of the sign of the eigenvalues of the Jacobian matrix obtained as:\nJ(\\mathscr{E^*})=\\begin{bmatrix}\n-( \\beta I^* +\\pi + \\mu) & \\theta & 0 & -\\beta S^*& 0& \\eta\\\\ \n\\pi & -(\\theta + \\mu) & 0 & 0 & 0&0\\\\ \n\\beta I^* & 0 & -(\\gamma + \\mu) &  \\beta S^* & 0&0\\\\  \n0 & 0 & \\gamma & -(\\delta + \\tau + \\mu) & 0&0\\\\ \n0 & 0 & 0 & \\delta & -(\\alpha + \\omega + \\mu)&0\\\\\n0 & 0 & 0 & 0 &\\alpha&-(\\eta + \\mu)\n\\end{bmatrix}.\nTo find the eigenvalues, we have\n|J (\\mathscr{E^*}) - \\lambda I_6|  = 0\nLet $a = (\\beta I^* + \\pi + \\mu), b = \\beta I^*, c = (\\theta + \\mu), d = (\\gamma + \\mu), e = \\beta S^*, f = (\\delta + \\tau + \\mu), g = (\\eta +\\mu)$ and $h = (\\alpha + \\omega + \\mu)$. Then the characteristic polynomial representation of equation (19) is given by:\na_6 \\lambda^6 + a_5\\lambda^5 + a_4\\lambda^4 + a_3\\lambda^3 + a_2\\lambda^2 + a_1\\lambda^1 + a_0\\lambda^0 = 0\nwhere\na_0 &= acdfgh + egh\\pi\\theta\\gamma - acegh\\gamma - bcegh\\gamma - dfgh\\pi\\theta - bc\\alpha\\eta\\gamma\\delta,\\\\\na_1 &= acfgh + acdfg + acdfh + adfgh +cdfgh + acdgh + eg\\pi\\theta\\gamma + eh\\pi\\theta\\gamma - aceg\\gamma - aceh\\gamma- aegh\\gamma - cegh\\gamma -\\\\ \n& dfg\\pi\\theta - dfh\\pi\\theta - dgh\\pi\\theta - bceg\\gamma - bceh\\gamma - begh\\gamma - fh\\pi\\theta - b\\alpha\\gamma\\eta\\delta, \\\\\na_2 &=acfg + acfh + afgh + cfgh + acgh + acdf + adfg + adfh + cdfg + cdfh + acdg + acdh + adgh + cdgh + \\\\ \n& e\\pi\\theta\\gamma - ace\\gamma - aeg\\gamma - aeh\\gamma - ceg\\gamma - ceh\\gamma- egh\\gamma- bce\\gamma -beg\\gamma - beh\\gamma - df\\pi\\theta - dg\\pi\\theta - dh\\pi\\theta - \\\\ \n& fg\\pi\\theta - fh\\pi\\theta - gh\\pi\\theta, \\\\\na_3 &= acf + afg + afh + cfg  + cfh + fgh + acg + ach + agh + cgh + adf + dfh + acd + adg + adh + cdg + cdh + \\\\ \n& dgh - ae\\gamma - ce\\gamma -be\\gamma - eg\\gamma- eh\\gamma - eg\\gamma - d\\pi \\theta - f\\pi\\theta - g\\pi\\theta - h\\pi\\theta, \\\\\na_4 &= af+ cf + fg + fh + ac + ag + ah +cg +ch +gh + df + ad + cd + dg +dh - e\\gamma - \\pi\\theta,\\\\\na_5 &= (a + c + d + f + g +h),~ \\text{and}~ a_6 = 1.\nAfter substitution and simplification by the Routh-Hurwitz stability criterion [citation], the endemic equilibrium point $\\mathscr{E}^*$ is locally asymptotically stable if $\\mathscr{R}_0>1$.\n\nGlobal Stability of Endemic Equilibrium Point\n\nIf $\\mathscr{R}_0>1$, the endemic equilibrium $\\mathscr{E}^*$ of the system of equations in (1) is globally asymptotically stable, whereas if $\\mathscr{R}_0<1$, it is unstable.\n\nTo prove the global asymptotic stability at the endemic equilibrium point, we use the Lyapunov function $\\mathcal{V}$ [citation], which is defined and derived as follows::\n\n\\mathcal{V}(S^*, V^*, E^*, I^*, T^*, R^*) &= \\bigg(S - S^* - S^*\\displaystyle\\ln \\frac{S^*}{S}\\bigg) + \\bigg(V - V^* - V^*\\displaystyle\\ln \\frac{V^*}{V}\\bigg) + \\bigg(E - E^* - E^*\\displaystyle\\ln \\frac{E^*}{E}\\bigg) +\\\\  \n& \\bigg(I - I^* - I^*\\displaystyle\\ln \\frac{I^*}{I}\\bigg) + \\bigg(T - T^* - T^*\\displaystyle\\ln \\frac{T^*}{T}\\bigg) + \\bigg(R - R^* - R^*\\displaystyle\\ln \\frac{R^*}{R}\\bigg).\n\nBy calculating the derivatives $\\mathcal{V}(S^*, V^*, E^*, I^*, T^*, R^*)$ with respect to $t$, we obtain\n\\displaystyle\\frac{d\\mathcal{V}}{dt} &= \\bigg(\\displaystyle\\frac{S-S^*}{S}\\bigg)\\displaystyle\\frac{dS}{dt} +  \\bigg(\\displaystyle\\frac{V - V^*}{V}\\bigg)\\displaystyle\\frac{dV}{dt} +  \\bigg(\\displaystyle\\frac{E - E^*}{E}\\bigg)\\frac{dE}{dt} + \\\\\n& \\bigg(\\displaystyle\\frac{I - I^*}{I}\\bigg)\\displaystyle\\frac{dI}{dt} +  \\bigg(\\displaystyle\\frac{T - T^*}{T}\\bigg)\\displaystyle\\frac{dT}{dt} + \\bigg(\\displaystyle\\frac{R - R^*}{R}\\bigg)\\displaystyle\\frac{dR}{dt}\nBy direct substitution of the model equation (1), we have\n\\displaystyle\\frac{d\\mathcal{V}}{dt} &= \\bigg(\\displaystyle\\frac{S-S^*)}{S}\\bigg)(\\Lambda + \\eta R + \\theta V- (\\beta I + \\pi + \\mu)S) + \\bigg(\\displaystyle\\frac{V- V^*}{V}\\bigg)(\\pi S - (\\theta + \\mu)V) +\\\\\n& \\bigg(\\displaystyle\\frac{E-E^*}{E}\\bigg)(\\beta SI - (\\gamma + \\mu)E) +\\bigg(\\displaystyle\\frac{I-I^*}{I}\\bigg)(\\gamma E -(\\delta +\\tau + \\mu)I) +\\\\\n& \\bigg(\\displaystyle\\frac{T-T^*}{T}\\bigg)(\\delta I -(\\alpha + \\omega +\\mu)T) +\\bigg(\\displaystyle\\frac{R-R^*}{R}\\bigg)(\\alpha T - (\\eta + \\mu)R).\nThen by simplifying the above equation, we have\n\\displaystyle\\frac{d\\mathcal{V}}{dt} &= \\Lambda + \\beta IS^* + \\pi S^* + \\mu S^* + \\theta V^* + \\mu V^* + \\gamma E^* + \\mu E^* +\\delta I^* +\\tau I^* + \\mu I^* + \\alpha T^* + \\\\\n& \\omega T^* + \\mu T^* + \\eta R^* + \\mu R^* - \\mu S - \\Lambda\\displaystyle\\frac{S^*}{S} - \\eta R\\frac{S^*}{S} - \\theta V\\frac{S^*}{S} - \\mu V -\\pi S\\frac{V^*}{V}  - \\mu E - \\\\\n& \\beta SI \\displaystyle\\frac{E^*}{E}- \\tau I - \\mu I - \\gamma E \\displaystyle\\frac{I^*}{I} -\\omega T -\\mu T - \\delta I \\frac{T^*}{T}- \\mu R - \\delta I\\frac{R^*}{R}.\nNow, let us take $X$ as the positive term and $Y$ as the negative term of the equation above such that\n\\displaystyle\\frac{dV}{dt} = X - Y.\nThus, if $X < Y$, then $\\displaystyle\\frac{d\\mathcal{V}}{dt}< 0$; note that $S = S^*, V = V^*, E = E^*, I = I^*, T = T^*, R = R^*$ if and only if $\\frac{d\\mathcal{V}}{dt}= 0$. Therefore, Lasalle’s invariant principle [citation] indicates that the endemic equilibrium $\\mathscr{E^*}$ is globally asymptotically stable if $X < Y$.\n\nSensitivity Analysis\n\nWe aim to ascertain the sensitivity of each parameter to the effective reproduction number of the model. We apply the following sensitivity index formula:\n\\displaystyle\\varUpsilon^{\\mathscr{R}_v}_{mi} = \\displaystyle\\frac{\\partial \\mathscr{R}_v }{\\partial mi} \\times \\displaystyle\\frac{mi}{\\mathscr{R}_0}\nwhere $mi$ are the system’s parameters in the quantity $\\mathscr{R}_v$. We recall that the effective reproduction number $\\mathscr{R}_v$ is given by:\n\\mathscr{R}_v = \\displaystyle\\frac{\\varLambda \\beta \\gamma(\\theta + \\mu)}{\\mu(\\theta + \\pi + \\mu)(\\delta + \\tau + \\mu)(\\gamma + \\mu)}.\nThen, via Equation (21), direct computation yields\n\n\\displaystyle \\varUpsilon^{\\mathscr{R}_v}_{\\varLambda} &= 1 > 0,~\\displaystyle \\varUpsilon^{\\mathscr{R}_v}_{\\beta}  = 1 > 0,~ \\displaystyle\\varUpsilon^{\\mathscr{R}_v}_{\\gamma} = \\displaystyle\\frac{\\mu}{(\\gamma + \\mu)}  > 0,~\n\\displaystyle\\varUpsilon^{\\mathscr{R}_v}_{\\theta} = \\displaystyle\\frac{\\pi}{(\\theta + \\pi + \\mu)(\\theta + \\mu)}  > 0,\\\\\n\\displaystyle \\varUpsilon^{\\mathscr{R}_v}_{\\mu} &= -[\\displaystyle\\frac{\\theta}{(\\theta + \\mu)} + \\frac{\\mu}{(\\theta + \\pi + \\mu)} + \\frac{\\mu}{(\\delta + \\tau + \\mu)} + \\frac{\\mu}{(\\gamma + \\mu)}] < 0,\\\\\n\\displaystyle\\varUpsilon^{\\mathscr{R}_v}_{\\pi} &=  \\displaystyle\\frac{-\\pi}{(\\theta + \\pi + \\mu)} < 0,~\n\\displaystyle\\varUpsilon^{\\mathscr{R}_v}_{\\delta} = \\displaystyle\\frac{-\\delta}{(\\delta + \\tau + \\mu)} < 0,~\\text{and}~\n\\displaystyle\\varUpsilon^{\\mathscr{R}_0}_{\\tau} = \\displaystyle\\frac{-\\tau}{(\\delta + \\tau + \\mu)} < 0.\n\nWe use sensitivity analysis to explain how our reproduction number should be interpreted. Parameters with negative sensitivity indices $(\\mu, \\pi, \\delta, \\tau )$ have the effect of lowering the community's TB burden if their values increases (i.e., the disease's reproduction number decreases as its parameter values increase). Additionally, if the values of those parameters with positive sensitivity indices $(\\Lambda, \\beta, \\gamma, \\theta)$ increase, they play a large part in the spread of tuberculosis in the community. This means that if the values of those parameters increase, so does secondary infection in the community. Therefore, it is essential to increase the negative indices and decrease the positive indices to reduce the disease incidence in the community. Since increasing the human mortality rate to contain disease epidemics is unethical, we do not take this into consideration when studying sensitivity.\n\nHowever, many of these studies have either relied on data from countries with more robust health infrastructures or have focused on theoretical applications rather than incorporating region-specific epidemiological data.\n\nParameter Estimation\n\nThe SVEITRS model is an extension of the SEIR model, that is specifically tailored to tuberculosis dynamics, and it has several compartments that represent different stages of the disease and different types of interventions. To accurately reflect and capture the transitions of individuals between different disease states, incorporating region-specific epidemiological data is crucial during model parameter estimation. A significant gap in the current literature is the use of locally relevant temporal data to estimate model parameters accurately, with particular emphasis on the choice of estimation techniques. Hence, to accomplish these goals, we use a nonlinear least squares method by implementing minimum search algorithms (gradient descent) and maximum likelihood estimation (MLE) to estimate parameters. We employ these methods to estimate relevant parameters for our model on a synthetic example case and assess the performance and validity of our model via real tuberculosis data from Ethiopia from 2011-2021.\n\nThe systems of ODEs in Equation (1) can be expressed in more general form as:\n\\Dot{\\mathbf{x}}(t) = f(\\mathbf{x}(t),\\theta), ~~ \\mathbf{x}(t_0) = \\mathbf{x}_0\nwhere $\\mathbf{x}(t) = \\big[S(t), V(t), E(t), I(t), T(t), R(t)\\big]^t$ and $\\mathbf{x}_0 = \\mathbf{x}(0)$ are 6-dimensional state vectors and constant initial states, respectively; $\\boldsymbol{\\theta} = \\big[\\varLambda, \\beta, \\gamma, \\nu, \\pi, \\eta, \\theta, \\delta, \\sigma, \\tau, \\alpha, \\omega\\big]^t$ is a 12-dimensional vector of the model parameters, and $f : \\Omega\\subset \\mathbb{R}^6\\times\\mathbb{R}^9\\rightarrow\\mathbb{R}^6$ is a continuous map, which is described on the open set\n\\Omega = \\big\\{ (\\mathbf{x}(t),\\boldsymbol{\\theta})\\in\\mathbb{R}^6\\times\\mathbb{R}^9|\\mathbf{x}_n(t),~\\boldsymbol{\\theta}_m>0~ \\text{for}~ n = 1,\\cdots,6~ \\text{and}~ m=1,\\cdots, 12\\big\\}.\n\nThe above notation for the SVEITRS models has been used in to illustrate the basic setup of the parameter estimation problem. If we have given the initial conditions $\\mathbf{x}_0$ and a set of parameters $\\boldsymbol{\\theta}$, we can compute the state vectors $\\mathbf{x}(t)$ of the model given in Equation (22). In other words, if we have been given a set of observed data $\\mathbf{y}(t), t = 1,\\cdots, T$, we try to estimate parameters $\\boldsymbol{\\theta}$, and then the state vector $\\mathbf{x}(t)$ for all $t$ can make predictions for $\\mathbf{y}(t)$ for $t > T$. In the following subsection, we describe the two parameter estimation approaches, nonlinear least squares and maximum likelihood estimation, that we use in this study.\n\nNonlinear least squares\n\nThe nonlinear least squares method (NLS) is used to numerically approximate a solution of the model Equation (23) and observations within the least-squares fitting, where we look for the $\\hat{\\boldsymbol{\\theta}}$ value of the model parameter $\\boldsymbol{\\theta}$, which minimizes the least squares criterion\nJ(\\boldsymbol{\\theta}) = \\sum_{t=1}^{T} ||\\mathbf{y}(t) - f(\\mathbf{x}(t),\\boldsymbol{\\theta})||^2,\nwhere $f(\\cdot)$ is the output of the model for a given set of parameters and where $\\boldsymbol{\\theta}$ and $\\mathbf{y(t)}$ are the observable outputs. The function $J(\\boldsymbol{\\theta})$ measures the difference between observed data and model predictions, typically using the sum of squared errors. This problem can be classified as a nonlinear least-squares problem because the relationship between the solution system and the parameter $\\boldsymbol{\\theta}$ is based on a complex system of nonlinear differential equations.\n\nMaximum likelihood estimation\n\nMaximum likelihood estimation (MLE) is a statistical method used to estimate the parameters of a model by maximizing the likelihood function. This technique finds the parameter values that make the observed data most likely, offering a robust approach for parameter estimation in complex models. It is particularly useful in cases where the data are subject to significant variability. The likelihood function is\nL(\\boldsymbol{\\theta}) = p(\\mathbf{y}|\\boldsymbol{\\theta})\n\nFor a given set of observations $\\mathbf{y}$, the likelihood function is defined as the joint probability of the observed data, given the parameters. This means that we assume that there is some uncertainty in the observed data $\\mathbf{y}(t)$ and that the only thing we know about those errors is that they are centered (zero mean) and identically and independently distributed with constant variance; then the likelihood function for the SVEITRS model can be expressed as\np(\\mathbf{y}|\\boldsymbol{\\theta}) \\propto \\exp\\left(-\\frac{1}{2\\sigma_y^2}J(\\boldsymbol{\\theta})\\right)\nwhere $\\sigma^2_y$ is a fixed variance that can be estimated together with the parameters. The log-likelihood function, $\\log L(\\boldsymbol{\\theta})$, is often used instead of the likelihood function because it simplifies the computations. Maximizing the log-likelihood function is equivalent to minimizing the negative log-likelihood function, and then the optimization problem for MLE can be formulated as:\n\\hat{\\boldsymbol{\\theta}} = \\arg\\max_{\\boldsymbol{\\theta}}\\left( p(\\mathbf{y}|\\boldsymbol{\\theta})\\right) = \\arg\\min_{\\boldsymbol{\\theta}}\\left( -\\ln{p(\\mathbf{y}|\\boldsymbol{\\theta})}\\right)\n\nSynthetic Example Case\n\nTo illustrate the parameter estimation process and check the model's predictive performance and model validity, let us consider a synthetic example case where we generated from the model using specific parameter values and initial conditions. $\\beta = 0.05, \\gamma = 0.48, \\varLambda = 15, \\eta = 0.2, \\theta = 0.5, \\pi = 0.1, \\mu = 0.0157, \\delta = 0.67, \\tau = 0.275, \\alpha = 0.88, \\omega = 0.12, S(0) = 861, V(0) = 100, E(0) = 20, I(0) = 10, T(0) = 6$, and $R(0) = 3$ in a time range of $t(0) = 0$ to $t(n) = 50$. Then, we estimate the contact rate $(\\beta)$ and transmission rate $(\\gamma)$ from the generated data, given the other parameters and the generated data, via the minimum search algorithm and maximum likelihood estimation techniques.\n\nThe estimated parameter values for $\\beta$, $\\gamma$, and $\\sigma^2_y$ are given in Table [tab:my_label]. Through the parameter estimation techniques, we were able to return to the initial parameter values that we used to make the synthetic data, as shown in the table. The error for both parameters was very small. This shows the performance of the parameter estimation techniques. A comparison of the performance of the minimum search algorithm with that of MLE, reveals that the MLE is more powerful for the current model. Furthermore, we also estimate the 97.5% confidence intervals of $\\beta$ to be $(0.04998402, 0.04999678)$, $\\gamma$ to be $(0.47997842, 0.48001454)$, and $\\sigma_y^2$ to be $(0.01790117, 0.01790117)$ when MLE is used. [H]\n\nwidth=\nParameters | True | Minimum | Error magnitude | MLE | Error magnitude\n | values | search (MS) | (MS) |  | (MLE)\n$\\beta$ | 0.05 | 0.04789474 | 0.00210526 | 0.04999040 | 0.0000096\n$\\gamma$ | 0.48 | 0.4789474 | 0.0010526 | 0.47999648 | 0.00000352\n$\\sigma_y^2$ |  |  |  | 0.01790117 | \n\nCaption: Estimated parameters of the contact rate $\\beta$, infection rate $\\gamma$, magnitudes of errors, and fixed common standard deviation ($\\sigma_y^2$) for the synthetic data.\n\n[H]\n\nSynthetic data. Synthetic_fit.png Model output model_fit2.png\n\nCaption: A synthetic SVEITRS model simulated solution. The result is obtained with the following parameters: $\\beta = 0.05, \\gamma = 0.48, \\varLambda = 15, \\eta = 0.2, \\theta = 0.5, \\pi = 0.1, \\mu = 0.0157, \\delta = 0.67, \\tau = 0.275, \\alpha = 0.88, \\omega = 0.12$, and initial values: $N = 1000, S(0) = 861, V(0) = 100, E(0) = 20, I(0) = 10, T(0) = 6, R(0) = 3$, years = 50.\n\nWe also checked how well the proposed model worked with the estimated parameters by comparing the fake data for each compartment with the model's results via the estimated parameters, as shown in the subfigures of Figure [fig:enter-label10]. The results in the figures for all the compartments indicate the reliability and performance of the proposed model with the corresponding parameter estimation. For the real dataset, we replace the true generated synthetic data with actual observed data of Ethiopian tuberculosis cases from 2011-2021 and implement parameter estimation for the real data case. We present the parameter values obtained and initial conditions in Table [tab:6.2] for the real Ethiopian tuberculosis data case from 2011-2021.\n\n[H]\n\nwidth=\nParameter | Description | Value | Source\n$N_0$ | Initial number of total population | $9.18\\times10^7$ | [citation]\n$S_0$ | Initial number of susceptible individuals | $7.505\\times 10^7$ | Estimated\n$V_0$ | Initial number of vaccinated individuals | $1.205\\times10^6$ | Estimated\n$E_0$ | Initial number of exposed individuals | $1.503\\times10^7$ | Estimated\n$I_0$ | Initial number of infectious individuals | $2.323\\times10^5$ | [citation]\n$T_0$ | Initial number of treated individuals | $1.56\\times10^5$ | [citation]\n$R_0$ | Initial number of recovery individuals | $1.39\\times10^5$ | [citation]\n$\\Lambda$ | Recruitment rate | $1.658\\times10^6$ | Estimated\n$\\beta$ | The contact rate | $7.75\\times 10^{-7}$ | Estimated\n$\\gamma$ | Infection rate | $0.225 $ | Estimated\n$\\mu$ | Natural death rate | $0.0157$ | Estimated\n$\\pi$ | Vaccination rate | $0.713$ | [citation]\n$\\eta$ | loss rate of immunity by recovered one | $0.2$ | Assumed\n$\\theta$ | Loss of protection for vaccination | $0.5$ | [citation]\n$\\delta$ | treatment rate of I(t) | $0.67$ | [citation]\n$\\tau$ | disease-causing death rate of I(t) | $0.266$ | [citation]\n$\\alpha$ | Recovery rate for treated individuals | $0.89$ | [citation]\n$\\omega$ | disease-causing death rate of T(t) | $0.11$ | [citation]\n\nCaption: Estimated values of parameters for the model\n\nResults and Discussions\n\nIn this section, we discuss the model outputs obtained and the corresponding parameter estimations for real Ethiopian tuberculosis data from 2011-2021. The numerical simulation results are obtained for the dynamical system of the tuberculosis disease model equation $\\left( \\ref{eq:4.1} \\right)$, and corresponding computations and graphical illustrations are carried out via Matlab and R programming languages. The idea behind numerical simulations is to look into how the proposed mathematical model works and why it makes sense. This model is too complicated to solve analytically, similar to most nonlinear systems. The simulations are performed by using the set of parameter values given in Table [tab:6.2] above.\n\nThe main goal of this study is to find the contact rate ($\\beta$) and transmission rate ($\\gamma$) for tuberculosis (TB) by existing TB incidence data, along with other computed parameter values, and to investigate disease changes over time and how well the proposed model works. The comparison of the model output and the incidence data for the estimated parameter values is given in Figure [fig:enter-label11] with a 95% confidence level. The figure shows that the suggested SVEITRS model can explain how the disease changes over time. The estimated parameter values are very good, so the model's output closely matches the real data on disease incidence.\n\n[H]\n\nInci_fit.png\n\nCaption: The fitted model of the incidence cases to the reported cases is used for the model for Ethiopia from 2011-2021.\n\nIn Figure $\\left( \\ref{fig:SVEITRS_model} \\right)$, we present the model outputs of all the compartments to illustrate how the different classes evolve over time under the estimated model parameters with initial conditions as the data in 2011. According to Figure $\\left( \\ref{fig:SVEITRS_model} \\right)$, as time increases, the susceptible human populations decrease rapidly, whereas the vaccinated population start to increase initially and then decrease rapidly.\n\n[H]\n\nTB_MODEL.png\n\nCaption: A plot indicating model outputs and how each class evolves in time for the estimated parameters.\n\nThis finding indicates that susceptible human and vaccinated population will continue to join the exposed class of the disease; as a result, the exposed populations initially tends to increase, reflecting the growth of the disease in the population. However, over time, the exposed population starts to decline, likely because of the flow into the infected class, the treatment, and the recovery processes. We obtained $\\mathscr{R}_0 = 2.67$ for the estimated model parameters, which are greater than one, indicating that the tuberculosis is continuously multiplying.\n\nMoreover, we have checked the effects of contact rate $(\\beta)$ and infectious rate $(\\gamma)$ on the exposed and infected human population, as shown in Figures [fig:beta_exposed],[fig:beta_infected],[fig:gamma_exposed] and [fig:gamma_infected] by varying $(\\beta)$ and $(\\gamma)$ starting from their estimated values.\n\nEffect of contact rate $(\\beta)$ on the TB-exposed population\n\nAccording to Figure [fig:beta_exposed], as the contact rate $(\\beta)$ increases, the exposed population also increases. This is because when the contact rate increases, the reproduction number also increases, and the disease persists in the population. This shows that the contact rate between susceptible and infected individuals increase. This graph also demonstrates that the contact rate has a large effect on the spread of the disease through the population. If the contact rate is high, then the rate of infection of the disease will also be high, as would be expected logically. Hence, to decrease the number of secondary infections, one can decrease the contact rate between susceptible and infected individuals.\n\n[H]\n\nBeta_Expo.png\n\nCaption: The graphical result of the effect of the contact rate $(\\beta)$ on the exposed population for several values of the contact rate $(\\beta)$.\n\nEffect of contact rate $(\\beta)$ on the TB-infected population\n\nIn Figure [fig:beta_infected], we show the effects of the contact rate $(\\beta)$ on the number of infected people. We obtained the numerical results by varying the value of the contact rate $(\\beta)$ while keeping the other parameters constant. When the value of the contact rate $(\\beta)$ increases from $4.75\\times10^{-8}$ to $7.75\\times10^{-7}$ there is an increase in the infected population. We see that as the contact rate increases, the number of infected people in the community increases as expected. Higher contact rates lead to more frequent interactions between susceptible and infected individuals, causing the disease to spread faster and increasing the number of infected people quickly.\n\n[H]\n\nCO_INF.png\n\nCaption: The graphical result of the effect of contact rate $(\\beta)$ on the infected population for several values of the infectious rate $(\\beta)$.\n\nEffect of infection rate $(\\gamma)$ on the TB-exposed population\n\nIn Figure [fig:gamma_exposed], we show the effects of the infection rate $(\\gamma)$ on the number of exposed populations. We obtained the numerical results by varying the value of the infectious rate $(\\gamma)$ while keeping the other parameters constant. When the value of the infection rate $(\\gamma)$ increased from 0.075 to 0.227, there was a decrease in the exposed population. This is because an increase in the infection rate results in an increase in the reproduction number; that is, the disease persists in the population. This shows the increase in infection rate between exposed and infected individuals. Hence, to decrease the number of secondary infections, one can decrease the infection rate between exposed and infected individuals.\n\n[H]\n\nIN_EXPOSED.png\n\nCaption: The graphical result of the effect of the infection rate $(\\gamma)$ on the exposed population for several values of the infectious rate $(\\gamma)$.\n\nEffect of the infection rate $(\\gamma)$ on the TB-infected population\n\nIn Figure [fig:gamma_infected], we demonstrate the impact of the infection rate $\\gamma$ on the number of infected individuals. The numerical results were obtained by varying the value of the infectious rate $\\gamma$ while keeping the other parameters constant. In the deterministic model, when the value of the infection rate increased from 0.075 to 0.227, there was also an increase in the number of infected individuals as in the exposed cases.\n\n[H]\n\nIN_INFECTED.png\n\nCaption: The graphical result of the effect of the infectious rate $(\\gamma)$ on the infected population for several values of the infectious rate $(\\gamma)$.\n\nIn this case again, the increase in the infection rate results in increase in the reproduction number; that is, the disease persists in the population. Hence, to decrease the number of secondary infections, one can decrease the infection rate between latent and actively infected individuals as noted out above.\n\nEffect of the treatment rate $\\delta$ on the TB-infected population\n\nIn Figure [fig:delta_infected], we checked the effect of the treatment rate $\\delta$ on the infected by varying the value of $\\delta$ from 0.47 to 0.67 starting from its estimated value and keeping the rest of the parameters constants. The result revealed that the infectious population decreases as the treatment rate of infected individuals increases; in the long run, this may lead to the eradication of the disease from the community. Thus, we can conclude that increasing the treatment rate $\\delta$, can play a vital role in reducing the incidence of tuberculosis from the community locally.\n\n[H]\n\nTrea_infected.png\n\nCaption: The graphical result of the effect of treatment rate $(\\delta)$ on the infected population for several values of the infectious rate $(\\delta)$.\n\nConclusions\n\nIn this study, we model tuberculosis transmission dynamics in Ethiopia by incorporating imperfect vaccination and treatment for active TB-infected classes. We estimated the contact and infection rate parameters through minimum search algorithms and maximum likelihood estimation techniques using Ethiopian tuberculosis data from 2011-2021. The model output is illustrated via the parameters estimated from the Ethiopian data. The model analysis revealed the existence of a unique, bounded, and positively invariant solution. We find the disease-free equilibrium (DFE) and endemic equilibrium (EE) states and use the next-generation matrix operator to find the basic reproduction number $\\mathscr{R}_0$. The analytical results show that the DFEs are locally and globally asymptotically stable when $\\mathscr{R}_V<1$, whereas the EEs are locally and globally asymptotically stable if $\\mathscr{R}_V>1$. This study revealed that contact rate ($\\beta$), recruitment rate ($\\Lambda$), the loss of protection for the vaccination rate ($\\theta$), and rate of progression from the exposed class to the infectious class ($\\gamma$) were the most important factors. These parameters have the greatest impact on increasing the reproductive number, significantly affecting TB spread in Ethiopia. Conversely, parameters $\\pi, \\mu, \\delta$, and $\\tau$ have the greatest influence on decreasing the reproductive number, leading to tuberculosis elimination.\n\nFurthermore, parameter estimation for the contact and infection rates was performed from the incidence data, providing a more accurate parameter values specific to Ethiopia for the proposed TB dynamics model. Overall, the numerical simulation results, as discussed in the previous sections, suggest that treating infectious individuals significantly affects the eradication of TB transmission for active TB patients locally. We conclude that increasing the contact rate leads to an increase in the TB-exposed population. Similarly, increasing the infection rate has led to an increase in the TB-infected population. The TB-infected population may become large, and treating such a large population is also a challenge economically for developing countries such as Ethiopia. Therefore, treating such a large number of patients may lead to an increase in the number of drug-resistant tuberculosis cases. Therefore, focusing on controlling contact and infection rate parameters is crucial, in addition to considering educational and awareness programs to reduce the transmission of TB bacteria from infected to susceptible populations.\n\nBy implementing this multifaceted approach that combines reduced contact rates and increased vaccination coverage, policymakers and healthcare workers can develop targeted and impactful interventions to effectively control and eventually eliminate TB in Ethiopia and other high-burden settings.\n\nACKNOWLEDGMENTS\n\nYassin Tesfaw Abebe acknowledges support from the International Mathematical Union (IMU) and the Graduate Research Assistantships in Developing Countries (GRAID) Program.\n\nAUTHOR DECLARATIONS\n\nConflict of interest\n\nNo potential conflicts of interest were reported by the author(s).\n\nAuthor Contributions\n\nMoksina Seid: Conceptualization (equal); investigation (equal); writing – original draft (equal); writing – review & editing (equal); software (equal). Yassin Tesfaw Abebe: Writing – original draft (equal); Software (equal); writing – review & editing (equal). Abdu Mohammed Seid : Conceptualization (equal); investigation (equal); and supervision.\n\nDATA AVAILABILITY\n\nThe data used in this paper are accessed online from [citation].",
+  "sections": [
+    {
+      "id": "front",
+      "title": "Title",
+      "start": 0,
+      "end": 117
+    },
+    {
+      "id": "s2-abstract",
+      "title": "Abstract",
+      "start": 117,
+      "end": 1788
+    },
+    {
+      "id": "s3-introduction",
+      "title": "Introduction",
+      "start": 1788,
+      "end": 11377
+    },
+    {
+      "id": "s4-model-formulation",
+      "title": "Model Formulation",
+      "start": 11377,
+      "end": 15657
+    },
+    {
+      "id": "s5-model-analysis",
+      "title": "Model Analysis",
+      "start": 15657,
+      "end": 15673
+    },
+    {
+      "id": "s6-positivity-of-solutions",
+      "title": "Positivity of Solutions",
+      "start": 15673,
+      "end": 17239
+    },
+    {
+      "id": "s7-invariant-region-boundedness-of-the-solu",
+      "title": "Invariant Region (Boundedness of the solution)",
+      "start": 17239,
+      "end": 18896
+    },
+    {
+      "id": "s8-analysis-of-disease-free-equilibrium-e-0",
+      "title": "Analysis of Disease-Free Equilibrium $(\\mathscr{E}_0)$, and Basic Reproduction Number $(\\mathscr{R}_0)$",
+      "start": 18896,
+      "end": 19832
+    },
+    {
+      "id": "s9-basic-reproductive-number",
+      "title": "Basic Reproductive Number",
+      "start": 19832,
+      "end": 22645
+    },
+    {
+      "id": "s10-stability-analysis",
+      "title": "Stability Analysis",
+      "start": 22645,
+      "end": 22994
+    },
+    {
+      "id": "s11-local-stability-of-the-disease-free-equi",
+      "title": "Local Stability of the Disease-Free Equilibrium Point",
+      "start": 22994,
+      "end": 25930
+    },
+    {
+      "id": "s12-global-stability-of-the-disease-free-equ",
+      "title": "Global Stability of the Disease-Free Equilibrium Point",
+      "start": 25930,
+      "end": 28662
+    },
+    {
+      "id": "s13-endemic-equilibrium-point-e-and-sensitiv",
+      "title": "Endemic Equilibrium Point $(\\mathscr{E}^*)$, and Sensitivity Analysis",
+      "start": 28662,
+      "end": 30320
+    },
+    {
+      "id": "s14-local-stability-of-the-endemic-equilibri",
+      "title": "Local Stability of the Endemic Equilibrium Point",
+      "start": 30320,
+      "end": 32757
+    },
+    {
+      "id": "s15-global-stability-of-endemic-equilibrium",
+      "title": "Global Stability of Endemic Equilibrium Point",
+      "start": 32757,
+      "end": 35716
+    },
+    {
+      "id": "s16-sensitivity-analysis",
+      "title": "Sensitivity Analysis",
+      "start": 35716,
+      "end": 38409
+    },
+    {
+      "id": "s17-parameter-estimation",
+      "title": "Parameter Estimation",
+      "start": 38409,
+      "end": 41035
+    },
+    {
+      "id": "s18-nonlinear-least-squares",
+      "title": "Nonlinear least squares",
+      "start": 41035,
+      "end": 42003
+    },
+    {
+      "id": "s19-maximum-likelihood-estimation",
+      "title": "Maximum likelihood estimation",
+      "start": 42003,
+      "end": 43687
+    },
+    {
+      "id": "s20-synthetic-example-case",
+      "title": "Synthetic Example Case",
+      "start": 43687,
+      "end": 48206
+    },
+    {
+      "id": "s21-results-and-discussions",
+      "title": "Results and Discussions",
+      "start": 48206,
+      "end": 51234
+    },
+    {
+      "id": "s22-effect-of-contact-rate-on-the-tb-exposed",
+      "title": "Effect of contact rate $(\\beta)$ on the TB-exposed population",
+      "start": 51234,
+      "end": 52190
+    },
+    {
+      "id": "s23-effect-of-contact-rate-on-the-tb-infecte",
+      "title": "Effect of contact rate $(\\beta)$ on the TB-infected population",
+      "start": 52190,
+      "end": 53126
+    },
+    {
+      "id": "s24-effect-of-infection-rate-on-the-tb-expos",
+      "title": "Effect of infection rate $(\\gamma)$ on the TB-exposed population",
+      "start": 53126,
+      "end": 54122
+    },
+    {
+      "id": "s25-effect-of-the-infection-rate-on-the-tb-i",
+      "title": "Effect of the infection rate $(\\gamma)$ on the TB-infected population",
+      "start": 54122,
+      "end": 55137
+    },
+    {
+      "id": "s26-effect-of-the-treatment-rate-on-the-tb-i",
+      "title": "Effect of the treatment rate $\\delta$ on the TB-infected population",
+      "start": 55137,
+      "end": 55984
+    },
+    {
+      "id": "s27-conclusions",
+      "title": "Conclusions",
+      "start": 55984,
+      "end": 58869
+    },
+    {
+      "id": "s28-acknowledgments",
+      "title": "ACKNOWLEDGMENTS",
+      "start": 58869,
+      "end": 59058
+    },
+    {
+      "id": "s29-author-declarations",
+      "title": "AUTHOR DECLARATIONS",
+      "start": 59058,
+      "end": 59079
+    },
+    {
+      "id": "s30-conflict-of-interest",
+      "title": "Conflict of interest",
+      "start": 59079,
+      "end": 59169
+    },
+    {
+      "id": "s31-author-contributions",
+      "title": "Author Contributions",
+      "start": 59169,
+      "end": 59541
+    },
+    {
+      "id": "s32-data-availability",
+      "title": "DATA AVAILABILITY",
+      "start": 59541,
+      "end": 59624
+    }
+  ],
+  "equations": [
+    {
+      "id": "eq1",
+      "labels": [
+        "eq:4.1"
+      ],
+      "number": "1",
+      "latex": "\\begin{split}\n\\frac{dS}{dt} &= \\Lambda + \\eta R + \\theta V - (\\beta I + \\pi + \\mu)S \\\\\n\\frac{dV}{dt} &= \\pi S - (\\theta + \\mu)V \\\\\n\\frac{dE}{dt} &= \\beta SI - (\\gamma + \\mu)E \\\\\n\\frac{dI}{dt} &= \\gamma E - (\\delta + \\tau + \\mu)I \\\\\n\\frac{dT}{dt} &= \\delta I - (\\alpha + \\omega + \\mu)T \\\\\n\\frac{dR}{dt} &= \\alpha T - (\\eta + \\mu)R\n\\end{split}",
+      "sectionId": "s4-model-formulation",
+      "start": 14172,
+      "end": 14513
+    },
+    {
+      "id": "eq2",
+      "labels": [],
+      "number": null,
+      "latex": "\\displaystyle\\frac{dS}{dt} = \\Lambda + \\eta R + \\theta V-(\\beta I + \\pi + \\mu)S  \\geq - (\\beta I + \\pi + \\mu)S.",
+      "sectionId": "s6-positivity-of-solutions",
+      "start": 16398,
+      "end": 16509
+    },
+    {
+      "id": "eq3",
+      "labels": [
+        "eq.thm1"
+      ],
+      "number": "2",
+      "latex": "\\displaystyle\\frac{dS}{S}\\geq - (\\beta I + \\pi + \\mu)dt.",
+      "sectionId": "s6-positivity-of-solutions",
+      "start": 16565,
+      "end": 16621
+    },
+    {
+      "id": "eq4",
+      "labels": [],
+      "number": null,
+      "latex": "S(t)\\geq S(0) \\cdot e^{\\displaystyle-\\left(\\beta I + \\pi + \\mu\\right)t} > 0.",
+      "sectionId": "s6-positivity-of-solutions",
+      "start": 16691,
+      "end": 16767
+    },
+    {
+      "id": "eq5",
+      "labels": [],
+      "number": null,
+      "latex": "V(t) &\\geq V(0) \\cdot e^{\\displaystyle -\\left(\\theta + \\mu\\right)t} \\geq 0,~ E(t) \\geq E(0) \\cdot e^{\\displaystyle -\\left(\\gamma +  \\mu\\right)t} \\geq 0,\\\\\nI(t) &\\geq I(0) \\cdot e^{\\displaystyle -\\left(\\delta + \\tau + \\mu\\right)t} \\geq 0,~T(t) \\geq T(0) \\cdot e^{\\displaystyle -\\left(\\alpha + \\omega + \\mu\\right)t}\\geq 0,~ \\text{and}\\\\\nR(t) &\\geq R(0) \\cdot e^{\\displaystyle -\\left(\\eta +  \\mu\\right)t}\\geq 0",
+      "sectionId": "s6-positivity-of-solutions",
+      "start": 16830,
+      "end": 17237
+    },
+    {
+      "id": "eq6",
+      "labels": [],
+      "number": null,
+      "latex": "N(t) = S(t) + V(t) + E(t) + I(t) + T(t) + R(t).",
+      "sectionId": "s7-invariant-region-boundedness-of-the-solu",
+      "start": 17635,
+      "end": 17682
+    },
+    {
+      "id": "eq7",
+      "labels": [
+        "eq.thm2"
+      ],
+      "number": "3",
+      "latex": "\\displaystyle\\frac{dN}{dt} = \\displaystyle\\frac{dS}{dt} + \\displaystyle\\frac{dV}{dt} + \\displaystyle\\frac{dE}{dt} + \\displaystyle\\frac{dI}{dt} + \\displaystyle\\frac{dT}{dt} +\n\\displaystyle\\frac{dR}{dt}.",
+      "sectionId": "s7-invariant-region-boundedness-of-the-solu",
+      "start": 17783,
+      "end": 17984
+    },
+    {
+      "id": "eq8",
+      "labels": [
+        "eq.thm3"
+      ],
+      "number": "4",
+      "latex": "\\displaystyle \\frac{dN}{dt} = \\Lambda - \\mu N - \\tau I - \\omega T.",
+      "sectionId": "s7-invariant-region-boundedness-of-the-solu",
+      "start": 18057,
+      "end": 18123
+    },
+    {
+      "id": "eq9",
+      "labels": [
+        "eq.thm4"
+      ],
+      "number": "5",
+      "latex": "\\displaystyle\\frac{dN}{\\Lambda - \\mu N} \\leq dt.",
+      "sectionId": "s7-invariant-region-boundedness-of-the-solu",
+      "start": 18289,
+      "end": 18337
+    },
+    {
+      "id": "eq10",
+      "labels": [
+        "eq.thm5"
+      ],
+      "number": "6",
+      "latex": "\\Lambda - \\mu N \\geq N(0)e^{-\\mu t}.",
+      "sectionId": "s7-invariant-region-boundedness-of-the-solu",
+      "start": 18406,
+      "end": 18442
+    },
+    {
+      "id": "eq11",
+      "labels": [],
+      "number": null,
+      "latex": "\\Lambda - \\mu N \\geq  0 \\Longrightarrow N \\leq \\displaystyle\\frac{\\varLambda}{\\mu},",
+      "sectionId": "s7-invariant-region-boundedness-of-the-solu",
+      "start": 18549,
+      "end": 18632
+    },
+    {
+      "id": "eq12",
+      "labels": [],
+      "number": null,
+      "latex": "\\Omega = \\bigg\\{(S,V,E,I,T,R) \\in \\mathbb{R}^6_+:0 \\leq N \\leq \\displaystyle\\frac{\\varLambda}{\\mu}\\bigg\\}.",
+      "sectionId": "s7-invariant-region-boundedness-of-the-solu",
+      "start": 18788,
+      "end": 18894
+    },
+    {
+      "id": "eq13",
+      "labels": [
+        "eq:5.1"
+      ],
+      "number": "7",
+      "latex": "\\left\\{\n\\begin{aligned}\n\\frac{dS}{dt} &= \\Lambda + \\eta R + \\theta V - (\\beta I + \\pi + \\mu)S \\\\\n\\frac{dV}{dt} &= \\pi S - (\\theta + \\mu)V .\n\\end{aligned}\n\\right.",
+      "sectionId": "s8-analysis-of-disease-free-equilibrium-e-0",
+      "start": 19441,
+      "end": 19602
+    },
+    {
+      "id": "eq14",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathscr{E}_0 = \\left( \\displaystyle\\frac{\\varLambda(\\theta + \\mu)}{\\mu(\\theta + \\pi + \\mu)}, \\frac{\\varLambda\\pi}{\\mu(\\theta + \\pi + \\mu)}, 0, 0, 0, 0 \\right)",
+      "sectionId": "s8-analysis-of-disease-free-equilibrium-e-0",
+      "start": 19671,
+      "end": 19830
+    },
+    {
+      "id": "eq15",
+      "labels": [
+        "eq:3"
+      ],
+      "number": "8",
+      "latex": "\\left\\{\n\\begin{aligned}\n\\frac{dE}{dt} &= \\beta SI - (\\gamma + \\mu)E \\\\\n\\frac{dI}{dt} &= \\gamma E  -(\\delta +\\tau + \\mu)I \\\\\n\\frac{dT}{dt} &= \\delta I  -(\\alpha +\\omega + \\mu)T \\\\\n\\end{aligned}\n\\right.",
+      "sectionId": "s9-basic-reproductive-number",
+      "start": 20314,
+      "end": 20514
+    },
+    {
+      "id": "eq16",
+      "labels": [
+        "eq.effective"
+      ],
+      "number": "9",
+      "latex": "\\mathscr{R}_v = \\frac{\\varLambda \\beta \\gamma (\\theta + \\mu)}{\\mu (\\delta + \\tau + \\mu)(\\theta + \\pi + \\mu)(\\gamma + \\mu)}",
+      "sectionId": "s9-basic-reproductive-number",
+      "start": 21410,
+      "end": 21532
+    },
+    {
+      "id": "eq17",
+      "labels": [
+        "eq.basic"
+      ],
+      "number": "10",
+      "latex": "\\mathscr{R}_0 = \\frac{\\varLambda \\beta \\gamma}{\\mu (\\delta + \\tau + \\mu)(\\gamma + \\mu)}",
+      "sectionId": "s9-basic-reproductive-number",
+      "start": 22276,
+      "end": 22363
+    },
+    {
+      "id": "eq18",
+      "labels": [],
+      "number": null,
+      "latex": "J(\\mathscr{E}_0)=\\begin{bmatrix} -(\\pi + \\mu) & \\theta &  0 & \\frac{-\\varLambda \\beta(\\theta + \\mu)}{\\mu(\\theta + \\pi + \\mu)} & 0 &  \\eta\\\\ \n\\pi &  -(\\theta + \\mu) &  0 &\\quad  0 &  0 & 0\\\\ \n0  &  0 &  -(\\gamma + \\mu) &   \\frac{\\varLambda \\beta(\\theta + \\mu)}{\\mu(\\theta + \\pi + \\mu)} &  0 & 0\\\\  \n0 &  0 &  \\gamma &  -(\\delta + \\tau + \\mu) & 0 &  0\\\\ \n0 &  0 &  0 &  \\delta &  -(\\alpha + \\omega + \\mu) & 0\\\\\n0 &  0 &  0 & 0 &  \\alpha & -(\\eta + \\mu)\\\\ \n\\end{bmatrix}.",
+      "sectionId": "s11-local-stability-of-the-disease-free-equi",
+      "start": 23749,
+      "end": 24217
+    },
+    {
+      "id": "eq19",
+      "labels": [
+        "eq.jacobian"
+      ],
+      "number": "11–17",
+      "latex": "\\begin{bmatrix} \n-(\\pi\\! +\\! \\mu\\! +\\! \\lambda) & \\theta &  0 & \\frac{-\\varLambda \\beta(\\theta\\! +\\! \\mu\\! +\\! \\lambda)}{\\mu(\\theta\\! +\\! \\pi\\! +\\! \\mu)} & 0 &  \\eta\\\\\n\\pi &  -(\\theta\\! +\\! \\mu\\! +\\! \\lambda) &  0 &\\quad  0 &  0 & 0\\\\ \n0  &  0 &  -(\\gamma\\! +\\! \\mu\\! +\\! \\lambda) &   \\frac{\\varLambda \\beta(\\theta\\! +\\! \\mu)}{\\mu(\\theta\\! +\\! \\pi\\! +\\! \\mu)} &  0 & 0\\\\  \n0 &  0 &  \\gamma &  -(\\delta\\! +\\! \\tau\\! +\\! \\mu \\!+\\! \\lambda) & 0 &  0\\\\ \n0 &  0 &  0 &  \\delta &  -(\\alpha\\! +\\! \\omega\\! +\\! \\mu\\! +\\! \\lambda) & 0\\\\\n0 &  0 &  0 & 0 &  \\alpha & -(\\eta\\! +\\! \\mu\\! +\\! \\lambda)\\\\ \n\\end{bmatrix}\\!=\\!0",
+      "sectionId": "s11-local-stability-of-the-disease-free-equi",
+      "start": 24379,
+      "end": 24989
+    },
+    {
+      "id": "eq20",
+      "labels": [],
+      "number": null,
+      "latex": "\\big[(\\pi +\\mu + \\lambda)(\\theta + \\mu +\\lambda) - \\theta\\pi\\big]\\big[(\\eta+ \\mu+ \\lambda)(\\alpha + \\omega + \\mu +\\lambda)\\big] \\bigg[(\\gamma +\\mu + \\lambda)(\\delta + \\tau + \\mu + \\lambda)-\\displaystyle\\frac{\\varLambda \\beta\\gamma(\\theta + \\mu)}{\\mu(\\theta + \\pi + \\mu)}\\bigg] = 0.",
+      "sectionId": "s11-local-stability-of-the-disease-free-equi",
+      "start": 25072,
+      "end": 25353
+    },
+    {
+      "id": "eq21",
+      "labels": [],
+      "number": null,
+      "latex": "(\\gamma +\\mu)(\\delta + \\tau + \\mu)-\\displaystyle\\frac{\\varLambda \\beta\\gamma(\\theta + \\mu)}{\\mu(\\theta + \\pi + \\mu)} < 0 \\Longrightarrow  \\frac{\\varLambda \\beta\\gamma(\\theta + \\mu)}{\\mu(\\theta + \\pi + \\mu)(\\gamma +\\mu)(\\delta + \\tau + \\mu)} < 1.",
+      "sectionId": "s11-local-stability-of-the-disease-free-equi",
+      "start": 25521,
+      "end": 25766
+    },
+    {
+      "id": "eq22",
+      "labels": [
+        "eq.global1"
+      ],
+      "number": "18",
+      "latex": "\\begin{cases}\n\\frac{dX}{dt} = F(X,Z) \\\\\n\\frac{dZ}{dt} = G(X,Z); \\quad G(X,0) = 0\n\\end{cases}",
+      "sectionId": "s12-global-stability-of-the-disease-free-equ",
+      "start": 26468,
+      "end": 26560
+    },
+    {
+      "id": "eq23",
+      "labels": [],
+      "number": null,
+      "latex": "X =(S, V, R)^T \\in \\mathbb{R}^3_+, Z = (E, I,  T)^T\\in \\mathbb{R}^3_+, \\mathscr{E}_0 = (x^*, 0) = (S_0, V_0, 0).",
+      "sectionId": "s12-global-stability-of-the-disease-free-equ",
+      "start": 27664,
+      "end": 27776
+    },
+    {
+      "id": "eq24",
+      "labels": [],
+      "number": null,
+      "latex": "S^* &= \\frac{\\varLambda(\\theta + \\mu)}{ \\mu(\\theta + \\tau + \\mu)\\mathscr R_0},~ V^* = \\frac{\\varLambda\\pi}{\\mu(\\theta + \\pi + \\mu)\\mathscr R_0} \\\\\nE^* &= \\frac{\\mu(\\eta + \\mu)(\\alpha +\\omega +\\mu)(\\gamma + \\mu)(\\theta + \\pi +\\mu)(\\delta + \\tau + \\mu)^2(\\mathscr{R}_0 -1)}{\\beta\\gamma(\\theta + \\mu)[(\\delta + \\tau + \\mu)(\\alpha + \\omega + \\mu)(\\gamma + \\mu)(\\eta + \\mu) - \\eta\\delta\\gamma\\alpha]},\\\\ \nI^* &= \\frac{\\mu(\\eta + \\mu)(\\alpha +\\omega +\\mu)(\\delta + \\tau + \\mu)(\\gamma + \\mu)(\\theta + \\pi +\\mu)(\\mathscr{R}_0 -1)}{\\beta(\\theta + \\mu)[(\\delta + \\tau + \\mu)(\\alpha + \\omega + \\mu)(\\gamma + \\mu)(\\eta + \\mu) - \\eta\\delta\\gamma\\alpha]}, \\\\\nT^* &= \\frac{\\delta\\mu(\\eta + \\mu)(\\delta + \\tau + \\mu)(\\gamma + \\mu)(\\theta + \\pi +\\mu)(\\mathscr{R}_0 -1)}{\\beta(\\theta + \\mu)[(\\delta + \\tau + \\mu)(\\alpha + \\omega + \\mu)(\\gamma + \\mu)(\\eta + \\mu) - \\eta\\delta\\gamma\\alpha]},~ \\text{and}\\\\ \nR^* &= \\frac{\\alpha\\delta\\mu(\\delta + \\tau + \\mu)(\\gamma + \\mu)(\\theta + \\pi +\\mu)(\\mathscr{R}_0 -1)}{\\beta(\\theta + \\mu)[(\\delta + \\tau + \\mu)(\\alpha + \\omega + \\mu)(\\gamma + \\mu)(\\eta + \\mu) - \\eta\\delta\\gamma\\alpha]}.",
+      "sectionId": "s13-endemic-equilibrium-point-e-and-sensitiv",
+      "start": 29211,
+      "end": 30318
+    },
+    {
+      "id": "eq25",
+      "labels": [],
+      "number": null,
+      "latex": "J(\\mathscr{E^*})=\\begin{bmatrix}\n-( \\beta I^* +\\pi + \\mu) & \\theta & 0 & -\\beta S^*& 0& \\eta\\\\ \n\\pi & -(\\theta + \\mu) & 0 & 0 & 0&0\\\\ \n\\beta I^* & 0 & -(\\gamma + \\mu) &  \\beta S^* & 0&0\\\\  \n0 & 0 & \\gamma & -(\\delta + \\tau + \\mu) & 0&0\\\\ \n0 & 0 & 0 & \\delta & -(\\alpha + \\omega + \\mu)&0\\\\\n0 & 0 & 0 & 0 &\\alpha&-(\\eta + \\mu)\n\\end{bmatrix}.",
+      "sectionId": "s14-local-stability-of-the-endemic-equilibri",
+      "start": 30670,
+      "end": 31009
+    },
+    {
+      "id": "eq26",
+      "labels": [
+        "eq.locstable1"
+      ],
+      "number": "19",
+      "latex": "|J (\\mathscr{E^*}) - \\lambda I_6|  = 0",
+      "sectionId": "s14-local-stability-of-the-endemic-equilibri",
+      "start": 31043,
+      "end": 31081
+    },
+    {
+      "id": "eq27",
+      "labels": [],
+      "number": null,
+      "latex": "a_6 \\lambda^6 + a_5\\lambda^5 + a_4\\lambda^4 + a_3\\lambda^3 + a_2\\lambda^2 + a_1\\lambda^1 + a_0\\lambda^0 = 0",
+      "sectionId": "s14-local-stability-of-the-endemic-equilibri",
+      "start": 31345,
+      "end": 31452
+    },
+    {
+      "id": "eq28",
+      "labels": [],
+      "number": null,
+      "latex": "a_0 &= acdfgh + egh\\pi\\theta\\gamma - acegh\\gamma - bcegh\\gamma - dfgh\\pi\\theta - bc\\alpha\\eta\\gamma\\delta,\\\\\na_1 &= acfgh + acdfg + acdfh + adfgh +cdfgh + acdgh + eg\\pi\\theta\\gamma + eh\\pi\\theta\\gamma - aceg\\gamma - aceh\\gamma- aegh\\gamma - cegh\\gamma -\\\\ \n& dfg\\pi\\theta - dfh\\pi\\theta - dgh\\pi\\theta - bceg\\gamma - bceh\\gamma - begh\\gamma - fh\\pi\\theta - b\\alpha\\gamma\\eta\\delta, \\\\\na_2 &=acfg + acfh + afgh + cfgh + acgh + acdf + adfg + adfh + cdfg + cdfh + acdg + acdh + adgh + cdgh + \\\\ \n& e\\pi\\theta\\gamma - ace\\gamma - aeg\\gamma - aeh\\gamma - ceg\\gamma - ceh\\gamma- egh\\gamma- bce\\gamma -beg\\gamma - beh\\gamma - df\\pi\\theta - dg\\pi\\theta - dh\\pi\\theta - \\\\ \n& fg\\pi\\theta - fh\\pi\\theta - gh\\pi\\theta, \\\\\na_3 &= acf + afg + afh + cfg  + cfh + fgh + acg + ach + agh + cgh + adf + dfh + acd + adg + adh + cdg + cdh + \\\\ \n& dgh - ae\\gamma - ce\\gamma -be\\gamma - eg\\gamma- eh\\gamma - eg\\gamma - d\\pi \\theta - f\\pi\\theta - g\\pi\\theta - h\\pi\\theta, \\\\\na_4 &= af+ cf + fg + fh + ac + ag + ah +cg +ch +gh + df + ad + cd + dg +dh - e\\gamma - \\pi\\theta,\\\\\na_5 &= (a + c + d + f + g +h),~ \\text{and}~ a_6 = 1.",
+      "sectionId": "s14-local-stability-of-the-endemic-equilibri",
+      "start": 31459,
+      "end": 32563
+    },
+    {
+      "id": "eq29",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathcal{V}(S^*, V^*, E^*, I^*, T^*, R^*) &= \\bigg(S - S^* - S^*\\displaystyle\\ln \\frac{S^*}{S}\\bigg) + \\bigg(V - V^* - V^*\\displaystyle\\ln \\frac{V^*}{V}\\bigg) + \\bigg(E - E^* - E^*\\displaystyle\\ln \\frac{E^*}{E}\\bigg) +\\\\  \n& \\bigg(I - I^* - I^*\\displaystyle\\ln \\frac{I^*}{I}\\bigg) + \\bigg(T - T^* - T^*\\displaystyle\\ln \\frac{T^*}{T}\\bigg) + \\bigg(R - R^* - R^*\\displaystyle\\ln \\frac{R^*}{R}\\bigg).",
+      "sectionId": "s15-global-stability-of-endemic-equilibrium",
+      "start": 33155,
+      "end": 33552
+    },
+    {
+      "id": "eq30",
+      "labels": [],
+      "number": null,
+      "latex": "\\displaystyle\\frac{d\\mathcal{V}}{dt} &= \\bigg(\\displaystyle\\frac{S-S^*}{S}\\bigg)\\displaystyle\\frac{dS}{dt} +  \\bigg(\\displaystyle\\frac{V - V^*}{V}\\bigg)\\displaystyle\\frac{dV}{dt} +  \\bigg(\\displaystyle\\frac{E - E^*}{E}\\bigg)\\frac{dE}{dt} + \\\\\n& \\bigg(\\displaystyle\\frac{I - I^*}{I}\\bigg)\\displaystyle\\frac{dI}{dt} +  \\bigg(\\displaystyle\\frac{T - T^*}{T}\\bigg)\\displaystyle\\frac{dT}{dt} + \\bigg(\\displaystyle\\frac{R - R^*}{R}\\bigg)\\displaystyle\\frac{dR}{dt}",
+      "sectionId": "s15-global-stability-of-endemic-equilibrium",
+      "start": 33660,
+      "end": 34116
+    },
+    {
+      "id": "eq31",
+      "labels": [],
+      "number": null,
+      "latex": "\\displaystyle\\frac{d\\mathcal{V}}{dt} &= \\bigg(\\displaystyle\\frac{S-S^*)}{S}\\bigg)(\\Lambda + \\eta R + \\theta V- (\\beta I + \\pi + \\mu)S) + \\bigg(\\displaystyle\\frac{V- V^*}{V}\\bigg)(\\pi S - (\\theta + \\mu)V) +\\\\\n& \\bigg(\\displaystyle\\frac{E-E^*}{E}\\bigg)(\\beta SI - (\\gamma + \\mu)E) +\\bigg(\\displaystyle\\frac{I-I^*}{I}\\bigg)(\\gamma E -(\\delta +\\tau + \\mu)I) +\\\\\n& \\bigg(\\displaystyle\\frac{T-T^*}{T}\\bigg)(\\delta I -(\\alpha + \\omega +\\mu)T) +\\bigg(\\displaystyle\\frac{R-R^*}{R}\\bigg)(\\alpha T - (\\eta + \\mu)R).",
+      "sectionId": "s15-global-stability-of-endemic-equilibrium",
+      "start": 34175,
+      "end": 34679
+    },
+    {
+      "id": "eq32",
+      "labels": [],
+      "number": null,
+      "latex": "\\displaystyle\\frac{d\\mathcal{V}}{dt} &= \\Lambda + \\beta IS^* + \\pi S^* + \\mu S^* + \\theta V^* + \\mu V^* + \\gamma E^* + \\mu E^* +\\delta I^* +\\tau I^* + \\mu I^* + \\alpha T^* + \\\\\n& \\omega T^* + \\mu T^* + \\eta R^* + \\mu R^* - \\mu S - \\Lambda\\displaystyle\\frac{S^*}{S} - \\eta R\\frac{S^*}{S} - \\theta V\\frac{S^*}{S} - \\mu V -\\pi S\\frac{V^*}{V}  - \\mu E - \\\\\n& \\beta SI \\displaystyle\\frac{E^*}{E}- \\tau I - \\mu I - \\gamma E \\displaystyle\\frac{I^*}{I} -\\omega T -\\mu T - \\delta I \\frac{T^*}{T}- \\mu R - \\delta I\\frac{R^*}{R}.",
+      "sectionId": "s15-global-stability-of-endemic-equilibrium",
+      "start": 34728,
+      "end": 35246
+    },
+    {
+      "id": "eq33",
+      "labels": [],
+      "number": null,
+      "latex": "\\displaystyle\\frac{dV}{dt} = X - Y.",
+      "sectionId": "s15-global-stability-of-endemic-equilibrium",
+      "start": 35350,
+      "end": 35385
+    },
+    {
+      "id": "eq34",
+      "labels": [
+        "eq.SA_1"
+      ],
+      "number": "20",
+      "latex": "\\displaystyle\\varUpsilon^{\\mathscr{R}_v}_{mi} = \\displaystyle\\frac{\\partial \\mathscr{R}_v }{\\partial mi} \\times \\displaystyle\\frac{mi}{\\mathscr{R}_0}",
+      "sectionId": "s16-sensitivity-analysis",
+      "start": 35893,
+      "end": 36042
+    },
+    {
+      "id": "eq35",
+      "labels": [
+        "basic_repro"
+      ],
+      "number": "21",
+      "latex": "\\mathscr{R}_v = \\displaystyle\\frac{\\varLambda \\beta \\gamma(\\theta + \\mu)}{\\mu(\\theta + \\pi + \\mu)(\\delta + \\tau + \\mu)(\\gamma + \\mu)}.",
+      "sectionId": "s16-sensitivity-analysis",
+      "start": 36193,
+      "end": 36327
+    },
+    {
+      "id": "eq36",
+      "labels": [],
+      "number": null,
+      "latex": "\\displaystyle \\varUpsilon^{\\mathscr{R}_v}_{\\varLambda} &= 1 > 0,~\\displaystyle \\varUpsilon^{\\mathscr{R}_v}_{\\beta}  = 1 > 0,~ \\displaystyle\\varUpsilon^{\\mathscr{R}_v}_{\\gamma} = \\displaystyle\\frac{\\mu}{(\\gamma + \\mu)}  > 0,~\n\\displaystyle\\varUpsilon^{\\mathscr{R}_v}_{\\theta} = \\displaystyle\\frac{\\pi}{(\\theta + \\pi + \\mu)(\\theta + \\mu)}  > 0,\\\\\n\\displaystyle \\varUpsilon^{\\mathscr{R}_v}_{\\mu} &= -[\\displaystyle\\frac{\\theta}{(\\theta + \\mu)} + \\frac{\\mu}{(\\theta + \\pi + \\mu)} + \\frac{\\mu}{(\\delta + \\tau + \\mu)} + \\frac{\\mu}{(\\gamma + \\mu)}] < 0,\\\\\n\\displaystyle\\varUpsilon^{\\mathscr{R}_v}_{\\pi} &=  \\displaystyle\\frac{-\\pi}{(\\theta + \\pi + \\mu)} < 0,~\n\\displaystyle\\varUpsilon^{\\mathscr{R}_v}_{\\delta} = \\displaystyle\\frac{-\\delta}{(\\delta + \\tau + \\mu)} < 0,~\\text{and}~\n\\displaystyle\\varUpsilon^{\\mathscr{R}_0}_{\\tau} = \\displaystyle\\frac{-\\tau}{(\\delta + \\tau + \\mu)} < 0.",
+      "sectionId": "s16-sensitivity-analysis",
+      "start": 36380,
+      "end": 37256
+    },
+    {
+      "id": "eq37",
+      "labels": [
+        "par.eq"
+      ],
+      "number": "22",
+      "latex": "\\Dot{\\mathbf{x}}(t) = f(\\mathbf{x}(t),\\theta), ~~ \\mathbf{x}(t_0) = \\mathbf{x}_0",
+      "sectionId": "s17-parameter-estimation",
+      "start": 39534,
+      "end": 39614
+    },
+    {
+      "id": "eq38",
+      "labels": [
+        "par.eq1"
+      ],
+      "number": "23",
+      "latex": "\\Omega = \\big\\{ (\\mathbf{x}(t),\\boldsymbol{\\theta})\\in\\mathbb{R}^6\\times\\mathbb{R}^9|\\mathbf{x}_n(t),~\\boldsymbol{\\theta}_m>0~ \\text{for}~ n = 1,\\cdots,6~ \\text{and}~ m=1,\\cdots, 12\\big\\}.",
+      "sectionId": "s17-parameter-estimation",
+      "start": 40106,
+      "end": 40294
+    },
+    {
+      "id": "eq39",
+      "labels": [
+        "par.eq2"
+      ],
+      "number": "24",
+      "latex": "J(\\boldsymbol{\\theta}) = \\sum_{t=1}^{T} ||\\mathbf{y}(t) - f(\\mathbf{x}(t),\\boldsymbol{\\theta})||^2,",
+      "sectionId": "s18-nonlinear-least-squares",
+      "start": 41371,
+      "end": 41470
+    },
+    {
+      "id": "eq40",
+      "labels": [
+        "par.eq3"
+      ],
+      "number": "25",
+      "latex": "L(\\boldsymbol{\\theta}) = p(\\mathbf{y}|\\boldsymbol{\\theta})",
+      "sectionId": "s19-maximum-likelihood-estimation",
+      "start": 42447,
+      "end": 42505
+    },
+    {
+      "id": "eq41",
+      "labels": [
+        "par.eq4"
+      ],
+      "number": "26",
+      "latex": "p(\\mathbf{y}|\\boldsymbol{\\theta}) \\propto \\exp\\left(-\\frac{1}{2\\sigma_y^2}J(\\boldsymbol{\\theta})\\right)",
+      "sectionId": "s19-maximum-likelihood-estimation",
+      "start": 42981,
+      "end": 43084
+    },
+    {
+      "id": "eq42",
+      "labels": [
+        "par.eq5"
+      ],
+      "number": "27",
+      "latex": "\\hat{\\boldsymbol{\\theta}} = \\arg\\max_{\\boldsymbol{\\theta}}\\left( p(\\mathbf{y}|\\boldsymbol{\\theta})\\right) = \\arg\\min_{\\boldsymbol{\\theta}}\\left( -\\ln{p(\\mathbf{y}|\\boldsymbol{\\theta})}\\right)",
+      "sectionId": "s19-maximum-likelihood-estimation",
+      "start": 43494,
+      "end": 43685
+    }
+  ],
+  "macros": [
+    {
+      "name": "\\bibname",
+      "definition": "References"
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "sourceregister/1",
+  "sources": [
+    {
+      "sourceId": "arxiv-2203.01434v2",
+      "title": "A mathematical study of the role of tBregs in breast cancer",
+      "authors": [
+        "Vasiliki Bitsouni",
+        "Nikolaos Gialelis",
+        "Vasilis Tsilidis"
+      ],
+      "year": 2022,
+      "venue": "arXiv:2203.01434v2 [q-bio.CB math.DS]",
+      "identifiers": {
+        "arxiv": "2203.01434v2",
+        "doi": "10.1007/s11538-022-01054-y"
+      },
+      "route": "arxiv-source",
+      "licence": "cc-by",
+      "licenceUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "licenceEvidence": "arXiv's OAI-PMH record for 2203.01434, its license field",
+      "sha256": "6179a931ee7c3a043a557455c8ac22d12be481533a03aa80c60c34cd61ba0522",
+      "accessedAt": "2026-10-14T20:25:51.837Z",
+      "textKept": true,
+      "attribution": "Vasiliki Bitsouni et al., \"A mathematical study of the role of tBregs in breast cancer\", 2022, arXiv:2203.01434v2 [q-bio.CB math.DS]. Licence: http://creativecommons.org/licenses/by/4.0/."
+    },
+    {
+      "sourceId": "arxiv-2506.19869v1",
+      "title": "Modeling Transmission Dynamics of Tuberculosis: Parameter Estimation and Sensitivity Analysis Using Real-World Data",
+      "authors": [
+        "Moksina Seyid",
+        "Abdu Mohammed Seid",
+        "Yassin Tesfaw Abebe"
+      ],
+      "year": 2025,
+      "venue": "arXiv:2506.19869v1 [q-bio.PE]",
+      "identifiers": {
+        "arxiv": "2506.19869v1"
+      },
+      "route": "arxiv-source",
+      "licence": "cc-by",
+      "licenceUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "licenceEvidence": "arXiv's OAI-PMH record for 2506.19869, its license field",
+      "sha256": "19a941808decf9471c7e61008557cb2b32e28a86507f043950036a816b7ad9d8",
+      "accessedAt": "2026-10-14T20:25:50.946Z",
+      "textKept": true,
+      "attribution": "Moksina Seyid et al., \"Modeling Transmission Dynamics of Tuberculosis: Parameter Estimation and Sensitivity Analysis Using Real-World Data\", 2025, arXiv:2506.19869v1 [q-bio.PE]. Licence: http://creativecommons.org/licenses/by/4.0/."
+    },
+    {
+      "sourceId": "pmc-PMC12334037",
+      "title": "Modeling the effects of treatment adherence challenges on the transmission dynamics of hepatitis C virus",
+      "authors": [
+        "Tinashe Victor Mupedza",
+        "Laurette Mhlanga",
+        "Dennis Mamutse",
+        "Mlyashimbi Helikumi",
+        "Paride Oresto Lolika",
+        "Shingirai Tangakugara Murambiwa",
+        "Adquate Mhlanga"
+      ],
+      "year": 2025,
+      "venue": "PLOS One",
+      "identifiers": {
+        "pmcid": "PMC12334037",
+        "doi": "10.1371/journal.pone.0329543",
+        "pmid": "40779594"
+      },
+      "route": "pmc-eutils",
+      "licence": "cc-by",
+      "licenceUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenceEvidence": "the article's JATS permissions, through E-utilities: \"https://creativecommons.org/licenses/by/4.0/This is an open access article distributed under the terms of the Creative Commons Attribution License, which permit\"",
+      "sha256": "44c9937004f0a638b6b2096e33889e8b144051afe8ee877cde3190f309b6c52d",
+      "accessedAt": "2026-10-14T20:24:55.386Z",
+      "textKept": true,
+      "attribution": "Tinashe Victor Mupedza et al., \"Modeling the effects of treatment adherence challenges on the transmission dynamics of hepatitis C virus\", 2025, PLOS One. Licence: https://creativecommons.org/licenses/by/4.0/."
+    }
+  ]
+}

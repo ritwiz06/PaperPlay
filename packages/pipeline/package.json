@@ -6,7 +6,8 @@
   "description": "Agent roles, model adapters, independent checks and the controller state machine.",
   "exports": {
     ".": "./src/index.ts",
-    "./models": "./src/models/index.ts"
+    "./models": "./src/models/index.ts",
+    "./ingest": "./src/ingest/index.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json && tsc -p test/tsconfig.json"

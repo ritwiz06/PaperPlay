@@ -1,0 +1,1085 @@
+{
+  "schemaVersion": "sourcetext/1",
+  "sourceId": "arxiv-2203.01434v2",
+  "sha256": "77a6fab531015e7e2f4000673c59ebbbbccfc6da195b5bd645e9a4bbb2332392",
+  "text": "A mathematical study of the role of tBregs in breast cancer\n\nAbstract\n\nA model for the mathematical study of immune response to breast cancer is proposed and studied, both analytically and numerically. It is a simplification of a complex one, recently introduced by two of the present authors. It serves for a compact study of the dynamical role in cancer promotion of a relatively recently described subgroup of regulatory B cells, which are evoked by the tumour.\n\nKeywords: Cancer Immunology, tumour-evoked regulatory B cell, Mathematical Modelling, Stability Analysis, Bifurcation Analysis, numerical simulation\n\nMSC: 34A34, 37G10, 37M05, 37N25, 92B05, 92D25, 93A30.\n\nIntroduction\n\nThe immune system, divided into the major components of innate and adaptive immunity, grants an organism the ability to detect invading pathogens and transformed cells (e.g. cancer cells) - namely differentiate between \"self\" and \"non-self\" - and to eliminate them. The provided type and measure of inflammation fit the circumstances, i.e., the immune system dynamically adjust the induced inflammatory response [citation]. The latter function of the immune system is called immune regulation . The suppressing mechanisms for immune regulation act as a double-edged sword: on the one hand, they prevent from autoimmune diseases, but on the other hand, they inhibit immune response against cancer [citation]. Indeed, it is currently accepted that an aberrant innate and adaptive immune response contributes to tumorigenesis by selecting aggressive clones, inducing immunosuppression, and stimulating cancer cell proliferation and metastasis [citation].\n\nThe immune system primarily consists of certain types of white blood cells, called lymphocytes. Innate immunity includes lymphocytes such as natural killer (NK) cells, while adaptive immunity includes T and B lymphocytes. Immune regulation involves a special subset of T cells, called regulatory T cells (Tregs) [citation]. B cells also play a part in immune regulation in the form of regulatory B cells (Bregs) [citation]. Even though the research on Cancer Immunology has been mainly concentrated on Tregs and NK cells, recently there has been an upsurge in research on Bregs associated with tumours (see, e.g., [citation] and the references therein).\n\nIn this work, we focus on breast cancer and we study the role of a relatively recently described [citation] subgroup of Bregs, the tumour-evoked Bregs ( tBregs ), in the immune response to the aforementioned type of cancer. Breast cancer is more than a hundred times more likely to affect a woman than a man [citation] and it is the most common cause of cancer-related death in women world-wide [citation]. It is estimated that one in eight women living in the United States will develop breast cancer in her lifetime [citation]. tBregs protect metastasizing breast cancer cells from immune effector cells by inducing immune suppression mediated by Tregs [citation]. In a few words, breast cancer seems to generate tBregs, which in turn increase the proliferation of Tregs, which are responsible for the death of the tumour-lysing NK cells, leading eventually to lung metastasis [citation].\n\nOur study is based on a dynamical system of non-linear ordinary differential equations . The theory of ordinary differential equations and dynamical systems has been deployed by scientists in order to gain new insights about the complex interactions between cancer and the immune system. To this end, several models have been constructed for the study of different entities concerning cancer-immune interactions such as cancer cells, normal cells, cytolytic cells, regulatory cells, cytokines, cancer cells at different stages as well as various therapies [citation].\n\nThe proposed model is a simplification of a complex one recently introduced in [citation]. In general, the complexity of the models appeared in bibliography vary greatly. On the one hand, lower dimensional and with simpler functional responses models are advantageous in that they allow for the straightforward application of mathematical techniques, including those of stability and bifurcation analysis [citation]. However, their low dimension inhibits the simultaneous investigation of more complex mechanisms that involve multiple components of the tumour micro-environment. On the other hand, higher dimensional models with complex functional responses are more realistic [citation]. However, they are much more difficult to analyse and can mainly be studied through numerical methods. Nevertheless, both approaches have led to significant insights into the biological mechanisms governing tumour-immune system interactions [citation].\n\nThe present study is organised as follows: In Section [ModelFormulation] , we construct the mathematical model governing the interactions between breast cancer cells, NK cells, Tregs and tBregs, for which we prove some basic properties of its solution, necessary for ensuring the model's biological relevance, in Appendix [AppendixSecPropSol] . In Section [StabAn] , we conduct local stability analysis using the linearisation theorem, as well as the centre manifold theorem for the cases in which our equilibrium points are non-hyperbolic. In Section [BifAn] , we investigate the local bifurcations of our model. In Section [reducedModelNumericalSimulationsSection] , we perform numerical simulations in order to confirm our qualitative results and further analyse our model. Finally, in Section [Discussion] , we sum up and review our results.\n\nModel Formulation\n\nIn this section, we develop a relatively simple mathematical model in an attempt to study the interactions between breast cancer cells, NK cells, Tregs and tBregs.\n\nSuch a model is a simplification of a complex one, recently introduced in [citation], where seven types of interacting cells are considered, i.e. breast cancer cells, NK cells, Tregs and tBregs, CD8$^+$ T cells, non-Treg CD4$^+$ T cells, non-Treg CD4$^+$ T cells and non-tBreg B cells. A schematic representation of the interactions between these seven types of cells is given in Figure [Fig1] .\n\n[t] Fig1.eps\n\nCaption: Interactions between the cells in the model described in [citation]. Solid line (—): Stimulating effect. Dashed line (- -): Inhibiting effect. Dotted line ($\\cdot \\cdot \\cdot$): Steady systemic supply. Figure adapted from [citation], with the inclusion of the present, yet previously non-depicted, steady systemic supply.\n\nAs a first step towards a simplified model of [citation], we follow [citation] and we consider only the interactions between breast cancer cells, NK cells, Tregs and tBregs, which are now depicted in Figure [Fig2] , omitting the rest of the interactions.\n\n[t] Fig2.eps\n\nCaption: Interactions between the cells in the simplified model. Solid line (—): Stimulating effect. Dashed line (- -): Inhibiting effect.\n\nHence, denoting the populations of those cells as $T$, $N$, $R$ and $B$, respectively, and considering them as functions of time, $t$, measured in days, we deduce the following general system of coupled non-linear ordinary equations:\n& \\dv{T}{t} = f_T{\\left(T\\right)} + f_{T,N}{\\left(T,N\\right)}\\,,      \\\\ \n    & \\dv{N}{t} = f_N{\\left(N\\right)} + f_{N,R}{\\left(N,R\\right)} \\,, \\\\\n    & \\dv{R}{t} = f_R{\\left(R\\right)} + f_{R,B}{\\left(R,B\\right)} \\,,     \\\\\n    & \\dv{B}{t} = f_B{\\left(B\\right)} + f_{T,B}{\\left(T,B\\right)} \\,,\nwhere $f_T$, $f_N$, $f_R$ and $f_B$ stand for the rates of the corresponding cell populations in the absence of interactions, and on the other hand, $f_{T,N}$, $f_{N,R}$, $f_{R,B}$ and $f_{T,B}$ stand for the additional rates in the presence of interactions.\n\nWe then make the following assumptions:\n\n- We utilize the non-interaction terms of [citation], i.e. we consider logistic growth for the breast cancer cell population, while exponential decay of the rest populations.\n\n- As far as the interaction terms are concerned: [label= .]\n\n- The Treg-induced NK cell inhibition coefficient parameter is eliminated. Besides, to the best of authors' knowledge, there is no data concerning its values in the bibliography. Moreover, the Hill function, which is used to model the NK-induced breast cancer cell lysis, is replaced by the simpler linear function. Besides, such a choice is followed in various other models to capture the same dynamics (see [citation] and references therein).\n\n- We drop the interaction between breast cancer cells and NK cells, i.e. the NK death mechanism by exhaustion of tumor-killing resources. Besides, in [citation] the value of the corresponding parameter is estimated to be small. Moreover, for the shake of simplicity, we consider linear function for the modelling of interaction between NK calls and Tregs.\n\n- As for the interaction term between Tregs and tBregs, in [citation] a linear function was used, which involved an intermediate cell type - in particular, non-Treg CD4$^+$ T cells - that is omitted here. We consider the same functional response without the presence of any intermediate cell population.\n\n- The condition for the interaction between breast cancer cells and tBregs in [citation] remains unchanged here.\n\nAt the end of the day, the rate of every interaction between two cell populations is the product of the size of the two populations, i.e. we consider Holling's type I functional response for every interacting population.\n\n& \\dv{T}{t} = aT(1-bT) - cNT\\,,                         \\\\ \n    & \\dv{N}{t} = \\sigma - \\theta_NN - \\gamma RN \\,,          \\\\\n    & \\dv{R}{t} = \\kappa -\\theta_RR + m_BBR \\,,               \\\\\n    & \\dv{B}{t} = -\\theta_BB + m_TTB \\,,\n\nTo sum up, we get the following system of ordinary differential equations:\n\nfor some positive constants $a$, $b$, $c$, $\\sigma$, $\\theta_N$, $\\gamma$, $\\kappa$, $\\theta_R$, $m_B$, $\\theta_B$ and $m_T$, along with the initial condition:\n\\left(T\\left(0\\right),N\\left(0\\right),R\\left(0\\right),B\\left(0\\right)\\right)=\\left(T_0,N_0,R_0,B_0\\right)\\in \\mathbb{R}_{\\ge 0}^4.\n\nTable [reducedModelParameterTable1] lists all the parameters of our model, along with a brief description about each one, as well as their units. We subsequently give an explanation about each term of our model.\n\n[h]\n\nCaption: Description and units of the parameters of system [reducedModel].\n\nPrm. | Description | Unit\n$a$ | Tumour growth rate | day$^{-1}$\n$b$ | Inverse of the tumour carrying capacity | cell$^{-1}$\n$c$ | Rate of NK-induced tumour death | cell$^{-1} \\cdot$ day$^{-1}$\n$\\sigma$ | Constant source of NK cells | cell $\\cdot$ day$^{-1}$\n$\\theta_N$ | Rate of programmable NK cell death | day$^{-1}$\n$\\gamma$ | Rate of NK cell death due to Tregs | cell$^{-1} \\cdot$ day$^{-1}$\n$\\kappa$ | Constant source of Tregs | cell $\\cdot$ day$^{-1}$\n$\\theta_R$ | Rate of programmable Treg death | day$^{-1}$\n$m_B$ | Rate of tBreg-induced Treg activation | cell$^{-1} \\cdot$ day$^{-1}$\n$\\theta_B$ | Rate of programmable tBreg cell death | day$^{-1}$\n$m_T$ | Rate of breast-cancer-induced tBreg activation | cell$^{-1} \\cdot$ day$^{-1}$\n\nThe first term of the right-hand side of equation (1) models the logistic growth of breast cancer cells, while the second term models the death of breast cancer cells due to NK cells. We can show that (see Proposition [BofT] ) the set $\\left[0,1/b\\right]$ is positively invariant for the component $T$ of the solution of initial value problem $\\left\\{\\eqref{reducedModel},\\eqref{reducedModel_ICs}\\right\\}$ (from now on: IVP). Hence, by analogy with the terminology used for the logistic equation, we say that the (positive) constant $1/b$ is the tumour carrying capacity for IVP. It expresses a maximal reachable size due to competition between adjacent cells, e.g. for space or nutrients [citation]. In general, the metastatic potential of a tumour increases as it reaches its carrying capacity. The conventional linear correlation between primary tumour size and the likelihood of metastasis (to the lymph nodes or to distant sites) is questioned, as a characteristic non-linear relationship, with a sigmoid corresponding curve, has already been described (see, e.g., [citation] and the references therein).\n\nAs far as equation (2) is concerned, parameter $\\sigma$ models the steady source of NK cells. The second term models the natural death of NK cells, whereas the last term models the Treg-induced NK apoptosis.\n\nRegarding equation (3), much like equation (2), parameter $\\kappa$ models the steady source of Tregs. The second term models the natural death of Tregs, whereas the last term models the proliferation of Tregs due to tBregs.\n\nFinally, the first term of equation (4) models the natural death of tBregs, whereas the last term models their proliferation due to the existence of breast cancer.\n\nEquilibria and Stability Analysis\n\na\\overbar{T}(1-b\\overbar{T}) - c\\overbar{N}\\overbar{T}             & = 0    \\,,     \\\\ \n     \\sigma - \\theta_N\\overbar{N} - \\gamma \\overbar{R}\\overbar{N} & = 0 \\,,   \\\\\n     \\kappa -\\theta_R\\overbar{R} + m_B\\overbar{B}\\overbar{R}     & = 0\\,,      \\\\\n     -\\theta_B\\overbar{B} + m_T\\overbar{T}\\overbar{B}           &  = 0 \\,.\nWe continue our analysis by finding the equilibrium points of system [reducedModel], which we write as $E=\\left(\\overbar{T}, \\overbar{N}, \\overbar{R}, \\overbar{B}\\right)$. To do so, we equate the right-hand side of [reducedModel] to $\\mathbf{0}$ and solve the resulting system of algebraic equations\n\nSystem [reducedModel] has three equilibrium points\n\nE_1 & =   \\left(0, \\frac{a}{c_1}, \\frac{\\kappa }{\\theta _R}, 0\\right) \\, , \\\\\nE_2 & = \\left(\\frac{c_1-c}{bc_1}, \\frac{a}{c_1}, \\frac{\\kappa }{\\theta _R}, 0\\right) \\text{\\quad and} \\\\\nE_3 & =\n\\begin{multlined}[t]\n\\biggl(\\frac{\\theta _B}{m_T}, -\\frac{a   \\Theta_1}{c m_T}, -\\frac{ \\Theta_2}{a \\gamma   \\Theta_1},  \\frac{\\sigma m_T\\theta_R\\left(c-c_2\\right)}{m_B\\Theta_2} \\bigg) \\, ,\n\\end{multlined}\nwhere\n\\Theta_1 & \\coloneqq  b \\theta_B - m_T  \\,, \\\\\n   \\Theta_2 &  \\coloneqq  a \\theta_N \\Theta_1 + c \\sigma  m_T\\,, \\\\\n    c_1 & \\coloneqq  \\frac{a\\left(\\theta_N\\theta_R+\\gamma\\kappa\\right)}{\\theta_R \\sigma} \\,, \\\\\n    c_2 & \\coloneqq -\\frac{\\Theta_1 c_1}{m_T}\\,,\nfor which we can easily see that $c_1 > c_2=\\left(1-\\frac{b\\theta_B}{m_T}\\right)c_1$.\n\nFrom equation (6), we see that either $\\overbar{T} = 0$ or $ a(1-b\\overbar{T}) - c\\overbar{N} = 0 $. In the case where $\\overbar{T} = 0$, by replacing $\\overbar{T} = 0$ to equation (9), we get that $\\overbar{B} = 0$, which we consequently replace to equation (8) to get $\\overbar{R} = \\kappa/\\theta_R$. Replacing the derived value of $\\overbar{R}$ to equation (7), we get that $\\overbar{N} = (\\sigma \\theta _R)/(\\gamma \\kappa +\\theta _N \\theta _R)$, which yields the equilibrium point $E_1$.\n\nWe next assume that $\\overbar{T} \\neq 0$, thus $ a(1-b\\overbar{T}) - c\\overbar{N} = 0 $. From equation (9), we see that either $ \\overbar{B} = 0 $ or $ \\overbar{T} = \\theta_B / m_T $. In the case where $\\overbar{B} = 0$, we follow the same procedure as in the above paragraph to find the values of $\\overbar{N}$ and $\\overbar{R}$, which are equal to their respective counterpart from equilibrium $E_1$. Then, by replacing $\\overbar{N}$ to equation $ a(1-b\\overbar{T}) - c\\overbar{N} = 0 $, we get $\\overbar{T} = (a \\gamma \\kappa +a \\theta _N \\theta _R-c \\sigma \\theta _R)/(a b \\gamma \\kappa +a b \\theta _N \\theta _R)$ which gives us the second equilibrium point, $E_2$.\n\nFinally, we have the case where $\\overbar{T} \\neq 0$ and $\\overbar{B} \\neq 0$. From equation (9), we see that $\\overbar{T} = \\theta_B / m_T$. By replacing it to equation $ a(1-b\\overbar{T}) - c\\overbar{N} = 0 $, we find $ \\overbar{N} = \\left(a \\left(m_T-b \\theta _B\\right)\\right)/\\left(c m_T\\right) $. Subsequently, replacing $\\overbar{N}$ to (7), we get that $\\overbar{R} = (a b \\theta _B \\theta _N-a \\theta _N m_T+c \\sigma m_T)/(a \\gamma \\left(m_T-b \\theta _B\\right))$ and by replacing $\\overbar{R}$ to equation (8), we find $\\overbar{B} = (a \\left(m_T-b \\theta _B\\right) \\left(\\gamma \\kappa +\\theta _N \\theta _R\\right)-c \\sigma m_T \\theta _R)/(m_B \\left(a \\theta _N \\left(m_T-b \\theta _B\\right)-c \\sigma m_T\\right))$, which gives us the third equilibrium point, $E_3$.\n\nSince we are only interested in the cases were our variables are non-negative, we determine the conditions under which the equilibrium points' coordinates are non-negative.\n\nAdmissible (i.e. with non-negative components) equilibrium point $E_1$ exists for any set of parameters.\n\nIt is evident that the coordinates of $E_1$ are non-negative since all the parameters are positive.\n\nAdmissible equilibrium point $E_2$ exists when $c\\leq c_1$. If $ c=c_1$, then $E_1 \\equiv E_2$ and if $ c<c_1$, then $E_1 \\nequiv E_2$.\n\nIn order for $E_2$ to have non-negative coordinates, the numerator of its first coordinate needs to be non-negative, thus $ c_1-c\\geq 0$. However, if $ c_1-c = 0$, then the first coordinate of $E_2$ becomes zero, therefore $E_1 \\equiv E_2$. Hence, $E_2$ exists and does not coincide with $E_1$ when $ c<c_1$.\n\nAdmissible equilibrium point $E_3$ exists when $c\\geq c_2$ and $\\frac{\\theta_B}{m_T} < \\frac{1}{b}$. If $c=c_2$, then $E_2 \\equiv E_3$ and if $c>c_2$, then $E_2 \\nequiv E_3$.\n\nClearly, the first coordinate of $E_3$ is positive. For its second coordinate to be non-negative, $\\Theta_1\\leq 0$ must hold. However, when $\\Theta_1 = 0$, the denominator of the third coordinate of $E_3$ becomes zero. Therefore, assuming that $\\Theta_1\\neq 0$, we have that $\\Theta_1 < 0$ or equivalently $ \\frac{\\theta_B}{m_T} < \\frac{1}{b}$.\n\nSince $\\Theta_1 < 0$, then the numerator of the third coordinate of $E_3$ needs to be non-negative, thus $\\Theta_2 \\geq 0$. However, if $\\Theta_2= 0$, then the denominator of the fourth coordinate of $E_3$ becomes zero. Therefore, assuming that $\\Theta_2 \\neq 0$, we have that $\\Theta_2 > 0$ or equivalently $\\frac{a \\theta_N - c \\sigma}{a b \\theta_N} < \\frac{\\theta_B}{m_T}$.\n\nSince we assumed that $\\Theta_2>0$, for its forth coordinate to be non-negative, $c\\geq c_2$ must hold or equivalently $\\frac{a \\gamma \\kappa +a \\theta _N \\theta _R-c \\sigma \\theta _R}{a b \\gamma \\kappa +a b \\theta _N \\theta _R} \\le \\frac{\\theta_B}{m_T}$.\n\nWe need to determine which of the two lower bounds of $\\frac{\\theta_B}{m_T}$ we found is the greatest, so we can take that as our lower bound for $\\frac{\\theta_B}{m_T}$. Let $\\frac{a \\gamma \\kappa +a \\theta _N \\theta _R-c \\sigma \\theta _R}{a b \\gamma \\kappa +a b \\theta _N \\theta _R} < \\frac{a \\theta_N - c \\sigma}{a b \\theta_N}$. It follows that\n\n\\frac{a \\gamma  \\kappa +a \\theta _N \\theta _R-c \\sigma  \\theta _R}{\\gamma  \\kappa + \\theta _N \\theta _R} < \\frac{a \\theta_N - c \\sigma}{ \\theta_N} \n    &\\Leftrightarrow   a-\\frac{ c \\sigma  \\theta _R}{\\gamma  \\kappa + \\theta _N \\theta _R}<a-\\frac{ c \\sigma}{ \\theta_N}   \\Leftrightarrow \\gamma  \\kappa < 0\nwhich is impossible, therefore we have that $\\frac{a \\gamma \\kappa +a \\theta _N \\theta _R-c \\sigma \\theta _R}{a b \\gamma \\kappa +a b \\theta _N \\theta _R} \\ge \\frac{a \\theta_N - c \\sigma}{a b \\theta_N}$ and we choose $\\frac{a \\gamma \\kappa +a \\theta _N \\theta _R-c \\sigma \\theta _R}{a b \\gamma \\kappa +a b \\theta _N \\theta _R}$ as our lower bound for $\\frac{\\theta_B}{m_T}$.\n\nHowever, when $\\frac{a \\gamma \\kappa +a \\theta _N \\theta _R-c \\sigma \\theta _R}{a b \\gamma \\kappa +a b \\theta _N \\theta _R} = \\frac{\\theta_B}{m_T}$, we have that $E_2 \\equiv E_3$. Therefore, when $E_2$ does not coincide with $E_3$, then $\\frac{a \\gamma \\kappa +a \\theta _N \\theta _R-c \\sigma \\theta _R}{a b \\gamma \\kappa +a b \\theta _N \\theta _R} < \\frac{\\theta_B}{m_T}$, and the proposition is proved.\n\nWe next study the local stability of system [reducedModel] using the linearisation theorem, as well as the center manifold theorem in the cases where the equilibrium point is non-hyperbolic, while also utilising Descartes' rule of signs in the case where the Jacobian matrix's eigenvalues are too complex to be computed.\n\nWe begin by computing the Jacobian matrix of system [reducedModel] to be equal to\n\\mathbf{J}(T,N,R,T) =\n\\begin{bmatrix} \n a-2 a b T-c N  & -c T & 0 & 0 \\\\\n 0 &  -\\theta_N-\\gamma R  & - \\gamma N   & 0 \\\\\n 0 & 0 & -\\theta _R+m_B B  &  m_B R \\\\\n m_T B  & 0 & 0 & -\\theta_B+m_T T  \\\\\n\\end{bmatrix} \\, .\n\nEquilibrium point $E_1$, when it does not coincide with $ E_2$, is locally asymptotically stable (stable node) if $c>c_1 $ and unstable (saddle) if $c<c_1$.\n\nAt the equilibrium point $E_1$, the Jacobian matrix becomes\n\\mathbf{J}(E_1;c) = \n    \\begin{bmatrix}\n \\frac{a\\left(c_1-c\\right)}{c_1} & 0 & 0 & 0 \\\\\n 0 & -\\frac{\\sigma c_1}{a} & -\\frac{a\\gamma}{c_1} & 0 \\\\\n 0 & 0 & -\\theta _R & \\frac{\\kappa  m_B}{\\theta _R} \\\\\n 0 & 0 & 0 & -\\theta _B \\\\\n    \\end{bmatrix} \\,,\nwith corresponding eigenvalues\n\\lambda_{11}\\left(c\\right) = \\frac{a\\left(c_1-c\\right)}{c_1},\\;  \\lambda_{12} = -\\theta _B\\,, \\; \\lambda_{13} = -\\theta _R\\quad \\text{ and }\\quad \\lambda_{14} =  -\\frac{\\sigma c_1}{a}\\,.\n\nIt is clear that the eigenvalues $\\lambda_{12}, \\lambda_{13}$ and $\\lambda_{14}$ are always negative since all the parameters are positive, while $\\lambda_{11}\\left(c\\right)$ is negative when $c>c_1 $ and positive when $c<c_1 $.\n\nNote that the corresponding eigenvectors of matrix (10) are\n\\mathbf{u}_{11}  &= \\begin{bmatrix}\n     1,0,0,0\n     \\end{bmatrix}\\tran, \\quad\\mathbf{u}_{12}  = \\begin{bmatrix}\n      0,-\\frac{a^2\\gamma  \\kappa  m_B}{ c_1\\theta _R\\left(\\theta _B-\\theta _R\\right)\\left(a\\theta _B-\\sigma c_1\\right)},-\\frac{\\kappa  m_B}{\\theta _R \\left(\\theta _B-\\theta _R\\right)},1 \n     \\end{bmatrix}\\tran, \\\\\n     \\mathbf{u}_{13} & = \\begin{bmatrix}\n      0,\\frac{a^2\\gamma }{c_1\\left(a\\theta _R-\\sigma c_1\\right)},1,0\n     \\end{bmatrix}\\tran \\quad \\text{ and } \\quad\n     \\mathbf{u}_{14} = \\begin{bmatrix}\n     0,1,0,0\n     \\end{bmatrix}\n    \\tran.\nIn the case where $\\lambda_{11}$ is positive, we have that the local stable invariant manifold is tangent to the stable manifold of the linearised system, which is $E^s = \\text{span}\\{\\mathbf{u}_{12},\\mathbf{u}_{13},\\mathbf{u}_{14}\\}$, while the local unstable invariant manifold is tangent to the unstable manifold of the linearised system, which is $E^u = \\text{span}\\{\\mathbf{u}_{11}\\}$, that is the $T$ axis. Biologically, this means that a small initial number of tumour cells will increase even with the presence of normal levels of NK cells, Tregs and tBregs.\n\nAdmissible equilibrium point $E_2$, when it does not coincide with $E_3$, is locally asymptotically stable (stable node) if $c>c_2$ and unstable (saddle) if $c<c_2$.\n\nAt the equilibrium point $E_2$, the Jacobian matrix becomes\n\\mathbf{J}(E_2;c) = \n\\begin{bmatrix}\n -\\frac{a\\left(c_1-c\\right)}{c_1}  &  -\\frac{c\\left(c_1-c\\right)}{bc_1}  & 0 & 0 \\\\\n 0 & -\\frac{\\sigma c_1}{a} & -\\frac{a\\gamma}{c_1} & 0 \\\\\n 0 & 0 & -\\theta _R & \\frac{\\kappa  m_B}{\\theta _R} \\\\\n 0 & 0 & 0 & \\frac{m_T\\left(c_2-c\\right)}{bc_1} \\\\\n\\end{bmatrix} \\, ,\nwith corresponding eigenvalues\n\\lambda_{21}\\left(c\\right)=\\frac{m_T\\left(c_2-c\\right)}{bc_1}\\,, \\; \\lambda_{22}=-\\theta _R\\,, \\; \\lambda_{23} =-\\frac{\\sigma c_1}{a} \\, \\quad \\text{ and }  \\lambda_{24}\\left(c\\right)=-\\frac{a\\left(c_1-c\\right)}{c_1}   \\,.\n\nIt is clear that the eigenvalues $\\lambda_{22}, \\lambda_{23}$ are always negative since all the parameters of our model are positive. Moreover, $\\lambda_{24}\\left(c\\right)$ is also negative, since its denominator is positive and its numerator is positive when $E_2$ exists from Proposition [existE2] . Finally, $\\lambda_{21}\\left(c\\right)$ is negative when $c>c_2$ and positive when $c<c_2$.\n\nAdmissible equilibrium point $E_3$, when it does not coincide with $E_2$, is always unstable.\n\nAt the equilibrium point $E_3$, the Jacobian matrix becomes\n\n\\mathbf{J}(E_3;c) = \n \\begin{bmatrix}\n -\\frac{a b \\theta _B}{m_T} & -\\frac{c \\theta _B}{m_T} & 0 & 0 \\\\\n 0 & \\frac{c \\sigma  m_T}{a \\Theta_1} & \\frac{a \\gamma \\Theta_1}{c m_T} & 0 \\\\\n 0 & 0 & \\frac{a \\gamma  \\kappa  \\Theta_1}{\\Theta_2} & -\\frac{m_B \\Theta_2}{a \\gamma \\Theta_1} \\\\\n\\frac{m_T\\left(a \\gamma  \\kappa \\Theta_1+\\theta_R \\Theta_2  \\right)}{m_B \\Theta_2} & 0 & 0 & 0 \\\\\n\\end{bmatrix}\\,,\nwith its characteristic polynomial being\n\\lambda^4 + \\alpha_3 \\lambda^3 + \\alpha_2 \\lambda^2 + \\alpha_1 \\lambda + \\alpha_0 = 0\\,,\nwhere\n\\alpha_0 &= -\\frac{ \\theta_B\\left(a \\gamma  \\kappa \\Theta_1+\\theta_R \\Theta_2  \\right)}{m_T}\\,, \\\\\n    \\alpha_1 &= \\frac{a b c \\gamma  \\kappa  \\sigma  \\theta _B }{\\Theta_2}\\,, \\\\\n    \\alpha_2 &= -\\frac{a^2 b \\gamma  \\kappa  \\theta _B \\Theta_1}{m_T \\Theta_2}+\\frac{c \\gamma  \\kappa  \\sigma  m_T }{\\Theta_2}-\\frac{b c \\sigma  \\theta _B}{\\Theta_1}\\,, \\\\\n    \\alpha_3 &= -\\frac{a \\gamma  \\kappa \\Theta_1}{\\Theta_2}-\\frac{c \\sigma  m_T}{a \\Theta_1}+\\frac{a b \\theta _B}{m_T}\\,.\nWe utilise Descartes' rule of signs to prove our claim. Firstly, let $\\alpha_0 \\ge 0$, which means that\n\\frac{\\theta_B}{m_T} \\le \\frac{a \\gamma  \\kappa +a \\theta _N \\theta _R-c \\sigma  \\theta _R}{a b \\gamma  \\kappa +a b \\theta _N \\theta _R}=\\dfrac{c_1-c}{bc_1}\\,,\nwhich is impossible when $E_3$ exists and does not coincide with $E_2$ from Proposition [existE3] . Hence, $\\alpha_0 < 0$. Consequently, from Proposition [existE3] , we have that when $E_3$ exists and does not coincide with $E_2$, then $\\Theta_1 < 0$ and $\\Theta_2 > 0$, which means that $\\alpha_1,\\alpha_2,\\alpha_3 > 0$. Next, we apply the transformation\n\\lambda \\mapsto -\\lambda \\;,\nto (15), to get\n\\underbrace{\\lambda^4}_{+}  \\underbrace{- \\alpha_3 \\lambda^3}_{-} + \\underbrace{\\alpha_2 \\lambda^2}_{+}  \\underbrace{-\\alpha_1 \\lambda}_{-}  \\underbrace{+\\alpha_0}_{-} = 0\\,.\nThe sign changes in the sequence of the polynomial coefficients of (16) are three. Therefore, (16) has exactly one or three positive real roots, which means that (15) has exactly one or three negative real roots. In either case, (15) has at least one positive real root, so it follows that $E_3$ is unstable.\n\nWe have yet to tackle the cases in which $E_1 \\equiv E_2$ and $E_2 \\equiv E_3$. When $ c = c_1,$ then $ \\lambda_{11}\\left(c_1\\right) = 0$, and when $c=c_2,$ then $ \\lambda_{21}\\left(c_2\\right) = 0$, so in each case a one dimensional center manifold arises, and the linearisation theorem cannot be used. In order to determine the dynamics of our system in those two cases, we utilise the center manifold theorem [citation].\n\nWhen $c = c_1,$ then the equilibrium point $E_1 \\equiv E_2$ is locally asymptotically stable.\n\nFor convenience, we firstly move the equilibrium point to the origin, using the transformation\n\\begin{aligned}\nT & \\mapsto T+\\overbar{T}=T \\, , \\\\\nN & \\mapsto N+\\overbar{N}=N+\\frac{a}{c_1} \\, , \\\\\nR & \\mapsto R+\\overbar{R}=R+\\frac{\\kappa }{\\theta _R} \\, , \\\\\nB & \\mapsto B+\\overbar{B}=B \\, .\n\\end{aligned}\n\nAfter replacing (17) to system [reducedModel], while utilising that $c=c_1$, we get the transformed system\n\n\\dv{\\mathbf{X}}{t} = \\mathbf{A_1 X} + \\mathbf{P_1}\\,,\nwhere\n\\mathbf{X} = \\begin{bmatrix}\n     T,N,R,B\n     \\end{bmatrix}\\tran\\,,\n\n\\mathbf{A_1} \\coloneqq  \\mathbf{J}(E_1;c=c_1)=\n\\begin{bmatrix}\n 0 & 0 & 0 & 0 \\\\\n 0 & -\\frac{\\sigma c_1}{a} & -\\frac{a\\gamma}{c_1} & 0 \\\\\n 0 & 0 & -\\theta _R & \\frac{\\kappa  m_B}{\\theta _R} \\\\\n 0 & 0 & 0 & -\\theta _B \\\\\n    \\end{bmatrix}\nand\n\\mathbf{P_1} = \\begin{bmatrix}\n -abT^2-c_1TN, -\\gamma RN, m_B  BR ,  m_T  TB \n\\end{bmatrix}\\tran\\,.\n\n$\\mathbf{A_1}$ is upper diagonal and its eigenvalues are $\\lambda_{11}\\left(c_1\\right), \\lambda_{12}, \\lambda_{13}$ and $\\lambda_{14}$, with corresponding eigenvectors $\\mathbf{u}_{11}, \\mathbf{u}_{12}, \\mathbf{u}_{13}$ and $\\mathbf{u}_{14}$, as given by (11)-(13).\n\nWe bring system (18) to its normal form with the help of the transformation\n\\mathbf{X} = \\mathbf{U_1} \\mathbf{Y}\\,,\nwhere we let\n\\mathbf{Y} = \\begin{bmatrix}\n      y_1, y_2, y_3, y_4\n     \\end{bmatrix}\\tran\n      \\quad \\text{ and } \\quad\n      \\mathbf{U_1} =  \\begin{bmatrix}\n      \\mathbf{u}_{11}, \\mathbf{u}_{12}, \\mathbf{u}_{13}, \\mathbf{u}_{14}\n     \\end{bmatrix}\\,.\nBy replacing (19) to system (18), we have that\n&& \\mathbf{U_1}\\dv{\\mathbf{Y}}{t} &= \\mathbf{A_1 U_1 Y} + \\mathbf{P_1} \\\\\n    \\Leftrightarrow && \\dv{\\mathbf{Y}}{t}   &= \\mathbf{U_1^{-1} A_1 U_1 Y} + \\mathbf{U_1^{-1} P_1}   \\\\\n    \\Leftrightarrow && \\dv{\\mathbf{Y}}{t}   &= \\mathbf{\\Lambda_1 Y} + \\mathbf{F_1} \\,,\nwhere\n\\mathbf{\\Lambda_1} &= \\text{diag}(\\lambda_{11}\\left(c_1\\right),\\lambda_{12},\\lambda_{13},\\lambda_{14}) \\quad \\text{ and } \\\\\n    \\mathbf{F_1} &= \\begin{bmatrix}\n      f_{11}, f_{12}, f_{13}, f_{14}\n     \\end{bmatrix}\\tran = \\mathbf{U_1^{-1} P}\\,\n\n$\\mathbf{F_1}$ is a function of $T, N, R$ and $B$. In order to express $\\mathbf{F_1}$ as a function of $ y_1, y_2, y_3$ and $y_4$, we substitute $T, N, R$ and $B$ from equation (19) to $\\mathbf{F_1}$, to find that\n\n\\mathbf{F_1} = \n\\begin{bmatrix}\n    -a b y_1^2+ w_{11} y_1 y_2 + w_{12} y_1 y_3- c_1 y_1 y_4  \\\\\n    m_T y_1 y_2  \\\\\n    w_{13} y_1 y_2 + w_{14} y_2^2 + m_B y_2 y_3\\\\\n    w_{15} y_1 y_2 + w_{16} y_2 y_3 + w_{17} y_2^2 + w_{18} y_2 y_4 + w_{19} y_3^2 + w_{110} y_3 y_4\n\\end{bmatrix}\\,,\nwhere $w_{1i}, \\; i=1,2,3,...,10$ are known constants.\n\nHence, system (20) can be written in the form\n\\dv{\\mathbf{Y}}{t} = \\begin{bmatrix}\n    \\mathbf{B_1} & \\mathbf{0} \\\\\n   \\mathbf{0} & \\mathbf{C_1}   \\\\\n\\end{bmatrix} \\mathbf{Y} + \\mathbf{F_1}\\,,\n\\dv{y_1}{t} & = \\mathbf{B_1} y_1 + f_{11}   \\,,     \\\\   \n    \\begin{bmatrix}\n        \\dv{y_2}{t} \\\\ \\dv{y_3}{t} \\\\ \\dv{y_4}{t}\n    \\end{bmatrix}  \n    & =\n   \\mathbf{C_1} \\begin{bmatrix}\n        y_2 \\\\ y_3 \\\\ y_4\n    \\end{bmatrix} \n     + \\begin{bmatrix}\n        f_{12} \\\\ f_{13} \\\\ f_{14}\n    \\end{bmatrix}\\,,\nor equivalently\n\nwhere\n\\mathbf{B_1} = \\lambda_{11}\\left(c_1\\right) = 0 \\quad \\text{ and } \\quad \\mathbf{C_1} = \\text{diag}(\\lambda_{12},\\lambda_{13},\\lambda_{14})\\,.\n\nWe have that $\\mathbf{B_1} $ and $\\mathbf{C_1}$ are constant matrices, with the eigenvalues of $\\mathbf{B_1} $ having zero real part and the eigenvalues of $\\mathbf{C_1}$ having negative real part, whereas $f_{1i}$ is smooth with $f_{1i}(0,0,0,0) = 0$ and $Df_{1i} (0,0,0,0) = 0$ for $i=1,2,3,4$. From the center manifold theorem, there exists a center manifold which is parametrised by\n\\begin{bmatrix}\n        y_2 \\\\ y_3 \\\\ y_4\n    \\end{bmatrix}  = \\mathbf{h_1}(y_1) = \\begin{bmatrix}\n        h_{12}(y_1) \\\\ h_{13}(y_1) \\\\ h_{14}(y_1)\n    \\end{bmatrix}\\,,\nwith $\\mathbf{h_1}(0)=0$ and $D\\mathbf{h_1}(0) = 0$, and satisfying\n\\mathbf{C_1} \\cdot \\mathbf{h_1}(y_1) +  \\begin{bmatrix}\n        f_{12}(y_1, \\mathbf{h_1}(y_1) ) \\\\ f_{13}(y_1, \\mathbf{h_1}(y_1) ) \\\\ f_{14}(y_1, \\mathbf{h_1}(y_1) ) \n    \\end{bmatrix} = D\\mathbf{h_1}(y_1) \\cdot \\left[\\mathbf{B_1} y_1 + f_{11}(y_1, \\mathbf{h_1}(y_1)) \\right]\\,,\nwhile the flow on the center manifold is defined by the differential equation (21).\n\nSince $\\mathbf{h_1}(0)=0$ and $D\\mathbf{h_1}(0) = 0$, then by approximating the center manifold with a Taylor series around 0, we get\n\\mathbf{h_1}(y_1) = \\begin{bmatrix}\n        b_{12} y_1^2 + b_{13} y_1^3 + b_{14} y_1^4 + O(y_1^5) \\\\ c_{12} y_1^2 + c_{13} y_1^3 + c_{14} y_1^4 + O(y_1^5) \\\\ d_{12} y_1^2 + d_{13} y_1^3 + d_{14} y_1^4 + O(y_1^5)\n    \\end{bmatrix}\\,.\nBy replacing (29) to (21) in order to express the terms of $y_2, y_3, y_4$ in $f_{11}$, we get\n\n\\dv{y_1}{t} = -aby_1^2 + O(y_1^3)\\,.\n\nFrom $\\mathbf{Y} = \\mathbf{U_1^{-1} X}$, we see that $y_1 = T$, so $y_1$ is non-negative. That means that 0 is an asymptotically stable point of equation (30), when approached from $y_1 \\ge 0$ since $-ab<0$. Thus, from the center manifold theorem, $\\mathbf{0}$ is a locally asymptotically stable equilibrium of system (18), which proves the proposition.\n\nWhen $c=c_2$, then the equilibrium point $E_2 \\equiv E_3$ is unstable.\n\nFor convenience, we firstly move the equilibrium point to the origin, using the transformation\n\\begin{aligned}\nT & \\mapsto T+\\overbar{T}=T+\\frac{c_1-c}{bc_1}  \\, , \\\\\nN & \\mapsto N+\\overbar{N}=N+\\frac{a}{c_1} \\, , \\\\\nR & \\mapsto R+\\overbar{R}=R+\\frac{\\kappa}{\\theta_R} \\, , \\\\\nB & \\mapsto B+\\overbar{B}=B \\, .\n\\end{aligned}\n\nAfter replacing (31) to system [reducedModel], while utilising that $c_2=c$, we get the transformed system\n\n\\dv{\\mathbf{X}}{t} = \\mathbf{A_2 X} + \\mathbf{P_2}\\,,\nwhere\n\\mathbf{X} = \\begin{bmatrix}\n     T,N,R,B\n     \\end{bmatrix}\\tran\\,,\n\n\\mathbf{A_2} \\coloneqq \\mathbf{J}(E_2;c=c_2)= \n\\begin{bmatrix}\n -\\frac{a\\left(c_1-c_2\\right)}{c_1}  &  -\\frac{c_2\\left(c_1-c_2\\right)}{bc_1}  & 0 & 0 \\\\\n 0 & -\\frac{\\sigma c_1}{a} & -\\frac{a\\gamma}{c_1} & 0 \\\\\n 0 & 0 & -\\theta _R & \\frac{\\kappa  m_B}{\\theta _R} \\\\\n 0 & 0 & 0 & 0\n\\end{bmatrix}\nand\n\\mathbf{P_2} = \\begin{bmatrix}\n -abT^2-c_2TN, -\\gamma RN, m_B  BR ,  m_T  TB \n\\end{bmatrix}\\tran\\,.\n\n$\\mathbf{A_2}$ is upper diagonal, so its eigenvalues are $ \\lambda_{21}\\left(c_2\\right), \\; \\lambda_{22}\\,, \\; \\lambda_{23} \\text{ and } \\lambda_{24}\\left(c_2\\right)$ with corresponding eigenvectors\n\\mathbf{u}_{21} & = \\begin{bmatrix}\n     \\frac{a\\gamma\\kappa c_2 m_B}{b \\theta_R^2 \\sigma c_1^2}, -\\frac{a^2\\gamma\\kappa m_B}{\\theta_R^2\\sigma c_1^2},\\frac{\\kappa m_B}{\\theta _R^2},1 \n     \\end{bmatrix}\\tran\\,, \\\\\n     \\mathbf{u}_{22} & = \\begin{bmatrix}\n      \\frac{a^2 c_2 \\gamma \\left(c_1-c_2\\right)}{bc_1\\left(a\\left(c_1-c_2\\right)-\\theta_Rc_1\\right)\\left(\\sigma c_1-a\\theta_R\\right)},\\frac{a^2\\gamma}{c_1\\left(a\\theta_R -\\sigma c_1\\right)},1,0\n     \\end{bmatrix}\\tran\\,, \\\\\n     \\mathbf{u}_{23} & = \\begin{bmatrix}\n    -\\frac{a c_2\\left(c_1-c_2\\right)}{b\\left(a^2\\left(c_1-c_2\\right)-\\sigma c_1^2\\right)},1,0,0\n     \\end{bmatrix}\\tran \\quad \\text{ and } \n     \\mathbf{u}_{24}  = \\begin{bmatrix}\n     1,0,0,0\n     \\end{bmatrix}\\tran\\,.\n\nWe transform system (32) to its normal form with the help of the transformation\n\\mathbf{X} = \\mathbf{U_2} \\mathbf{Y}\\,,\nwhere we let\n\\mathbf{U_2} =  \\begin{bmatrix}\n      \\mathbf{u}_{21}, \\mathbf{u}_{22}, \\mathbf{u}_{23}, \\mathbf{u}_{24}\n     \\end{bmatrix}\\,.\nBy replacing (34) to system (32), we get\n\\dv{\\mathbf{Y}}{t}   = \\mathbf{\\Lambda_2 Y} + \\mathbf{F_2}\\,,\nwhere\n\\mathbf{\\Lambda_2} = \\text{diag}(\\lambda_{21}\\left(c_2\\right),\\lambda_{22},\\lambda_{23},\\lambda_{24}\\left(c_2\\right)) \\quad \\text{and} \\quad\n    \\mathbf{F_2} = \\begin{bmatrix}\n      f_{21}, f_{22}, f_{23}, f_{24}\n     \\end{bmatrix}\\tran = \\mathbf{U_2^{-1} P_2}\\,.\n\nBy using equation (34) and substituting $T, N, R$ and $B$ to $\\mathbf{F_2}$, we find that\nf_{21} &= w_{21} y_1^2 + w_{22} y_1 y_2 + w_{23} y_1 y_3 - m_T y_1 y_4 \\,,\\\\\n f_{22} &= w_{24} y_1^2 + w_{25} y_1 y_2 + w_{26} y_1 y_3 - w_{27} y_1 y_4 \\,,\\\\\n f_{23} &= w_{28} y_1^2 + w_{29} y_2^2 + \\gamma y_2 y_3 + w_{210} y_1 y_2 + w_{211} y_1 y_3 - w_{212} y_1 y_4 \\,,\\\\\n  f_{24} &=   \\begin{multlined}[t]\n  w_{213} y_1^2 + w_{214} y_2^2 + w_{215} y_3^2 + w_{216} y_3 y_4 + a b y_4^2 + w_{217} y_2 y_3  \\\\ +w_{216} y_2 y_4 + w_{217} y_1 y_2 + w_{218} y_1 y_3 - w_{219} y_1 y_4\\,,\n \\end{multlined}\nwhere $w_{2i}, \\; i=1,2,3,...,19$ are known constants.\n\nHence, system (35) can be written in the form\n\\dv{\\mathbf{Y}}{t} = \\begin{bmatrix}\n    \\mathbf{B_2} & \\mathbf{0} \\\\\n   \\mathbf{0} & \\mathbf{C_2}   \\\\\n\\end{bmatrix} \\mathbf{Y} + \\mathbf{F_2}\\,,\n\\dv{y_1}{t} & = \\mathbf{B_2} y_1 + f_{21}   \\,,     \\\\   \n    \\begin{bmatrix}\n        \\dv{y_2}{t} \\\\ \\dv{y_3}{t} \\\\ \\dv{y_4}{t}\n    \\end{bmatrix}  \n    & =\n   \\mathbf{C_2} \\begin{bmatrix}\n        y_2 \\\\ y_3 \\\\ y_4\n    \\end{bmatrix} \n     + \\begin{bmatrix}\n        f_{22} \\\\ f_{23} \\\\ f_{24}\n    \\end{bmatrix}\\,,\nor equivalently\n\nwhere\n\\mathbf{B_2} = \\lambda_{21}\\left(c_2\\right) = 0 \\quad \\text{ and } \\quad \\mathbf{C_2} = \\text{diag}(\\lambda_{22},\\lambda_{23},\\lambda_{24}\\left(c_2\\right))\\,.\n\nWe have that $\\mathbf{B_2} $ and $\\mathbf{C_2}$ are constant matrices, with the eigenvalues of $\\mathbf{B_2} $ having 0 real part and the eigenvalues of $\\mathbf{C_2}$ having negative real part, whereas $f_{2i}$ is smooth with $f_{2i}(0,0,0,0) = 0$ and $Df_{2i} (0,0,0,0) = 0$ for $i=1,2,3,4.$ By the center manifold theorem, there exists a center manifold which is parametrised by\n\\begin{bmatrix}\n        y_2 \\\\ y_3 \\\\ y_4\n    \\end{bmatrix}  = \\mathbf{h_2}(y_1) = \\begin{bmatrix}\n        h_{22}(y_1) \\\\ h_{23}(y_1) \\\\ h_{24}(y_1)\n    \\end{bmatrix}\\,,\nwith $\\mathbf{h_2}(0)=0$ and $D\\mathbf{h_2}(0) = 0$, and satisfying\n\\mathbf{C_2} \\cdot \\mathbf{h_2}(y_1) +  \\begin{bmatrix}\n        f_{22}(y_1, \\mathbf{h_2}(y_1) ) \\\\ f_{23}(y_1, \\mathbf{h_2}(y_1) ) \\\\ f_{24}(y_1, \\mathbf{h_2}(y_1) ) \n    \\end{bmatrix} = D\\mathbf{h_2}(y_1) \\cdot \\left[\\mathbf{B_2}y_1 + f_{21}(y_1, \\mathbf{h_2}(y_1)) \\right]\\,,\nwhile the flow on the center manifold is defined by the differential equation (36).\n\nSince $\\mathbf{h_2}(0)=0$ and $D\\mathbf{h_2}(0) = 0$, then by approximating the center manifold with a Taylor series around 0, we get\n\\mathbf{h_2}(y_1) = \\begin{bmatrix}\n        b_{22} y_1^2 + b_{23} y_1^3 + b_{24} y_1^4 + O(y_1^5) \\\\ c_{22} y_1^2 + c_{23} y_1^3 + c_{24} y_1^4 + O(y_1^5) \\\\ d_{22} y_1^2 + d_{23} y_1^3 + d_{24} y_1^4 + O(y_1^5)\n    \\end{bmatrix}\\,.\nBy replacing (44) to (36) in order to express the terms of $y_2, y_3, y_4$ in $f_{21}$, we get\n\n\\dv{y_1}{t} = w_{21}y_1^2 + O(y_1^3) \\,,\nwith\nw_{21} = \\frac{c_2 \\gamma  \\kappa \\sigma  m_B m_T}{a b \\left(\\gamma  k+\\theta _N \\theta _R\\right){}^2} > 0 \\,.\n\nFrom $\\mathbf{Y} = \\mathbf{U_2^{-1} X}$, we see that $y_1 = B$, so $y_1$ is non-negative. That means that 0 is an unstable equilibrium point of equation (45), when approached from $y_1 \\ge 0$ since $w_{21} > 0$. Thus, from the center manifold theorem, $\\mathbf{0}$ is an unstable equilibrium point of system (32), which proves the proposition.\n\nHaving studied every possible case in which the equilibrium points are biologically realistic, we conclude with the main result of the present section as follows. [Local stability analysis]\n\nFor the Admissible equilibrium points of system [reducedModel], the following facts hold true.\n\n- $E_1$ always exists, and is locally stable when $c \\ge c_1$, and unstable when $c < c_1$.\n\n- $E_2$ exists when $c < c_1$, and is locally stable when $c \\ge c_2$, and unstable when $c < c_2$.\n\n- $E_3$ exists when $c > c_2$ and $\\frac{\\theta_B}{m_T} < \\frac{1}{b}$, and is always unstable.\n\n- $E_1 \\equiv E_2$ when $c = c_1$, and $E_2 \\equiv E_3$ when $c = c_2$.\n\nBifurcation Analysis\n\nStarting off, we prove that, under certain sufficient conditions, IVP has no closed orbits and therefore a Hopf bifurcation can not occur.\n\n[Lack of Hopf bifurcations] If\n0\\leq T_0\\leq \\frac{1}{b}\\text{ and }\\frac{\\theta_B}{m_T} > \\frac{1}{b},\nthen IVP has no closed orbits.\n\nFrom (4) along with the non-negativity of the solution (see Proposition [unnneg] ) we get that\n\\mathrm{sgn}{\\frac{\\de B}{\\de t}}=\\mathrm{sgn}{\\left(T-\\frac{\\theta_B}{m_T}\\right)}.\nSince $T_0\\leq 1/b$, we have from Proposition [BofT] that $T\\leq 1/b$, as well. Hence, by\n\\frac{\\theta_B}{m_T} > \\frac{1}{b}\nwe get that $B$ is strictly decreasing, therefore there are no periodic solutions of non-zero period, i.e no closed orbits.\n\nA different way to prove the lack of Hopf bifurcation is by supposing that there is a periodic solution $\\left(T,N,R,B\\right)$ of period $P\\neq 0$, hence every component is also a $P$-periodic function. Then, from [Bfor] we get that $e^{\\int_0^t \\left( m_TT(s) - \\theta_B \\right) \\, \\mathrm{d}s}$ is also $P$-periodic, and so does\n\\int_0^t  \\left( T(s) - \\frac{\\theta_B}{m_T} \\right) \\, \\mathrm{d}s.\nFrom this, along with the fact that $m_TT-\\theta_B$ is $P$-periodic, we get that\n\\int_0^P  \\left( T(s) - \\frac{\\theta_B}{m_T} \\right) \\, \\mathrm{d}s=0.\nDealing as before, we have a contradiction, since\nT-\\frac{\\theta_B}{m_T}\\leq \\frac{1}{b}-\\frac{\\theta_B}{m_T}<0.\n\nThe result of Proposition [summain] makes us suspect that two transcritical bifurcations are happening; one between $E_1$ and $E_2$ when $c=c_1$, and one between $E_2$ and $E_3$ when $c=c_2$. Indeed, we set the right-hand side of system [reducedModel] equal to $\\mathbf{G}$, i.e.\n\\mathbf{G}(T,N,R,B) \\coloneqq\n  \\begin{bmatrix}\n      aT(1-bT) - cNT \\\\\n      \\sigma - \\theta_NN - \\gamma RN  \\\\\n      \\kappa -\\theta_RR + m_BBR   \\\\\n       -\\theta_BB + m_TTB\n  \\end{bmatrix}\\,,\nand we use Sotomayor's theorem [citation] to prove our observations.\n\n[Transcritical bifurcation 1] System [reducedModel] experiences a transcritical bifurcation at the equilibrium point $E_1 \\equiv E_2$ as the parameter $c$ varies through $c_1$.\n\nThe Jacobian matrix of system [reducedModel] at $E_1 \\equiv E_2$, i.e. when $c = c_1$, is given by $\\mathbf{A_1}$. From (11) and (12), we see that the eigenvector corresponding to the zero eigenvalue is $\\mathbf{u}_{11}$, whereas simple computations show us that the eigenvector corresponding to the zero eigenvalue of matrix $\\mathbf{A_1}\\tran$ is $\\mathbf{w_1} = \\begin{bmatrix} 1,0,0,0 \\end{bmatrix}\\tran$.\n\nFurthermore, we have that\n\\pdv{\\mathbf{G}(T,N,R,B;c)}{c} = \n   \\begin{bmatrix}\n      -NT,  0,  0  ,  0\n  \\end{bmatrix}\\tran\\,,\n\nD\\pdv{\\mathbf{G}(T,N,R,B;c)}{c}\\mathbf{u}_{11} = \n   \\begin{bmatrix}\n      -N,  0,  0  ,  0\n  \\end{bmatrix}\\tran\\,,\nand\nD^2 \\mathbf{G}(T,N,R,B) (\\mathbf{u}_{11},\\mathbf{u}_{11}) = \n   \\begin{bmatrix}\n      -2ab,  0,  0  ,  0\n  \\end{bmatrix}\\tran\\,.\n\nConsequently, when $c=c_1$ we have that\n& \\mathbf{w_1}\\tran \\pdv{\\mathbf{G}(E_1;c_1)}{c} =0\\,, \\\\\n      & \\mathbf{w_1}\\tran \\left[ D\\pdv{\\mathbf{G}(E_1;c_1)}{c}\\mathbf{u}_{11} \\right] = -\\frac{a}{c_1} \\neq 0\\,, \\\\\n      & \\mathbf{w_1}\\tran \\left[ D^2 \\mathbf{G}(E_1;c_1) (\\mathbf{u}_{11},\\mathbf{u}_{11})\\right] = -2 a b \\neq 0\\,.\n\nThus, the conditions of Sotomayor's theorem are satisfied and the proposition is proved.\n\n[Transcritical bifurcation 2] System [reducedModel] experiences a transcritical bifurcation at the equilibrium point $E_2 \\equiv E_3$ as the parameter $c$ varies through $c_2$.\n\nSince\nc = c_2 \\Leftrightarrow \\theta_B = \\frac{a \\theta _N m_T \\theta _R+a \\gamma  \\kappa  m_T-c \\sigma  m_T \\theta _R}{a b \\gamma  \\kappa +a b \\theta _N \\theta _R} =: \\theta_B^*\\,,\nwe prove the equivalent proposition of system [reducedModel] experiencing a transcritical bifurcation at the equilibrium point $E_2 \\equiv E_3$ as the parameter $\\theta_B$ varies through $\\theta_B^*$, as the conditions of Sotomayor's theorem cannot be satisfied in the case of parameter $c$ varying through $c_2$.\n\nWe have that the Jacobian of system [reducedModel] at $E_2 \\equiv E_3$, i.e. when $\\theta_B = \\theta_B^*$, is equal to $ \\mathbf{A_2}=\\mathbf{J}(E_2;c=c_2)=\\mathbf{J}(E_2;\\theta_B=\\theta_B^*)$.\n\nFrom (14) and (33), we see that the eigenvector corresponding to the zero eigenvalue is $\\mathbf{u}_{21}$, whereas simple computations show us that the eigenvector corresponding to the zero eigenvalue of matrix $\\mathbf{A_2}\\tran$ is $\\mathbf{w_2} = \\begin{bmatrix} 0, 0, 0, 1 \\end{bmatrix}\\tran$.\n\nFurthermore, we have that\n\\pdv{\\mathbf{G}(T,N,R,B;\\theta_B)}{\\theta_B} = \n   \\begin{bmatrix}\n      0,0,0,-B\n  \\end{bmatrix}\\tran,\nD\\pdv{\\mathbf{G}(T,N,R,B;\\theta_B)}{\\theta_B}\\mathbf{u}_{21} = \n   \\begin{bmatrix}\n      0, 0, 0, -1\n  \\end{bmatrix}\\tran\\,,\nand\nD^2 \\mathbf{G}(T,N,R,B;\\theta_B) (\\mathbf{u}_{21},\\mathbf{u}_{21}) = \n   \\begin{bmatrix}\n     0,\\frac{2 \\gamma ^2 \\kappa ^2 \\sigma  m_B^2}{\\theta _R^2 \\left(\\gamma  \\kappa +\\theta _N \\theta _R\\right){}^2},\\frac{2 \\kappa  m_B^2}{\\theta _R^2},\\frac{2 c \\gamma  \\kappa  \\sigma  m_B m_T}{a b \\left(\\gamma  \\kappa +\\theta _N \\theta _R\\right){}^2}\n  \\end{bmatrix}\\tran\\,.\n\nConsequently, when $\\theta_B = \\theta_B^*$ we have that\n& \\mathbf{w_2}\\tran \\pdv{\\mathbf{G}(E_2;\\theta_B^*)}{\\theta_B} =0\\,, \\\\\n      & \\mathbf{w_2}\\tran \\left[ D\\pdv{\\mathbf{G}(E_2;\\theta_B^*)}{\\theta_B} \\right] = -1 \\neq 0\\,, \\\\\n      & \\mathbf{w_2}\\tran \\left[ D^2 \\mathbf{G}(E_2;\\theta_B^*) (\\mathbf{u}_{21},\\mathbf{u}_{21})\\right] = \\frac{2 c \\gamma  \\kappa  \\sigma  m_B m_T}{a b \\left(\\gamma  \\kappa +\\theta _N \\theta _R\\right){}^2} \\neq 0\\,.\n\nThus, the conditions of Sotomayor's theorem are satisfied and the proposition is proved.\n\nThe value and stability of the first coordinate - that is the breast cancer cell population - at equilibrium, depending on parameter $c$ is given in Figure [Fig3] .\n\n[!htbp] .5\n\nFig3a.eps\n\nCaption: The tumour carrying capacity is bounded from above, i.e. $\\frac{\\theta_B}{m_T}\\geq \\frac{1}{b}$.\n\n.5\n\nFig3b.eps\n\nCaption: The tumour carrying capacity is bounded from below, i.e. $\\frac{\\theta_B}{m_T}<\\frac{1}{b}$.\n\nCaption: Projection of the bifurcation diagram of system [reducedModel] onto the $\\overbar{T}$–$c$ plane. Solid line (—): Stable equilibrium. Dashed line (- -): Unstable equilibrium. $\\square$: Transcritical bifurcation 1. $\\bigcirc$: Transcritical bifurcation 2. $\\mathcal{VL}$: Region in which $c$ is very low , i.e. $c<c_2$ when $c_2>0$. $\\mathcal{L}$: Region in which $c$ is low , i.e. $c<c_1$ when $c_2<0$ and $c_2<c<c_1$ when $c_2>0$. $\\mathcal{H}$: Region in which $c$ is high , i.e. $c>c_1$.\n\nNumerical Simulations\n\nIn this section, we numerically solve our model, using Julia and the suite DifferentialEquations.jl [citation], under two antipodal theoretical scenarios concerning the absence and the presence of tBregs. Contrary to our previous local stability analysis, numerical simulations help us develop an intuition about the global behaviour of our model. Additionally, we perform numerical parameter sensitivity analysis, in order to further explore the dependence of the solution of our model to its parameters, under different initial conditions of tBregs.\n\nThe parameter values used in our simulations are listed in Table [reducedModelParameterTable] , unless otherwise stated, and their derivation is explained in Appendix . In particular, $m_T$ either becomes\nm_T = m_T^A \\coloneqq  5 \\cdot 10^{-15}\\; \\text{cell}^{-1}  \\, \\cdot \\, \\text{day}^{-1} \\;,\nor\n\nm_T = m_T^B \\coloneqq  5 \\cdot 10^{-10}\\; \\text{cell}^{-1}  \\, \\cdot \\, \\text{day}^{-1} \\; .\nThus, choosing the value $m_T^A$ yields $\\frac{\\theta_B}{m_T} > \\frac{1}{b}$, whereas choosing the value $m_T^B$ yields $\\frac{\\theta_B}{m_T} < \\frac{1}{b}$, allowing us to explore the different dynamics of IVP.\n\nConsidering the values of two bifurcation points of system [reducedModel] with respect to parameter $c$, we have that $c_1 = 2.88 \\cdot 10^{-10}\\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$, since $c_1$ is independent from the value of $m_T$. When $m_T = m_T^A$, then $c_2<0$, as expected from our bifurcation analysis, whereas when $m_T = m_T^B$, then $c_2 = 5.76 \\cdot 10^{-11}\\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$.\n\nFinally, we choose $N_0 = 5 \\cdot 10^8$ cells and $R_0 = 2 \\cdot 10^8$ cells.\n\n[h]\n\nCaption: Units and values of the parameters of system [reducedModel]. For estimations arising from literature see Appendix [secB1] .\n\nPrm. | Unit | Value | Source\n$a$ | day$^{-1}$ | 0.15 | [citation]\n$b$ | cell$^{-1}$ | $1 \\cdot 10^{-9}$ | [citation]\n$c$ | cell$^{-1} \\cdot$ day$^{-1}$ | varied | center --- center\n$\\sigma$ | cell $\\cdot$ day$^{-1}$ | $5 \\cdot 10^7$ | Estimated from [citation]\n$\\theta_N$ | day$^{-1}$ | 0.07 | Estimated from [citation]\n$\\gamma$ | cell$^{-1} \\cdot$ day$^{-1}$ | $1 \\cdot 10^{-10}$ | Estimated from equilibrium point\n$\\kappa$ | cell $\\cdot$ day$^{-1}$ | $1 \\cdot 10^7$ | Estimated from equilibrium point\n$\\theta_R$ | day$^{-1}$ | 0.03851 | Estimated from [citation]\n$m_B$ | cell$^{-1} \\cdot$ day$^{-1}$ | $3 \\cdot 10^{-8}$ | No data found\n$\\theta_B$ | day$^{-1}$ | 0.4 | No data found\n$m_T$ | cell$^{-1} \\cdot$ day$^{-1}$ | varied | center --- center\n\nThe Scenario of Absent tBregs ($B_0 = 0$)\n\nAs can be seen from [Bfor], when $B_0 = 0$, we have that $B(t) = 0, \\; t \\in \\mathbb{R}_{\\ge 0}$. Therefore, system [reducedModel] becomes a 3D system with only breast cancer cells, NK cells and Tregs existing in the body.\n\nPlotting the phase portrait of the resulting 3D system, for different values of $c$, we get Figure [Fig4] . We notice that all trajectories move towards an equilibrium point for all $c$. This equilibrium point moves along the line\n\\{(T,N,R) \\in \\mathbb{R}_{\\ge 0 }^3: N=\\frac{\\sigma  \\theta _R}{\\gamma  \\kappa +\\theta _N \\theta _R}, R= \\frac{\\kappa }{\\theta _R}\\},\nwith $T$ getting bigger, as $c$ gets smaller, and vice versa. When $c>c_1$, T reaches zero. We observe the same type of transcritical bifurcation that happens between $E_1$ and $E_2$ when $c=c_1$ for system [reducedModel], also happens for the 3D system. Even with no rigorous result at hand regarding the global stability of IVP with tBregs no longer in the picture, it is apparent that for the 3D system the equilibrium point $E_1$ is globally stable when $c>c_1$ and $E_2$ is globally stable when $c<c_1$. The crux of the scenario in question is:\n\nConclusion $1_a$: In the absence of tBregs, the breast tumour will reach its carrying capacity due to NK cell insufficiency, i.e. $T \\nearrow \\frac{1}{b}$ when $c \\searrow 0$.\n\n[h!] Fig4.eps\n\nCaption: Phase portrait of system [reducedModel] with $B_0 = 0$, for different values of $c$. The equilibrium point $(\\overbar{T},\\overbar{N},\\overbar{R})$ pictured by the red sphere moves along the black line, which is given by $\\{(T,N,R) \\in \\mathbb{R}_{\\ge 0 }^3: N=\\frac{\\sigma \\theta _R}{\\gamma \\kappa +\\theta _N \\theta _R}, R= \\frac{\\kappa }{\\theta _R}\\}$. The value of $\\overbar{T}$ tends to 0, as $c$ increases, whereas tends to $\\frac{1}{b}$, as $c$ tends to 0.\n\nThe Scenario of Present tBregs ($B_0 \\neq 0$)\n\nIn this section, we study the scenario in which the initial condition of tBregs is not 0. We divide our analysis into three sections: Section [sec:GE1b] in which $m_T = m_T^A$ and therefore $\\frac{\\theta_B}{m_T} \\ge \\frac{1}{b}$, and Section [sec:L1b] in which $m_T = m_T^B$ and therefore $\\frac{\\theta_B}{m_T} < \\frac{1}{b}$. In both first sections, we individually study each of the involved regions, $\\mathcal{VL}$, $\\mathcal{L}$ and $\\mathcal{H}$, admitted by our bifurcation analysis and depicted in Figure [Fig3] . In Section [sec:importc] we investigate the influence of the rate of NK-induced breast cancer cell death, $c$, to our model.\n\nBounded-From-Above Tumour Carrying Capacity ($\\frac{\\theta_B}{m_T} \\ge \\frac{1}{b}$)\n\nHere, we show that the dynamics of the solution of IVP are eventually the same with the ones of the previous scenario. However, there are interesting initial differences between the two scenarios.\n\nWhen $m_T = m_T^A$, we have that $\\frac{\\theta_B}{m_T} \\ge \\frac{1}{b}$, which means that B is strictly decreasing. Additionally, only equilibria $E_1$ and $E_2$ exist. Figure [Fig5] and Figure [Fig6] depict both $T$ and $B$, for $c$ in region $\\mathcal{L}$ and $\\mathcal{H}$, respectively. As can be seen in the aforementioned figures, $T$ forms a single peak, which increases as $B_0$ increases. Such an increase of $T$ continues until $T$ reaches its carrying capacity, $\\frac{1}{b}$, and after that it gradually flattens out. The greater $B_0$ is, the longer $T$ stays close to $\\frac{1}{b}$, before eventually tending to $\\overbar{T}$ of $E_2$. Consequently, as $B_0$ increases, the metastatic potential becomes higher. This comes in agreement with the results of [citation], where tBregs were associated with breast cancer metastasising to the lungs.\n\n[h!] Fig5.eps\n\nCaption: Ensemble simulations of IVP, with $B_0$ taking values in the 30-point discretisation of the interval $\\left[ 0, 5\\cdot 10^{8} \\right] \\, \\cdot \\, \\text{cells}$, $T_0 = 5$ cells, and $c=2 \\cdot 10^{-10}\\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$ (region $\\mathcal{L}$). When $B\\to 0$, $T$ eventually tends to $\\overbar{T}>0$ of $E_2$.\n\nIn Figure [Fig6] , $T$ eventually vanishes, instead of tending to a positive value, as in Figure [Fig5] . Thus, in the light of Figure [Fig4] , when $B\\to0$, the dynamics of IVP are similar to the corresponding ones of the problem with the simplified 3D system for $B=0$.\n\n[h!] Fig6.eps\n\nCaption: Ensemble simulations of IVP, with $B_0$ taking values in the 30-point discretisation of the interval $\\left[ 0, 5\\cdot 10^{8} \\right] \\, \\cdot \\, \\text{cells}$ , $T_0 = 5$ cells, and $c=3 \\cdot 10^{-10}\\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$ (region $\\mathcal{H}$). When $B\\to 0$, $T$ eventually tends to $\\overbar{T}=0$ of $E_1$.\n\nAll in all, we reach the following conclusion:\n\nConclusion 2: In the presence of tBregs, if tumour carrying capacity is bounded from above, then the breast tumour will initially reach its carrying capacity due to the effect of tBregs, i.e. initially $T \\nearrow \\frac{1}{b}$ when $B_0 \\nearrow $.\n\nBounded-From-Bellow Tumour Carrying Capacity ($\\frac{\\theta_B}{m_T} < \\frac{1}{b}$)\n\nWhen $\\frac{\\theta_B}{m_T} < \\frac{1}{b}$, $B$ can become an increasing function. Hence, even if tBregs start as just a few cells, they could cause breast cancer cells to reach their carrying capacity.\n\nRegion $\\mathcal{L}$. When $c=9 \\cdot 10^{-11}\\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$, we have that $c_2<c<c_1$. Depending on the initial condition of tBregs, the dynamics of IVP vary greatly. When $B_0 = 5 \\cdot 10^5$ cells, we get Figure [Fig7] . In Figure [Fig7] , we see that tBregs, despite increasing up until around the 20th day, are unable to continue doing so and are eventually depleted. tBreg levels did not reach a sufficient population number that would allow breast cancer cells to grow to their carrying capacity. Instead, breast cancer cells stabilise to equilibrium point $E_2$.\n\n[h!] Fig7.eps\n\nCaption: Ensemble simulations of IVP, with $T_0$ taking values in the 50-point discretisation of the interval $\\left[ 0, 10^{9} \\right] \\, \\cdot \\, \\text{cells}$, $c=9 \\cdot 10^{-11}\\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$ and $B_0 = 5 \\cdot 10^5$ cells. Left: Number of tBregs. Right: Number of breast cancer cells. We notice that when $B_0 = 5 \\cdot 10^5$ cells, the trajectories of our model move towards $E_2$.\n\nIncreasing the initial condition of tBregs to $B_0 = 5 \\cdot 10^6$ cells, we get Figure [Fig8] . In Figure [Fig8] , we see that when the initial breast cancer cell population is around $6 \\cdot 10^8$ cells, tBregs do not get depleted. Additionally, in every simulation where tBregs do not deplete, they cause breast cancer cells to move away from equilibrium point $E_2$ and reach their carrying capacity.\n\n[h!] Fig8.eps\n\nCaption: Ensemble simulations of IVP, with $T_0$ taking values in the 50-point discretisation of the interval $\\left[ 0, 10^{9} \\right] \\, \\cdot \\, \\text{cells}$, $c=9 \\cdot 10^{-11}\\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$ and $B_0 = 5 \\cdot 10^6$ cells. Left: Number of breast cancer cells. Right: Number of tBregs. We notice that, unlike the corresponding simulations of Figure [Fig7] , when $B_0 = 5 \\cdot 10^6$ cells, and if $T_0 \\ge 6 \\cdot 10^8$, then the breast tumour reaches its carrying capacity.\n\nRegion $\\mathcal{VL}$. When $c=2 \\cdot 10^{-11}\\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$, we have that $c<c_2$. Region $\\mathcal{VL}$ is a particular interesting case, since our local stability analysis showed that both $E_1$ and $E_2$ are unstable, hence making the dynamics of IVP difficult to determine without numerical simulations. In Figure [Fig9] , we notice that despite the initial number of tBregs being as low as $B_0 = 50$ cells, tBregs manage to proliferate. Even though up until around the 200th day breast cancer cells seem to have stabilised at equilibrium point $E_2$, they proceed to start increasing up until they reach their carrying capacity. An interesting observation is that tBreg levels need to be around $10^8$ cells in order for breast cancer cells to reach their carrying capacity, much like the case studied for the scenario of $\\frac{\\theta_B}{m_T} \\ge \\frac{1}{b}$ in Figure [Fig6] .\n\n[h!] Fig9.eps\n\nCaption: Ensemble simulations of IVP, with $T_0$ taking values in the 50-point discretisation of the interval $\\left[ 0, 10^{9} \\right] \\, \\cdot \\, \\text{cells}$, $c=2 \\cdot 10^{-11}\\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$ and $B_0 = 50$ cells. Left: Number of breast cancer cells. Right: Number of tBregs. Even though breast cancer cells seem to have stabilised to their corresponding $E_2$ value for more than 100 days in each simulation, when tBerg levels are about $10^8$ cells (dashed line), breast cancer cells start increasing again and reach their carrying capacity.\n\nFinally, we notice that when tBregs are scarce, even if the initial number of breast cancer cells is very close to the tumour carrying capacity, breast cancer cells are not able to maintain their high levels and decrease until they reach $E_2$. However, this changes when tBregs become around $10^8$ cells, causing breast cancer cells to increase to their carrying capacity, while also being able to maintain their high numbers.\n\nRegion $\\mathcal{H}$. When $c = 3 \\cdot 10^{-10}\\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$, we have that $c>c_1$. In this case, the ability of NK cells at lysing breast cancer cells is at its highest, so we expect some of our simulations to result in the elimination of the tumour. As anticipated, we see that in Figure [Fig10] , when the initial condition of tBregs is $B_0 = 5 \\cdot 10^{5}$, breast cancer cells, along with tBregs, are quickly depleted from the body for all simulations.\n\n[h!] Fig10.eps\n\nCaption: Ensemble simulations of IVP, with $T_0$ taking values in the 50-point discretisation of the interval $\\left[ 0, 10^{9} \\right] \\, \\cdot \\, \\text{cells}$, $c = 3 \\cdot 10^{-10}\\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$ and $B_0 = 5 \\cdot 10^5$ cells. Left: Number of breast cancer cells. Right: Number of tBregs. We notice that breast cancer cells are quickly depleted from the body when $c = 3 \\cdot 10^{-10}\\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1} \\; (c > c_1)$ and $B_0 = 5 \\cdot 10^5$ cells.\n\nHowever, the same does not hold if the initial number of tBergs is higher. When the initial condition of IVP becomes equal to equilibrium point $E_3$, which in this case is equal to $\\left( 8 \\cdot 10^8, 6 \\cdot 10^7, 7.63 \\cdot 10^9, 1.24 \\cdot 10^6 \\right) \\; \\cdot \\; \\text{cells}$, we get Figure [Fig11] . In Figure [Fig11] , we observe that when the initial condition of breast cancer cells is lower than the value of breast cancer cells at $E_3$, the tumour is eliminated, whereas if it is higher, the tumour reaches its carrying capacity. Naturally, if it is equal to the value of breast cancer cells at $E_3$, then the solution is constant. Even though the trajectories that move towards the tumour carrying capacity, do not actually move towards an equilibrium point, a sort of bistability phenomenon appears, as far as the population of breast cancer cells is concerned.\n\n[h!] Fig11.eps\n\nCaption: Ensemble simulations of IVP, with $T_0$ taking values in the 200-point discretisation of the interval $\\left[ 0, 10^{9} \\right] \\, \\cdot \\, \\text{cells}$, $c = 3 \\cdot 10^{-10}\\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$ and $\\left( T_0, N_0, R_0, B_0 \\right) = E_3$ cells. Left: Number of breast cancer cells. Right: Number of tBregs. We notice that if $T_0$ is higher than the corresponding value of $T$ in $E_3$ then $T \\nearrow \\frac{1}{b}$, whereas if $T_0$ is lower than the corresponding value of $T$ in $E_3$ then $T \\searrow 0$.\n\nThroughout Section [sec:tBregsExist] , we observed the importance of tBergs in the dynamics of IVP. Each time tBreg levels were sufficiently high, breast cancer cells reached their carrying capacity. In the presence of tBregs, breast tumour can reach its carrying capacity independently of the value of parameter $c$. Hence, we reach the following conclusion:\n\nConclusion 3: In the presence of tBregs, if tumour carrying capacity is bounded from below, then the breast tumour will eventually reach its carrying capacity due to the effect of an increasing population of tBregs, i.e. $T \\nearrow \\frac{1}{b}$ when $B \\nearrow$.\n\nThe Importance of $c$\n\nOur bifurcation analysis, along with our numerical simulations, underlined the importance of the rate at which NK cells lyse breast cancer cells. A way to numerically visualise the bifurcation diagram of Figure [Fig3] is with Figure [Fig12] . In Figure [Fig12] , we let $c$ take a range of values between $4 \\cdot 10 ^{-11}$ and $4 \\cdot 10^{-10} \\; \\cdot \\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$, while keeping the initial condition constant. As expected from our stability and numerical analysis, when $c<c_1$, breast cancer cells increase until they reach their carrying capacity. Additionally, when $c_1<c<c_2$ equilibrium point $E_2$ is stable, and the value of breast cancer cells at the equilibrium decreases, as we increase the value of $c$, until it reaches 0, when $c>c_2$.\n\n[h!] Fig12.eps\n\nCaption: Ensemble simulations of IVP, with $c$ taking values in the 150-point discretisation of the interval $\\left[ 4 \\cdot 10 ^{-11}, 4 \\cdot 10^{-10} \\right] \\; \\cdot \\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$, $m_T = m_T^B$, $T_0 = 6.5 \\cdot 10^8$ cells, and $B_0 = 50$ cells. The phenomenon of tumour dormancy is evident, since there exist stable equilibrium points where breast-cancer-cell levels are very low.\n\nAdditionally, when the value of $c$ is a bit smaller than $c_2$, our model predicts breast cancer cells decreasing to a very small, but nonzero, amount. This clinically undetectable population could seize its proliferation, until the tumour micro-environmental conditions are suitable for its growth. This phenomenon is known as cancer dormancy and it happens to 20–45% of breast cancer patients [citation].\n\nTo sum up, similarly to Conclusion $1_a$ we have that:\n\nConclusion $1_p$: In the presence of tBregs, the breast tumour will reach its carrying capacity due to NK cell insufficiency, i.e. $T \\nearrow \\frac{1}{b}$ when $c \\searrow 0$.\n\nSensitivity Analysis\n\nIn this section, we perform numerical parameter sensitivity analysis in order to bring light to the dependence of the solution of our model to its parameters. Our approach is to fix all parameter values but one, which we increase and decrease by 10%, and measure the percent change of the breast cancer cell population after 200 days, when compared to the same value, but for our original parameter. We execute this procedure for four different tBregs initial conditions: $B_0 = 10^6,\\; 6 \\cdot 10^6, \\; 11 \\cdot 10^6 \\; \\text{and} \\; 11.5 \\cdot 10^6$ cells. Additionally, we have that $T_0 = 8 \\cdot 10^8$ cells, $c =3 \\cdot 10^{-10}\\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$, $m_T = 5 \\cdot 10^{-10}\\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$.\n\nThe results are given in Figure [Fig13] . In most of our experiments, the parameter showing the biggest sensitivity is, the rate at which NK cells lyse cancer cells, $c$. The more we increase $c$, the biggest the decrease in final tumour size after 200 days, further supporting Conclusion $1_a$ and Conclusion $1_p$ . Another parameter showing high sensitivity is, the tumour growth rate, $a$, which is to be expected. Additionally, the rest of parameters directly involving NK cells, namely, the constant source of NK cells, $\\sigma$, the rate of programmable NK cell death, $\\theta_N$, and the rate of NK cell death due to Tregs, $\\gamma$, all show considerable high sensitivity, which underlines the anti-tumour effect of NK cells. As far as the sensitivity of the parameters regarding Tregs is concerned, it remains almost the same, no matter the initial conditions of tBregs. On the contrary, the parameters regarding tBregs, namely, the rate of tBreg-induced Treg activation, $m_B$, the rate of programmable tBreg cell death, $\\theta_B$, and the rate of breast-cancer-induced tBreg activation, $m_T$, all show increasing sensitivity, as we increase the initial number of tBregs. This comes as a further confirmation of Conclusion 2 and Conclusion 3 , since the higher the number of tBregs in the body, the bigger the resulting tumour, and therefore the probability of cancer metastasis is increased.\n\n[h!] Fig13.eps\n\nCaption: Numerical sensitivity of the parameters of IVP, with $T_0 = 8 \\cdot 10^8$ cells, $c =3 \\cdot 10^{-10}\\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$, $m_T = 5 \\cdot 10^{-10}\\; \\text{cell}^{-1} \\, \\cdot \\, \\text{day}^{-1}$. The percentage change in final tumour size after 200 days is plotted. We notice that in all experiments, the parameters regarding NK cells show very high sensitivity, whereas the parameters regarding tBregs show increasing sensitivity as we increase $B_0$.\n\nConclusion and Discussion\n\nIn this study, we developed a model of non-linear ordinary differential equations, with the goal of capturing the dynamics between breast cancer cells, NK cells, Tregs and the newly discovered tBregs. An introductory approach was taken place, where the functional responses of our model were chosen to be linear (i.e. Holling's type I).\n\nWe showed the existence of three biologically realistic equilibria: an equilibrium with no cancer cells, an equilibrium with cancer cells and no tBregs, and an equilibrium with both cancer cells and tBregs. Using the linearisation and the center manifold theorem, we gave conditions regarding the local stability of each equilibrium.\n\nUsing bifurcation analysis, we showed the importance of the rate of NK-induced tumour death, $c$, - independently of the presence or absence of tBregs - on the stability and the existence of the equilibria, which we further proved using our numerical simulations, arriving at Conclusion $1_a$ and Conclusion $1_p$ .\n\nMoreover, we showed how the sign of $\\frac{\\theta_B}{m_T} - \\frac{1}{b}$ can change the number of equilibria of our model and, therefore, the dynamics of breast cancer growth. On top of that, we proved that when $\\frac{\\theta_B}{m_T} > \\frac{1}{b}$, our model has no closed orbits, meaning that breast cancer will either be cleared by NK cells or stabilise around a constant number.\n\nAdditionally, we performed numerical simulations, in which our model was able to capture some interesting behaviours of breast cancer. On the one hand, breast cancer cells decreased for a period of time and after reaching a minimum value, they started to increase. An opposite behaviour was also observed, with cancer cells increasing and reaching a peak, after which NK cells finally managed to clear the cancer cell population ( Figure [Fig8] and Figure [Fig11] ). On the other hand, our model was able to capture the phenomenon of cancer dormancy, due to the existence of a stable equilibrium, in which the number of breast cancer cells is very small ( Figure [Fig3] and Figure [Fig12] ).\n\nThroughout our numerical simulations, the ability of tBregs to cause breast cancer cells to reach their carrying capacity was underlined, thus making us reach Conclusion 2 and Conclusion 3 . In fact, our simulations showed that without tBregs, breast cancer cells can only be stabilised around two of the three equilibria admitted by our analysis ($E_1$ and $E_2$). Furthermore, even in the cases where the tumour micro-environmental conditions did not allow tBregs to grow, but only decrease - which happens when $\\frac{\\theta_B}{m_T} > \\frac{1}{b}$ - a high initial number of tBregs caused breast tumour to reach its carrying capacity. Thus, the important takeaway of this study is that when tBregs do not exist in the body, the only way for the breast tumour to reach its carrying capacity is for the rate of NK-induced breast cancer cell death to be tending to 0, whereas if tBregs exist in the body, a sufficiently large number of tBregs can cause the breast tumour to reach its carrying capacity, regardless of the rate of NK-induced breast cancer cell death. Taking all these into account, a potential tBreg-depleting therapy could minimise the ability of breast cancer to grow and metastasise.\n\nFinally, our numerical sensitivity analysis emphasised Conclusion 2 and Conclusion 3 , due to our model's high sensitivity to the parameter regarding the NK-induced death of breast cancer cells, as well as the increasing sensitivity to parameters regarding tBregs, as we increased the initial condition of tBregs.\n\nIn spite of our model's ability to be used as a framework within which we can study breast cancer growth with respect to NK cells, Tregs and tBregs, there do exist some limitations. Choosing linear functional responses has the advantage of making the model easier to approach, however this makes our results potentially less realistic. Additionally, as tBregs are recently discovered, data regarding their kinetics do not currently exist; this drove us to estimate the value of the corresponding parameters. However, our findings could serve as a catalyst to more research regarding the function and kinetics of tBregs, which in turn could help further refine the proposed model and, therefore, the understanding of the role of tBregs in breast cancer growth and metastasis.\n\nAcknowledgement\n\nThe authors would like to thank the reviewers for their thoughtful comments and efforts towards improving our manuscript.\n\nPreliminary Results\n\nIn this section, we prove that IVP (we remind that this acronym is used for the initial value problem $\\left\\{\\eqref{reducedModel},\\eqref{reducedModel_ICs}\\right\\}$) has a unique solution, which is non-negative for non-negative initial conditions and for positive parameter values. We also prove that our solution is global, i.e. it does not explode for some finite positive value of time $t$. The above conditions are necessary in order to assure that IVP yields biologically realistic results.\n\n[Uniqueness and non-negativity]\n\nFor every $\\left(T_0,N_0,R_0,B_0\\right)\\in \\mathbb{R}_{\\ge 0}^4$, IVP has a unique (local) solution $\\left(T, N, R, B\\right):\\left[0,\\tau\\right)\\to\\mathbb{R}_{\\ge 0}^4$ for some $\\tau>0$.\n\nIt is easy to see that the conditions of the Picard-Lindelöf theorem are fulfilled, since every function of the right-hand side of system [reducedModel] is continuous, just like its partial derivative with respect to every variable. Thus, we have that there exists a unique solution to IVP. In fact, we can extended the solution and consider it in the maximal non-negative interval of existence.\n\nNext, we prove the non-negativity of the solution. Rewriting (1) in the following form\n{\\dv{T}{t}}(t) +(cN(t)-a)T(t)=-abT^2(t) \\,,\nwe notice that we have a Bernoulli equation for the variable $T$, thus its solution is\nT(t) = \\frac{T_0 e^{\\int_0^t \\left( a-cN(s) \\right) \\, \\mathrm{d}s}}{1+T_0ab \\int_0^t \\! e^{{\\int_0^s \\left( a-cN(\\xi) \\right) \\, \\mathrm{d}\\xi}} \\,  \\mathrm{d}s} \\,,\nwhich is non-negative, if $T_0$ is non-negative.\n\nUsing the fact that $\\sigma > 0$, we turn our attention to (2). We have that\n{\\dv{N}{t}}(t) > -(\\gamma R(t) + \\theta_N)N(t) \\,,\nand using Grönwall's inequality, we have that\nN(t) \\ge N_0e^{- \\int_0^t \\left( \\gamma R(s) + \\theta_N \\right) \\, \\mathrm{d}s} \\,,\nwhich means that $N(t)\\ge0$, when $N_0\\ge0$.\n\nUsing a similar method as above, from (3) we get\nR(t) \\ge R_0e^{\\int_0^t \\left( m_BB(s)-\\theta_R \\right) \\, \\mathrm{d}s} \\,,\nwhich means that $R(t)\\ge0$, when $R_0\\ge0$.\n\nWe then use the separation of variables method to solve (4) for the variable $B$. Its solution is\nB(t) = B_0e^{\\int_0^t  \\left( m_TT(s) - \\theta_B \\right) \\, \\mathrm{d}s} \\,.\nClearly, if $B_0\\ge0$, then $B(t)\\ge0$.\n\n[Boundedness of $T$]\n\nThe set $\\left[0,1/b\\right]$ is positively invariant for the component $T$ of the solution of IVP.\n\nSince the solution of IVP is non-negative, we have from (1) that\n{\\dv{T}{t}}(t)  = \\underbrace{aT(1-bT) - cNT}_{q_1(T)} \\le \\underbrace{aT(1-bT)}_{q_2(T)} \\; .\nWe assume the following two initial value problems:\n& \\dv{T}{t}  = q_1(T), \\quad  T(0)=T_0 \\ge 0 \\quad \\text{ and} \\\\\n    & \\dv{y_2}{t} = q_2(y_2), \\quad y_2(0) = \\frac{1}{b} \\; .\nAssuming that $T_0 \\le y_2(0) = 1/b $, and since $q_1, q_2$ are Lipschitz functions on $\\mathbb{R}$ that satisfy the inequality $ q_1(T) \\le q_2(T)$, from the comparison theorem we have that $T(t) \\le y_2(t)$ for $t$ in the maximal non-negative interval of existence of the solution of IVP. Solving initial value problem (48), yields $y_2 = 1/b$. Hence, $T(t) \\le 1/b$, with the assumption that the initial value of $T$ is smaller or equal to $1/b$.\n\n[Globality] If $T_0 \\le 1/b$, then the solution of IVP is global.\n\nFrom (4) and using the fact that $T(t) \\le 1/b$, we have that\n{\\dv{B}{t}}(t) \\le -\\theta_BB(t)+\\frac{m_T}{b}B(t) \\,,\nand by using Grönwall's inequality, we have that\nB(t) \\le B_0e^{(\\frac{m_T}{b}-\\theta_B)t} \\,.\n\nMoreover, from (3) and using the fact that $\\theta_RR \\ge 0 $ we get\n{\\dv{R}{t}}(t) \\le \\kappa + m_BB(t)R(t) \\,,\nand by using Grönwall's inequality, we have that\nR(t) \\le e^{m_B \\int_0^t \\! B(s)  \\, \\mathrm{d}s} \\left(R_0 + \\kappa \\int_0^t \\! e^{ - m_B \\int_0^\\xi \\! B(s)  \\, \\mathrm{d}s} \\, \\mathrm{d}\\xi  \\right) \\,.\n\nFinally, from (2) and using the fact that $ \\gamma RN \\ge 0 $ we get\n{\\dv{N}{t}}(t)\\le \\sigma - \\theta_N N(t) \\,,\nand by using Grönwall's inequality, we have that\nN(t) \\le \\frac{\\sigma}{\\theta_N} - \\frac{\\sigma}{\\theta_N}e^{-\\theta_Nt} + e^{-\\theta_Nt}N_0 \\,.\n\nSince the solution is bounded on any compact non-negative interval, we deduce its (positive) globality.\n\nParameter Estimation\n\nHere we explain our reasoning behind our choice of parameters. Most of the parameters in our model have been chosen based on methods and data that can also be found in [citation].\n\nThe Tumour\n\nBased on the data fitting experiments conducted in [citation], we chose the logistic function to model the breast cancer growth, with the tumour growth rate being $a = 0.15$ day$^{-1}$ and the inverse of the tumour carrying capacity being $b = 1 \\cdot 10^{-9}$ cell$^{-1}$. The cell lines used for the estimation of these parameters are CN34BrM, MDA-231 and SUM1315.\n\nThe NK Cells\n\nHealthy young adults have a total NK production rate of (15 ± 7.6)·10$^6$ cell · litre$^{-1}$ · day$^{-1}$, while healthy older adults have one of (7.3 ± 3.7)·10$^6$ cells · litre$^{-1}$ · day$^{-1}$ [citation]. Since the average amount of blood in the human body is about 5 litre [citation], the constant source of NK cells is in the range\n\\sigma \\in \\left[  1.8 \\cdot10^7 \\text{ cell} \\cdot \\text{day}^{-1},\\,  1.13 \\cdot10^8 \\text{ cell} \\cdot \\text{day}^{-1} \\right]\\,.\n\nThe half-life of NK cells in humans is 1 to 2 weeks [citation] which, assuming exponential decay of NK cells, yields a range for $\\theta_N$ of $({\\frac{\\ln2}{14}}, {\\frac{\\ln2}{7}})=(0.049, 0.099)$. Here, we choose an NK cells half-life of 11 days with a corresponding programmable NK death rate of\n\\theta_N = \\frac{\\ln2}{11 \\text{ day}} \\approx 6.301 \\cdot 10^{-2} \\text{ day}^{-1}\\,.\n\nApproximately 4 to 29% of circulating lymphocytes are NK cells [citation]. The average number of lymphocytes per microlitre is 1000 to 4800 cells [citation], and since the average human has an average of 5 litres of blood, we have that the total population of lymphocytes in a human is 5·10$^9$ to 24·10$^9$ cells. Therefore, the total population of NK cells in blood is $N_{min}=$ 2·10$^8$ to $N_{max}=$ 6.96·10$^9$ cells. At the healthy equilibrium, our model suggests the population of NK cells to be $\\frac{\\sigma \\theta _R}{\\gamma \\kappa +\\theta _N \\theta _R}$, which means that\nN_{min} \\le \\frac{\\sigma  \\theta _R}{\\gamma  \\kappa +\\theta _N \\theta _R} \\le N_{max} \\Leftrightarrow   \\frac{\\theta_R ( \\sigma - \\theta_N )}{N_{max} \\kappa} \\le \\gamma \\le \\frac{\\theta_R ( \\sigma - \\theta_N )}{N_{min} \\kappa}\\,.\nReplacing the minimum value of $\\sigma$, and the maximum value of $\\theta_N$ and $\\kappa$ in the above inequality yields the minimum value of $\\gamma$, while replacing the maximum value of $\\sigma$, and the minimum value of $\\theta_N$ and $\\kappa$ (we derive a range for $\\kappa$ in Appendix [reducedModelTregParameterEstimation] ), yields the maximum value of $\\gamma$. Finally, after calculating the above two quantities, the resulting range for the parameter $\\gamma$ is\n\\gamma \\in \\left[   1.796 \\cdot 10^{-12} \\text{ cell}^{-1} \\cdot \\text{day}^{-1} , 4.52 \\cdot 10^{-9} \\text{ cell}^{-1} \\cdot \\text{day}^{-1} \\right]\\,.\n\nThe Tregs\n\nFor the constant source of Tregs, our model suggests that a healthy organism has an average number of $ \\kappa/\\theta_R $ Tregs, since this is the coordinate which corresponds to Tregs in the healthy equilibrium. From [citation] we get that Tregs are 5 to 10% of the total CD4$^+$ T cells population circulating in blood, while from [citation] we get that the percentage of CD4$^+$ T cells among the total population of circulating lymphocytes ranges from 50 to 60%. Hence, the percentage of Tregs among the total population of circulating lymphocytes is 2.5 to 6%. The average number of lymphocytes per microlitre is 1000 to 4800 cells [citation], and since the average human has an average of 5 litres of blood, we have that the total population of lymphocytes in a human is 5·10$^9$ to 24·10$^9$ cells. Therefore, the total population of Tregs in blood is 1.25·10$^8$ to 1.44·10$^9$ cells. Solving the equation\n\\textit{total population of Tregs} = \\frac{\\kappa}{\\theta_R},\nfor $\\kappa$ and replacing the range of values for the total population of Tregs as found above and the value of $\\theta_R$ as found in the following paragraph, we finally get the constant source of Tregs to be in the interval\n\\kappa \\in [4.8137 \\cdot 10^6 \\text{ cell·day$^{-1}$},5.5454 \\cdot 10^7 \\text{ cell·day$^{-1}$}]\\,.\n\nThe half-life of Tregs is found to be about 18 days [citation]. Thus, assuming Tregs follow exponential decay we have that\n\\theta_R = \\frac{\\ln2}{18 \\text{ day}} \\approx 3.851 \\cdot 10^{-2} \\text{ day}^{-1}.\n\nThe rate of NK cell death due to Tregs, $\\gamma$, is assumed to be\n\\gamma = 1 \\cdot 10^{-10} \\text{ cell}^{-1} \\cdot \\text{day}^{-1}.\n\nThe tBregs\n\nAs B cells are less studied than T cells and NK cells, we are not able to find the half-life of Bregs, let alone tBregs, as they are recently discovered. So, we estimate the rate of programmable tBreg cell death to be around $\\theta_B = 0.4 \\text{ day}^{-1}$.\n\nThe same holds for the rate of breast-cancer-induced tBreg activation, $m_T$, which we assume it to be either $m_T = 5.2 \\cdot 10^{-15}$ cell$^{-1}$ $\\cdot$ day$^{-1}$ or $m_T = 5 \\cdot 10^{-10}$ cell$^{-1}$ $\\cdot$ day$^{-1}$.\n\ntoc chapterBibliography",
+  "sections": [
+    {
+      "id": "front",
+      "title": "Title",
+      "start": 0,
+      "end": 61
+    },
+    {
+      "id": "s2-abstract",
+      "title": "Abstract",
+      "start": 61,
+      "end": 671
+    },
+    {
+      "id": "s3-introduction",
+      "title": "Introduction",
+      "start": 671,
+      "end": 5543
+    },
+    {
+      "id": "s4-model-formulation",
+      "title": "Model Formulation",
+      "start": 5543,
+      "end": 12738
+    },
+    {
+      "id": "s5-equilibria-and-stability-analysis",
+      "title": "Equilibria and Stability Analysis",
+      "start": 12738,
+      "end": 38008
+    },
+    {
+      "id": "s6-bifurcation-analysis",
+      "title": "Bifurcation Analysis",
+      "start": 38008,
+      "end": 44586
+    },
+    {
+      "id": "s7-numerical-simulations",
+      "title": "Numerical Simulations",
+      "start": 44586,
+      "end": 47171
+    },
+    {
+      "id": "s8-the-scenario-of-absent-tbregs-b-0-0",
+      "title": "The Scenario of Absent tBregs ($B_0 = 0$)",
+      "start": 47171,
+      "end": 49018
+    },
+    {
+      "id": "s9-the-scenario-of-present-tbregs-b-0-0",
+      "title": "The Scenario of Present tBregs ($B_0 \\neq 0$)",
+      "start": 49018,
+      "end": 49712
+    },
+    {
+      "id": "s10-bounded-from-above-tumour-carrying-capac",
+      "title": "Bounded-From-Above Tumour Carrying Capacity ($\\frac{\\theta_B}{m_T} \\ge \\frac{1}{b}$)",
+      "start": 49712,
+      "end": 52154
+    },
+    {
+      "id": "s11-bounded-from-bellow-tumour-carrying-capa",
+      "title": "Bounded-From-Bellow Tumour Carrying Capacity ($\\frac{\\theta_B}{m_T} < \\frac{1}{b}$)",
+      "start": 52154,
+      "end": 59485
+    },
+    {
+      "id": "s12-the-importance-of-c",
+      "title": "The Importance of $c$",
+      "start": 59485,
+      "end": 61384
+    },
+    {
+      "id": "s13-sensitivity-analysis",
+      "title": "Sensitivity Analysis",
+      "start": 61384,
+      "end": 64078
+    },
+    {
+      "id": "s14-conclusion-and-discussion",
+      "title": "Conclusion and Discussion",
+      "start": 64078,
+      "end": 68466
+    },
+    {
+      "id": "s15-acknowledgement",
+      "title": "Acknowledgement",
+      "start": 68466,
+      "end": 68606
+    },
+    {
+      "id": "s16-preliminary-results",
+      "title": "Preliminary Results",
+      "start": 68606,
+      "end": 72748
+    },
+    {
+      "id": "s17-parameter-estimation",
+      "title": "Parameter Estimation",
+      "start": 72748,
+      "end": 72951
+    },
+    {
+      "id": "s18-the-tumour",
+      "title": "The Tumour",
+      "start": 72951,
+      "end": 73331
+    },
+    {
+      "id": "s19-the-nk-cells",
+      "title": "The NK Cells",
+      "start": 73331,
+      "end": 75649
+    },
+    {
+      "id": "s20-the-tregs",
+      "title": "The Tregs",
+      "start": 75649,
+      "end": 77308
+    },
+    {
+      "id": "s21-the-tbregs",
+      "title": "The tBregs",
+      "start": 77308,
+      "end": 77833
+    }
+  ],
+  "equations": [
+    {
+      "id": "eq1",
+      "labels": [],
+      "number": null,
+      "latex": "& \\dv{T}{t} = f_T{\\left(T\\right)} + f_{T,N}{\\left(T,N\\right)}\\,,      \\\\ \n    & \\dv{N}{t} = f_N{\\left(N\\right)} + f_{N,R}{\\left(N,R\\right)} \\,, \\\\\n    & \\dv{R}{t} = f_R{\\left(R\\right)} + f_{R,B}{\\left(R,B\\right)} \\,,     \\\\\n    & \\dv{B}{t} = f_B{\\left(B\\right)} + f_{T,B}{\\left(T,B\\right)} \\,,",
+      "sectionId": "s4-model-formulation",
+      "start": 7114,
+      "end": 7407
+    },
+    {
+      "id": "eq2",
+      "labels": [
+        "dT",
+        "dN",
+        "dR",
+        "dB"
+      ],
+      "number": "1–4",
+      "latex": "& \\dv{T}{t} = aT(1-bT) - cNT\\,,                         \\\\ \n    & \\dv{N}{t} = \\sigma - \\theta_NN - \\gamma RN \\,,          \\\\\n    & \\dv{R}{t} = \\kappa -\\theta_RR + m_BBR \\,,               \\\\\n    & \\dv{B}{t} = -\\theta_BB + m_TTB \\,,",
+      "sectionId": "s4-model-formulation",
+      "start": 9390,
+      "end": 9620
+    },
+    {
+      "id": "eq3",
+      "labels": [
+        "reducedModel_ICs"
+      ],
+      "number": "5",
+      "latex": "\\left(T\\left(0\\right),N\\left(0\\right),R\\left(0\\right),B\\left(0\\right)\\right)=\\left(T_0,N_0,R_0,B_0\\right)\\in \\mathbb{R}_{\\ge 0}^4.",
+      "sectionId": "s4-model-formulation",
+      "start": 9858,
+      "end": 9988
+    },
+    {
+      "id": "eq4",
+      "labels": [
+        "Tss",
+        "Nss",
+        "Rss",
+        "Bss"
+      ],
+      "number": "6–9",
+      "latex": "a\\overbar{T}(1-b\\overbar{T}) - c\\overbar{N}\\overbar{T}             & = 0    \\,,     \\\\ \n     \\sigma - \\theta_N\\overbar{N} - \\gamma \\overbar{R}\\overbar{N} & = 0 \\,,   \\\\\n     \\kappa -\\theta_R\\overbar{R} + m_B\\overbar{B}\\overbar{R}     & = 0\\,,      \\\\\n     -\\theta_B\\overbar{B} + m_T\\overbar{T}\\overbar{B}           &  = 0 \\,.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 12773,
+      "end": 13098
+    },
+    {
+      "id": "eq5",
+      "labels": [],
+      "number": null,
+      "latex": "E_1 & =   \\left(0, \\frac{a}{c_1}, \\frac{\\kappa }{\\theta _R}, 0\\right) \\, , \\\\\nE_2 & = \\left(\\frac{c_1-c}{bc_1}, \\frac{a}{c_1}, \\frac{\\kappa }{\\theta _R}, 0\\right) \\text{\\quad and} \\\\\nE_3 & =\n\\begin{multlined}[t]\n\\biggl(\\frac{\\theta _B}{m_T}, -\\frac{a   \\Theta_1}{c m_T}, -\\frac{ \\Theta_2}{a \\gamma   \\Theta_1},  \\frac{\\sigma m_T\\theta_R\\left(c-c_2\\right)}{m_B\\Theta_2} \\bigg) \\, ,\n\\end{multlined}",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 13452,
+      "end": 13848
+    },
+    {
+      "id": "eq6",
+      "labels": [],
+      "number": null,
+      "latex": "\\Theta_1 & \\coloneqq  b \\theta_B - m_T  \\,, \\\\\n   \\Theta_2 &  \\coloneqq  a \\theta_N \\Theta_1 + c \\sigma  m_T\\,, \\\\\n    c_1 & \\coloneqq  \\frac{a\\left(\\theta_N\\theta_R+\\gamma\\kappa\\right)}{\\theta_R \\sigma} \\,, \\\\\n    c_2 & \\coloneqq -\\frac{\\Theta_1 c_1}{m_T}\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 13855,
+      "end": 14114
+    },
+    {
+      "id": "eq7",
+      "labels": [],
+      "number": null,
+      "latex": "\\frac{a \\gamma  \\kappa +a \\theta _N \\theta _R-c \\sigma  \\theta _R}{\\gamma  \\kappa + \\theta _N \\theta _R} < \\frac{a \\theta_N - c \\sigma}{ \\theta_N} \n    &\\Leftrightarrow   a-\\frac{ c \\sigma  \\theta _R}{\\gamma  \\kappa + \\theta _N \\theta _R}<a-\\frac{ c \\sigma}{ \\theta_N}   \\Leftrightarrow \\gamma  \\kappa < 0",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 18472,
+      "end": 18777
+    },
+    {
+      "id": "eq8",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{J}(T,N,R,T) =\n\\begin{bmatrix} \n a-2 a b T-c N  & -c T & 0 & 0 \\\\\n 0 &  -\\theta_N-\\gamma R  & - \\gamma N   & 0 \\\\\n 0 & 0 & -\\theta _R+m_B B  &  m_B R \\\\\n m_T B  & 0 & 0 & -\\theta_B+m_T T  \\\\\n\\end{bmatrix} \\, .",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 19961,
+      "end": 20177
+    },
+    {
+      "id": "eq9",
+      "labels": [
+        "jacE1"
+      ],
+      "number": "10",
+      "latex": "\\mathbf{J}(E_1;c) = \n    \\begin{bmatrix}\n \\frac{a\\left(c_1-c\\right)}{c_1} & 0 & 0 & 0 \\\\\n 0 & -\\frac{\\sigma c_1}{a} & -\\frac{a\\gamma}{c_1} & 0 \\\\\n 0 & 0 & -\\theta _R & \\frac{\\kappa  m_B}{\\theta _R} \\\\\n 0 & 0 & 0 & -\\theta _B \\\\\n    \\end{bmatrix} \\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 20397,
+      "end": 20646
+    },
+    {
+      "id": "eq10",
+      "labels": [
+        "eigenvalE1"
+      ],
+      "number": "11",
+      "latex": "\\lambda_{11}\\left(c\\right) = \\frac{a\\left(c_1-c\\right)}{c_1},\\;  \\lambda_{12} = -\\theta _B\\,, \\; \\lambda_{13} = -\\theta _R\\quad \\text{ and }\\quad \\lambda_{14} =  -\\frac{\\sigma c_1}{a}\\,.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 20678,
+      "end": 20864
+    },
+    {
+      "id": "eq11",
+      "labels": [
+        "eigenvecE1.a",
+        "eigenvecE1.b"
+      ],
+      "number": "12–13",
+      "latex": "\\mathbf{u}_{11}  &= \\begin{bmatrix}\n     1,0,0,0\n     \\end{bmatrix}\\tran, \\quad\\mathbf{u}_{12}  = \\begin{bmatrix}\n      0,-\\frac{a^2\\gamma  \\kappa  m_B}{ c_1\\theta _R\\left(\\theta _B-\\theta _R\\right)\\left(a\\theta _B-\\sigma c_1\\right)},-\\frac{\\kappa  m_B}{\\theta _R \\left(\\theta _B-\\theta _R\\right)},1 \n     \\end{bmatrix}\\tran, \\\\\n     \\mathbf{u}_{13} & = \\begin{bmatrix}\n      0,\\frac{a^2\\gamma }{c_1\\left(a\\theta _R-\\sigma c_1\\right)},1,0\n     \\end{bmatrix}\\tran \\quad \\text{ and } \\quad\n     \\mathbf{u}_{14} = \\begin{bmatrix}\n     0,1,0,0\n     \\end{bmatrix}\n    \\tran.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 21156,
+      "end": 21725
+    },
+    {
+      "id": "eq12",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{J}(E_2;c) = \n\\begin{bmatrix}\n -\\frac{a\\left(c_1-c\\right)}{c_1}  &  -\\frac{c\\left(c_1-c\\right)}{bc_1}  & 0 & 0 \\\\\n 0 & -\\frac{\\sigma c_1}{a} & -\\frac{a\\gamma}{c_1} & 0 \\\\\n 0 & 0 & -\\theta _R & \\frac{\\kappa  m_B}{\\theta _R} \\\\\n 0 & 0 & 0 & \\frac{m_T\\left(c_2-c\\right)}{bc_1} \\\\\n\\end{bmatrix} \\, ,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 22521,
+      "end": 22823
+    },
+    {
+      "id": "eq13",
+      "labels": [
+        "eigenvalE2"
+      ],
+      "number": "14",
+      "latex": "\\lambda_{21}\\left(c\\right)=\\frac{m_T\\left(c_2-c\\right)}{bc_1}\\,, \\; \\lambda_{22}=-\\theta _R\\,, \\; \\lambda_{23} =-\\frac{\\sigma c_1}{a} \\, \\quad \\text{ and }  \\lambda_{24}\\left(c\\right)=-\\frac{a\\left(c_1-c\\right)}{c_1}   \\,.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 22855,
+      "end": 23077
+    },
+    {
+      "id": "eq14",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{J}(E_3;c) = \n \\begin{bmatrix}\n -\\frac{a b \\theta _B}{m_T} & -\\frac{c \\theta _B}{m_T} & 0 & 0 \\\\\n 0 & \\frac{c \\sigma  m_T}{a \\Theta_1} & \\frac{a \\gamma \\Theta_1}{c m_T} & 0 \\\\\n 0 & 0 & \\frac{a \\gamma  \\kappa  \\Theta_1}{\\Theta_2} & -\\frac{m_B \\Theta_2}{a \\gamma \\Theta_1} \\\\\n\\frac{m_T\\left(a \\gamma  \\kappa \\Theta_1+\\theta_R \\Theta_2  \\right)}{m_B \\Theta_2} & 0 & 0 & 0 \\\\\n\\end{bmatrix}\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 23628,
+      "end": 24023
+    },
+    {
+      "id": "eq15",
+      "labels": [
+        "charPol"
+      ],
+      "number": "15",
+      "latex": "\\lambda^4 + \\alpha_3 \\lambda^3 + \\alpha_2 \\lambda^2 + \\alpha_1 \\lambda + \\alpha_0 = 0\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 24065,
+      "end": 24153
+    },
+    {
+      "id": "eq16",
+      "labels": [],
+      "number": null,
+      "latex": "\\alpha_0 &= -\\frac{ \\theta_B\\left(a \\gamma  \\kappa \\Theta_1+\\theta_R \\Theta_2  \\right)}{m_T}\\,, \\\\\n    \\alpha_1 &= \\frac{a b c \\gamma  \\kappa  \\sigma  \\theta _B }{\\Theta_2}\\,, \\\\\n    \\alpha_2 &= -\\frac{a^2 b \\gamma  \\kappa  \\theta _B \\Theta_1}{m_T \\Theta_2}+\\frac{c \\gamma  \\kappa  \\sigma  m_T }{\\Theta_2}-\\frac{b c \\sigma  \\theta _B}{\\Theta_1}\\,, \\\\\n    \\alpha_3 &= -\\frac{a \\gamma  \\kappa \\Theta_1}{\\Theta_2}-\\frac{c \\sigma  m_T}{a \\Theta_1}+\\frac{a b \\theta _B}{m_T}\\,.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 24160,
+      "end": 24632
+    },
+    {
+      "id": "eq17",
+      "labels": [],
+      "number": null,
+      "latex": "\\frac{\\theta_B}{m_T} \\le \\frac{a \\gamma  \\kappa +a \\theta _N \\theta _R-c \\sigma  \\theta _R}{a b \\gamma  \\kappa +a b \\theta _N \\theta _R}=\\dfrac{c_1-c}{bc_1}\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 24737,
+      "end": 24896
+    },
+    {
+      "id": "eq18",
+      "labels": [],
+      "number": null,
+      "latex": "\\lambda \\mapsto -\\lambda \\;,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 25253,
+      "end": 25281
+    },
+    {
+      "id": "eq19",
+      "labels": [
+        "charPolTrans"
+      ],
+      "number": "16",
+      "latex": "\\underbrace{\\lambda^4}_{+}  \\underbrace{- \\alpha_3 \\lambda^3}_{-} + \\underbrace{\\alpha_2 \\lambda^2}_{+}  \\underbrace{-\\alpha_1 \\lambda}_{-}  \\underbrace{+\\alpha_0}_{-} = 0\\,.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 25298,
+      "end": 25472
+    },
+    {
+      "id": "eq20",
+      "labels": [
+        "transform1"
+      ],
+      "number": "17",
+      "latex": "\\begin{aligned}\nT & \\mapsto T+\\overbar{T}=T \\, , \\\\\nN & \\mapsto N+\\overbar{N}=N+\\frac{a}{c_1} \\, , \\\\\nR & \\mapsto R+\\overbar{R}=R+\\frac{\\kappa }{\\theta _R} \\, , \\\\\nB & \\mapsto B+\\overbar{B}=B \\, .\n\\end{aligned}",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 26397,
+      "end": 26607
+    },
+    {
+      "id": "eq21",
+      "labels": [
+        "trSys1"
+      ],
+      "number": "18",
+      "latex": "\\dv{\\mathbf{X}}{t} = \\mathbf{A_1 X} + \\mathbf{P_1}\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 26717,
+      "end": 26770
+    },
+    {
+      "id": "eq22",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{X} = \\begin{bmatrix}\n     T,N,R,B\n     \\end{bmatrix}\\tran\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 26777,
+      "end": 26845
+    },
+    {
+      "id": "eq23",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{A_1} \\coloneqq  \\mathbf{J}(E_1;c=c_1)=\n\\begin{bmatrix}\n 0 & 0 & 0 & 0 \\\\\n 0 & -\\frac{\\sigma c_1}{a} & -\\frac{a\\gamma}{c_1} & 0 \\\\\n 0 & 0 & -\\theta _R & \\frac{\\kappa  m_B}{\\theta _R} \\\\\n 0 & 0 & 0 & -\\theta _B \\\\\n    \\end{bmatrix}",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 26847,
+      "end": 27084
+    },
+    {
+      "id": "eq24",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{P_1} = \\begin{bmatrix}\n -abT^2-c_1TN, -\\gamma RN, m_B  BR ,  m_T  TB \n\\end{bmatrix}\\tran\\,.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 27089,
+      "end": 27188
+    },
+    {
+      "id": "eq25",
+      "labels": [
+        "transNormal1"
+      ],
+      "number": "19",
+      "latex": "\\mathbf{X} = \\mathbf{U_1} \\mathbf{Y}\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 27533,
+      "end": 27572
+    },
+    {
+      "id": "eq26",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{Y} = \\begin{bmatrix}\n      y_1, y_2, y_3, y_4\n     \\end{bmatrix}\\tran\n      \\quad \\text{ and } \\quad\n      \\mathbf{U_1} =  \\begin{bmatrix}\n      \\mathbf{u}_{11}, \\mathbf{u}_{12}, \\mathbf{u}_{13}, \\mathbf{u}_{14}\n     \\end{bmatrix}\\,.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 27586,
+      "end": 27827
+    },
+    {
+      "id": "eq27",
+      "labels": [
+        "NormalForm"
+      ],
+      "number": "20",
+      "latex": "&& \\mathbf{U_1}\\dv{\\mathbf{Y}}{t} &= \\mathbf{A_1 U_1 Y} + \\mathbf{P_1} \\\\\n    \\Leftrightarrow && \\dv{\\mathbf{Y}}{t}   &= \\mathbf{U_1^{-1} A_1 U_1 Y} + \\mathbf{U_1^{-1} P_1}   \\\\\n    \\Leftrightarrow && \\dv{\\mathbf{Y}}{t}   &= \\mathbf{\\Lambda_1 Y} + \\mathbf{F_1} \\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 27875,
+      "end": 28139
+    },
+    {
+      "id": "eq28",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{\\Lambda_1} &= \\text{diag}(\\lambda_{11}\\left(c_1\\right),\\lambda_{12},\\lambda_{13},\\lambda_{14}) \\quad \\text{ and } \\\\\n    \\mathbf{F_1} &= \\begin{bmatrix}\n      f_{11}, f_{12}, f_{13}, f_{14}\n     \\end{bmatrix}\\tran = \\mathbf{U_1^{-1} P}\\,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 28146,
+      "end": 28391
+    },
+    {
+      "id": "eq29",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{F_1} = \n\\begin{bmatrix}\n    -a b y_1^2+ w_{11} y_1 y_2 + w_{12} y_1 y_3- c_1 y_1 y_4  \\\\\n    m_T y_1 y_2  \\\\\n    w_{13} y_1 y_2 + w_{14} y_2^2 + m_B y_2 y_3\\\\\n    w_{15} y_1 y_2 + w_{16} y_2 y_3 + w_{17} y_2^2 + w_{18} y_2 y_4 + w_{19} y_3^2 + w_{110} y_3 y_4\n\\end{bmatrix}\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 28608,
+      "end": 28892
+    },
+    {
+      "id": "eq30",
+      "labels": [],
+      "number": null,
+      "latex": "\\dv{\\mathbf{Y}}{t} = \\begin{bmatrix}\n    \\mathbf{B_1} & \\mathbf{0} \\\\\n   \\mathbf{0} & \\mathbf{C_1}   \\\\\n\\end{bmatrix} \\mathbf{Y} + \\mathbf{F_1}\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 28995,
+      "end": 29141
+    },
+    {
+      "id": "eq31",
+      "labels": [
+        "y1'"
+      ],
+      "number": "21–28",
+      "latex": "\\dv{y_1}{t} & = \\mathbf{B_1} y_1 + f_{11}   \\,,     \\\\   \n    \\begin{bmatrix}\n        \\dv{y_2}{t} \\\\ \\dv{y_3}{t} \\\\ \\dv{y_4}{t}\n    \\end{bmatrix}  \n    & =\n   \\mathbf{C_1} \\begin{bmatrix}\n        y_2 \\\\ y_3 \\\\ y_4\n    \\end{bmatrix} \n     + \\begin{bmatrix}\n        f_{12} \\\\ f_{13} \\\\ f_{14}\n    \\end{bmatrix}\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 29142,
+      "end": 29453
+    },
+    {
+      "id": "eq32",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{B_1} = \\lambda_{11}\\left(c_1\\right) = 0 \\quad \\text{ and } \\quad \\mathbf{C_1} = \\text{diag}(\\lambda_{12},\\lambda_{13},\\lambda_{14})\\,.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 29477,
+      "end": 29619
+    },
+    {
+      "id": "eq33",
+      "labels": [],
+      "number": null,
+      "latex": "\\begin{bmatrix}\n        y_2 \\\\ y_3 \\\\ y_4\n    \\end{bmatrix}  = \\mathbf{h_1}(y_1) = \\begin{bmatrix}\n        h_{12}(y_1) \\\\ h_{13}(y_1) \\\\ h_{14}(y_1)\n    \\end{bmatrix}\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 30008,
+      "end": 30177
+    },
+    {
+      "id": "eq34",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{C_1} \\cdot \\mathbf{h_1}(y_1) +  \\begin{bmatrix}\n        f_{12}(y_1, \\mathbf{h_1}(y_1) ) \\\\ f_{13}(y_1, \\mathbf{h_1}(y_1) ) \\\\ f_{14}(y_1, \\mathbf{h_1}(y_1) ) \n    \\end{bmatrix} = D\\mathbf{h_1}(y_1) \\cdot \\left[\\mathbf{B_1} y_1 + f_{11}(y_1, \\mathbf{h_1}(y_1)) \\right]\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 30246,
+      "end": 30524
+    },
+    {
+      "id": "eq35",
+      "labels": [
+        "taylorApprox"
+      ],
+      "number": "29",
+      "latex": "\\mathbf{h_1}(y_1) = \\begin{bmatrix}\n        b_{12} y_1^2 + b_{13} y_1^3 + b_{14} y_1^4 + O(y_1^5) \\\\ c_{12} y_1^2 + c_{13} y_1^3 + c_{14} y_1^4 + O(y_1^5) \\\\ d_{12} y_1^2 + d_{13} y_1^3 + d_{14} y_1^4 + O(y_1^5)\n    \\end{bmatrix}\\,.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 30744,
+      "end": 30976
+    },
+    {
+      "id": "eq36",
+      "labels": [
+        "flowT1"
+      ],
+      "number": "30",
+      "latex": "\\dv{y_1}{t} = -aby_1^2 + O(y_1^3)\\,.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 31073,
+      "end": 31109
+    },
+    {
+      "id": "eq37",
+      "labels": [
+        "transform2"
+      ],
+      "number": "31",
+      "latex": "\\begin{aligned}\nT & \\mapsto T+\\overbar{T}=T+\\frac{c_1-c}{bc_1}  \\, , \\\\\nN & \\mapsto N+\\overbar{N}=N+\\frac{a}{c_1} \\, , \\\\\nR & \\mapsto R+\\overbar{R}=R+\\frac{\\kappa}{\\theta_R} \\, , \\\\\nB & \\mapsto B+\\overbar{B}=B \\, .\n\\end{aligned}",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 31633,
+      "end": 31861
+    },
+    {
+      "id": "eq38",
+      "labels": [
+        "trSys2"
+      ],
+      "number": "32",
+      "latex": "\\dv{\\mathbf{X}}{t} = \\mathbf{A_2 X} + \\mathbf{P_2}\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 31971,
+      "end": 32024
+    },
+    {
+      "id": "eq39",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{X} = \\begin{bmatrix}\n     T,N,R,B\n     \\end{bmatrix}\\tran\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 32031,
+      "end": 32099
+    },
+    {
+      "id": "eq40",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{A_2} \\coloneqq \\mathbf{J}(E_2;c=c_2)= \n\\begin{bmatrix}\n -\\frac{a\\left(c_1-c_2\\right)}{c_1}  &  -\\frac{c_2\\left(c_1-c_2\\right)}{bc_1}  & 0 & 0 \\\\\n 0 & -\\frac{\\sigma c_1}{a} & -\\frac{a\\gamma}{c_1} & 0 \\\\\n 0 & 0 & -\\theta _R & \\frac{\\kappa  m_B}{\\theta _R} \\\\\n 0 & 0 & 0 & 0\n\\end{bmatrix}",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 32101,
+      "end": 32394
+    },
+    {
+      "id": "eq41",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{P_2} = \\begin{bmatrix}\n -abT^2-c_2TN, -\\gamma RN, m_B  BR ,  m_T  TB \n\\end{bmatrix}\\tran\\,.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 32399,
+      "end": 32498
+    },
+    {
+      "id": "eq42",
+      "labels": [
+        "eigenvecE2"
+      ],
+      "number": "33",
+      "latex": "\\mathbf{u}_{21} & = \\begin{bmatrix}\n     \\frac{a\\gamma\\kappa c_2 m_B}{b \\theta_R^2 \\sigma c_1^2}, -\\frac{a^2\\gamma\\kappa m_B}{\\theta_R^2\\sigma c_1^2},\\frac{\\kappa m_B}{\\theta _R^2},1 \n     \\end{bmatrix}\\tran\\,, \\\\\n     \\mathbf{u}_{22} & = \\begin{bmatrix}\n      \\frac{a^2 c_2 \\gamma \\left(c_1-c_2\\right)}{bc_1\\left(a\\left(c_1-c_2\\right)-\\theta_Rc_1\\right)\\left(\\sigma c_1-a\\theta_R\\right)},\\frac{a^2\\gamma}{c_1\\left(a\\theta_R -\\sigma c_1\\right)},1,0\n     \\end{bmatrix}\\tran\\,, \\\\\n     \\mathbf{u}_{23} & = \\begin{bmatrix}\n    -\\frac{a c_2\\left(c_1-c_2\\right)}{b\\left(a^2\\left(c_1-c_2\\right)-\\sigma c_1^2\\right)},1,0,0\n     \\end{bmatrix}\\tran \\quad \\text{ and } \n     \\mathbf{u}_{24}  = \\begin{bmatrix}\n     1,0,0,0\n     \\end{bmatrix}\\tran\\,.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 32699,
+      "end": 33438
+    },
+    {
+      "id": "eq43",
+      "labels": [
+        "transNormal2"
+      ],
+      "number": "34",
+      "latex": "\\mathbf{X} = \\mathbf{U_2} \\mathbf{Y}\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 33520,
+      "end": 33559
+    },
+    {
+      "id": "eq44",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{U_2} =  \\begin{bmatrix}\n      \\mathbf{u}_{21}, \\mathbf{u}_{22}, \\mathbf{u}_{23}, \\mathbf{u}_{24}\n     \\end{bmatrix}\\,.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 33573,
+      "end": 33699
+    },
+    {
+      "id": "eq45",
+      "labels": [
+        "NormalForm2"
+      ],
+      "number": "35",
+      "latex": "\\dv{\\mathbf{Y}}{t}   = \\mathbf{\\Lambda_2 Y} + \\mathbf{F_2}\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 33741,
+      "end": 33802
+    },
+    {
+      "id": "eq46",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{\\Lambda_2} = \\text{diag}(\\lambda_{21}\\left(c_2\\right),\\lambda_{22},\\lambda_{23},\\lambda_{24}\\left(c_2\\right)) \\quad \\text{and} \\quad\n    \\mathbf{F_2} = \\begin{bmatrix}\n      f_{21}, f_{22}, f_{23}, f_{24}\n     \\end{bmatrix}\\tran = \\mathbf{U_2^{-1} P_2}\\,.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 33809,
+      "end": 34072
+    },
+    {
+      "id": "eq47",
+      "labels": [],
+      "number": null,
+      "latex": "f_{21} &= w_{21} y_1^2 + w_{22} y_1 y_2 + w_{23} y_1 y_3 - m_T y_1 y_4 \\,,\\\\\n f_{22} &= w_{24} y_1^2 + w_{25} y_1 y_2 + w_{26} y_1 y_3 - w_{27} y_1 y_4 \\,,\\\\\n f_{23} &= w_{28} y_1^2 + w_{29} y_2^2 + \\gamma y_2 y_3 + w_{210} y_1 y_2 + w_{211} y_1 y_3 - w_{212} y_1 y_4 \\,,\\\\\n  f_{24} &=   \\begin{multlined}[t]\n  w_{213} y_1^2 + w_{214} y_2^2 + w_{215} y_3^2 + w_{216} y_3 y_4 + a b y_4^2 + w_{217} y_2 y_3  \\\\ +w_{216} y_2 y_4 + w_{217} y_1 y_2 + w_{218} y_1 y_3 - w_{219} y_1 y_4\\,,\n \\end{multlined}",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 34164,
+      "end": 34663
+    },
+    {
+      "id": "eq48",
+      "labels": [],
+      "number": null,
+      "latex": "\\dv{\\mathbf{Y}}{t} = \\begin{bmatrix}\n    \\mathbf{B_2} & \\mathbf{0} \\\\\n   \\mathbf{0} & \\mathbf{C_2}   \\\\\n\\end{bmatrix} \\mathbf{Y} + \\mathbf{F_2}\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 34766,
+      "end": 34912
+    },
+    {
+      "id": "eq49",
+      "labels": [
+        "y1'2"
+      ],
+      "number": "36–43",
+      "latex": "\\dv{y_1}{t} & = \\mathbf{B_2} y_1 + f_{21}   \\,,     \\\\   \n    \\begin{bmatrix}\n        \\dv{y_2}{t} \\\\ \\dv{y_3}{t} \\\\ \\dv{y_4}{t}\n    \\end{bmatrix}  \n    & =\n   \\mathbf{C_2} \\begin{bmatrix}\n        y_2 \\\\ y_3 \\\\ y_4\n    \\end{bmatrix} \n     + \\begin{bmatrix}\n        f_{22} \\\\ f_{23} \\\\ f_{24}\n    \\end{bmatrix}\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 34913,
+      "end": 35224
+    },
+    {
+      "id": "eq50",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{B_2} = \\lambda_{21}\\left(c_2\\right) = 0 \\quad \\text{ and } \\quad \\mathbf{C_2} = \\text{diag}(\\lambda_{22},\\lambda_{23},\\lambda_{24}\\left(c_2\\right))\\,.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 35248,
+      "end": 35406
+    },
+    {
+      "id": "eq51",
+      "labels": [],
+      "number": null,
+      "latex": "\\begin{bmatrix}\n        y_2 \\\\ y_3 \\\\ y_4\n    \\end{bmatrix}  = \\mathbf{h_2}(y_1) = \\begin{bmatrix}\n        h_{22}(y_1) \\\\ h_{23}(y_1) \\\\ h_{24}(y_1)\n    \\end{bmatrix}\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 35790,
+      "end": 35959
+    },
+    {
+      "id": "eq52",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{C_2} \\cdot \\mathbf{h_2}(y_1) +  \\begin{bmatrix}\n        f_{22}(y_1, \\mathbf{h_2}(y_1) ) \\\\ f_{23}(y_1, \\mathbf{h_2}(y_1) ) \\\\ f_{24}(y_1, \\mathbf{h_2}(y_1) ) \n    \\end{bmatrix} = D\\mathbf{h_2}(y_1) \\cdot \\left[\\mathbf{B_2}y_1 + f_{21}(y_1, \\mathbf{h_2}(y_1)) \\right]\\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 36028,
+      "end": 36305
+    },
+    {
+      "id": "eq53",
+      "labels": [
+        "taylorApprox2"
+      ],
+      "number": "44",
+      "latex": "\\mathbf{h_2}(y_1) = \\begin{bmatrix}\n        b_{22} y_1^2 + b_{23} y_1^3 + b_{24} y_1^4 + O(y_1^5) \\\\ c_{22} y_1^2 + c_{23} y_1^3 + c_{24} y_1^4 + O(y_1^5) \\\\ d_{22} y_1^2 + d_{23} y_1^3 + d_{24} y_1^4 + O(y_1^5)\n    \\end{bmatrix}\\,.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 36525,
+      "end": 36757
+    },
+    {
+      "id": "eq54",
+      "labels": [
+        "flowT2"
+      ],
+      "number": "45",
+      "latex": "\\dv{y_1}{t} = w_{21}y_1^2 + O(y_1^3) \\,,",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 36854,
+      "end": 36894
+    },
+    {
+      "id": "eq55",
+      "labels": [],
+      "number": null,
+      "latex": "w_{21} = \\frac{c_2 \\gamma  \\kappa \\sigma  m_B m_T}{a b \\left(\\gamma  k+\\theta _N \\theta _R\\right){}^2} > 0 \\,.",
+      "sectionId": "s5-equilibria-and-stability-analysis",
+      "start": 36900,
+      "end": 37010
+    },
+    {
+      "id": "eq56",
+      "labels": [],
+      "number": null,
+      "latex": "0\\leq T_0\\leq \\frac{1}{b}\\text{ and }\\frac{\\theta_B}{m_T} > \\frac{1}{b},",
+      "sectionId": "s6-bifurcation-analysis",
+      "start": 38201,
+      "end": 38273
+    },
+    {
+      "id": "eq57",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathrm{sgn}{\\frac{\\de B}{\\de t}}=\\mathrm{sgn}{\\left(T-\\frac{\\theta_B}{m_T}\\right)}.",
+      "sectionId": "s6-bifurcation-analysis",
+      "start": 38401,
+      "end": 38485
+    },
+    {
+      "id": "eq58",
+      "labels": [],
+      "number": null,
+      "latex": "\\frac{\\theta_B}{m_T} > \\frac{1}{b}",
+      "sectionId": "s6-bifurcation-analysis",
+      "start": 38576,
+      "end": 38610
+    },
+    {
+      "id": "eq59",
+      "labels": [],
+      "number": null,
+      "latex": "\\int_0^t  \\left( T(s) - \\frac{\\theta_B}{m_T} \\right) \\, \\mathrm{d}s.",
+      "sectionId": "s6-bifurcation-analysis",
+      "start": 39067,
+      "end": 39135
+    },
+    {
+      "id": "eq60",
+      "labels": [],
+      "number": null,
+      "latex": "\\int_0^P  \\left( T(s) - \\frac{\\theta_B}{m_T} \\right) \\, \\mathrm{d}s=0.",
+      "sectionId": "s6-bifurcation-analysis",
+      "start": 39217,
+      "end": 39287
+    },
+    {
+      "id": "eq61",
+      "labels": [],
+      "number": null,
+      "latex": "T-\\frac{\\theta_B}{m_T}\\leq \\frac{1}{b}-\\frac{\\theta_B}{m_T}<0.",
+      "sectionId": "s6-bifurcation-analysis",
+      "start": 39338,
+      "end": 39400
+    },
+    {
+      "id": "eq62",
+      "labels": [],
+      "number": null,
+      "latex": "\\mathbf{G}(T,N,R,B) \\coloneqq\n  \\begin{bmatrix}\n      aT(1-bT) - cNT \\\\\n      \\sigma - \\theta_NN - \\gamma RN  \\\\\n      \\kappa -\\theta_RR + m_BBR   \\\\\n       -\\theta_BB + m_TTB\n  \\end{bmatrix}\\,,",
+      "sectionId": "s6-bifurcation-analysis",
+      "start": 39682,
+      "end": 39876
+    },
+    {
+      "id": "eq63",
+      "labels": [],
+      "number": null,
+      "latex": "\\pdv{\\mathbf{G}(T,N,R,B;c)}{c} = \n   \\begin{bmatrix}\n      -NT,  0,  0  ,  0\n  \\end{bmatrix}\\tran\\,,",
+      "sectionId": "s6-bifurcation-analysis",
+      "start": 40562,
+      "end": 40662
+    },
+    {
+      "id": "eq64",
+      "labels": [],
+      "number": null,
+      "latex": "D\\pdv{\\mathbf{G}(T,N,R,B;c)}{c}\\mathbf{u}_{11} = \n   \\begin{bmatrix}\n      -N,  0,  0  ,  0\n  \\end{bmatrix}\\tran\\,,",
+      "sectionId": "s6-bifurcation-analysis",
+      "start": 40664,
+      "end": 40779
+    },
+    {
+      "id": "eq65",
+      "labels": [],
+      "number": null,
+      "latex": "D^2 \\mathbf{G}(T,N,R,B) (\\mathbf{u}_{11},\\mathbf{u}_{11}) = \n   \\begin{bmatrix}\n      -2ab,  0,  0  ,  0\n  \\end{bmatrix}\\tran\\,.",
+      "sectionId": "s6-bifurcation-analysis",
+      "start": 40784,
+      "end": 40912
+    },
+    {
+      "id": "eq66",
+      "labels": [],
+      "number": null,
+      "latex": "& \\mathbf{w_1}\\tran \\pdv{\\mathbf{G}(E_1;c_1)}{c} =0\\,, \\\\\n      & \\mathbf{w_1}\\tran \\left[ D\\pdv{\\mathbf{G}(E_1;c_1)}{c}\\mathbf{u}_{11} \\right] = -\\frac{a}{c_1} \\neq 0\\,, \\\\\n      & \\mathbf{w_1}\\tran \\left[ D^2 \\mathbf{G}(E_1;c_1) (\\mathbf{u}_{11},\\mathbf{u}_{11})\\right] = -2 a b \\neq 0\\,.",
+      "sectionId": "s6-bifurcation-analysis",
+      "start": 40954,
+      "end": 41244
+    },
+    {
+      "id": "eq67",
+      "labels": [],
+      "number": null,
+      "latex": "c = c_2 \\Leftrightarrow \\theta_B = \\frac{a \\theta _N m_T \\theta _R+a \\gamma  \\kappa  m_T-c \\sigma  m_T \\theta _R}{a b \\gamma  \\kappa +a b \\theta _N \\theta _R} =: \\theta_B^*\\,,",
+      "sectionId": "s6-bifurcation-analysis",
+      "start": 41520,
+      "end": 41695
+    },
+    {
+      "id": "eq68",
+      "labels": [],
+      "number": null,
+      "latex": "\\pdv{\\mathbf{G}(T,N,R,B;\\theta_B)}{\\theta_B} = \n   \\begin{bmatrix}\n      0,0,0,-B\n  \\end{bmatrix}\\tran,",
+      "sectionId": "s6-bifurcation-analysis",
+      "start": 42531,
+      "end": 42634
+    },
+    {
+      "id": "eq69",
+      "labels": [],
+      "number": null,
+      "latex": "D\\pdv{\\mathbf{G}(T,N,R,B;\\theta_B)}{\\theta_B}\\mathbf{u}_{21} = \n   \\begin{bmatrix}\n      0, 0, 0, -1\n  \\end{bmatrix}\\tran\\,,",
+      "sectionId": "s6-bifurcation-analysis",
+      "start": 42635,
+      "end": 42759
+    },
+    {
+      "id": "eq70",
+      "labels": [],
+      "number": null,
+      "latex": "D^2 \\mathbf{G}(T,N,R,B;\\theta_B) (\\mathbf{u}_{21},\\mathbf{u}_{21}) = \n   \\begin{bmatrix}\n     0,\\frac{2 \\gamma ^2 \\kappa ^2 \\sigma  m_B^2}{\\theta _R^2 \\left(\\gamma  \\kappa +\\theta _N \\theta _R\\right){}^2},\\frac{2 \\kappa  m_B^2}{\\theta _R^2},\\frac{2 c \\gamma  \\kappa  \\sigma  m_B m_T}{a b \\left(\\gamma  \\kappa +\\theta _N \\theta _R\\right){}^2}\n  \\end{bmatrix}\\tran\\,.",
+      "sectionId": "s6-bifurcation-analysis",
+      "start": 42764,
+      "end": 43129
+    },
+    {
+      "id": "eq71",
+      "labels": [],
+      "number": null,
+      "latex": "& \\mathbf{w_2}\\tran \\pdv{\\mathbf{G}(E_2;\\theta_B^*)}{\\theta_B} =0\\,, \\\\\n      & \\mathbf{w_2}\\tran \\left[ D\\pdv{\\mathbf{G}(E_2;\\theta_B^*)}{\\theta_B} \\right] = -1 \\neq 0\\,, \\\\\n      & \\mathbf{w_2}\\tran \\left[ D^2 \\mathbf{G}(E_2;\\theta_B^*) (\\mathbf{u}_{21},\\mathbf{u}_{21})\\right] = \\frac{2 c \\gamma  \\kappa  \\sigma  m_B m_T}{a b \\left(\\gamma  \\kappa +\\theta _N \\theta _R\\right){}^2} \\neq 0\\,.",
+      "sectionId": "s6-bifurcation-analysis",
+      "start": 43187,
+      "end": 43579
+    },
+    {
+      "id": "eq72",
+      "labels": [],
+      "number": null,
+      "latex": "m_T = m_T^A \\coloneqq  5 \\cdot 10^{-15}\\; \\text{cell}^{-1}  \\, \\cdot \\, \\text{day}^{-1} \\;,",
+      "sectionId": "s7-numerical-simulations",
+      "start": 45367,
+      "end": 45458
+    },
+    {
+      "id": "eq73",
+      "labels": [],
+      "number": null,
+      "latex": "m_T = m_T^B \\coloneqq  5 \\cdot 10^{-10}\\; \\text{cell}^{-1}  \\, \\cdot \\, \\text{day}^{-1} \\; .",
+      "sectionId": "s7-numerical-simulations",
+      "start": 45463,
+      "end": 45555
+    },
+    {
+      "id": "eq74",
+      "labels": [],
+      "number": null,
+      "latex": "\\{(T,N,R) \\in \\mathbb{R}_{\\ge 0 }^3: N=\\frac{\\sigma  \\theta _R}{\\gamma  \\kappa +\\theta _N \\theta _R}, R= \\frac{\\kappa }{\\theta _R}\\},",
+      "sectionId": "s8-the-scenario-of-absent-tbregs-b-0-0",
+      "start": 47669,
+      "end": 47802
+    },
+    {
+      "id": "eq75",
+      "labels": [],
+      "number": null,
+      "latex": "{\\dv{T}{t}}(t) +(cN(t)-a)T(t)=-abT^2(t) \\,,",
+      "sectionId": "s16-preliminary-results",
+      "start": 69830,
+      "end": 69873
+    },
+    {
+      "id": "eq76",
+      "labels": [],
+      "number": null,
+      "latex": "T(t) = \\frac{T_0 e^{\\int_0^t \\left( a-cN(s) \\right) \\, \\mathrm{d}s}}{1+T_0ab \\int_0^t \\! e^{{\\int_0^s \\left( a-cN(\\xi) \\right) \\, \\mathrm{d}\\xi}} \\,  \\mathrm{d}s} \\,,",
+      "sectionId": "s16-preliminary-results",
+      "start": 69961,
+      "end": 70127
+    },
+    {
+      "id": "eq77",
+      "labels": [],
+      "number": null,
+      "latex": "{\\dv{N}{t}}(t) > -(\\gamma R(t) + \\theta_N)N(t) \\,,",
+      "sectionId": "s16-preliminary-results",
+      "start": 70255,
+      "end": 70305
+    },
+    {
+      "id": "eq78",
+      "labels": [],
+      "number": null,
+      "latex": "N(t) \\ge N_0e^{- \\int_0^t \\left( \\gamma R(s) + \\theta_N \\right) \\, \\mathrm{d}s} \\,,",
+      "sectionId": "s16-preliminary-results",
+      "start": 70352,
+      "end": 70435
+    },
+    {
+      "id": "eq79",
+      "labels": [],
+      "number": null,
+      "latex": "R(t) \\ge R_0e^{\\int_0^t \\left( m_BB(s)-\\theta_R \\right) \\, \\mathrm{d}s} \\,,",
+      "sectionId": "s16-preliminary-results",
+      "start": 70531,
+      "end": 70606
+    },
+    {
+      "id": "eq80",
+      "labels": [
+        "Bfor"
+      ],
+      "number": "46",
+      "latex": "B(t) = B_0e^{\\int_0^t  \\left( m_TT(s) - \\theta_B \\right) \\, \\mathrm{d}s} \\,.",
+      "sectionId": "s16-preliminary-results",
+      "start": 70751,
+      "end": 70827
+    },
+    {
+      "id": "eq81",
+      "labels": [],
+      "number": null,
+      "latex": "{\\dv{T}{t}}(t)  = \\underbrace{aT(1-bT) - cNT}_{q_1(T)} \\le \\underbrace{aT(1-bT)}_{q_2(T)} \\; .",
+      "sectionId": "s16-preliminary-results",
+      "start": 71056,
+      "end": 71150
+    },
+    {
+      "id": "eq82",
+      "labels": [
+        "2ndIVPComparison"
+      ],
+      "number": "47–48",
+      "latex": "& \\dv{T}{t}  = q_1(T), \\quad  T(0)=T_0 \\ge 0 \\quad \\text{ and} \\\\\n    & \\dv{y_2}{t} = q_2(y_2), \\quad y_2(0) = \\frac{1}{b} \\; .",
+      "sectionId": "s16-preliminary-results",
+      "start": 71203,
+      "end": 71330
+    },
+    {
+      "id": "eq83",
+      "labels": [],
+      "number": null,
+      "latex": "{\\dv{B}{t}}(t) \\le -\\theta_BB(t)+\\frac{m_T}{b}B(t) \\,,",
+      "sectionId": "s16-preliminary-results",
+      "start": 71911,
+      "end": 71965
+    },
+    {
+      "id": "eq84",
+      "labels": [],
+      "number": null,
+      "latex": "B(t) \\le B_0e^{(\\frac{m_T}{b}-\\theta_B)t} \\,.",
+      "sectionId": "s16-preliminary-results",
+      "start": 72015,
+      "end": 72060
+    },
+    {
+      "id": "eq85",
+      "labels": [],
+      "number": null,
+      "latex": "{\\dv{R}{t}}(t) \\le \\kappa + m_BB(t)R(t) \\,,",
+      "sectionId": "s16-preliminary-results",
+      "start": 72131,
+      "end": 72174
+    },
+    {
+      "id": "eq86",
+      "labels": [],
+      "number": null,
+      "latex": "R(t) \\le e^{m_B \\int_0^t \\! B(s)  \\, \\mathrm{d}s} \\left(R_0 + \\kappa \\int_0^t \\! e^{ - m_B \\int_0^\\xi \\! B(s)  \\, \\mathrm{d}s} \\, \\mathrm{d}\\xi  \\right) \\,.",
+      "sectionId": "s16-preliminary-results",
+      "start": 72224,
+      "end": 72380
+    },
+    {
+      "id": "eq87",
+      "labels": [],
+      "number": null,
+      "latex": "{\\dv{N}{t}}(t)\\le \\sigma - \\theta_N N(t) \\,,",
+      "sectionId": "s16-preliminary-results",
+      "start": 72451,
+      "end": 72495
+    },
+    {
+      "id": "eq88",
+      "labels": [],
+      "number": null,
+      "latex": "N(t) \\le \\frac{\\sigma}{\\theta_N} - \\frac{\\sigma}{\\theta_N}e^{-\\theta_Nt} + e^{-\\theta_Nt}N_0 \\,.",
+      "sectionId": "s16-preliminary-results",
+      "start": 72545,
+      "end": 72641
+    },
+    {
+      "id": "eq89",
+      "labels": [],
+      "number": null,
+      "latex": "\\sigma \\in \\left[  1.8 \\cdot10^7 \\text{ cell} \\cdot \\text{day}^{-1},\\,  1.13 \\cdot10^8 \\text{ cell} \\cdot \\text{day}^{-1} \\right]\\,.",
+      "sectionId": "s19-the-nk-cells",
+      "start": 73686,
+      "end": 73818
+    },
+    {
+      "id": "eq90",
+      "labels": [],
+      "number": null,
+      "latex": "\\theta_N = \\frac{\\ln2}{11 \\text{ day}} \\approx 6.301 \\cdot 10^{-2} \\text{ day}^{-1}\\,.",
+      "sectionId": "s19-the-nk-cells",
+      "start": 74119,
+      "end": 74205
+    },
+    {
+      "id": "eq91",
+      "labels": [],
+      "number": null,
+      "latex": "N_{min} \\le \\frac{\\sigma  \\theta _R}{\\gamma  \\kappa +\\theta _N \\theta _R} \\le N_{max} \\Leftrightarrow   \\frac{\\theta_R ( \\sigma - \\theta_N )}{N_{max} \\kappa} \\le \\gamma \\le \\frac{\\theta_R ( \\sigma - \\theta_N )}{N_{min} \\kappa}\\,.",
+      "sectionId": "s19-the-nk-cells",
+      "start": 74791,
+      "end": 75020
+    },
+    {
+      "id": "eq92",
+      "labels": [],
+      "number": null,
+      "latex": "\\gamma \\in \\left[   1.796 \\cdot 10^{-12} \\text{ cell}^{-1} \\cdot \\text{day}^{-1} , 4.52 \\cdot 10^{-9} \\text{ cell}^{-1} \\cdot \\text{day}^{-1} \\right]\\,.",
+      "sectionId": "s19-the-nk-cells",
+      "start": 75495,
+      "end": 75647
+    },
+    {
+      "id": "eq93",
+      "labels": [],
+      "number": "49",
+      "latex": "\\textit{total population of Tregs} = \\frac{\\kappa}{\\theta_R},",
+      "sectionId": "s20-the-tregs",
+      "start": 76574,
+      "end": 76635
+    },
+    {
+      "id": "eq94",
+      "labels": [],
+      "number": "50",
+      "latex": "\\kappa \\in [4.8137 \\cdot 10^6 \\text{ cell·day$^{-1}$},5.5454 \\cdot 10^7 \\text{ cell·day$^{-1}$}]\\,.",
+      "sectionId": "s20-the-tregs",
+      "start": 76863,
+      "end": 76962
+    },
+    {
+      "id": "eq95",
+      "labels": [],
+      "number": "51",
+      "latex": "\\theta_R = \\frac{\\ln2}{18 \\text{ day}} \\approx 3.851 \\cdot 10^{-2} \\text{ day}^{-1}.",
+      "sectionId": "s20-the-tregs",
+      "start": 77087,
+      "end": 77171
+    },
+    {
+      "id": "eq96",
+      "labels": [],
+      "number": null,
+      "latex": "\\gamma = 1 \\cdot 10^{-10} \\text{ cell}^{-1} \\cdot \\text{day}^{-1}.",
+      "sectionId": "s20-the-tregs",
+      "start": 77240,
+      "end": 77306
+    }
+  ],
+  "macros": [
+    {
+      "name": "\\tran",
+      "definition": "^{\\mkern-1.5mu\\mathsf{T}}"
+    },
+    {
+      "name": "\\e",
+      "definition": "\\mathrm{e}"
+    },
+    {
+      "name": "\\de",
+      "definition": "\\mathrm{d}"
+    },
+    {
+      "name": "\\overbar",
+      "definition": "\\mkern 1.5mu\\overline{\\mkern-1.5mu#1\\mkern-1.5mu}\\mkern 1.5mu"
+    },
+    {
+      "name": "\\backmatter",
+      "definition": "\\global\\backmattertrue"
+    },
+    {
+      "name": "\\todo",
+      "definition": "\\textcolor{green!50!black}{#1}"
+    }
+  ]
+}

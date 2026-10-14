@@ -1,0 +1,270 @@
+{
+  "schemaVersion": "sourcetext/1",
+  "sourceId": "pmc-PMC12334037",
+  "sha256": "5cab1382f41e0583897e2e707e1d0e94ac177bf77719469b11902d91e1c7fe65",
+  "text": "Modeling the effects of treatment adherence challenges on the transmission dynamics of hepatitis C virus\n\nAbstract\n\nInfectious disease modeling is crucial for predicting disease progression over time and helps guide decision makers in public health policy. Hepatitis C virus (HCV) prevalence is still increasing in Zimbabwe, a low-middle-income country (LMIC), despite the availability of effective treatments, and the reasons for this increase are not well understood. Our study employed a mathematical model to explain the impact of poor treatment adherence on HCV transmission dynamics in Zimbabwe. We computed the basic reproduction number ($ℛ_{0}$), a vital metric of disease spread. Equilibrium states of the model were determined, and their stability was investigated. The study demonstrated that an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread. Our HCV model indicates that variations in re-susceptibility minimally impact outcomes, suggesting that re-susceptibility can often be excluded in such analyses. Our model unraveled the synergistic impact of simultaneously enhancing the recovery rate of acutely infected individuals and treatment adherence on reducing $ℛ_{0}$. The study underlines the pressing need for stronger health interventions, including patient education, financial assistance, and rigorous monitoring, to improve treatment adherence. These interventions are paramount in curbing HCV proliferation, particularly in LMICs like Zimbabwe, and can serve as a template for similar settings globally.\n\n1 Introduction\n\nHepatitis C virus (HCV) is a bloodborne pathogen classified under the Hepacivirus genus within the Flaviviridae family. It can lead to chronic liver diseases such as cirrhosis and hepatocellular carcinoma if left untreated [[citation],[citation]]. Globally, as of 2019, around 58 million individuals were living with chronic HCV, with 1.5 million new infections occurring annually, including 3.2 million cases among children and adolescents [[citation]]. Despite the availability of highly effective antiviral therapies, only 5% of infected individuals were diagnosed and nearly 0% treated in 2021, according to WHO estimates [[citation]]. This underlines a substantial gap in HCV management and underscores the importance of scaling up testing and treatment, particularly in low- and middle-income countries (LMICs). In Africa, over 90 million cases of hepatitis B and C were reported by 2021, with more than 1% of the population in 18 countries infected with HCV [[citation]]. In Zimbabwe, the burden remains unclear due to poor surveillance systems and sparse epidemiological data. A study by the National Blood Services Zimbabwe (NBSZ) showed an increasing trend in HCV prevalence among blood donors between 2015–2018, with poor treatment adherence highlighted as a contributing factor [[citation]]. Multiple barriers to adherence exist in LMICs, including limited access to affordable medication, stigma, low health literacy, and weak healthcare infrastructure [[citation],[citation]].\n\nTreatment adherence is critical to prevent drug resistance, improve patient outcomes, and reduce transmission rates [[citation],[citation]]. Yet, it is often overlooked in both intervention planning and mathematical modeling. While previous modeling studies have explored various aspects of HCV transmission dynamics [[citation]–[citation]], few have integrated the dynamic impact of adherence. Clinical studies such as Bonner et al. [[citation]] have discussed its importance, but to our knowledge, no mathematical model has explicitly incorporated adherence as a determinant of HCV transmission dynamics. This study addresses this gap by developing a compartmental model of HCV transmission that explicitly accounts for treatment adherence in Zimbabwe. Our model distinguishes between individuals with chronic infection who are on treatment and those who have discontinued treatment, capturing more nuanced transitions in disease dynamics. By incorporating adherence behavior into the model, we aim to provide actionable insights to inform public health policy and support efforts toward achieving WHO’s 2030 HCV elimination targets [[citation]]. This approach is especially critical for LMICs, where intervention design must consider socio-economic constraints and real-world treatment behaviors.\n\nThe subsequent sections of this paper are organized as follows: Sect 2 outlines the model formulation, while Sect 3 computes the reproduction number and conducts a model analysis. Numerical simulations are presented in Sect 4. Sect 5 is the discussion. Sect 6 offers concluding remarks and future directions.\n\n2 Model description\n\nThe model analyzes the transmission dynamics of HCV within a homogeneously mixing population. The population is categorized into several compartments: susceptible to infection (S), acutely infected (I), chronically infected under treatment (C), chronically infected after quitting treatment prematurely (Cq), and recovered individuals (R). The total population at time t, denoted by N, is given by:\n\nN = S + I + C + C_{q} + R .\n\nThe number of susceptible individuals is augmented by a constant inflow into the population at rate b. The parameter μ signifies the natural mortality rate applicable to all compartments, v represents mortality due to chronic infection under treatment, and $ν$ denotes disease-induced mortality due to chronic infection not under treatment. It is assumed that $ν > v$, reflecting a higher mortality rate for not under treatment versus under treatment chronic infections. Susceptible individuals acquire the infection at a rate λ, defined as:\n\nλ = β_{1} I + β_{2} C + β_{3} C_{q} ,\n\nwhere $β_{1} , β_{2} , β_{3}$ correspond to the transmission rates from the I, C, and Cq compartments, respectively. We assumed that $β_{2} < β_{3}$, since quitting treatment before reaching sustained viral response (SVR) increases HCV viral load, leading to higher transmissibility [[citation]–[citation]]. Recovered individuals (R) lose immunity at rate ϕ, reverting to the susceptible class (S). We introduced the re susceptibility as suggested by [[citation]], where it was stated that reinfection of hepatitis C is a crucial factor to consider in constructing a hepatitis C transmission dynamics model. However, in [[citation]], it had not been included. Acutely infected individuals transition out of the acute stage at rate r, while a proportion $η$ of these recover temporarily (R), while the remaining $( 1$ − $η )$ develop chronic infection. Those remaining either recover or die. We define $θ$ as the proportion of individuals under treatment who successfully adhere to it. The treatment-related transitions are modeled such that a fraction $θ$ of individuals in the treatment compartment C complete treatment successfully, while the remaining fraction 1 − $θ$ fail to adhere and move to the Cq compartment at a rate $δ$. Thus, the non-adherent individuals transition from C to Cq at rate $δ ( 1$ − $θ )$. Individuals under treatment recover at rate ρ, whereas untreated individuals recover at rate $α ρ$, where $α ∈ ( 0 , 1 )$, signifying a slower recovery rate for untreated individuals. Chronically infected individuals on treatment recover faster than those who have quit treatment because the active medication continuously suppresses the viral load and supports the immune system. The compartmental model is governed by the following system of ordinary differential equations (ODEs):\n\n\\frac{d S}{d t} = b − ( μ + λ ) S + ϕ R , \\frac{d I}{d t} = λ S − ( μ + r ) I , \\frac{d C}{d t} = ( 1 − η ) r I − δ ( 1 − θ ) C − ( ρ + μ + v ) C , \\frac{d C_{q}}{d t} = δ ( 1 − θ ) C − ( α ρ + μ + ν ) C_{q} , \\frac{d R}{d t} = ( C + α C_{q} ) ρ + η r I − ( μ + ϕ ) R .\n\nInvariant region\n\nSince the HCV model (3) deals with human population which cannot be negative, we need to show that all the solutions of system (3) remain positive with positive initial conditions in the bounded. To guarantee that the system 3 is mathematical well-posed in a feasible region $Θ$, we establish that:\n\nΘ = { S ( t ) , I ( t ) , C ( t ) , C_{q} ( t ) , R ( t ) ∈ ℝ_{+}^{5} , N ≤ \\frac{b}{μ} } .\n\nTheorem 1. Let S(0)>0,I(0)>0,C(0)>0,Cq(0)>0,R(0)>0 be the initial solutions of the model (3); then, S(t),I(t),C(t),Cq(t),R(t) are positive in $ℝ_{+}^{5}$ for all t>0.\n\nProof of Theorem 1 is presented in Appendix A.\n\nTheorem 2. The region $Θ$ shown in equation (4) is bounded in the space $ℝ_{+}^{5}$.\n\nProof of Theorem 2 is also provided in Appendix A.\n\n3 Reproduction number\n\nThe global behavior of our model is largely determined by the basic reproduction number, denoted by $ℛ_{0}$. This number represents the average number of secondary infections produced by a single infectious individual when introduced into a completely susceptible population. For the absence of disease, the system exhibits a disease-free equilibrium point $ℰ^{0} = ( S^{0} , A^{0} , Q^{0} , C^{0} , R^{0} )$, which is mathematically expressed as:\n\nℰ^{0} = ( \\frac{b}{μ} , 0 , 0 , 0 , 0 ) .\n\nTo compute the basic reproduction number $ℛ_{0}$, we adopt the next-generation matrix method as developed by van den Driessche and Watmough [[citation]]. In accordance with their methodology, we define two matrices F and V at the disease-free equilibrium. Matrix F represents the rate of new HCV infections generated by each infectious class, while matrix V incorporates all other transitions between compartments. These matrices are given by:\n\nF = ( \\frac{b β_{1}}{μ} & \\frac{b β_{2}}{μ} & \\frac{b β_{3}}{μ} \\\\ 0 & 0 & 0 \\\\ 0 & 0 & 0 ) , V = ( m_{1} & 0 & 0 \\\\ − ( 1 − η ) r & m_{2} & 0 \\\\ 0 & − δ ( 1 − θ ) & m_{3} ) .\n\nSubsequently, $ℛ_{0}$ is determined as the spectral radius of the next-generation matrix $F V^{− 1}$, and can be expressed as:\n\nℛ_{0} = ℛ_{I} + ℛ_{C} + ℛ_{C_{q}} = \\frac{b β_{1}}{μ m_{1}} + \\frac{b r β_{2} ( 1 − η )}{μ m_{1} m_{2}} + \\frac{r b δ β_{3} ( 1 − η ) ( 1 − θ )}{μ m_{1} m_{2} m_{3}} ,\n\nwhere $m_{1} = μ + r$, $m_{2} = δ ( 1 − θ ) + μ + v + ρ$, and $m_{3} = α ρ + μ + ν$.\n\nEquation (7) expresses the basic reproduction number R0 as the sum of three constituent terms:\n\nR_{0} = R_{I} + R_{C} + R_{C q} .\n\n- $R_{I} = \\frac{b β_{1}}{μ m_{1}}$: This term represents the average number of secondary infections generated by an acutely infected individual. The parameter $β_{1}$ denotes the transmission rate from the acute class, while $m_{1} = μ + r$ accounts for the rate at which individuals leave the acute class due to recovery or natural death.\n\n- $R_{C} = \\frac{b r β_{2} ( 1 − η )}{μ m_{1} m_{2}}$: This term represents the secondary infections caused by chronically infected individuals who are under treatment. The factor $( 1 − η )$ reflects the proportion of acutely infected individuals who progress to chronic infection, and $β_{2}$ is the transmission rate from the chronic class. The denominator includes $m_{2} = δ ( 1 − θ ) + μ + v + ρ$, which reflects the rates of treatment failure, death, and recovery in the treated class.\n\n- $R_{C q} = \\frac{r b δ β_{3} ( 1 − η ) ( 1 − θ )}{μ m_{1} m_{2} m_{3}}$: This component captures the contribution of individuals who initiate but do not complete treatment and transition to the Cq class. The parameter $β_{3}$ reflects the higher transmissibility associated with incomplete treatment, and $( 1 − θ )$ represents the proportion of individuals who fail to adhere. The term $m_{3} = α ρ + μ + ν$ includes the reduced recovery rate in this group, as well as disease-induced and natural mortality.\n\nThe sub-reproduction numbers $ℛ_{I}$, $ℛ_{C}$, and $ℛ_{C_{q}}$ quantify the contributions to the overall transmission of HCV from individuals in compartments I, C, and Cq, respectively.\n\nIf $ℛ_{0} < 1$, the disease-free equilibrium is locally asymptotically stable. However, under certain conditions, the model may exhibit a backward bifurcation, in which case a stable endemic equilibrium may also exist when $ℛ_{0} < 1$. Using Theorem 2 in van den Driessche and Watmough (2002) [[citation]], the following result is established.\n\nTheorem 3. The disease-free equilibrium (DFE) of system (3) is locally asymptotically stable (LAS) if R0<1 and unstable otherwise.\n\nLocal stability offers insights only into the behavior of the disease when the number of HCV infections is close to the equilibrium. If the number of infections is near 0 (albeit not exactly 0), they will decline and converge to 0 over time. But this doesn’t provide any assurance about larger outbreaks. If there is a significant outbreak, the dynamics of HCV might take an unpredictable turn, highlighting the importance of proactive measures even when the disease seems to be under control.\n\nWe now investigate the global stability of $ℰ^{0}$, the disease-free equilibrium. We claim the following result.\n\nTheorem 4. If $ℛ_{0} < 1$, the DFE is globally asymptotically stable (GAS) in $Θ$.\n\nProof of Theorem 4 is presented in Appendix B.\n\nTheorem 4 implies that if $ℛ_{0} ≤ 1$, then the disease free equilibrium is globally asymptotically stable, and the disease will eventually die out, regardless of initial infection levels. However, this relies on the assumption that no other stable equilibria exist when $ℛ_{0} ≤ 1$, a condition that is examined further in subsequent sections.\n\nTheorem 5. If $ℛ_{0} > 1$, the disease is uniformly persistent. Specifically, there exists a positive constant $ε$ such that\n\nlim inf_{t → ∞} { I ( t ) + C ( t ) + C_{q} ( t ) } > ε\n\nfor every solution (S,I,C,C q ,R) of (1) satisfying\n\nI ( 0 ) + C ( 0 ) + C_{q} ( 0 ) > 0 .\n\nProof of Theorem 5 is presented in Appendix C.\n\nTheorem 5 means that when the reproduction number is greater than 1, (R0>1), the disease persists in the population. This highlights the importance of of control strategies aimed at reducing R0 below the critical threshold. The consistent presence of the disease, even at low levels, in the community can act as a reservoir, posing a threat to the wider population. It would be important to keep continuous surveillance and intervention measures at play, within communities especially within high risk groups.\n\n3.1 Endemic equilibrium point\n\nComputing and analyzing the endemic equilibrium point (EEP) is key for our study due to its implications on the understanding of the persistence and dynamics of system 3. Through the study of the EEP, we are able to realize valuable insights into system 3 stability, long term behavior and the critical threshold conditions necessary to its sustained existence. The EEP for system 3 is denoted by $ℰ^{*} = ( S^{*} , I^{*} , C^{*} , C_{q}^{*} , R^{*} )$. To compute the equilibrium values, we set the right-hand sides of the system (3) to zero:\n\n\\frac{d S}{d t} = b − ( μ + λ ) S + ϕ R = 0 , \\frac{d I}{d t} = λ S − ( μ + r ) I = 0 , \\frac{d C}{d t} = ( 1 − η ) r I − δ ( 1 − θ ) C − ( ρ + μ + v ) C = 0 , \\frac{d C_{q}}{d t} = δ ( 1 − θ ) C − ( α ρ + μ + ν ) C_{q} = 0 , \\frac{d R}{d t} = ( C + α C_{q} ) ρ + η r I − ( μ + ϕ ) R = 0 ,\n\nwhere the force of infection is given by,\n\nλ = β_{1} I + β_{2} C + β_{3} C_{q} .\n\nThen, the EEP is given by\n\nS^{*} = \\frac{m_{1} m_{2} m_{3}}{β_{1} m_{2} m_{3} + r ( 1 − η ) m_{4}}\n\nI^{*} = \\frac{m_{2} m_{3} [ ( b β_{1} − μ m_{1} ) m_{2} m_{3} + b r ( 1 − η ) m_{4} ] ( μ + ϕ )}{[ β_{1} m_{2} m_{3} + r ( 1 − η ) m_{4} ] [ μ m_{2} m_{3} ( μ + ϕ ) + r m_{2} ( μ^{2} + ( 1 − η ) ν ϕ + μ m_{5} ) \\\\ + r δ ( 1 − θ ) ( μ^{2} + ( 1 − η ) m_{6} ϕ + μ m_{5} ) ]}\n\nC^{*} = \\frac{r ( 1 − η ) m_{2} [ ( b β_{1} m_{2} m_{3} − μ ( r + μ ) m_{2} m_{3} + b r ( 1 − η ) m_{4} ] ( μ + ϕ )}{[ β_{1} m_{2} m_{3} + r ( 1 − η ) m_{4} ] [ μ m_{2} m_{3} ( μ + ϕ ) + r m_{2} ( μ^{2} + ( 1 − η ) ν ϕ + μ m_{5} ) \\\\ + r δ ( 1 − θ ) ( μ^{2} + ( 1 − η ) m_{6} ϕ + μ m_{5} ) ]}\n\nC_{q}^{*} = \\frac{r δ ( 1 − η ) ( 1 − θ ) [ ( b β_{1} m_{3} − μ m_{1} m_{2} m_{3} + b r ( 1 − η ) m_{4} ] ( μ + ϕ )}{[ β_{1} m_{3} + r ( 1 − η ) m_{4} ] [ μ m_{2} m_{3} ( μ + ϕ ) + r m_{2} ( μ^{2} + ( 1 − η ) ν ϕ + μ m_{5} ) \\\\ + r δ ( 1 − θ ) ( μ^{2} + ( 1 − η ) m_{6} ϕ + μ m_{5} ) ]}\n\nR^{*} = \\frac{r [ ( b β_{1} − μ m_{1} ) m_{2} m_{3} + b r ( 1 − η ) m_{4} ] [ m_{2} ( η ( μ + ν ) + ρ ) \\\\ + δ ( 1 − θ ) ( α ρ + η ( μ + m_{6} ) ) ]}{[ β_{1} m_{2} m_{3} + r ( 1 − η ) m_{4} ] [ μ m_{2} m_{3} ( μ + ϕ ) + r m_{2} ( μ^{2} + ( 1 − η ) ν ϕ + μ m_{5} ) \\\\ + r δ ( 1 − θ ) ( μ^{2} + ( 1 − η ) m_{6} ϕ + μ m_{5} ) ]}\n\nwhere $m_{1} = μ + r ,$ $m_{2} = μ + ν + ρ ,$ $m_{3} = μ + ν + ρ + δ ( 1 − θ ) ,$ $m_{4} = β_{2} ( μ + ν + ρ ) + β_{3} δ ( 1 − θ ) ,$ $m_{5} = ν + ρ + ϕ ( 1 − η ) ,$ $m_{6} = ν + ρ ( 1 − α )$\n\nTo examine the local stability of the EEP we will make use of the Centre Manifold Theory, and the next result is established.\n\nTheorem 6. If $Λ_{1} > Λ_{2}$, a>0, then system (3) undergoes a backward bifurcation at $ℛ_{0} = 1$, otherwise a<0 and a unique EEP $ℰ^{*}$ guaranteed by Theorem 4.1 in [[citation]] is locally asymptotically stable for $ℛ_{0} > 1$, but close to 1.\n\n3.2 Backward bifurcation analysis\n\nIn this section, we apply center manifold theory to our model (system 3) to establish the conditions under which a backward bifurcation may occur. Specifically, we derive the bifurcation coefficient a, following the approach of Castillo-Chavez and Song [[citation]], and demonstrate that under certain parameter conditions, particularly those involving the treatment adherence rate $θ$, treatment discontinuation rate $δ$, and the transmission parameters $β_{1} , β_{2} , β_{3}$; the coefficient a becomes positive. This confirms the existence of a backward bifurcation, as presented in Theorem 6. Model system 3 reveals that backward bifurcation arises when $Λ_{1} > Λ_{2}$ and a>0, indicating the coexistence of a stable endemic equilibrium and a stable disease-free equilibrium even when the basic reproduction number satisfies $ℛ_{0} < 1$, as also stated in Theorem 6. This dynamic is illustrated in Fig 1.\n\nFigure: Backward bifurcation diagram for A* of model 3, using the parameter values shown in Table 1.EE denotes endemic equilibrium and DFE denotes disease-free equilibrium.\n\nTable 1: Model parameters and their interpretations.\nDefinition | Symbol | Value (Range) | Source\nRecruitment rate | b | 0.01 (0.009-0.06) | [[citation],[citation]]\nNatural mortality rate | $μ$ | 0.02 (0.01-0.03) | [[citation],[citation]]\nDisease induced death rate (on treatment) | v | 0.006 (0.001-0.008) | [[citation]]\nDisease induced death rate (not on treatment) | $ν$ | 0.055 (0.01-0.065) | Fitted\nDisease transmission rate (I) | $β_{1}$ | 0.214 (0-3) | [[citation]]\nDisease transmission rate (C) | $β_{2}$ | 0.016 (0.01-0.02) | Fitted\nDisease transmission rate (Cq) | $β_{3}$ | 0.05 (0.01-0.1) | Fitted\nRe-susceptibility rate | $ϕ$ | 0.001 (0.0008-0.0012) | [[citation]]\nAcute to recovered rate | r | 0.163 (0.1-0.18) | Fitted\nRecovery rate in acutely infected cases | $η$ | 0.3 (0.1-0.4) | [[citation]]\nTreatment quitting rate | $δ$ | 0.6 (0.4-0.7) | [[citation]]\nTreatment adherence proportion | $θ$ | 0.5 (0-1) | Assumed\nRecovery rate for those with chronic infections | ρ | 0.053 (0.009-0.0011 | Fitted\nSlow recovery modification parameter | $α$ | 0.001 (0.0009-0.0011) | Fitted\n\nThe occurrence of backward bifurcation has some epidemiological implications. Under standard epidemic models, reducing the basic reproduction number $ℛ_{0}$ below one is sufficient to eliminate the disease. However, in the presence of a backward bifurcation, this classical threshold rule breaks down: even if $ℛ_{0} < 1$, the disease may persist due to the coexistence of multiple stable equilibria. This means that conclusions based solely on $ℛ_{0}$ can be misleading. From a control perspective, backward bifurcation implies that more aggressive and sustained intervention strategies are necessary not only to drive $ℛ_{0}$ below one but also to significantly reduce the number of existing infections. Failing to address the size of the initial infected population may result in persistent endemic transmission, even when standard thresholds are met. Furthermore, the complex dynamics arising from this phenomenon, such as sensitivity to initial conditions complicate eradication efforts. This highlights the critical need to integrate early diagnosis, high treatment coverage, and behavioral interventions into public health strategies for HCV control.\n\n4 Numerical simulations\n\nIn this section, we perform numerical simulations and sensitivity analyses on our model parameters.\n\nThe cited parameters, (b, μ, v, $β_{1}$, ϕ, $η$, $δ$), were used with their respective ranges from the literature. By incorporating these cited parameters and their ranges, we ensured that the model remained consistent with established findings and grounded in real-world data. The fitted parameters, including $ν$ (mortality), $β_{2}$ and $β_{3}$ (transmission rates), r (acute to recovered rate), ρ (chronic recovery rate), and α (slow recovery modification), were determined using Berkeley Madonna’s slider feature to ensure the model closely matched HCV data from Zimbabwe (1990-2019) with an RMS error of 0.0001. The values were kept within biologically plausible ranges based on real-world dynamics, particularly reflecting higher transmission rates for untreated chronic cases and slower recovery rates for individuals not receiving treatment. This fitting process allowed for a model model that accurately represented the progression and transmission of HCV, Fig 2.\n\nFigure: Data fitting results for the HCV dynamics model.The blue markers represent observed data points, while the red line illustrates the model’s predictions. The close alignment between the two shows the model’s accuracy in capturing the underlying dynamics of HCV transmission and progression. The model was fitted to the data from Zimbabwe over a period of 30 years between the years 1990 - 2019, which can be obtained from: https://www.globalhep.org/country-progress/zimbabwe [29], using initial conditions as follows S0=0.8, I0=0.01, C0=0.015, Cq0=0, R0=0. The root mean square (RMS) was calculated as 0.0001.\n\nFigure: Data fitting results for the HCV dynamics model.The blue markers represent observed data points, while the red line illustrates the model’s predictions. This is an extension of the model fits Fig 3, with projections for the year 2019 to 2028.\n\nThe data projection shows that starting from 2019, the HCV cases are declining gradually. Due to the unavailability of data for that period, no verification could be carried out.\n\nIn Fig 4, the distribution of the basic reproduction number $ℛ_{0}$, as determined by LHS, offers notable insights into the variability of the system. While the mean reproduction number stands at 2.19, the spread of the values reveals that certain parameter combinations can lead to either higher or lower $ℛ_{0}$ values. The reproduction number that we estimated lies in the same range as the one previously estimated [[citation]]. This variability emphasizes the system’s sensitivity to parameter changes. The broader spread in certain regions of the histogram suggests that even minor alterations in some parameters (as given in Table 1) can have substantial impacts on the system’s dynamics. Understanding this variability is crucial as a higher $ℛ_{0}$ indicates a more rapid spread of the infection, necessitating different intervention strategies compared to a scenario with a lower $ℛ_{0}$. The results underline the importance of accurate parameter estimation in predicting and controlling the spread of the infection.\n\nIn Fig 5, we observed that the recruitment rate exhibits the highest positive index, while the treatment adherence proportion $θ$ presents the most pronounced negative PRCC index. In comparison to Fig 6 where the disease transmission rate for (Cq) class $β_{3}$ had a greater impact on the reproduction number than the disease transmission rate for (I) class $β_{1}$, here we found that $β_{1}$ exerts a stronger influence than $β_{3}$. However, the distinction is not substantial, as both $β_{1}$ and $β_{3}$ have a more pronounced influence than the disease transmission rate for (C) class $β_{2}$. Fig 5 illustrates that enhancing treatment adherence can play a pivotal role in reducing the reproduction number. Strategies such as patient education, addressing financial barriers, and consistent follow-ups and monitoring can be essential in curbing HCV spread by decreasing the reproduction number. Furthermore, the recovery rate of those acutely infected r is also crucial in this reduction. The parameter ϕ, which represents the reinfection rate of those who have recovered, has negligible impact on the reproduction number given its PRCC index is near zero, hence we ddnt include it for the local sensitivity analysis. We further varied ϕ to understand the impact of re susceptibility as shown in Fig 12.\n\nFigure: Presents a histogram of the basic reproduction number ℛ0, computed from 10000 samples using LHS.The distribution highlights the range and frequency of different ℛ0 values, illustrating their sensitivity to variations in the model parameters listed in Table 1. Notably, the mean value of ℛ0 across these samples was estimated to be 2.19. The sampling ranges used are as indicated in Table 1.\n\nFigure: Partial Rank Correlation Coefficient (PRCC) sensitivity analysis results, obtained using LHS with 1000 samples and run in Python version 3.11.0.This highlights the relative influence of model parameters from Table 1 on the basic reproduction number ℛ0. Parameters with positive PRCCs will increase ℛ0 when they increase, while those with negative PRCCs will decrease ℛ0 as they increase. The sampling ranges used are as indicated in Table 1.\n\nFigure: Impact of varying the effective contact rates βi, i=1,2,3, on the reproduction number ℛ0.\n\nFigure: Illustrates the effects of varying: (a) the treatment adherence proportion θ, and (b) the recovery rate for individuals with chronic infections ρ on the reproduction number ℛ0.In this analysis, ρ and θ were varied while all other parameters were held constant as displayed in Table 1.\n\nFigure: Impact of recovery rate of the chronically infected ρ and the proportion adherence θ on the reproduction number ℛ0.This contour plot shows how ρ and θ affect the reproduction number in HCV treatment.\n\nFigure: Effect of varying the proportion of individuals adhering to treatment θ on the acutely infected cases I, with (a) ℛ0<1 and (b) ℛ0>1.\n\nFigure: Effect of varying the proportion of individuals adhering to treatment, represented by θ, on the number of chronically infected individuals who are under treatment, denoted by C, with (a) ℛ0<1 and (b) ℛ0>1.\n\nFigure: Effect of varying the proportion of individuals adhering to treatment, θ, on the number of chronically infected individuals who are not under treatment, denoted by Cq, with (a) ℛ0<1 and (b) ℛ0>1.\n\nFigure: Effect of varying the re-susceptibility rates (ϕ) on infection dynamics across varying scenarios of the basic reproduction number (ℛ0).Subplots (a) and (b) show the number of acutely infected individuals without treatment (I) for ℛ0<1 and ℛ0>1 respectively. Subplots (c) and (d) depicts the chronically infected individuals under treatment (I) for the corresponding ℛ0 scenarios. Lastly, subplots (e) and (f) illustrate the dynamics of chronically infected individuals not under treatment (Cq) under ℛ0<1 and ℛ0>1 conditions. This figure offers insights into the intricate relationship between treatment adherence and infection outcomes in diverse epidemiological settings.\n\nIn Fig 6, we elucidate the consequences of varying $β_{1} , β_{2}$, and $β_{3}$ values independently, with all other parameters maintained as shown in Table 1. The findings are graphically represented in Fig 6. Most strikingly, $β_{3}$ exerts the strongest influence on the reproduction number. This can be attributed to its correlation with the prolonged infectious period experienced by individuals with chronic infections. Parameter $β_{1}$, which has more impact over $β_{2}$ also plays a significant role, emphasizing its importance in the overall model. In contrast, even though $β_{2}$ characterizes the chronically infectious population, its impact is minimized since these individuals are typically under treatment.\n\nFig 7(a) demonstrates that as $θ$ increases, there is a marked decline in $ℛ_{0}$. For values of $θ < 0.5$, the decrease is gradual; however, when $θ > 0.5$, the reduction becomes more pronounced. Treatment adherence is particularly effective at reducing the reproduction number once it goes beyond 50% threshold. Additionally, it is worth noting that the reproduction number $ℛ_{0}$ goes below 1 when $θ > 0.52$. Fig 7(b) illustrates the effect of changing ρ on the reproduction number, $ℛ_{0}$. Interestingly, the reduction in $ℛ_{0}$ appears more consistent across all values of ρ. When ρ approaches a value of approximately 0.19, we observe that $ℛ_{0}$ falls below 1. In essence, as ρ increases, there is a systematic reduction in $ℛ_{0}$, highlighting the inverse relationship between the two.\n\nFig 8 provides a comprehensive visualization of the combined effects of varying both ρ and $θ$ on the reproduction number. The interplay between these parameters is clear: as $θ$ and ρ increase, there’s a corresponding decline in the reproduction number. This indicates that, even with a reasonable recovery rate among the chronically infected, achieving a minimal reproduction number requires exceptionally high adherence rates. Therefore, while the recovery from chronic infection is pivotal, ensuring adherence to treatment protocols becomes equally, if not more, crucial. This highlights the urgency of educational campaigns and the adoption of other proactive strategies that aim to bolster adherence to HCV treatment, to further drive down the reproduction number and, by extension, the spread of the virus.\n\nFig 9(a) reveals that when $ℛ_{0} < 1$, treatment adherence plays a pivotal role in diminishing the number of I cases. Consistently, the number of I cases exhibits a decline across the entire adherence spectrum from 0% to 100%. This means that the disease cannot spread in the population because each infected individual, on average, transmits the disease to fewer than one other person. Thus, when $ℛ_{0} < 1$, the effectiveness of treatment is enhanced by adherence, but the impact is relatively low since the disease is already in decline. Meanwhile, Fig 9(b) highlights that at an adherence rate of 75% or below, there’s a surge in the I cases. Nonetheless, these start to subside after a span of 30 years. For this case, the impact of adherence is much more effective. When $ℛ_{0} > 1$, the disease is capable of spreading rapidly through the population, which means that partial adherence is insufficient to control the spread, leading to a substantial increase in infections.\n\nFig 10(a) illustrates the influence of treatment adherence on the C class when $ℛ_{0} < 1$. Throughout the 0 to 100% range, C cases increase initially but begin to decline after 15 years suggesting that treatment adherence helps control the spread of infection over time, leading to a reduction in new chronic cases eventually. Notably, as the adherence percentages increase, there’s a consistent increase in C cases for $ℛ_{0} < 1$. This increase in C cases with higher adherence percentages shows the importance of maintaining high adherence to achieve long-term benefits. When comparing Fig 10(a) with (b), it becomes evident that the C cases count is greater when $ℛ_{0} > 1$ than when $ℛ_{0} < 1$, due to more people infected when $ℛ_{0} > 1$. In Fig 10(b), C cases experience an initial rise in the beginning years, subsequently stabilizing for all treatment adherence percentages (0-100%). In this scenario, the initial rise and subsequent stabilization of C cases across all adherence levels suggest that while adherence helps manage the infection, it doesn’t immediately reduce the number of chronically infected individuals due to the higher transmission rate.\n\nFig 11 illustrates a significant result: at 100% adherence, there are no cases of Cq. In Fig 11(a), as adherence levels decrease, the number of HCV-infected individuals not under treatment also increases. For all adherence levels, the number of Cq cases increases for up to 20 years before beginning to decline for the remainder of the observation period. In Fig 11(b), we observe that Cq cases continue to increase over the entire 50-year period. The impact of adherence is evident; when adherence increases, cases decrease, but the general trend shows an increase. The same explanations from Fig 10 holds.\n\nComparing Fig 10(b) and Fig 11(b) for C (chronic HCV patients adhering to treatment) and Cq (chronic HCV patients who have quit treatment), respectively, we note that individuals adhering to treatment experience an increase in cases that reaches a plateau at around 9 years. This plateau suggests that treatment adherence can stabilize the number of chronic cases, preventing further escalation. In contrast, in cases where individuals do not adhere to treatment, the number of Cq cases continues to increase, indicating a lack of control over the disease progression.\n\nThus, from Figs 9–11, we can denote that treatment adherence is crucial in the fight against HCV. Ensuring that patients adhere to their prescribed treatment regimens can prevent the increase in chronic cases and help achieve long-term disease control.\n\nWe observe that when $ℛ_{0} > 1$, there is an increase in the number of HCV cases. Additionally, variations in ϕ for each transition state appear to have minimal impact on the overall population dynamics. This could be due to the fact that individuals who recover from HCV often develop immunity or have a reduced probability of being re-infected. Furthermore, the rate of re-susceptibility might be considerably lower than the primary infection rate, making it less influential in the disease’s overall spread. Therefore, when constructing mathematical models for HCV, it’s reasonable to omit re-susceptibility, as it doesn’t significantly influence the number of HCV cases.\n\n5 Discussion\n\nMathematical modeling of infectious diseases is pivotal for understanding the spread and control of infectious diseases. In this study, we utilized infectious disease modeling to understand the relationship between treatment adherence and HCV dynamics in Zimbabwe, a LMIC country challenged by this pathogen. Mathematical models have been instrumental in policy formulations, guidance of resource allocation, and helping predict the spread and potential disease outcomes. We developed our mathematical model to reflect the diverse disease stages within the population, providing us with a versatile framework for understanding the various epidemiological transitions that HCV can undergo in this context. We computed the models basic reproduction number ($ℛ_{0}$), an important epidemiological threshold that measures the disease potential for propagation within the population. We managed to validate our model using data for Zimbabwe HCV cases, from 1990 to 2019. We utilized LHS on 1000 samples to assess the basic reproduction number, $ℛ_{0}$. The results indicated that an average $ℛ_{0}$ value of 2.19, emphasizing its sensitivity to the parameters detailed in Table 1. Through sensitivity analysis, we were able to pinpoint the pivotal roles played by treatment adherence and the recovery rate of the chronic infected individuals in driving reductions in $ℛ_{0}$. We computed the model’s steady states, offering insights into its long-term behavior and disease dynamics. These steady states are crucial for understanding the potential outcomes and stability of the modeled system. We found that variations in ϕ have minimal impact on population outcomes, suggesting that re-susceptibility can be reasonably omitted in HCV mathematical models, as recovered individuals often exhibit reduced re-infection rates or develop immunity.\n\nCertainly, the study’s exploration into the effective contact rates, specifically $β_{1}$, $β_{2}$, $β_{3}$ unveils crucial dynamics in HCV transmission. Notably, $β_{3}$ emerges as particularly influential, likely due to its association with extended infectious periods characteristic of chronic infections. In contrast, $β_{1}$, despite its significant role in disease transmission, also has a pronounced impact, emphasizing its relevance in the disease’s spread. Surprisingly, $β_{2}$, which ideally should represent the chronically infectious population, has a more subdued influence, potentially because these individuals are often under treatment. These findings display the intricate interplay of contact rates in HCV transmission and highlight the necessity of understanding and managing these rates to effectively control the disease’s spread. Central to our findings is the relationship between treatment adherence proportion and the reproduction number, $ℛ_{0}$. Notably, a pronounced decline in $ℛ_{0}$ is evident as adherence rises, particularly beyond the 50% threshold. In fact, the reproduction number drops below the crucial threshold of 1 when adherence surpasses 52%. As adherence levels wane, the population’s pool of chronically infected individuals not under treatment (Cq) swells, pointing out the critical importance of adherence promotion strategies in curtailing HCV transmission. This nuanced understanding sheds light on the pressing need for comprehensive interventions aimed at bolstering treatment adherence in LMICs, such as Zimbabwe. Such strategies extend beyond the mere provision of medication to encompass multifaceted initiatives, including patient education, addressing financial barriers to treatment access, and the establishment of rigorous monitoring and follow-up mechanisms. Furthermore, our model unraveled the synergistic impact of simultaneously enhancing the recovery rate of acutely infected individuals and treatment adherence on reducing $ℛ_{0}$. This insight suggests that a holistic approach, addressing both the clinical and behavioral aspects of HCV management, can have a profound impact on disease transmission dynamics. Our in-depth sensitivity analysis, implemented through LHS, shed light on the inherent variability within the system. This variability denotes the critical importance of precise parameter estimation in the realm of infectious disease modeling. Minor fluctuations in certain parameters, as detailed in our analysis, can have substantial impacts on the system’s dynamics, thereby emphasizing the need for accurate data collection and model calibration. By fostering a higher rate of recovery among the infected individuals and promoting adherence to treatment regimens, it becomes possible to significantly curtail the virus’s ability to spread within the population.\n\nOur study highlights the minimal impact of re-susceptibility on HCV outcomes, aligning with Wang et al.’s suggestion that re-susceptibility may not significantly contribute to transmission dynamics in certain contexts [[citation]]. While Elbasha [[citation]] emphasizes the role of reinfection in HCV transmission, our findings highlight the more substantial influence of increasing recovery rates and treatment adherence in reducing the basic reproduction number, $ℛ_{0}$. Both our study and the work of Pitcher et al. [[citation]] portray the critical role of treatment adherence in the effort to achieve HCV elimination, with our analysis identifying a pivotal adherence threshold of 52% for bringing $ℛ_{0}$ below 1. Furthermore, our conclusions regarding the importance of adherence strategies are consistent with Feng et al.’s [[citation]] call for coordinated testing and harm reduction programs to meet WHO elimination goals. While Tatara et al. [[citation]] highlight the significance of addressing reinfection risks, our model suggests that re-susceptibility plays a less dominant role, with adherence remaining the key factor for effective control. Additionally, the findings of Mushayabasa and Bhunu [[citation]], which focus on nonadherence among intravenous drug users, complement our study by reinforcing the importance of improving adherence in high-risk populations to reduce HCV transmission.\n\nOur mathematical approach is comprehensive and without limitations. While the most prevalent transmission of HCV occurs among individuals who inject drugs, we did not solely concentrate on this group. Instead, we broadened our perspective to encompass the entire population, utilizing a general transmission model without narrowing our focus. Emphasizing age structures might be crucial for a deeper understanding of the transmission dynamics. Lastly, We cannot say the mathematical is complete, it is still open for further study. Future directions of this model should incorporate age and sex structuring to capture more granular transmission dynamics. This would allow for a more comprehencive understanding of HCV transmission dynamics within specific subpopulations, leading to more tailored intervention strategies. The data used for parameter estimation in this study was obtained from the Global Hepatitis Progress Report for Zimbabwe (https://www.globalhep.org/data-profiles/countries/zimbabwe) [[citation]], which provides modeled trends of hepatitis-related indicators rather than raw data collected annually. While this approach helps to estimate long-term patterns, it introduces inherent limitations that may affect the accuracy of the model’s outputs. One key limitation is that the data points for each year are not the result of direct observation but are instead derived through modeling processes. These modeled estimates are often based on underlying assumptions, extrapolations, and limited available data, which may introduce uncertainty and potential biases in the trends they predict. In resource-constrained settings like Zimbabwe, where accurate and comprehensive surveillance systems may not be in place, these modeled trends can be heavily influenced by the assumptions of the models used to generate them. As a result, the reliability of the data for key parameters such as infection rates, treatment outcomes, and reinfection risks might be reduced. Given that these trends are modeled rather than collected in real time, they may not fully account for rapid epidemiological changes or the immediate impacts of public health interventions. This can introduce imprecision in key estimates and may affect the predictive power of the model. Moving forward, efforts should be made to combine modeled trends with more frequent, real-time data collection to improve the accuracy and robustness of future parameter estimates and predictions.\n\n6 Conclusion\n\nOur mathematical model highlights the pivotal role of treatment adherence in shaping the transmission dynamics of HCV in Zimbabwe, a low-middle-income country where the disease remains a major public health concern. The analysis shows that the basic reproduction number, $ℛ_{0}$, can fall below the epidemic threshold ($ℛ_{0} < 1$) when adherence levels exceed approximately 52%, provided other key parameters such as the recovery rate of acutely infected individuals are also favorable. Sensitivity analysis revealed that both adherence and recovery rate are among the most influential factors affecting HCV spread, while re-susceptibility has a negligible impact and may be omitted from simplified models. These findings support the implementation of targeted strategies to improve adherence, including patient education, financial support mechanisms, and robust treatment monitoring systems. The model’s responsiveness to changes in parameter values highlights the critical need for accurate parameter estimation in guiding public health decisions. Collectively, this study provides evidence-based insights to inform HCV control efforts through comprehensive and context-specific policy interventions in resource-limited settings.\n\nSupporting information\n\n(PDF)",
+  "sections": [
+    {
+      "id": "front",
+      "title": "Title",
+      "start": 0,
+      "end": 106
+    },
+    {
+      "id": "s2-abstract",
+      "title": "Abstract",
+      "start": 106,
+      "end": 1583
+    },
+    {
+      "id": "s3-1-introduction",
+      "title": "1 Introduction",
+      "start": 1583,
+      "end": 4702
+    },
+    {
+      "id": "s4-2-model-description",
+      "title": "2 Model description",
+      "start": 4702,
+      "end": 7807
+    },
+    {
+      "id": "s5-invariant-region",
+      "title": "Invariant region",
+      "start": 7807,
+      "end": 8572
+    },
+    {
+      "id": "s6-3-reproduction-number",
+      "title": "3 Reproduction number",
+      "start": 8572,
+      "end": 14156
+    },
+    {
+      "id": "s7-3-1-endemic-equilibrium-point",
+      "title": "3.1 Endemic equilibrium point",
+      "start": 14156,
+      "end": 16957
+    },
+    {
+      "id": "s8-3-2-backward-bifurcation-analysis",
+      "title": "3.2 Backward bifurcation analysis",
+      "start": 16957,
+      "end": 20328
+    },
+    {
+      "id": "s9-4-numerical-simulations",
+      "title": "4 Numerical simulations",
+      "start": 20328,
+      "end": 34127
+    },
+    {
+      "id": "s10-5-discussion",
+      "title": "5 Discussion",
+      "start": 34127,
+      "end": 42703
+    },
+    {
+      "id": "s11-6-conclusion",
+      "title": "6 Conclusion",
+      "start": 42703,
+      "end": 43952
+    },
+    {
+      "id": "s12-supporting-information",
+      "title": "Supporting information",
+      "start": 43952,
+      "end": 43981
+    }
+  ],
+  "equations": [
+    {
+      "id": "eq1",
+      "labels": [
+        "pone.0329543.e003"
+      ],
+      "number": "1",
+      "latex": "N = S + I + C + C_{q} + R .",
+      "sectionId": "s4-2-model-description",
+      "start": 5123,
+      "end": 5150
+    },
+    {
+      "id": "eq2",
+      "labels": [
+        "pone.0329543.e006"
+      ],
+      "number": "2",
+      "latex": "λ = β_{1} I + β_{2} C + β_{3} C_{q} ,",
+      "sectionId": "s4-2-model-description",
+      "start": 5695,
+      "end": 5732
+    },
+    {
+      "id": "eq3",
+      "labels": [
+        "pone.0329543.e020"
+      ],
+      "number": "3",
+      "latex": "\\frac{d S}{d t} = b − ( μ + λ ) S + ϕ R , \\frac{d I}{d t} = λ S − ( μ + r ) I , \\frac{d C}{d t} = ( 1 − η ) r I − δ ( 1 − θ ) C − ( ρ + μ + v ) C , \\frac{d C_{q}}{d t} = δ ( 1 − θ ) C − ( α ρ + μ + ν ) C_{q} , \\frac{d R}{d t} = ( C + α C_{q} ) ρ + η r I − ( μ + ϕ ) R .",
+      "sectionId": "s4-2-model-description",
+      "start": 7536,
+      "end": 7805
+    },
+    {
+      "id": "eq4",
+      "labels": [
+        "pone.0329543.e022"
+      ],
+      "number": "4",
+      "latex": "Θ = { S ( t ) , I ( t ) , C ( t ) , C_{q} ( t ) , R ( t ) ∈ ℝ_{+}^{5} , N ≤ \\frac{b}{μ} } .",
+      "sectionId": "s5-invariant-region",
+      "start": 8125,
+      "end": 8216
+    },
+    {
+      "id": "eq5",
+      "labels": [
+        "pone.0329543.e028"
+      ],
+      "number": "5",
+      "latex": "ℰ^{0} = ( \\frac{b}{μ} , 0 , 0 , 0 , 0 ) .",
+      "sectionId": "s6-3-reproduction-number",
+      "start": 9044,
+      "end": 9085
+    },
+    {
+      "id": "eq6",
+      "labels": [
+        "pone.0329543.e030"
+      ],
+      "number": "6",
+      "latex": "F = ( \\frac{b β_{1}}{μ} & \\frac{b β_{2}}{μ} & \\frac{b β_{3}}{μ} \\\\ 0 & 0 & 0 \\\\ 0 & 0 & 0 ) , V = ( m_{1} & 0 & 0 \\\\ − ( 1 − η ) r & m_{2} & 0 \\\\ 0 & − δ ( 1 − θ ) & m_{3} ) .",
+      "sectionId": "s6-3-reproduction-number",
+      "start": 9532,
+      "end": 9707
+    },
+    {
+      "id": "eq7",
+      "labels": [
+        "pone.0329543.e033"
+      ],
+      "number": "7",
+      "latex": "ℛ_{0} = ℛ_{I} + ℛ_{C} + ℛ_{C_{q}} = \\frac{b β_{1}}{μ m_{1}} + \\frac{b r β_{2} ( 1 − η )}{μ m_{1} m_{2}} + \\frac{r b δ β_{3} ( 1 − η ) ( 1 − θ )}{μ m_{1} m_{2} m_{3}} ,",
+      "sectionId": "s6-3-reproduction-number",
+      "start": 9837,
+      "end": 10004
+    },
+    {
+      "id": "eq8",
+      "labels": [
+        "pone.0329543.e037"
+      ],
+      "number": null,
+      "latex": "R_{0} = R_{I} + R_{C} + R_{C q} .",
+      "sectionId": "s6-3-reproduction-number",
+      "start": 10188,
+      "end": 10221
+    },
+    {
+      "id": "eq9",
+      "labels": [
+        "pone.0329543.e061"
+      ],
+      "number": null,
+      "latex": "lim inf_{t → ∞} { I ( t ) + C ( t ) + C_{q} ( t ) } > ε",
+      "sectionId": "s6-3-reproduction-number",
+      "start": 13448,
+      "end": 13503
+    },
+    {
+      "id": "eq10",
+      "labels": [
+        "pone.0329543.e062"
+      ],
+      "number": null,
+      "latex": "I ( 0 ) + C ( 0 ) + C_{q} ( 0 ) > 0 .",
+      "sectionId": "s6-3-reproduction-number",
+      "start": 13558,
+      "end": 13595
+    },
+    {
+      "id": "eq11",
+      "labels": [
+        "pone.0329543.e064"
+      ],
+      "number": "8",
+      "latex": "\\frac{d S}{d t} = b − ( μ + λ ) S + ϕ R = 0 , \\frac{d I}{d t} = λ S − ( μ + r ) I = 0 , \\frac{d C}{d t} = ( 1 − η ) r I − δ ( 1 − θ ) C − ( ρ + μ + v ) C = 0 , \\frac{d C_{q}}{d t} = δ ( 1 − θ ) C − ( α ρ + μ + ν ) C_{q} = 0 , \\frac{d R}{d t} = ( C + α C_{q} ) ρ + η r I − ( μ + ϕ ) R = 0 ,",
+      "sectionId": "s7-3-1-endemic-equilibrium-point",
+      "start": 14732,
+      "end": 15021
+    },
+    {
+      "id": "eq12",
+      "labels": [
+        "pone.0329543.e065"
+      ],
+      "number": "9",
+      "latex": "λ = β_{1} I + β_{2} C + β_{3} C_{q} .",
+      "sectionId": "s7-3-1-endemic-equilibrium-point",
+      "start": 15066,
+      "end": 15103
+    },
+    {
+      "id": "eq13",
+      "labels": [
+        "pone.0329543.e066"
+      ],
+      "number": null,
+      "latex": "S^{*} = \\frac{m_{1} m_{2} m_{3}}{β_{1} m_{2} m_{3} + r ( 1 − η ) m_{4}}",
+      "sectionId": "s7-3-1-endemic-equilibrium-point",
+      "start": 15132,
+      "end": 15203
+    },
+    {
+      "id": "eq14",
+      "labels": [
+        "pone.0329543.e067"
+      ],
+      "number": null,
+      "latex": "I^{*} = \\frac{m_{2} m_{3} [ ( b β_{1} − μ m_{1} ) m_{2} m_{3} + b r ( 1 − η ) m_{4} ] ( μ + ϕ )}{[ β_{1} m_{2} m_{3} + r ( 1 − η ) m_{4} ] [ μ m_{2} m_{3} ( μ + ϕ ) + r m_{2} ( μ^{2} + ( 1 − η ) ν ϕ + μ m_{5} ) \\\\ + r δ ( 1 − θ ) ( μ^{2} + ( 1 − η ) m_{6} ϕ + μ m_{5} ) ]}",
+      "sectionId": "s7-3-1-endemic-equilibrium-point",
+      "start": 15205,
+      "end": 15477
+    },
+    {
+      "id": "eq15",
+      "labels": [
+        "pone.0329543.e068"
+      ],
+      "number": null,
+      "latex": "C^{*} = \\frac{r ( 1 − η ) m_{2} [ ( b β_{1} m_{2} m_{3} − μ ( r + μ ) m_{2} m_{3} + b r ( 1 − η ) m_{4} ] ( μ + ϕ )}{[ β_{1} m_{2} m_{3} + r ( 1 − η ) m_{4} ] [ μ m_{2} m_{3} ( μ + ϕ ) + r m_{2} ( μ^{2} + ( 1 − η ) ν ϕ + μ m_{5} ) \\\\ + r δ ( 1 − θ ) ( μ^{2} + ( 1 − η ) m_{6} ϕ + μ m_{5} ) ]}",
+      "sectionId": "s7-3-1-endemic-equilibrium-point",
+      "start": 15479,
+      "end": 15771
+    },
+    {
+      "id": "eq16",
+      "labels": [
+        "pone.0329543.e069"
+      ],
+      "number": null,
+      "latex": "C_{q}^{*} = \\frac{r δ ( 1 − η ) ( 1 − θ ) [ ( b β_{1} m_{3} − μ m_{1} m_{2} m_{3} + b r ( 1 − η ) m_{4} ] ( μ + ϕ )}{[ β_{1} m_{3} + r ( 1 − η ) m_{4} ] [ μ m_{2} m_{3} ( μ + ϕ ) + r m_{2} ( μ^{2} + ( 1 − η ) ν ϕ + μ m_{5} ) \\\\ + r δ ( 1 − θ ) ( μ^{2} + ( 1 − η ) m_{6} ϕ + μ m_{5} ) ]}",
+      "sectionId": "s7-3-1-endemic-equilibrium-point",
+      "start": 15773,
+      "end": 16059
+    },
+    {
+      "id": "eq17",
+      "labels": [
+        "pone.0329543.e070"
+      ],
+      "number": null,
+      "latex": "R^{*} = \\frac{r [ ( b β_{1} − μ m_{1} ) m_{2} m_{3} + b r ( 1 − η ) m_{4} ] [ m_{2} ( η ( μ + ν ) + ρ ) \\\\ + δ ( 1 − θ ) ( α ρ + η ( μ + m_{6} ) ) ]}{[ β_{1} m_{2} m_{3} + r ( 1 − η ) m_{4} ] [ μ m_{2} m_{3} ( μ + ϕ ) + r m_{2} ( μ^{2} + ( 1 − η ) ν ϕ + μ m_{5} ) \\\\ + r δ ( 1 − θ ) ( μ^{2} + ( 1 − η ) m_{6} ϕ + μ m_{5} ) ]}",
+      "sectionId": "s7-3-1-endemic-equilibrium-point",
+      "start": 16061,
+      "end": 16386
+    }
+  ],
+  "macros": []
+}
