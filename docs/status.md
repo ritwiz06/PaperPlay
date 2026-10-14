@@ -19,15 +19,18 @@ then G3a.3 ([log](sessions/2026-10-14.md)). This file is rewritten every session
     `9dd66e1`);
   - **landed:** the Voyager adapter, recordings, `npm run pipeline:live` and the capability
     probe of all 39 chat models (`796fdc4`, landed at `1af26c8`);
-  - **landing:** ingest by restricted readers, the source register and the sanitiser
-    (`3aead5f`, ADR-0031), with three CC BY papers;
-  - **next:** the gold answers and the bake-off.
+  - **landed:** ingest by restricted readers, the source register and the sanitiser
+    (`3aead5f`, ADR-0031, landed at `1c2d7a6`), with three CC BY papers;
+  - **landing:** transcriptions, their structural match and three gold answers (`2577025`,
+    ADR-0032);
+  - **next:** the pipeline's stages and controller, the API's jobs, `/create`, the bake-off's
+    table and the first generated world, each on its own branch.
 - **`main` moves only through `npm run land`** (ADR-0009, amended).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`. CI runs `check:gate` on every
   push and pull request.
-- **Branches:** `g3/ingest`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the compartment
+- **Branches:** `g3/transcribe`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the compartment
   agent's own, whose three commits are on `main`.
-- **Working commit:** `3aead5f` on `g3/ingest`. `main` is at `1af26c8`, whose CI passed.
+- **Working commit:** `2577025` on `g3/transcribe`. `main` is at `1c2d7a6`, whose CI passed.
 - **Model provider:** Voyager, `https://openai.rc.asu.edu/v1`, its key `VOYAGER_API_KEY` in
   `apps/api/.env` only (ADR-0030); called only by `npm run pipeline:live`.
 - **Primitives:** `flock.planar.weighted@3.1.0`, with queries Q1–Q4, the agents family's
