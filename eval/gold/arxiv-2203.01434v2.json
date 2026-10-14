@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "gold/1",
+  "sourceId": "arxiv-2203.01434v2",
+  "transcribedBy": "Claude Code, by hand from the extracted source, 2026-10-14",
+  "notes": [
+    "The table gives c and m_T as varied. The gold takes the first scenario the paper names, m_T = m_T^A = 5e-15 and c = 2e-10; its other stated values are accepted.",
+    "T_0 and B_0 are given per figure; the gold takes T_0 = 5 and B_0 = 5e5, a case with tBregs present.",
+    "Time is in days, as the paper states."
+  ],
+  "modelEquations": ["eq2"],
+  "acceptableValues": {
+    "c": [2e-10, 3e-10, 9e-11, 2e-11],
+    "m_T": [5e-15, 5e-10],
+    "T": [5, 650000000, 800000000],
+    "B": [500000, 0, 50, 5000000]
+  },
+  "transcription": {
+    "timeUnit": "day",
+    "compartments": [
+      { "id": "T", "symbol": "T", "name": "Breast cancer cells", "unit": { "cells": 1 }, "initial": 5, "initialQuote": "T_0 = 5", "quote": "denoting the populations of those cells as $T$, $N$, $R$ and $B$" },
+      { "id": "N", "symbol": "N", "name": "NK cells", "unit": { "cells": 1 }, "initial": 500000000, "initialQuote": "N_0 = 5 \\cdot 10^8", "quote": "denoting the populations of those cells as $T$, $N$, $R$ and $B$" },
+      { "id": "R", "symbol": "R", "name": "Tregs", "unit": { "cells": 1 }, "initial": 200000000, "initialQuote": "R_0 = 2 \\cdot 10^8", "quote": "denoting the populations of those cells as $T$, $N$, $R$ and $B$" },
+      { "id": "B", "symbol": "B", "name": "tBregs", "unit": { "cells": 1 }, "initial": 500000, "initialQuote": "B_0 = 5 \\cdot 10^5", "quote": "denoting the populations of those cells as $T$, $N$, $R$ and $B$" }
+    ],
+    "parameters": [
+      { "id": "a", "symbol": "a", "name": "Tumour growth rate", "unit": { "time": -1 }, "value": 0.15, "quote": "$a$ | day$^{-1}$ | 0.15" },
+      { "id": "b", "symbol": "b", "name": "Inverse of the tumour carrying capacity", "unit": { "cells": -1 }, "value": 1e-9, "quote": "$b$ | cell$^{-1}$ | $1 \\cdot 10^{-9}$" },
+      { "id": "c", "symbol": "c", "name": "Rate of NK-induced tumour death", "unit": { "cells": -1, "time": -1 }, "value": 2e-10, "quote": "c=2 \\cdot 10^{-10}" },
+      { "id": "sigma", "symbol": "\\sigma", "name": "Constant source of NK cells", "unit": { "cells": 1, "time": -1 }, "value": 50000000, "quote": "$\\sigma$ | cell $\\cdot$ day$^{-1}$ | $5 \\cdot 10^7$" },
+      { "id": "theta_N", "symbol": "\\theta_N", "name": "NK cell death rate", "unit": { "time": -1 }, "value": 0.07, "quote": "$\\theta_N$ | day$^{-1}$ | 0.07" },
+      { "id": "gamma", "symbol": "\\gamma", "name": "Treg-induced NK cell death", "unit": { "cells": -1, "time": -1 }, "value": 1e-10, "quote": "$\\gamma$ | cell$^{-1} \\cdot$ day$^{-1}$ | $1 \\cdot 10^{-10}$" },
+      { "id": "kappa", "symbol": "\\kappa", "name": "Constant source of Tregs", "unit": { "cells": 1, "time": -1 }, "value": 10000000, "quote": "$\\kappa$ | cell $\\cdot$ day$^{-1}$ | $1 \\cdot 10^7$" },
+      { "id": "theta_R", "symbol": "\\theta_R", "name": "Treg death rate", "unit": { "time": -1 }, "value": 0.03851, "quote": "$\\theta_R$ | day$^{-1}$ | 0.03851" },
+      { "id": "m_B", "symbol": "m_B", "name": "tBreg-induced Treg growth", "unit": { "cells": -1, "time": -1 }, "value": 3e-8, "quote": "$m_B$ | cell$^{-1} \\cdot$ day$^{-1}$ | $3 \\cdot 10^{-8}$" },
+      { "id": "theta_B", "symbol": "\\theta_B", "name": "tBreg death rate", "unit": { "time": -1 }, "value": 0.4, "quote": "$\\theta_B$ | day$^{-1}$ | 0.4" },
+      { "id": "m_T", "symbol": "m_T", "name": "Tumour-induced tBreg growth", "unit": { "cells": -1, "time": -1 }, "value": 5e-15, "quote": "m_T = m_T^A \\coloneqq 5 \\cdot 10^{-15}" }
+    ],
+    "equations": [
+      { "of": "T", "rate": "a*T*(1 - b*T) - c*N*T", "quote": "\\dv{T}{t} = aT(1-bT) - cNT" },
+      { "of": "N", "rate": "sigma - theta_N*N - gamma*R*N", "quote": "\\dv{N}{t} = \\sigma - \\theta_NN - \\gamma RN" },
+      { "of": "R", "rate": "kappa - theta_R*R + m_B*B*R", "quote": "\\dv{R}{t} = \\kappa -\\theta_RR + m_BBR" },
+      { "of": "B", "rate": "-theta_B*B + m_T*T*B", "quote": "\\dv{B}{t} = -\\theta_BB + m_TTB" }
+    ]
+  },
+  "qualitative": {
+    "text": "The tumour is eliminated when the rate of NK-induced tumour death c exceeds a threshold c_1, about 2.88e-10 per cell per day, and persists below it.",
+    "quote": "c_1 = 2.88 \\cdot 10^{-10}"
+  }
+}

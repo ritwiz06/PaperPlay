@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "gold/1",
+  "sourceId": "arxiv-2506.19869v1",
+  "transcribedBy": "Claude Code, by hand from the extracted source, 2026-10-14",
+  "notes": [
+    "The paper's values are its synthetic example's; its Ethiopian estimates are accepted as alternatives.",
+    "The paper calls gamma an infection rate; it moves the exposed to the infectious.",
+    "Time is in years: the synthetic run spans t = 0 to 50 years, and the paper fits annual data. No units column is given."
+  ],
+  "modelEquations": ["eq1"],
+  "acceptableValues": {
+    "Lambda": [15, 1658000],
+    "beta": [0.05, 7.75e-7],
+    "gamma": [0.48, 0.225],
+    "pi": [0.1, 0.713],
+    "tau": [0.275, 0.266],
+    "alpha": [0.88, 0.89],
+    "omega": [0.12, 0.11]
+  },
+  "transcription": {
+    "timeUnit": "year",
+    "compartments": [
+      { "id": "S", "symbol": "S", "name": "Susceptible", "unit": { "people": 1 }, "initial": 861, "initialQuote": "S(0) = 861", "quote": "susceptible $S(t)$" },
+      { "id": "V", "symbol": "V", "name": "Vaccinated", "unit": { "people": 1 }, "initial": 100, "initialQuote": "V(0) = 100", "quote": "vaccinated $V(t)$" },
+      { "id": "E", "symbol": "E", "name": "Exposed", "unit": { "people": 1 }, "initial": 20, "initialQuote": "E(0) = 20", "quote": "exposed $E(t)$" },
+      { "id": "I", "symbol": "I", "name": "Infectious", "unit": { "people": 1 }, "initial": 10, "initialQuote": "I(0) = 10", "quote": "infectious $I(t)$" },
+      { "id": "T", "symbol": "T", "name": "Treated", "unit": { "people": 1 }, "initial": 6, "initialQuote": "T(0) = 6", "quote": "treated, $T(t)$" },
+      { "id": "R", "symbol": "R", "name": "Recovered", "unit": { "people": 1 }, "initial": 3, "initialQuote": "$R(0) = 3$", "quote": "recovered $R(t)$" }
+    ],
+    "parameters": [
+      { "id": "Lambda", "symbol": "\\Lambda", "name": "Recruitment rate", "unit": { "people": 1, "time": -1 }, "value": 15, "quote": "\\varLambda = 15" },
+      { "id": "beta", "symbol": "\\beta", "name": "Contact rate", "unit": { "people": -1, "time": -1 }, "value": 0.05, "quote": "\\beta = 0.05" },
+      { "id": "gamma", "symbol": "\\gamma", "name": "Progression from exposed to infectious", "unit": { "time": -1 }, "value": 0.48, "quote": "\\gamma = 0.48" },
+      { "id": "eta", "symbol": "\\eta", "name": "Loss of immunity", "unit": { "time": -1 }, "value": 0.2, "quote": "\\eta = 0.2" },
+      { "id": "theta", "symbol": "\\theta", "name": "Loss of vaccine protection", "unit": { "time": -1 }, "value": 0.5, "quote": "\\theta = 0.5" },
+      { "id": "pi", "symbol": "\\pi", "name": "Vaccination rate", "unit": { "time": -1 }, "value": 0.1, "quote": "\\pi = 0.1" },
+      { "id": "mu", "symbol": "\\mu", "name": "Natural death rate", "unit": { "time": -1 }, "value": 0.0157, "quote": "\\mu = 0.0157" },
+      { "id": "delta", "symbol": "\\delta", "name": "Treatment rate", "unit": { "time": -1 }, "value": 0.67, "quote": "\\delta = 0.67" },
+      { "id": "tau", "symbol": "\\tau", "name": "Disease death rate of the infectious", "unit": { "time": -1 }, "value": 0.275, "quote": "\\tau = 0.275" },
+      { "id": "alpha", "symbol": "\\alpha", "name": "Recovery rate of the treated", "unit": { "time": -1 }, "value": 0.88, "quote": "\\alpha = 0.88" },
+      { "id": "omega", "symbol": "\\omega", "name": "Disease death rate of the treated", "unit": { "time": -1 }, "value": 0.12, "quote": "\\omega = 0.12" }
+    ],
+    "equations": [
+      { "of": "S", "rate": "Lambda + eta*R + theta*V - (beta*I + pi + mu)*S", "quote": "\\frac{dS}{dt} &= \\Lambda + \\eta R + \\theta V - (\\beta I + \\pi + \\mu)S" },
+      { "of": "V", "rate": "pi*S - (theta + mu)*V", "quote": "\\frac{dV}{dt} &= \\pi S - (\\theta + \\mu)V" },
+      { "of": "E", "rate": "beta*S*I - (gamma + mu)*E", "quote": "\\frac{dE}{dt} &= \\beta SI - (\\gamma + \\mu)E" },
+      { "of": "I", "rate": "gamma*E - (delta + tau + mu)*I", "quote": "\\frac{dI}{dt} &= \\gamma E - (\\delta + \\tau + \\mu)I" },
+      { "of": "T", "rate": "delta*I - (alpha + omega + mu)*T", "quote": "\\frac{dT}{dt} &= \\delta I - (\\alpha + \\omega + \\mu)T" },
+      { "of": "R", "rate": "alpha*T - (eta + mu)*R", "quote": "\\frac{dR}{dt} &= \\alpha T - (\\eta + \\mu)R" }
+    ]
+  },
+  "qualitative": {
+    "text": "The disease-free equilibrium is stable when the basic reproduction number is below one, and an endemic equilibrium exists when it is above one.",
+    "quote": "Analysis of Disease-Free Equilibrium"
+  }
+}

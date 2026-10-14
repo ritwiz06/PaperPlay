@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "gold/1",
+  "sourceId": "pmc-PMC12334037",
+  "transcribedBy": "Claude Code, by hand from the extracted source, 2026-10-14",
+  "notes": [
+    "The compartments are shares of the population: the stated starting values sum to 0.825.",
+    "Time is in years: the model is fitted to 30 years of annual data, 1990-2019. No units are given.",
+    "Two death rates differ only in their letter: Latin v, on treatment, and Greek nu, off treatment.",
+    "eta and theta are proportions, without units, though the table calls eta a rate.",
+    "rho's printed range, 0.009-0.0011, does not hold its value, 0.053; the value is taken as printed.",
+    "The force of infection, lambda = beta1 I + beta2 C + beta3 Cq, is written out in each rate."
+  ],
+  "modelEquations": ["eq2", "eq3"],
+  "acceptableValues": {},
+  "transcription": {
+    "timeUnit": "year",
+    "compartments": [
+      { "id": "S", "symbol": "S", "name": "Susceptible", "unit": {}, "initial": 0.8, "initialQuote": "S0=0.8", "quote": "susceptible to infection (S)" },
+      { "id": "I", "symbol": "I", "name": "Acutely infected", "unit": {}, "initial": 0.01, "initialQuote": "I0=0.01", "quote": "acutely infected (I)" },
+      { "id": "C", "symbol": "C", "name": "Chronically infected, on treatment", "unit": {}, "initial": 0.015, "initialQuote": "C0=0.015", "quote": "chronically infected under treatment (C)" },
+      { "id": "Cq", "symbol": "C_q", "name": "Chronically infected, quit treatment", "unit": {}, "initial": 0, "initialQuote": "Cq0=0", "quote": "chronically infected after quitting treatment prematurely (Cq)" },
+      { "id": "R", "symbol": "R", "name": "Recovered", "unit": {}, "initial": 0, "initialQuote": "R0=0", "quote": "recovered individuals (R)" }
+    ],
+    "parameters": [
+      { "id": "b", "symbol": "b", "name": "Recruitment rate", "unit": { "time": -1 }, "value": 0.01, "quote": "Recruitment rate | b | 0.01 (0.009-0.06)" },
+      { "id": "mu", "symbol": "\\mu", "name": "Natural mortality rate", "unit": { "time": -1 }, "value": 0.02, "quote": "Natural mortality rate | $μ$ | 0.02 (0.01-0.03)" },
+      { "id": "v", "symbol": "v", "name": "Disease-induced death rate on treatment", "unit": { "time": -1 }, "value": 0.006, "quote": "Disease induced death rate (on treatment) | v | 0.006 (0.001-0.008)" },
+      { "id": "nu", "symbol": "\\nu", "name": "Disease-induced death rate off treatment", "unit": { "time": -1 }, "value": 0.055, "quote": "Disease induced death rate (not on treatment) | $ν$ | 0.055 (0.01-0.065)" },
+      { "id": "beta1", "symbol": "\\beta_1", "name": "Transmission rate from the acutely infected", "unit": { "time": -1 }, "value": 0.214, "quote": "Disease transmission rate (I) | $β_{1}$ | 0.214 (0-3)" },
+      { "id": "beta2", "symbol": "\\beta_2", "name": "Transmission rate from the chronically infected on treatment", "unit": { "time": -1 }, "value": 0.016, "quote": "Disease transmission rate (C) | $β_{2}$ | 0.016 (0.01-0.02)" },
+      { "id": "beta3", "symbol": "\\beta_3", "name": "Transmission rate from those who quit treatment", "unit": { "time": -1 }, "value": 0.05, "quote": "Disease transmission rate (Cq) | $β_{3}$ | 0.05 (0.01-0.1)" },
+      { "id": "phi", "symbol": "\\phi", "name": "Re-susceptibility rate", "unit": { "time": -1 }, "value": 0.001, "quote": "Re-susceptibility rate | $ϕ$ | 0.001 (0.0008-0.0012)" },
+      { "id": "r", "symbol": "r", "name": "Rate of leaving the acute stage", "unit": { "time": -1 }, "value": 0.163, "quote": "Acute to recovered rate | r | 0.163 (0.1-0.18)" },
+      { "id": "eta", "symbol": "\\eta", "name": "Proportion of the acutely infected who recover", "unit": {}, "value": 0.3, "quote": "Recovery rate in acutely infected cases | $η$ | 0.3 (0.1-0.4)" },
+      { "id": "delta", "symbol": "\\delta", "name": "Treatment quitting rate", "unit": { "time": -1 }, "value": 0.6, "quote": "Treatment quitting rate | $δ$ | 0.6 (0.4-0.7)" },
+      { "id": "theta", "symbol": "\\theta", "name": "Treatment adherence proportion", "unit": {}, "value": 0.5, "quote": "Treatment adherence proportion | $θ$ | 0.5 (0-1)" },
+      { "id": "rho", "symbol": "\\rho", "name": "Recovery rate on treatment", "unit": { "time": -1 }, "value": 0.053, "quote": "Recovery rate for those with chronic infections | ρ | 0.053" },
+      { "id": "alpha", "symbol": "\\alpha", "name": "Slow recovery modification", "unit": {}, "value": 0.001, "quote": "Slow recovery modification parameter | $α$ | 0.001 (0.0009-0.0011)" }
+    ],
+    "equations": [
+      { "of": "S", "rate": "b - (mu + beta1*I + beta2*C + beta3*Cq)*S + phi*R", "quote": "\\frac{d S}{d t} = b − ( μ + λ ) S + ϕ R" },
+      { "of": "I", "rate": "(beta1*I + beta2*C + beta3*Cq)*S - (mu + r)*I", "quote": "\\frac{d I}{d t} = λ S − ( μ + r ) I" },
+      { "of": "C", "rate": "(1 - eta)*r*I - delta*(1 - theta)*C - (rho + mu + v)*C", "quote": "\\frac{d C}{d t} = ( 1 − η ) r I − δ ( 1 − θ ) C − ( ρ + μ + v ) C" },
+      { "of": "Cq", "rate": "delta*(1 - theta)*C - (alpha*rho + mu + nu)*Cq", "quote": "\\frac{d C_{q}}{d t} = δ ( 1 − θ ) C − ( α ρ + μ + ν ) C_{q}" },
+      { "of": "R", "rate": "(C + alpha*Cq)*rho + eta*r*I - (mu + phi)*R", "quote": "\\frac{d R}{d t} = ( C + α C_{q} ) ρ + η r I − ( μ + ϕ ) R" }
+    ]
+  },
+  "qualitative": {
+    "text": "The model has a backward bifurcation: the disease may persist even when the basic reproduction number is below one.",
+    "quote": "even if $ℛ_{0} < 1$, the disease may persist"
+  }
+}
