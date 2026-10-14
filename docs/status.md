@@ -25,12 +25,12 @@ then G3a.3 ([log](sessions/2026-10-14.md)). This file is rewritten every session
     ADR-0032);
   - **next to land:** the pipeline's stages and controller, and the API's jobs (`16dac04`,
     ADR-0033);
-  - **then:** `/create`, the bake-off's table and the first generated world, each on its own
-    branch.
+  - **then:** `/create` and generated worlds in the town kit (`870c541`, ADR-0034); then the
+    bake-off's table and the first generated world, each on its own branch.
 - **`main` moves only through `npm run land`** (ADR-0009, amended).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`. CI runs `check:gate` on every
   push and pull request.
-- **Branches:** `g3/transcribe`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the compartment
+- **Branches:** `g3/transcribe`, `g3/pipeline` and `g3/create`, to land in that order; `worktree-agent-ab8301aef54d2fcc8`, the compartment
   agent's own, whose three commits are on `main`.
 - **Working commit:** `2577025` on `g3/transcribe`. `main` is at `1c2d7a6`, whose CI passed.
 - **Model provider:** Voyager, `https://openai.rc.asu.edu/v1`, its key `VOYAGER_API_KEY` in
