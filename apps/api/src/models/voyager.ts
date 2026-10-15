@@ -75,7 +75,9 @@ export function voyagerClient(options: VoyagerOptions): VoyagerClient {
       });
     } catch (error) {
       if (controller.signal.aborted) throw new ModelError("timeout", `the gateway did not answer within ${options.timeoutMs} ms`, { retryable: true });
-      throw new ModelError("network", `the gateway could not be reached: ${error instanceof Error ? error.message : String(error)}`, { retryable: true });
+      // The cause's code, such as ECONNRESET, says more than fetch's own "fetch failed".
+      const code = (error as { cause?: { code?: unknown }; code?: unknown }).cause?.code ?? (error as { code?: unknown }).code;
+      throw new ModelError("network", `the gateway could not be reached: ${error instanceof Error ? error.message : String(error)}${typeof code === "string" ? ` (${code})` : ""}`, { retryable: true });
     } finally {
       clearTimeout(timer);
     }

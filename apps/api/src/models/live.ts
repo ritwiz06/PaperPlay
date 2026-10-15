@@ -6,6 +6,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { loadModelConfig, type ModelConfig } from "./config.ts";
+import { nodeFetch } from "./node-fetch.ts";
 import { voyagerClient, type VoyagerClient } from "./voyager.ts";
 
 export const ENV_FILE = join(import.meta.dirname, "..", "..", ".env");
@@ -42,6 +43,7 @@ export function liveClient(config: ModelConfig = loadModelConfig()): VoyagerClie
     retries: config.retries,
     backoffMs: config.backoffMs,
     minIntervalMs: config.minIntervalMs,
-    fetch: globalThis.fetch,
+    // Not Node's own fetch, which gives up on a reply after 300 seconds whatever the timeout says.
+    fetch: nodeFetch as typeof fetch,
   });
 }
