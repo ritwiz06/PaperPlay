@@ -70,8 +70,9 @@ export function CreatePage() {
   const last = events.at(-1);
   const reached = new Set(events.map((entry) => entry.state));
   const ending = last && ENDINGS[last.state] ? last : null;
+  // A stage is done once the job has left it, and ready is done on arrival: nothing follows it.
   const statusOf = (state: JobState): "done" | "now" | "waiting" =>
-    last?.state === state && !ending ? "now" : reached.has(state) && (last?.state !== state || state === "ready") ? "done" : "waiting";
+    !reached.has(state) ? "waiting" : last?.state !== state || state === "ready" ? "done" : ending ? "done" : "now";
 
   return (
     <main className="create">
