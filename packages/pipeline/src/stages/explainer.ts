@@ -58,5 +58,5 @@ export function explainerMessages(input: { readonly title: string; readonly plan
 }
 
 export function explain(client: ModelClient, model: string, input: Parameters<typeof explainerMessages>[0], options: { readonly structuredOutput: boolean }) {
-  return completeStructured(client, { stage: "explainer", model, messages: explainerMessages(input), temperature: 0, maxTokens: 16_000 }, Explanation, { name: "explanation", structuredOutput: options.structuredOutput });
+  return completeStructured(client, { stage: "explainer", model, messages: explainerMessages(input), temperature: 0, maxTokens: 32_000 }, Explanation, { name: "explanation", structuredOutput: options.structuredOutput });
 }

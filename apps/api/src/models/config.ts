@@ -12,7 +12,8 @@ const ModelId = z.string().min(1).max(200);
 
 export const ModelConfig = z.strictObject({
   baseUrl: z.url(),
-  timeoutMs: z.int().positive().max(600_000),
+  /** Each call's ceiling: a reasoning model streaming a long plan can take many minutes. */
+  timeoutMs: z.int().positive().max(1_800_000),
   retries: z.int().min(0).max(6),
   backoffMs: z.int().positive().max(60_000),
   minIntervalMs: z.int().nonnegative().max(60_000),

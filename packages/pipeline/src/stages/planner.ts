@@ -97,5 +97,5 @@ export function plannerMessages(input: { readonly title: string; readonly readin
 }
 
 export function plan(client: ModelClient, model: string, input: Parameters<typeof plannerMessages>[0], options: { readonly structuredOutput: boolean }) {
-  return completeStructured(client, { stage: "planner", model, messages: plannerMessages(input), temperature: 0, maxTokens: 12_000 }, Plan, { name: "plan", structuredOutput: options.structuredOutput });
+  return completeStructured(client, { stage: "planner", model, messages: plannerMessages(input), temperature: 0, maxTokens: 32_000 }, Plan, { name: "plan", structuredOutput: options.structuredOutput });
 }

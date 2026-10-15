@@ -61,8 +61,24 @@ describe("[R09] the Voyager gateway's client", () => {
       temperature: 0,
       max_tokens: 50,
       response_format: { type: "json_schema", json_schema: { name: "groups", schema: { type: "object" }, strict: true } },
+      stream: true,
+      stream_options: { include_usage: true },
     });
     expect(calls[0]?.body).not.toContain(KEY);
+  });
+
+  it("joins a streamed reply's pieces, its finish and its usage, and reads an error sent mid-stream as a failure to retry", async () => {
+    const events = (chunks: readonly unknown[]) => new Response(`${chunks.map((chunk) => `data: ${JSON.stringify(chunk)}\n\n`).join("")}data: [DONE]\n\n`, { status: 200, headers: { "content-type": "text/event-stream" } });
+    const streamed = events([
+      { model: "model-a", choices: [{ delta: { role: "assistant" } }] },
+      { choices: [{ delta: { content: '{"groups":' } }] },
+      { choices: [{ delta: { reasoning_content: "thinking" } }] },
+      { choices: [{ delta: { content: '["S","I"]}' }, finish_reason: "stop" }] },
+      { choices: [], usage: { prompt_tokens: 12, completion_tokens: 6, total_tokens: 18 } },
+    ]);
+    const { made, calls } = client([events([{ error: { message: "upstream went away" } }]), streamed]);
+    expect(await made.complete(request)).toEqual({ model: "model-a", text: '{"groups":["S","I"]}', usage: { promptTokens: 12, completionTokens: 6, totalTokens: 18 }, finishReason: "stop" });
+    expect(calls).toHaveLength(2);
   });
 
   it("retries a rate limit and a server's error with exponential backoff, honouring Retry-After", async () => {

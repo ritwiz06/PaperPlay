@@ -38,13 +38,23 @@ const figure = (value: number): string => String(Number(value.toPrecision(4)));
 
 /**
  * A plan's names as the model's ids. A planner may name a parameter or a compartment as the paper
- * writes it, "theta_N" or "S", where the model's id is "thetaN" or "s": the id, its camelCase form,
- * or the paper's symbol in any notation, in that order. A name none of these finds is left as it
- * is, and the builder says it is unknown.
+ * writes it, "theta_N" or "S", where the model's id is "thetaN" or "s": the id, its camelCase form
+ * in any case, or the paper's symbol in any notation, in that order; then, for a name written as
+ * words, an id in brackets within it, or a compartment's or parameter's name it holds. A name none
+ * of these finds is left as it is, and the builder says it is unknown.
  */
 export function namedInModel(plan: Plan, model: ModelSpec): Plan {
-  const resolve = (name: string, pool: readonly { readonly id: string; readonly symbol?: string }[]): string =>
-    pool.find((entry) => entry.id === name)?.id ?? pool.find((entry) => entry.id === camelId(name))?.id ?? pool.find((entry) => entry.symbol !== undefined && sameSymbol(entry.symbol, name))?.id ?? name;
+  const exactly = (name: string, pool: readonly { readonly id: string; readonly symbol?: string }[]): string | undefined =>
+    pool.find((entry) => entry.id === name)?.id ??
+    pool.find((entry) => entry.id === camelId(name))?.id ??
+    pool.find((entry) => entry.id.toLowerCase() === camelId(name).toLowerCase())?.id ??
+    pool.find((entry) => entry.symbol !== undefined && sameSymbol(entry.symbol, name))?.id;
+  // Last, a name written as words, "susceptible (s) at the end": an id in brackets, then a name it holds.
+  const resolve = (name: string, pool: readonly { readonly id: string; readonly name: string; readonly symbol?: string }[]): string =>
+    exactly(name, pool) ??
+    [...name.matchAll(/\(([^()\s]{1,24})\)/g)].map((match) => exactly(match[1] ?? "", pool)).find(Boolean) ??
+    pool.find((entry) => name.toLowerCase().includes(entry.name.toLowerCase()))?.id ??
+    name;
   return {
     ...plan,
     levels: plan.levels.map((level) => ({

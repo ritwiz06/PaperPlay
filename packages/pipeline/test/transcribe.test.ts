@@ -51,7 +51,7 @@ describe("[R05] quotes as anchors", () => {
   });
 
   it("finds a quote written in another notation, and anchors the source's own LaTeX, never the model's rendering", () => {
-    const text = "the system\n\\frac{dS}{dt} &= \\Lambda - (\\beta I + \\mu)S \\\\\nwith $\\beta = 0.05$ and $N_0 = 5\\times 10^{8}$; then m_T \\coloneqq 5 \\cdot 10^{-15}\; cells";
+    const text = "the system\n\\frac{dS}{dt} &= \\Lambda - (\\beta I + \\mu)S \\\\\nwith $\\beta = 0.05$ and $N_0 = 5\\times 10^{8}$; then m_T \\coloneqq 5 \\cdot 10^{-15}\\; cells";
     const span = (quote: string) => {
       const found = findQuote(text, quote);
       return found && text.slice(found.start, found.end);

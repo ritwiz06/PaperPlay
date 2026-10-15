@@ -62,14 +62,14 @@ export function voyagerClient(options: VoyagerOptions): VoyagerClient {
   };
 
   /** One HTTP call with a timeout; the gateway's own error text is kept, trimmed, and never holds the key. */
-  async function send(path: string, init: { readonly method: "GET" | "POST"; readonly body?: string }): Promise<unknown> {
+  async function send(path: string, init: { readonly method: "GET" | "POST"; readonly body?: string; readonly raw?: boolean }): Promise<unknown> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), options.timeoutMs);
     let response: Response;
     try {
       response = await options.fetch(`${base}${path}`, {
         method: init.method,
-        headers: { authorization: `Bearer ${options.apiKey}`, "content-type": "application/json", accept: "application/json" },
+        headers: { authorization: `Bearer ${options.apiKey}`, "content-type": "application/json", accept: init.raw ? "text/event-stream, application/json" : "application/json" },
         ...(init.body === undefined ? {} : { body: init.body }),
         signal: controller.signal,
       });
@@ -87,7 +87,7 @@ export function voyagerClient(options: VoyagerOptions): VoyagerClient {
       (error as ModelError & { retryAfterMs?: number }).retryAfterMs = retryAfter(response.headers.get("retry-after"));
       throw error;
     }
-    return response.json();
+    return init.raw ? response.text() : response.json();
   }
 
   /** Tries a call, and again after a backoff while it may still succeed. */
@@ -112,8 +112,12 @@ export function voyagerClient(options: VoyagerOptions): VoyagerClient {
         ...(request.temperature === undefined ? {} : { temperature: request.temperature }),
         ...(request.maxTokens === undefined ? {} : { max_tokens: request.maxTokens }),
         ...(request.jsonSchema ? { response_format: { type: "json_schema", json_schema: { name: request.jsonSchema.name, schema: request.jsonSchema.schema, strict: true } } } : {}),
+        // Streamed, so bytes keep flowing while a slow model thinks: the gateway's proxy ends a
+        // reply that sends nothing for too long (a 524). The reply is read whole, then joined.
+        stream: true,
+        stream_options: { include_usage: true },
       });
-      const reply = (await withRetries(() => send("/chat/completions", { method: "POST", body }))) as CompletionBody;
+      const reply = await withRetries(async () => completionOf((await send("/chat/completions", { method: "POST", body, raw: true })) as string, request));
       const choice = reply.choices?.[0];
       const text = choice?.message?.content;
       if (typeof text !== "string") throw new ModelError("invalid-response", `${request.model} returned no message for the ${request.stage} call`);
@@ -132,6 +136,57 @@ export function voyagerClient(options: VoyagerOptions): VoyagerClient {
       return (reply.data ?? []).map(({ id, owned_by, ...details }) => ({ id: String(id), ownedBy: typeof owned_by === "string" ? owned_by : null, details }));
     },
   };
+}
+
+interface StreamChunk {
+  readonly model?: string;
+  readonly choices?: readonly { readonly delta?: { readonly content?: string | null }; readonly finish_reason?: string | null }[];
+  readonly usage?: CompletionBody["usage"] | null;
+  readonly error?: { readonly message?: string } | string;
+}
+
+/**
+ * A streamed reply, server-sent events of chunks, joined into one completion: the content's pieces
+ * in order, the last finish reason, the usage the final chunk reports. A gateway that answers with
+ * one JSON body instead is read as that body.
+ */
+export function completionOf(text: string, request: ChatRequest): CompletionBody {
+  const events = text
+    .split(/\r?\n/)
+    .filter((line) => line.startsWith("data:"))
+    .map((line) => line.slice(5).trim())
+    .filter((data) => data.length > 0 && data !== "[DONE]");
+  if (events.length === 0) {
+    try {
+      return JSON.parse(text) as CompletionBody;
+    } catch {
+      throw new ModelError("invalid-response", `${request.model} sent a reply that is neither events nor JSON for the ${request.stage} call`);
+    }
+  }
+  let content = "";
+  let model: string | undefined;
+  let finish: string | null = null;
+  let usage: CompletionBody["usage"];
+  let sawContent = false;
+  for (const data of events) {
+    let chunk: StreamChunk;
+    try {
+      chunk = JSON.parse(data) as StreamChunk;
+    } catch {
+      throw new ModelError("invalid-response", `${request.model} sent an event that is not JSON for the ${request.stage} call`);
+    }
+    if (chunk.error) throw new ModelError("http", `the gateway's stream ended in an error: ${typeof chunk.error === "string" ? chunk.error : (chunk.error.message ?? "unnamed")}`.slice(0, 400), { retryable: true });
+    model ??= chunk.model;
+    const choice = chunk.choices?.[0];
+    const piece = choice?.delta?.content;
+    if (typeof piece === "string") {
+      content += piece;
+      sawContent = true;
+    }
+    if (choice?.finish_reason) finish = choice.finish_reason;
+    if (chunk.usage) usage = chunk.usage;
+  }
+  return { ...(model ? { model } : {}), choices: [{ message: { content: sawContent ? content : null }, finish_reason: finish }], ...(usage ? { usage } : {}) };
 }
 
 /** A Retry-After header in milliseconds: seconds, or an HTTP date. */
