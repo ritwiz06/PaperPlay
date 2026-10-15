@@ -50,6 +50,23 @@ describe("[R05] quotes as anchors", () => {
     expect(findQuote("The rate is 0.05", "0.06")).toBeNull();
   });
 
+  it("finds a quote written in another notation, and anchors the source's own LaTeX, never the model's rendering", () => {
+    const text = "the system\n\\frac{dS}{dt} &= \\Lambda - (\\beta I + \\mu)S \\\\\nwith $\\beta = 0.05$ and $N_0 = 5\\times 10^{8}$; then m_T \\coloneqq 5 \\cdot 10^{-15}\; cells";
+    const span = (quote: string) => {
+      const found = findQuote(text, quote);
+      return found && text.slice(found.start, found.end);
+    };
+    expect(span("dS/dt = Λ - (βI + μ)S")).toBe("\\frac{dS}{dt} &= \\Lambda - (\\beta I + \\mu)S");
+    expect(span("β = 0.05")).toBe("\\beta = 0.05");
+    expect(span("beta = 0.05")).toBe("\\beta = 0.05");
+    expect(span("N_0 = 5 × 10^8")).toBe("N_0 = 5\\times 10^{8}");
+    expect(span("m_T := 5 * 10^{-15}")).toBe("m_T \\coloneqq 5 \\cdot 10^{-15}");
+    // A changed number or term is not there, and a short quote never matches by notation alone.
+    expect(span("dS/dt = Λ - (βI + 2μ)S")).toBeNull();
+    expect(span("β = 0.06")).toBeNull();
+    expect(span("βI")).toBeNull();
+  });
+
   it("makes each paper name a distinct camelCase id", () => {
     expect(["S", "C_q", "Cq", "theta_N", "beta1"].map(camelId)).toEqual(["s", "cQ", "cq", "thetaN", "beta1"]);
     expect([...idsFor(["B", "b", "R", "r"]).values()]).toEqual(["b", "b2", "r", "r2"]);

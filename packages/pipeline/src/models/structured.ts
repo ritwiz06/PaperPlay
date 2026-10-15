@@ -17,13 +17,53 @@ export function jsonSchemaOf(name: string, schema: z.ZodType): JsonSchemaFormat 
   return { name, schema: z.toJSONSchema(schema, { target: "draft-7" }) };
 }
 
-/** The first JSON value in a reply, from a bare object or one wrapped in a code fence. */
+/** LaTeX commands a model may write inside a JSON string with one backslash, meaning the backslash. */
+const LATEX = new Set(
+  "alpha beta gamma delta epsilon varepsilon zeta eta theta vartheta iota kappa lambda mu nu xi pi rho sigma tau upsilon phi varphi chi psi omega Gamma Delta Theta Lambda varLambda Xi Pi Sigma Phi Psi Omega frac dfrac tfrac times cdot left right mathrm mathbf mathit mathcal text textrm dv dot ddot bar hat tilde sqrt sum prod int partial nabla quad qquad label tag begin end leq geq neq approx infty ln log exp min max".split(" "),
+);
+const ESCAPES = new Set(['"', "\\", "/", "b", "f", "n", "r", "t", "u"]);
+
+/**
+ * A reply's JSON with two common slips mended inside its strings, so a parse never reads them
+ * wrong: a raw control character, which JSON forbids, is escaped; and a backslash that begins a
+ * LaTeX command, `\beta`, is kept as a backslash, where JSON would read `\b` as a backspace and
+ * `\s` as an error. Valid JSON with no LaTeX in its strings passes through unchanged.
+ */
+export function mendJson(body: string): string {
+  let out = "";
+  let inString = false;
+  for (let i = 0; i < body.length; i++) {
+    const char = body[i] ?? "";
+    if (!inString) {
+      if (char === '"') inString = true;
+      out += char;
+      continue;
+    }
+    if (char === '"') {
+      inString = false;
+      out += char;
+    } else if (char === "\\") {
+      const word = /^[A-Za-z]+/.exec(body.slice(i + 1))?.[0] ?? "";
+      const next = body[i + 1] ?? "";
+      if (LATEX.has(word) || !ESCAPES.has(next)) out += "\\\\";
+      else {
+        out += char + next;
+        i++;
+      }
+    } else if (char.charCodeAt(0) < 0x20) {
+      out += char === "\n" ? "\\n" : char === "\r" ? "\\r" : char === "\t" ? "\\t" : `\\u${char.charCodeAt(0).toString(16).padStart(4, "0")}`;
+    } else out += char;
+  }
+  return out;
+}
+
+/** The first JSON value in a reply, from a bare object or one wrapped in a code fence, mended as above. */
 export function extractJson(text: string): unknown {
   const fenced = /```(?:json)?\s*([\s\S]*?)```/.exec(text);
   const body = (fenced?.[1] ?? text).trim();
   const start = body.search(/[[{]/);
   if (start < 0) throw new SyntaxError("the reply holds no JSON object");
-  return JSON.parse(body.slice(start, Math.max(body.lastIndexOf("}"), body.lastIndexOf("]")) + 1));
+  return JSON.parse(mendJson(body.slice(start, Math.max(body.lastIndexOf("}"), body.lastIndexOf("]")) + 1)));
 }
 
 /** Zod's issues in a few plain lines, for the model to correct. */

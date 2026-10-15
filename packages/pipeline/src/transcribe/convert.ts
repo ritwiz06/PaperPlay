@@ -18,10 +18,66 @@ export interface Conversion {
   readonly unstated: readonly string[];
 }
 
-/** Where a quote stands in a text: exactly, or with its whitespace collapsed on both sides. */
+const GREEK: Readonly<Record<string, string>> = {
+  alpha: "α", beta: "β", gamma: "γ", delta: "δ", epsilon: "ε", varepsilon: "ε", zeta: "ζ", eta: "η", theta: "θ", vartheta: "θ", iota: "ι", kappa: "κ", lambda: "λ", mu: "μ", nu: "ν", xi: "ξ", pi: "π", rho: "ρ", sigma: "σ", tau: "τ", upsilon: "υ", phi: "φ", varphi: "φ", chi: "χ", psi: "ψ", omega: "ω",
+  Gamma: "Γ", Delta: "Δ", Theta: "Θ", Lambda: "Λ", varLambda: "Λ", Xi: "Ξ", Pi: "Π", Sigma: "Σ", Phi: "Φ", Psi: "Ψ", Omega: "Ω",
+};
+/** Characters written more than one way: a quote and its source may use either. */
+const SAME: Readonly<Record<string, string>> = { "−": "-", "–": "-", "×": "*", "·": "*", "⋅": "*", "∗": "*", "ϕ": "φ", "ϵ": "ε", "ϑ": "θ", "’": "'", "‘": "'", "“": '"', "”": '"' };
+/** LaTeX that only lays out: dropped, as are whitespace, `$`, braces and alignment marks. */
+const LAYOUT = new Set(["left", "right", "big", "Big", "bigl", "bigr", "displaystyle", "mathrm", "mathit", "mathbf", "text", "textrm", "quad", "qquad", "frac", "dfrac", "tfrac", "nonumber"]);
+const COMMANDS: Readonly<Record<string, string>> = { times: "*", cdot: "*", coloneqq: ":=" };
+
+/**
+ * A text in one notation, with where each of its characters came from: a LaTeX command's Greek
+ * letter as the letter, as is the bare name a model writes for it ("sigma", "\sigma", "σ" alike),
+ * × and \times as *, − as -, and layout dropped, with \frac's braces and any "/" so that
+ * "dS/dt" finds "\frac{dS}{dt}". Used only to find a quote a model wrote in
+ * another notation; the anchor still holds the source's own characters.
+ */
+function notation(text: string): { readonly chars: string; readonly from: readonly number[] } {
+  let chars = "";
+  const from: number[] = [];
+  const put = (value: string, at: number): void => {
+    for (const char of value) {
+      chars += char;
+      from.push(at);
+    }
+  };
+  for (let i = 0; i < text.length; ) {
+    const char = text[i] ?? "";
+    // LaTeX's spacing and line breaks, "\,", "\;", "\\": dropped whole.
+    if (char === "\\" && /[^A-Za-z]/.test(text[i + 1] ?? "a")) {
+      i += 2;
+      continue;
+    }
+    if (/[A-Za-z\\]/.test(char)) {
+      const word = /^\\?([A-Za-z]+)/.exec(text.slice(i));
+      const name = word?.[1] ?? "";
+      const length = word?.[0].length ?? 1;
+      const command = char === "\\";
+      if (GREEK[name] !== undefined) put(GREEK[name], i);
+      else if (command && COMMANDS[name] !== undefined) put(COMMANDS[name], i);
+      else if (command && LAYOUT.has(name)) {
+        // dropped
+      } else if (name) for (let k = 0; k < name.length; k++) put(name[k] ?? "", i + (command ? 1 : 0) + k);
+      i += Math.max(length, 1);
+      continue;
+    }
+    if (!/[\s${}&/]/.test(char)) put(SAME[char] ?? char, i);
+    i++;
+  }
+  return { chars, from };
+}
+
+/**
+ * Where a quote stands in a text: exactly; else with its whitespace differing; else written in
+ * another notation, as models do with LaTeX ("β = 0.05" for "\beta = 0.05"). The span returned is
+ * always the text's own, so an anchor quotes the source, never the model's rendering of it.
+ */
 export function findQuote(text: string, quote: string): { readonly start: number; readonly end: number } | null {
   const exact = text.indexOf(quote);
-  if (exact >= 0) return { start: exact, end: exact + quote.length };
+  if (exact >= 0) return widen(text, exact, exact + quote.length);
   const target = quote.replace(/\s+/g, "");
   if (target.length === 0) return null;
   // The text without whitespace, and where each of its characters came from.
@@ -34,8 +90,41 @@ export function findQuote(text: string, quote: string): { readonly start: number
     }
   }
   const at = squeezed.indexOf(target);
-  if (at < 0) return null;
-  return { start: positions[at] ?? 0, end: (positions[at + target.length - 1] ?? 0) + 1 };
+  if (at >= 0) return widen(text, positions[at] ?? 0, (positions[at + target.length - 1] ?? 0) + 1);
+  // In one notation: only a quote with something to find, so a short one cannot match by chance.
+  const wanted = notation(quote).chars;
+  if (wanted.length < 4) return null;
+  const source = notation(text);
+  const found = source.chars.indexOf(wanted);
+  if (found < 0) return null;
+  const first = source.from[found] ?? 0;
+  const last = source.from[found + wanted.length - 1] ?? first;
+  // Through to the end of the last character's command or word, so "\beta" is not cut to "\b".
+  const tail = /^\\?[A-Za-z]+/.exec(text.slice(last))?.[0].length ?? 1;
+  return widen(text, first, last + Math.max(tail, 1));
+}
+
+/**
+ * A span widened to whole LaTeX: from a command's backslash when it starts inside a command's
+ * name, back over the layout and braces it opens with, "\frac{", and on over the braces it leaves
+ * open, so an anchor shows "\frac{dS}{dt}", never "dS}{dt" or "beta" for "\beta".
+ */
+function widen(text: string, from: number, to: number): { readonly start: number; readonly end: number } {
+  let start = from;
+  while (start > 0 && /[A-Za-z]/.test(text[start] ?? "") && /[A-Za-z\\]/.test(text[start - 1] ?? "")) {
+    const run = /\\?[A-Za-z]*$/.exec(text.slice(0, start))?.[0] ?? "";
+    if (!run.startsWith("\\")) break;
+    start -= run.length;
+  }
+  for (;;) {
+    const before = /(\\[A-Za-z]+|\{)$/.exec(text.slice(Math.max(0, start - 16), start))?.[0];
+    if (!before || (before.startsWith("\\") && !LAYOUT.has(before.slice(1)))) break;
+    start -= before.length;
+  }
+  let end = to;
+  const open = (span: string): number => (span.match(/{/g)?.length ?? 0) - (span.match(/}/g)?.length ?? 0);
+  while (open(text.slice(start, end)) > 0 && text[end] === "}") end++;
+  return { start, end };
 }
 
 /** A quote as an anchor into the source, or null when the source does not hold it. */

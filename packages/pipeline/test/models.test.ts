@@ -92,6 +92,9 @@ describe("structured replies", () => {
   it("finds the JSON in a reply, bare or fenced", () => {
     expect(extractJson('{"groups":["S"]}')).toEqual({ groups: ["S"] });
     expect(extractJson('Here it is:\n```json\n{"groups":["S","I"]}\n```')).toEqual({ groups: ["S", "I"] });
+    // LaTeX written with one backslash is read as LaTeX, never as \b's backspace or \t's tab, and a
+    // raw line break inside a string is escaped; JSON's own escapes still mean what they say.
+    expect(extractJson('{"quote":"\\beta = 0.05, \\theta_N and \\sigma","note":"one\ntwo\\nthree \\"q\\" \\\\frac"}')).toEqual({ quote: "\\beta = 0.05, \\theta_N and \\sigma", note: "one\ntwo\nthree \"q\" \\frac" });
     expect(() => extractJson("no JSON here")).toThrow(SyntaxError);
   });
 
