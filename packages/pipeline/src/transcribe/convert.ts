@@ -127,6 +127,12 @@ function widen(text: string, from: number, to: number): { readonly start: number
   return { start, end };
 }
 
+/** Whether two names are one symbol written in different notations: "theta_N", "\theta_N", "θ_N". */
+export function sameSymbol(a: string, b: string): boolean {
+  const left = notation(a).chars;
+  return left.length > 0 && left === notation(b).chars;
+}
+
 /** A quote as an anchor into the source, or null when the source does not hold it. */
 export function anchorOf(source: SourceText, quote: string): Anchor | null {
   const found = findQuote(source.text, quote);

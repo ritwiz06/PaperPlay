@@ -11,14 +11,14 @@ const MAX_STEPS = 400_000;
 
 export const defaultsOf = (model: ModelSpec): Record<string, number> => Object.fromEntries(model.parameters.map((parameter) => [parameter.id, parameter.defaultValue]));
 
-/** The largest step at which the accuracy check passes over `time`, or null when none does: a model too stiff to draw. */
-export function chooseStep(model: ModelSpec, time: number): number | null {
+/** The largest step at which the accuracy check passes over `time` at `params`, the paper's values unless given, or null when none does: a model too stiff to draw. */
+export function chooseStep(model: ModelSpec, time: number, params: Readonly<Record<string, number>> = defaultsOf(model)): number | null {
   for (const dt of STEPS) {
     const steps = Math.round(time / dt);
     if (steps < 1 || steps > MAX_STEPS) continue;
     try {
       const primitive = compartmentModel({ ...model, solver: { ...model.solver, dt } });
-      const report = accuracyReport(primitive, defaultsOf(model), steps);
+      const report = accuracyReport(primitive, params, steps);
       if (!("failure" in report) && report.ratio <= 0.5) return dt;
     } catch {
       continue;
@@ -49,4 +49,11 @@ export function describeBehaviour(model: ModelSpec, time: number): string {
     ...rows,
     `Highest: ${[...peaks].map(([id, peak]) => `${id} ${Number(peak.value.toPrecision(4))} at t = ${Number(peak.at.toPrecision(4))}`).join("; ")}.`,
   ].join("\n");
+}
+
+/** Ten times the median of a model's per-time rates: a horizon to describe its behaviour over. */
+export function horizonOf(model: ModelSpec): number {
+  const rates = model.parameters.filter((parameter) => parameter.unit.time === -1 && Object.keys(parameter.unit).length === 1 && parameter.defaultValue > 0).map((parameter) => parameter.defaultValue).sort((a, b) => a - b);
+  const median = rates[Math.floor(rates.length / 2)] ?? 1;
+  return Number((10 / median).toPrecision(2));
 }

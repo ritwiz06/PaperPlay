@@ -216,6 +216,14 @@ describe("[R10] [R11] the controller", () => {
     expect(client.calls.filter((call) => call.stage === "reviewer")).toHaveLength(0);
   }, 60_000);
 
+  it("reads a plan that names things as the paper writes them, β and S, as the model's ids", async () => {
+    const asPaper = { ...good(), levels: [planLevel(0, { control: { parameter: "β", label: "How easily it spreads", lowEnd: "Hardly", highEnd: "Easily" }, watch: "S", difference: { compartment: "S", summary: "at", at: 150, time: 150, relation: "lower", by: 20 } }), planLevel(1), planLevel(2)] };
+    const { outcome, artifacts } = await run(scripted(replies({ planner: [asPaper] })));
+    expect(outcome.state).toBe("ready");
+    const world = artifacts.get("world") as { levels: { manipulable: { targetVariable: string } }[] };
+    expect(world.levels[0]?.manipulable.targetVariable).toBe("beta");
+  }, 60_000);
+
   it("stops as unsupported when the router sends the paper to another family", async () => {
     const { outcome, states } = await run(scripted(replies({ router: [{ domain: "epidemiology", mechanism: "Spread on a network.", family: "networks", tier: "B", reason: "A contact network." }] })));
     expect(outcome.state).toBe("unsupported");

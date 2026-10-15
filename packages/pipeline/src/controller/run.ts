@@ -8,7 +8,7 @@
 import { canMove, type JobState, type ModelSpec, type SourceRegisterEntry, type SourceText } from "@paperplay/contracts";
 import { registry } from "@paperplay/primitives";
 import { assembleWorld } from "../assemble/world.ts";
-import { chooseStep, describeBehaviour } from "../assemble/model.ts";
+import { chooseStep, describeBehaviour, horizonOf } from "../assemble/model.ts";
 import { buildWorld, type BuiltWorld } from "../builder/build.ts";
 import { checkProvenance } from "../checks/provenance.ts";
 import { fetchArxiv, fetchPmc, registerAndText, type Fetch } from "../ingest/index.ts";
@@ -66,13 +66,6 @@ class Stop extends Error {
     super(message);
     this.state = state;
   }
-}
-
-/** The median of a model's per-time rates, for a horizon to describe its behaviour over. */
-function horizonOf(model: ModelSpec): number {
-  const rates = model.parameters.filter((parameter) => parameter.unit.time === -1 && Object.keys(parameter.unit).length === 1 && parameter.defaultValue > 0).map((parameter) => parameter.defaultValue).sort((a, b) => a - b);
-  const median = rates[Math.floor(rates.length / 2)] ?? 1;
-  return Number((10 / median).toPrecision(2));
 }
 
 export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome> {

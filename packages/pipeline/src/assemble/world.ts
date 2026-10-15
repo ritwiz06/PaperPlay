@@ -8,10 +8,11 @@
  */
 import { TIME_WORDS, type Anchor, type ModelSpec, type SourceRegisterEntry, type SourceText } from "@paperplay/contracts";
 import { formatUnit } from "@paperplay/primitives/compartments";
+import { chooseStep, defaultsOf } from "./model.ts";
 import type { Explanation, ExplainedLevel } from "../stages/explainer.ts";
 import type { Plan, PlanLevel } from "../stages/planner.ts";
 import type { Reading } from "../stages/reader.ts";
-import { anchorOf } from "../transcribe/convert.ts";
+import { anchorOf, camelId, sameSymbol } from "../transcribe/convert.ts";
 
 export interface AssembleInput {
   readonly source: SourceText;
@@ -35,8 +36,48 @@ const variant = (show: readonly string[]) => ({ show: [...show], hide: ELEMENTS.
 const kebab = (id: string): string => id.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 const figure = (value: number): string => String(Number(value.toPrecision(4)));
 
+/**
+ * A plan's names as the model's ids. A planner may name a parameter or a compartment as the paper
+ * writes it, "theta_N" or "S", where the model's id is "thetaN" or "s": the id, its camelCase form,
+ * or the paper's symbol in any notation, in that order. A name none of these finds is left as it
+ * is, and the builder says it is unknown.
+ */
+export function namedInModel(plan: Plan, model: ModelSpec): Plan {
+  const resolve = (name: string, pool: readonly { readonly id: string; readonly symbol?: string }[]): string =>
+    pool.find((entry) => entry.id === name)?.id ?? pool.find((entry) => entry.id === camelId(name))?.id ?? pool.find((entry) => entry.symbol !== undefined && sameSymbol(entry.symbol, name))?.id ?? name;
+  return {
+    ...plan,
+    levels: plan.levels.map((level) => ({
+      ...level,
+      control: { ...level.control, parameter: resolve(level.control.parameter, model.parameters) },
+      whatIf: { ...level.whatIf, parameter: resolve(level.whatIf.parameter, model.parameters) },
+      watch: resolve(level.watch, model.compartments),
+      difference: { ...level.difference, compartment: resolve(level.difference.compartment, model.compartments) },
+    })),
+  };
+}
+
+/**
+ * The model with the finest step any level needs: the step chosen at the paper's values can be too
+ * coarse for a What-if's, which the builder's accuracy check would then refuse. Each level's two
+ * worlds are checked over its time; a level no step serves is left for the builder to refuse.
+ */
+export function steppedFor(model: ModelSpec, plan: Plan): ModelSpec {
+  const defaults = defaultsOf(model);
+  let dt = model.solver.dt;
+  for (const level of plan.levels) {
+    for (const params of [defaults, { ...defaults, [level.whatIf.parameter]: level.whatIf.value }]) {
+      const step = chooseStep(model, level.difference.time, params);
+      if (step !== null && step < dt) dt = step;
+    }
+  }
+  return dt === model.solver.dt ? model : { ...model, solver: { ...model.solver, dt } };
+}
+
 export function assembleWorld(input: AssembleInput): Assembled {
-  const { source, model, plan, explanation, reading } = input;
+  const { source, explanation, reading } = input;
+  const plan = namedInModel(input.plan, input.model);
+  const model = steppedFor(input.model, plan);
   const notes: string[] = [];
   const time = TIME_WORDS[model.timeUnit];
   const anchored = (quote: string | null | undefined, what: string): Anchor[] => {

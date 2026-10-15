@@ -3,7 +3,7 @@
  * parsed by the closed grammar, its quotes made anchors, and two transcriptions compared up to
  * renaming (ADR-0024, item 2).
  */
-export { anchorOf, camelId, findQuote, idsFor, toModelSpec, type Conversion } from "./convert.ts";
+export { anchorOf, camelId, findQuote, idsFor, sameSymbol, toModelSpec, type Conversion } from "./convert.ts";
 export { FormulaError, formulaOf, parseFormula, tokenize } from "./formula.ts";
 export { Gold } from "./gold.ts";
 export { matchModels, normalName, type ModelMatch } from "./match.ts";
