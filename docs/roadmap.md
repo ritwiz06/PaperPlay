@@ -188,7 +188,8 @@ G3a.3, the pipeline on a known family (24–32 h):
   (2026-10-14, `16dac04`, ADR-0033).
 - [x] Ingest from arXiv's LaTeX source and PubMed Central's JATS, with the source register and
   the sanitiser (2026-10-14, `3aead5f`, ADR-0031).
-- [ ] Ingest from PDF text.
+- [x] Ingest from PDF text: page and character offsets, display equations recovered or refused
+  by reason, arXiv's PDF-only route and a PDF from this machine (2026-10-16, `f7da06c`, ADR-0038).
 - [x] Transcriptions, their structural match and three gold answers (2026-10-14, `2577025`,
   ADR-0032).
 - [x] `packages/pipeline`: the router (compartments only), reader, two transcriptions, planner,

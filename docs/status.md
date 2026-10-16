@@ -16,17 +16,18 @@ Updated 2026-10-16: the owner's answers, then lessons worth learning, then PDF i
   - **landed:** several value sets in one paper, picked by rule (ADR-0036, at `b1d19d2`);
   - **landed:** the visibility rule, the town's lens, share units, and peak and mean summaries
     (ADR-0037, at `c270633`);
-  - **landing:** findings, not definitions, every prompt change, and the bake-off on them with the
-    picks (`43be8a0`, `b943b5b`; ADR-0035's second amendment, ADR-0037);
-  - **next:** the hepatitis C world regenerated and the tuberculosis paper re-run; PDF ingest is
-    written and tested on its own branch (`d407a2d`, ADR-0038), to land after them;
-  - **then:** PDF ingest, the last of G3a.3.
+  - **landed:** findings, not definitions, every prompt change, and the bake-off on them with the
+    picks (ADR-0035's second amendment, ADR-0037, at `8391216`);
+  - **landing:** PDF ingest, the last item of G3a.3 (`f7da06c`, ADR-0038);
+  - **next:** the hepatitis C world regenerated and the tuberculosis paper re-run, on
+    `g3/regenerate`.
 - **`main` moves only through `npm run land`** (ADR-0009, amended).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`. CI runs `check:gate` on every
   push and pull request.
-- **Branches:** `g3/lessons`, being landed; `g3/pdf-ingest`, waiting in its own worktree; `worktree-agent-ab8301aef54d2fcc8`, the compartment
-  agent's own, whose three commits are on `main`.
-- **Working commit:** `b943b5b` on `g3/lessons`. `main` is at `c270633`, whose CI passed.
+- **Branches:** `g3/pdf-ingest`, being landed; `g3/regenerate`, in progress;
+  `worktree-agent-ab8301aef54d2fcc8`, the compartment agent's own, whose three commits are on
+  `main`.
+- **Working commit:** `f7da06c` on `g3/pdf-ingest`. `main` is at `8391216`, whose CI passed.
 - **Model provider:** Voyager, `https://openai.rc.asu.edu/v1`, its key `VOYAGER_API_KEY` in
   `apps/api/.env` only (ADR-0030); called only by `npm run pipeline:live`. Replies stream; a call
   may take up to 30 minutes.
@@ -41,30 +42,32 @@ Updated 2026-10-16: the owner's answers, then lessons worth learning, then PDF i
 - **What a learner can do:** the six flocking levels on `/world/hook`, Threshold Town's five on
   `/world/epidemic`, and the first generated world's five on
   `/world/generated/pmc-PMC12334037`, each with its control, readout, guide, journal, prediction
-  and fork. On this machine only, `/create` makes a world from an arXiv id or a PMCID.
+  and fork. On this machine only, `/create` makes a world from an arXiv id, a PMCID or a PDF.
 
-## Latest check:gate (G1), 2026-10-16, on `g3/bakeoff` at eb5aab9 with these docs
+## Latest check:gate (G1), 2026-10-16, on `g3/pdf-ingest` at f7da06c
 
 ```
 check:gate G1 · Playable baseline · tag v0.1.0
   runtime    node 24.21.0 (pinned 24.21.0)  ok
-  typecheck  ok      14.9 s
-  lint       ok      11.3 s
-  check:docs ok      0.2 s
-  test       ok      31.7 s
-  build      ok      0.5 s
-  test:e2e   ok      105.9 s
-  evidence   831 tests (vitest 751, playwright 80), 0 skipped
+  typecheck  ok      22.7 s
+  lint       ok      17.0 s
+  check:docs ok      0.3 s
+  test       ok      64.7 s
+  build      ok      0.7 s
+  test:e2e   ok      165.2 s
+  evidence   854 tests (vitest 773, playwright 81), 0 skipped
     R01  Deterministic, oracle-checked primitives      151 passing
     R02  Model/render separation                       9 passing
-    R03  Strict, versioned contracts                   151 passing
+    R03  Strict, versioned contracts                   152 passing
     R04  Playable local world                          20 passing
 
 G1 passed: every required check ran and every requirement has passing evidence.
 ```
 
-Ahead of their gate, from the same suites' reports: R05 8, R06 53, R07 40, R08 66, R09 34, R10 13,
-R11 16, R12 20. Land runs the gate again before it pushes.
+Ahead of their gate, from the same suites' reports: R05 8, R06 58, R07 40, R08 71, R09 41, R10 15,
+R11 20, R12 20. Two runs before it failed in the browser tests alone, each first frame later than
+5 seconds while the machine's load stood near 30; run again on a quiet machine, all passed. Land
+runs the gate again before it pushes.
 
 ## Blockers
 
@@ -80,9 +83,9 @@ R11 16, R12 20. Land runs the gate again before it pushes.
 
 ## Next three actions
 
-1. Land `g3/lessons`.
+1. Land PDF ingest.
 2. The hepatitis C world regenerated, the tuberculosis paper re-run, with before and after.
-3. Land PDF ingest.
+3. Land `g3/regenerate`.
 
 ## Recommendations
 
