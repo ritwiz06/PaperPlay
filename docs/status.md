@@ -13,17 +13,18 @@ Updated 2026-10-16: the owner's answers, then lessons worth learning, then PDF i
   `c0228da`, ADR-0030 to ADR-0035). The owner's answers of 2026-10-16:
   - **landed:** the models in testing excluded, five candidates added, interim picks (ADR-0035's
     amendment, at `77b816e`);
-  - **landing:** several value sets in one paper, picked by rule (`7c17f96`, ADR-0036);
-  - **next:** the visibility rule, the town's lens and share units; then every prompt change with
-    one bake-off run and the picks from it; then the hepatitis C world regenerated and the
-    tuberculosis paper re-run;
+  - **landed:** several value sets in one paper, picked by rule (ADR-0036, at `b1d19d2`);
+  - **landing:** the visibility rule, the town's lens, share units, and peak and mean summaries
+    (`d3af3df`, ADR-0037);
+  - **next:** every prompt change with one bake-off run and the picks from it; then the hepatitis C
+    world regenerated and the tuberculosis paper re-run;
   - **then:** PDF ingest, the last of G3a.3.
 - **`main` moves only through `npm run land`** (ADR-0009, amended).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`. CI runs `check:gate` on every
   push and pull request.
-- **Branches:** `g3/value-sets`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the compartment
+- **Branches:** `g3/visibility`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the compartment
   agent's own, whose three commits are on `main`.
-- **Working commit:** `7c17f96` on `g3/value-sets`. `main` is at `77b816e`, whose CI passed.
+- **Working commit:** `d3af3df` on `g3/visibility`. `main` is at `b1d19d2`, whose CI passed.
 - **Model provider:** Voyager, `https://openai.rc.asu.edu/v1`, its key `VOYAGER_API_KEY` in
   `apps/api/.env` only (ADR-0030); called only by `npm run pipeline:live`. Replies stream; a call
   may take up to 30 minutes.
@@ -75,9 +76,9 @@ R11 16, R12 20. Land runs the gate again before it pushes.
 
 ## Next three actions
 
-1. Land `g3/value-sets`.
-2. The visibility rule, the town's lens and share units.
-3. Every prompt change, with one bake-off run and the picks from it.
+1. Land `g3/visibility`.
+2. Every prompt change, with one bake-off run and the picks from it.
+3. The hepatitis C world regenerated, the tuberculosis paper re-run, then PDF ingest.
 
 ## Recommendations
 
