@@ -13,7 +13,14 @@ import { DATA_RULE } from "./source.ts";
 const Quote = z.string().min(3).max(300);
 const Words = (max: number) => z.string().min(1).max(max);
 const UpTo = (words: number) => z.string().min(1).refine((text) => wordCount(text) <= words, { error: `at most ${words} words` });
-const Did = z.string().refine((text) => text.split("{to}").length === 2 && !/[{}]/.test(text.replaceAll("{to}", "")), { error: "holds {to} exactly once, and no other braces" });
+/**
+ * A guide line with {to} where the learner's new value goes. A model that writes a value there
+ * instead ("You raise the rate to 0.1, so …") has it mended to the placeholder, the one way that
+ * slip can be read; anything else must still hold {to} exactly once.
+ */
+export const mendTo = (text: unknown): unknown =>
+  typeof text === "string" && !text.includes("{to}") ? text.replace(/\s+to\s+[-−]?\d+(?:[.,]\d+)*(?:\s*%|\s*(?:per|a|an)\s+\w+)?/, "{to}") : text;
+const Did = z.preprocess(mendTo, z.string().refine((text) => text.split("{to}").length === 2 && !/[{}]/.test(text.replaceAll("{to}", "")), { error: "holds {to} exactly once, and no other braces" }));
 
 export const ExplainedLevel = z.strictObject({
   beginner: z.strictObject({ text: UpTo(90), analogy: Words(200) }),
@@ -39,9 +46,9 @@ export const Explanation = z.strictObject({ levels: z.array(ExplainedLevel).min(
 export type Explanation = z.infer<typeof Explanation>;
 
 export const EXPLAINER_INSTRUCTIONS = [
-  "You write the words of a small learning game, a playable world built from a scientific paper, for each of its planned levels, in order.",
+  "You write the words of a small learning game, a playable world built from a scientific paper, for one of its planned levels at a time.",
   DATA_RULE,
-  "For each level:",
+  "For the level named:",
   "- beginner: at most 90 words, no numbers or symbols, and an everyday analogy.",
   "- intermediate: at most 150 words, with the control's and the watched value's names.",
   "- advanced: at most 200 words, and the relevant equation in plain Unicode mathematics, such as dI/dt = βSI − γI. If the equation is the paper's own, give a verbatim quote of it from the paper; otherwise null.",
@@ -50,17 +57,29 @@ export const EXPLAINER_INSTRUCTIONS = [
   "Rules: plain, short sentences in sentence case; say only what the paper or the model states; never present your own inference as the paper's; every quote copied character for character, 3 to 200 characters.",
 ].join("\n");
 
-export function explainerMessages(input: { readonly title: string; readonly plan: Plan; readonly passages: string; readonly model: string }): ChatMessage[] {
+export function explainerMessages(input: { readonly title: string; readonly plan: Plan; readonly passages: string; readonly model: string }, level: number): ChatMessage[] {
+  const planned = input.plan.levels[level];
   return [
     { role: "system", content: EXPLAINER_INSTRUCTIONS },
-    { role: "user", content: `Paper: ${input.title}\n\nThe model:\n${input.model}\n\nThe plan:\n${JSON.stringify(input.plan.levels, null, 1)}\n\nPAPER START\n${input.passages}\nPAPER END\n\nWrite each level's words, in the plan's order.` },
+    {
+      role: "user",
+      content: `Paper: ${input.title}\n\nThe model:\n${input.model}\n\nThe whole plan, for context:\n${JSON.stringify(input.plan.levels, null, 1)}\n\nPAPER START\n${input.passages}\nPAPER END\n\nWrite the words of level ${level + 1}, "${planned?.title ?? ""}", alone, as one JSON object.`,
+    },
   ];
 }
 
 /**
- * Always as plain JSON, validated by Zod, whatever the model honours (ADR-0035): held to this large
- * a schema, models looped on whitespace or thought until their limit, and wrote nothing usable.
+ * One level a call, held to its schema where the model honours one (ADR-0037): asked for every
+ * level at once, gemma4-31b-it looped on whitespace under the schema and, in plain JSON, closed a
+ * level before its guide, twice. A schema-held reply that runs out or comes back empty is asked for
+ * again as plain JSON. The explainer is not ranked by the bake-off; it takes the planner's model.
  */
-export function explain(client: ModelClient, model: string, input: Parameters<typeof explainerMessages>[0]) {
-  return completeStructured(client, { stage: "explainer", model, messages: explainerMessages(input), temperature: 0, maxTokens: 32_000 }, Explanation, { name: "explanation", structuredOutput: false });
+export async function explain(client: ModelClient, model: string, input: Parameters<typeof explainerMessages>[0], options: { readonly structuredOutput: boolean }): Promise<{ readonly value: Explanation }> {
+  // One level a call: a small reply has less room to loop or nest wrongly, and a failure costs one level's words.
+  const levels: ExplainedLevel[] = [];
+  for (let level = 0; level < input.plan.levels.length; level++) {
+    const words = await completeStructured(client, { stage: "explainer", model, messages: explainerMessages(input, level), temperature: 0, maxTokens: 16_000 }, ExplainedLevel, { name: "level_words", structuredOutput: options.structuredOutput });
+    levels.push(words.value);
+  }
+  return { value: Explanation.parse({ levels }) };
 }

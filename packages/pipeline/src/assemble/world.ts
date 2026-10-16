@@ -6,7 +6,7 @@
  * teaching choices made here. The builder then checks everything against the solver, and the level
  * rule sweeps every What-if.
  */
-import { TIME_WORDS, type Anchor, type ModelSpec, type SourceRegisterEntry, type SourceText } from "@paperplay/contracts";
+import { RULE_FASTEST_SPEED, RULE_WATCH_SECONDS, TIME_WORDS, type Anchor, type ModelSpec, type SourceRegisterEntry, type SourceText } from "@paperplay/contracts";
 import { formatUnit } from "@paperplay/primitives/compartments";
 import { chooseStep, defaultsOf } from "./model.ts";
 import type { Explanation, ExplainedLevel } from "../stages/explainer.ts";
@@ -72,6 +72,26 @@ export function namedInModel(plan: Plan, model: ModelSpec): Plan {
  * coarse for a What-if's, which the builder's accuracy check would then refuse. Each level's two
  * worlds are checked over its time; a level no step serves is left for the builder to refuse.
  */
+/**
+ * The model with each parameter's range widened to take in the values the levels' What-ifs set:
+ * a range is a teaching choice made at conversion, four times the paper's value, which the planner
+ * is not shown; a What-if beyond it is the planner's to choose, and the level rule's to check.
+ */
+export function rangedFor(model: ModelSpec, plan: Plan): ModelSpec {
+  const wanted = new Map<string, number[]>();
+  for (const level of plan.levels) wanted.set(level.whatIf.parameter, [...(wanted.get(level.whatIf.parameter) ?? []), level.whatIf.value]);
+  return {
+    ...model,
+    parameters: model.parameters.map((parameter) => {
+      const values = wanted.get(parameter.id);
+      if (!values) return parameter;
+      const low = Math.min(parameter.range[0], ...values);
+      const high = Math.max(parameter.range[1], ...values);
+      return low === parameter.range[0] && high === parameter.range[1] ? parameter : { ...parameter, range: [low, high === low ? low + 1 : high] as [number, number] };
+    }),
+  };
+}
+
 export function steppedFor(model: ModelSpec, plan: Plan): ModelSpec {
   const defaults = defaultsOf(model);
   let dt = model.solver.dt;
@@ -84,11 +104,23 @@ export function steppedFor(model: ModelSpec, plan: Plan): ModelSpec {
   return dt === model.solver.dt ? model : { ...model, solver: { ...model.solver, dt } };
 }
 
+/** A round number at or above `value`: 1, 2 or 5 times a power of ten. */
+function roundUp(value: number): number {
+  const power = 10 ** Math.floor(Math.log10(value));
+  for (const factor of [1, 2, 5, 10]) if (factor * power >= value * (1 - 1e-12)) return factor * power;
+  return 10 * power;
+}
+
 export function assembleWorld(input: AssembleInput): Assembled {
   const { source, explanation, reading } = input;
   const plan = namedInModel(input.plan, input.model);
-  const model = steppedFor(input.model, plan);
-  const notes: string[] = [];
+  const model = steppedFor(rangedFor(input.model, plan), plan);
+  // How fast the world plays is a teaching choice: the planner's pace, raised just enough, to a
+  // round number, that every level's time shows within the level rule's 20 seconds at 4x.
+  const longest = Math.max(...plan.levels.map((level) => level.difference.time));
+  const needed = longest / (RULE_WATCH_SECONDS * RULE_FASTEST_SPEED);
+  const perWatchSecond = plan.perWatchSecond >= needed ? plan.perWatchSecond : roundUp(needed);
+  const notes: string[] = perWatchSecond === plan.perWatchSecond ? [] : [`the world plays at ${perWatchSecond} ${model.timeUnit}(s) a second, not the plan's ${plan.perWatchSecond}, so every level shows within ${RULE_WATCH_SECONDS} s at ${RULE_FASTEST_SPEED}x`];
   /** A finding by its number in the planner's list: 0 the headline result, then the reading's findings. */
   const findingOf = (number: number | null) => (number === null ? null : number === 0 ? reading.result : (reading.findings[number - 1] ?? null));
   const time = TIME_WORDS[model.timeUnit];
@@ -122,8 +154,11 @@ export function assembleWorld(input: AssembleInput): Assembled {
     const summaryOf = () => {
       const at = planned.difference.at ?? 0;
       switch (planned.difference.summary) {
-        case "at":
-          return { summary: { kind: "at", time: at }, label: `${measured?.name ?? planned.difference.compartment} at ${time.one} ${figure(at)}`, unit: unitOf(planned.difference.compartment) };
+        case "at": {
+          // A value "at" no stated time is the value at the end of the level's run.
+          const when = planned.difference.at ?? planned.difference.time;
+          return { summary: { kind: "at", time: when }, label: `${measured?.name ?? planned.difference.compartment} at ${time.one} ${figure(when)}`, unit: unitOf(planned.difference.compartment) };
+        }
         case "first-reach":
           return { summary: { kind: "first-reach", threshold: at }, label: `${time.many.charAt(0).toUpperCase()}${time.many.slice(1)} until ${measured?.name.toLowerCase() ?? planned.difference.compartment} first reaches ${figure(at)}`, unit: time.many };
         case "lowest":
@@ -150,7 +185,7 @@ export function assembleWorld(input: AssembleInput): Assembled {
       title: planned.title,
       goal: planned.goal,
       bonus: false,
-      binding: { type: "equations", solver: { id: "compartments.ode", version: "1.0.0" }, model, params: {}, perWatchSecond: plan.perWatchSecond },
+      binding: { type: "equations", solver: { id: "compartments.ode", version: "1.0.0" }, model, params: {}, perWatchSecond },
       manipulable: {
         actionId: kebab(planned.control.parameter),
         label: planned.control.label,

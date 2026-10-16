@@ -84,7 +84,7 @@ const describeModel = (model: ModelSpec): string =>
     ...model.parameters.map((parameter) => `- ${parameter.id} (${parameter.symbol}): ${parameter.name} = ${parameter.defaultValue}`),
   ].join("\n");
 
-export function plannerMessages(input: { readonly title: string; readonly reading: Reading; readonly model: ModelSpec; readonly example: string; readonly behaviour: string }): ChatMessage[] {
+export function plannerMessages(input: { readonly title: string; readonly reading: Reading; readonly model: ModelSpec; readonly example: string; readonly behaviour: string; readonly response: string }): ChatMessage[] {
   return [
     { role: "system", content: PLANNER_INSTRUCTIONS },
     {
@@ -94,6 +94,7 @@ export function plannerMessages(input: { readonly title: string; readonly readin
         `Findings, by number:\n0 (the headline result): ${input.reading.result.text} (the paper: "${input.reading.result.quote}")\n${input.reading.findings.map((finding, index) => `${index + 1} (${finding.kind}): ${finding.text} (the paper: "${finding.quote}")`).join("\n")}\nPAPER END`,
         `The model, verified:\n${describeModel(input.model)}`,
         `How the model behaves at the paper's values, as solved:\n${input.behaviour}`,
+        `How it responds to change, as solved: each rate halved and doubled, and every compartment whose peak, or value at the end, moves by 15% or more. Choose What-ifs from what moves; a change that moves nothing will fail the visibility rule:\n${input.response}`,
         `A worked example, another world's levels:\n${input.example}`,
         "Plan the world.",
       ].join("\n\n"),

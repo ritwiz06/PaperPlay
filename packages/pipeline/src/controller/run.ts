@@ -8,7 +8,7 @@
 import { canMove, type JobState, type ModelSpec, type SourceRegisterEntry, type SourceText } from "@paperplay/contracts";
 import { registry } from "@paperplay/primitives";
 import { assembleWorld } from "../assemble/world.ts";
-import { chooseStep, describeBehaviour, horizonOf } from "../assemble/model.ts";
+import { chooseStep, describeBehaviour, describeResponse, horizonOf } from "../assemble/model.ts";
 import { buildWorld, type BuiltWorld } from "../builder/build.ts";
 import { checkProvenance } from "../checks/provenance.ts";
 import { fetchArxiv, fetchPmc, fromOwnerPdf, registerAndText, type Fetch } from "../ingest/index.ts";
@@ -210,18 +210,19 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
 
     say("planning", "planning the levels");
     const behaviour = describeBehaviour(model, horizon);
+    const response = describeResponse(model, horizon);
     const plannerModel = modelFor("planner");
-    let plan: Plan = (await planWorld(input.client, plannerModel, { title, reading: reading.value, model, example: input.example, behaviour })).value;
+    let plan: Plan = (await planWorld(input.client, plannerModel, { title, reading: reading.value, model, example: input.example, behaviour, response })).value;
     const passages = promptSource(text, { maxCharacters: 60_000 }).block;
     const modelWords = `${describeBehaviour(model, horizon).split("\n").slice(0, 3).join("\n")}`;
     const explainerModel = modelFor("explainer");
-    let explanation: Explanation = (await explain(input.client, explainerModel, { title, plan, passages, model: modelWords })).value;
+    let explanation: Explanation = (await explain(input.client, explainerModel, { title, plan, passages, model: modelWords }, { structuredOutput: structured(explainerModel) })).value;
 
     /** Asks the planner to change only the named levels, keeping the rest. */
     const replan = async (problems: readonly string[]): Promise<void> => {
       repairs++;
       move("repairing", "planning", `asking the planner to change only the levels with problems: ${problems.slice(0, 4).join("; ")}`);
-      const messages = plannerMessages({ title, reading: reading.value, model, example: input.example, behaviour });
+      const messages = plannerMessages({ title, reading: reading.value, model, example: input.example, behaviour, response });
       const replanned = await completeStructured(
         input.client,
         { stage: "planner", model: plannerModel, messages: [...messages, { role: "assistant", content: JSON.stringify(plan) }, { role: "user", content: `These problems were found:\n${problems.map((line) => `- ${line}`).join("\n")}\nChange only the levels named, as little as fixes them, and give the whole plan again.` }], temperature: 0, maxTokens: PLANNER_MAX_TOKENS },
@@ -229,7 +230,16 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
         { name: "plan", structuredOutput: false },
       );
       plan = replanned.value;
-      explanation = (await explain(input.client, explainerModel, { title, plan, passages, model: modelWords })).value;
+      explanation = (await explain(input.client, explainerModel, { title, plan, passages, model: modelWords }, { structuredOutput: structured(explainerModel) })).value;
+    };
+
+    /** What a level's first start, the world's own values, measured: so a repair can aim its claim. */
+    const measuredAt = (level: LevelResult): string => {
+      const first = level.skies[0];
+      if (!first) return "";
+      const shown = (value: number): string => (Number.isFinite(value) ? Number(value.toPrecision(3)).toString() : "never");
+      const way = first.there > first.here ? "higher" : first.there < first.here ? "lower" : "the same";
+      return `; at the world's own values this world measures ${shown(first.here)} and the What-if ${shown(first.there)}, ${way}${way === "the same" ? "" : ` by ${shown(Math.abs(first.there - first.here))}`}`;
     };
 
     // Building and running: assemble, build, sweep; the level rule, the visibility rule and the
@@ -278,7 +288,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
           const level = swept[index];
           const visible = seen[index];
           return [
-            ...(level && !level.meets ? [`its claim holds on ${level.holds} of 20 starts, fewer than 16`] : []),
+            ...(level && !level.meets ? [`its claim holds on ${level.holds} of 20 starts, fewer than 16${measuredAt(level)}`] : []),
             ...(visible && !visible.visible ? [`its difference is too small to see: ${visible.why ?? ""}`] : []),
             ...(found.levels[index] ?? []),
           ];

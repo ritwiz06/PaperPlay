@@ -159,7 +159,7 @@ const replies = (overrides: Partial<Record<string, readonly unknown[]>> = {}) =>
   transcriber: [transcription()],
   "second-transcriber": [transcription()],
   planner: [good()],
-  explainer: [{ levels: [words(), words(), words()] }],
+  explainer: [words()],
   reviewer: [{ findings: [] }],
   ...overrides,
 });
@@ -214,6 +214,8 @@ describe("[R10] [R11] the controller", () => {
     expect(states).toEqual(["received", "parsing", "planning", "building", "running", "repairing", "building", "running", "checking", "ready"]);
     const replan = client.calls.filter((call) => call.stage === "planner")[1];
     expect(replan?.messages.map((message) => message.content).join("\n")).toMatch(/These problems were found:\n- level 1 \("An epidemic that ends by itself"\): its claim holds on 0 of 20 starts/);
+    // The measurement at the world's own values goes with it, so the planner can aim its claim.
+    expect(replan?.messages.map((message) => message.content).join("\n")).toMatch(/at the world's own values this world measures [\d.e-]+ and the What-if [\d.e-]+, (higher|lower) by [\d.e-]+/);
   }, 60_000);
 
   it("keeps a failed check failed after two repairs, and never asks the reviewer, scripted to approve, to rule on it", async () => {

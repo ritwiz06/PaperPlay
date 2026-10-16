@@ -7,7 +7,7 @@
  */
 import { registry } from "@paperplay/primitives";
 import { buildWorld, checkFindings, sweepLevels, visibilityOf } from "@paperplay/pipeline";
-import { assembleWorld, chooseStep, describeBehaviour, horizonOf } from "@paperplay/pipeline/assemble";
+import { assembleWorld, chooseStep, describeBehaviour, describeResponse, horizonOf } from "@paperplay/pipeline/assemble";
 import type { ModelClient } from "@paperplay/pipeline/models";
 import { plan, promptSource, review, type Plan, type Reading } from "@paperplay/pipeline/stages";
 import { toModelSpec } from "@paperplay/pipeline/transcribe";
@@ -116,7 +116,7 @@ export async function runDesignBakeoff(client: ModelClient, structuredOutput: Re
         const { model, horizon } = modelOf(paper);
         if (!reading) continue;
         try {
-          const { value } = await plan(client, name, { title: paper.title, reading, model, example, behaviour: describeBehaviour(model, horizon) });
+          const { value } = await plan(client, name, { title: paper.title, reading, model, example, behaviour: describeBehaviour(model, horizon), response: describeResponse(model, horizon) });
           plans.push({ model: name, paper: paper.id, ok: true, error: null, score: scorePlan(value, { paper, reading, model }) });
         } catch (error) {
           plans.push({ model: name, paper: paper.id, ok: false, error: oneLine(error), score: { levels: 0, built: 0, meetRule: 0, onFindings: false, note: "" } });

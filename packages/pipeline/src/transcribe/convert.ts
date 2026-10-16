@@ -72,10 +72,20 @@ function notation(text: string): { readonly chars: string; readonly from: readon
 
 /**
  * Where a quote stands in a text: exactly; else with its whitespace differing; else written in
- * another notation, as models do with LaTeX ("β = 0.05" for "\beta = 0.05"). The span returned is
- * always the text's own, so an anchor quotes the source, never the model's rendering of it.
+ * another notation, as models do with LaTeX ("β = 0.05" for "\beta = 0.05"); else with its first
+ * letter's case the other way, as a sentence quoted from its middle starts with a capital ("Exposed
+ * individuals are …" for "Thus, exposed individuals are …"). The span returned is always the text's
+ * own, so an anchor quotes the source, never the model's rendering of it.
  */
 export function findQuote(text: string, quote: string): { readonly start: number; readonly end: number } | null {
+  const found = findAsWritten(text, quote);
+  if (found) return found;
+  const first = quote.charAt(0);
+  const flipped = first === first.toUpperCase() ? first.toLowerCase() : first.toUpperCase();
+  return flipped === first ? null : findAsWritten(text, `${flipped}${quote.slice(1)}`);
+}
+
+function findAsWritten(text: string, quote: string): { readonly start: number; readonly end: number } | null {
   const exact = text.indexOf(quote);
   if (exact >= 0) return widen(text, exact, exact + quote.length);
   const target = quote.replace(/\s+/g, "");

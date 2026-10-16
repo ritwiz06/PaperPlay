@@ -51,6 +51,15 @@ describe("[R05] quotes as anchors", () => {
     expect(findQuote("The rate is 0.05", "0.06")).toBeNull();
   });
 
+  it("finds a sentence quoted from its middle with a capital, and anchors the source's own letters", () => {
+    const text = "An infected individual has a latency period. Thus, exposed individuals are TB-infected but not yet infectious.";
+    const found = findQuote(text, "Exposed individuals are TB-infected but not yet infectious.");
+    expect(found && text.slice(found.start, found.end)).toBe("exposed individuals are TB-infected but not yet infectious.");
+    expect(findQuote(text, "thus, exposed individuals")).toEqual({ start: 45, end: 70 });
+    // Only the first letter folds: a capital anywhere else is a different text.
+    expect(findQuote(text, "Exposed Individuals are")).toBeNull();
+  });
+
   it("finds a quote written in another notation, and anchors the source's own LaTeX, never the model's rendering", () => {
     const text = "the system\n\\frac{dS}{dt} &= \\Lambda - (\\beta I + \\mu)S \\\\\nwith $\\beta = 0.05$ and $N_0 = 5\\times 10^{8}$; then m_T \\coloneqq 5 \\cdot 10^{-15}\\; cells";
     const span = (quote: string) => {
