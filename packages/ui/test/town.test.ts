@@ -37,6 +37,17 @@ describe("the town kit's figures", () => {
     }
   });
 
+  it("draw only the lens's compartment through a lens, each figure a stated amount, at most 120 (ADR-0037)", () => {
+    const amounts = { previous: [0.95, 0.03, 0.02], current: [0.94, 0.04, 0.02], previousAmounts: [0.95, 0.03, 0.02], currentAmounts: [0.94, 0.04, 0.02] };
+    const lensed = describeTown({ ...input([0.95, 0.03, 0.02]), ...amounts }, DEFAULT_CAMERA, townDay, {}, { lens: { compartment: 1, perFigure: 0.0005 } });
+    // 0.04 of the whole at 0.0005 a figure: 80 figures, every one of them the lens's compartment.
+    expect(lensed.counts).toEqual([0, 80, 0]);
+    expect(lensed.figures).toHaveLength(80);
+    expect(new Set(lensed.figures.map((figure) => figure.compartment))).toEqual(new Set([1]));
+    const capped = describeTown({ ...input([0.5, 0.5, 0]), previousAmounts: [0.5, 0.5, 0], currentAmounts: [0.5, 0.5, 0] }, DEFAULT_CAMERA, townDay, {}, { lens: { compartment: 1, perFigure: 0.001 } });
+    expect(capped.figures).toHaveLength(FIGURES);
+  });
+
   it("colour each figure by its compartment, and ring the ill, so illness never shows by colour alone", () => {
     const frame = describeTown(input([0.5, 0.25, 0.25]), DEFAULT_CAMERA, townDay);
     expect(frame.figures).toHaveLength(FIGURES);

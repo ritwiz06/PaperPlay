@@ -18,6 +18,13 @@ export interface CompartmentBarProps {
   readonly watched: number | null;
   /** Counts from Intermediate on; words at Beginner. */
   readonly showNumber: boolean;
+  /**
+   * For a model of shares of a population: each amount shown as people in a town of this size, a
+   * teaching choice the note says (ADR-0037). The data stays the primitive's own.
+   */
+  readonly townOf?: number;
+  /** Teaching choices the readout makes, said beneath it: the town's size, a lens. */
+  readonly notes?: readonly string[];
 }
 
 const COUNT = new Intl.NumberFormat("en-GB", { maximumFractionDigits: 0 });
@@ -27,7 +34,8 @@ const COUNT = new Intl.NumberFormat("en-GB", { maximumFractionDigits: 0 });
  * share, in the figures' own colours, labelled beneath with its count, or at Beginner in words.
  * The watched compartment is outlined, and its count is the primitive's own measurement.
  */
-export function CompartmentBar({ compartments, observable, watched, showNumber }: CompartmentBarProps) {
+export function CompartmentBar({ compartments, observable, watched, showNumber, townOf, notes = [] }: CompartmentBarProps) {
+  const people = (value: number): string => COUNT.format(value * (townOf ?? 1));
   const colour = (index: number): string => townDay.figures[Math.min(index, townDay.figures.length - 1)] ?? townDay.wall;
   return (
     <div className="compartments" role="group" aria-label="The town now">
@@ -47,7 +55,7 @@ export function CompartmentBar({ compartments, observable, watched, showNumber }
       <ul className="compartments-legend">
         {compartments.map((compartment, index) => {
           const isWatched = index === watched;
-          const amount = showNumber ? (isWatched ? observable.value.toFixed(observable.decimals) : COUNT.format(compartment.value)) : shareInWords(compartment.share);
+          const amount = showNumber ? (townOf ? people(isWatched ? observable.value : compartment.value) : isWatched ? observable.value.toFixed(observable.decimals) : COUNT.format(compartment.value)) : shareInWords(compartment.share);
           return (
             <li key={compartment.id} className={isWatched ? "watched" : undefined}>
               <span className="compartments-swatch" style={{ background: colour(index) }} aria-hidden="true" />
@@ -62,6 +70,11 @@ export function CompartmentBar({ compartments, observable, watched, showNumber }
           );
         })}
       </ul>
+      {notes.map((note) => (
+        <p key={note} className="compartments-note">
+          <OriginTag origin="teaching-choice" quiet /> {note}
+        </p>
+      ))}
     </div>
   );
 }

@@ -19,7 +19,9 @@ export function sampleCount(time: number, timestep: number): number {
  * - `at`: the sample at that time;
  * - `first-reach`: the time of the first sample at or above the threshold, or Infinity if none;
  * - `lowest`: the lowest sample from `from` on;
- * - `total`: the samples before the level's time ends, each times the sampling interval.
+ * - `total`: the samples before the level's time ends, each times the sampling interval;
+ * - `peak`: the highest sample;
+ * - `mean`: the average of the samples before the level's time ends, the total over the time.
  */
 export function summarise(difference: { readonly summary: DifferenceSummary | DifferenceSummaryV3 }, samples: readonly number[], timestep: number): number {
   const interval = SAMPLE_STEPS * timestep;
@@ -38,6 +40,12 @@ export function summarise(difference: { readonly summary: DifferenceSummary | Di
     }
     case "total":
       return samples.slice(0, -1).reduce((sum, value) => sum + value, 0) * interval;
+    case "peak":
+      return Math.max(...samples);
+    case "mean": {
+      const before = samples.length > 1 ? samples.slice(0, -1) : samples;
+      return before.reduce((sum, value) => sum + value, 0) / before.length;
+    }
   }
 }
 

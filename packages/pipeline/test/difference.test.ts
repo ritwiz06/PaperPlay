@@ -41,6 +41,13 @@ describe("[R08] the measured difference", () => {
     expect(summarise(difference({ kind: "total" }), samples, DT)).toBeCloseTo(0.545, 12);
   });
 
+  it("reads the peak and the average, the average over the samples before the level's time ends (ADR-0037)", () => {
+    const v3 = (summary: { kind: "peak" } | { kind: "mean" }) => ({ summary });
+    expect(summarise(v3({ kind: "peak" }), samples, DT)).toBe(0.95);
+    // The same ten samples as the total, averaged: 5.45 / 10.
+    expect(summarise(v3({ kind: "mean" }), samples, DT)).toBeCloseTo(0.545, 12);
+  });
+
   it("checks a claim sky by sky: by more than the margin, and more than the ratio", () => {
     expect(claimHolds({ kind: "each", relation: "lower", by: 0.5 }, 0.9, 0.3)).toBe(true);
     expect(claimHolds({ kind: "each", relation: "lower", by: 0.5 }, 0.9, 0.4)).toBe(false);

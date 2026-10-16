@@ -4,8 +4,8 @@
  * its chart runs to the town's population. Which compartments' figures stand in a ring, as the ill
  * do, is a choice of drawing only, and the kit's page of what the world cannot show says so.
  */
-import type { BuiltLevel, BuiltWorld } from "@paperplay/pipeline";
-import type { CompartmentModel } from "@paperplay/primitives/compartments";
+import { SHARE_TOWN, sharesOf, visibilityOf, type BuiltLevel, type BuiltWorld } from "@paperplay/pipeline";
+import { formatUnit, type CompartmentModel } from "@paperplay/primitives/compartments";
 import { CompartmentBar, TownMark } from "@paperplay/ui/react/town";
 import { FIGURES, townStage, type TownLook } from "@paperplay/ui/stage-core/town";
 import { createTownSession, type SessionOptions, type TownSnapshot } from "../world/town.ts";
@@ -35,6 +35,21 @@ export function townWorld(world: BuiltWorld, options: TownWorldOptions): Playabl
   const compartments = model.spec.compartments;
   const ringedIds = options.ringed ?? compartments.filter((compartment) => ILL.test(compartment.name)).map((compartment) => compartment.id);
   const look: TownLook = { ringed: compartments.flatMap((compartment, index) => (ringedIds.includes(compartment.id) ? [index] : [])) };
+  // The visibility rule's own measures (ADR-0037): each level's chart axis and, when the quantity is
+  // too small for 120 figures, its lens. A model of shares is shown as people in a stated town.
+  const visibility = new Map(visibilityOf(world).map((entry) => [entry.id, entry]));
+  const shares = sharesOf(model, first.params);
+  const townOf = shares ? SHARE_TOWN : undefined;
+  const COUNT = new Intl.NumberFormat("en-GB", { maximumFractionDigits: 0 });
+  const townNote = `The paper counts shares of its population; they are shown as people in a town of ${COUNT.format(SHARE_TOWN)}.`;
+  const lensOf = (level: BuiltLevel) => visibility.get(level.id)?.scene?.lens ?? null;
+  const lensNote = (level: BuiltLevel): string | null => {
+    const lens = lensOf(level);
+    if (!lens) return null;
+    const name = compartments.find((compartment) => compartment.id === lens.compartment)?.name.toLowerCase() ?? lens.compartment;
+    const each = townOf ? `${COUNT.format(lens.perFigure * townOf)} ${lens.perFigure * townOf === 1 ? "person" : "people"}` : `${lens.perFigure} ${formatUnit(compartments.find((compartment) => compartment.id === lens.compartment)?.unit ?? {}, model.spec.timeUnit)}`;
+    return `Through a lens: only ${name} are drawn, each figure standing for ${each}, so a difference too small for the whole town shows.`;
+  };
   const compartmentOf = (metricId: string): number | null => {
     const expr = model.spec.observables.find((observable) => observable.id === metricId)?.expr;
     const at = expr && "c" in expr ? compartments.findIndex((compartment) => compartment.id === expr.c) : -1;
@@ -59,10 +74,26 @@ export function townWorld(world: BuiltWorld, options: TownWorldOptions): Playabl
       const { metricId } = level.observable;
       // Beginner shows words and plain names; Intermediate and Advanced, counts and the model's names.
       const shown = town.shares.map((share) => ({ ...share, name: showNumber ? share.name : (options.beginnerNames?.[share.id] ?? share.name) }));
-      return <CompartmentBar compartments={shown} observable={{ metricId, value: town.observed[metricId] ?? Number.NaN, decimals: level.observable.decimals }} watched={compartmentOf(metricId)} showNumber={showNumber} />;
+      const notes = [...(townOf ? [townNote] : []), ...[lensNote(level)].filter((note): note is string => note !== null)];
+      return (
+        <CompartmentBar
+          compartments={shown}
+          observable={{ metricId, value: town.observed[metricId] ?? Number.NaN, decimals: level.observable.decimals }}
+          watched={compartmentOf(metricId)}
+          showNumber={showNumber}
+          {...(townOf ? { townOf } : {})}
+          notes={notes}
+        />
+      );
     },
     chartName: (_level, metricId) => model.spec.observables.find((observable) => observable.id === metricId)?.label ?? metricId,
-    // Every compartment counts the town, so the chart runs from none to the larger town's whole.
-    chartTop: (level) => Math.max(populationOf(level.params), populationOf(level.fork.params)),
+    // Fitted to the measured quantity, as the visibility rule fits it, not to the whole town.
+    chartTop: (level) => visibility.get(level.id)?.chart.top ?? Math.max(populationOf(level.params), populationOf(level.fork.params)),
+    lookFor: (level) => {
+      const lens = lensOf(level);
+      return lens ? { ...look, lens: { compartment: compartments.findIndex((compartment) => compartment.id === lens.compartment), perFigure: lens.perFigure } } : look;
+    },
+    sceneNote: lensNote,
+    displayScale: () => (townOf ? { factor: townOf, unit: "people" } : null),
   };
 }

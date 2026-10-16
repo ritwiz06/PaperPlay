@@ -344,14 +344,20 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
   const advanced = level.explanation.advanced;
 
   const difference = whatIfSpec.difference;
+  // Shares of a population, shown as people in a stated town (ADR-0037); a time stays a time.
+  const scale = play.displayScale?.(level) ?? null;
+  const shown = (value: number): number => (scale && difference.unit !== timeWords.many ? value * scale.factor : value);
   const measured = (value: number): string => {
     if (Number.isNaN(value)) return "not measured yet";
     if (!Number.isFinite(value)) return forkView?.done ? `not within ${difference.time} ${timeWords.short}` : "not yet";
     if (difference.unit === timeWords.many) return `${value.toFixed(1)} ${timeWords.short}`;
+    if (scale) return `${Math.round(shown(value)).toLocaleString("en-GB")} ${difference.summary.kind === "total" ? `${scale.unit} × ${timeWords.many}` : scale.unit}`;
     // A share reads as the number alone: "0.93", not "0.93 fraction from 0 to 1".
     return difference.unit.startsWith("fraction") ? value.toFixed(2) : `${value.toFixed(2)} ${difference.unit}`;
   };
   const threshold = difference.summary.kind === "first-reach" ? difference.summary.threshold : undefined;
+  const lensNote = play.sceneNote?.(level) ?? null;
+  const levelLook = play.lookFor?.(level) ?? play.look;
   const claim = difference.claim;
   const acrossSkies =
     claim.kind === "each"
@@ -372,12 +378,13 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
           <p>
             <OriginTag origin="teaching-choice" quiet /> The other world runs with {overrides}.
             {whatIfSpec.restarts ? <span data-restarts="">{restartWords}</span> : null}
+            {lensNote ? <span data-lens=""> {lensNote}</span> : null}
           </p>
         }
         here={{ label: "This world", name: "World stage, this world", driver: run.here }}
         there={{ label: `What if: ${overridesShort}`, name: "World stage, what if", driver: run.there }}
         stageLabel={play.stageLabel}
-        look={play.look}
+        look={levelLook}
         playing={forkView.playing}
         done={forkView.done}
         onTogglePlay={toggleFork}
@@ -391,13 +398,13 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
             duration={difference.time}
             unit={{ short: timeWords.short, words: timeWords.many }}
             interval={SAMPLE_STEPS * timestep}
-            here={forkView.samples.here}
-            there={forkView.samples.there}
-            top={
+            here={forkView.samples.here.map(shown)}
+            there={forkView.samples.there.map(shown)}
+            top={shown(
               play.chartTop?.(level) ??
-              chartTop(level.primitive.describe().observables[difference.metricId]?.unit.startsWith("fraction") ?? false, [...forkView.samples.here, ...forkView.samples.there], threshold)
-            }
-            {...(threshold === undefined ? {} : { threshold })}
+                chartTop(level.primitive.describe().observables[difference.metricId]?.unit.startsWith("fraction") ?? false, [...forkView.samples.here, ...forkView.samples.there], threshold),
+            )}
+            {...(threshold === undefined ? {} : { threshold: shown(threshold) })}
             hereName="This world"
             thereName="What if"
           />
@@ -454,7 +461,7 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
         tool="look"
         window={free}
         framing={play.framing}
-        look={play.look}
+        look={levelLook}
         onTogglePlay={togglePlay}
         onReadout={refresh}
         onView={(view) => setYaw(view.yaw)}

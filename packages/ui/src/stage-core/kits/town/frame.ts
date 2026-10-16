@@ -10,7 +10,10 @@ import { frameCamera, type BaseEmphasis, type FrameDescription, type StageKit } 
 import type { Vec3 } from "../../vec.ts";
 import { townDay, type TownPalette } from "./palettes.ts";
 
-/** Figures in the town: each stands for one in this many of the people. */
+/**
+ * Figures in the town: each stands for one in this many of the people. The pipeline's visibility
+ * rule counts figures by the same rule as figureCounts below, and a test holds the two equal.
+ */
 export const FIGURES = 120;
 /** The town's field, in world units: the stage frames it as it frames the valley's. */
 export const TOWN_SIZE = 28;
@@ -33,6 +36,9 @@ export interface TownInput {
   /** The model's time at the two states, in its own unit. */
   readonly timeBefore: number;
   readonly timeNow: number;
+  /** Each compartment's amount, in the model's order and unit, at the two states: what a lens counts. */
+  readonly previousAmounts?: readonly number[];
+  readonly currentAmounts?: readonly number[];
 }
 
 export interface FigurePose {
@@ -53,10 +59,16 @@ export interface HousePose {
   readonly roof: string;
 }
 
-/** The town's look, apart from emphasis: which compartments' figures stand in a ring, as the ill do. */
+/** The town's look, apart from emphasis: which compartments' figures stand in a ring, as the ill do, and a lens. */
 export interface TownLook {
   /** By place in the model's order; the second compartment alone when not given, as in Threshold Town. */
   readonly ringed?: readonly number[];
+  /**
+   * A lens (ADR-0037): only one compartment's figures, each standing for `perFigure` of it in the
+   * model's unit, for a quantity too small for the town's 120 to show. A teaching choice, which
+   * the shell says on screen; the visibility rule chooses it.
+   */
+  readonly lens?: { readonly compartment: number; readonly perFigure: number };
 }
 
 export type TownFrame = FrameDescription<
@@ -129,10 +141,12 @@ export function figureCounts(shares: readonly number[], figures = FIGURES): numb
 /**
  * Which compartment each figure is counted in. Figures are counted out in one fixed order, the
  * last compartment's first, so as a run moves people from the first compartment to the last, as
- * an epidemic does, each figure only ever moves forward, never back.
+ * an epidemic does, each figure only ever moves forward, never back. A figure no compartment
+ * claims, when the counts add up to fewer than 120 as through a lens, is -1 and is not drawn.
  */
 export function figureCompartments(counts: readonly number[]): number[] {
-  const of = new Array<number>(FIGURES).fill(0);
+  // A walker no compartment claims, as through a lens, stands for nothing and is not drawn.
+  const of = new Array<number>(FIGURES).fill(-1);
   let at = 0;
   for (let compartment = counts.length - 1; compartment >= 0; compartment--) {
     for (let k = 0; k < (counts[compartment] ?? 0) && at < FIGURES; k++) of[ORDER[at++] as number] = compartment;
@@ -179,26 +193,36 @@ export function townCamera(camera: OrbitCamera): OrbitCamera {
 }
 
 /** (shares, camera, palette, emphasis, look) → frame. Pure: reads its inputs, writes nothing. */
+/** Through a lens: the one compartment's amount in figures, at most the town's 120, the others none. */
+function lensCounts(input: TownInput, lens: { readonly compartment: number; readonly perFigure: number }, length: number): number[] {
+  const before = input.previousAmounts?.[lens.compartment] ?? 0;
+  const now = input.currentAmounts?.[lens.compartment] ?? before;
+  const amount = before + input.alpha * (now - before);
+  const count = Math.max(0, Math.min(FIGURES, Math.round(amount / lens.perFigure)));
+  return Array.from({ length }, (_, index) => (index === lens.compartment ? count : 0));
+}
+
 export function describeTown(input: TownInput, camera: OrbitCamera, palette: TownPalette, emphasis: BaseEmphasis = {}, look: TownLook = {}): TownFrame {
   const ringed = look.ringed ?? [1];
   const { previous, current, alpha } = input;
   const shares = current.map((share, index) => (previous[index] ?? share) + alpha * (share - (previous[index] ?? share)));
-  const counts = figureCounts(shares);
+  const counts = look.lens ? lensCounts(input, look.lens, shares.length) : figureCounts(shares);
   const compartments = figureCompartments(counts);
   const time = input.timeBefore + alpha * (input.timeNow - input.timeBefore);
-  const figures = WALKERS.map((walker, index): FigurePose => {
+  const figures = WALKERS.flatMap((walker, index): FigurePose[] => {
+    if ((compartments[index] ?? -1) < 0) return [];
     const turn = walker.phase + walker.speed * 2 * Math.PI * time;
     const x = walker.home[0] + walker.reach * Math.cos(turn);
     const z = walker.home[1] + walker.reach * Math.sin(turn);
     const compartment = compartments[index] ?? 0;
-    return {
+    return [{
       position: [x, 0, z],
       // Facing along the loop, tangent to it.
       yaw: -turn,
       compartment,
       color: palette.figures[Math.min(compartment, palette.figures.length - 1)] ?? palette.wall,
       ring: ringed.includes(compartment),
-    };
+    }];
   });
   const rings = emphasis.cursor ? [{ key: "cursor", position: [emphasis.cursor.x - TOWN_SIZE / 2, 0, emphasis.cursor.y - TOWN_SIZE / 2] as Vec3, radius: 1.2, color: palette.cursor }] : [];
   return {

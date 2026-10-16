@@ -33,6 +33,12 @@ export interface PlayableWorld {
   readout(level: BuiltLevel, snapshot: PlaySnapshot, showNumber: boolean, yaw: number): ReactNode;
   /** What the fork's chart calls a metric. */
   chartName(level: BuiltLevel, metricId: string): string;
-  /** The top of the fork chart's value axis, when the world knows it, such as a town's population; otherwise the shell rounds above what is drawn. */
+  /** The top of the fork chart's value axis, fitted to the measured quantity as the visibility rule fits it; otherwise the shell rounds above what is drawn. */
   chartTop?(level: BuiltLevel): number;
+  /** A level's own look, when it differs from the world's, such as a town drawn through a lens. */
+  lookFor?(level: BuiltLevel): unknown;
+  /** A teaching choice in how the level is drawn, said on screen beside the fork, such as a lens; null when there is none. */
+  sceneNote?(level: BuiltLevel): string | null;
+  /** How measured values are shown, when not as the model counts them: shares as people in a stated town. */
+  displayScale?(level: BuiltLevel): { readonly factor: number; readonly unit: string } | null;
 }

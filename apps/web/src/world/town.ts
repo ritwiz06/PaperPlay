@@ -50,6 +50,9 @@ export function townView(model: CompartmentModel): SessionView<CompartmentParams
       alpha,
       timeBefore: previous.stepIndex * timestep,
       timeNow: current.stepIndex * timestep,
+      // What a lens counts: each compartment's own amount, not its share.
+      previousAmounts: model.spec.compartments.map((compartment) => previous.compartments[compartment.id] ?? 0),
+      currentAmounts: model.spec.compartments.map((compartment) => current.compartments[compartment.id] ?? 0),
     }),
     historySteps: 0,
     names: Object.freeze({}),

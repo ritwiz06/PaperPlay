@@ -41,6 +41,10 @@ export const DifferenceSummaryV3 = z.discriminatedUnion("kind", [
   z.strictObject({ kind: z.literal("lowest"), from: z.number().nonnegative() }),
   /** The value summed over the level's time, times the timestep. */
   z.strictObject({ kind: z.literal("total") }),
+  /** The highest value over the level's time. */
+  z.strictObject({ kind: z.literal("peak") }),
+  /** The average value over the level's time. */
+  z.strictObject({ kind: z.literal("mean") }),
 ]);
 export type DifferenceSummaryV3 = z.infer<typeof DifferenceSummaryV3>;
 

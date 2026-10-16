@@ -14,6 +14,7 @@ import { checkProvenance } from "../checks/provenance.ts";
 import { fetchArxiv, fetchPmc, registerAndText, type Fetch } from "../ingest/index.ts";
 import { completeStructured, type ModelClient, type Stage } from "../models/index.ts";
 import { sweepLevels, type LevelResult } from "../rule/sweep.ts";
+import { visibilityOf } from "../rule/visibility.ts";
 import { explain, type Explanation } from "../stages/explainer.ts";
 import { plan as planWorld, Plan, PLANNER_MAX_TOKENS, plannerMessages, type PlanLevel } from "../stages/planner.ts";
 import { read } from "../stages/reader.ts";
@@ -251,21 +252,32 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       move("running", "level rule", `sweeping every What-if over 20 starts: the world's values and 19 within a tenth of them`);
       swept = sweepLevels(built);
       sink.artifact("level-rule", swept);
-      const failing = swept.filter((level) => !level.meets);
+      // Beside the level rule, the visibility rule (ADR-0037): the difference must show on the chart and in the scene.
+      const seen = visibilityOf(built);
+      sink.artifact("visibility", seen);
+      const passes = (index: number): boolean => (swept[index]?.meets ?? false) && (seen[index]?.visible ?? false);
+      const failing = swept.filter((_, index) => !passes(index));
       if (failing.length === 0) break;
-      const words = failing.map((level) => `level ${level.order} ("${level.title}"): its claim holds on ${level.holds} of 20 starts, fewer than 16; choose a What-if or a claim that holds clearly`);
+      const words = failing.map((level) => {
+        const visible = seen[level.order - 1];
+        const problems = [
+          ...(level.meets ? [] : [`its claim holds on ${level.holds} of 20 starts, fewer than 16`]),
+          ...(visible && !visible.visible ? [`its difference is too small to see: ${visible.why ?? ""}`] : []),
+        ];
+        return `level ${level.order} ("${level.title}"): ${problems.join("; ")}; choose a What-if or a claim that holds clearly and shows`;
+      });
       if (repairs < MAX_REPAIRS) {
         await replan(words);
         continue;
       }
-      const keep = plan.levels.filter((_, index) => swept[index]?.meets);
-      if (keep.length < 3) throw new Stop("failed", `too few levels meet the level rule: ${words.join("; ")}`);
+      const keep = plan.levels.filter((_, index) => passes(index));
+      if (keep.length < 3) throw new Stop("failed", `too few levels meet the level rule and show their difference: ${words.join("; ")}`);
       plan = { ...plan, levels: keep };
-      explanation = { levels: explanation.levels.filter((_, index) => swept[index]?.meets) };
-      say("level rule", `dropped ${failing.length} level(s) the rule refuses, keeping ${keep.length}`);
+      explanation = { levels: explanation.levels.filter((_, index) => passes(index)) };
+      say("level rule", `dropped ${failing.length} level(s) the rules refuse, keeping ${keep.length}`);
       move("repairing", "level rule", "rebuilding without the dropped levels");
     }
-    say("level rule", `every level meets the rule: ${swept.map((level) => `level ${level.order} ${level.holds} of 20`).join(", ")}`);
+    say("level rule", `every level meets the rule and shows its difference: ${swept.map((level) => `level ${level.order} ${level.holds} of 20`).join(", ")}`);
 
     // Checking: provenance, then the reviewer, who can suggest but never overturn.
     move("checking", "provenance", "checking every anchor quotes the source exactly");
