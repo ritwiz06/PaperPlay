@@ -6,9 +6,19 @@
  * alone is the reviewer's to judge, and the planner repairs what it flags.
  */
 import type { SourceText } from "@paperplay/contracts";
-import type { Plan } from "../stages/planner.ts";
-import type { Reading } from "../stages/reader.ts";
 import { findQuote } from "../transcribe/convert.ts";
+
+/**
+ * What the check reads of a plan and a reading, named here rather than imported from the stages,
+ * which reach the model client: the web app imports this module, and must never reach Node's own.
+ */
+interface Plan {
+  readonly levels: readonly { readonly finding: number | null; readonly difference: { readonly summary: string } }[];
+}
+interface Reading {
+  readonly result: { readonly text: string; readonly quote: string };
+  readonly findings: readonly { readonly text: string; readonly quote: string }[];
+}
 
 /** At least this many levels test one of the paper's anchored findings. */
 export const LEVELS_ON_FINDINGS = 3;
