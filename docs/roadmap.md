@@ -194,13 +194,14 @@ G3a.3, the pipeline on a known family (24–32 h):
 - [x] `packages/pipeline`: the router (compartments only), reader, two transcriptions, planner,
   explainer, the level-rule sweep, checks, reviewer, and the controller with at most two scoped
   repairs (2026-10-14, `16dac04`, ADR-0033).
-- [ ] The bake-off per stage against the gold answers, in `eval/models.md`, and each stage's
-  model chosen from it.
-- [ ] The `/create` storyboard with real job states (and StatusChip), and explicit failure
-  outcomes.
-- [ ] The first generated world, from one of the three gold papers, end to end: one recorded
+- [x] The bake-off per stage against the gold answers, in `eval/models.md`, and each stage's
+  model chosen from it (2026-10-16, `c261409`, ADR-0035; provisional until the owner names the
+  models marked "Testing in progress").
+- [x] The `/create` storyboard with real job states and explicit failure outcomes (2026-10-14,
+  `870c541`, ADR-0034).
+- [x] The first generated world, from one of the three gold papers, end to end: one recorded
   live run, replayed in tests (the owner's G3a.3 request replaced Elowitz and Leibler with a
-  compartment paper, 2026-10-14).
+  compartment paper, 2026-10-14): PMC12334037, hepatitis C (2026-10-16, `eb5aab9`, ADR-0035).
 
 After G3a's first generated world (owner, 2026-10-09):
 - [ ] Replay export and import with `npm run replay`, and `/world/local` in the shell.

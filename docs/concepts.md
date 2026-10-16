@@ -258,6 +258,29 @@ and a reply that fails is sent back once with the error.
 - **Used in:** `packages/pipeline/src/models/structured.ts`, `scripts/live/probe.ts`
 - **Why here:** Every stage's output must be data the builder can check, never free text (R08).
 - **Learn more:** [JSON Schema, "Getting started"](https://json-schema.org/learn/getting-started-step-by-step)
+
+### Constrained decoding, and when it goes wrong
+
+A server that holds a model to a JSON Schema does it by constrained decoding: at each step it
+lets the model choose only tokens the schema's grammar allows. The reply is always valid JSON,
+but not always useful. A grammar that allows whitespace anywhere lets a model loop on spaces
+until its limit, and a reasoning model can spend its whole budget thinking before the grammar
+lets it write. The fallback is to ask for plain JSON and check it afterwards.
+
+- **Used in:** `packages/pipeline/src/models/structured.ts` (the fallback), `packages/pipeline/src/stages/planner.ts` and `packages/pipeline/src/stages/explainer.ts` (plain JSON always)
+- **Why here:** In the bake-off, models held to the planner's large schema looped or wrote nothing (ADR-0035).
+- **Learn more:** [vLLM, "Structured outputs"](https://docs.vllm.ai/en/latest/features/structured_outputs.html)
+
+### Streaming a reply, and a proxy's idle timeout
+
+A server can send its reply as it is made, as server-sent events, each a line `data: {…}`. A
+proxy between the client and the server (here, Cloudflare in front of the gateway) gives up on a
+connection that carries nothing for too long and answers 524. Streaming keeps bytes moving while
+a slow model works; the client joins the pieces into one reply before anything else reads it.
+
+- **Used in:** `apps/api/src/models/voyager.ts`, `apps/api/src/models/node-fetch.ts`
+- **Why here:** Reasoning models took longer than the proxy would wait, and longer than Node's own fetch waits for headers (ADR-0030's amendment).
+- **Learn more:** [MDN, "Using server-sent events"](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events)
 ### Radius of gyration, and a centre on a wrap-around world
 
 The radius of gyration of some points is how far, on average, they lie from their centre:

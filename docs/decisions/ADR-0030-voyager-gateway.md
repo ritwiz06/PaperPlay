@@ -65,6 +65,25 @@ repository's root; the brief keeps secrets in `apps/api/.env` only.
   behind ASU's login. No model is left out by the probe, and the owner names the marked ones
   before any is chosen for a stage.
 
+## Amendment, 2026-10-15: the live client's fetch
+
+The bake-off lost every call longer than five minutes with "fetch failed". Node's built-in
+`fetch` gives up when a reply's headers take more than 300 seconds, a limit of its own that the
+adapter's timeout (600 seconds for the bake-off) cannot lengthen; reasoning models on a long paper
+take longer. The live client now uses a small fetch on `node:https`
+(`apps/api/src/models/node-fetch.ts`), with no limit of its own: the adapter's timeout, through
+the abort signal, is the only one, and it covers the body too. The adapter itself is unchanged
+and still takes any fetch, so its tests keep their fakes. No dependency was added. A network
+error now names its cause's code, such as `ECONNRESET`, after fetch's own message.
+
+With that limit gone, the same calls met the gateway's own: its Cloudflare front answers 524 when
+a reply sends nothing for too long. So completions are now **streamed** (`stream: true`, with the
+usage in the last event), and the client joins the events into one reply before anything else
+sees it; a recording holds the joined reply, as before, and its hash is unchanged. An error sent
+mid-stream is retried like a server's error. A call's ceiling, `timeoutMs`, may now be up to 30
+minutes, and `apps/api/models.json` sets 30: a reasoning model streaming a 32,000-token plan takes
+many minutes, and every byte it sends keeps the gateway's proxy waiting.
+
 ## Consequences
 
 - **ADR-0024's "per-job token and cost budget" becomes a token budget:** the gateway charges
