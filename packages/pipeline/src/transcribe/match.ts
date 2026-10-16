@@ -121,6 +121,8 @@ function agrees(a: ModelSpec, b: ModelSpec, ca: Compiled2, cb: Compiled2, compar
 
 export function matchModels(a: ModelSpec, b: ModelSpec): ModelMatch {
   const fail = (problem: string): ModelMatch => ({ structural: false, values: false, compartments: {}, parameters: {}, problems: [problem] });
+  // The rates' time unit is structure: the same equations per day and per year are different models.
+  if (a.timeUnit !== b.timeUnit) return fail(`the first's rates are per ${a.timeUnit}, the second's per ${b.timeUnit}`);
   if (a.compartments.length !== b.compartments.length) return fail(`the first has ${a.compartments.length} compartments, the second ${b.compartments.length}`);
   if (a.parameters.length !== b.parameters.length) return fail(`the first has ${a.parameters.length} parameters, the second ${b.parameters.length}`);
   const ca = compile(a);

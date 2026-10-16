@@ -119,7 +119,8 @@ export function voyagerClient(options: VoyagerOptions): VoyagerClient {
       });
       const reply = await withRetries(async () => completionOf((await send("/chat/completions", { method: "POST", body, raw: true })) as string, request));
       const choice = reply.choices?.[0];
-      const text = choice?.message?.content;
+      // A choice with no content, as when a model thinks until its limit, is an empty reply for the caller to judge.
+      const text = choice ? (choice.message?.content ?? "") : undefined;
       if (typeof text !== "string") throw new ModelError("invalid-response", `${request.model} returned no message for the ${request.stage} call`);
       const usage = reply.usage ?? {};
       const promptTokens = usage.prompt_tokens ?? 0;

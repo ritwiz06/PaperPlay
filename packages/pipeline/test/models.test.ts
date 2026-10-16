@@ -95,6 +95,8 @@ describe("structured replies", () => {
     // LaTeX written with one backslash is read as LaTeX, never as \b's backspace or \t's tab, and a
     // raw line break inside a string is escaped; JSON's own escapes still mean what they say.
     expect(extractJson('{"quote":"\\beta = 0.05, \\theta_N and \\sigma","note":"one\ntwo\\nthree \\"q\\" \\\\frac"}')).toEqual({ quote: "\\beta = 0.05, \\theta_N and \\sigma", note: "one\ntwo\nthree \"q\" \\frac" });
+    // A reply a gateway already decoded once, its "\frac" a form feed and "rac", has its commands back.
+    expect(extractJson('{"q":"\frac{dS}{dt} = \varLambda + \theta R, \beta I\nnext line"}')).toEqual({ q: "\\frac{dS}{dt} = \\varLambda + \\theta R, \\beta I\nnext line" });
     expect(() => extractJson("no JSON here")).toThrow(SyntaxError);
   });
 
@@ -112,6 +114,24 @@ describe("structured replies", () => {
     expect(client.calls[0]?.jsonSchema).toBeUndefined();
     expect(client.calls[0]?.messages.at(-1)?.content).toMatch(/^Reply with one JSON object and nothing else/);
     expect(client.calls[1]?.messages.at(-1)?.content).toMatch(/That reply cannot be used\. It does not match the schema:\n- groups:/);
+  });
+
+  it("asks afresh for plain JSON when a schema-held reply runs out of room or comes back empty", async () => {
+    for (const first of [{ text: '{\n  "groups": [ \t\t\n \t\t\n', finishReason: "length" }, { text: "", finishReason: "length" }, { text: "", finishReason: "stop" }]) {
+      const calls: ChatRequest[] = [];
+      const client: ModelClient = {
+        complete(next) {
+          calls.push(next);
+          return Promise.resolve(calls.length === 1 ? { ...reply(first.text, 10), finishReason: first.finishReason } : reply('{"groups":["S"]}', 10));
+        },
+      };
+      expect(await completeStructured(client, request(), Groups, { name: "groups", structuredOutput: true })).toEqual({ value: { groups: ["S"] }, attempts: 2 });
+      expect(calls[0]?.jsonSchema?.name).toBe("groups");
+      expect(calls[1]?.jsonSchema).toBeUndefined();
+      // Afresh: the cut-off reply is not sent back.
+      expect(calls[1]?.messages).toHaveLength(request().messages.length + 1);
+      expect(calls[1]?.messages.at(-1)?.content).toMatch(/^Reply with one JSON object and nothing else/);
+    }
   });
 
   it("fails after a second invalid reply, saying why", async () => {

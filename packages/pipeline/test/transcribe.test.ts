@@ -144,4 +144,10 @@ describe("[R10] two transcriptions compared up to renaming", () => {
     const a = gold();
     expect(matchModels(a, { ...a, compartments: a.compartments.slice(1), equations: a.equations.slice(1), observables: a.observables.slice(1) }).problems).toEqual(["the first has 5 compartments, the second 4"]);
   });
+
+  it("refuses the same equations in a different time unit, per day against per year", () => {
+    const a = gold();
+    const other = a.timeUnit === "day" ? "year" : "day";
+    expect(matchModels(a, { ...a, timeUnit: other })).toMatchObject({ structural: false, problems: [`the first's rates are per ${a.timeUnit}, the second's per ${other}`] });
+  });
 });

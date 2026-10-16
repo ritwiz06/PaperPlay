@@ -32,6 +32,9 @@ export const REVIEWER_INSTRUCTIONS = [
   "- If nothing is wrong, return no findings. Never invent a problem.",
 ].join("\n");
 
+/** Room for a reasoning model to think before it writes its findings: 8,000 ran out while thinking. */
+export const REVIEWER_MAX_TOKENS = 32_000;
+
 export function reviewerMessages(input: { readonly title: string; readonly world: string; readonly checks: string; readonly passages: string }): ChatMessage[] {
   return [
     { role: "system", content: REVIEWER_INSTRUCTIONS },
@@ -40,5 +43,5 @@ export function reviewerMessages(input: { readonly title: string; readonly world
 }
 
 export function review(client: ModelClient, model: string, input: Parameters<typeof reviewerMessages>[0], options: { readonly structuredOutput: boolean }) {
-  return completeStructured(client, { stage: "reviewer", model, messages: reviewerMessages(input), temperature: 0, maxTokens: 8000 }, Review, { name: "review", structuredOutput: options.structuredOutput });
+  return completeStructured(client, { stage: "reviewer", model, messages: reviewerMessages(input), temperature: 0, maxTokens: REVIEWER_MAX_TOKENS }, Review, { name: "review", structuredOutput: options.structuredOutput });
 }

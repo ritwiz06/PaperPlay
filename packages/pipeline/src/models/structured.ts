@@ -21,13 +21,17 @@ export function jsonSchemaOf(name: string, schema: z.ZodType): JsonSchemaFormat 
 const LATEX = new Set(
   "alpha beta gamma delta epsilon varepsilon zeta eta theta vartheta iota kappa lambda mu nu xi pi rho sigma tau upsilon phi varphi chi psi omega Gamma Delta Theta Lambda varLambda Xi Pi Sigma Phi Psi Omega frac dfrac tfrac times cdot left right mathrm mathbf mathit mathcal text textrm dv dot ddot bar hat tilde sqrt sum prod int partial nabla quad qquad label tag begin end leq geq neq approx infty ln log exp min max".split(" "),
 );
+/** The letter of the JSON escape that makes each control character. */
+const UNESCAPED: Readonly<Record<string, string>> = { "\b": "b", "\t": "t", "\n": "n", "\v": "v", "\f": "f", "\r": "r" };
 const ESCAPES = new Set(['"', "\\", "/", "b", "f", "n", "r", "t", "u"]);
 
 /**
- * A reply's JSON with two common slips mended inside its strings, so a parse never reads them
- * wrong: a raw control character, which JSON forbids, is escaped; and a backslash that begins a
- * LaTeX command, `\beta`, is kept as a backslash, where JSON would read `\b` as a backspace and
- * `\s` as an error. Valid JSON with no LaTeX in its strings passes through unchanged.
+ * A reply's JSON with three common slips mended inside its strings, so a parse never reads them
+ * wrong: a backslash that begins a LaTeX command, `\beta`, is kept as a backslash, where JSON
+ * would read `\b` as a backspace and `\s` as an error; a control character that such an escape
+ * already became, followed by the rest of the command's name, is the command again; and any other
+ * raw control character, which JSON forbids, is escaped. Valid JSON with no LaTeX in its strings
+ * passes through unchanged.
  */
 export function mendJson(body: string): string {
   let out = "";
@@ -51,7 +55,12 @@ export function mendJson(body: string): string {
         i++;
       }
     } else if (char.charCodeAt(0) < 0x20) {
-      out += char === "\n" ? "\\n" : char === "\r" ? "\\r" : char === "\t" ? "\\t" : `\\u${char.charCodeAt(0).toString(16).padStart(4, "0")}`;
+      // A control character that a JSON escape made of a LaTeX command's first letter, as a
+      // gateway that decoded the reply once leaves "\frac" as a form feed and "rac": restored.
+      const letter = UNESCAPED[char];
+      const word = letter === undefined ? "" : letter + (/^[A-Za-z]*/.exec(body.slice(i + 1))?.[0] ?? "");
+      if (letter !== undefined && LATEX.has(word)) out += `\\\\${letter}`;
+      else out += char === "\n" ? "\\n" : char === "\r" ? "\\r" : char === "\t" ? "\\t" : `\\u${char.charCodeAt(0).toString(16).padStart(4, "0")}`;
     } else out += char;
   }
   return out;
@@ -76,6 +85,9 @@ const issuesOf = (error: z.ZodError): string =>
 /**
  * Asks for a reply matching `schema`. With `structuredOutput`, the gateway holds the model to the
  * schema; without it, the schema goes in the prompt and the model is asked for one JSON object.
+ * A reply that fails is tried once more: with the error, to correct; or, when a schema-held reply
+ * ran out of room or came back empty (a model can loop on whitespace inside a schema, or think
+ * until its limit), afresh as plain JSON, the fallback every model gets alike.
  */
 export async function completeStructured<T>(
   client: ModelClient,
@@ -84,18 +96,18 @@ export async function completeStructured<T>(
   options: { readonly name: string; readonly structuredOutput: boolean },
 ): Promise<StructuredResult<T>> {
   const format = jsonSchemaOf(options.name, schema);
-  const messages: ChatMessage[] = options.structuredOutput
-    ? [...request.messages]
-    : [
-        ...request.messages,
-        {
-          role: "user",
-          content: `Reply with one JSON object and nothing else, no prose and no code fence. It must match this JSON Schema:\n${JSON.stringify(format.schema)}`,
-        },
-      ];
+  const plainly = (): ChatMessage[] => [
+    ...request.messages,
+    {
+      role: "user",
+      content: `Reply with one JSON object and nothing else, no prose and no code fence. It must match this JSON Schema:\n${JSON.stringify(format.schema)}`,
+    },
+  ];
+  let structured = options.structuredOutput;
+  let messages: ChatMessage[] = structured ? [...request.messages] : plainly();
   for (let attempt = 1; attempt <= 2; attempt++) {
     // Each call gets its own copy, so a retry's messages never rewrite what an earlier call was sent.
-    const response = await client.complete({ ...request, messages: [...messages], ...(options.structuredOutput ? { jsonSchema: format } : {}) });
+    const response = await client.complete({ ...request, messages: [...messages], ...(structured ? { jsonSchema: format } : {}) });
     let problem: string;
     try {
       const parsed = schema.safeParse(extractJson(response.text));
@@ -105,7 +117,10 @@ export async function completeStructured<T>(
       problem = `It is not valid JSON: ${error instanceof Error ? error.message : String(error)}`;
     }
     if (attempt === 2) throw new ModelError("invalid-response", `${request.model}'s ${request.stage} reply was invalid twice. ${problem}`);
-    messages.push({ role: "assistant", content: response.text }, { role: "user", content: `That reply cannot be used. ${problem}\nReply again with one corrected JSON object only.` });
+    if (structured && (response.finishReason === "length" || response.text.trim() === "")) {
+      structured = false;
+      messages = plainly();
+    } else messages.push({ role: "assistant", content: response.text }, { role: "user", content: `That reply cannot be used. ${problem}\nReply again with one corrected JSON object only.` });
   }
   throw new ModelError("invalid-response", "unreachable");
 }

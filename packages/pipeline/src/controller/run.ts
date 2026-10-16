@@ -15,13 +15,14 @@ import { fetchArxiv, fetchPmc, registerAndText, type Fetch } from "../ingest/ind
 import { completeStructured, type ModelClient, type Stage } from "../models/index.ts";
 import { sweepLevels, type LevelResult } from "../rule/sweep.ts";
 import { explain, type Explanation } from "../stages/explainer.ts";
-import { plan as planWorld, Plan, plannerMessages, type PlanLevel } from "../stages/planner.ts";
+import { plan as planWorld, Plan, PLANNER_MAX_TOKENS, plannerMessages, type PlanLevel } from "../stages/planner.ts";
 import { read } from "../stages/reader.ts";
 import { review, type Review } from "../stages/reviewer.ts";
 import { route } from "../stages/router.ts";
 import { promptSource } from "../stages/source.ts";
-import { transcribe, transcriberMessages } from "../stages/transcriber.ts";
+import { TRANSCRIBER_MAX_TOKENS, transcribe, transcriberMessages } from "../stages/transcriber.ts";
 import { toModelSpec } from "../transcribe/convert.ts";
+import { modelForComparison } from "../transcribe/score.ts";
 import { matchModels } from "../transcribe/match.ts";
 import { Transcription } from "../transcribe/schema.ts";
 
@@ -124,10 +125,12 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     const second = (await transcribe(input.client, modelFor("second-transcriber"), text, title, { structuredOutput: structured(modelFor("second-transcriber")), stage: "second-transcriber" })).value;
     sink.artifact("transcription-first", first);
     sink.artifact("transcription-second", second);
+    // The first transcription's quotes become the world's anchors, so every one must be found; the
+    // second exists to check the structure, so only its structure is compared, quotes aside.
     const compare = () => {
       const a = toModelSpec(first, text);
-      const b = toModelSpec(second, text);
-      const match = a.model && b.model ? matchModels(a.model, b.model) : null;
+      const b = modelForComparison(second, text);
+      const match = a.model && b ? matchModels(a.model, b) : null;
       return { a, b, match };
     };
     let compared = compare();
@@ -135,7 +138,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     if (!agree()) {
       if (repairs >= MAX_REPAIRS) throw new Stop("needs_information", "the two transcriptions disagree, and no repair is left");
       repairs++;
-      const why = [...compared.a.problems, ...compared.b.problems, ...(compared.match?.problems ?? [])].slice(0, 8);
+      const why = [...compared.a.problems, ...(compared.b ? [] : ["the second transcription does not become a model"]), ...(compared.match?.problems ?? [])].slice(0, 8);
       move("repairing", "transcription", `the two transcriptions disagree (${why.join("; ") || "they could not be compared"}); asking the first transcriber to check against the paper`);
       const messages = transcriberMessages(text, title);
       const retried = await completeStructured(
@@ -145,7 +148,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
           model: modelFor("transcriber"),
           messages: [...messages, { role: "assistant", content: JSON.stringify(first) }, { role: "user", content: `A second, independent reading of the paper disagrees with yours here:\n${why.map((line) => `- ${line}`).join("\n")}\nCheck each against the paper's own equations, table and text, and give the whole transcription again, corrected where the paper says so. Every quote must be copied exactly.` }],
           temperature: 0,
-          maxTokens: 16_000,
+          maxTokens: TRANSCRIBER_MAX_TOKENS,
         },
         Transcription,
         { name: "transcription", structuredOutput: structured(modelFor("transcriber")) },
@@ -171,11 +174,11 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     say("planning", "planning the levels");
     const behaviour = describeBehaviour(model, horizon);
     const plannerModel = modelFor("planner");
-    let plan: Plan = (await planWorld(input.client, plannerModel, { title, reading: reading.value, model, example: input.example, behaviour }, { structuredOutput: structured(plannerModel) })).value;
+    let plan: Plan = (await planWorld(input.client, plannerModel, { title, reading: reading.value, model, example: input.example, behaviour })).value;
     const passages = promptSource(text, { maxCharacters: 60_000 }).block;
     const modelWords = `${describeBehaviour(model, horizon).split("\n").slice(0, 3).join("\n")}`;
     const explainerModel = modelFor("explainer");
-    let explanation: Explanation = (await explain(input.client, explainerModel, { title, plan, passages, model: modelWords }, { structuredOutput: structured(explainerModel) })).value;
+    let explanation: Explanation = (await explain(input.client, explainerModel, { title, plan, passages, model: modelWords })).value;
 
     /** Asks the planner to change only the named levels, keeping the rest. */
     const replan = async (problems: readonly string[]): Promise<void> => {
@@ -184,12 +187,12 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       const messages = plannerMessages({ title, reading: reading.value, model, example: input.example, behaviour });
       const replanned = await completeStructured(
         input.client,
-        { stage: "planner", model: plannerModel, messages: [...messages, { role: "assistant", content: JSON.stringify(plan) }, { role: "user", content: `These problems were found:\n${problems.map((line) => `- ${line}`).join("\n")}\nChange only the levels named, as little as fixes them, and give the whole plan again.` }], temperature: 0, maxTokens: 12_000 },
+        { stage: "planner", model: plannerModel, messages: [...messages, { role: "assistant", content: JSON.stringify(plan) }, { role: "user", content: `These problems were found:\n${problems.map((line) => `- ${line}`).join("\n")}\nChange only the levels named, as little as fixes them, and give the whole plan again.` }], temperature: 0, maxTokens: PLANNER_MAX_TOKENS },
         Plan,
-        { name: "plan", structuredOutput: structured(plannerModel) },
+        { name: "plan", structuredOutput: false },
       );
       plan = replanned.value;
-      explanation = (await explain(input.client, explainerModel, { title, plan, passages, model: modelWords }, { structuredOutput: structured(explainerModel) })).value;
+      explanation = (await explain(input.client, explainerModel, { title, plan, passages, model: modelWords })).value;
     };
 
     // Building and running: assemble, build, sweep; repair the levels that fail, or drop them.

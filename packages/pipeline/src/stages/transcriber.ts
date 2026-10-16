@@ -21,6 +21,9 @@ export const TRANSCRIBER_INSTRUCTIONS = [
   "- Leave out anything the paper does not state as part of its model.",
 ].join("\n");
 
+/** A whole model, its quotes and values, with room to think first. */
+export const TRANSCRIBER_MAX_TOKENS = 16_000;
+
 export function transcriberMessages(source: SourceText, title: string): ChatMessage[] {
   return [
     { role: "system", content: TRANSCRIBER_INSTRUCTIONS },
@@ -31,7 +34,7 @@ export function transcriberMessages(source: SourceText, title: string): ChatMess
 export async function transcribe(client: ModelClient, model: string, source: SourceText, title: string, options: { readonly structuredOutput: boolean; readonly stage?: "transcriber" | "second-transcriber" }) {
   return completeStructured(
     client,
-    { stage: options.stage ?? "transcriber", model, messages: transcriberMessages(source, title), temperature: 0, maxTokens: 16_000 },
+    { stage: options.stage ?? "transcriber", model, messages: transcriberMessages(source, title), temperature: 0, maxTokens: TRANSCRIBER_MAX_TOKENS },
     Transcription,
     { name: "transcription", structuredOutput: options.structuredOutput },
   );

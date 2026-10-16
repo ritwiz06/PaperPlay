@@ -96,6 +96,13 @@ export function plannerMessages(input: { readonly title: string; readonly readin
   ];
 }
 
-export function plan(client: ModelClient, model: string, input: Parameters<typeof plannerMessages>[0], options: { readonly structuredOutput: boolean }) {
-  return completeStructured(client, { stage: "planner", model, messages: plannerMessages(input), temperature: 0, maxTokens: 32_000 }, Plan, { name: "plan", structuredOutput: options.structuredOutput });
+/**
+ * Always as plain JSON, validated by Zod, whatever the model honours (ADR-0035): held to this large
+ * a schema, models looped on whitespace or thought until their limit, and wrote nothing usable.
+ */
+/** Room for a reasoning model to think before it writes a plan: 12,000 ran out while thinking. */
+export const PLANNER_MAX_TOKENS = 32_000;
+
+export function plan(client: ModelClient, model: string, input: Parameters<typeof plannerMessages>[0]) {
+  return completeStructured(client, { stage: "planner", model, messages: plannerMessages(input), temperature: 0, maxTokens: PLANNER_MAX_TOKENS }, Plan, { name: "plan", structuredOutput: false });
 }

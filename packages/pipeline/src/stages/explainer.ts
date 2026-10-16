@@ -57,6 +57,10 @@ export function explainerMessages(input: { readonly title: string; readonly plan
   ];
 }
 
-export function explain(client: ModelClient, model: string, input: Parameters<typeof explainerMessages>[0], options: { readonly structuredOutput: boolean }) {
-  return completeStructured(client, { stage: "explainer", model, messages: explainerMessages(input), temperature: 0, maxTokens: 32_000 }, Explanation, { name: "explanation", structuredOutput: options.structuredOutput });
+/**
+ * Always as plain JSON, validated by Zod, whatever the model honours (ADR-0035): held to this large
+ * a schema, models looped on whitespace or thought until their limit, and wrote nothing usable.
+ */
+export function explain(client: ModelClient, model: string, input: Parameters<typeof explainerMessages>[0]) {
+  return completeStructured(client, { stage: "explainer", model, messages: explainerMessages(input), temperature: 0, maxTokens: 32_000 }, Explanation, { name: "explanation", structuredOutput: false });
 }

@@ -216,6 +216,14 @@ describe("[R10] [R11] the controller", () => {
     expect(client.calls.filter((call) => call.stage === "reviewer")).toHaveLength(0);
   }, 60_000);
 
+  it("checks only the second transcription's structure: a quote it miscopied does not stop the world", async () => {
+    const miscopied = transcription(0.1) as { equations: { quote: string }[] };
+    const second = { ...miscopied, equations: miscopied.equations.map((equation, index) => (index === 0 ? { ...equation, quote: "dS/dt = -beta S I, as copied wrongly" } : equation)) };
+    const { outcome, states } = await run(scripted(replies({ "second-transcriber": [second] })));
+    expect(outcome.state).toBe("ready");
+    expect(states).not.toContain("repairing");
+  }, 60_000);
+
   it("reads a plan that names things as the paper writes them, β and S, as the model's ids", async () => {
     const asPaper = { ...good(), levels: [planLevel(0, { control: { parameter: "β", label: "How easily it spreads", lowEnd: "Hardly", highEnd: "Easily" }, watch: "S", difference: { compartment: "S", summary: "at", at: 150, time: 150, relation: "lower", by: 20 } }), planLevel(1), planLevel(2)] };
     const { outcome, artifacts } = await run(scripted(replies({ planner: [asPaper] })));
