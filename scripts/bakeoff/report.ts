@@ -81,18 +81,27 @@ export function rankRouters(results: BakeoffResults): Ranked[] {
     .sort((a, b) => better(a.key, b.key));
 }
 
-/** The best transcriber, and the best of another vendor for the second transcription. */
-export function transcriberPair(results: BakeoffResults): { readonly first: Candidate | null; readonly second: Candidate | null } {
-  const ranked = rankTranscribers(results);
+/** Models the portal marks "Testing in progress": shown in the tables, never picked (the owner, 2026-10-16). */
+export interface Exclusion {
+  readonly asOf: string;
+  readonly models: readonly string[];
+}
+const NONE: Exclusion = { asOf: "", models: [] };
+/** The best of a table that may be picked. */
+const pick = (ranked: readonly Ranked[], excluded: Exclusion): Ranked | undefined => ranked.find((row) => !excluded.models.includes(row.model));
+
+/** The best transcriber, and the best of another vendor for the second transcription, neither excluded. */
+export function transcriberPair(results: BakeoffResults, excluded: Exclusion = NONE): { readonly first: Candidate | null; readonly second: Candidate | null } {
+  const ranked = rankTranscribers(results).filter((row) => !excluded.models.includes(row.model));
   const first = ranked[0] ?? null;
   const second = first ? (ranked.find((entry) => entry.vendor !== first.vendor) ?? null) : null;
   return { first: first && { model: first.model, vendor: first.vendor }, second: second && { model: second.model, vendor: second.vendor } };
 }
 
-const table = (header: readonly string[], rows: readonly Ranked[]): string[] => [
+const table = (header: readonly string[], rows: readonly Ranked[], excluded: Exclusion = NONE): string[] => [
   `| Rank | Model | Vendor | ${header.join(" | ")} |`,
   `|---|---|---|${header.map(() => "---|").join("")}`,
-  ...rows.map((row, index) => `| ${index + 1} | ${row.model} | ${row.vendor} | ${row.cells.join(" | ")} |`),
+  ...rows.map((row, index) => `| ${index + 1} | ${row.model}${excluded.models.includes(row.model) ? " (testing in progress, not picked)" : ""} | ${row.vendor} | ${row.cells.join(" | ")} |`),
 ];
 
 export function rankPlanners(results: BakeoffResults, design: DesignResults): Ranked[] {
@@ -132,11 +141,11 @@ export function rankReviewers(results: BakeoffResults, design: DesignResults): R
     .sort((a, b) => better(a.key, b.key));
 }
 
-export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { readonly paper: string; readonly structural: boolean; readonly values: boolean; readonly problems: readonly string[] }[], meta: { readonly date: string }, design?: DesignResults): string {
+export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { readonly paper: string; readonly structural: boolean; readonly values: boolean; readonly problems: readonly string[] }[], meta: { readonly date: string }, design?: DesignResults, excluded: Exclusion = NONE): string {
   const transcribers = rankTranscribers(results);
   const readers = rankReaders(results);
   const routers = rankRouters(results);
-  const pair = transcriberPair(results);
+  const pair = transcriberPair(results, excluded);
   const failures = [...results.transcriptions, ...results.readings, ...results.routes].filter((entry) => !entry.outcome.ok);
   return [
     "# The model bake-off",
@@ -147,15 +156,16 @@ export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { 
     `Run on ${meta.date}, on ASU Research Computing's Voyager gateway (ADR-0030). ${results.candidates.length} candidates from ${new Set(results.candidates.map((candidate) => candidate.vendor)).size} vendors;`,
     "the gold answers are three CC BY papers' models transcribed by hand (`eval/gold/`).",
     "",
-    "**Not yet a choice:** the Voyager portal marks some models \"Testing in progress\", which its API does not show. The",
-    "owner names them, and each stage takes the best of the rest.",
+    ...(excluded.models.length > 0
+      ? [`**Not picked:** the models the Voyager portal marks "Testing in progress", which its API does not show, as the owner saw them on ${excluded.asOf}: ${excluded.models.join(", ")}. They keep their rows, marked; each stage takes the best of the rest.`]
+      : ["**Not yet a choice:** the Voyager portal marks some models \"Testing in progress\", which its API does not show. The", "owner names them, and each stage takes the best of the rest."]),
     "",
     "## Transcription",
     "",
     "Each model transcribed each paper's model on its own. Ranked by equations that match the gold's up to renaming, then",
     "values read right (a value the paper also states for another scenario counts), then quotes the source holds.",
     "",
-    ...table(["Equations match", "Values right", "Quotes found", "Failed calls"], transcribers),
+    ...table(["Equations match", "Values right", "Quotes found", "Failed calls"], transcribers, excluded),
     "",
     `**First transcription:** ${pair.first ? `${pair.first.model} (${pair.first.vendor})` : "none"}. **Second, from another vendor:** ${pair.second ? `${pair.second.model} (${pair.second.vendor})` : "none"}.`,
     "",
@@ -173,14 +183,14 @@ export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { 
     "in the source, then the claims' quotes found, then the overlap of the equations it says define the model with the",
     "gold's (intersection over union), which the pipeline does not use.",
     "",
-    ...table(["Result quoted", "Claims quoted", "Equations overlap", "Failed calls"], readers),
+    ...table(["Result quoted", "Claims quoted", "Equations overlap", "Failed calls"], readers, excluded),
     "",
     "## Routing",
     "",
     `Each model routed ${results.routes.filter((route) => route.model === results.candidates[0]?.model).length} papers: the three gold papers, and arXiv abstracts of a flock, an optimiser, a training technique,`,
     "an epidemic on a network and a reaction-diffusion grid (`eval/routing/papers.json`).",
     "",
-    ...table(["Family and tier right", "Family right", "Tier right", "Failed calls"], routers),
+    ...table(["Family and tier right", "Family right", "Tier right", "Failed calls"], routers, excluded),
     "",
     ...(design
       ? [
@@ -191,7 +201,7 @@ export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { 
           "meeting the rule, then by their share of the levels planned, then by the levels that build. A first plan only: in a",
           "job, the controller shows the planner each failing level's measurement and asks it to change that level.",
           "",
-          ...table(["Levels meeting the rule", "Levels that build", "Failed calls", "First problem"], rankPlanners(results, design)),
+          ...table(["Levels meeting the rule", "Levels that build", "Failed calls", "First problem"], rankPlanners(results, design), excluded),
           "",
           "## Reviewing",
           "",
@@ -200,7 +210,7 @@ export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { 
           "calling the failed check acceptable, then the planted faults it blocks (levels 2 and 3), less any block on level 1,",
           "which has no fault.",
           "",
-          ...table(["Faults blocked", "Wrong blocks", "Called a failed check acceptable", "Failed calls"], rankReviewers(results, design)),
+          ...table(["Faults blocked", "Wrong blocks", "Called a failed check acceptable", "Failed calls"], rankReviewers(results, design), excluded),
           "",
         ]
       : []),
@@ -208,15 +218,15 @@ export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { 
     "",
     "| Stage | Proposed | Why |",
     "|---|---|---|",
-    `| reader | ${readers[0]?.model ?? "none"} | the best reader |`,
+    `| reader | ${pick(readers, excluded)?.model ?? "none"} | the best reader |`,
     `| transcriber | ${pair.first?.model ?? "none"} | the best transcriber |`,
     `| second-transcriber | ${pair.second?.model ?? "none"} | the best transcriber from another vendor |`,
-    `| router | ${routers[0]?.model ?? "none"} | the best router |`,
+    `| router | ${pick(routers, excluded)?.model ?? "none"} | the best router |`,
     ...(design
       ? [
-          `| planner | ${rankPlanners(results, design)[0]?.model ?? "none"} | the most levels meeting the level rule |`,
-          `| explainer | ${rankPlanners(results, design)[0]?.model ?? "none"} | the planner's model, which knows the plan; its words are held by the schema and their quotes by provenance, not ranked |`,
-          `| reviewer | ${rankReviewers(results, design)[0]?.model ?? "none"} | the most planted faults found, none blocked wrongly, no failed check called acceptable |`,
+          `| planner | ${pick(rankPlanners(results, design), excluded)?.model ?? "none"} | the most levels meeting the level rule |`,
+          `| explainer | ${pick(rankPlanners(results, design), excluded)?.model ?? "none"} | the planner's model, which knows the plan; its words are held by the schema and their quotes by provenance, not ranked |`,
+          `| reviewer | ${pick(rankReviewers(results, design), excluded)?.model ?? "none"} | the most planted faults found, none blocked wrongly, no failed check called acceptable |`,
         ]
       : ["| planner, explainer, reviewer | not yet | their bake-off runs after this one |"]),
     "",

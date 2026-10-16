@@ -20,16 +20,20 @@ export interface Candidate {
 
 /** Ten candidates, ten vendors; the probe found every one gives valid JSON (eval/models-probe.md). */
 export const CANDIDATES: readonly Candidate[] = Object.freeze([
-  { model: "qwen35-397b-a17b", vendor: "Qwen" },
+  // The first bake-off's candidates the portal does not mark "Testing in progress" (the owner, 2026-10-16)…
   { model: "glm-5-3", vendor: "Z.ai" },
-  { model: "deepseek-v4-1-flash", vendor: "DeepSeek" },
   { model: "gpt-oss-120b", vendor: "OpenAI" },
   { model: "llama4-maverick-17b", vendor: "Meta" },
   { model: "kimi-k2-7-code", vendor: "Moonshot AI" },
   { model: "gemma4-31b-it", vendor: "Google" },
-  { model: "minimax-m2-7", vendor: "MiniMax" },
   { model: "granite41-30b", vendor: "IBM" },
-  { model: "mimo-v2-6-flash", vendor: "Xiaomi" },
+  // …and the five the owner added, which the first never tried. The gateway names no maker for
+  // Muse-Glimmer; it counts as its own vendor.
+  { model: "inkling-small", vendor: "Thinking Machines" },
+  { model: "qwen38-27b", vendor: "Qwen" },
+  { model: "qwen3-235b-a22b-thinking-2507", vendor: "Qwen" },
+  { model: "qwen36-27b", vendor: "Qwen" },
+  { model: "muse-glimmer-30b", vendor: "Muse" },
 ]);
 
 export const GOLD_PAPERS: readonly string[] = Object.freeze(["arxiv-2506.19869v1", "arxiv-2203.01434v2", "pmc-PMC12334037"]);

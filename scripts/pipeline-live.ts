@@ -7,7 +7,8 @@
  *
  *   models   lists the gateway's models, with whatever it says about each
  *   probe    asks every chat model for structured output and for plain JSON; writes
- *            eval/models-probe.md and each model's finding into apps/api/models.json
+ *            eval/models-probe.md and each model's finding into apps/api/models.json;
+ *            `probe <model…>` asks only those named
  *   bakeoff  runs every candidate on every stage against the gold answers; writes
  *            eval/bakeoff/results.json and eval/models.md
  *   design   runs every candidate on planning and reviewing, after bakeoff; writes
@@ -42,6 +43,8 @@ async function models(): Promise<void> {
 
 async function probe(): Promise<void> {
   const client = liveClient();
+  const named = process.argv.slice(3);
+  if (named.length > 0) return probeNamed(client, named);
   const chat = (await client.listModels()).filter((model) => model.details.mode === "chat").sort((a, b) => a.id.localeCompare(b.id));
   const recorded = recordingClient(client, directoryStore(RECORDINGS));
   console.log(`probing ${chat.length} chat models`);
@@ -76,6 +79,28 @@ async function probe(): Promise<void> {
   console.log(`wrote eval/models-probe.md and ${results.length} findings to apps/api/models.json`);
 }
 
+/**
+ * `probe <model…>`: only the models named, such as a family member the gateway does not list on
+ * its own; each finding goes into apps/api/models.json and a row under the probe's later section.
+ */
+async function probeNamed(client: ReturnType<typeof liveClient>, names: readonly string[]): Promise<void> {
+  const recorded = recordingClient(client, directoryStore(RECORDINGS));
+  const listed = new Map((await client.listModels()).map((model) => [model.id, model]));
+  const results = await Promise.all(names.map((name) => probeModel(recorded, name, listed.get(name)?.details.supports_response_schema === true)));
+  for (const result of results) console.log(`${result.model.padEnd(30)} schema ${result.structured.padEnd(13)} plain JSON ${result.plainJson.padEnd(13)} ${result.correct ? "correct" : "WRONG"} ${result.notes}`);
+  const file = join(import.meta.dirname, "..", "eval", "models-probe.md");
+  const heading = "## Probed later, by name";
+  let text = readFileSync(file, "utf8");
+  if (!text.includes(heading)) text = `${text.trimEnd()}\n\n${heading}\n\nModels probed on their own with \`npm run pipeline:live -- probe <model…>\`, such as a family's member that the gateway's list does not show.\n\n| Date | Model | Listed by the gateway | With a schema | Plain JSON | Correct | Notes |\n|---|---|---|---|---|---|---|\n`;
+  const date = new Date().toISOString().slice(0, 10);
+  text = `${text.trimEnd()}\n${results.map((result) => `| ${date} | ${result.model} | ${listed.has(result.model) ? "yes" : "no"} | ${result.structured} | ${result.plainJson} | ${result.correct ? "yes" : "no"} | ${result.notes.replaceAll("|", "/")} |`).join("\n")}\n`;
+  writeFileSync(file, text);
+  const config = loadModelConfig();
+  const raw = JSON.parse(readFileSync(CONFIG_FILE, "utf8")) as Record<string, unknown>;
+  writeFileSync(CONFIG_FILE, `${JSON.stringify({ ...raw, structuredOutput: { ...config.structuredOutput, ...Object.fromEntries(results.map((result) => [result.model, result.structured === "honoured"])) } }, null, 2)}\n`);
+  console.log(`wrote ${results.length} findings to eval/models-probe.md and apps/api/models.json`);
+}
+
 async function bakeoff(): Promise<void> {
   const config = loadModelConfig();
   // The slow reasoning models can take minutes on a long paper; one retry only, so a timeout is not paid for twice over.
@@ -85,9 +110,9 @@ async function bakeoff(): Promise<void> {
   const folder = join(import.meta.dirname, "..", "eval", "bakeoff");
   mkdirSync(folder, { recursive: true });
   writeFileSync(join(folder, "results.json"), `${JSON.stringify(results, null, 2)}\n`);
-  const pair = transcriberPair(results);
+  const pair = transcriberPair(results, config.excluded);
   const agreed = pair.first && pair.second ? agreement(results, pair.first.model, pair.second.model) : [];
-  writeFileSync(join(import.meta.dirname, "..", "eval", "models.md"), toModelsMarkdown(results, agreed, { date: new Date().toISOString().slice(0, 10) }));
+  writeFileSync(join(import.meta.dirname, "..", "eval", "models.md"), toModelsMarkdown(results, agreed, { date: new Date().toISOString().slice(0, 10) }, undefined, config.excluded));
   console.log("wrote eval/bakeoff/results.json and eval/models.md");
 }
 
@@ -99,26 +124,27 @@ async function design(): Promise<void> {
   const folder = join(import.meta.dirname, "..", "eval", "bakeoff");
   const results = JSON.parse(readFileSync(join(folder, "results.json"), "utf8")) as BakeoffResults;
   // Each paper's reading from the best reader, as the controller would have it.
-  const best = rankReaders(results)[0]?.model;
+  const best = rankReaders(results).find((row) => !config.excluded.models.includes(row.model))?.model;
   const readings = Object.fromEntries(results.readings.filter((entry) => entry.model === best && entry.outcome.ok).map((entry) => [entry.paper, (entry.outcome as { value: unknown }).value])) as Record<string, never>;
   const designed: DesignResults = await runDesignBakeoff(client, config.structuredOutput, CANDIDATES, readings);
   writeFileSync(join(folder, "design.json"), `${JSON.stringify(designed, null, 2)}\n`);
-  const pair = transcriberPair(results);
+  const pair = transcriberPair(results, config.excluded);
   const agreed = pair.first && pair.second ? agreement(results, pair.first.model, pair.second.model) : [];
-  writeFileSync(join(import.meta.dirname, "..", "eval", "models.md"), toModelsMarkdown(results, agreed, { date: new Date().toISOString().slice(0, 10) }, designed));
+  writeFileSync(join(import.meta.dirname, "..", "eval", "models.md"), toModelsMarkdown(results, agreed, { date: new Date().toISOString().slice(0, 10) }, designed, config.excluded));
   console.log("wrote eval/bakeoff/design.json and eval/models.md");
 }
 
 /** eval/models.md again from eval/bakeoff/, with no call to the gateway. */
 async function report(): Promise<void> {
+  const config = loadModelConfig();
   const folder = join(import.meta.dirname, "..", "eval", "bakeoff");
   const results = JSON.parse(readFileSync(join(folder, "results.json"), "utf8")) as BakeoffResults;
   const designed = existsSync(join(folder, "design.json")) ? (JSON.parse(readFileSync(join(folder, "design.json"), "utf8")) as DesignResults) : undefined;
   const written = readFileSync(join(import.meta.dirname, "..", "eval", "models.md"), "utf8");
   const date = /Run on (\d{4}-\d{2}-\d{2})/.exec(written)?.[1] ?? new Date().toISOString().slice(0, 10);
-  const pair = transcriberPair(results);
+  const pair = transcriberPair(results, config.excluded);
   const agreed = pair.first && pair.second ? agreement(results, pair.first.model, pair.second.model) : [];
-  writeFileSync(join(import.meta.dirname, "..", "eval", "models.md"), toModelsMarkdown(results, agreed, { date }, designed));
+  writeFileSync(join(import.meta.dirname, "..", "eval", "models.md"), toModelsMarkdown(results, agreed, { date }, designed, config.excluded));
   await Promise.resolve();
   console.log("wrote eval/models.md");
 }

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "job-record/1",
+  "sourceId": "pmc-PMC12334037",
+  "world": "fixtures/worldspecs/generated/pmc-PMC12334037.json",
+  "recordedOn": "2026-10-16",
+  "note": "The first generated world's live job (ADR-0035), before the owner excluded the models the portal marks Testing in progress; kept so it replays as it was made.",
+  "stages": {
+    "reader": "kimi-k2-7-code",
+    "transcriber": "glm-5-3",
+    "second-transcriber": "qwen35-397b-a17b",
+    "router": "qwen35-397b-a17b",
+    "planner": "kimi-k2-7-code",
+    "explainer": "kimi-k2-7-code",
+    "reviewer": "qwen35-397b-a17b"
+  },
+  "structuredOutput": {
+    "glm-5-3": true,
+    "kimi-k2-7-code": true,
+    "qwen35-397b-a17b": true
+  }
+}

@@ -6,8 +6,7 @@ recorded in `fixtures/recordings/`, and a test replays them to the same scores. 
 Run on 2026-10-16, on ASU Research Computing's Voyager gateway (ADR-0030). 10 candidates from 10 vendors;
 the gold answers are three CC BY papers' models transcribed by hand (`eval/gold/`).
 
-**Not yet a choice:** the Voyager portal marks some models "Testing in progress", which its API does not show. The
-owner names them, and each stage takes the best of the rest.
+**Not picked:** the models the Voyager portal marks "Testing in progress", which its API does not show, as the owner saw them on 2026-10-16: qwen35-397b-a17b, deepseek-v4-1-flash, mimo-v2-6-flash, minimax-m2-7, minimax-m3, gemma3-27b-it, qwen3-vl-32b-thinking, north-mini-code, north-mini-code-glm, hemmingway-1, laguna-s-2-1, router-classifier-v2. They keep their rows, marked; each stage takes the best of the rest.
 
 ## Transcription
 
@@ -17,17 +16,17 @@ values read right (a value the paper also states for another scenario counts), t
 | Rank | Model | Vendor | Equations match | Values right | Quotes found | Failed calls |
 |---|---|---|---|---|---|---|
 | 1 | glm-5-3 | Z.ai | 3/3 | 49/51 | 62/79 | 0 |
-| 2 | qwen35-397b-a17b | Qwen | 3/3 | 40/51 | 70/77 | 0 |
+| 2 | qwen35-397b-a17b (testing in progress, not picked) | Qwen | 3/3 | 40/51 | 70/77 | 0 |
 | 3 | kimi-k2-7-code | Moonshot AI | 2/3 | 31/51 | 39/79 | 0 |
-| 4 | deepseek-v4-1-flash | DeepSeek | 2/3 | 26/51 | 71/71 | 0 |
+| 4 | deepseek-v4-1-flash (testing in progress, not picked) | DeepSeek | 2/3 | 26/51 | 71/71 | 0 |
 | 5 | gemma4-31b-it | Google | 2/3 | 23/51 | 68/79 | 0 |
-| 6 | minimax-m2-7 | MiniMax | 2/3 | 21/51 | 65/88 | 0 |
+| 6 | minimax-m2-7 (testing in progress, not picked) | MiniMax | 2/3 | 21/51 | 65/88 | 0 |
 | 7 | llama4-maverick-17b | Meta | 2/3 | 21/51 | 46/77 | 0 |
-| 8 | mimo-v2-6-flash | Xiaomi | 1/3 | 13/51 | 79/79 | 0 |
+| 8 | mimo-v2-6-flash (testing in progress, not picked) | Xiaomi | 1/3 | 13/51 | 79/79 | 0 |
 | 9 | granite41-30b | IBM | 1/3 | 10/51 | 37/66 | 0 |
 | 10 | gpt-oss-120b | OpenAI | 0/3 | 0/51 | 62/79 | 0 |
 
-**First transcription:** glm-5-3 (Z.ai). **Second, from another vendor:** qwen35-397b-a17b (Qwen).
+**First transcription:** glm-5-3 (Z.ai). **Second, from another vendor:** kimi-k2-7-code (Moonshot AI).
 
 ### The two transcriptions' agreement
 
@@ -35,8 +34,8 @@ The world is verified only where the two agree structurally, up to renaming (ADR
 
 | Paper | Equations agree | Values agree | What differs |
 |---|---|---|---|
-| arxiv-2506.19869v1 | yes | **no** | lambda is 15 in the first and 1658000 in the second; beta is 0.05 in the first and 7.75e-7 in the second; gamma is 0.48 in the first and 0.225 in the second |
-| arxiv-2203.01434v2 | yes | **no** | n0 is 500000000 in the first and 0 in the second; r0 is 200000000 in the first and 0 in the second |
+| arxiv-2506.19869v1 | yes | yes | nothing |
+| arxiv-2203.01434v2 | yes | yes | nothing |
 | pmc-PMC12334037 | yes | yes | nothing |
 
 ## Reading
@@ -48,13 +47,13 @@ gold's (intersection over union), which the pipeline does not use.
 | Rank | Model | Vendor | Result quoted | Claims quoted | Equations overlap | Failed calls |
 |---|---|---|---|---|---|---|
 | 1 | kimi-k2-7-code | Moonshot AI | 3/3 | 18/18 | 0.67 | 0 |
-| 2 | mimo-v2-6-flash | Xiaomi | 3/3 | 12/14 | 0.44 | 0 |
-| 3 | qwen35-397b-a17b | Qwen | 3/3 | 12/15 | 0.72 | 0 |
+| 2 | mimo-v2-6-flash (testing in progress, not picked) | Xiaomi | 3/3 | 12/14 | 0.44 | 0 |
+| 3 | qwen35-397b-a17b (testing in progress, not picked) | Qwen | 3/3 | 12/15 | 0.72 | 0 |
 | 4 | glm-5-3 | Z.ai | 2/3 | 12/12 | 0.67 | 0 |
 | 5 | gemma4-31b-it | Google | 2/3 | 3/3 | 0.67 | 0 |
 | 6 | granite41-30b | IBM | 2/3 | 8/13 | 0.78 | 0 |
-| 7 | minimax-m2-7 | MiniMax | 1/3 | 3/14 | 0.89 | 0 |
-| 8 | deepseek-v4-1-flash | DeepSeek | 1/3 | 0/0 | 0.67 | 0 |
+| 7 | minimax-m2-7 (testing in progress, not picked) | MiniMax | 1/3 | 3/14 | 0.89 | 0 |
+| 8 | deepseek-v4-1-flash (testing in progress, not picked) | DeepSeek | 1/3 | 0/0 | 0.67 | 0 |
 | 9 | gpt-oss-120b | OpenAI | 0/3 | 8/15 | 0.56 | 0 |
 | 10 | llama4-maverick-17b | Meta | 0/3 | 4/12 | 0.89 | 0 |
 
@@ -65,15 +64,15 @@ an epidemic on a network and a reaction-diffusion grid (`eval/routing/papers.jso
 
 | Rank | Model | Vendor | Family and tier right | Family right | Tier right | Failed calls |
 |---|---|---|---|---|---|---|
-| 1 | qwen35-397b-a17b | Qwen | 8/8 | 8/8 | 8/8 | 0 |
+| 1 | qwen35-397b-a17b (testing in progress, not picked) | Qwen | 8/8 | 8/8 | 8/8 | 0 |
 | 2 | glm-5-3 | Z.ai | 8/8 | 8/8 | 8/8 | 0 |
-| 3 | deepseek-v4-1-flash | DeepSeek | 8/8 | 8/8 | 8/8 | 0 |
+| 3 | deepseek-v4-1-flash (testing in progress, not picked) | DeepSeek | 8/8 | 8/8 | 8/8 | 0 |
 | 4 | gpt-oss-120b | OpenAI | 8/8 | 8/8 | 8/8 | 0 |
 | 5 | kimi-k2-7-code | Moonshot AI | 8/8 | 8/8 | 8/8 | 0 |
 | 6 | gemma4-31b-it | Google | 8/8 | 8/8 | 8/8 | 0 |
 | 7 | granite41-30b | IBM | 8/8 | 8/8 | 8/8 | 0 |
-| 8 | mimo-v2-6-flash | Xiaomi | 8/8 | 8/8 | 8/8 | 0 |
-| 9 | minimax-m2-7 | MiniMax | 7/8 | 8/8 | 7/8 | 0 |
+| 8 | mimo-v2-6-flash (testing in progress, not picked) | Xiaomi | 8/8 | 8/8 | 8/8 | 0 |
+| 9 | minimax-m2-7 (testing in progress, not picked) | MiniMax | 7/8 | 8/8 | 7/8 | 0 |
 | 10 | llama4-maverick-17b | Meta | 5/8 | 8/8 | 5/8 | 0 |
 
 ## Planning
@@ -87,14 +86,14 @@ job, the controller shows the planner each failing level's measurement and asks 
 |---|---|---|---|---|---|---|
 | 1 | kimi-k2-7-code | Moonshot AI | 6/13 | 10/13 | 0 | level 1: holds on 0 of 20 |
 | 2 | llama4-maverick-17b | Meta | 4/9 | 9/9 | 0 | level 1: holds on 0 of 20 |
-| 3 | minimax-m2-7 | MiniMax | 3/6 | 6/6 | 1 | level 1: holds on 0 of 20 |
-| 4 | qwen35-397b-a17b | Qwen | 3/9 | 9/9 | 0 | level 1: holds on 0 of 20 |
+| 3 | minimax-m2-7 (testing in progress, not picked) | MiniMax | 3/6 | 6/6 | 1 | level 1: holds on 0 of 20 |
+| 4 | qwen35-397b-a17b (testing in progress, not picked) | Qwen | 3/9 | 9/9 | 0 | level 1: holds on 0 of 20 |
 | 5 | gemma4-31b-it | Google | 1/9 | 2/9 | 0 | level 1: the summary's time lies within the level's time |
 | 6 | granite41-30b | IBM | 0/13 | 13/13 | 0 | level 1: holds on 0 of 20 |
 | 7 | gpt-oss-120b | OpenAI | 0/9 | 6/9 | 0 | level 1: holds on 0 of 20 |
 | 8 | glm-5-3 | Z.ai | 0/0 | 0/0 | 3 |  |
-| 9 | deepseek-v4-1-flash | DeepSeek | 0/0 | 0/0 | 3 |  |
-| 10 | mimo-v2-6-flash | Xiaomi | 0/0 | 0/0 | 3 |  |
+| 9 | deepseek-v4-1-flash (testing in progress, not picked) | DeepSeek | 0/0 | 0/0 | 3 |  |
+| 10 | mimo-v2-6-flash (testing in progress, not picked) | Xiaomi | 0/0 | 0/0 | 3 |  |
 
 ## Reviewing
 
@@ -105,15 +104,15 @@ which has no fault.
 
 | Rank | Model | Vendor | Faults blocked | Wrong blocks | Called a failed check acceptable | Failed calls |
 |---|---|---|---|---|---|---|
-| 1 | qwen35-397b-a17b | Qwen | 2/2 | 0 | no | 0 |
+| 1 | qwen35-397b-a17b (testing in progress, not picked) | Qwen | 2/2 | 0 | no | 0 |
 | 2 | glm-5-3 | Z.ai | 2/2 | 0 | no | 0 |
 | 3 | kimi-k2-7-code | Moonshot AI | 2/2 | 0 | no | 0 |
 | 4 | gemma4-31b-it | Google | 2/2 | 0 | no | 0 |
-| 5 | minimax-m2-7 | MiniMax | 2/2 | 0 | no | 0 |
-| 6 | mimo-v2-6-flash | Xiaomi | 2/2 | 0 | no | 0 |
+| 5 | minimax-m2-7 (testing in progress, not picked) | MiniMax | 2/2 | 0 | no | 0 |
+| 6 | mimo-v2-6-flash (testing in progress, not picked) | Xiaomi | 2/2 | 0 | no | 0 |
 | 7 | llama4-maverick-17b | Meta | 1/2 | 0 | no | 0 |
 | 8 | granite41-30b | IBM | 1/2 | 0 | no | 0 |
-| 9 | deepseek-v4-1-flash | DeepSeek | 0/2 | 0 | no | 1 |
+| 9 | deepseek-v4-1-flash (testing in progress, not picked) | DeepSeek | 0/2 | 0 | no | 1 |
 | 10 | gpt-oss-120b | OpenAI | 1/2 | 1 | no | 0 |
 
 ## Proposed per stage
@@ -122,11 +121,11 @@ which has no fault.
 |---|---|---|
 | reader | kimi-k2-7-code | the best reader |
 | transcriber | glm-5-3 | the best transcriber |
-| second-transcriber | qwen35-397b-a17b | the best transcriber from another vendor |
-| router | qwen35-397b-a17b | the best router |
+| second-transcriber | kimi-k2-7-code | the best transcriber from another vendor |
+| router | glm-5-3 | the best router |
 | planner | kimi-k2-7-code | the most levels meeting the level rule |
 | explainer | kimi-k2-7-code | the planner's model, which knows the plan; its words are held by the schema and their quotes by provenance, not ranked |
-| reviewer | qwen35-397b-a17b | the most planted faults found, none blocked wrongly, no failed check called acceptable |
+| reviewer | glm-5-3 | the most planted faults found, none blocked wrongly, no failed check called acceptable |
 
 ## Failed calls
 

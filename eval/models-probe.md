@@ -49,3 +49,11 @@ to its API, so none are left out here; the owner names them before any is chosen
 | qwen36-35b-a3b | yes | honoured | first reply | yes |  |
 | qwen38-27b | no | honoured | first reply | yes |  |
 | router-classifier-v2 | no | failed | failed | no | with a schema: the gateway answered 400: {"error":{"type":"invalid_request_error","code":null,"param":null,"message":"{\"error\":{\"message\":\"This model's maximum context le; plain JSON: the gateway answered 400: {"error":{"code":null,"param":null,"message":"{\"error\":{\"message\":\"This model's maximum context length is 4096 tokens. However, y |
+
+## Probed later, by name
+
+Models probed on their own with `npm run pipeline:live -- probe <model…>`, such as a family's member that the gateway's list does not show.
+
+| Date | Model | Listed by the gateway | With a schema | Plain JSON | Correct | Notes |
+|---|---|---|---|---|---|---|
+| 2026-10-16 | qwen3-235b-a22b-thinking-2507 | no | honoured | first reply | yes |  |

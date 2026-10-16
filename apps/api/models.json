@@ -8,11 +8,29 @@
   "stages": {
     "reader": "kimi-k2-7-code",
     "transcriber": "glm-5-3",
-    "second-transcriber": "qwen35-397b-a17b",
-    "router": "qwen35-397b-a17b",
+    "second-transcriber": "kimi-k2-7-code",
+    "router": "glm-5-3",
     "planner": "kimi-k2-7-code",
     "explainer": "kimi-k2-7-code",
-    "reviewer": "qwen35-397b-a17b"
+    "reviewer": "glm-5-3"
+  },
+  "excluded": {
+    "asOf": "2026-10-16",
+    "source": "the owner's snapshot of the Voyager portal, given on 2026-10-16",
+    "models": [
+      "qwen35-397b-a17b",
+      "deepseek-v4-1-flash",
+      "mimo-v2-6-flash",
+      "minimax-m2-7",
+      "minimax-m3",
+      "gemma3-27b-it",
+      "qwen3-vl-32b-thinking",
+      "north-mini-code",
+      "north-mini-code-glm",
+      "hemmingway-1",
+      "laguna-s-2-1",
+      "router-classifier-v2"
+    ]
   },
   "structuredOutput": {
     "deepseek-v4-1-flash": true,
@@ -53,6 +71,7 @@
     "qwen36-27b": true,
     "qwen36-35b-a3b": true,
     "qwen38-27b": true,
-    "router-classifier-v2": false
+    "router-classifier-v2": false,
+    "qwen3-235b-a22b-thinking-2507": true
   }
 }

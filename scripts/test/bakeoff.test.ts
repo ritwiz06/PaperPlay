@@ -28,17 +28,18 @@ describe("the model bake-off", () => {
   it("replays from its recordings to the same scores, and eval/models.md's tables follow from them", async () => {
     const replayed = await runBakeoff(replayClient(store()), loadModelConfig().structuredOutput, recorded.candidates);
     expect(comparable(replayed)).toEqual(comparable(recorded));
-    const pair = transcriberPair(replayed);
+    const { excluded } = loadModelConfig();
+    const pair = transcriberPair(replayed, excluded);
     const agreed = pair.first && pair.second ? agreement(replayed, pair.first.model, pair.second.model) : [];
     const written = readFileSync(join(root, "eval", "models.md"), "utf8");
     const date = /Run on (\d{4}-\d{2}-\d{2})/.exec(written)?.[1] ?? "";
     // Up to the design half, which has its own results file.
-    const [ours] = toModelsMarkdown(replayed, agreed, { date }).split("## Proposed per stage");
+    const [ours] = toModelsMarkdown(replayed, agreed, { date }, undefined, excluded).split("## Proposed per stage");
     expect(written.startsWith((ours ?? "").split("## Planning")[0] ?? "")).toBe(true);
   }, 120_000);
 
   it("replays its planning and reviewing to the same scores, from the best reader's readings", async () => {
-    const best = rankReaders(recorded)[0]?.model;
+    const best = rankReaders(recorded).find((row) => !loadModelConfig().excluded.models.includes(row.model))?.model;
     const readings = Object.fromEntries(recorded.readings.filter((entry) => entry.model === best && entry.outcome.ok).map((entry) => [entry.paper, (entry.outcome as { value: unknown }).value])) as Record<string, never>;
     const replayed = await runDesignBakeoff(replayClient(store()), loadModelConfig().structuredOutput, recorded.candidates, readings);
     expect(comparable(replayed)).toEqual(comparable(designed));

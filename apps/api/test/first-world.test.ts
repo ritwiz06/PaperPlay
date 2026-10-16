@@ -1,10 +1,9 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { SourceRegister, SourceText, type JobState } from "@paperplay/contracts";
-import { runJob, type JobSink } from "@paperplay/pipeline/controller";
+import { runJob, type JobConfig, type JobSink } from "@paperplay/pipeline/controller";
 import { directoryStore, replayClient } from "@paperplay/pipeline/models";
 import { describe, expect, it } from "vitest";
-import { loadModelConfig } from "../src/models/config.ts";
 import { workedExample } from "../src/runner.ts";
 
 // The first generated world (ADR-0035), fixtures/worldspecs/generated/pmc-PMC12334037.json, made
@@ -21,7 +20,8 @@ describe("[R10] [R11] the first generated world", () => {
     const text = SourceText.parse(read(`fixtures/sources/${SOURCE_ID}.json`));
     const register = SourceRegister.parse(read("fixtures/sources/register.json")).sources.find((entry) => entry.sourceId === SOURCE_ID);
     if (!register) throw new Error(`${SOURCE_ID} is not in the source register`);
-    const config = loadModelConfig();
+    // The models the job was made with, not today's picks: a recorded job replays as it was.
+    const config = read("fixtures/jobs/pmc-PMC12334037-2026-10-16.json") as JobConfig;
     const states: JobState[] = [];
     const artifacts = new Map<string, unknown>();
     const sink: JobSink = { emit: (state) => void (states.at(-1) === state ? undefined : states.push(state)), artifact: (name, value) => void artifacts.set(name, value) };

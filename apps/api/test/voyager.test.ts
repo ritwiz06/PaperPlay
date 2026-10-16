@@ -153,4 +153,18 @@ describe("[R09] the live client", () => {
     expect(Object.keys(config.stages).sort()).toEqual(["explainer", "planner", "reader", "reviewer", "router", "second-transcriber", "transcriber"]);
     expect(config.jobTokenBudget).toBeGreaterThan(0);
   });
+
+  it("refuses a model the portal marks \"Testing in progress\" in any stage, and uses none today", () => {
+    const config = loadModelConfig();
+    expect(config.excluded.models).toContain("qwen35-397b-a17b");
+    for (const model of Object.values(config.stages)) expect(config.excluded.models).not.toContain(model);
+    const folder = mkdtempSync(join(tmpdir(), "paperplay-config-"));
+    try {
+      const file = join(folder, "models.json");
+      writeFileSync(file, JSON.stringify({ ...config, stages: { ...config.stages, router: "qwen35-397b-a17b" } }));
+      expect(() => loadModelConfig(file)).toThrow(/Testing in progress/);
+    } finally {
+      rmSync(folder, { recursive: true, force: true });
+    }
+  });
 });
