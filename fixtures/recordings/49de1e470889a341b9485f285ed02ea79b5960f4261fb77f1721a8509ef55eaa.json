@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen36-27b",
+  "promptHash": "49de1e470889a341b9485f285ed02ea79b5960f4261fb77f1721a8509ef55eaa",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"domain\": \"compartments\", \"family\": \"compartments\", \"mechanism\": \"compartmental\", \"reason\": \"The paper explicitly develops and analyzes an SVEITRS compartmental model using a system of ordinary differential equations to track population flows between epidemiological states. This is a classic well-mixed compartmental mechanism, which is covered by the released compartments family.\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 898,
+      "completionTokens": 1355,
+      "totalTokens": 2253
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:34:54.502Z"
+}

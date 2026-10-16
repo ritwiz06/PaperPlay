@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "inkling-small",
+  "promptHash": "d7c9be9586fa85441e9645d34a62fae734c361857b736a8c7141686c367b671b",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\n\n\n\"domain\": \"networks\",\n\"family\": \"networks\",\n\"mechanism\": \"epidemic spreading on a scale-free contact network (absence of epidemic threshold via degree-heterogeneous dynamics)\",\n\"reason\": \"The paper models infection dynamics explicitly on scale-free network topology, not as a well-mixed compartment system; by the routing rule, contact-network epidemics belong to the networks family, which is not yet released.\",\n\"tier\": \"B\"\n}",
+    "usage": {
+      "promptTokens": 424,
+      "completionTokens": 646,
+      "totalTokens": 1070
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:29:42.781Z"
+}

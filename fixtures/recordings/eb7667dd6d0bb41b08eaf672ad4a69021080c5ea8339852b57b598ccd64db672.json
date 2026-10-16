@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen36-27b",
+  "promptHash": "eb7667dd6d0bb41b08eaf672ad4a69021080c5ea8339852b57b598ccd64db672",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"domain\": \"compartments\", \"family\": \"compartments\", \"mechanism\": \"well-mixed ODE system\", \"reason\": \"The paper models interacting cell populations (tumor, normal/immune, regulatory, B cells) using a system of coupled ordinary differential equations with mass-action/logistic interaction terms. This is a classic well-mixed compartmental dynamical system, not an agent-based, spatial, or network-topology model.\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 920,
+      "completionTokens": 1475,
+      "totalTokens": 2395
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:35:39.733Z"
+}

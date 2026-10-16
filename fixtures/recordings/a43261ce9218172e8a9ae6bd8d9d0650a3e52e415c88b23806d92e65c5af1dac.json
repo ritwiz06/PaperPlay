@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "transcriber",
+  "model": "qwen36-27b",
+  "promptHash": "a43261ce9218172e8a9ae6bd8d9d0650a3e52e415c88b23806d92e65c5af1dac",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"compartments\": [{\"id\": \"T\", \"initial\": null, \"initialQuote\": null, \"name\": \"Breast cancer cells\", \"quote\": \"T, N, R and B, respectively\", \"symbol\": \"T\", \"unit\": {\"cells\": 1}}, {\"id\": \"N\", \"initial\": null, \"initialQuote\": null, \"name\": \"NK cells\", \"quote\": \"T, N, R and B, respectively\", \"symbol\": \"N\", \"unit\": {\"cells\": 1}}, {\"id\": \"R\", \"initial\": null, \"initialQuote\": null, \"name\": \"Tregs\", \"quote\": \"T, N, R and B, respectively\", \"symbol\": \"R\", \"unit\": {\"cells\": 1}}, {\"id\": \"B\", \"initial\": null, \"initialQuote\": null, \"name\": \"tBregs\", \"quote\": \"T, N, R and B, respectively\", \"symbol\": \"B\", \"unit\": {\"cells\": 1}}], \"equations\": [{\"of\": \"T\", \"quote\": \"& dv{T}{t} = aT(1-bT) - cNT\", \"rate\": \"a*T*(1-b*T) - c*N*T\"}, {\"of\": \"N\", \"quote\": \"& dv{N}{t} = sigma - theta_N*N - gamma*R*N\", \"rate\": \"sigma - theta_N*N - gamma*R*N\"}, {\"of\": \"R\", \"quote\": \"& dv{R}{t} = kappa - theta_R*R + m_B*B*R\", \"rate\": \"kappa - theta_R*R + m_B*B*R\"}, {\"of\": \"B\", \"quote\": \"& dv{B}{t} = -theta_B*B + m_T*T*B\", \"rate\": \"-theta_B*B + m_T*T*B\"}], \"parameters\": [{\"id\": \"a\", \"name\": \"Tumour growth rate\", \"quote\": \"0.15\", \"symbol\": \"a\", \"unit\": {\"time\": -1}, \"value\": 0.15}, {\"id\": \"b\", \"name\": \"Inverse of the tumour carrying capacity\", \"quote\": \"$1 cdot 10^{-9}$\", \"symbol\": \"b\", \"unit\": {\"cells\": -1}, \"value\": 1e-9}, {\"id\": \"c\", \"name\": \"Rate of NK-induced tumour death\", \"quote\": \"varied\", \"symbol\": \"c\", \"unit\": {\"cells\": -1, \"time\": -1}, \"value\": null}, {\"id\": \"sigma\", \"name\": \"Constant source of NK cells\", \"quote\": \"$5 cdot 10^7$\", \"symbol\": \"sigma\", \"unit\": {\"cells\": 1, \"time\": -1}, \"value\": 5e7}, {\"id\": \"theta_N\", \"name\": \"Rate of programmable NK cell death\", \"quote\": \"0.07\", \"symbol\": \"theta_N\", \"unit\": {\"time\": -1}, \"value\": 0.07}, {\"id\": \"gamma\", \"name\": \"Rate of NK cell death due to Tregs\", \"quote\": \"$1 cdot 10^{-10}$\", \"symbol\": \"gamma\", \"unit\": {\"cells\": -1, \"time\": -1}, \"value\": 1e-10}, {\"id\": \"kappa\", \"name\": \"Constant source of Tregs\", \"quote\": \"$1 cdot 10^7$\", \"symbol\": \"kappa\", \"unit\": {\"cells\": 1, \"time\": -1}, \"value\": 1e7}, {\"id\": \"theta_R\", \"name\": \"Rate of programmable Treg death\", \"quote\": \"0.03851\", \"symbol\": \"theta_R\", \"unit\": {\"time\": -1}, \"value\": 0.03851}, {\"id\": \"m_B\", \"name\": \"Rate of tBreg-induced Treg activation\", \"quote\": \"$3 cdot 10^{-8}$\", \"symbol\": \"m_B\", \"unit\": {\"cells\": -1, \"time\": -1}, \"value\": 3e-8}, {\"id\": \"theta_B\", \"name\": \"Rate of programmable tBreg cell death\", \"quote\": \"0.4\", \"symbol\": \"theta_B\", \"unit\": {\"time\": -1}, \"value\": 0.4}, {\"id\": \"m_T\", \"name\": \"Rate of breast-cancer-induced tBreg activation\", \"quote\": \"varied\", \"symbol\": \"m_T\", \"unit\": {\"cells\": -1, \"time\": -1}, \"value\": null}], \"timeUnit\": \"day\"}",
+    "usage": {
+      "promptTokens": 36707,
+      "completionTokens": 8855,
+      "totalTokens": 45562
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:25:36.738Z"
+}

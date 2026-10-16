@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen3-235b-a22b-thinking-2507",
+  "promptHash": "b4f1c6425c35d516c15d38f6590be649c7efad57716e0ad0782408eeaa3738bb",
+  "response": {
+    "model": "qwen3-235b-a22b-thinking-2507",
+    "text": "{\"domain\": \"grids\", \"family\": \"grids\", \"mechanism\": \"reaction-diffusion system with spot formation, growth, division, and decay based on local density\", \"reason\": \"The paper describes a reaction-diffusion model producing spatio-temporal patterns including spots that grow, divide at critical size, and decay when overcrowded. Reaction-diffusion systems are field-based models implemented on spatial grids where local reaction and diffusion rules create emergent patterns. This matches the 'grids' family (fields on a grid), though it's marked as not released yet.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 390,
+      "completionTokens": 1119,
+      "totalTokens": 1509
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:50:00.171Z"
+}

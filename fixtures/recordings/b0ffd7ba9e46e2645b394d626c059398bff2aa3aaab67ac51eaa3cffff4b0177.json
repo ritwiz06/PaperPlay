@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "planner",
+  "model": "kimi-k2-7-code",
+  "promptHash": "b0ffd7ba9e46e2645b394d626c059398bff2aa3aaab67ac51eaa3cffff4b0177",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": "",
+    "usage": {
+      "promptTokens": 2922,
+      "completionTokens": 32000,
+      "totalTokens": 34922
+    },
+    "finishReason": "length"
+  },
+  "recordedAt": "2026-10-16T20:18:26.919Z"
+}

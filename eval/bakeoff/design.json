@@ -2,42 +2,6 @@
   "schemaVersion": "bakeoff-design/1",
   "plans": [
     {
-      "model": "qwen35-397b-a17b",
-      "paper": "arxiv-2506.19869v1",
-      "ok": true,
-      "error": null,
-      "score": {
-        "levels": 3,
-        "built": 3,
-        "meetRule": 2,
-        "note": "level 1: holds on 0 of 20"
-      }
-    },
-    {
-      "model": "qwen35-397b-a17b",
-      "paper": "arxiv-2203.01434v2",
-      "ok": true,
-      "error": null,
-      "score": {
-        "levels": 3,
-        "built": 3,
-        "meetRule": 0,
-        "note": "level 1: holds on 0 of 20"
-      }
-    },
-    {
-      "model": "qwen35-397b-a17b",
-      "paper": "pmc-PMC12334037",
-      "ok": true,
-      "error": null,
-      "score": {
-        "levels": 3,
-        "built": 3,
-        "meetRule": 1,
-        "note": "level 1: holds on 0 of 20"
-      }
-    },
-    {
       "model": "glm-5-3",
       "paper": "arxiv-2506.19869v1",
       "ok": false,
@@ -46,6 +10,7 @@
         "levels": 0,
         "built": 0,
         "meetRule": 0,
+        "onFindings": false,
         "note": ""
       }
     },
@@ -53,11 +18,12 @@
       "model": "glm-5-3",
       "paper": "arxiv-2203.01434v2",
       "ok": false,
-      "error": "glm-5-3's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object",
+      "error": "the gateway did not answer within 1800000 ms",
       "score": {
         "levels": 0,
         "built": 0,
         "meetRule": 0,
+        "onFindings": false,
         "note": ""
       }
     },
@@ -70,42 +36,7 @@
         "levels": 0,
         "built": 0,
         "meetRule": 0,
-        "note": ""
-      }
-    },
-    {
-      "model": "deepseek-v4-1-flash",
-      "paper": "arxiv-2506.19869v1",
-      "ok": false,
-      "error": "no recording of this planner call to deepseek-v4-1-flash (prompt f8431d2e2547); record it with npm run pipeline:live",
-      "score": {
-        "levels": 0,
-        "built": 0,
-        "meetRule": 0,
-        "note": ""
-      }
-    },
-    {
-      "model": "deepseek-v4-1-flash",
-      "paper": "arxiv-2203.01434v2",
-      "ok": false,
-      "error": "no recording of this planner call to deepseek-v4-1-flash (prompt e6c9400fb3b4); record it with npm run pipeline:live",
-      "score": {
-        "levels": 0,
-        "built": 0,
-        "meetRule": 0,
-        "note": ""
-      }
-    },
-    {
-      "model": "deepseek-v4-1-flash",
-      "paper": "pmc-PMC12334037",
-      "ok": false,
-      "error": "no recording of this planner call to deepseek-v4-1-flash (prompt 78e3b1b280e3); record it with npm run pipeline:live",
-      "score": {
-        "levels": 0,
-        "built": 0,
-        "meetRule": 0,
+        "onFindings": false,
         "note": ""
       }
     },
@@ -116,80 +47,87 @@
       "error": null,
       "score": {
         "levels": 3,
-        "built": 3,
+        "built": 0,
         "meetRule": 0,
-        "note": "level 1: holds on 0 of 20"
+        "onFindings": false,
+        "note": "level 1: the level's time takes 37.5 s to watch at 4x, more than the level rule's 20 s"
       }
     },
     {
       "model": "gpt-oss-120b",
       "paper": "arxiv-2203.01434v2",
-      "ok": true,
-      "error": null,
-      "score": {
-        "levels": 3,
-        "built": 0,
-        "meetRule": 0,
-        "note": "level 1: must be a camelCase parameter name"
-      }
-    },
-    {
-      "model": "gpt-oss-120b",
-      "paper": "pmc-PMC12334037",
-      "ok": true,
-      "error": null,
-      "score": {
-        "levels": 3,
-        "built": 3,
-        "meetRule": 0,
-        "note": "level 1: holds on 0 of 20"
-      }
-    },
-    {
-      "model": "llama4-maverick-17b",
-      "paper": "arxiv-2506.19869v1",
       "ok": true,
       "error": null,
       "score": {
         "levels": 3,
         "built": 3,
         "meetRule": 1,
+        "onFindings": false,
         "note": "level 1: holds on 0 of 20"
       }
     },
     {
-      "model": "llama4-maverick-17b",
-      "paper": "arxiv-2203.01434v2",
-      "ok": true,
-      "error": null,
-      "score": {
-        "levels": 3,
-        "built": 3,
-        "meetRule": 2,
-        "note": "level 1: holds on 0 of 20"
-      }
-    },
-    {
-      "model": "llama4-maverick-17b",
+      "model": "gpt-oss-120b",
       "paper": "pmc-PMC12334037",
-      "ok": true,
-      "error": null,
-      "score": {
-        "levels": 3,
-        "built": 3,
-        "meetRule": 1,
-        "note": "level 1: holds on 0 of 20"
-      }
-    },
-    {
-      "model": "kimi-k2-7-code",
-      "paper": "arxiv-2506.19869v1",
       "ok": true,
       "error": null,
       "score": {
         "levels": 4,
         "built": 4,
-        "meetRule": 3,
+        "meetRule": 0,
+        "onFindings": true,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "llama4-maverick-17b",
+      "paper": "arxiv-2506.19869v1",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 3,
+        "meetRule": 1,
+        "onFindings": false,
+        "note": "level 2: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "llama4-maverick-17b",
+      "paper": "arxiv-2203.01434v2",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 3,
+        "meetRule": 1,
+        "onFindings": false,
+        "note": "level 2: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "llama4-maverick-17b",
+      "paper": "pmc-PMC12334037",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 3,
+        "meetRule": 0,
+        "onFindings": true,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "kimi-k2-7-code",
+      "paper": "arxiv-2506.19869v1",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 4,
+        "built": 3,
+        "meetRule": 1,
+        "onFindings": true,
         "note": "level 1: holds on 0 of 20"
       }
     },
@@ -200,8 +138,9 @@
       "error": null,
       "score": {
         "levels": 4,
-        "built": 3,
+        "built": 1,
         "meetRule": 1,
+        "onFindings": false,
         "note": "level 1: Too big: expected number to be <=2000000"
       }
     },
@@ -211,9 +150,10 @@
       "ok": true,
       "error": null,
       "score": {
-        "levels": 5,
-        "built": 3,
-        "meetRule": 2,
+        "levels": 4,
+        "built": 0,
+        "meetRule": 0,
+        "onFindings": true,
         "note": "level 1: must be a camelCase parameter name"
       }
     },
@@ -224,9 +164,10 @@
       "error": null,
       "score": {
         "levels": 3,
-        "built": 1,
-        "meetRule": 0,
-        "note": "level 1: the summary's time lies within the level's time"
+        "built": 3,
+        "meetRule": 3,
+        "onFindings": true,
+        "note": ""
       }
     },
     {
@@ -236,222 +177,370 @@
       "error": null,
       "score": {
         "levels": 3,
-        "built": 0,
-        "meetRule": 0,
-        "note": "level 1: Too small: expected number to be >0"
+        "built": 2,
+        "meetRule": 1,
+        "onFindings": false,
+        "note": "level 1: Too big: expected number to be <=2000000"
       }
     },
     {
       "model": "gemma4-31b-it",
       "paper": "pmc-PMC12334037",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 3,
+        "meetRule": 1,
+        "onFindings": true,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "granite41-30b",
+      "paper": "arxiv-2506.19869v1",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 5,
+        "built": 5,
+        "meetRule": 1,
+        "onFindings": true,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "granite41-30b",
+      "paper": "arxiv-2203.01434v2",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 5,
+        "built": 5,
+        "meetRule": 1,
+        "onFindings": true,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "granite41-30b",
+      "paper": "pmc-PMC12334037",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 3,
+        "meetRule": 0,
+        "onFindings": true,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "inkling-small",
+      "paper": "arxiv-2506.19869v1",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 4,
+        "built": 4,
+        "meetRule": 0,
+        "onFindings": true,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "inkling-small",
+      "paper": "arxiv-2203.01434v2",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 2,
+        "meetRule": 1,
+        "onFindings": false,
+        "note": "level 1: Too big: expected number to be <=2000000"
+      }
+    },
+    {
+      "model": "inkling-small",
+      "paper": "pmc-PMC12334037",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 4,
+        "built": 3,
+        "meetRule": 0,
+        "onFindings": true,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "qwen38-27b",
+      "paper": "arxiv-2506.19869v1",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 4,
+        "built": 4,
+        "meetRule": 0,
+        "onFindings": true,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "qwen38-27b",
+      "paper": "arxiv-2203.01434v2",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 4,
+        "built": 3,
+        "meetRule": 2,
+        "onFindings": false,
+        "note": "level 1: Too big: expected number to be <=2000000"
+      }
+    },
+    {
+      "model": "qwen38-27b",
+      "paper": "pmc-PMC12334037",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 4,
+        "built": 4,
+        "meetRule": 0,
+        "onFindings": true,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "qwen3-235b-a22b-thinking-2507",
+      "paper": "arxiv-2506.19869v1",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 4,
+        "built": 4,
+        "meetRule": 1,
+        "onFindings": true,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "qwen3-235b-a22b-thinking-2507",
+      "paper": "arxiv-2203.01434v2",
       "ok": true,
       "error": null,
       "score": {
         "levels": 3,
         "built": 1,
         "meetRule": 1,
-        "note": "level 1: Too big: expected number to be <=0.04"
+        "onFindings": true,
+        "note": "level 1: the what-if changes nothing: every override equals the level's own value"
       }
     },
     {
-      "model": "minimax-m2-7",
-      "paper": "arxiv-2506.19869v1",
-      "ok": false,
-      "error": "minimax-m2-7's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object",
+      "model": "qwen3-235b-a22b-thinking-2507",
+      "paper": "pmc-PMC12334037",
+      "ok": true,
+      "error": null,
       "score": {
-        "levels": 0,
-        "built": 0,
-        "meetRule": 0,
-        "note": ""
+        "levels": 4,
+        "built": 4,
+        "meetRule": 1,
+        "onFindings": true,
+        "note": "level 1: holds on 0 of 20"
       }
     },
     {
-      "model": "minimax-m2-7",
-      "paper": "arxiv-2203.01434v2",
+      "model": "qwen36-27b",
+      "paper": "arxiv-2506.19869v1",
       "ok": true,
       "error": null,
       "score": {
         "levels": 3,
         "built": 3,
-        "meetRule": 0,
+        "meetRule": 1,
+        "onFindings": true,
         "note": "level 1: holds on 0 of 20"
       }
     },
     {
-      "model": "minimax-m2-7",
+      "model": "qwen36-27b",
+      "paper": "arxiv-2203.01434v2",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 4,
+        "built": 3,
+        "meetRule": 2,
+        "onFindings": false,
+        "note": "level 1: Too big: expected number to be <=2000000"
+      }
+    },
+    {
+      "model": "qwen36-27b",
       "paper": "pmc-PMC12334037",
       "ok": true,
       "error": null,
       "score": {
         "levels": 3,
         "built": 3,
-        "meetRule": 3,
-        "note": ""
+        "meetRule": 1,
+        "onFindings": true,
+        "note": "level 1: holds on 0 of 20"
       }
     },
     {
-      "model": "granite41-30b",
+      "model": "muse-glimmer-30b",
       "paper": "arxiv-2506.19869v1",
       "ok": true,
       "error": null,
       "score": {
-        "levels": 5,
-        "built": 5,
-        "meetRule": 0,
+        "levels": 4,
+        "built": 4,
+        "meetRule": 2,
+        "onFindings": true,
         "note": "level 1: holds on 0 of 20"
       }
     },
     {
-      "model": "granite41-30b",
+      "model": "muse-glimmer-30b",
       "paper": "arxiv-2203.01434v2",
       "ok": true,
       "error": null,
       "score": {
-        "levels": 5,
-        "built": 5,
-        "meetRule": 0,
-        "note": "level 1: holds on 0 of 20"
-      }
-    },
-    {
-      "model": "granite41-30b",
-      "paper": "pmc-PMC12334037",
-      "ok": true,
-      "error": null,
-      "score": {
-        "levels": 3,
+        "levels": 4,
         "built": 3,
         "meetRule": 0,
-        "note": "level 1: holds on 0 of 20"
+        "onFindings": true,
+        "note": "level 1: Too big: expected number to be <=2000000"
       }
     },
     {
-      "model": "mimo-v2-6-flash",
-      "paper": "arxiv-2506.19869v1",
-      "ok": false,
-      "error": "mimo-v2-6-flash's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object",
-      "score": {
-        "levels": 0,
-        "built": 0,
-        "meetRule": 0,
-        "note": ""
-      }
-    },
-    {
-      "model": "mimo-v2-6-flash",
-      "paper": "arxiv-2203.01434v2",
-      "ok": false,
-      "error": "mimo-v2-6-flash's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object",
-      "score": {
-        "levels": 0,
-        "built": 0,
-        "meetRule": 0,
-        "note": ""
-      }
-    },
-    {
-      "model": "mimo-v2-6-flash",
+      "model": "muse-glimmer-30b",
       "paper": "pmc-PMC12334037",
-      "ok": false,
-      "error": "mimo-v2-6-flash's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object",
+      "ok": true,
+      "error": null,
       "score": {
-        "levels": 0,
-        "built": 0,
-        "meetRule": 0,
-        "note": ""
+        "levels": 4,
+        "built": 3,
+        "meetRule": 1,
+        "onFindings": true,
+        "note": "level 1: holds on 0 of 20"
       }
     }
   ],
   "reviews": [
     {
-      "model": "qwen35-397b-a17b",
-      "ok": true,
-      "error": null,
-      "found": 2,
-      "planted": 2,
-      "falseBlocks": 0,
-      "calledFailedAcceptable": false
-    },
-    {
       "model": "glm-5-3",
       "ok": true,
       "error": null,
-      "found": 2,
-      "planted": 2,
+      "found": 1,
+      "planted": 3,
       "falseBlocks": 0,
-      "calledFailedAcceptable": false
-    },
-    {
-      "model": "deepseek-v4-1-flash",
-      "ok": false,
-      "error": "no recording of this reviewer call to deepseek-v4-1-flash (prompt 3e361ff99e38); record it with npm run pipeline:live",
-      "found": 0,
-      "planted": 2,
-      "falseBlocks": 0,
-      "calledFailedAcceptable": false
+      "calledFailedAcceptable": false,
+      "definitional": false
     },
     {
       "model": "gpt-oss-120b",
       "ok": true,
       "error": null,
-      "found": 1,
-      "planted": 2,
-      "falseBlocks": 1,
-      "calledFailedAcceptable": false
+      "found": 2,
+      "planted": 3,
+      "falseBlocks": 0,
+      "calledFailedAcceptable": false,
+      "definitional": true
     },
     {
       "model": "llama4-maverick-17b",
       "ok": true,
       "error": null,
-      "found": 1,
-      "planted": 2,
+      "found": 0,
+      "planted": 3,
       "falseBlocks": 0,
-      "calledFailedAcceptable": false
+      "calledFailedAcceptable": false,
+      "definitional": false
     },
     {
       "model": "kimi-k2-7-code",
       "ok": true,
       "error": null,
-      "found": 2,
-      "planted": 2,
+      "found": 1,
+      "planted": 3,
       "falseBlocks": 0,
-      "calledFailedAcceptable": false
+      "calledFailedAcceptable": false,
+      "definitional": false
     },
     {
       "model": "gemma4-31b-it",
       "ok": true,
       "error": null,
-      "found": 2,
-      "planted": 2,
+      "found": 3,
+      "planted": 3,
       "falseBlocks": 0,
-      "calledFailedAcceptable": false
-    },
-    {
-      "model": "minimax-m2-7",
-      "ok": true,
-      "error": null,
-      "found": 2,
-      "planted": 2,
-      "falseBlocks": 0,
-      "calledFailedAcceptable": false
+      "calledFailedAcceptable": false,
+      "definitional": true
     },
     {
       "model": "granite41-30b",
       "ok": true,
       "error": null,
       "found": 1,
-      "planted": 2,
+      "planted": 3,
       "falseBlocks": 0,
-      "calledFailedAcceptable": false
+      "calledFailedAcceptable": false,
+      "definitional": false
     },
     {
-      "model": "mimo-v2-6-flash",
+      "model": "inkling-small",
       "ok": true,
       "error": null,
       "found": 2,
-      "planted": 2,
+      "planted": 3,
       "falseBlocks": 0,
-      "calledFailedAcceptable": false
+      "calledFailedAcceptable": false,
+      "definitional": true
+    },
+    {
+      "model": "qwen38-27b",
+      "ok": true,
+      "error": null,
+      "found": 3,
+      "planted": 3,
+      "falseBlocks": 0,
+      "calledFailedAcceptable": false,
+      "definitional": true
+    },
+    {
+      "model": "qwen3-235b-a22b-thinking-2507",
+      "ok": true,
+      "error": null,
+      "found": 2,
+      "planted": 3,
+      "falseBlocks": 0,
+      "calledFailedAcceptable": false,
+      "definitional": true
+    },
+    {
+      "model": "qwen36-27b",
+      "ok": true,
+      "error": null,
+      "found": 3,
+      "planted": 3,
+      "falseBlocks": 0,
+      "calledFailedAcceptable": false,
+      "definitional": true
+    },
+    {
+      "model": "muse-glimmer-30b",
+      "ok": true,
+      "error": null,
+      "found": 2,
+      "planted": 3,
+      "falseBlocks": 0,
+      "calledFailedAcceptable": false,
+      "definitional": true
     }
   ]
 }

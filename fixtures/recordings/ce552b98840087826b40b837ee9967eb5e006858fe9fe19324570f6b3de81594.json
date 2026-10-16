@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "muse-glimmer-30b",
+  "promptHash": "ce552b98840087826b40b837ee9967eb5e006858fe9fe19324570f6b3de81594",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"domain\":\"machine learning\",\"mechanism\":\"Randomly dropping half of feature detectors per training case to prevent co-adaptation and improve generalization of feedforward neural networks\",\"family\":\"learning\",\"tier\":\"B\",\"reason\":\"Paper describes dropout regularization as a training procedure for neural networks. This is a learning algorithm, covered by the learning family which is not yet released, so tier B.\"}",
+    "usage": {
+      "promptTokens": 605,
+      "completionTokens": 756,
+      "totalTokens": 1361
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:24:30.625Z"
+}

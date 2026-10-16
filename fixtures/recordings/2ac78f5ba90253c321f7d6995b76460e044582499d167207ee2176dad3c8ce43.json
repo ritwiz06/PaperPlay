@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "muse-glimmer-30b",
+  "promptHash": "2ac78f5ba90253c321f7d6995b76460e044582499d167207ee2176dad3c8ce43",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"domain\":\"Reaction-diffusion spatiotemporal dynamics\",\"mechanism\":\"Simple reaction-diffusion system simulated numerically showing irregular spatio-temporal patterns from finite-amplitude perturbations, with spots growing to a critical size then dividing, and overcrowding leading to decay back to uniform background\",\"family\":\"grids\",\"tier\":\"B\",\"reason\":\"The mechanism is a spatially extended reaction-diffusion field with pattern formation, spot growth/division and collapse, naturally represented as fields on a grid. The grids family is not released yet, so the match is tier B.\"}",
+    "usage": {
+      "promptTokens": 566,
+      "completionTokens": 816,
+      "totalTokens": 1382
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:25:08.116Z"
+}

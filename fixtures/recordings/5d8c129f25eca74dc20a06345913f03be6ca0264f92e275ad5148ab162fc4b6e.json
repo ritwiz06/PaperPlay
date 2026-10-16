@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "5d8c129f25eca74dc20a06345913f03be6ca0264f92e275ad5148ab162fc4b6e",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"findings\": [\n    {\n      \"finding\": \"Level 2 — Blocking (false/misleading, misattributed)\",\n      \"kind\": \"unsupported\",\n      \"level\": 2,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace the attributed quote with a statement the paper actually supports. The current quote, “The paper shows that vaccinating every newborn would eliminate tuberculosis within ten years,” is not in the source and contradicts the paper’s statements that BCG is imperfect and that vaccination alone cannot end the epidemic. The word “newborn” is also confusing because the model has a recruitment/imm\"\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 21196,
+      "completionTokens": 12380,
+      "totalTokens": 33576
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T20:49:21.372Z"
+}

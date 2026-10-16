@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "muse-glimmer-30b",
+  "promptHash": "7088c27048a0c7cf833048a54696208ae9b6593bb9376549f551ea736ec1e896",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"domain\":\"cancer immunology\",\"mechanism\":\"Coupled ODEs for tumor T, immune effector N, responder R and tumor-evoked regulatory B cells B with logistic tumor growth, linear turnover and bilinear interaction terms, analyzed for equilibria, stability and bifurcations and simulated numerically.\",\"family\":\"compartments\",\"tier\":\"A\",\"reason\":\"The paper presents a well-mixed system of four ordinary differential equations with mass-action interactions, i.e., a classic compartment model. The released compartments family covers such ODE systems.\"}",
+    "usage": {
+      "promptTokens": 1002,
+      "completionTokens": 702,
+      "totalTokens": 1704
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:23:35.737Z"
+}

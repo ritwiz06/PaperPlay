@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reader",
+  "model": "qwen36-27b",
+  "promptHash": "0e8c00b481ebfa74cf9b78ebd617a359e44121def19fb37d3ab1494dd7b1091b",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"findings\": [{\"kind\": \"result\", \"quote\": \"an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\", \"text\": \"The model shows that if more than 52% of patients stick to their treatment, the virus will stop spreading in the population.\"}, {\"kind\": \"result\", \"quote\": \"variations in re-susceptibility minimally impact outcomes, suggesting that re-susceptibility can often be excluded in such analyses.\", \"text\": \"Re-infection of recovered individuals has almost no effect on the overall spread of the disease.\"}, {\"kind\": \"result\", \"quote\": \"Our model unraveled the synergistic impact of simultaneously enhancing the recovery rate of acutely infected individuals and treatment adherence on reducing $ℛ_{0}$.\", \"text\": \"Improving both treatment adherence and the recovery rate of acutely infected patients works together to lower transmission.\"}, {\"kind\": \"result\", \"quote\": \"$β_{3}$ exerts the strongest influence on the reproduction number.\", \"text\": \"Patients who quit treatment pose the greatest transmission risk compared to other infected groups.\"}, {\"kind\": \"result\", \"quote\": \"even if $ℛ_{0} < 1$, the disease may persist due to the coexistence of multiple stable equilibria.\", \"text\": \"The model exhibits backward bifurcation, meaning that even if the reproduction number falls below 1, the disease can still persist if initial infection levels are high.\"}, {\"kind\": \"result\", \"quote\": \"When ρ approaches a value of approximately 0.19, we observe that $ℛ_{0}$ falls below 1.\", \"text\": \"Increasing the chronic recovery rate to about 0.19 also pushes the reproduction number below the epidemic threshold.\"}], \"mechanism\": \"The paper proposes a compartmental mathematical model that tracks individuals as they move through five stages: susceptible, acutely infected, chronically infected on treatment, chronically infected who quit treatment, and recovered. It explicitly models treatment adherence as a proportion that决定了是否\", \"modelEquations\": [\"eq1\", \"eq2\", \"eq3\"], \"question\": \"The paper asks how poor treatment adherence affects the spread of hepatitis C virus (HCV) in Zimbabwe, and what level of adherence is needed to stop the epidemic.\", \"result\": {\"quote\": \"an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\", \"text\": \"The model shows that if more than 52% of patients stick to their treatment, the virus will stop spreading in the population.\"}}",
+    "usage": {
+      "promptTokens": 12742,
+      "completionTokens": 4127,
+      "totalTokens": 16869
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:34:12.631Z"
+}

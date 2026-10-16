@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "inkling-small",
+  "promptHash": "83090fecf1bf211606716511383eeefaf21dea2218c24998426cda49a22c5833",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\n\n\n\"domain\": \"optimization / stochastic gradient descent variant\",\n\"family\": \"learning\",\n\"mechanism\": \"iterative parameter updates via adaptive first- and second-moment estimates (local update rules for each parameter, but as a learning/optimization toy rather than agent-based or compartmental)\",\n\"reason\": \"The paper proposes Adam, an algorithm with explicit dynamics (moment estimates, bias correction, parameter updates). That mechanism is a learning/optimization process, matching the 'learning' family (learning toys). It is not a released family (only agents and compartments are released), and it is not a static survey or theorem without dynamics. Hence it needs a model of a known kind but unreleas\",\n\"tier\": \"B\"\n}",
+    "usage": {
+      "promptTokens": 487,
+      "completionTokens": 1261,
+      "totalTokens": 1748
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:28:51.413Z"
+}

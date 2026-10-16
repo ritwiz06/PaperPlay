@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "muse-glimmer-30b",
+  "promptHash": "d70bf1854836f04220e4c11213794a5aeb0375f192402686a3b3ddf9cb515b55",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"domain\":\"active matter collective motion\",\"mechanism\":\"Self-propelled particles with constant speed align heading each step to average neighbor direction plus noise η, producing spontaneous symmetry breaking and a kinetic order-disorder transition in mean velocity\",\"family\":\"agents\",\"tier\":\"A\",\"reason\":\"The model is an agent-based flocking rule with local alignment and noise, exactly the released agents family of locally interacting self-driven particles.\"}",
+    "usage": {
+      "promptTokens": 627,
+      "completionTokens": 580,
+      "totalTokens": 1207
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:24:42.472Z"
+}

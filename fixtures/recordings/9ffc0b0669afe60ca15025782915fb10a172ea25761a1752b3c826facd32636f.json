@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen3-235b-a22b-thinking-2507",
+  "promptHash": "9ffc0b0669afe60ca15025782915fb10a172ea25761a1752b3c826facd32636f",
+  "response": {
+    "model": "qwen3-235b-a22b-thinking-2507",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"Adam optimization algorithm for stochastic gradient descent\", \"reason\": \"The paper introduces Adam, a specific learning algorithm for stochastic optimization. It's a method for updating parameters in machine learning models based on adaptive estimates of moments of the gradients. While it uses mathematical equations, its core mechanism is about learning - specifically how parameters are adjusted during training. The 'learning' family is marked as 'not released yet' in \", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 486,
+      "completionTokens": 781,
+      "totalTokens": 1267
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:47:12.107Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen38-27b",
+  "promptHash": "11df38bbc920c9ff220821a38d7eef97e859006c7fe5a24f432e3495e4b02776",
+  "response": {
+    "model": "qwen38-27b",
+    "text": "{\n  \"domain\": \"physics\",\n  \"family\": \"agents\",\n  \"mechanism\": \"Discrete self-driven particles (agents) that at each time step align their heading with the average direction of neighbors within a local neighborhood, plus a random perturbation η. The collective behavior produces a continuous kinetic phase transition (spontaneous breaking of rotational symmetry)从无\"\n  ,\n  \"reason\": \"Each particle is an autonomous agent following a simple local rule (align to neighborhood mean direction + noise). The emergent phase transition is a property of the agent ensemble, not of a field, compartment, or fixed network. This is the canonical agent-based / active-matter model (Vicsek-type), squarely in the released 'agents' family.\",\n  \"tier\": \"A\"\n}",
+    "usage": {
+      "promptTokens": 472,
+      "completionTokens": 603,
+      "totalTokens": 1075
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:30:43.083Z"
+}

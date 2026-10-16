@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen36-27b",
+  "promptHash": "c957511f8d11bc2f2904442cc14e1ed252ad71ae05a1b24c9372ebf8f639da37",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"domain\": \"networks\", \"family\": \"networks\", \"mechanism\": \"Epidemic spreading dynamics on a scale-free contact network\", \"reason\": \"The paper explicitly models infection spreading on a scale-free network structure. Per the prompt's instruction, an epidemic on a contact network maps to the networks family. Since networks is marked as not released yet, it falls under Tier B.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 439,
+      "completionTokens": 1109,
+      "totalTokens": 1548
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:39:05.688Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen38-27b",
+  "promptHash": "b450498866b9dc5f1d975c87b10e0d3259147aa74cebc4555c281ac2f78e8e3c",
+  "response": {
+    "model": "qwen38-27b",
+    "text": "{\n  \"domain\": \"compartments\",\n  \"family\": \"compartments\",\n  \"mechanism\": \"SVEITRS compartmental ODE model for TB transmission: six compartments (Susceptible, Vaccinated, Exposed, Infected, Treated, Recovered) with flows governed by mass-action infection, vaccination, treatment, recovery, and natural/disease death rates; parameterized with Ethiopian data and analyzed for R\",\n  \"reason\": \"The paper's core mechanism is a system of coupled ODEs tracking population flows between epidemiological compartments (S, V, E, I, T, R). This is the textbook definition of a compartmental model solved as equations, which is the released 'compartments' family. The stability analysis, R\",\n  \"tier\": \"A\"\n}",
+    "usage": {
+      "promptTokens": 898,
+      "completionTokens": 340,
+      "totalTokens": 1238
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:28:54.794Z"
+}

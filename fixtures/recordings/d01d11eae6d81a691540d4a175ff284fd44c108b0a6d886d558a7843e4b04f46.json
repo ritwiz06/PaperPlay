@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "inkling-small",
+  "promptHash": "d01d11eae6d81a691540d4a175ff284fd44c108b0a6d886d558a7843e4b04f46",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\n\n\n\"domain\": \"learning\",\n\"family\": \"learning\",\n\"mechanism\": \"Dropout as a training-time regularization mechanism that prevents co-adaptation of feature detectors in feedforward neural networks\",\n\"reason\": \"The paper proposes a procedural learning mechanism (randomly omitting units during training) to change how internal representations are learned. This is not a compartmental ODE, agent-based local rule, grid field, or network-graph dynamics, but a learning-toy mechanism. The learning family is not yet released.\",\n\"tier\": \"B\"\n}",
+    "usage": {
+      "promptTokens": 429,
+      "completionTokens": 732,
+      "totalTokens": 1161
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:29:14.038Z"
+}

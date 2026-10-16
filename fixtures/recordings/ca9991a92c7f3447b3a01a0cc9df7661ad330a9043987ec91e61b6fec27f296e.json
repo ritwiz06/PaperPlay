@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen36-27b",
+  "promptHash": "ca9991a92c7f3447b3a01a0cc9df7661ad330a9043987ec91e61b6fec27f296e",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"adaptive gradient-based parameter update rules\", \"reason\": \"The paper describes Adam, an iterative optimization algorithm that updates model parameters using adaptive estimates of gradient moments. This is a core learning/optimization dynamic. Since the 'learning' family is listed as not released yet, it receives Tier B.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 502,
+      "completionTokens": 1303,
+      "totalTokens": 1805
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:37:01.998Z"
+}

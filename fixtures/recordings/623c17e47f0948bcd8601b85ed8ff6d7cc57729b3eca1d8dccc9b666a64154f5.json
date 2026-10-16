@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen38-27b",
+  "promptHash": "623c17e47f0948bcd8601b85ed8ff6d7cc57729b3eca1d8dccc9b666a64154f5",
+  "response": {
+    "model": "qwen38-27b",
+    "text": "{\n  \"domain\": \"compartments\",\n  \"family\": \"compartments\",\n  \"mechanism\": \"A well-mixed ODE compartment model (S, I, C, C_q, R) tracking HCV transmission and treatment-adherence dynamics in Zimbabwe, with a basic reproduction number, equilibrium stability analysis, and parameter sensitivity.\",\n  \"reason\": \"The paper's mechanism is a system of ordinary differential equations governing flows between five population compartments (susceptible, infected, chronic, chronic-in-treatment, recovered). There is no spatial grid, no individual agents, and no contact network; the entire model is a well-mixed compartmental ODE system, which is exactly the compartments family.\",\n  \"tier\": \"A\"\n}",
+    "usage": {
+      "promptTokens": 827,
+      "completionTokens": 480,
+      "totalTokens": 1307
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:29:35.834Z"
+}

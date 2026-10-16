@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen36-27b",
+  "promptHash": "26e19a74be6e8141ef85f8bc4caa44b7b15bdf76f5b93327525bfcd52dd6034f",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"domain\": \"grids\", \"family\": \"grids\", \"mechanism\": \"reaction-diffusion\", \"reason\": \"The paper describes a reaction-diffusion system generating spatio-temporal patterns (spots, local overcrowding, decay into uniform background). This mechanism operates on spatial fields where dynamics depend on local concentrations and diffusion to neighboring locations, which maps directly to the grids family (fields on a grid).\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 405,
+      "completionTokens": 1504,
+      "totalTokens": 1909
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:39:51.990Z"
+}

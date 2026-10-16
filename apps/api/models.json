@@ -6,13 +6,13 @@
   "minIntervalMs": 1000,
   "jobTokenBudget": 600000,
   "stages": {
-    "reader": "kimi-k2-7-code",
-    "transcriber": "glm-5-3",
-    "second-transcriber": "kimi-k2-7-code",
+    "reader": "qwen36-27b",
+    "transcriber": "qwen3-235b-a22b-thinking-2507",
+    "second-transcriber": "inkling-small",
     "router": "glm-5-3",
-    "planner": "kimi-k2-7-code",
-    "explainer": "kimi-k2-7-code",
-    "reviewer": "glm-5-3"
+    "planner": "gemma4-31b-it",
+    "explainer": "gemma4-31b-it",
+    "reviewer": "gemma4-31b-it"
   },
   "excluded": {
     "asOf": "2026-10-16",

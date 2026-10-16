@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "inkling-small",
+  "promptHash": "b0889f3c88e29eac99f60bef824b28cf21ede7bd6105a2f33679da01fde47db4",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\n\n\n\"domain\": \"compartments\",\n\"family\": \"compartments\",\n\"mechanism\": \"Compartmental ODE model of HCV with susceptible, acute, chronic, treated chronic, and recovered classes; computes R0, equilibria, stability, and adherence effects via rate parameters.\",\n\"reason\": \"The paper presents a system of ordinary differential equations dividing the population into compartments (S, I, C, C_q, R) with mass-action-like transmission and treatment/adherence parameters. This is exactly a compartment model solved as equations, and the compartments family is released.\",\n\"tier\": \"A\"\n}",
+    "usage": {
+      "promptTokens": 811,
+      "completionTokens": 225,
+      "totalTokens": 1036
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:28:14.871Z"
+}

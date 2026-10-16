@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "muse-glimmer-30b",
+  "promptHash": "6e5294b568b7009dec59894f52b4a0ecadc33eb44a386cd9e8b07f000d9c20a6",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"domain\":\"epidemic spreading on scale-free networks\",\"mechanism\":\"Dynamical infection spread on a scale-free network topology with degree heterogeneity leading to absence of epidemic threshold and associated critical behavior for computer virus strains\",\"family\":\"networks\",\"tier\":\"B\",\"reason\":\"The mechanism is infection dynamics on a scale-free network structure, which falls under the Networks family. Networks is not released yet, so the paper is covered by a not-yet-released family, giving tier B.\"}",
+    "usage": {
+      "promptTokens": 600,
+      "completionTokens": 442,
+      "totalTokens": 1042
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:24:51.574Z"
+}

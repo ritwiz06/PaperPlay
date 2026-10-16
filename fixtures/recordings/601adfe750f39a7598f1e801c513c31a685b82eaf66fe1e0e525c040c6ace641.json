@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen3-235b-a22b-thinking-2507",
+  "promptHash": "601adfe750f39a7598f1e801c513c31a685b82eaf66fe1e0e525c040c6ace641",
+  "response": {
+    "model": "qwen3-235b-a22b-thinking-2507",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"dropout technique for preventing co-adaptation in neural networks\", \"reason\": \"The paper describes dropout, a learning technique that modifies how neural networks train by randomly omitting feature detectors during training to prevent co-adaptation. This is fundamentally a learning mechanism rather than a network structure, compartment model, or agent-based system. While neural networks themselves could be considered under 'networks', the specific mechanism being described (\"  ,  \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 429,
+      "completionTokens": 895,
+      "totalTokens": 1324
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:47:58.119Z"
+}

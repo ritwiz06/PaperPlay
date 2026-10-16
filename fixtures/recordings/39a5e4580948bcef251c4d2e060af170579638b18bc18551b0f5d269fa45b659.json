@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "inkling-small",
+  "promptHash": "39a5e4580948bcef251c4d2e060af170579638b18bc18551b0f5d269fa45b659",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\n\n\n\"domain\": \"agents\",\n\"family\": \"agents\",\n\"mechanism\": \"Each particle (agent) updates its direction by averaging the velocities of neighbors within a local radius and adding noise; global order emerges from these local interaction rules.\",\n\"reason\": \"The paper introduces a particle-based model where individual self-driven units follow a simple local alignment rule. This is exactly the agent family: released, local-rule-driven dynamics. It is not a compartment equation, a grid field, a network topology, or a non-dynamical study design.\",\n\"tier\": \"A\"\n}",
+    "usage": {
+      "promptTokens": 457,
+      "completionTokens": 381,
+      "totalTokens": 838
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:29:25.062Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reader",
+  "model": "gemma4-31b-it",
+  "promptHash": "fd236283b4fb40e65e658397c133f6bb4a234a8a1ac343dcde001a3870bf2b3e",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"findings\": [{\"kind\": \"threshold\", \"quote\": \"the reproduction number drops below the crucial threshold of 1 when adherence surpasses 52%.\"                              , \"text\": \"The basic reproduction number ($R_0$) falls below 1 when treatment adherence exceeds 52%.\"}, {\"kind\": \"result\", \"quote\": \"variations in re-susceptibility minimally impact outcomes, suggesting that re-susceptibility can often be excluded in such analyses.\" , \"text\": \"Re-susceptibility has a negligible impact on the transmission dynamics and can be omitted from the model.\"}, {\"kind\": \"result\", \"quote\": \"our model unraveled the synergistic impact of simultaneously enhancing the recovery rate of acutely infected individuals and treatment adherence on reducing $ℛ_{0}$.\" , \"text\": \"Reducing $R_0$ is most effective when both the recovery rate of acutely infected individuals and treatment adherence are improved simultaneously.\"}, {\"kind\": \"result\", \"quote\": \"most strikingly, $β_{3}$ exerts the strongest influence on the reproduction number.\" , \"text\": \"The transmission rate from individuals who quit treatment prematurely ($β_3$) has the strongest influence on the reproduction number.\"}], \"mechanism\": \"The paper proposes a compartmental ODE model that tracks five population groups: susceptible (S), acutely infected (I), chronically infected under treatment (C), chronically infected after quitting treatment (Cq), and recovered (R). It specifically incorporates treatment adherence as a proportion ($\" , \"modelEquations\": [\"eq1\", \"eq2\", \"eq3\"], \"question\": \"How does poor treatment adherence impact the transmission dynamics of the hepatitis C virus (HCV) in Zimbabwe?\", \"result\":  {\"quote\": \"The study demonstrated that an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\" , \"text\": \"Treatment adherence levels above 52% are sufficient to reduce the basic reproduction number below 1, thereby stopping the spread of HCV.\"}}",
+    "usage": {
+      "promptTokens": 12524,
+      "completionTokens": 418,
+      "totalTokens": 12942
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:16:27.188Z"
+}

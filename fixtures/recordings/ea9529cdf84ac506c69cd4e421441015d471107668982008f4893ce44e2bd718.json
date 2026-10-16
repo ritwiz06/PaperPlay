@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen3-235b-a22b-thinking-2507",
+  "promptHash": "ea9529cdf84ac506c69cd4e421441015d471107668982008f4893ce44e2bd718",
+  "response": {
+    "model": "qwen3-235b-a22b-thinking-2507",
+    "text": "{\"domain\": \"agents\", \"family\": \"agents\", \"mechanism\": \"Particles follow local alignment rules with neighbors plus noise, leading to emergent collective motion\", \"reason\": \"Each particle (agent) follows local rules: maintaining constant speed while aligning direction with neighbors plus random perturbation. The global phase transition emerges from these local agent interactions, matching the 'agents' family where individual entities follow local rules. This is not a compartment model (no population flows between compartments) or other families.\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 457,
+      "completionTokens": 609,
+      "totalTokens": 1066
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:48:32.993Z"
+}

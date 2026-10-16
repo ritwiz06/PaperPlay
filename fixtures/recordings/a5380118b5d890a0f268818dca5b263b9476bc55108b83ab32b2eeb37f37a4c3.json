@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "qwen36-27b",
+  "promptHash": "a5380118b5d890a0f268818dca5b263b9476bc55108b83ab32b2eeb37f37a4c3",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"findings\": [{\"finding\": \"Level 2\", \"kind\": \"definitional\", \"level\": 2, \"severity\": \"blocking\", \"suggestion\": \"Replace the statement with one supported by the paper, e.g., 'Increasing the treatment rate lowers the number of infectious individuals, as the paper's sensitivity analysis shows treatment rate ($δ$) has a negative impact on the reproduction number.'\"}, {\"finding\": \"Level 3\", \"kind\": \"definitional\", \"level\": 3, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test a paper finding, e.g., 'What if the treatment rate were reduced by half? It states: the number of infectious individuals increases over time, reflecting the paper's sensitivity analysis that treatment rate negatively affects the reproduction number.'\"}, {\"finding\": \"Level 4\", \"kind\": \"definitional\", \"level\": 4, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test a paper finding, e.g., 'What if the contact rate were increased? It states: the infectious population grows larger, aligning with the paper's sensitivity analysis that contact rate ($β$) positively drives TB transmission.'\"}, {\"finding\": \"Level 5\", \"kind\": \"definitional\", \"level\": 5, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test a paper finding, e.g., 'What if the vaccination rate were increased? It states: the infectious population decreases over time, consistent with the paper's finding that vaccination rate ($π$) negatively influences disease spread.'\"}]}",
+    "usage": {
+      "promptTokens": 22882,
+      "completionTokens": 3794,
+      "totalTokens": 26676
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T19:06:50.203Z"
+}

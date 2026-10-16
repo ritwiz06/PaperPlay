@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen3-235b-a22b-thinking-2507",
+  "promptHash": "ced33538ea8471f1977af78af3c4b0d7d8655fe15741ec94acd15c3213e600f9",
+  "response": {
+    "model": "qwen3-235b-a22b-thinking-2507",
+    "text": "{\"domain\": \"compartments\", \"family\": \"compartments\", \"mechanism\": \"compartment model of disease transmission with treatment adherence effects\", \"reason\": \"The paper uses a system of differential equations to model population flows between disease state compartments (S, I, C, C_q, R), which is characteristic of compartment models. It computes R0, analyzes equilibria, and studies parameter effects - all standard compartment model analyses. No agent-based, network, or grid structure is present.\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 810,
+      "completionTokens": 844,
+      "totalTokens": 1654
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:46:24.138Z"
+}

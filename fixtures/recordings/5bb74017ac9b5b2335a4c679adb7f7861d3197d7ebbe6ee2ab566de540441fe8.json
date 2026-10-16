@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen36-27b",
+  "promptHash": "5bb74017ac9b5b2335a4c679adb7f7861d3197d7ebbe6ee2ab566de540441fe8",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"dropout regularization during neural network training\", \"reason\": \"The paper describes a training algorithm that stochastically omits neurons during learning to prevent co-adaptation and improve generalization. This is fundamentally a machine learning mechanism, mapping to the 'learning' family.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 445,
+      "completionTokens": 1556,
+      "totalTokens": 2001
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:37:49.403Z"
+}

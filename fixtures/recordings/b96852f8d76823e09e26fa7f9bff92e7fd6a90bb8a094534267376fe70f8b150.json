@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen36-27b",
+  "promptHash": "b96852f8d76823e09e26fa7f9bff92e7fd6a90bb8a094534267376fe70f8b150",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"domain\": \"agents\", \"family\": \"agents\", \"mechanism\": \"self-driven particles aligning with local neighbors\", \"reason\": \"The paper describes discrete particles (agents) that update their direction at each time step based on the average direction of nearby particles plus noise. This is a classic local-rule agent-based mechanism (akin to the Vicsek model). The `agents` family is released and directly covers this, so it is Tier A.\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 472,
+      "completionTokens": 1368,
+      "totalTokens": 1840
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:38:31.515Z"
+}

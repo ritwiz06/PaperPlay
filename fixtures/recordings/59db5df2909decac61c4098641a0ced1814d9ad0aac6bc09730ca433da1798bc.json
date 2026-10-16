@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "muse-glimmer-30b",
+  "promptHash": "59db5df2909decac61c4098641a0ced1814d9ad0aac6bc09730ca433da1798bc",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"domain\":\"Hepatitis C virus transmission with treatment adherence in Zimbabwe\",\"mechanism\":\"Five-compartment deterministic ODE model S,I,C,C_q,R with force of infection λ=β1 I+β2 C+β3 C_q, progression r, adherence parameters η,θ, treatment rates ρ, recovery α, waning φ, used to compute R0 and equilibrium stability\",\"family\":\"compartments\",\"tier\":\"A\",\"reason\":\"The paper defines N=S+I+C+C_q+R and explicit ODEs for each compartment with parameters for adherence and treatment, and analyses R0 and equilibria. This is a classic well-mixed compartment model, covered by the released compartments family.\"}",
+    "usage": {
+      "promptTokens": 967,
+      "completionTokens": 828,
+      "totalTokens": 1795
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:23:52.749Z"
+}

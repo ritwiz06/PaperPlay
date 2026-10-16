@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "inkling-small",
+  "promptHash": "137a6e873185e3e7f8daeef73a453156fceb18551e0c035e81e7262f7bb350f3",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\n\n\n\"domain\": \"compartments\",\n\"family\": \"compartments\",\n\"mechanism\": \"ODE compartment model of tumor–immune interactions (T, N, R, B) with mass-action coupling, stability/bifurcation analysis\",\n\"reason\": \"The paper presents a continuous, well-mixed system of ordinary differential equations for population-level quantities (tumor, NK cells, regulatory B cells, etc.). It is solved as equations, not as individual agents, grids, or networks. The released family 'compartments' directly covers this mechanism.\",\n\"tier\": \"A\"\n}",
+    "usage": {
+      "promptTokens": 895,
+      "completionTokens": 335,
+      "totalTokens": 1230
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:28:06.525Z"
+}

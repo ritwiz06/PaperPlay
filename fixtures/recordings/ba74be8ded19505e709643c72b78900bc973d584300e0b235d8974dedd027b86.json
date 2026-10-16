@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reader",
+  "model": "muse-glimmer-30b",
+  "promptHash": "ba74be8ded19505e709643c72b78900bc973d584300e0b235d8974dedd027b86",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"question\":\"What is the impact of poor treatment adherence on HCV transmission dynamics in Zimbabwe?\",\"mechanism\":\"Poor adherence moves chronically treated individuals to a higher-transmissibility quitting class, sustaining infection via force of infection λ = β1 I + β2 C + β3 Cq with β3 > β2.\",\"modelEquations\":[\"eq1\",\"eq2\",\"eq3\"],\"result\":{\"text\":\"Adherence above about 52% can drive the basic reproduction number below one and curb HCV spread.\",\"quote\":\"The study demonstrated that an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\"},\"findings\":[{\"kind\":\"conclusion\",\"text\":\"Re-susceptibility has minimal effect on HCV outcomes and can be omitted from models.\",\"quote\":\"Our HCV model indicates that variations in re-susceptibility minimally impact outcomes, suggesting that re-susceptibility can often be excluded in such analyses.\"},{\"kind\":\"result\",\"text\":\"Simultaneous increase in acute recovery rate and treatment adherence synergistically reduces R0.\",\"quote\":\"Our model unraveled the synergistic impact of simultaneously enhancing the recovery rate of acutely infected individuals and treatment adherence on reducing ℛ0.\"},{\"kind\":\"threshold\",\"text\":\"R0 falls below one when treatment adherence proportion exceeds 0.52.\",\"quote\":\"the reproduction number ℛ0 goes below 1 when θ > 0.52.\"},{\"kind\":\"result\",\"text\":\"Re-susceptibility rate ϕ has negligible influence on R0 in sensitivity analysis.\",\"quote\":\"the parameter ϕ, which represents the reinfection rate of those who have recovered, has negligible impact on the reproduction number given its PRCC index is near zero, hence we ddnt include it for the local sensitivity analysis.\"},{\"kind\":\"result\",\"text\":\"Transmission rate from quitting-treatment class β3 most strongly drives R0.\",\"quote\":\"Most strikingly, β3 exerts the strongest influence on the reproduction number.\"}]}",
+    "usage": {
+      "promptTokens": 12347,
+      "completionTokens": 2744,
+      "totalTokens": 15091
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:23:07.859Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen3-235b-a22b-thinking-2507",
+  "promptHash": "51007786e6ed5d53dc9db9e7d96874057704370df6278eebe8cff731bf9e8ad6",
+  "response": {
+    "model": "qwen3-235b-a22b-thinking-2507",
+    "text": "{ \"domain\": \"epidemiology\", \"family\": \"compartments\", \"mechanism\": \"SVEITRS compartmental model with differential equations describing population flows between susceptible, vaccinated, exposed, infected, treated, and recovered states\", \"reason\": \"The paper explicitly describes and uses a compartmental model (SVEITRS) with differential equations showing population flows between compartments. This matches the 'compartments' family which is for compartment models solved as equations. The model is well-mixed (not on a network or grid) and uses standard ODEs for epidemiological compartment modeling.\", \"tier\": \"A\" }",
+    "usage": {
+      "promptTokens": 873,
+      "completionTokens": 852,
+      "totalTokens": 1725
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:44:52.726Z"
+}

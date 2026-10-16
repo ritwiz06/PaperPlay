@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "granite41-30b",
+  "promptHash": "9e464c00b0a10dbb580d5b5685a49d6bc1537088becca053fb568fed7a6089f9",
+  "response": {
+    "model": "granite41-30b",
+    "text": "{\n  \"findings\": [\n    {\n      \"finding\": \"Level 2's statement is not supported by the paper.\",\n      \"kind\": \"unsupported\",\n      \"level\": 2,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Remove the quote 'The paper shows that vaccinating every newborn would eliminate tuberculosis within ten years.' and replace the level's statement with a factual claim derived from the model, such as 'Increasing the vaccination rate reduces the peak number of infectious individuals.'\"\n    },\n    {\n      \"finding\": \"Level 3's claim about the epidemic never being controlled is overstated.\",\n      \"kind\": \"overstated\",\n      \"level\": 3,\n      \"severity\": \"advice\",\n      \"suggestion\": \"Modify the statement to: 'If the progression rate from exposed to infectious is doubled, the number of exposed individuals increases, leading to a larger epidemic.'\"\n    },\n    {\n      \"finding\": \"Level 4 is purely definitional – changing the recovery rate directly affects the recovered compartment.\",\n      \"kind\": \"definitional\",\n      \"level\": 4,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace this level with a What‑if that tests a paper finding, e.g., 'What if the vaccination coverage is increased to 90%? Observe the change in the infectious compartment over time.'\"\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 22288,
+      "completionTokens": 294,
+      "totalTokens": 22582
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:59:42.534Z"
+}

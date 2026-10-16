@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "planner",
+  "model": "llama4-maverick-17b",
+  "promptHash": "dd43de4925c984e64ad937ed8b5756360c77936bdf012858180a354fa563da8d",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"title\":\"Tumour and tBregs\",\"perWatchSecond\":3,\"levels\":[{\"kind\":\"hook\",\"finding\":0,\"title\":\"Tumour grows despite NK cells\",\"goal\":\"See how tBregs affect tumour growth\",\"control\":{\"parameter\":\"c\",\"label\":\"NK-induced tumour death\",\"lowEnd\":\"low\",\"highEnd\":\"high\"},\"watch\":\"t\",\"whatIf\":{\"prompt\":\"What if NK cells were less effective?\",\"parameter\":\"c\",\"value\":1e-10},\"difference\":{\"compartment\":\"t\",\"summary\":\"at\",\"at\":67,\"time\":80,\"relation\":\"higher\",\"by\":10},\"effect\":\"The tumour is larger at day 67.\",\"prediction\":{\"prompt\":\"Will the tumour be larger or smaller at day 67?\",\"claimed\":\"larger\",\"other\":\"smaller\"},\"passage\":{\"title\":\"Headline result\",\"quote\":\"\\\"a sufficiently large number of tBregs can cause the breast tumour to reach its carrying capacity, regardless of the rate of NK-induced breast cancer cell death.\\\"\"},\"carryForward\":\"t0 = 5, n0 = 500000000, r0 = 200000000, b0 = 500000\"},{\"kind\":\"result\",\"finding\":2,\"title\":\"NK cells control tumour without tBregs\",\"goal\":\"See how NK cells control tumour growth without tBregs\",\"control\":{\"parameter\":\"mT\",\"label\":\"Tumour-induced tBreg growth\",\"lowEnd\":\"absent\",\"highEnd\":\"present\"},\"watch\":\"t\",\"whatIf\":{\"prompt\":\"What if tBregs were absent?\",\"parameter\":\"mT\",\"value\":0},\"difference\":{\"compartment\":\"t\",\"summary\":\"peak\",\"at\":null,\"time\":80,\"relation\":\"lower\",\"by\":50},\"effect\":\"The tumour peaks lower.\",\"prediction\":{\"prompt\":\"Will the tumour peak higher or lower?\",\"claimed\":\"lower\",\"other\":\"higher\"},\"passage\":{\"title\":\"Result 2\",\"quote\":\"\\\"when tBregs do not exist in the body, the only way for the breast tumour to reach its carrying capacity is for the rate of NK-induced breast cancer cell death to be tending to 0\\\"\"},\"carryForward\":\"t0 = 5, n0 = 500000000, r0 = 200000000, b0 = 0\"},{\"kind\":\"result\",\"finding\":5,\"title\":\"tBreg death rate affects tumour growth\",\"goal\":\"See how tBreg death rate affects tumour growth\",\"control\":{\"parameter\":\"thetaB\",\"label\":\"tBreg death rate\",\"lowEnd\":\"low\",\"highEnd\":\"high\"},\"watch\":\"t\",\"whatIf\":{\"prompt\":\"What if tBreg death rate were higher?\",\"parameter\":\"thetaB\",\"value\":0.8},\"difference\":{\"compartment\":\"t\",\"summary\":\"at\",\"at\":67,\"time\":80,\"relation\":\"lower\",\"by\":20},\"effect\":\"The tumour is smaller at day 67.\",\"prediction\":{\"prompt\":\"Will the tumour be larger or smaller at day 67?\",\"claimed\":\"smaller\",\"other\":\"larger\"},\"passage\":{\"title\":\"Result 5\",\"quote\":\"\\\"when θB/mT > 1/b, our model has no closed orbits, meaning that breast cancer will either be cleared by NK cells or stabilise around a constant number.\\\"\"},\"carryForward\":\"t0 = 5, n0 = 500000000, r0 = 200000000, b0 = 500000\"}],\"limits\":[\"Change one parameter at a time.\",\"Watch the tumour size over time.\"]}",
+    "usage": {
+      "promptTokens": 2870,
+      "completionTokens": 721,
+      "totalTokens": 3591
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:56:14.727Z"
+}

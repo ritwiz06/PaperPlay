@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reader",
+  "model": "llama4-maverick-17b",
+  "promptHash": "f4763a720d87186d004eafc970dccde5941a01b40b420cdb3dec0e38f79ace98",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"findings\": [\n{\"kind\": \"result\", \"quote\": \"The study demonstrated that an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\", \"text\": \"The model shows that if more than 52% of people adhere to their HCV treatment, the disease will stop spreading.\"},\n{\"kind\": \"result\", \"quote\": \"Our HCV model indicates that variations in re-susceptibility minimally impact outcomes, suggesting that re-susceptibility can often be excluded in such analyses.\", \"text\": \"The model finds that how easily people get infected again after recovering doesn't significantly affect the overall spread of HCV.\"},\n{\"kind\": \"result\", \"quote\": \"Our model unraveled the synergistic impact of simultaneously enhancing the recovery rate of acutely infected individuals and treatment adherence on reducing $ℛ_{0}$.\", \"text\": \"The model shows that improving both how quickly people recover from acute HCV and how well they stick to treatment together reduces the disease's spread more than either factor alone.\"}\n], \n\"mechanism\": \n\"the paper proposes a model where the population is divided into compartments: susceptible (S), acutely infected (I), chronically infected under treatment (C), chronically infected after quitting treatment (Cq), and recovered (R). The model is governed by a system of ordinary differential equations (\",\n\"modelEquations\": [ \n\"eq1\", \n\"eq2\", \n\"eq3\" \n], \n\"question\": \n\"the paper asks how treatment adherence challenges affect the transmission dynamics of hepatitis C virus (HCV), particularly in low-middle-income countries like Zimbabwe\", \n\"result\": \n{\"quote\": \"The study demonstrated that an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\", \"text\": \"The model shows that with over 52% treatment adherence, the reproduction number falls below 1, stopping the disease from spreading further.\"}}",
+    "usage": {
+      "promptTokens": 12074,
+      "completionTokens": 412,
+      "totalTokens": 12486
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:16:27.649Z"
+}

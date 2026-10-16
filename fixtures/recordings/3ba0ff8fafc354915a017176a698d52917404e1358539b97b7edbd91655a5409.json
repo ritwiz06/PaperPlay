@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen38-27b",
+  "promptHash": "3ba0ff8fafc354915a017176a698d52917404e1358539b97b7edbd91655a5409",
+  "response": {
+    "model": "qwen38-27b",
+    "text": "{\n  \"domain\": \"grids\",\n  \"family\": \"grids\",\n  \"mechanism\": \"A reaction-diffusion PDE system (concentration fields evolving in space and time via local reaction terms and spatial diffusion) is numerically simulated on a spatial grid. Finite-amplitude perturbations of the uniform state produce emergent spatio-temporal patterns: growing and dividing spots, and,\",\"reason\": \"The mechanism is a continuous spatial field (chemical concentrations) governed by reaction-diffusion PDEs, discretized onto a grid for numerical simulation. The emergent patterns (spots that grow, divide, and decay) are properties of the field, not of discrete agents or well-mixed compartments. This is a field-on-a-grid model, which maps to the 'grids' family. Since grids is not yet released, the\",\"tier\": \"B\"\n}",
+    "usage": {
+      "promptTokens": 405,
+      "completionTokens": 649,
+      "totalTokens": 1054
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:31:26.147Z"
+}

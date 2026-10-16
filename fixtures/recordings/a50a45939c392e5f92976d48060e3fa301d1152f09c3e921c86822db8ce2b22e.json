@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "inkling-small",
+  "promptHash": "a50a45939c392e5f92976d48060e3fa301d1152f09c3e921c86822db8ce2b22e",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\n\n\n\"domain\": \"mechanism classification\",\n\"family\": \"grids\",\n\"mechanism\": \"reaction–diffusion field dynamics producing spatio-temporal spot patterns (growth, division, overcrowding decay)\",\n\"reason\": \"The paper studies a continuous reaction–diffusion system simulated to yield irregular spatial patterns and self-replicating spots; this is a spatial field mechanism, best matched by grids (fields on a grid). It is not a well-mixed compartment model, nor agent-based/local-rule, nor network, nor study design, nor pure learning.\",\n\"tier\": \"B\"\n}",
+    "usage": {
+      "promptTokens": 389,
+      "completionTokens": 858,
+      "totalTokens": 1247
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:30:05.673Z"
+}

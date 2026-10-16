@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen38-27b",
+  "promptHash": "3bc0410bd67b9c5fdc9bba93c865f14c74dd125802f59f08a86f8d226547833b",
+  "response": {
+    "model": "qwen38-27b",
+    "text": "{\n  \"domain\": \"networks\",\n  \"family\": \"networks\",\n  \"mechanism\": \"A dynamical (SIR-like) infection model in which each node of a scale-free network can be susceptible, infected, or recovered; the key mechanism is how the power-law degree distribution of the network topology eliminates the epidemic threshold, so that any nonzero infection rate leads to a persistent\",\n  \"reason\": \"The paper's central mechanism is an epidemic process whose dynamics are governed by the scale-free network topology (power-law degree distribution). The abstract explicitly states a 'dynamical model for the spreading of infections on scale-free networks' and the headline result (absence of an epidemic threshold) is a property of the network structure. Per the routing rule, an epidemic on a contact\",\n  \"tier\": \"B\"\n}",
+    "usage": {
+      "promptTokens": 439,
+      "completionTokens": 670,
+      "totalTokens": 1109
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:31:04.736Z"
+}

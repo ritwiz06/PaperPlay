@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "muse-glimmer-30b",
+  "promptHash": "9ea7dbff39990883485382e6850e6fd368db1777307a51e5f522dc6c392c4413",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"domain\":\"Machine learning optimization\",\"mechanism\":\"Adaptive first-order stochastic gradient method using bias-corrected exponential moving averages of gradients and squared gradients\",\"family\":\"learning\",\"tier\":\"B\",\"reason\":\"Adam is an adaptive optimization algorithm for training models. It fits the learning toys family which is not yet released, so coverage is tier B.\"}",
+    "usage": {
+      "promptTokens": 659,
+      "completionTokens": 1033,
+      "totalTokens": 1692
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:24:14.764Z"
+}

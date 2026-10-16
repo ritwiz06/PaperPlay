@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "muse-glimmer-30b",
+  "promptHash": "76229cb3f508e7f79984315affa843e566919fb3f0a2be761c1ede86ef05818a",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"domain\":\"tuberculosis transmission dynamics\",\"mechanism\":\"SVEITRS compartmental ODE system for S,V,E,I,T,R with transmission, vaccination, waning, progression, treatment and recovery flows, parameter estimation from Ethiopian data and R0 stability/sensitivity analysis\",\"family\":\"compartments\",\"tier\":\"A\",\"reason\":\"The paper defines and analyzes a deterministic SVEITRS compartment model via ODEs with S,V,E,I,T,R equations, parameter estimation and sensitivity analysis. This is a classic compartmental model, covered by the released compartments family.\"}",
+    "usage": {
+      "promptTokens": 1003,
+      "completionTokens": 599,
+      "totalTokens": 1602
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:23:20.831Z"
+}

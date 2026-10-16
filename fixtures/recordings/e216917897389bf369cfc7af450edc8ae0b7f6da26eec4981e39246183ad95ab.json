@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "inkling-small",
+  "promptHash": "e216917897389bf369cfc7af450edc8ae0b7f6da26eec4981e39246183ad95ab",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\n\n\n\"findings\": [\n  {\n    \"finding\": \"Level 2 states a paper claim that is not in the source (provenance failure) and misattributes a teaching choice to the paper.\",\n    \"kind\": \"definitional\",\n    \"level\": 2,\n    \"severity\": \"blocking\",\n    \"suggestion\": \"Replace the false quote with a source-supported statement about treatment and the threshold, e.g.: 'The paper shows that increasing the treatment rate δ lowers the reproduction number R_v and helps drive it below 1, so the disease-free equilibrium is stable.' Keep the slider on treatment rate and the watch on infectious.\"\n  },\n  {\n    \"finding\": \"Level 3’s claim ('the epidemic doubles in size and the disease can never be controlled') is far stronger than the measured effect (about 6 more exposed at year 10).\",\n    \"kind\": \"overstated\",\n    \"level\": 3,\n    \"severity\": \"advice\",\n    \"suggestion\": \"Soften the statement to match the measurement: 'With twice the progression rate, there are about 6 more exposed people at year 10; the epidemic grows faster, but control still depends on other parameters.'\"\n  },\n  {\n    \"finding\": \"Level 4 teaches only a definitional consequence: a larger recovery inflow directly yields more recovered people, with no paper finding needed.\",\n    \"kind\": \"definitional\",\n    \"level\": 4,\n    \"severity\": \"blocking\",\n    \"suggestion\": \"Change the watched variable from recovered to infectious (or treated) and replace the What-if with one that tests a paper finding, e.g.: 'What if recovery were twice as fast—how does the infectious population change by year 30?' State: 'The paper finds that treatment/recovery dynamics affect TB burden; faster recovery changes flows through T and R, which can alter future infections.'\"\n  },\n  {\n    \"finding\": \"Level 5 teaches only a definitional emptying: setting the treatment rate to zero removes the inflow to T, so T stays empty by definition.\",\n    \"kind\": \"definitional\",\n    \"level\": 5,\n    \"severity\": \"blocking\",\n    \"suggestion\": \"Replace the What-if with a paper-finding test, e.g.: 'What if the treatment rate were doubled—how does the infectious count change?' and state: 'The paper’s sensitivity analysis shows δ has a negative index: higher treatment rates reduce TB cases.'\"\n  }\n]\n\n}",
+    "usage": {
+      "promptTokens": 22157,
+      "completionTokens": 7771,
+      "totalTokens": 29928
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T19:17:55.212Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen38-27b",
+  "promptHash": "d4ff05fd03d3e244c4746a40b210609bd443db4ce577e4963a21662a5d50663e",
+  "response": {
+    "model": "qwen38-27b",
+    "text": "{\n  \"domain\": \"learning\",\n  \"family\": \"learning\",\n  \"mechanism\": \"During training of a feedforward neural network, randomly zero out half the neurons on each training case (dropout). This prevents co-adaptation of feature detectors, forcing each neuron to learn a generally useful feature across many internal contexts, thereby reducing overfitting and improving out\",\n  \"reason\": \"The mechanism is a training/regularization procedure for a neural network (randomly omitting units during training to prevent co-adaptation). This is a learning algorithm, not a network-dynamics or compartment model. The 'learning' family (learning toys) covers it, but that family is not yet released, so tier B.\"\n  ,\n  \"tier\": \"B\"\n}",
+    "usage": {
+      "promptTokens": 445,
+      "completionTokens": 716,
+      "totalTokens": 1161
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:30:20.644Z"
+}

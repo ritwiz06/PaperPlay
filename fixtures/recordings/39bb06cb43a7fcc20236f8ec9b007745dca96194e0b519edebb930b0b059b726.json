@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen36-27b",
+  "promptHash": "39bb06cb43a7fcc20236f8ec9b007745dca96194e0b519edebb930b0b059b726",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"domain\": \"compartments\", \"family\": \"compartments\", \"mechanism\": \"system of coupled ODEs tracking well-mixed population compartments (S, I, C, C_q, R)\", \"reason\": \"The paper explicitly uses a deterministic compartmental model (SICCR-type) with ordinary differential equations to track disease states in a well-mixed population. This directly matches the released 'compartments' family.\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 827,
+      "completionTokens": 1316,
+      "totalTokens": 2143
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T18:36:19.943Z"
+}
