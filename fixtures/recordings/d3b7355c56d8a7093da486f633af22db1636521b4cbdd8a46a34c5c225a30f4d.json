@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "kimi-k2-7-code",
+  "promptHash": "d3b7355c56d8a7093da486f633af22db1636521b4cbdd8a46a34c5c225a30f4d",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"domain\": \"learning\",\n  \"family\": \"learning\",\n  \"mechanism\": \"Training a neural network with dropout to prevent co-adaptation of feature detectors\",\n  \"reason\": \"The paper's mechanism is a learning/optimization dynamic in an artificial neural network, not an agent, compartment, grid, or network model in the family sense. The 'learning' family is not yet released, so this is Tier B.\",\n  \"tier\": \"B\"\n}",
+    "usage": {
+      "promptTokens": 426,
+      "completionTokens": 281,
+      "totalTokens": 707
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:15:36.277Z"
+}

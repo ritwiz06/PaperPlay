@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "granite41-30b",
+  "promptHash": "686b1ba36ccd8e951e9462c77703355e886fd15d308cced41b2a59b850519c41",
+  "response": {
+    "model": "granite41-30b",
+    "text": "{  \n  \"domain\": \"machine-learning\",  \n  \"family\": \"learning\",  \n  \"mechanism\": \"Dropout regularization in neural networks, which prevents co-adaptation of feature detectors by randomly omitting neurons during training.\",  \n  \"reason\": \"The paper describes the dropout technique, a learning mechanism that can be explored through interactive learning toys or simulations. However, the 'learning' family of models is marked as 'not released yet', so the appropriate tier is B.\",  \n  \"tier\": \"B\"  \n}",
+    "usage": {
+      "promptTokens": 427,
+      "completionTokens": 112,
+      "totalTokens": 539
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:01:35.673Z"
+}

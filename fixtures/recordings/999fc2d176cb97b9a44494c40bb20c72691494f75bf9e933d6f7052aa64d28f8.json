@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "999fc2d176cb97b9a44494c40bb20c72691494f75bf9e933d6f7052aa64d28f8",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"networks\", \"family\": \"networks\", \"mechanism\": \"Epidemic spreading on scale-free (heterogeneous) contact networks, where the degree distribution removes the epidemic threshold\", \"reason\":\": The paper's core mechanism is infection dynamics on a scale-free network topology — the absence of an epidemic threshold arises from the network's degree distribution, not from well-mixed compartmental equations. The networks family covers it, but that family is not yet released.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1091,
+      "completionTokens": 125,
+      "totalTokens": 1216
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:12:27.689Z"
+}

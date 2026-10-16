@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen35-397b-a17b",
+  "promptHash": "08325f38984f37b9c92b9b52d8bfa0404c9de16e4aa5750de03b42beac56d309",
+  "response": {
+    "model": "qwen35-397b-a17b-fp8",
+    "text": "{\n  \"domain\": \"compartments\",\n  \"family\": \"compartments\",\n  \"mechanism\": \"compartment\",\n  \"reason\": \"The paper presents a system of Ordinary Differential Equations (ODEs) describing the flow of a population between distinct health states (S, I, C, C_q, R). This is a classic compartmental modeling approach (specifically an SIR-type variant for Hepatitis C). The 'compartments' family is listed as released.\",\n  \"tier\": \"A\"\n}",
+    "usage": {
+      "promptTokens": 967,
+      "completionTokens": 1474,
+      "totalTokens": 2441
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T07:13:18.210Z"
+}

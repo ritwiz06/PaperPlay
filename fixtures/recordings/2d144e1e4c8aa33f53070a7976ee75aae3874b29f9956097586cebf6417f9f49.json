@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "gemma4-31b-it",
+  "promptHash": "2d144e1e4c8aa33f53070a7976ee75aae3874b29f9956097586cebf6417f9f49",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"learning\", \"reason\": \"The paper describes 'dropout', a mechanism for training neural networks to prevent overfitting by randomly omitting neurons during training. This falls under learning toys/mechanisms.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 445,
+      "completionTokens": 60,
+      "totalTokens": 505
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:26:54.915Z"
+}

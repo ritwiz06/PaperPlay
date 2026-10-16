@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "minimax-m2-7",
+  "promptHash": "f4ab26e94956f9c10b2084e2797c56a73691f0cad21940c9d403360cba3ee993",
+  "response": {
+    "model": "minimax-m2-7-fast",
+    "text": "{ \"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"Adam is a gradient-based optimization algorithm that updates model parameters using adaptive estimates of first and second moments of gradients. It adapts learning rates per-parameter and is used to train machine learning models, making it fundamentally a learning algorithm.\" , \"reason\": \"Adam is a parameter optimization algorithm for training models, which is a core learning mechanism in machine learning. While the paper analyzes its theoretical convergence properties, the core mechanism is about learning through gradient-based updates with adaptive moment estimation.\" , \"tier\": \"B\" }",
+    "usage": {
+      "promptTokens": 479,
+      "completionTokens": 770,
+      "totalTokens": 1249
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-15T21:01:40.733Z"
+}

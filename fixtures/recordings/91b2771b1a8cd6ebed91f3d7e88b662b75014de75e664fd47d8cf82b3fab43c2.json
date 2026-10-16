@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "granite41-30b",
+  "promptHash": "91b2771b1a8cd6ebed91f3d7e88b662b75014de75e664fd47d8cf82b3fab43c2",
+  "response": {
+    "model": "granite41-30b",
+    "text": "{  \n  \"domain\": \"collective-behavior\",  \n  \"family\": \"agents\",  \n  \"mechanism\": \"self-driven particles interacting locally to produce a kinetic phase transition from no net transport to finite net transport via spontaneous symmetry breaking\",  \n  \"reason\": \"The paper describes a model where each particle (agent) moves with a constant speed and continuously updates its direction based on the average direction of nearby particles plus a random perturbation. This is a classic agent-based mechanism where local interaction rules (alignment with neighbors plus noise) lead to emergent global behavior (a phase transition in average velocity). The described \"  ,  \n  \"tier\": \"A\"  \n}",
+    "usage": {
+      "promptTokens": 454,
+      "completionTokens": 142,
+      "totalTokens": 596
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:01:40.719Z"
+}

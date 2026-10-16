@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "deepseek-v4-1-flash",
+  "promptHash": "6ef3bb29b0a027b2e1ad9dc153d0b2290dfbaa8cd11ec5de2f9f048f1b820213",
+  "response": {
+    "model": "deepseek-v4-1-flash",
+    "text": "{\"domain\": \"compartments\", \"family\": \"compartments\", \"mechanism\": \"A deterministic SVEITRS compartmental ODE model: susceptible, vaccinated, exposed, infectious, treated, and recovered populations flow between compartments via recruitment, vaccination, waning vaccine protection, infection (mass-action βSI), progression, treatment, recovery, and death. The paper's R\", \"reason\": \"The mechanism is a well-mixed compartmental system solved as differential equations, not an agent, network, grid, learning, or study-design model. The compartments family is released, so it covers the mechanism as stated.\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 1384,
+      "completionTokens": 164,
+      "totalTokens": 1548
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:45:20.544Z"
+}

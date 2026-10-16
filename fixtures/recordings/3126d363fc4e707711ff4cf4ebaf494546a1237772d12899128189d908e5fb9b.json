@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "llama4-maverick-17b",
+  "promptHash": "3126d363fc4e707711ff4cf4ebaf494546a1237772d12899128189d908e5fb9b",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"domain\": \"compartments\", \"family\": \"compartments\", \"mechanism\": \"A\", \"reason\": \"The paper presents a compartment model described by a system of ordinary differential equations (ODEs), where the dynamics of different cell populations (Tumour cells T, a certain type of immune cells N, Regulatory cells R, and B cells B) and their interactions are modelled. The model is analysed both analytically and numerically, including stability and bifurcation analysis, which is typical for \" \n    , \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 821,
+      "completionTokens": 116,
+      "totalTokens": 937
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:01:52.476Z"
+}

@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "routingset/1",
+  "papers": [
+    {
+      "id": "arxiv-2506.19869v1",
+      "title": "Modeling Transmission Dynamics of Tuberculosis: Parameter Estimation and Sensitivity Analysis Using Real-World Data",
+      "abstract": "Tuberculosis (TB) continues to pose a major public health challenge, particularly in high-burden regions such as Ethiopia, necessitating a more profound understanding of its transmission dynamics. In this study, we developed an SVEITRS compartmental model to investigate the transmission dynamics of TBs, utilizing real data from Ethiopia from 2011–2021. Model parameters were estimated via two methods: nonlinear least squares and maximum likelihood, with maximum likelihood providing more accurate and reliable results, as confirmed by a test case. The model's stability analysis indicated that there is a disease-free equilibrium in areas where the basic reproduction number ($\\mathscr{R}_0$) is less than one. The results suggest that optimal conditions could lead to the elimination of TB. On the other hand, there is an endemic equilibrium in areas where $\\mathscr{R}_0$ is greater than one, which means that the disease is still present. Sensitivity analysis revealed important factors affecting TB levels: higher natural death rates, vaccination rates, treatment rates, and disease-related death rates lower TB cases, whereas higher recruitment rates, contact rates, infection rates, and loss of vaccine protection increase its spread. These findings highlights to the necessity of enhancing vaccination, treatment, and recovery strategies while addressing drivers of transmission to achieve TB control in Ethiopia. This study provides useful advice for guiding TB control efforts and public health interventions in Ethiopia and similar regions.\n\nKeywords: TB; basic reproduction number; sensitivity analysis; stability; parameter estimation; Ethiopia",
+      "equations": [
+        "\\begin{split}\n\\frac{dS}{dt} &= \\Lambda + \\eta R + \\theta V - (\\beta I + \\pi + \\mu)S \\\\\n\\frac{dV}{dt} &= \\pi S - (\\theta + \\mu)V \\\\\n\\frac{dE}{dt} &= \\beta SI - (\\gamma + \\mu)E \\\\\n\\frac{dI}{dt} &= \\gamma E - (\\delta + \\tau + \\mu)I \\\\\n\\frac{dT}{dt} &= \\delta I - (\\alpha + \\omega + \\mu)T \\\\\n\\frac{dR}{dt} &= \\alpha T - (\\eta + \\mu)R\n\\end{split}",
+        "\\displaystyle\\frac{dS}{dt} = \\Lambda + \\eta R + \\theta V-(\\beta I + \\pi + \\mu)S  \\geq - (\\beta I + \\pi + \\mu)S.",
+        "\\displaystyle\\frac{dS}{S}\\geq - (\\beta I + \\pi + \\mu)dt.",
+        "S(t)\\geq S(0) \\cdot e^{\\displaystyle-\\left(\\beta I + \\pi + \\mu\\right)t} > 0."
+      ],
+      "expected": {
+        "family": "compartments",
+        "tier": "A",
+        "why": "a well-mixed epidemic of six compartments"
+      }
+    },
+    {
+      "id": "arxiv-2203.01434v2",
+      "title": "A mathematical study of the role of tBregs in breast cancer",
+      "abstract": "A model for the mathematical study of immune response to breast cancer is proposed and studied, both analytically and numerically. It is a simplification of a complex one, recently introduced by two of the present authors. It serves for a compact study of the dynamical role in cancer promotion of a relatively recently described subgroup of regulatory B cells, which are evoked by the tumour.\n\nKeywords: Cancer Immunology, tumour-evoked regulatory B cell, Mathematical Modelling, Stability Analysis, Bifurcation Analysis, numerical simulation\n\nMSC: 34A34, 37G10, 37M05, 37N25, 92B05, 92D25, 93A30.",
+      "equations": [
+        "& \\dv{T}{t} = f_T{\\left(T\\right)} + f_{T,N}{\\left(T,N\\right)}\\,,      \\\\ \n    & \\dv{N}{t} = f_N{\\left(N\\right)} + f_{N,R}{\\left(N,R\\right)} \\,, \\\\\n    & \\dv{R}{t} = f_R{\\left(R\\right)} + f_{R,B}{\\left(R,B\\right)} \\,,     \\\\\n    & \\dv{B}{t} = f_B{\\left(B\\right)} + f_{T,B}{\\left(T,B\\right)} \\,,",
+        "& \\dv{T}{t} = aT(1-bT) - cNT\\,,                         \\\\ \n    & \\dv{N}{t} = \\sigma - \\theta_NN - \\gamma RN \\,,          \\\\\n    & \\dv{R}{t} = \\kappa -\\theta_RR + m_BBR \\,,               \\\\\n    & \\dv{B}{t} = -\\theta_BB + m_TTB \\,,",
+        "\\left(T\\left(0\\right),N\\left(0\\right),R\\left(0\\right),B\\left(0\\right)\\right)=\\left(T_0,N_0,R_0,B_0\\right)\\in \\mathbb{R}_{\\ge 0}^4.",
+        "a\\overbar{T}(1-b\\overbar{T}) - c\\overbar{N}\\overbar{T}             & = 0    \\,,     \\\\ \n     \\sigma - \\theta_N\\overbar{N} - \\gamma \\overbar{R}\\overbar{N} & = 0 \\,,   \\\\\n     \\kappa -\\theta_R\\overbar{R} + m_B\\overbar{B}\\overbar{R}     & = 0\\,,      \\\\\n     -\\theta_B\\overbar{B} + m_T\\overbar{T}\\overbar{B}           &  = 0 \\,."
+      ],
+      "expected": {
+        "family": "compartments",
+        "tier": "A",
+        "why": "four interacting cell populations as ordinary differential equations"
+      }
+    },
+    {
+      "id": "pmc-PMC12334037",
+      "title": "Modeling the effects of treatment adherence challenges on the transmission dynamics of hepatitis C virus",
+      "abstract": "Infectious disease modeling is crucial for predicting disease progression over time and helps guide decision makers in public health policy. Hepatitis C virus (HCV) prevalence is still increasing in Zimbabwe, a low-middle-income country (LMIC), despite the availability of effective treatments, and the reasons for this increase are not well understood. Our study employed a mathematical model to explain the impact of poor treatment adherence on HCV transmission dynamics in Zimbabwe. We computed the basic reproduction number ($ℛ_{0}$), a vital metric of disease spread. Equilibrium states of the model were determined, and their stability was investigated. The study demonstrated that an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread. Our HCV model indicates that variations in re-susceptibility minimally impact outcomes, suggesting that re-susceptibility can often be excluded in such analyses. Our model unraveled the synergistic impact of simultaneously enhancing the recovery rate of acutely infected individuals and treatment adherence on reducing $ℛ_{0}$. The study underlines the pressing need for stronger health interventions, including patient education, financial assistance, and rigorous monitoring, to improve treatment adherence. These interventions are paramount in curbing HCV proliferation, particularly in LMICs like Zimbabwe, and can serve as a template for similar settings globally.",
+      "equations": [
+        "N = S + I + C + C_{q} + R .",
+        "λ = β_{1} I + β_{2} C + β_{3} C_{q} ,",
+        "\\frac{d S}{d t} = b − ( μ + λ ) S + ϕ R , \\frac{d I}{d t} = λ S − ( μ + r ) I , \\frac{d C}{d t} = ( 1 − η ) r I − δ ( 1 − θ ) C − ( ρ + μ + v ) C , \\frac{d C_{q}}{d t} = δ ( 1 − θ ) C − ( α ρ + μ + ν ) C_{q} , \\frac{d R}{d t} = ( C + α C_{q} ) ρ + η r I − ( μ + ϕ ) R .",
+        "Θ = { S ( t ) , I ( t ) , C ( t ) , C_{q} ( t ) , R ( t ) ∈ ℝ_{+}^{5} , N ≤ \\frac{b}{μ} } ."
+      ],
+      "expected": {
+        "family": "compartments",
+        "tier": "A",
+        "why": "a well-mixed epidemic of five compartments"
+      }
+    },
+    {
+      "id": "arxiv-1412.6980",
+      "title": "Adam: A Method for Stochastic Optimization",
+      "abstract": "We introduce Adam, an algorithm for first-order gradient-based optimization of stochastic objective functions, based on adaptive estimates of lower-order moments. The method is straightforward to implement, is computationally efficient, has little memory requirements, is invariant to diagonal rescaling of the gradients, and is well suited for problems that are large in terms of data and/or parameters. The method is also appropriate for non-stationary objectives and problems with very noisy and/or sparse gradients. The hyper-parameters have intuitive interpretations and typically require little tuning. Some connections to related algorithms, on which Adam was inspired, are discussed. We also analyze the theoretical convergence properties of the algorithm and provide a regret bound on the convergence rate that is comparable to the best known results under the online convex optimization framework. Empirical results demonstrate that Adam works well in practice and compares favorably to other stochastic optimization methods. Finally, we discuss AdaMax, a variant of Adam based on the infinity norm.",
+      "equations": [],
+      "expected": {
+        "family": "learning",
+        "tier": "B",
+        "why": "an optimiser for training models; the learning family is not released"
+      }
+    },
+    {
+      "id": "arxiv-1207.0580",
+      "title": "Improving neural networks by preventing co-adaptation of feature detectors",
+      "abstract": "When a large feedforward neural network is trained on a small training set, it typically performs poorly on held-out test data. This \"overfitting\" is greatly reduced by randomly omitting half of the feature detectors on each training case. This prevents complex co-adaptations in which a feature detector is only helpful in the context of several other specific feature detectors. Instead, each neuron learns to detect a feature that is generally helpful for producing the correct answer given the combinatorially large variety of internal contexts in which it must operate. Random \"dropout\" gives big improvements on many benchmark tasks and sets new records for speech and object recognition.",
+      "equations": [],
+      "expected": {
+        "family": "learning",
+        "tier": "B",
+        "why": "a training technique for neural networks; the learning family is not released"
+      }
+    },
+    {
+      "id": "arxiv-cond-mat-0611743",
+      "title": "Novel type of phase transition in a system of self-driven particles",
+      "abstract": "A simple model with a novel type of dynamics is introduced in order to investigate the emergence of self-ordered motion in systems of particles with biologically motivated interaction. In our model particles are driven with a constant absolute velocity and at each time step assume the average direction of motion of the particles in their neighborhood with some random perturbation ($η$) added. We present numerical evidence that this model results in a kinetic phase transition from no transport (zero average velocity, $| {\\bf v}_a | =0$) to finite net transport through spontaneous symmetry breaking of the rotational symmetry. The transition is continuous since $| {\\bf v}_a |$ is found to scale as $(η_c-η)^β$ with $β\\simeq 0.45$.",
+      "equations": [],
+      "expected": {
+        "family": "agents",
+        "tier": "A",
+        "why": "self-driven particles aligning with their neighbours, as the flock does"
+      }
+    },
+    {
+      "id": "arxiv-cond-mat-0010317",
+      "title": "Epidemic spreading in scale-free networks",
+      "abstract": "The Internet, as well as many other networks, has a very complex connectivity recently modeled by the class of scale-free networks. This feature, which appears to be very efficient for a communications network, favors at the same time the spreading of computer viruses. We analyze real data from computer virus infections and find the average lifetime and prevalence of viral strains on the Internet. We define a dynamical model for the spreading of infections on scale-free networks, finding the absence of an epidemic threshold and its associated critical behavior. This new epidemiological framework rationalize data of computer viruses and could help in the understanding of other spreading phenomena on communication and social networks.",
+      "equations": [],
+      "expected": {
+        "family": "networks",
+        "tier": "B",
+        "why": "an epidemic spreading on a scale-free contact network"
+      }
+    },
+    {
+      "id": "arxiv-patt-sol-9304003",
+      "title": "Complex Patterns in a Simple System",
+      "abstract": "Numerical simulations of a simple reaction--diffusion model reveal a surprising variety of irregular spatio--temporal patterns. These patterns arise in response to finite--amplitude perturbations. Some of them resemble the steady irregular patterns discussed by Lee et al. Others consist of spots which grow until they reach a critical size at which time they divide in two. If, in some region, the spots become overcrowded, all the spots in that region decay into the uniform background.",
+      "equations": [],
+      "expected": {
+        "family": "grids",
+        "tier": "B",
+        "why": "reaction and diffusion on a two-dimensional grid"
+      }
+    }
+  ]
+}

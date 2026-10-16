@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "gpt-oss-120b",
+  "promptHash": "3519a4a65a3b9083db70b272b20491a412dcf080029729b976cba036cf18eed4",
+  "response": {
+    "model": "gpt-oss-120b",
+    "text": "{\n  \"domain\": \"learning\",\n  \"family\": \"learning\",\n  \"mechanism\": \"Adam is a stochastic optimization algorithm that updates parameters using adaptive estimates of first‑ and second‑order moments of the gradients. It is a learning‑algorithm mechanism rather than a compartment, agent‑based, grid, or network model.\",\n  \"reason\": \"The paper describes an algorithmic learning rule (parameter update equations) for optimizing stochastic objectives. This fits the 'learning' family, which is not yet released, so the appropriate tier is B.\",\n  \"tier\": \"B\"\n}",
+    "usage": {
+      "promptTokens": 543,
+      "completionTokens": 294,
+      "totalTokens": 837
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:02:53.206Z"
+}

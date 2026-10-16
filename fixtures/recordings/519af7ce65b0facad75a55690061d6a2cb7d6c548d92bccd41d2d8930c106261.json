@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "kimi-k2-7-code",
+  "promptHash": "519af7ce65b0facad75a55690061d6a2cb7d6c548d92bccd41d2d8930c106261",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " { \"domain\": \"agents\", \"family\": \"agents\", \"mechanism\": \"self-driven particles align with neighbors plus noise\", \"reason\": \"Each particle follows a local update rule based on its neighbors' average direction; this is the classic Vicsek-model agent mechanism.\", \"tier\": \"A\" }",
+    "usage": {
+      "promptTokens": 451,
+      "completionTokens": 123,
+      "totalTokens": 574
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:15:40.638Z"
+}

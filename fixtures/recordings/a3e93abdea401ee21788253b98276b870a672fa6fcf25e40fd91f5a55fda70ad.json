@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "planner",
+  "model": "llama4-maverick-17b",
+  "promptHash": "a3e93abdea401ee21788253b98276b870a672fa6fcf25e40fd91f5a55fda70ad",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"title\":\"Tumour Growth and tBregs\",\"perWatchSecond\":3,\"levels\":[{\"kind\":\"hook\",\"title\":\"Tumour Growth with tBregs\",\"goal\":\"Understand how tBregs affect tumour growth\",\"control\":{\"parameter\":\"mT\",\"label\":\"Tumour-induced tBreg growth rate\",\"lowEnd\":\"very low\",\"highEnd\":\"very high\"},\"watch\":\"t\",\"whatIf\":{\"prompt\":\"What if the tumour-induced tBreg growth rate is doubled?\",\"parameter\":\"mT\",\"value\":1e-14},\"difference\":{\"compartment\":\"t\",\"summary\":\"at\",\"at\":67,\"time\":80,\"relation\":\"higher\",\"by\":5},\"effect\":\"The tumour size at day 67 will be more than 5 higher with a doubled tumour-induced tBreg growth rate.\",\"prediction\":{\"prompt\":\"Will the tumour size at day 67 be higher or lower with a doubled tumour-induced tBreg growth rate?\",\"claimed\":\"higher by more than 5\",\"other\":\"lower by more than 5\"},\"passage\":{\"title\":\"Result\",\"quote\":\"\\\"if tBregs exist in the body, a sufficiently large number of tBregs can cause the breast tumour to reach its carrying capacity\\\"\"},\"carryForward\":\"mT = 1e-14\"},{\"kind\":\"background\",\"title\":\"NK Cells and Tumour Death\",\"goal\":\"See how NK-induced tumour death affects tumour growth\",\"control\":{\"parameter\":\"c\",\"label\":\"Rate of NK-induced tumour death\",\"lowEnd\":\"very effective\",\"highEnd\":\"very weak\"},\"watch\":\"t\",\"whatIf\":{\"prompt\":\"What if NK cells were twice as effective at killing tumour cells?\",\"parameter\":\"c\",\"value\":4e-10},\"difference\":{\"compartment\":\"t\",\"summary\":\"at\",\"at\":67,\"time\":80,\"relation\":\"lower\",\"by\":5},\"effect\":\"The tumour size at day 67 will be more than 5 lower with NK cells twice as effective.\",\"prediction\":{\"prompt\":\"Will the tumour size at day 67 be higher or lower with more effective NK cells?\",\"claimed\":\"lower by more than 5\",\"other\":\"higher by more than 5\"},\"passage\":{\"title\":\"Mechanism\",\"quote\":\"\\\"NK cells kill tumour cells\\\"\"},\"carryForward\":\"c = 4e-10, mT = 1e-14\"},{\"kind\":\"idea\",\"title\":\"Tregs and NK Cells\",\"goal\":\"Understand the role of Tregs in tumour growth\",\"control\":{\"parameter\":\"gamma\",\"label\":\"Treg-induced NK cell death rate\",\"lowEnd\":\"low\",\"highEnd\":\"high\"},\"watch\":\"n\",\"whatIf\":{\"prompt\":\"What if Tregs were twice as effective at killing NK cells?\",\"parameter\":\"gamma\",\"value\":2e-10},\"difference\":{\"compartment\":\"n\",\"summary\":\"lowest\",\"at\":null,\"time\":80,\"relation\":\"lower\",\"by\":10000000},\"effect\":\"The lowest NK cell count will be more than 10 million lower with Tregs twice as effective.\",\"prediction\":{\"prompt\":\"Will the lowest NK cell count be higher or lower with more effective Tregs?\",\"claimed\":\"lower by more than 10 million\",\"other\":\"higher by more than 10 million\"},\"passage\":{\"title\":\"Mechanism\",\"quote\":\"\\\"Tregs inhibit NK cells\\\"\"},\"carryForward\":\"gamma = 2e-10, c = 4e-10, mT = 1e-14\"}],\"limits\":[\"Tumour size is limited by the carrying capacity.\",\"NK cell count can be affected by Treg-induced death.\"]}",
+    "usage": {
+      "promptTokens": 3230,
+      "completionTokens": 727,
+      "totalTokens": 3957
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T04:08:23.853Z"
+}

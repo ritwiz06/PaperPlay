@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "llama4-maverick-17b",
+  "promptHash": "c332248cbe72c61617ba3fbc40ae026b61644ec370d1cf528ff30954d0fc3821",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"domain\": \"compartments\", \"family\": \"compartments\", \"mechanism\": \"compartments\", \"reason\": \"The paper develops and analyzes an SVEITRS compartmental model to study the transmission dynamics of tuberculosis, using real data from Ethiopia. The model is described by a system of differential equations representing different compartments of the population.\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 822,
+      "completionTokens": 81,
+      "totalTokens": 903
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:01:42.159Z"
+}

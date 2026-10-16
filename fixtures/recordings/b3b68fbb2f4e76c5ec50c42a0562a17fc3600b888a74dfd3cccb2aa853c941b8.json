@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "gemma4-31b-it",
+  "promptHash": "b3b68fbb2f4e76c5ec50c42a0562a17fc3600b888a74dfd3cccb2aa853c941b8",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"domain\": \"grids\", \"family\": \"grids\", \"mechanism\": \"reaction-diffusion\", \"reason\": \"The paper describes a reaction-diffusion model producing spatio-temporal patterns (spots, division, decay) based on local interactions in space, which is characteristic of field-based models on a grid.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 402,
+      "completionTokens": 71,
+      "totalTokens": 473
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:27:04.553Z"
+}

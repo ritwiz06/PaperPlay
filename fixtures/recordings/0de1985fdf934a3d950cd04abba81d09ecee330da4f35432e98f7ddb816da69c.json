@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "0de1985fdf934a3d950cd04abba81d09ecee330da4f35432e98f7ddb816da69c",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"machine learning\", \"family\": \"learning\", \"mechanism\": \"Adam is a first-order stochastic gradient-based optimizer: it maintains exponentially decayed running estimates of the gradient's first moment (mean) and second raw moment (uncentered variance), then performs bias-corrected, per-parameter adaptive step sizes. This is a mechanism a learner can play —\" , \"reason\":\": watching an optimizer descend a loss surface, tuning learning rate and moment decay, comparing against plain SGD or AdaGrad. It is not agents, compartments, grids, or networks; it is a learning toy, and the learning family is not released yet, so the tier is B.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1154,
+      "completionTokens": 179,
+      "totalTokens": 1333
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:12:01.264Z"
+}

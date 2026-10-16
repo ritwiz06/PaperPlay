@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "kimi-k2-7-code",
+  "promptHash": "8101584d96477764575e5a4f554fbf30986fc3cf83a4c3417051a7140520c23d",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " { \"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"adaptive moment estimates for stochastic gradient optimization\", \"reason\": \"Adam is an iterative learning/optimization algorithm, not an agent, compartment, grid, or network model. The learning family is not yet released.\", \"tier\": \"B\" }",
+    "usage": {
+      "promptTokens": 482,
+      "completionTokens": 186,
+      "totalTokens": 668
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:15:27.252Z"
+}

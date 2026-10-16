@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reader",
+  "model": "qwen35-397b-a17b",
+  "promptHash": "b0d14f4b5af0a824ebae3d1fa44901888f336063c92c243f759206985f5f6181",
+  "response": {
+    "model": "qwen35-397b-a17b-fp8",
+    "text": "{\n  \"claims\": [\n    {\n      \"quote\": \"In this study, we developed an SVEITRS compartmental model to investigate the transmission dynamics of TBs, utilizing real data from Ethiopia from 2011–2021.\",\n      \"text\": \"The paper asks to investigate the transmission dynamics of tuberculosis using a specific compartmental model and real-world data from Ethiopia.\"\n    },\n    {\n      \"quote\": \"The total population is divided into six distinct compartments: susceptible $S(t)$, vaccinated $V(t)$, exposed $E(t)$, infectious $I(t)$, treated, $T(t)$ and recovered $R(t)$.\",\n      \"text\": \"It proposes a mechanism where the population is split into six groups: susceptible, vaccinated, exposed, infectious, treated, and recovered.\"\n    },\n    {\n      \"quote\": \"The model's stability analysis indicated that there is a disease-free equilibrium in areas where the basic reproduction number ($$R_0$$) is less than one.\",\n      \"text\": \"The model shows that a disease-free state exists when the basic reproduction number is below one.\"\n    },\n    {\n      \"quote\": \"We obtained $$R_0 = 2.67$$ for the estimated model parameters, which are greater than one, indicating that the tuberculosis is continuously multiplying.\",\n      \"text\": \"For the Ethiopian data, the model shows the disease is endemic because the reproduction number is greater than one.\"\n    },\n    {\n      \"quote\": \"Model parameters were estimated via two methods: nonlinear least squares and maximum likelihood, with maximum likelihood providing more accurate and reliable results, as confirmed by a test case.\",\n      \"text\": \"The paper shows that maximum likelihood estimation was more accurate than nonlinear least squares for parameter estimation.\"\n    },\n    {\n      \"quote\": \"Parameters with negative sensitivity indices $$(μ, π, δ, τ )$$ have the effect of lowering the community's TB burden if their values increases\",\n      \"text\": \"Sensitivity analysis shows that increasing natural death, vaccination, treatment, and disease-induced death rates lowers the TB burden.\"\n    }\n  ],\n  \"mechanism\": \"The paper proposes an SVEITRS compartmental model described by a system of differential equations.\",\n  \"modelEquations\": [\n    \"eq1\"\n  ]\n  ,\n  \"question\": \"The paper asks to investigate the transmission dynamics of tuberculosis in Ethiopia using real data from 2011–2021.\",\n  \"result\":  {\n    \"quote\": \"In this study, we developed an SVEITRS compartmental model to investigate the transmission dynamics of TBs, utilizing real data from Ethiopia from 2011–2021.\",\n    \"text\": \"The paper asks to investigate the transmission dynamics of tuberculosis using a specific compartmental model and real-world data from Ethiopia.\"\n  }\n}",
+    "usage": {
+      "promptTokens": 22394,
+      "completionTokens": 5183,
+      "totalTokens": 27577
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:02:33.025Z"
+}

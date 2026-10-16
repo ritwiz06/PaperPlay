@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "qwen35-397b-a17b",
+  "promptHash": "52aedb57fc5784c5533486e0a00c0f173ebca85c08bb28f85d33b9dd2545a615",
+  "response": {
+    "model": "qwen35-397b-a17b-fp8",
+    "text": "{\n  \"findings\": [\n    {\n      \"finding\": \"Confusing word\",\n      \"level\": 1,\n      \"severity\": \"advice\",\n      \"suggestion\": \"Change the title from 'Who quits treatment?' to 'How adherence affects quitting' or 'How many quit treatment?'. The word 'Who' implies a demographic breakdown (e.g., age, risk group), but the level manipulates a global adherence rate and shows a cumulative count, not a demographic profile. The paper discusses adherence challenges generally, not specific demographic 'who' data.\"\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 13165,
+      "completionTokens": 13887,
+      "totalTokens": 27052
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T10:14:59.401Z"
+}

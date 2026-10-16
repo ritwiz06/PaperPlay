@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen35-397b-a17b",
+  "promptHash": "4b17df8b272ff37eeb85725f0a60f133f7377700d155e725243b9c26f4809592",
+  "response": {
+    "model": "qwen35-397b-a17b-fp8",
+    "text": "{\n  \"domain\": \"learning\",\n  \"family\": \"learning\",\n  \"mechanism\": \"optimization algorithm\",\n  \"reason\": \"The paper describes Adam, a stochastic optimization algorithm used for training machine learning models. This fits the 'learning' family (Learning toys). Since the 'learning' family is marked as 'not released yet' in the provided list, this falls under Tier B.\",\n  \"tier\": \"B\"\n}",
+    "usage": {
+      "promptTokens": 502,
+      "completionTokens": 2522,
+      "totalTokens": 3024
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T22:04:53.762Z"
+}

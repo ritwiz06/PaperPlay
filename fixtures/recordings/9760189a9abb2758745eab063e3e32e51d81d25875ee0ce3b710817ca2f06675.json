@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "granite41-30b",
+  "promptHash": "9760189a9abb2758745eab063e3e32e51d81d25875ee0ce3b710817ca2f06675",
+  "response": {
+    "model": "granite41-30b",
+    "text": "{  \n  \"domain\": \"biology\",  \n  \"family\": \"compartments\",  \n  \"mechanism\": \"The paper presents a system of ordinary differential equations describing the dynamics of four interacting populations (tumor cells T, natural killer cells N, regulatory cells R, and tumour‑evoked regulatory B cells B). This is a classic compartment‑model approach where each compartment's rate of  …\",  \n  \"reason\": \"The mechanism is expressed as a set of coupled ODEs for distinct compartments (T, N, R, B). Such systems are directly covered by the **compartments** family, which is already released. Therefore the appropriate tier is **A**.\",  \n  \"tier\": \"A\"  \n}",
+    "usage": {
+      "promptTokens": 881,
+      "completionTokens": 157,
+      "totalTokens": 1038
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:01:19.657Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "minimax-m2-7",
+  "promptHash": "d444854951181edf74684ec839cc30f90789ecac923dedfa247a9f790f386a1b",
+  "response": {
+    "model": "minimax-m2-7-fast",
+    "text": "{\n  \"domain\": \"compartments\",\n  \"family\": \"compartments\",\n  \"mechanism\": \"SVEITRS compartmental model for TB transmission\",\n  \"reason\": \"The paper presents a system of ordinary differential equations describing transitions between compartments (S, V, E, I, T, R). This is a classic compartment model solved as equations, matching the 'compartments' family, which is released.\",\n  \"tier\": \"A\"\n}",
+    "usage": {
+      "promptTokens": 826,
+      "completionTokens": 608,
+      "totalTokens": 1434
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:27:24.933Z"
+}

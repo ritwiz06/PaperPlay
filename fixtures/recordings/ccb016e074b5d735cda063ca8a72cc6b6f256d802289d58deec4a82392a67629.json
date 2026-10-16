@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reader",
+  "model": "deepseek-v4-1-flash",
+  "promptHash": "ccb016e074b5d735cda063ca8a72cc6b6f256d802289d58deec4a82392a67629",
+  "response": {
+    "model": "deepseek-v4-1-flash",
+    "text": "{ \"claims\": [], \"mechanism\": \"...\" , \"modelEquations\": [\"eq1\"] , \"question\": \"...\" , \"result\": { \"quote\": \"...\" , \"text\": \"...\" } }",
+    "usage": {
+      "promptTokens": 20450,
+      "completionTokens": 3064,
+      "totalTokens": 23514
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:09:00.720Z"
+}

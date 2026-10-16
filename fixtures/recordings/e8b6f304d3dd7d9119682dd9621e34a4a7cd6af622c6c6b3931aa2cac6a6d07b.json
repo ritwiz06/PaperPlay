@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "e8b6f304d3dd7d9119682dd9621e34a4a7cd6af622c6c6b3931aa2cac6a6d07b",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"grids\", \"family\": \"grids\", \"mechanism\": \"Reaction–diffusion dynamics (the Gray–Scott model): two chemical concentration fields evolving on a spatial domain via local reaction kinetics plus diffusion, producing self-organized spatio-temporal patterns — splitting spots, overcrowding-induced decay, and irregular steady patterns — from finite–\" , \"reason\": \"The paper's mechanism is a pair of coupled reaction–diffusion PDEs simulated on a spatial domain: local reaction terms plus Laplacian diffusion of two concentration fields. That is a field-on-a-grid mechanism, not agents, compartments, or networks. The grids family is not released yet, so the tier is B.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1058,
+      "completionTokens": 217,
+      "totalTokens": 1275
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:12:39.231Z"
+}

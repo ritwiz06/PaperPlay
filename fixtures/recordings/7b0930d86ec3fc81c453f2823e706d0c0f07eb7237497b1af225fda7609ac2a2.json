@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "mimo-v2-6-flash",
+  "promptHash": "7b0930d86ec3fc81c453f2823e706d0c0f07eb7237497b1af225fda7609ac2a2",
+  "response": {
+    "model": "mimo-v2-6-flash",
+    "text": "{\"domain\":\"reaction–diffusion spatio‑temporal pattern formation (spots that grow, divide, and collapse whencrow\",\"family\":\"grids\",\"mechanism\":\"A reaction–diffusion system integrated numerically: two (or more) fields evolving on a spatial domain by local reaction kinetics plus diffusion, where finite‑amplitude perturbations grow into irregular spot patterns, spots divide at a critical size, and overcrowded regions relax back to the uniform.\",\"reason\":\"The mechanism is explicitly a PDE field model solved by numerical simulation — spatially extended, diffusive, with local nonlinear kinetics. That is a field‑on‑a‑grid model, not a well‑mixed compartment ODE (no spatial structure would destroy the spots), not independent local agents (the state is a continuous field, not discrete rule‑following entities), and not a contact network.\",\"tier\":\"B\"}",
+    "usage": {
+      "promptTokens": 387,
+      "completionTokens": 361,
+      "totalTokens": 748
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:06:38.063Z"
+}

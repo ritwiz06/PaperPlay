@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "gemma4-31b-it",
+  "promptHash": "d916396c7d59a668ef4656a94229a5ff05fc3c9b01e3661a05815159c6a65ff2",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"domain\": \"agents\", \"family\": \"agents\", \"mechanism\": \"agents\", \"reason\": \"The paper describes a system of self-driven particles where each particle follows a local rule: updating its direction based on the average direction of its neighbors plus random noise. This is a classic agent-based model of collective motion (specifically, the Vicsek model).\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 470,
+      "completionTokens": 82,
+      "totalTokens": 552
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:26:58.403Z"
+}

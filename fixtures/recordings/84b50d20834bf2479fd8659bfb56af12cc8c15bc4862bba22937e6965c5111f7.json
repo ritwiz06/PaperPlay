@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "deepseek-v4-1-flash",
+  "promptHash": "84b50d20834bf2479fd8659bfb56af12cc8c15bc4862bba22937e6965c5111f7",
+  "response": {
+    "model": "deepseek-v4-1-flash",
+    "text": "{ \"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"Iterative first-order optimization: parameters are updated by gradient steps scaled by running exponential moving averages of the gradient and its square (adaptive per-coordinate step sizes), with bias correction; a variant uses the infinity norm.\", \"reason\": \"The paper's core is a dynamical update rule — a stochastic optimizer whose state (moment estimates) evolves step by step and whose behavior a learner can replay and tune. That is a learning-algorithm mechanism rather than agents, compartments, grids, or networks. The learning family is not released yet, so it routes to tier B.\", \"tier\": \"B\" }",
+    "usage": {
+      "promptTokens": 1041,
+      "completionTokens": 570,
+      "totalTokens": 1611
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T22:02:16.344Z"
+}

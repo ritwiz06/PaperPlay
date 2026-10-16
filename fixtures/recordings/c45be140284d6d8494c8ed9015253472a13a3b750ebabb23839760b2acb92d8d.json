@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen35-397b-a17b",
+  "promptHash": "c45be140284d6d8494c8ed9015253472a13a3b750ebabb23839760b2acb92d8d",
+  "response": {
+    "model": "qwen35-397b-a17b-fp8",
+    "text": "{\n  \"domain\": \"grids\",\n  \"family\": \"grids\",\n  \"mechanism\": \"Reaction-diffusion system producing spatio-temporal patterns (fields on a grid)\",\n  \"reason\": \"The paper describes numerical simulations of a reaction-diffusion model, which involves continuous fields evolving over space (grid). This matches the 'grids' family ('Fields on a grid'). Since the 'grids' family is marked as 'not released yet', the tier is B.\",\n  \"tier\": \"B\"\n}",
+    "usage": {
+      "promptTokens": 405,
+      "completionTokens": 3683,
+      "totalTokens": 4088
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T22:28:14.997Z"
+}

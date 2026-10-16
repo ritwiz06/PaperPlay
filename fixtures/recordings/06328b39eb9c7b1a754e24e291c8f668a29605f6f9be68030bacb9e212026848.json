@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen35-397b-a17b",
+  "promptHash": "06328b39eb9c7b1a754e24e291c8f668a29605f6f9be68030bacb9e212026848",
+  "response": {
+    "model": "qwen35-397b-a17b-fp8",
+    "text": "{\n  \"domain\": \"networks\",\n  \"family\": \"networks\",\n  \"mechanism\": \"Epidemic spreading on scale-free networks\",\n  \"reason\": \"The paper explicitly models dynamics on a network structure (scale-free). The instructions specify that epidemics on contact networks fall under the 'networks' family rather than 'compartments' or 'agents'. Since the 'networks' family is marked as 'not released yet', this is Tier B.\",\n  \"tier\": \"B\"\n}",
+    "usage": {
+      "promptTokens": 439,
+      "completionTokens": 1385,
+      "totalTokens": 1824
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T22:25:37.056Z"
+}

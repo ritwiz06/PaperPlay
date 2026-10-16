@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "planner",
+  "model": "minimax-m2-7",
+  "promptHash": "ac95551d9e95674d4a15b3a0775a0d07921664716ff50fd3cf36a4b5b41d057b",
+  "response": {
+    "model": "minimax-m2-7-fast",
+    "text": "\n\n{\"title\":\"TB Transmission Dynamics\",\"perWatchSecond\":0.5,\"levels\":[{\"kind\":\"hook\",\"title\":\"The First Outbreak\",\"goal\":\"Adjust the contact rate to see how the susceptible population changes over time.\",\"control\":{\"parameter\":\"beta\",\"label\":\"Contact rate\",\"lowEnd\":\"0.01\",\"highEnd\":\"0.2\"},\"watch\":\"s\",\"whatIf\":{\"prompt\":\"What if the contact rate was doubled?\",\"parameter\":\"beta\",\"value\":0.1},\"difference\":{\"compartment\":\"s\",\"summary\":\"at\",\"at\":null,\"time\":10,\"relation\":\"lower\",\"by\":5},\"effect\":\"At year 10, the susceptible population in the what‑if world is lower by more than 5.\",\"prediction\":{\"prompt\":\"Will the what‑if world have fewer susceptible people at year 10?\",\"claimed\":\"Yes, lower\",\"other\":\"No, higher or same\"},\"passage\":{\"title\":\"Contact rate importance\",\"quote\":\"contact rate ($beta$), recruitment rate ($varLambda$), the loss of protection for the vaccination rate ($theta$), and rate of progression from the exposed class to the infectious class ($gamma$) were the most important factors.\"},\"carryForward\":\"The susceptible population after the",
+    "usage": {
+      "promptTokens": 2711,
+      "completionTokens": 32000,
+      "totalTokens": 34711
+    },
+    "finishReason": "length"
+  },
+  "recordedAt": "2026-10-16T04:36:17.048Z"
+}

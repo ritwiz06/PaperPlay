@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen35-397b-a17b",
+  "promptHash": "2f0a5c9539dc5930e019d98a5f9153093933b01e843aa489fde553029a93d7a0",
+  "response": {
+    "model": "qwen35-397b-a17b-fp8",
+    "text": "{\n  \"domain\": \"compartments\",\n  \"family\": \"compartments\",\n  \"mechanism\": \"ODE system modeling cell population dynamics\",\n  \"reason\": \"The paper presents a system of ordinary differential equations (ODEs) describing the time evolution of four populations (T, N, R, B). This is a classic compartmental model used in mathematical biology, fitting the 'compartments' family definition ('Compartment models, solved as equations'). Since this family is released, it is Tier A.\",\n  \"tier\": \"A\"\n}",
+    "usage": {
+      "promptTokens": 920,
+      "completionTokens": 1536,
+      "totalTokens": 2456
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-15T19:53:44.001Z"
+}

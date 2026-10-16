@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen35-397b-a17b",
+  "promptHash": "d4074dfafc2c4952291499d8c713686464c53d4ff17f6097c230bd5f30fb6a3d",
+  "response": {
+    "model": "qwen35-397b-a17b-fp8",
+    "text": "{\n  \"domain\": \"compartments\",\n  \"family\": \"compartments\",\n  \"mechanism\": \"ODE-based compartmental epidemiological model\",\n  \"reason\": \"The paper presents a system of ordinary differential equations (dS/dt, dI/dt, etc.) describing flows between population compartments (S, I, C, Cq, R). This is the defining characteristic of the 'compartments' family. The model is well-mixed (mass-action transmission) rather than network-based or agent-based. Since the 'compartments' family is released, this is Tier A.\",\n  \"tier\": \"A\"\n}",
+    "usage": {
+      "promptTokens": 827,
+      "completionTokens": 1319,
+      "totalTokens": 2146
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T22:01:58.900Z"
+}

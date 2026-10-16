@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "gpt-oss-120b",
+  "promptHash": "fbff75ec0017c5cc4fa25867e8a86dee0e0f32bf62e963200881fa422b17b832",
+  "response": {
+    "model": "gpt-oss-120b",
+    "text": "{\n  \"domain\": \"compartments\",\n  \"family\": \"compartments\",\n  \"mechanism\": \"well‑mixed ODE compartment model of interacting cell populations (tumor cells, immune cells, regulatory B cells, etc.)\",\n  \"reason\": \"The paper formulates the dynamics with a system of ordinary differential equations describing the time evolution of four homogeneous compartments. This matches the released ‘compartments’ family.\",\n  \"tier\": \"A\"\n}",
+    "usage": {
+      "promptTokens": 951,
+      "completionTokens": 238,
+      "totalTokens": 1189
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:02:24.591Z"
+}

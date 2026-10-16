@@ -8,12 +8,24 @@
  *   models   lists the gateway's models, with whatever it says about each
  *   probe    asks every chat model for structured output and for plain JSON; writes
  *            eval/models-probe.md and each model's finding into apps/api/models.json
+ *   bakeoff  runs every candidate on every stage against the gold answers; writes
+ *            eval/bakeoff/results.json and eval/models.md
+ *   design   runs every candidate on planning and reviewing, after bakeoff; writes
+ *            eval/bakeoff/design.json and eval/models.md again
+ *   report   rewrites eval/models.md from the saved results, calling nothing
+ *   serve    the API on 127.0.0.1 with live model calls, recorded (or replayed when recorded
+ *            already), for /create on this machine
  */
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { directoryStore, recordingClient } from "@paperplay/pipeline/models";
+import { directoryStore, recordingClient, resumingClient } from "@paperplay/pipeline/models";
 import { CONFIG_FILE, loadModelConfig } from "../apps/api/src/models/config.ts";
 import { liveClient } from "../apps/api/src/models/live.ts";
+import { pipelineRunner } from "../apps/api/src/runner.ts";
+import { buildServer } from "../apps/api/src/server.ts";
+import { runDesignBakeoff, type DesignResults } from "./bakeoff/design.ts";
+import { rankReaders, toModelsMarkdown, transcriberPair } from "./bakeoff/report.ts";
+import { agreement, CANDIDATES, runBakeoff, type BakeoffResults } from "./bakeoff/run.ts";
 import { probeModel, type ProbeResult } from "./live/probe.ts";
 
 const RECORDINGS = join(import.meta.dirname, "..", "fixtures", "recordings");
@@ -64,7 +76,67 @@ async function probe(): Promise<void> {
   console.log(`wrote eval/models-probe.md and ${results.length} findings to apps/api/models.json`);
 }
 
-const commands: Readonly<Record<string, () => Promise<void>>> = { models, probe };
+async function bakeoff(): Promise<void> {
+  const config = loadModelConfig();
+  // The slow reasoning models can take minutes on a long paper; one retry only, so a timeout is not paid for twice over.
+  // Calls already recorded are replayed, so a run cut short resumes where it stopped.
+  const client = resumingClient(liveClient({ ...config, timeoutMs: 1_800_000, retries: 1 }), directoryStore(RECORDINGS));
+  const results = await runBakeoff(client, config.structuredOutput);
+  const folder = join(import.meta.dirname, "..", "eval", "bakeoff");
+  mkdirSync(folder, { recursive: true });
+  writeFileSync(join(folder, "results.json"), `${JSON.stringify(results, null, 2)}\n`);
+  const pair = transcriberPair(results);
+  const agreed = pair.first && pair.second ? agreement(results, pair.first.model, pair.second.model) : [];
+  writeFileSync(join(import.meta.dirname, "..", "eval", "models.md"), toModelsMarkdown(results, agreed, { date: new Date().toISOString().slice(0, 10) }));
+  console.log("wrote eval/bakeoff/results.json and eval/models.md");
+}
+
+/** The bake-off's second half, planning and reviewing, on the first half's results; then the report again, whole. */
+async function design(): Promise<void> {
+  const config = loadModelConfig();
+  // Calls already recorded are replayed, so a run cut short resumes where it stopped.
+  const client = resumingClient(liveClient({ ...config, timeoutMs: 1_800_000, retries: 1 }), directoryStore(RECORDINGS));
+  const folder = join(import.meta.dirname, "..", "eval", "bakeoff");
+  const results = JSON.parse(readFileSync(join(folder, "results.json"), "utf8")) as BakeoffResults;
+  // Each paper's reading from the best reader, as the controller would have it.
+  const best = rankReaders(results)[0]?.model;
+  const readings = Object.fromEntries(results.readings.filter((entry) => entry.model === best && entry.outcome.ok).map((entry) => [entry.paper, (entry.outcome as { value: unknown }).value])) as Record<string, never>;
+  const designed: DesignResults = await runDesignBakeoff(client, config.structuredOutput, CANDIDATES, readings);
+  writeFileSync(join(folder, "design.json"), `${JSON.stringify(designed, null, 2)}\n`);
+  const pair = transcriberPair(results);
+  const agreed = pair.first && pair.second ? agreement(results, pair.first.model, pair.second.model) : [];
+  writeFileSync(join(import.meta.dirname, "..", "eval", "models.md"), toModelsMarkdown(results, agreed, { date: new Date().toISOString().slice(0, 10) }, designed));
+  console.log("wrote eval/bakeoff/design.json and eval/models.md");
+}
+
+/** eval/models.md again from eval/bakeoff/, with no call to the gateway. */
+async function report(): Promise<void> {
+  const folder = join(import.meta.dirname, "..", "eval", "bakeoff");
+  const results = JSON.parse(readFileSync(join(folder, "results.json"), "utf8")) as BakeoffResults;
+  const designed = existsSync(join(folder, "design.json")) ? (JSON.parse(readFileSync(join(folder, "design.json"), "utf8")) as DesignResults) : undefined;
+  const written = readFileSync(join(import.meta.dirname, "..", "eval", "models.md"), "utf8");
+  const date = /Run on (\d{4}-\d{2}-\d{2})/.exec(written)?.[1] ?? new Date().toISOString().slice(0, 10);
+  const pair = transcriberPair(results);
+  const agreed = pair.first && pair.second ? agreement(results, pair.first.model, pair.second.model) : [];
+  writeFileSync(join(import.meta.dirname, "..", "eval", "models.md"), toModelsMarkdown(results, agreed, { date }, designed));
+  await Promise.resolve();
+  console.log("wrote eval/models.md");
+}
+
+/** The API with live calls, recorded as they are made, so a job run here can be replayed by dev:api and the tests; a call already recorded is replayed. */
+async function serve(): Promise<void> {
+  const config = loadModelConfig();
+  const missing = Object.entries(config.stages).filter(([, model]) => model === null).map(([stage]) => stage);
+  if (missing.length > 0) throw new Error(`apps/api/models.json names no model for ${missing.join(", ")}; the bake-off chooses them (eval/models.md)`);
+  // A call already recorded is replayed, so a job run again is the same job, at once.
+  const client = resumingClient(liveClient(config), directoryStore(RECORDINGS));
+  const port = Number(process.env.PORT ?? 8787);
+  const app = buildServer({ runner: pipelineRunner(client, config, (url, init) => fetch(url, init)) });
+  await app.listen({ host: "127.0.0.1", port });
+  console.log(`PaperPlay API listening on http://127.0.0.1:${port}, with live model calls, recorded`);
+}
+
+const commands: Readonly<Record<string, () => Promise<void>>> = { models, probe, bakeoff, design, report, serve };
 const run = command === undefined ? undefined : commands[command];
 if (!run) {
   console.error(`usage: npm run pipeline:live -- <${Object.keys(commands).join("|")}>`);

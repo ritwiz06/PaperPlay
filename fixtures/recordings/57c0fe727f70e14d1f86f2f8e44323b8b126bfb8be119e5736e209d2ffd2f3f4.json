@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "mimo-v2-6-flash",
+  "promptHash": "57c0fe727f70e14d1f86f2f8e44323b8b126bfb8be119e5736e209d2ffd2f3f4",
+  "response": {
+    "model": "mimo-v2-6-flash",
+    "text": "{\"domain\":\"learning\",\"family\":\"learning\",\"mechanism\":\"randomly disabling a fraction of a network's units during each training step (dropout) to prevent co-adaptation of feature detectors\",\"reason\":\"The mechanism is a training rule for a neural network: units are stochastically masked so each neuron must remain useful across many internal contexts. That is a learning toy — a small trainable network with a masking rule the learner can run and inspect. No released family (agents, compartments) honestly covers it, so it falls to the not-yet-released learning family.\",\"tier\":\"B\"}",
+    "usage": {
+      "promptTokens": 426,
+      "completionTokens": 187,
+      "totalTokens": 613
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:06:07.071Z"
+}

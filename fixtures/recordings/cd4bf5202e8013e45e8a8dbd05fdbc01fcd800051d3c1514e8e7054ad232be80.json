@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen35-397b-a17b",
+  "promptHash": "cd4bf5202e8013e45e8a8dbd05fdbc01fcd800051d3c1514e8e7054ad232be80",
+  "response": {
+    "model": "qwen35-397b-a17b-fp8",
+    "text": "{\n  \"domain\": \"compartments\",\n  \"family\": \"compartments\",\n  \"mechanism\": \"ODE-based compartmental model (SVEITRS)\",\n  \"reason\": \"The paper explicitly describes an 'SVEITRS compartmental model' and provides a system of ordinary differential equations governing the flow between population states (Susceptible, Vaccinated, Exposed, Infected, Treated, Recovered). This matches the 'compartments' family definition (Compartment models, solved as equations), which is listed as released.\",\n  \"tier\": \"A\"\n}",
+    "usage": {
+      "promptTokens": 898,
+      "completionTokens": 1286,
+      "totalTokens": 2184
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-15T19:51:47.208Z"
+}

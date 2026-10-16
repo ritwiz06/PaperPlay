@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "gpt-oss-120b",
+  "promptHash": "508a3a0e62dd1798deb9322fc3fd477726f12be39fc583ff46505c61b8e4c3d0",
+  "response": {
+    "model": "gpt-oss-120b",
+    "text": "{\n  \"domain\": \"compartments\",\n  \"family\": \"compartments\",\n  \"mechanism\": \"epidemiological compartment model (ODEs for susceptible, infected, chronic, quarantined, recovered)\",\n  \"reason\": \"The paper presents a classic well‑mixed compartmental model of HCV transmission with treatment adherence, using ordinary differential equations for population compartments. This matches the released ‘compartments’ family.\",\n  \"tier\": \"A\"\n}",
+    "usage": {
+      "promptTokens": 867,
+      "completionTokens": 209,
+      "totalTokens": 1076
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:02:35.725Z"
+}

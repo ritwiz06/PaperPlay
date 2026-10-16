@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reader",
+  "model": "mimo-v2-6-flash",
+  "promptHash": "9f8633be5cd6511911db436930c7046d87be65d8b3eecbf630a1c8bdaa34f179",
+  "response": {
+    "model": "mimo-v2-6-flash",
+    "text": "{\"claims\":[{\"quote\":\"Hepatitis C virus (HCV) prevalence is still increasing in Zimbabwe, a low-middle-income country (LMIC), despite the availability of effective treatments, and the reasons for this increase are not well understood.\",\"text\":\"The paper asks why HCV keeps spreading in Zimbabwe even though effective treatments exist, and specifically what role poor treatment adherence plays. It notes that, to its knowledge, no mathematical model has yet put adherence into HCV transmission dynamics.\"},{\"quote\":\"Our study employed a mathematical model to explain the impact of poor treatment adherence on HCV transmission dynamics in Zimbabwe.\",\"text\":\"The proposed mechanism is a compartmental model of a homogeneously mixing population split into susceptible (S), acutely infected (I), chronically infected on treatment (C), chronically infected after quitting treatment (Cq), and recovered (R) people. Adherence enters as a parameter θ, the fraction,\"}] , \"mechanism\":\"The paper's mechanism is a five-compartment ODE model of a homogeneously mixing population: susceptible (S), acutely infected (I), chronically infected on treatment (C), chronically infected after quitting treatment (Cq), and recovered (R). Adherence enters as θ, the proportion of treated people who\" , \"modelEquations\":[ \"eq1\", \"eq2\", \"eq3\" ] , \"question\":\"The paper asks why hepatitis C virus (HCV) prevalence keeps rising in Zimbabwe despite effective treatments being available, and specifically what role poor treatment adherence plays in transmission. It states that, to its knowledge, no mathematical model has yet incorporated adherence as a driver\" , \"result\":{ \"quote\":\"The study demonstrated that an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\",\"text\":\"The model shows that raising treatment adherence θ above about 52% pushes R₀ below 1, which would stop further spread. Other findings reported: the mean R₀ from 10,000 Latin-hypercube samples is 2.19; the treatment adherence proportion θ has the most negative PRCC (so raising it lowers R₀) while the recruitment rate b has the highest positive PRCC; R₀ falls below 1 when the chronic recovery rate ρ\" } }",
+    "usage": {
+      "promptTokens": 12578,
+      "completionTokens": 516,
+      "totalTokens": 13094
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:05:29.284Z"
+}

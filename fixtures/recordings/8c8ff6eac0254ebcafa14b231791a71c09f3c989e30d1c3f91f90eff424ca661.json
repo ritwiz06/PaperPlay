@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "mimo-v2-6-flash",
+  "promptHash": "8c8ff6eac0254ebcafa14b231791a71c09f3c989e30d1c3f91f90eff424ca661",
+  "response": {
+    "model": "mimo-v2-6-flash",
+    "text": "{\"findings\": [{\"finding\": \"Level 2 attributes a quote to the paper that does not appear in it. The paper never claims that vaccinating every newborn would eliminate tuberculosis within ten years. In fact, the paper explicitly states that BCG 'alone will not be enough to stop the disease's epidemic' and reports R₀ = 2.67 (endemic). This is a false attribution that would teach the learner something the paper does not say.\", \"level\": 2, \"severity\": \"blocking\", \"suggestion\": \"Replace the quoted statement with one actually supported by the paper, such as: 'The paper shows that increasing the vaccination rate lowers the effective reproduction number R_v, moving the system toward disease-free conditions when R_v < 1.'\"}, {\"finding\": \"The statement claims 'the epidemic doubles in size and the disease can never be controlled,' but the measured difference is only 6 more exposed people at year 10 — nowhere near doubling. The absolute claim 'can never be controlled' is also not supported by the paper, which discusses control strategies and does not make such a claim.\", \"level\": 3, \"severity\": \"blocking\", \"suggestion\": \"Reword the statement to match the measurement: 'With twice the progression rate, there are 6 more exposed people at year 10, and the reproduction number increases, making control harder.'\"}, {\"finding\": \"The check fails: the statement 'more people are recovered at year 30' holds on only 9 of 20 runs. The world would teach a claim that the simulation does not reliably support.\", \"level\": 4, \"severity\": \"blocking\", \"suggestion\": \"Either adjust the what-if or the stated outcome so the claim holds consistently across runs, or reword the statement to reflect what the simulation actually shows (e.g., describe the direction of change in the recovered compartment at a time where the effect is reliable).\"}]}",
+    "usage": {
+      "promptTokens": 22490,
+      "completionTokens": 1692,
+      "totalTokens": 24182
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T10:01:01.152Z"
+}

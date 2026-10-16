@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "llama4-maverick-17b",
+  "promptHash": "39219518232af40a57ccd7f4f7dbc86053d4c855d6bccfaef0f31e4600061159",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"A\", \"reason\": \"The paper introduces Adam, an algorithm for stochastic optimization, which is a type of learning method. The abstract describes it as a first-order gradient-based optimization method, indicating that it is related to learning models.\" , \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 478,
+      "completionTokens": 74,
+      "totalTokens": 552
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:01:57.228Z"
+}

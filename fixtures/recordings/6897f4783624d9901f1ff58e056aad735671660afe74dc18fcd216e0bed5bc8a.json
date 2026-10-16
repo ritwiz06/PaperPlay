@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "6897f4783624d9901f1ff58e056aad735671660afe74dc18fcd216e0bed5bc8a",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"findings\": [\n    {\n      \"finding\": \"Level 2 — Blocking: misattributed, off-topic claim presented as the paper’s\",\n      \"level\": 2,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace the level’s statement with a claim that is actually in the paper and about treatment. The current quote, “The paper shows that vaccinating every newborn would eliminate tuberculosis within ten years,” is not in the source, so it falsely attributes a teaching choice to the paper. It also switches the level’s topic from treatment rate to vaccination. Use a paper-supported treatment statement\"\n    },\n    {\n      \"finding\": \"Level 3 — Blocking: claim worded more strongly than the measurement\",\n      \"level\": 3,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Reword the what-if statement to match the measured result. The check found only 6 more exposed people at year 10, so “the epidemic doubles in size” overstates the change and “the disease can never be controlled” contradicts the paper’s conclusion that elimination is possible. Replace with something like: “If exposed individuals became infectious twice as fast, there would be about 6 more exposed\"\n    },\n    {\n      \"finding\": \"Level 4 — Blocking: failing quantitative claim\",\n      \"level\": 4,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace the year-30 claim or remove the what-if. The statement “more people are recovered at year 30” holds in only 9 of 20 checks, so it is not reliably true in this world and would teach a false relationship. The paper also does not analyze the recovery rate (α) in its sensitivity indices, so do not present the claim as the paper’s. Use only a statement that passes 20/20, or drop the what-if if\"\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 21067,
+      "completionTokens": 11017,
+      "totalTokens": 32084
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T10:11:53.263Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "kimi-k2-7-code",
+  "promptHash": "7fe74b5305d12a2d50b836d5c5a9e343da45ab5074e37ebc8274d31f8049e669",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " { \"domain\": \"grids\", \"family\": \"grids\", \"mechanism\": \"Fields on a grid\", \"reason\": \"The paper studies a reaction–diffusion PDE/field model producing spatial patterns, not well-mixed compartments or discrete agents.\", \"tier\": \"B\" }",
+    "usage": {
+      "promptTokens": 386,
+      "completionTokens": 189,
+      "totalTokens": 575
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:15:53.065Z"
+}

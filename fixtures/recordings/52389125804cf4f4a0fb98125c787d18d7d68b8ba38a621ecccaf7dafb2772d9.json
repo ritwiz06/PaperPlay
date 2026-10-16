@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "minimax-m2-7",
+  "promptHash": "52389125804cf4f4a0fb98125c787d18d7d68b8ba38a621ecccaf7dafb2772d9",
+  "response": {
+    "model": "minimax-m2-7-fast",
+    "text": "{ \"domain\": \"biology\", \"family\": \"compartments\", \"mechanism\": \"A system of coupled ordinary differential equations representing population dynamics between tumor cells, immune cells, regulatory cells, and B cells, with stability and bifurcation analysis of equilibrium points.\", \"reason\": \"The paper presents a system of ODEs describing interactions between four populations (tumor T, immune cells N, regulatory cells R, B cells B). The equations show logistic growth, predation/immune response terms, and regulatory interactions. The analysis focuses on equilibrium points and their stability, characteristic of compartment models in mathematical biology.\", \"tier\": \"A\" }",
+    "usage": {
+      "promptTokens": 812,
+      "completionTokens": 687,
+      "totalTokens": 1499
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:28:20.994Z"
+}

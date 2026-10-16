@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "gpt-oss-120b",
+  "promptHash": "6edf2739529b99c7568defd1f636e94ec034385324f5c7b4d7a5ca9132e783df",
+  "response": {
+    "model": "gpt-oss-120b",
+    "text": "{\n  \"domain\": \"compartments\",\n  \"family\": \"compartments\",\n  \"mechanism\": \"Compartmental ODE model of TB transmission (SVEITRS)\",\n  \"reason\": \"The paper builds and analyzes a deterministic compartment model (S, V, E, I, T, R) using differential equations, stability, R₀, and sensitivity—exactly the type of mechanism covered by the released “compartments” family.\",\n  \"tier\": \"A\"\n}",
+    "usage": {
+      "promptTokens": 930,
+      "completionTokens": 230,
+      "totalTokens": 1160
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:02:18.925Z"
+}

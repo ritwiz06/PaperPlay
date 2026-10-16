@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "df7dd63dda9b5666cd38900b307279a417b467abf2b8eb0a411e04c524c600cf",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"immunology\", \"family\": \"compartments\", \"mechanism\": \"A four-compartment ODE model of tumour cells (T), NK cells (N), regulatory T cells (R), and tumour-evoked regulatory B cells (B), with logistic tumour growth, immune killing, and tBreg-mediated suppression, studied via equilibrium, stability, and bifurcation analysis.\", \"reason\":\": The paper's mechanism is a well-mixed system of coupled ODEs (dT/dt, dN/dt, dR/dt, dB/dt) with interaction terms, equilibria, and stability/bifurcation analysis — exactly the structure of a compartment model solved as equations. No spatial structure, network topology, or agent-level rules appear; the dynamics are purely equation-based, so the released compartments family covers it as stated.\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 1551,
+      "completionTokens": 214,
+      "totalTokens": 1765
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:11:42.038Z"
+}

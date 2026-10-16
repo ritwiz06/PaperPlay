@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "llama4-maverick-17b",
+  "promptHash": "1dd5125269717d273c12e60e7be83493106675d7843a9fc19d3e9dbdc96734b3",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"domain\": \"agents\", \"family\": \"agents\", \"mechanism\": \"A\", \"reason\": \"The paper describes a model of self-driven particles that follow local rules, interacting with their neighbors to determine their direction of motion. This fits the definition of an 'agents' model, where individual agents follow simple rules to produce emergent behavior.\" , \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 446,
+      "completionTokens": 80,
+      "totalTokens": 526
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:02:01.814Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "minimax-m2-7",
+  "promptHash": "90de5b4687e87ec1d18ce851b993332979adc4df163930f090c23365acb1df16",
+  "response": {
+    "model": "minimax-m2-7-fast",
+    "text": "{ \"domain\": \"grids\", \"family\": \"grids\", \"mechanism\": \"reaction-diffusion on a grid producing spot patterns that grow, divide, and decay\", \"reason\": \"The paper describes numerical simulations of a reaction-diffusion model producing spatio-temporal patterns (spots that grow, divide, and decay). Reaction-diffusion systems are typically simulated on spatial grids, making grids the appropriate family.\", \"tier\": \"A\" }",
+    "usage": {
+      "promptTokens": 384,
+      "completionTokens": 570,
+      "totalTokens": 954
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T22:02:40.484Z"
+}

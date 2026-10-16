@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen35-397b-a17b",
+  "promptHash": "a32c1dbfae7f311091b589fcca456629dbe58f4728ce111843c2b836f6ce1050",
+  "response": {
+    "model": "qwen35-397b-a17b-fp8",
+    "text": "{\n  \"domain\": \"learning\",\n  \"family\": \"learning\",\n  \"mechanism\": \"Dropout regularization during neural network training\",\n  \"reason\": \"The paper describes a machine learning training technique (dropout) to prevent overfitting. While the substrate is a neural network, the core mechanism is about the learning process (training cases, feature detection learning, generalization). The 'learning' family is designated for learning toys but is marked as not released yet.\",\n  \"tier\": \"B\"\n}",
+    "usage": {
+      "promptTokens": 445,
+      "completionTokens": 3223,
+      "totalTokens": 3668
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T22:23:37.770Z"
+}

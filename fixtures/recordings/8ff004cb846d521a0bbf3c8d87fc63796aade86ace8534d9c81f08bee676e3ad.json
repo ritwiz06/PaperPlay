@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "kimi-k2-7-code",
+  "promptHash": "8ff004cb846d521a0bbf3c8d87fc63796aade86ace8534d9c81f08bee676e3ad",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " { \"domain\": \"compartments\", \"family\": \"compartments\", \"mechanism\": \"SVEITRS compartmental ODE model of TB transmission\", \"reason\": \"The paper's mechanism is a deterministic compartmental model solved as differential equations; no spatial structure, individual agents, learning, networks, or study-design focus.\", \"tier\": \"A\" }",
+    "usage": {
+      "promptTokens": 839,
+      "completionTokens": 170,
+      "totalTokens": 1009
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:15:10.387Z"
+}

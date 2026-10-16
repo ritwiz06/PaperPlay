@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "mimo-v2-6-flash",
+  "promptHash": "f7dc13c46e5daca886447143c8fc68e70231fb74fc26e9e22c1f0a5649bd54b8",
+  "response": {
+    "model": "mimo-v2-6-flash",
+    "text": "{\"domain\":\"stochastic gradient optimization (adaptive moment estimation)\",\"family\":\"learning\",\"mechanism\":\"Adam maintains running estimates of the first and second moments of the stochastic gradients and uses them to rescale per-parameter learning rates; AdaMax generalizes this to the infinity norm. The dynamics are those of a learning rule updating parameters and moment state from noisy gradient signals\",\"reason\":\"The mechanism is a learning/optimization algorithm — a parameter update rule with internal state — not a spatial field, a contact network, a compartmental flow, or a study design. The 'learning' family is the fit, but it is not yet released.\",\"tier\":\"B\"}",
+    "usage": {
+      "promptTokens": 483,
+      "completionTokens": 213,
+      "totalTokens": 696
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:06:00.888Z"
+}

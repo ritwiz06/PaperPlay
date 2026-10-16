@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reader",
+  "model": "qwen35-397b-a17b",
+  "promptHash": "aeaa36f202baa5080d3b34c993942caa0319ca4e74268cf6feb1a024960343a1",
+  "response": {
+    "model": "qwen35-397b-a17b-fp8",
+    "text": "\n\n{\n  \"question\": \"What is the impact of poor treatment adherence on HCV transmission dynamics in Zimbabwe?\",\n  \"mechanism\": \"A compartmental model distinguishing chronic infected under treatment versus those who quit prematurely, incorporating adherence proportion.\",\n  \"modelEquations\": [\n    \"eq1\",\n    \"eq2\",\n    \"eq3\"\n  ],\n  \"result\": {\n    \"text\": \"The model indicates that an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\",\n    \"quote\": \"The study demonstrated that an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\"\n  },\n  \"claims\": [\n    {\n      \"text\": \"Variations in re-susceptibility minimally impact outcomes.\",\n      \"quote\": \"Our HCV model indicates that variations in re-susceptibility minimally impact outcomes, suggesting that re-susceptibility can often be excluded\"\n    },\n    {\n      \"text\": \"Synergistic impact of enhancing recovery rate and treatment adherence on reducing R0.\",\n      \"quote\": \"Our model unraveled the synergistic impact of simultaneously enhancing the recovery rate of acutely infected individuals and treatment adherence on reducing\"\n    },\n    {\n      \"text\": \"Backward bifurcation arises when Lambda1 > Lambda2 and a>0.\",\n      \"quote\": \"Model system 3 reveals that backward bifurcation arises when $Λ_{1} > Λ_{2}$ and a>0, indicating the coexistence of a stable endemic equilibrium\"\n    },\n    {\n      \"text\": \"The mean reproduction number stands at 2.19.\",\n      \"quote\": \"While the mean reproduction number stands at 2.19, the spread of the values reveals that certain parameter combinations can lead\"\n    },\n    {\n      \"text\": \"Treatment adherence proportion theta presents the most pronounced negative PRCC index.\",\n      \"quote\": \"In Fig 5, we observed that the recruitment rate exhibits the highest positive index, while the treatment adherence proportion $θ$ presents the most pronounced negative\"\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 12906,
+      "completionTokens": 5319,
+      "totalTokens": 18225
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T06:58:38.090Z"
+}

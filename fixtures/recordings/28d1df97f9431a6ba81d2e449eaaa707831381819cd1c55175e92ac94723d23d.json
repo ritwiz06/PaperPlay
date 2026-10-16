@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "llama4-maverick-17b",
+  "promptHash": "28d1df97f9431a6ba81d2e449eaaa707831381819cd1c55175e92ac94723d23d",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"domain\": \"compartments\", \"family\": \"compartments\", \"mechanism\": \"compartments\", \"reason\": \"The paper uses a system of differential equations to model the transmission dynamics of hepatitis C virus, dividing the population into compartments (S, I, C, C_q, R) and tracking the flow between them based on various parameters. This is a classic example of a compartmental model.\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 786,
+      "completionTokens": 96,
+      "totalTokens": 882
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:01:54.387Z"
+}

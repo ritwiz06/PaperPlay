@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "llama4-maverick-17b",
+  "promptHash": "1b0a76db64deeb044a252212f3f85f4ed8ce261dc7bea38dcf6f6da73d20f6bd",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"B\", \"reason\": \"The paper discusses improving neural networks, which is related to the 'learning' family. Although the 'learning' family is not released yet, the mechanism described in the paper involves learning and neural networks, making it a good fit for this category. The tier is B because the family is not released yet.\" , \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 424,
+      "completionTokens": 92,
+      "totalTokens": 516
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:02:00.140Z"
+}

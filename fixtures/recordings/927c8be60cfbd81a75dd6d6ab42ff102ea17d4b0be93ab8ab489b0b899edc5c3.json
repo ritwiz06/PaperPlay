@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "granite41-30b",
+  "promptHash": "927c8be60cfbd81a75dd6d6ab42ff102ea17d4b0be93ab8ab489b0b899edc5c3",
+  "response": {
+    "model": "granite41-30b",
+    "text": "{  \n  \"domain\": \"epidemiology\",  \n  \"family\": \"compartments\",  \n  \"mechanism\": \"The paper presents a classic compartmental model for Hepatitis C Virus (HCV) transmission, using ordinary differential equations (ODEs) to describe the flow of individuals among Susceptible (S), Infected (I), Chronic (C), Quarantined Chronic (C_q), and Recovered (R) compartments. The model computes \"  \n  ,  \n  \"reason\": \"The mechanism is explicitly expressed as a set of compartment‑based ODEs (e.g., dS/dt, dI/dt, …) and includes calculation of the basic reproduction number ℛ₀ and stability analysis of equilibrium states. This aligns directly with the **compartments** family, which is already released. Therefore the appropriate tier is **A**.\"  \n,  \n  \"tier\": \"A\"  \n}",
+    "usage": {
+      "promptTokens": 810,
+      "completionTokens": 203,
+      "totalTokens": 1013
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:01:26.779Z"
+}

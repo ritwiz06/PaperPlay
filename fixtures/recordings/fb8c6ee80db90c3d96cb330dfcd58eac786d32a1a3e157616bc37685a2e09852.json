@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reader",
+  "model": "gpt-oss-120b",
+  "promptHash": "fb8c6ee80db90c3d96cb330dfcd58eac786d32a1a3e157616bc37685a2e09852",
+  "response": {
+    "model": "gpt-oss-120b",
+    "text": "{\n  \"claims\": [\n    {\n      \"quote\": \"Our study employed a mathematical model to explain the impact of poor treatment adherence on HCV transmission dynamics in Zimbabwe.\",\n      \"text\": \"The paper asks how poor treatment adherence influences hepatitis‑C transmission in Zimbabwe and seeks to quantify that impact with a mathematical model.\"\n    },\n    {\n      \"quote\": \"This study addresses this gap by developing a compartmental model of HCV transmission that explicitly accounts for treatment adherence in Zimbabwe.\",\n      \"text\": \"It proposes a compartmental mechanism that separates susceptible (S), acutely infected (I), chronically infected on treatment (C), chronically infected who quit treatment (Cq), and recovered (R) individuals.\"\n    },\n    {\n      \"quote\": \"We define θ as the proportion of individuals under treatment who successfully adhere to it.\",\n      \"text\": \"Treatment adherence (θ) determines the flow from the treated chronic class C to the non‑adherent class Cq.\"\n    },\n    {\n      \"quote\": \"non‑adherent individuals transition from C to Cq at rate δ (1 − θ).\",\n      \"text\": \"A quitting‑treatment rate (δ) together with the non‑adherence fraction (1 − θ) moves patients from C to Cq.\"\n    },\n    {\n      \"quote\": \"λ = β_{1} I + β_{2} C + β_{3} C_{q}\",\n      \"text\": \"The force of infection λ aggregates transmission from acute, treated chronic, and non‑adherent chronic compartments.\"\n    },\n    {\n      \"quote\": \"The study demonstrated that an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\",\n      \"text\": \"The model shows that when θ > 0.52 the basic reproduction number ℛ₀ falls below the epidemic threshold, implying disease elimination is possible.\"\n    }\n  ],\n  \"mechanism\": \"The model captures HCV dynamics by linking the five epidemiological compartments through a system of ordinary differential equations (eq3). Susceptible individuals become infected at rate λ (eq2). Acute infections either recover (fraction η) or progress to chronic infection (fraction 1 − η). Chronic\"\n\n  ,\n  \"modelEquations\": [\n    \"eq1\",\n    \"eq2\",\n    \"eq3\"\n  ],\n  \"question\": \"What is the effect of treatment‑adherence challenges on hepatitis‑C transmission in Zimbabwe?\",\n  \"result\": {\n    \"quote\": \"Our model indicates that variations in re‑susceptibility minimally impact outcomes, suggesting that re‑susceptibility can often be excluded in such analyses.\",\n    \"text\": \"The model shows that re‑susceptibility (ϕ) has little influence on the epidemic trajectory, so it may be omitted without materially changing predictions.\"\n  }\n}",
+    "usage": {
+      "promptTokens": 12475,
+      "completionTokens": 1177,
+      "totalTokens": 13652
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:02:13.627Z"
+}

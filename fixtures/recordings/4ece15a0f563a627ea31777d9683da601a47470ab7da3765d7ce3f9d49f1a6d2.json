@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "deepseek-v4-1-flash",
+  "promptHash": "4ece15a0f563a627ea31777d9683da601a47470ab7da3765d7ce3f9d49f1a6d2",
+  "response": {
+    "model": "deepseek-v4-1-flash",
+    "text": "{\"domain\": \"grids\", \"family\": \"grids\", \"mechanism\": \"A two-species reaction–diffusion system integrated on a spatial grid, where finite-amplitude perturbations nucleate localized spots that grow, split, and decay — a continuous field evolving by local reaction and diffusion rules.\", \"reason\": \"The mechanism is a spatially extended field (concentration of chemical species) evolving under local reaction and diffusion, producing spot nucleation, growth, division, and overcrowding-induced decay. That is a field-on-a-grid mechanism, not well-mixed compartments, not agent rules, and not a network. The grids family is not released yet, so the paper routes to Tier B.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 946,
+      "completionTokens": 267,
+      "totalTokens": 1213
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T22:03:23.015Z"
+}

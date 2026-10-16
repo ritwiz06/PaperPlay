@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "planner",
+  "model": "kimi-k2-7-code",
+  "promptHash": "71c98aa11d86eb29577415f3886e2f93284552d6b7aa9d144c070d9be768c09e",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\"title\": \"tBregs and breast cancer\", \"perWatchSecond\": 1, \"levels\": [{\"kind\": \"hook\", \"title\": \"The tumour's hidden helper\", \"goal\": \"See how a large tBreg population can change the tumour's fate.\", \"control\": {\"parameter\": \"a\", \"label\": \"tumour growth rate\", \"lowEnd\": \"slow\", \"highEnd\": \"fast\"}, \"watch\": \"t\", \"whatIf\": {\"prompt\": \"What if the body started with 100 million tBregs instead of 500 thousand?\", \"parameter\": \"b0\", \"value\": 100000000}, \"difference\": {\"compartment\": \"t\", \"summary\": \"at\", \"at\": 80, \"time\": 80, \"relation\": \"higher\", \"by\": 100000}, \"effect\": \"At day 80, the world with 100 million starting tBregs has more than 100,000 more tumour cells than the base world.\", \"prediction\": {\"prompt\": \"Which world has more tumour cells at day 80?\", \"claimed\": \"The world with extra tBregs\", \"other\": \"The base world\"}, \"passage\": {\"title\": \"tBregs suppress immunity\", \"quote\": \"tBregs protect metastasizing breast cancer cells from immune effector cells by inducing immune suppression mediated by Tregs\"}, \"carryForward\": \"A large tBreg population can act as a hidden ally for the tumour.\"}, {\"kind\": \"background\", \"title\": \"NK cells hold the tumour back\", \"goal\": \"Explore how NK-cell killing slows tumour growth.\", \"control\": {\"parameter\": \"sigma\", \"label\": \"NK cell supply\", \"lowEnd\": \"few\", \"highEnd\": \"many\"}, \"watch\": \"t\", \"whatIf\": {\"prompt\": \"What if NK cells killed tumour cells half as effectively?\", \"parameter\": \"c\", \"value\": 1e-10}, \"difference\": {\"compartment\": \"t\", \"summary\": \"at\", \"at\": 80, \"time\": 80, \"relation\": \"higher\", \"by\": 1000}, \"effect\": \"At day 80, the world with half the NK killing rate has more than 1,000 extra tumour cells.\", \"prediction\": {\"prompt\": \"Which world has more tumour cells at day 80?\", \"claimed\": \"The world with weaker NK killing\", \"other\": \"The base world\"}, \"passage\": {\"title\": \"NK killing\", \"quote\": \"The first term of the right-hand side of equation (1) models the logistic growth of breast cancer cells, while the second term models the death of breast cancer cells due to NK cells.\"}, \"carryForward\": \"Stronger NK killing slows tumour growth.\"}, {\"kind\": \"method\", \"title\": \"Tregs blunt the immune attack\", \"goal\": \"Watch how Tregs suppress the NK-cell population.\", \"control\": {\"parameter\": \"mB\", \"label\": \"tBreg-induced Treg growth\", \"lowEnd\": \"weak\", \"highEnd\": \"strong\"}, \"watch\": \"n\", \"whatIf\": {\"prompt\": \"What if Treg killing of NK cells were twice as strong?\", \"parameter\": \"gamma\", \"value\": 2e-10}, \"difference\": {\"compartment\": \"n\", \"summary\": \"at\", \"at\": 30, \"time\": 30",
+    "usage": {
+      "promptTokens": 2488,
+      "completionTokens": 32000,
+      "totalTokens": 34488
+    },
+    "finishReason": "length"
+  },
+  "recordedAt": "2026-10-16T04:55:18.305Z"
+}

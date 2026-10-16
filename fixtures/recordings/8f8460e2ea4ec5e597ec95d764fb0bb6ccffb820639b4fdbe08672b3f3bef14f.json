@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "gpt-oss-120b",
+  "promptHash": "8f8460e2ea4ec5e597ec95d764fb0bb6ccffb820639b4fdbe08672b3f3bef14f",
+  "response": {
+    "model": "gpt-oss-120b",
+    "text": "{\n  \"findings\": [\n    {\n      \"finding\": \"Statement the paper does not support\",\n      \"level\": 1,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace the specific quantitative claim *“with no vaccination, more than 5 more people are infectious at year 20 than in this world”* with a qualitative description that matches the paper’s results, e.g.: *“with no vaccination the number of infectious individuals is higher at year 20, reflecting the negative sensitivity of the reproduction number to the vaccination rate*”.\"\n    },\n    {\n      \"finding\": \"Statement labelled the paper’s but is really a teaching choice (mis‑attribution)\",\n      \"level\": 2,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Remove the quotation *“The paper shows that vaccinating every newborn would eliminate tuberculosis within ten years.”* and re‑phrase it as a teacher‑generated scenario, e.g.: *“Imagine a situation where every newborn is vaccinated; the model predicts that, if the effective reproduction number falls below 1, the disease would eventually die out (the paper does not give a ten‑year timeline).”*\"\n    },\n    {\n      \"finding\": \"Claim worded more strongly than its measurement\",\n      \"level\": 3,\n      \"severity\": \"advice\",\n      \"suggestion\": \"Tone down the claim *“the epidemic doubles in size and the disease can never be controlled”* to reflect what the analysis actually shows, e.g.: *“doubling the progression rate leads to a larger exposed population and makes control more difficult, as the basic reproduction number increases.”*\"\n    },\n    {\n      \"finding\": \"What‑if that cannot teach what its level is about\",\n      \"level\": 3,\n      \"severity\": \"advice\",\n      \"suggestion\": \"Change the what‑if description to focus on the exposed compartment, e.g.: *“What if the progression rate (γ) were twice as fast? Observe how the exposed class rises more quickly and how this influences the subsequent infectious class.”*\"\n    },\n    {\n      \"finding\": \"Confusing word\",\n      \"level\": 2,\n      \"severity\": \"advice\",\n      \"suggestion\": \"Replace the phrase *“vaccinating every newborn”* with *“vaccinating a proportion π of susceptible individuals (including newborns)”* to align the wording with the model’s vaccination parameter π.\"\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 22084,
+      "completionTokens": 1327,
+      "totalTokens": 23411
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T09:59:44.658Z"
+}

@@ -98,3 +98,17 @@ export function recordingClient(inner: ModelClient, store: RecordingStore, now: 
     },
   };
 }
+
+/**
+ * A client that answers from a recording when there is one, and otherwise passes the call on and
+ * records it: for `npm run pipeline:live`, so a run cut short resumes without repeating a call.
+ */
+export function resumingClient(inner: ModelClient, store: RecordingStore, now?: () => string): ModelClient {
+  const recording = recordingClient(inner, store, now);
+  return {
+    complete(request) {
+      const kept = store.get(promptHash(request));
+      return kept ? Promise.resolve(kept.response) : recording.complete(request);
+    },
+  };
+}

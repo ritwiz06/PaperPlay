@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "deepseek-v4-1-flash",
+  "promptHash": "1356d5788f2c7182e99bc79ffe243b989754216d956adce5544f16d7374ad008",
+  "response": {
+    "model": "deepseek-v4-1-flash",
+    "text": "{ \"domain\": \"compartments\", \"family\": \"compartments\", \"mechanism\": \"well-mixed SICCR-style ODE model with treatment adherence\", \"reason\": \"The paper's mechanism is a deterministic compartmental model: five well-mixed states (susceptible, acute infected, chronically infected, quarantined/treated chronic, recovered) linked by ODEs, with a force of infection λ = β₁I + β₂C + β₃Cq, treatment-adherence parameters (η, θ, α), and analysis via ℛ₀ and equilibrium stability. There is no contact network, spatial grid, or individual-level rule-fo\" , \"tier\": \"A\" }",
+    "usage": {
+      "promptTokens": 1340,
+      "completionTokens": 238,
+      "totalTokens": 1578
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T22:01:16.403Z"
+}

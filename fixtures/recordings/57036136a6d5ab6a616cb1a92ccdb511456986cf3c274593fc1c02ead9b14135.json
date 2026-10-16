@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "planner",
+  "model": "mimo-v2-6-flash",
+  "promptHash": "57036136a6d5ab6a616cb1a92ccdb511456986cf3c274593fc1c02ead9b14135",
+  "response": {
+    "model": "mimo-v2-6-flash",
+    "text": "",
+    "usage": {
+      "promptTokens": 2976,
+      "completionTokens": 32000,
+      "totalTokens": 34976
+    },
+    "finishReason": "length"
+  },
+  "recordedAt": "2026-10-16T05:15:09.300Z"
+}

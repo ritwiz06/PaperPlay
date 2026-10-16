@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "minimax-m2-7",
+  "promptHash": "20e013850247cd04710366f8fd8420559aab7e2d64e1fddac95fd9002e87cea3",
+  "response": {
+    "model": "minimax-m2-7-fast",
+    "text": "{ \"domain\": \"biology\", \"family\": \"networks\", \"mechanism\": \"epidemic spreading on scale-free network topology\", \"reason\": \"The paper explicitly defines a dynamical model for infection spreading on scale-free networks, where the network structure itself (degree distribution) drives the critical behavior. This is fundamentally a network-based mechanism, not a well-mixed compartment model or local agent rules.\", \"tier\": \"B\" }",
+    "usage": {
+      "promptTokens": 420,
+      "completionTokens": 556,
+      "totalTokens": 976
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T22:02:06.806Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "planner",
+  "model": "minimax-m2-7",
+  "promptHash": "8d83a440f827e4a7ebf1dcaf73ceb246d30a9ae6bb3c5f1ae49a6960497f79ec",
+  "response": {
+    "model": "minimax-m2-7-fast",
+    "text": "",
+    "usage": {
+      "promptTokens": 3011,
+      "completionTokens": 32000,
+      "totalTokens": 35011
+    },
+    "finishReason": "length"
+  },
+  "recordedAt": "2026-10-16T10:25:23.090Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "deepseek-v4-1-flash",
+  "promptHash": "368cafcbe086aadc23c7d01e6b247bdab106c73da2f4473d369a03890a9ca91f",
+  "response": {
+    "model": "deepseek-v4-1-flash",
+    "text": "{\"domain\": \"agents\", \"family\": \"agents\", \"mechanism\": \"Each particle is an autonomous agent that moves at constant speed and, at every time step, updates its heading to the average direction of its neighbors plus a random perturbation η. Collective ordered motion (nonzero average velocity) emerges from these purely local alignment rules, and increasingη\" , \"reason\": \"The mechanism is a population of individual particles each following a local update rule (align with neighbors, add noise) — the defining structure of the agents family, which is released. The phase transition is an emergent property of those local interactions, not a compartment/ODE formulation, a network topology, or a study design.\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 1009,
+      "completionTokens": 214,
+      "totalTokens": 1223
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T22:02:47.141Z"
+}

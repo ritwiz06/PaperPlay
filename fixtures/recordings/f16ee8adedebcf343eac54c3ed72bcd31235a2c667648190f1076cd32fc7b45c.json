@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "mimo-v2-6-flash",
+  "promptHash": "f16ee8adedebcf343eac54c3ed72bcd31235a2c667648190f1076cd32fc7b45c",
+  "response": {
+    "model": "mimo-v2-6-flash",
+    "text": "{\"domain\":\"infectious disease epidemiology (hepatitis C treatment adherence)\",\"family\":\"compartments\",\"mechanism\":\"A well-mixed population partitioned into five compartments — susceptible $S$, acutely infected $I$, chronically infected untreated $C$, chronically infected on treatment $C_q$, and recovered $R$ — with total $N=S+I+C+C_q+R$. Force of infection is a weighted sum over infected classes, $λ=β_1I+β_2C+β_\"  , \"reason\":\"The mechanism is a standard well-mixed compartmental ODE system: five state variables, a mass-action force of infection λ = β₁I + β₂C + β₃C_q, vital dynamics with birth rate b and death rate μ, waning immunity φR returning recovered to susceptible, and treatment/adherence parameters (η, δ, θ, ρ, α) controlling flow between chronic and treated classes. There is no contact structure or spatial grid,\",\"tier\":\"A\"}",
+    "usage": {
+      "promptTokens": 807,
+      "completionTokens": 267,
+      "totalTokens": 1074
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:05:53.950Z"
+}

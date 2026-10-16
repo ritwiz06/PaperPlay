@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "llama4-maverick-17b",
+  "promptHash": "048214f597a859ddc5842bd13a716e384238244e90455ec05f2e1b567b3cfba7",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"domain\": \"networks\", \"family\": \"networks\", \"mechanism\": \"A\", \"reason\": \"The paper discusses epidemic spreading in scale-free networks, which is a type of network model. The abstract mentions analyzing real data from computer virus infections and defining a dynamical model for the spreading of infections on scale-free networks.\" , \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 419,
+      "completionTokens": 76,
+      "totalTokens": 495
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:02:03.390Z"
+}

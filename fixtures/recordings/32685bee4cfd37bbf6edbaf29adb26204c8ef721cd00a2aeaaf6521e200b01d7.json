@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "deepseek-v4-1-flash",
+  "promptHash": "32685bee4cfd37bbf6edbaf29adb26204c8ef721cd00a2aeaaf6521e200b01d7",
+  "response": {
+    "model": "deepseek-v4-1-flash",
+    "text": "{\"domain\": \"compartments\", \"family\": \"compartments\", \"mechanism\": \"A well-mixed ODE model of interacting cell populations: tumour cells T, natural killer/immune effector cells N, regulatory T cells R, and tumour-evoked regulatory B cells B. Each population follows a mean-field compartment-style rate equation with growth, death, and bilinear interaction terms.\", \"reason\": \"The paper's mechanism is a system of ordinary differential equations for well-mixed populations, not agents following local rules, not a network, and not a spatial grid. This is exactly the released compartments family, which covers compartment models solved as equations.\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 1382,
+      "completionTokens": 236,
+      "totalTokens": 1618
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T22:00:58.694Z"
+}

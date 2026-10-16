@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "gpt-oss-120b",
+  "promptHash": "f8c9fb13500077327b0cb22b390109dd34175427662861187b0468de56d87aed",
+  "response": {
+    "model": "gpt-oss-120b",
+    "text": "{\n  \"domain\": \"learning\",\n  \"family\": \"learning\",\n  \"mechanism\": \"B\"\n  ,\n  \"reason\": \"The paper introduces dropout, a regularization technique that alters the learning dynamics of neural networks. This is a learning‑type mechanism, and the 'learning' family (which models such training processes) is not yet released, so it falls into tier B.\"\n  ,\n  \"tier\": \"B\"\n}",
+    "usage": {
+      "promptTokens": 485,
+      "completionTokens": 327,
+      "totalTokens": 812
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:03:14.786Z"
+}

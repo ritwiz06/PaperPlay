@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "transcriber",
+  "model": "deepseek-v4-1-flash",
+  "promptHash": "2fd6aeeecd71cb52b88d2228e37072a73fd07840c86bec4acdcff8a1cea7da56",
+  "response": {
+    "model": "deepseek-v4-1-flash",
+    "text": "",
+    "usage": {
+      "promptTokens": 33132,
+      "completionTokens": 16000,
+      "totalTokens": 49132
+    },
+    "finishReason": "length"
+  },
+  "recordedAt": "2026-10-15T23:01:17.423Z"
+}

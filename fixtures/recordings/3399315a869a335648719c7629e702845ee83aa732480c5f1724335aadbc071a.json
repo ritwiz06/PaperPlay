@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "gemma4-31b-it",
+  "promptHash": "3399315a869a335648719c7629e702845ee83aa732480c5f1724335aadbc071a",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"domain\": \"compartments\", \"family\": \"compartments\", \"mechanism\": \"compartments\", \"reason\": \"The paper uses a system of ordinary differential equations (ODEs) to model the populations of tumor cells (T), effector cells (N), regulatory cells (R), and B cells (B). This is a classic compartment model where the variables represent concentrations or populations in a well-mixed system.\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 934,
+      "completionTokens": 91,
+      "totalTokens": 1025
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:26:45.729Z"
+}

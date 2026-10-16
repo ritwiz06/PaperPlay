@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "kimi-k2-7-code",
+  "promptHash": "3dac9e7396dc0d3e4ccae0e2a2910a2ac19b0a0b9a9f14dedaa121802be601a3",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"domain\": \"compartments\",\n  \"family\": \"compartments\",\n  \"mechanism\": \"Compartmental ODE model of HCV transmission with susceptible, infected, chronic, quarantined/treated, recovered compartments.\",\n  \"reason\": \"The paper's mechanism is a deterministic well-mixed compartment model solved via ordinary differential equations. No network structure, agents, grids, or learning component is present.\",\n  \"tier\": \"A\"\n}",
+    "usage": {
+      "promptTokens": 793,
+      "completionTokens": 157,
+      "totalTokens": 950
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:15:21.312Z"
+}

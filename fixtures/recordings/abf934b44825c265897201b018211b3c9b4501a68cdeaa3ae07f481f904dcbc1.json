@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "granite41-30b",
+  "promptHash": "abf934b44825c265897201b018211b3c9b4501a68cdeaa3ae07f481f904dcbc1",
+  "response": {
+    "model": "granite41-30b",
+    "text": "{  \n  \"domain\": \"science\",  \n  \"family\": \"grids\",  \n  \"mechanism\": \"reaction-diffusion dynamics on a spatial grid leading to pattern formation, spot growth, division, and overcrowding-induced decay\",  \n  \"reason\": \"The paper describes a simple reaction‑diffusion model that generates spatio‑temporal patterns on a spatial domain. This is naturally represented as fields evolving on a grid, which corresponds to the 'grids' family. However, the 'grids' family is marked as 'not released yet', so the appropriate tier is B.\",  \n  \"tier\": \"B\"  \n}",
+    "usage": {
+      "promptTokens": 388,
+      "completionTokens": 135,
+      "totalTokens": 523
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:01:49.852Z"
+}

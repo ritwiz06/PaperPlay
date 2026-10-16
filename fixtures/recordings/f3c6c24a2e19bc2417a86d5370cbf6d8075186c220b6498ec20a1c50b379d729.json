@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "kimi-k2-7-code",
+  "promptHash": "f3c6c24a2e19bc2417a86d5370cbf6d8075186c220b6498ec20a1c50b379d729",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " { \"domain\": \"networks\", \"family\": \"networks\", \"mechanism\": \"epidemic spreading on a scale-free contact network\", \"reason\": \"The paper's mechanism is explicitly a dynamical spreading model on a network topology (scale-free networks), not a well-mixed compartment model.\", \"tier\": \"B\" }",
+    "usage": {
+      "promptTokens": 421,
+      "completionTokens": 190,
+      "totalTokens": 611
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:15:46.969Z"
+}

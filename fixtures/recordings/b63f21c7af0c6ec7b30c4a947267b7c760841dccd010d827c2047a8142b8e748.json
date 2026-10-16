@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "gemma4-31b-it",
+  "promptHash": "b63f21c7af0c6ec7b30c4a947267b7c760841dccd010d827c2047a8142b8e748",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"domain\": \"networks\", \"family\": \"networks\", \"mechanism\": \"networks\", \"reason\": \"The paper explicitly defines a dynamical model for the spreading of infections on scale-free networks, focusing on the connectivity and topology of the network rather than a well-mixed population.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 442,
+      "completionTokens": 64,
+      "totalTokens": 506
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:27:01.382Z"
+}

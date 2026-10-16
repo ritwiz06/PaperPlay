@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "granite41-30b",
+  "promptHash": "1356c4ab50cd60e9e494bd83c7e0b32100a92e7f9317e284dd4f1293fe64f730",
+  "response": {
+    "model": "granite41-30b",
+    "text": "{  \n  \"domain\": \"optimization\",  \n  \"family\": \"learning\",  \n  \"mechanism\": \"Adam, a first-order gradient-based stochastic optimization algorithm that uses adaptive estimates of lower-order moments (first and second moments) of the gradients to adjust the learning rate for each parameter individually.\",  \n  \"reason\": \"The paper introduces the Adam optimization algorithm, which is a learning mechanism. The 'learning' family is designated for learning toys, and while it is currently marked as 'not released yet', it directly covers the mechanism described in the paper. Therefore, the appropriate tier is B: a family that is not yet released covers the mechanism.\",  \n  \"tier\": \"B\"  \n}",
+    "usage": {
+      "promptTokens": 484,
+      "completionTokens": 146,
+      "totalTokens": 630
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:01:31.846Z"
+}

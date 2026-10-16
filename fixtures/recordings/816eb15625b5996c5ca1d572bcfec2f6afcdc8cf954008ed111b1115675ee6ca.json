@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "816eb15625b5996c5ca1d572bcfec2f6afcdc8cf954008ed111b1115675ee6ca",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"Dropout training: randomly omitting feature detectors during training to prevent co-adaptation and reduce overfitting in feedforward neural networks\", \"reason\": \"The paper's mechanism is a training procedure for neural networks — stochastic omission of units during learning. This is squarely a learning-toy mechanism (a learner can play with a small network trained with and without dropout and watch overfitting change). The learning family is not yet released, so the tier is B, not A.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1097,
+      "completionTokens": 158,
+      "totalTokens": 1255
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:12:09.767Z"
+}

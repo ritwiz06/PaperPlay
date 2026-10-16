@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "6758b9a96fb8e09534c5a15a1eae748384d92e613ce7dd3740512de51dc956ce",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"agents\", \"family\": \"agents\", \"mechanism\": \"Self-propelled particles move at constant speed and, at each time step, adopt the average heading of their local neighbors plus random noise, producing an order-disorder (kinetic) phase transition in the flock's net velocity.\", \"reason\":\": This is the Vicsek flocking model: each particle follows a purely local rule (align with neighbors, add noise, move at fixed speed), and the macroscopic order parameter |v_a| emerges from those local interactions. That is exactly the 'agents' family — agents each following local rules — which is released, so the mechanism is covered as stated (Tier A).\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 1124,
+      "completionTokens": 181,
+      "totalTokens": 1305
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:12:21.031Z"
+}

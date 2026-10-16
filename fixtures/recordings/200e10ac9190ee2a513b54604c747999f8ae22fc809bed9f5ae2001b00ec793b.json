@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "qwen35-397b-a17b",
+  "promptHash": "200e10ac9190ee2a513b54604c747999f8ae22fc809bed9f5ae2001b00ec793b",
+  "response": {
+    "model": "qwen35-397b-a17b-fp8",
+    "text": "{\n  \"domain\": \"agents\",\n  \"family\": \"agents\",\n  \"mechanism\": \"Self-driven particles updating direction based on local neighborhood average with noise\",\n  \"reason\": \"The paper describes individual particles (agents) that move and update their state (direction) based on local interactions with neighbors. This fits the definition of 'Agents that each follow local rules'.\",\n  \"tier\": \"A\"\n}",
+    "usage": {
+      "promptTokens": 472,
+      "completionTokens": 1400,
+      "totalTokens": 1872
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T22:24:37.772Z"
+}

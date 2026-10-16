@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "minimax-m2-7",
+  "promptHash": "1a1797e13dde3aee44690c69611b6ba682a96d16c5384821fcfba7da915efa19",
+  "response": {
+    "model": "minimax-m2-7-fast",
+    "text": "{ \"domain\": \"compartments\" , \"family\": \"compartments\" , \"mechanism\": \"compartment_model\" , \"reason\": \"The paper uses a deterministic compartmental model (S, I, C, Cq, R) with ODEs to describe HCV transmission dynamics, compute R0, and analyze equilibria. This matches the 'compartments' family of models solved as equations.\" , \"tier\": \"A\" }",
+    "usage": {
+      "promptTokens": 783,
+      "completionTokens": 577,
+      "totalTokens": 1360
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-15T19:28:35.298Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "mimo-v2-6-flash",
+  "promptHash": "ae4dcf77c8e9d64003ffbdf0146f28f35d8cb8e50d96b9b140cbc6a9a4e7fe6a",
+  "response": {
+    "model": "mimo-v2-6-flash",
+    "text": "{\"domain\":\"collective motion / self-ordered active particles\",\"family\":\"agents\",\"mechanism\":\"Each particle moves at constant speed and, at each time step, adopts the average heading of the particles in its local neighborhood plus a random perturbation η — a local rule applied independently by every agent. The paper reports a continuous kinetic phase transition from zero to finite average |v\", \"reason\":\"The mechanism is a population of self-driven agents each following a local interaction rule (neighbor averaging + noise), with no field equations or compartment bookkeeping; this is exactly the released 'agents' family.\",\"tier\":\"A\"}",
+    "usage": {
+      "promptTokens": 454,
+      "completionTokens": 213,
+      "totalTokens": 667
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:06:14.254Z"
+}

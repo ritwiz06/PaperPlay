@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reader",
+  "model": "glm-5-3",
+  "promptHash": "f578a25d557a1ad2c4ec77bf5cfed3dbcd89517589b57df8cf75e3672189c141",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"claims\": [], \"mechanism\": \"The paper proposes a compartmental ODE model in which the population is split into susceptible (S), acutely infected (I), chronically infected and on treatment (C), chronically infected after quitting treatment prematurely (Cq), and recovered (R). Susceptibles are infected at a force of infection λ,\",\"modelEquations\": [\"eq1\", \"eq2\", \"eq3\"], \"question\": \"The paper asks why hepatitis C virus (HCV) prevalence keeps rising in Zimbabwe despite effective treatments being available, and specifically what role poor adherence to treatment plays in that rise. As the authors put it, their study 'employed a mathematical model to explain the impact of poor' — '\" ,\"result\": {\"quote\": \"The study demonstrated that an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\", \"text\": \"The model shows that treatment adherence is the dominant lever on transmission. The basic reproduction number, computed via a next-generation matrix as the sum of contributions from the acutely infected, treated chronic, and treatment-quitting chronic compartments, has a mean value of 2.19 in Latin hypercube sampling. Raising the adherence proportion θ above roughly 52% pushes R0 below 1; raising \"} \n}",
+    "usage": {
+      "promptTokens": 13072,
+      "completionTokens": 337,
+      "totalTokens": 13409
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:11:20.463Z"
+}

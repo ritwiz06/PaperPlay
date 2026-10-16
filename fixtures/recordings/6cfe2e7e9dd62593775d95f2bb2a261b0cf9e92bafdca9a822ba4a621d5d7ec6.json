@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "kimi-k2-7-code",
+  "promptHash": "6cfe2e7e9dd62593775d95f2bb2a261b0cf9e92bafdca9a822ba4a621d5d7ec6",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " { \"domain\": \"compartments\", \"family\": \"compartments\", \"mechanism\": \"compartments\", \"reason\": \"The paper presents and analyzes a system of ordinary differential equations for interacting cell populations (tumour, NK cells, regulatory cells, B cells), which is a classic compartment model.\", \"tier\": \"A\" }",
+    "usage": {
+      "promptTokens": 826,
+      "completionTokens": 177,
+      "totalTokens": 1003
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:15:16.051Z"
+}

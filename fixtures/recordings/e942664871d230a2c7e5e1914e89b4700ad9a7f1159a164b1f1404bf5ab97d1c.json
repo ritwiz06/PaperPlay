@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "mimo-v2-6-flash",
+  "promptHash": "e942664871d230a2c7e5e1914e89b4700ad9a7f1159a164b1f1404bf5ab97d1c",
+  "response": {
+    "model": "mimo-v2-6-flash",
+    "text": "{ \"domain\": \"cancer immunology (tumour–immune interaction)\", \"family\": \"compartments\", \"mechanism\": \"A four-variable well-mixed ODE system coupling tumour cells T, effector/NK cells N, regulatory cells R, and tumour-evoked regulatory B cells B: logistic tumour growth killed by N, N suppressed by R, R promoted by B, B induced by T — with steady states, stability and bifurcation analysis.\", \"reason\": \"The mechanism is a closed system of ordinary differential equations for interacting populations in a single well-mixed compartment (no spatial grid, no contact structure, no learning rule, no study-design element). That is exactly the released 'compartments' family: the equations can be integrated and played with as stated.\", \"tier\": \"A\" }",
+    "usage": {
+      "promptTokens": 894,
+      "completionTokens": 251,
+      "totalTokens": 1145
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:05:45.219Z"
+}

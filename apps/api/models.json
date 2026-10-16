@@ -1,18 +1,18 @@
 {
   "baseUrl": "https://openai.rc.asu.edu/v1",
-  "timeoutMs": 180000,
+  "timeoutMs": 1800000,
   "retries": 3,
   "backoffMs": 2000,
   "minIntervalMs": 1000,
   "jobTokenBudget": 600000,
   "stages": {
-    "reader": null,
-    "transcriber": null,
-    "second-transcriber": null,
-    "router": null,
-    "planner": null,
-    "explainer": null,
-    "reviewer": null
+    "reader": "kimi-k2-7-code",
+    "transcriber": "glm-5-3",
+    "second-transcriber": "qwen35-397b-a17b",
+    "router": "qwen35-397b-a17b",
+    "planner": "kimi-k2-7-code",
+    "explainer": "kimi-k2-7-code",
+    "reviewer": "qwen35-397b-a17b"
   },
   "structuredOutput": {
     "deepseek-v4-1-flash": true,

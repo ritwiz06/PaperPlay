@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "minimax-m2-7",
+  "promptHash": "37edde6bc387b71cb9f90b920fd3ab993464fb6e663f3371829b3418621bd943",
+  "response": {
+    "model": "minimax-m2-7-fast",
+    "text": "{ \"domain\": \"physics\", \"family\": \"agents\", \"mechanism\": \"alignment dynamics with noise\", \"reason\": \"Particles (agents) follow local rules: each aligns its direction of motion with neighbors plus random perturbation. Shows phase transition from disordered to ordered collective motion as noise decreases.\", \"tier\": \"A\" }",
+    "usage": {
+      "promptTokens": 446,
+      "completionTokens": 535,
+      "totalTokens": 981
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T22:01:39.664Z"
+}

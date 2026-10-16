@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "deepseek-v4-1-flash",
+  "promptHash": "c9c740e78b2042b7835e898530d7ed221f71a3ec51c407239d6d99c6748fcc8a",
+  "response": {
+    "model": "deepseek-v4-1-flash",
+    "text": "{\"domain\": \"networks\", \"family\": \"networks\", \"mechanism\": \"Susceptible–infected–susceptible (SIS) spreading of computer viruses over a scale-free contact network, where the absence of an epidemic threshold follows from the network's degree distribution rather than from well-mixed mixing.\", \"reason\": \"The paper's mechanism is explicitly a dynamical spreading process on a network: infection propagates along the links of a scale-free connectivity structure, and the key result (vanishing epidemic threshold, critical behavior) is a property of that network topology. By the routing rule, an epidemic on a contact network is networks, not compartments — a well-mixed version would be compartments, but \", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 980,
+      "completionTokens": 218,
+      "totalTokens": 1198
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T22:03:05.715Z"
+}

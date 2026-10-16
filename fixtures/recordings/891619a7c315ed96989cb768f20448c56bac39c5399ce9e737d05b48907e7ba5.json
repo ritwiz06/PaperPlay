@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "planner",
+  "model": "llama4-maverick-17b",
+  "promptHash": "891619a7c315ed96989cb768f20448c56bac39c5399ce9e737d05b48907e7ba5",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"title\":\"TB Spread Model\",\"perWatchSecond\":1,\"levels\":[{\"kind\":\"hook\",\"title\":\"TB Spread Basics\",\"goal\":\"Understand how TB spreads in a population.\",\"control\":{\"parameter\":\"beta\",\"label\":\"Contact rate\",\"lowEnd\":\"low contact\",\"highEnd\":\"high contact\"},\"watch\":\"i\",\"whatIf\":{\"prompt\":\"What if contact rate doubles?\",\"parameter\":\"beta\",\"value\":0.1},\"difference\":{\"compartment\":\"i\",\"summary\":\"at\",\"at\":10,\"time\":20,\"relation\":\"higher\",\"by\":10},\"effect\":\"The number of infectious individuals will be higher by more than 10 at year 10.\",\"prediction\":{\"prompt\":\"Will the number of infectious individuals be higher or lower?\",\"claimed\":\"higher\",\"other\":\"lower\"},\"passage\":{\"title\":\"Model Description\",\"quote\":\"The total population is divided into six distinct compartments: susceptible $S(t)$, vaccinated $V(t)$, exposed $E(t)$, infectious $I(t)$, treated, $T(t)$ and recovered $R(t)$.\"},\"carryForward\":\"beta=0.05\"},{\"kind\":\"background\",\"title\":\"Vaccination Impact\",\"goal\":\"See how vaccination rate affects TB spread.\",\"control\":{\"parameter\":\"pi\",\"label\":\"Vaccination rate\",\"lowEnd\":\"low vaccination\",\"highEnd\":\"high vaccination\"},\"watch\":\"i\",\"whatIf\":{\"prompt\":\"What if vaccination rate is halved?\",\"parameter\":\"pi\",\"value\":0.05},\"difference\":{\"compartment\":\"i\",\"summary\":\"at\",\"at\":10,\"time\":20,\"relation\":\"lower\",\"by\":5},\"effect\":\"The number of infectious individuals will be lower by more than 5 at year 10.\",\"prediction\":{\"prompt\":\"Will halving vaccination rate increase or decrease infectious individuals?\",\"claimed\":\"lower\",\"other\":\"higher\"},\"passage\":{\"title\":\"Model Parameters\",\"quote\":\"vaccination rate ($\\\\pi$) = 0.1\"},\"carryForward\":\"pi=0.1\"},{\"kind\":\"idea\",\"title\":\"Treatment Effect\",\"goal\":\"Understand the impact of treatment rate on TB.\",\"control\":{\"parameter\":\"delta\",\"label\":\"Treatment rate\",\"lowEnd\":\"slow treatment\",\"highEnd\":\"fast treatment\"},\"watch\":\"t\",\"whatIf\":{\"prompt\":\"What if treatment rate doubles?\",\"parameter\":\"delta\",\"value\":1.34},\"difference\":{\"compartment\":\"t\",\"summary\":\"at\",\"at\":5,\"time\":10,\"relation\":\"higher\",\"by\":5},\"effect\":\"The number of treated individuals will be higher by more than 5 at year 5.\",\"prediction\":{\"prompt\":\"Will doubling treatment rate increase treated individuals?\",\"claimed\":\"higher\",\"other\":\"lower\"},\"passage\":null,\"carryForward\":\"delta=0.67\"}],\"limits\":[\"Change one parameter at a time.\",\"Use given parameter ranges.\"]}",
+    "usage": {
+      "promptTokens": 2722,
+      "completionTokens": 560,
+      "totalTokens": 3282
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T04:07:53.104Z"
+}

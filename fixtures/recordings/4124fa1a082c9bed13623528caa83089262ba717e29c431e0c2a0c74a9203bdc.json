@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "granite41-30b",
+  "promptHash": "4124fa1a082c9bed13623528caa83089262ba717e29c431e0c2a0c74a9203bdc",
+  "response": {
+    "model": "granite41-30b",
+    "text": "{  \n  \"domain\": \"epidemiology\",  \n  \"family\": \"networks\",  \n  \"mechanism\": \"The paper describes a dynamical model for epidemic spreading specifically on scale‑free networks, highlighting the absence of an epidemic threshold due to the network's topology.\",  \n  \"reason\": \"The core mechanism is the propagation of an infection across a network structure (scale‑free), which is directly modeled using network dynamics. This aligns with the 'networks' family of models, which are designed to capture disease spread on graph‑based contact structures.\",  \n  \"tier\": \"B\"  \n}",
+    "usage": {
+      "promptTokens": 421,
+      "completionTokens": 130,
+      "totalTokens": 551
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:01:45.174Z"
+}

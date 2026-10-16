@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "minimax-m2-7",
+  "promptHash": "2829521f9894cc4238435732e0bfb48a58b0ec868c106c0611a8f2143b92f809",
+  "response": {
+    "model": "minimax-m2-7-fast",
+    "text": "{ \"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"dropout regularization prevents co-adaptation by randomly omitting neurons during training, forcing each to learn generally useful features\", \"reason\": \"The paper describes a learning mechanism (dropout) that modifies how neural networks learn, preventing complex co-adaptations between feature detectors. This is a learning toy scenario where one could explore how dropout affects feature learning and generalization.\", \"tier\": \"B\" }",
+    "usage": {
+      "promptTokens": 424,
+      "completionTokens": 542,
+      "totalTokens": 966
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T22:01:13.421Z"
+}

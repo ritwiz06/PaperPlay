@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "qwen35-397b-a17b",
+  "promptHash": "7242fe0d2a4bb31564ea97817aad20eda4286b4f5e326300c361d1aaf9bcbc4d",
+  "response": {
+    "model": "qwen35-397b-a17b-fp8",
+    "text": "{\n  \"findings\": [\n    {\n      \"finding\": \"Level 2 contains a statement labelled as the paper's that is not in the source and contradicts the paper's conclusions.\",\n      \"level\": 2,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace the quote with an accurate summary of the paper's findings on treatment, matching the level title. For example: 'The paper indicates that increasing treatment rates can play a vital role in reducing incidence and may lead to eradication in the long run.' Remove the claim that vaccination alone eliminates TB within ten years, as the paper states 'the vaccine alone will not be enough'.\"\n    },\n    {\n      \"finding\": \"Level 3 makes a claim worded more strongly than its measurement and contradicts the paper's stability analysis.\",\n      \"level\": 3,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Soften the statement to align with the measurement and paper. Change 'the epidemic doubles in size' to 'the number of exposed increases significantly' (matching the '6 more' measurement context) and remove 'the disease can never be controlled', as the paper shows elimination is possible under optimal conditions.\"\n    },\n    {\n      \"finding\": \"Level 4 fails the rule check, meaning the What-if cannot teach what its level is about.\",\n      \"level\": 4,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"This level requires technical debugging as the simulation does not currently demonstrate the stated effect ('more people are recovered'). Either fix the simulation logic to match the paper's equation ($dR/dt$ increases with recovery rate) or change the statement to a qualitative observation until the rule passes.\"\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 22749,
+      "completionTokens": 8234,
+      "totalTokens": 30983
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T10:08:51.649Z"
+}

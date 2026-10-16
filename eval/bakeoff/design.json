@@ -1,0 +1,457 @@
+{
+  "schemaVersion": "bakeoff-design/1",
+  "plans": [
+    {
+      "model": "qwen35-397b-a17b",
+      "paper": "arxiv-2506.19869v1",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 3,
+        "meetRule": 2,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "qwen35-397b-a17b",
+      "paper": "arxiv-2203.01434v2",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 3,
+        "meetRule": 0,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "qwen35-397b-a17b",
+      "paper": "pmc-PMC12334037",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 3,
+        "meetRule": 1,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "glm-5-3",
+      "paper": "arxiv-2506.19869v1",
+      "ok": false,
+      "error": "glm-5-3's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object",
+      "score": {
+        "levels": 0,
+        "built": 0,
+        "meetRule": 0,
+        "note": ""
+      }
+    },
+    {
+      "model": "glm-5-3",
+      "paper": "arxiv-2203.01434v2",
+      "ok": false,
+      "error": "glm-5-3's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object",
+      "score": {
+        "levels": 0,
+        "built": 0,
+        "meetRule": 0,
+        "note": ""
+      }
+    },
+    {
+      "model": "glm-5-3",
+      "paper": "pmc-PMC12334037",
+      "ok": false,
+      "error": "glm-5-3's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object",
+      "score": {
+        "levels": 0,
+        "built": 0,
+        "meetRule": 0,
+        "note": ""
+      }
+    },
+    {
+      "model": "deepseek-v4-1-flash",
+      "paper": "arxiv-2506.19869v1",
+      "ok": false,
+      "error": "the gateway could not be reached: aborted (ECONNRESET)",
+      "score": {
+        "levels": 0,
+        "built": 0,
+        "meetRule": 0,
+        "note": ""
+      }
+    },
+    {
+      "model": "deepseek-v4-1-flash",
+      "paper": "arxiv-2203.01434v2",
+      "ok": false,
+      "error": "the gateway could not be reached: aborted (ECONNRESET)",
+      "score": {
+        "levels": 0,
+        "built": 0,
+        "meetRule": 0,
+        "note": ""
+      }
+    },
+    {
+      "model": "deepseek-v4-1-flash",
+      "paper": "pmc-PMC12334037",
+      "ok": false,
+      "error": "the gateway did not answer within 1800000 ms",
+      "score": {
+        "levels": 0,
+        "built": 0,
+        "meetRule": 0,
+        "note": ""
+      }
+    },
+    {
+      "model": "gpt-oss-120b",
+      "paper": "arxiv-2506.19869v1",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 3,
+        "meetRule": 0,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "gpt-oss-120b",
+      "paper": "arxiv-2203.01434v2",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 0,
+        "meetRule": 0,
+        "note": "level 1: must be a camelCase parameter name"
+      }
+    },
+    {
+      "model": "gpt-oss-120b",
+      "paper": "pmc-PMC12334037",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 3,
+        "meetRule": 0,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "llama4-maverick-17b",
+      "paper": "arxiv-2506.19869v1",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 3,
+        "meetRule": 1,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "llama4-maverick-17b",
+      "paper": "arxiv-2203.01434v2",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 3,
+        "meetRule": 2,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "llama4-maverick-17b",
+      "paper": "pmc-PMC12334037",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 3,
+        "meetRule": 1,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "kimi-k2-7-code",
+      "paper": "arxiv-2506.19869v1",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 4,
+        "built": 4,
+        "meetRule": 3,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "kimi-k2-7-code",
+      "paper": "arxiv-2203.01434v2",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 4,
+        "built": 3,
+        "meetRule": 1,
+        "note": "level 1: Too big: expected number to be <=2000000"
+      }
+    },
+    {
+      "model": "kimi-k2-7-code",
+      "paper": "pmc-PMC12334037",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 5,
+        "built": 3,
+        "meetRule": 2,
+        "note": "level 1: must be a camelCase parameter name"
+      }
+    },
+    {
+      "model": "gemma4-31b-it",
+      "paper": "arxiv-2506.19869v1",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 1,
+        "meetRule": 0,
+        "note": "level 1: the summary's time lies within the level's time"
+      }
+    },
+    {
+      "model": "gemma4-31b-it",
+      "paper": "arxiv-2203.01434v2",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 0,
+        "meetRule": 0,
+        "note": "level 1: Too small: expected number to be >0"
+      }
+    },
+    {
+      "model": "gemma4-31b-it",
+      "paper": "pmc-PMC12334037",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 1,
+        "meetRule": 1,
+        "note": "level 1: Too big: expected number to be <=0.04"
+      }
+    },
+    {
+      "model": "minimax-m2-7",
+      "paper": "arxiv-2506.19869v1",
+      "ok": false,
+      "error": "minimax-m2-7's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object",
+      "score": {
+        "levels": 0,
+        "built": 0,
+        "meetRule": 0,
+        "note": ""
+      }
+    },
+    {
+      "model": "minimax-m2-7",
+      "paper": "arxiv-2203.01434v2",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 3,
+        "meetRule": 0,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "minimax-m2-7",
+      "paper": "pmc-PMC12334037",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 3,
+        "meetRule": 3,
+        "note": ""
+      }
+    },
+    {
+      "model": "granite41-30b",
+      "paper": "arxiv-2506.19869v1",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 5,
+        "built": 5,
+        "meetRule": 0,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "granite41-30b",
+      "paper": "arxiv-2203.01434v2",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 5,
+        "built": 5,
+        "meetRule": 0,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "granite41-30b",
+      "paper": "pmc-PMC12334037",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 3,
+        "built": 3,
+        "meetRule": 0,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "mimo-v2-6-flash",
+      "paper": "arxiv-2506.19869v1",
+      "ok": false,
+      "error": "mimo-v2-6-flash's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object",
+      "score": {
+        "levels": 0,
+        "built": 0,
+        "meetRule": 0,
+        "note": ""
+      }
+    },
+    {
+      "model": "mimo-v2-6-flash",
+      "paper": "arxiv-2203.01434v2",
+      "ok": false,
+      "error": "mimo-v2-6-flash's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object",
+      "score": {
+        "levels": 0,
+        "built": 0,
+        "meetRule": 0,
+        "note": ""
+      }
+    },
+    {
+      "model": "mimo-v2-6-flash",
+      "paper": "pmc-PMC12334037",
+      "ok": false,
+      "error": "mimo-v2-6-flash's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object",
+      "score": {
+        "levels": 0,
+        "built": 0,
+        "meetRule": 0,
+        "note": ""
+      }
+    }
+  ],
+  "reviews": [
+    {
+      "model": "qwen35-397b-a17b",
+      "ok": true,
+      "error": null,
+      "found": 2,
+      "planted": 2,
+      "falseBlocks": 0,
+      "calledFailedAcceptable": false
+    },
+    {
+      "model": "glm-5-3",
+      "ok": true,
+      "error": null,
+      "found": 2,
+      "planted": 2,
+      "falseBlocks": 0,
+      "calledFailedAcceptable": false
+    },
+    {
+      "model": "deepseek-v4-1-flash",
+      "ok": false,
+      "error": "the gateway could not be reached: aborted (ECONNRESET)",
+      "found": 0,
+      "planted": 2,
+      "falseBlocks": 0,
+      "calledFailedAcceptable": false
+    },
+    {
+      "model": "gpt-oss-120b",
+      "ok": true,
+      "error": null,
+      "found": 1,
+      "planted": 2,
+      "falseBlocks": 1,
+      "calledFailedAcceptable": false
+    },
+    {
+      "model": "llama4-maverick-17b",
+      "ok": true,
+      "error": null,
+      "found": 1,
+      "planted": 2,
+      "falseBlocks": 0,
+      "calledFailedAcceptable": false
+    },
+    {
+      "model": "kimi-k2-7-code",
+      "ok": true,
+      "error": null,
+      "found": 2,
+      "planted": 2,
+      "falseBlocks": 0,
+      "calledFailedAcceptable": false
+    },
+    {
+      "model": "gemma4-31b-it",
+      "ok": true,
+      "error": null,
+      "found": 2,
+      "planted": 2,
+      "falseBlocks": 0,
+      "calledFailedAcceptable": false
+    },
+    {
+      "model": "minimax-m2-7",
+      "ok": true,
+      "error": null,
+      "found": 2,
+      "planted": 2,
+      "falseBlocks": 0,
+      "calledFailedAcceptable": false
+    },
+    {
+      "model": "granite41-30b",
+      "ok": true,
+      "error": null,
+      "found": 1,
+      "planted": 2,
+      "falseBlocks": 0,
+      "calledFailedAcceptable": false
+    },
+    {
+      "model": "mimo-v2-6-flash",
+      "ok": true,
+      "error": null,
+      "found": 2,
+      "planted": 2,
+      "falseBlocks": 0,
+      "calledFailedAcceptable": false
+    }
+  ]
+}

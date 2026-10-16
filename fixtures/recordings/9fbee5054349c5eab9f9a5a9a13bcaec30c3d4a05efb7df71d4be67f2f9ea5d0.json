@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "gpt-oss-120b",
+  "promptHash": "9fbee5054349c5eab9f9a5a9a13bcaec30c3d4a05efb7df71d4be67f2f9ea5d0",
+  "response": {
+    "model": "gpt-oss-120b",
+    "text": "{\n  \"domain\": \"networks\",\n  \"family\": \"networks\",\n  \"mechanism\": \"epidemic spreading on a scale‑free network\",\n  \"reason\": \"The paper models the dynamics of infection propagation on a scale‑free network, which is a classic network‑based epidemic mechanism. The ‘networks’ family captures this, but it is not yet released, so the appropriate tier is B.\",\n  \"tier\": \"B\"\n}",
+    "usage": {
+      "promptTokens": 480,
+      "completionTokens": 213,
+      "totalTokens": 693
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:03:44.846Z"
+}

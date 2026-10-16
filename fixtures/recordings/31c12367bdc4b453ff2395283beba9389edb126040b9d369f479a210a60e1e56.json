@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "deepseek-v4-1-flash",
+  "promptHash": "31c12367bdc4b453ff2395283beba9389edb126040b9d369f479a210a60e1e56",
+  "response": {
+    "model": "deepseek-v4-1-flash",
+    "text": "{ \"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"Training a feedforward network while randomly dropping half of the feature detectors on each training case, so each neuron must detect features that are useful across many internal contexts rather than co-adapting to specific partners.\", \"reason\": \"The paper's mechanism is a training/learning rule for neural networks — stochastic omission of hidden units to reduce overfitting. That is a learning-dynamics mechanism, not a compartment flow, agent rule set, grid field, or network topology. The learning family is not released yet, so it routes to tier B.\", \"tier\": \"B\" }",
+    "usage": {
+      "promptTokens": 986,
+      "completionTokens": 231,
+      "totalTokens": 1217
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T22:02:32.977Z"
+}

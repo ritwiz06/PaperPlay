@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "mimo-v2-6-flash",
+  "promptHash": "9ab708a2d23a7f3c165c2734cc63bd966a8151892c343bf0ff3a036fccd0dbe5",
+  "response": {
+    "model": "mimo-v2-6-flash",
+    "text": "{\"domain\":\"epidemiology (tuberculosis transmission in Ethiopia)\",\"family\":\"compartments\",\"mechanism\":\"A well-mixed SVEITRS compartmental ODE system: susceptibles split into S and vaccinated V, exposed E, infectious I, treated T, recovered R, with flows Λ, βSI, γ, δ, τ, α, ω, η, θ, π, μ; analysis via R₀, disease-free/endemic equilibria, stability, parameter estimation and sensitivity analysis.\",\"reason\":\"The stated mechanism is a deterministic compartmental model solved as a system of ODEs — the released 'compartments' family covers it directly (no contact-network structure is involved; the epidemic is well-mixed).\",\"tier\":\"A\"}",
+    "usage": {
+      "promptTokens": 870,
+      "completionTokens": 218,
+      "totalTokens": 1088
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:05:36.787Z"
+}

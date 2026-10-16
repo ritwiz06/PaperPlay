@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "gpt-oss-120b",
+  "promptHash": "b8b1248ce740fe78beb264935518a59a97e5c1f8e9b42967ea13231328ac0833",
+  "response": {
+    "model": "gpt-oss-120b",
+    "text": "{\n  \"domain\": \"grids\",\n  \"family\": \"grids\",\n  \"mechanism\": \"spatio‑temporal reaction‑diffusion dynamics producing spots that grow, divide and decay\",\n  \"reason\": \"The paper’s mechanism is a continuous reaction‑diffusion system that is typically simulated on a spatial lattice (grid). The ‘grids’ family captures this kind of field‑based dynamics, but it is not yet released, so the appropriate tier is B.\",\n  \"tier\": \"B\"\n}",
+    "usage": {
+      "promptTokens": 445,
+      "completionTokens": 311,
+      "totalTokens": 756
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:04:10.909Z"
+}

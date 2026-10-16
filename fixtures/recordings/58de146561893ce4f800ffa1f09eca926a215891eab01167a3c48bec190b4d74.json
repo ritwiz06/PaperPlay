@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "gemma4-31b-it",
+  "promptHash": "58de146561893ce4f800ffa1f09eca926a215891eab01167a3c48bec190b4d74",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"learning\", \"reason\": \"The paper describes Adam, a stochastic optimization algorithm used for training neural networks. This falls under the 'learning toys' category as it describes the mechanism of how a model updates its parameters via gradient descent.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 504,
+      "completionTokens": 69,
+      "totalTokens": 573
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:26:52.165Z"
+}

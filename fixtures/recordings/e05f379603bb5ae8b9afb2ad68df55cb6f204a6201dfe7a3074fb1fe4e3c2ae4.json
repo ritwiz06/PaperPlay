@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reader",
+  "model": "gemma4-31b-it",
+  "promptHash": "e05f379603bb5ae8b9afb2ad68df55cb6f204a6201dfe7a3074fb1fe4e3c2ae4",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"claims\": [{\"quote\": \"Our study employed a mathematical model to explain the impact of poor treatment adherence on HCV transmission dynamics in Zimbabwe.\" , \"text\": \"The paper asks how poor treatment adherence affects the transmission dynamics of the hepatitis C virus (HCV), specifically within the context of Zimbabwe.\"}], \"mechanism\": \"The paper proposes a compartmental model that divides the population into five groups: susceptible (S), acutely infected (I), chronically infected under treatment (C), chronically infected after quitting treatment prematurely (Cq), and recovered (R). It specifically models the transition from the 'C\" , \"modelEquations\": [\"eq1\", \"eq2\", \"eq3\"], \"question\": \"The model shows that the basic reproduction number (ℛ₀) drops below 1—the threshold for curtailing the spread of the disease—when the treatment adherence level exceeds 52%. It also indicates that the recovery rate of acutely infected individuals and treatment adherence have a synergistic effect on $\" , \"result\": {\"quote\": \"The study demonstrated that an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\" , \"text\": \"The model shows that the basic reproduction number (ℛ₀) drops below 1—the threshold for curtailing the spread of the disease—when the treatment adherence level exceeds 52%. It also indicates that the recovery rate of acutely infected individuals and treatment adherence have a synergistic effect on reducing ℛ₀, and that re-susceptibility has a negligible impact on the overall population dynamics.\"}}",
+    "usage": {
+      "promptTokens": 12433,
+      "completionTokens": 338,
+      "totalTokens": 12771
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:26:36.311Z"
+}

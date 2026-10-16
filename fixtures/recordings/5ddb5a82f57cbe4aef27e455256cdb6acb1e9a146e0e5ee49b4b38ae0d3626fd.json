@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "gemma4-31b-it",
+  "promptHash": "5ddb5a82f57cbe4aef27e455256cdb6acb1e9a146e0e5ee49b4b38ae0d3626fd",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"domain\": \"compartments\", \"family\": \"compartments\", \"mechanism\": \"compartments\", \"reason\": \"The paper explicitly describes and uses an 'SVEITRS compartmental model' consisting of a system of ordinary differential equations (ODEs) to track the population movement between different disease states (Susceptible, Vaccinated, Exposed, Infected, Treated, Recovered).\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 882,
+      "completionTokens": 85,
+      "totalTokens": 967
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-14T21:26:39.819Z"
+}
