@@ -76,6 +76,30 @@ from different vendors (ADR-0024). Usage is free, but each call takes seconds to
    paper each took a different one of the paper's two value sets; on the tumour paper they read
    two starting values differently. Each of those jobs goes to the owner, as it should.
 
+## Amendment, 2026-10-16: the models in testing, and more candidates
+
+The owner named the models the Voyager portal marks "Testing in progress", as of their snapshot
+of 2026-10-16: qwen35-397b-a17b, deepseek-v4-1-flash, mimo-v2-6-flash, minimax-m2-7, minimax-m3,
+gemma3-27b-it, qwen3-vl-32b-thinking, north-mini-code, north-mini-code-glm, hemmingway-1,
+laguna-s-2-1 and router-classifier-v2. All are excluded. The list and its date live in
+`apps/api/models.json` under `excluded`; the configuration refuses any stage that names one, and
+the report keeps their rows, marked, and never picks them. The owner will say when the portal
+changes.
+
+qwen35-397b-a17b had held three stages, so the owner added five candidates the first bake-off
+never tried: inkling-small (Thinking Machines), qwen38-27b, qwen3-235b-a22b-thinking-2507 and
+qwen36-27b (Qwen), and muse-glimmer-30b, whose maker the gateway does not name (it counts as its
+own vendor). The gateway lists the thinking model only as a member of the `qwen3-235b-a22b`
+family; it answers to its own name and honours a schema (`eval/models-probe.md`, probed by name).
+The candidates are now the first bake-off's six that are not in testing, and these five.
+
+Until the bake-off runs again, each stage takes the best of the current tables that is not
+excluded: reader, planner and explainer kimi-k2-7-code; first transcriber glm-5-3; second
+transcriber kimi-k2-7-code, another vendor; router and reviewer glm-5-3. The rerun waits for the
+prompt changes the owner asked for at the same time (value sets, findings, visibility and units),
+since each changes a stage's prompt and so its recordings. The first generated world's job keeps
+the models it was made with, in `fixtures/jobs/`, and replays as it was.
+
 ## Consequences
 
 - The picked pair agrees in equations on all three gold papers and in values on one.

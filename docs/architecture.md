@@ -17,6 +17,7 @@ How PaperPlay fits together today. The concepts named here are explained in
 | `fixtures/oracles/` | Hand-derived expected behaviours for primitives | See `fixtures/oracles/README.md` |
 | `fixtures/worldspecs/` | Authored WorldSpecs, and generated ones | `flocking-reference.json`, a draft with placeholder anchors until the source map exists; `kermack-mckendrick-1927.json`, Threshold Town; `generated/pmc-PMC12334037.json`, the first generated world, made by a recorded live job (ADR-0035) |
 | `fixtures/recordings/` | Every model call, by its prompt's hash: the model and its reply, never the prompt (ADR-0030) | The probe's, the bake-off's and the first generated world's job; tests replay them |
+| `fixtures/jobs/` | What each recorded live job was made with: its stages' models, so it replays as made | `pmc-PMC12334037-2026-10-16.json`, the first generated world's job (ADR-0035) |
 | `fixtures/records/` | Run records held bit for bit across a refactor | `flocking-seed5/`: the six levels on seed 5 and both worlds of each fork, made at `f0bc31c` before G3a's refactor |
 | `fixtures/bindings/` | Hand-written binding fixtures: the variable each level's control must move, its fork and setup | `flocking-reference.json` |
 | `eval/` | Sweeps now; the frozen protocol and raw attempts from G4 | `eval/sweeps/` |
