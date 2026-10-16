@@ -99,3 +99,16 @@ test("[R09] the production build has no /create: the public site only plays worl
   await expect(page.getByLabel("Paper")).toHaveCount(0);
   expect(called).toBe(false);
 });
+
+test("[R09] the production build plays a world generated beforehand, with no API", async ({ page }) => {
+  let called = false;
+  await page.route("**/api/**", (route) => {
+    called = true;
+    return route.abort();
+  });
+  await page.goto("http://127.0.0.1:4318/world/generated/pmc-PMC12334037");
+  await expect(page.getByRole("heading", { name: "HCV adherence in Zimbabwe", level: 1 })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByText(/A PaperPlay world about “Modeling the effects of treatment adherence/)).toBeVisible();
+  await expect(page.getByRole("slider", { name: /Treatment adherence/ })).toBeVisible();
+  expect(called).toBe(false);
+});

@@ -40,7 +40,9 @@ export function GeneratedWorld({ from }: { readonly from: { readonly job: string
       .then((spec) => {
         const built = buildWorld(spec, registry);
         if (!built.ok) throw new Error(`the world does not build: ${built.problems.slice(0, 3).map((entry) => `${entry.path}: ${entry.message}`).join("; ")}`);
-        if (live) setPlay(townWorld(built.world, { about: "a paper's model" }));
+        // "A PaperPlay world about" the paper itself, by its title, so a generated world names its source.
+        const about = `“${built.world.source.title}”`;
+        if (live) setPlay(townWorld(built.world, { about }));
       })
       .catch((error: unknown) => live && setProblem(error instanceof Error ? error.message : String(error)));
     return () => {
