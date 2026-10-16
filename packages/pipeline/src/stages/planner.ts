@@ -16,6 +16,8 @@ const Words = (max: number) => z.string().min(1).max(max);
 
 export const PlanLevel = z.strictObject({
   kind: z.enum(["hook", "background", "idea", "method", "evaluation", "result"]),
+  /** The paper's finding this level tests, by its number in the list given: 0 is the headline result; null for a level that tests none. */
+  finding: z.int().min(0).nullable(),
   title: Words(60),
   /** One sentence: what to do here. */
   goal: Words(160),
@@ -28,8 +30,8 @@ export const PlanLevel = z.strictObject({
   /** What the What-if changes, as the level rule will measure it. */
   difference: z.strictObject({
     compartment: z.string().min(1),
-    summary: z.enum(["at", "first-reach", "lowest", "total"]),
-    /** For "at", the time; for "first-reach", the threshold; for "lowest", the time it starts from. Null for "total". */
+    summary: z.enum(["peak", "at", "first-reach", "mean", "lowest", "total"]),
+    /** For "at", the time; for "first-reach", the threshold; for "lowest", the time it starts from. Null for "peak", "mean" and "total". */
     at: z.number().nullable(),
     time: z.number().positive(),
     relation: z.enum(["higher", "lower"]),
@@ -63,7 +65,10 @@ export const PLANNER_INSTRUCTIONS = [
   "Rules:",
   "- The control is a rate parameter of the model, never a starting value (one whose id ends in 0). Use parameter ids exactly as given.",
   "- The What-if changes one parameter, or one starting value, to one value. Prefer a change the paper itself discusses: a threshold, a treatment, a rate halved or doubled.",
-  "- The difference is measured on one compartment: its value 'at' a time, the time it 'first-reach'es a threshold, its 'lowest' value from a time on, or its 'total' over the level's time. The claim says the What-if's world is 'higher' or 'lower' by more than 'by'. Choose a claim that holds clearly: it will be checked on the paper's values and on 19 starts with every parameter moved by up to a tenth, and must hold on 16 of them. A claim that is only barely true will fail.",
+  "- Findings: each level tests one of the paper's findings, given by its number: at least three levels each test a different finding, and level 1, the hook, tests the headline result, finding 0. A level never tests what follows from the model's definitions alone, such as a rate set to zero emptying the compartment it fills, or a compartment fed by nothing staying empty: test what the paper found by solving its model.",
+  "- The difference is measured on one compartment. Prefer a summary a person can feel: its 'peak', its value 'at' a time, the time it 'first-reach'es a threshold, or its 'mean' over the level's time. Use 'lowest' from a time on where a fall is the point, and 'total' only when the paper itself reports a total over time. The claim says the What-if's world is 'higher' or 'lower' by more than 'by'. Choose a claim that holds clearly: it will be checked on the paper's values and on 19 starts with every parameter moved by up to a tenth, and must hold on 16 of them. A claim that is only barely true will fail.",
+  "- The difference must be plain to see. On a chart of the measured compartment, from zero to a little above the highest value either world reaches, the two worlds' curves must part by at least a tenth of the chart's height. In the scene, a town of 120 figures, at least 3 figures must differ; a compartment too small for that is drawn through a lens, and must still differ by 3 figures there. A What-if that barely changes anything fails, however true.",
+  "- When the compartments are shares of a population, adding up to one, every value is a fraction: 0.02 is 2%.",
   "- The level's 'time' is how long both worlds run, in the model's time unit; it must show at four times speed within 20 seconds, so time / perWatchSecond / 4 must be at most 20.",
   "- The effect sentence says exactly what the claim says, in plain words, with its numbers. No overstatement.",
   "- Each passage quote is copied character for character from the paper, 3 to 200 characters. A level beyond the paper has passage null.",
@@ -85,8 +90,8 @@ export function plannerMessages(input: { readonly title: string; readonly readin
     {
       role: "user",
       content: [
-        `PAPER START\nTitle: ${input.title}\nQuestion: ${input.reading.question}\nMechanism: ${input.reading.mechanism}\nResult: ${input.reading.result.text} (the paper: "${input.reading.result.quote}")`,
-        `Claims:\n${input.reading.claims.map((claim) => `- ${claim.text} (the paper: "${claim.quote}")`).join("\n")}\nPAPER END`,
+        `PAPER START\nTitle: ${input.title}\nQuestion: ${input.reading.question}\nMechanism: ${input.reading.mechanism}`,
+        `Findings, by number:\n0 (the headline result): ${input.reading.result.text} (the paper: "${input.reading.result.quote}")\n${input.reading.findings.map((finding, index) => `${index + 1} (${finding.kind}): ${finding.text} (the paper: "${finding.quote}")`).join("\n")}\nPAPER END`,
         `The model, verified:\n${describeModel(input.model)}`,
         `How the model behaves at the paper's values, as solved:\n${input.behaviour}`,
         `A worked example, another world's levels:\n${input.example}`,

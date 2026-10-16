@@ -1,10 +1,13 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { registry } from "@paperplay/primitives";
-import type { CompartmentModel } from "@paperplay/primitives/compartments";
+import { compartmentModel, type CompartmentModel } from "@paperplay/primitives/compartments";
+import { SourceText } from "@paperplay/contracts";
 import { describe, expect, it } from "vitest";
 import { buildWorld } from "../src/builder/build.ts";
 import { sweepLevels } from "../src/rule/sweep.ts";
+import { toModelSpec } from "../src/transcribe/convert.ts";
+import { Gold } from "../src/transcribe/gold.ts";
 import { chartTopOf, sharesOf, VISIBLE_FIGURES, VISIBLE_SHARE, visibilityOf } from "../src/rule/visibility.ts";
 
 // The visibility rule (ADR-0037), beside the level rule: a level's difference must show on a chart
@@ -34,6 +37,15 @@ describe("[R06] the visibility rule", () => {
       expect(level.scene?.lens).toBeNull();
       expect(level.scene?.figures).toBeGreaterThanOrEqual(VISIBLE_FIGURES);
     }
+  });
+
+  it("knows shares of a population, unitless and starting at no more than the whole, as the hepatitis C paper's 0.825", () => {
+    const gold = Gold.parse(JSON.parse(readFileSync(join(root, "eval", "gold", "pmc-PMC12334037.json"), "utf8")));
+    const source = SourceText.parse(JSON.parse(readFileSync(join(root, "fixtures", "sources", "pmc-PMC12334037.json"), "utf8")));
+    const model = toModelSpec(gold.transcription, source).model;
+    if (!model) throw new Error("the gold does not convert");
+    const params = Object.fromEntries(model.parameters.map((parameter) => [parameter.id, parameter.defaultValue]));
+    expect(sharesOf(compartmentModel(model), params)).toBe(true);
   });
 
   it("keeps the first generated world as it was made: every level meets the level rule, three need a lens, and level 5 shows nothing", () => {

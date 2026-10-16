@@ -1,7 +1,7 @@
 /**
  * The reviewer (R10, every-paper.md §3.7): reads a built world, the paper's passages and the checks'
  * results, and suggests. It cannot overturn a failed check, approve a world or edit the spec: its
- * findings go to the controller, which may spend one of its two scoped repairs on one.
+ * findings go to the controller, which spends a scoped repair on a level it finds definitional.
  */
 import { z } from "zod";
 import { completeStructured, type ChatMessage, type ModelClient } from "../models/index.ts";
@@ -10,8 +10,13 @@ import { DATA_RULE } from "./source.ts";
 export const Finding = z.strictObject({
   /** The level it concerns, by its order from 1, or null for the whole world. */
   level: z.int().min(1).max(9).nullable(),
-  /** Blocking: the world says something false or misleading. Advice: it could be clearer. */
+  /** Blocking: the world says something false or misleading, or a level teaches nothing worth learning. Advice: it could be clearer. */
   severity: z.enum(["blocking", "advice"]),
+  /**
+   * What is wrong: a level whose effect follows from the model's definitions alone (ADR-0037), a
+   * statement the paper does not support, one worded beyond its measurement, or something else.
+   */
+  kind: z.enum(["definitional", "unsupported", "overstated", "other"]),
   finding: z.string().min(1).max(400),
   /** A scoped repair: what to change, in that level alone. */
   suggestion: z.string().min(1).max(400),
@@ -27,7 +32,8 @@ export const REVIEWER_INSTRUCTIONS = [
   "You read each level's statements and the checks' results, and find what a careful teacher would: a statement the paper does not support, a statement labelled the paper's that is really a teaching choice, a claim worded more strongly than its measurement, a What-if that cannot teach what its level is about, a confusing word.",
   "Rules:",
   "- You cannot change a check's result. A failed check stays failed whatever you say; never call one acceptable.",
-  "- Mark a finding blocking only when the world would teach something false or misleading; otherwise advice.",
+  "- A level whose effect follows from the model's definitions alone teaches nothing the paper found: setting a rate to zero empties the compartment it fills, a compartment fed by nothing stays empty, a larger inflow gives more. Mark it blocking, of kind definitional, and suggest a What-if that tests one of the paper's findings instead.",
+  "- Mark a finding blocking only when the world would teach something false or misleading, or a level is definitional; otherwise advice.",
   "- Each suggestion is a scoped repair to one level: what to change there, and nothing else.",
   "- If nothing is wrong, return no findings. Never invent a problem.",
 ].join("\n");

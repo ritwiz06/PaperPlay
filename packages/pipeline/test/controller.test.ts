@@ -23,6 +23,8 @@ const TEXT = [
   "At the start S(0) = 995, I(0) = 5 and R(0) = 0.",
   "The epidemic ends before everyone has been infected.",
   "An illustrative example instead takes beta = 0.0002 and gamma = 0.2.",
+  "When the infected recover faster, the epidemic infects fewer people.",
+  "Below a threshold of susceptible people, the illness fades out.",
 ].join("\n");
 const offset = (needle: string): number => TEXT.indexOf(needle);
 const source: SourceText = SourceText.parse({
@@ -76,6 +78,7 @@ const transcription = (gamma = 0.1) => ({
 const LEVELS: readonly Record<string, unknown>[] = [
     {
       kind: "hook",
+      finding: 0,
       title: "An epidemic that ends by itself",
       goal: "Change how easily it spreads, and watch who stays well.",
       control: { parameter: "beta", label: "How easily it spreads", lowEnd: "Hardly", highEnd: "Easily" },
@@ -89,6 +92,7 @@ const LEVELS: readonly Record<string, unknown>[] = [
     },
     {
       kind: "background",
+      finding: 1,
       title: "Faster spread",
       goal: "Change how fast people recover, and watch the infected.",
       control: { parameter: "gamma", label: "How fast people recover", lowEnd: "Slowly", highEnd: "Quickly" },
@@ -102,6 +106,7 @@ const LEVELS: readonly Record<string, unknown>[] = [
     },
     {
       kind: "idea",
+      finding: 2,
       title: "A threshold",
       goal: "Change how fast people recover, and find where it no longer spreads.",
       control: { parameter: "gamma", label: "How fast people recover", lowEnd: "Slowly", highEnd: "Quickly" },
@@ -143,9 +148,14 @@ function scripted(replies: Partial<Record<string, readonly unknown[]>>): ModelCl
   };
 }
 
+const FINDINGS = [
+  { kind: "result", text: "Faster recovery means fewer infected.", quote: "When the infected recover faster, the epidemic infects fewer people." },
+  { kind: "threshold", text: "Below a threshold the illness fades.", quote: "Below a threshold of susceptible people, the illness fades out." },
+];
+
 const replies = (overrides: Partial<Record<string, readonly unknown[]>> = {}) => ({
   router: [{ domain: "epidemiology", mechanism: "A well-mixed epidemic.", family: "compartments", tier: "A", reason: "Three compartments." }],
-  reader: [{ question: "Why does an epidemic end?", mechanism: "Infection and recovery.", modelEquations: [], result: { text: "It ends before everyone is infected.", quote: "The epidemic ends before everyone has been infected." }, claims: [] }],
+  reader: [{ question: "Why does an epidemic end?", mechanism: "Infection and recovery.", modelEquations: [], result: { text: "It ends before everyone is infected.", quote: "The epidemic ends before everyone has been infected." }, findings: FINDINGS }],
   transcriber: [transcription()],
   "second-transcriber": [transcription()],
   planner: [good()],
@@ -211,7 +221,7 @@ describe("[R10] [R11] the controller", () => {
     const client = scripted(replies({ planner: [wrong, wrong, wrong], reviewer: [{ findings: [{ level: 1, severity: "advice", finding: "The world is acceptable." }] }] }));
     const { outcome, states } = await run(client);
     expect(outcome.state).toBe("failed");
-    expect(outcome.message).toMatch(/too few levels meet the level rule/);
+    expect(outcome.message).toMatch(/too few levels meet the rules/);
     expect(states.filter((state) => state === "repairing")).toHaveLength(2);
     expect(states).not.toContain("checking");
     expect(client.calls.filter((call) => call.stage === "reviewer")).toHaveLength(0);
@@ -225,12 +235,51 @@ describe("[R10] [R11] the controller", () => {
     expect(states).not.toContain("repairing");
   }, 60_000);
 
+  it("picks the paper's main set of values by rule when it states two, and keeps the other as an alternative", async () => {
+    const sets = (main: boolean) => ({
+      ...transcription(0.1),
+      valueSets: [
+        { id: "main", label: "the model's values", quote: "The infection rate is beta = 0.0003", fittedToData: false, mainResults: main, usageQuote: null, firstResult: null, values: [{ of: "beta", value: 0.0003, quote: "beta = 0.0003" }, { of: "gamma", value: 0.1, quote: "gamma = 0.1" }] },
+        { id: "example", label: "an illustrative example", quote: "An illustrative example instead takes", fittedToData: false, mainResults: false, usageQuote: null, firstResult: null, values: [{ of: "beta", value: 0.0002, quote: "beta = 0.0002" }, { of: "gamma", value: 0.2, quote: "gamma = 0.2" }] },
+      ],
+    });
+    const { outcome, events, artifacts } = await run(scripted(replies({ transcriber: [sets(true)], "second-transcriber": [sets(true)] })));
+    expect(outcome.state).toBe("ready");
+    expect(events.map((event) => event.message).join("\n")).toMatch(/on the paper's set "the model's values" \(the set the paper's main results use\)/);
+    const model = artifacts.get("model") as { alternatives: { id: string; values: Record<string, number> }[] };
+    expect(model.alternatives).toMatchObject([{ id: "example", values: { beta: 0.0002, gamma: 0.2 } }]);
+    // When nothing the rule reads tells the sets apart, the owner decides, and nothing is planned.
+    const undecided = await run(scripted(replies({ transcriber: [sets(false)], "second-transcriber": [sets(false)] })));
+    expect(undecided.outcome).toMatchObject({ state: "needs_information", message: expect.stringMatching(/the rule cannot pick one/) as unknown });
+    expect(undecided.states).not.toContain("building");
+  }, 60_000);
+
   it("reads a plan that names things as the paper writes them, β and S, as the model's ids", async () => {
     const asPaper = { ...good(), levels: [planLevel(0, { control: { parameter: "β", label: "How easily it spreads", lowEnd: "Hardly", highEnd: "Easily" }, watch: "S", difference: { compartment: "S", summary: "at", at: 150, time: 150, relation: "lower", by: 20 } }), planLevel(1), planLevel(2)] };
     const { outcome, artifacts } = await run(scripted(replies({ planner: [asPaper] })));
     expect(outcome.state).toBe("ready");
     const world = artifacts.get("world") as { levels: { manipulable: { targetVariable: string } }[] };
     expect(world.levels[0]?.manipulable.targetVariable).toBe("beta");
+  }, 60_000);
+
+  it("repairs a world whose hook does not test the paper's headline result (ADR-0037)", async () => {
+    const offTheHeadline = { ...good(), levels: [planLevel(0, { finding: 1 }), planLevel(1), planLevel(2)] };
+    const client = scripted(replies({ planner: [offTheHeadline, good()] }));
+    const { outcome } = await run(client);
+    expect(outcome.state).toBe("ready");
+    const replan = client.calls.filter((call) => call.stage === "planner")[1];
+    expect(replan?.messages.map((message) => message.content).join("\n")).toMatch(/level 1, the hook, must test the paper's headline result, finding 0/);
+  }, 60_000);
+
+  it("sends a level the reviewer finds definitional back to the planner, then checks the world again", async () => {
+    const definitional = { findings: [{ level: 2, severity: "blocking", kind: "definitional", finding: "Doubling the infection rate spreading it faster follows from the rate's definition.", suggestion: "Test the threshold instead." }] };
+    const client = scripted(replies({ reviewer: [definitional, { findings: [] }] }));
+    const { outcome, states } = await run(client);
+    expect(outcome.state).toBe("ready");
+    expect(states).toEqual(["received", "parsing", "planning", "building", "running", "checking", "repairing", "building", "running", "checking", "ready"]);
+    const replan = client.calls.filter((call) => call.stage === "planner")[1];
+    expect(replan?.messages.map((message) => message.content).join("\n")).toMatch(/level 2 \("Faster spread"\): the reviewer finds its effect follows from the model's definitions alone/);
+    expect(client.calls.filter((call) => call.stage === "reviewer")).toHaveLength(2);
   }, 60_000);
 
   it("stops as unsupported when the router sends the paper to another family", async () => {

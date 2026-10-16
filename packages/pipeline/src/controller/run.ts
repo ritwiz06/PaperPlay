@@ -14,6 +14,7 @@ import { checkProvenance } from "../checks/provenance.ts";
 import { fetchArxiv, fetchPmc, registerAndText, type Fetch } from "../ingest/index.ts";
 import { completeStructured, type ModelClient, type Stage } from "../models/index.ts";
 import { sweepLevels, type LevelResult } from "../rule/sweep.ts";
+import { checkFindings } from "../rule/findings.ts";
 import { visibilityOf } from "../rule/visibility.ts";
 import { explain, type Explanation } from "../stages/explainer.ts";
 import { plan as planWorld, Plan, PLANNER_MAX_TOKENS, plannerMessages, type PlanLevel } from "../stages/planner.ts";
@@ -26,7 +27,7 @@ import { toModelSpec } from "../transcribe/convert.ts";
 import { modelForComparison } from "../transcribe/score.ts";
 import { compareValueSets, pickValueSet, withValueSet } from "../transcribe/valuesets.ts";
 import { matchModels } from "../transcribe/match.ts";
-import { Transcription, type TranscriptionWithSets } from "../transcribe/schema.ts";
+import { TranscriptionWithSets } from "../transcribe/schema.ts";
 
 export const MAX_REPAIRS = 2;
 
@@ -175,7 +176,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
           temperature: 0,
           maxTokens: TRANSCRIBER_MAX_TOKENS,
         },
-        Transcription,
+        TranscriptionWithSets,
         { name: "transcription", structuredOutput: structured(modelFor("transcriber")) },
       );
       first = retried.value;
@@ -223,79 +224,109 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       explanation = (await explain(input.client, explainerModel, { title, plan, passages, model: modelWords })).value;
     };
 
-    // Building and running: assemble, build, sweep; repair the levels that fail, or drop them.
+    // Building and running: assemble, build, sweep; the level rule, the visibility rule and the
+    // findings check (ADR-0037); repair the levels that fail, or drop them. Then checking, where the
+    // reviewer may send a definitional level back for repair.
     let built: BuiltWorld | null = null;
     let swept: LevelResult[] = [];
     let spec: Record<string, unknown> = {};
+    /** Drops the levels at these places, keeping the explanation in step. */
+    const drop = (indices: ReadonlySet<number>): void => {
+      plan = { ...plan, levels: plan.levels.filter((_, index) => !indices.has(index)) };
+      explanation = { levels: explanation.levels.filter((_, index) => !indices.has(index)) };
+    };
     for (;;) {
-      move("building", "assembly", "assembling the world and building it against the solver");
-      const assembled = assembleWorld({ source: text, register, reading: reading.value, model, plan, explanation, routingReason: routed.value.reason });
-      spec = assembled.spec;
-      for (const note of assembled.notes) say("assembly", note);
-      const result = buildWorld(spec, registry);
-      if (!result.ok) {
-        const byLevel = result.problems.map((problem) => `${/^levels\.(\d+)/.test(problem.path) ? `level ${Number(/^levels\.(\d+)/.exec(problem.path)?.[1]) + 1}` : problem.path}: ${problem.message}`);
-        sink.artifact("build-problems", result.problems);
-        if (repairs < MAX_REPAIRS) {
-          await replan(byLevel);
+      for (;;) {
+        move("building", "assembly", "assembling the world and building it against the solver");
+        const assembled = assembleWorld({ source: text, register, reading: reading.value, model, plan, explanation, routingReason: routed.value.reason });
+        spec = assembled.spec;
+        for (const note of assembled.notes) say("assembly", note);
+        const result = buildWorld(spec, registry);
+        if (!result.ok) {
+          const byLevel = result.problems.map((problem) => `${/^levels\.(\d+)/.test(problem.path) ? `level ${Number(/^levels\.(\d+)/.exec(problem.path)?.[1]) + 1}` : problem.path}: ${problem.message}`);
+          sink.artifact("build-problems", result.problems);
+          if (repairs < MAX_REPAIRS) {
+            await replan(byLevel);
+            continue;
+          }
+          // No repair left: drop the levels that do not build, if three remain.
+          const failing = new Set(result.problems.map((problem) => /^levels\.(\d+)/.exec(problem.path)?.[1]).filter((index): index is string => index !== undefined).map(Number));
+          if (failing.size === 0 || plan.levels.length - failing.size < 3) throw new Stop("failed", `the world does not build: ${byLevel.slice(0, 4).join("; ")}`);
+          drop(failing);
+          move("repairing", "assembly", `dropping ${failing.size} level(s) that do not build, keeping ${plan.levels.length}`);
           continue;
         }
-        // No repair left: drop the levels that do not build, if three remain.
-        const failing = new Set(result.problems.map((problem) => /^levels\.(\d+)/.exec(problem.path)?.[1]).filter((index): index is string => index !== undefined).map(Number));
-        if (failing.size === 0 || plan.levels.length - failing.size < 3) throw new Stop("failed", `the world does not build: ${byLevel.slice(0, 4).join("; ")}`);
-        plan = { ...plan, levels: plan.levels.filter((_, index) => !failing.has(index)) };
-        explanation = { levels: explanation.levels.filter((_, index) => !failing.has(index)) };
-        move("repairing", "assembly", `dropping ${failing.size} level(s) that do not build, keeping ${plan.levels.length}`);
-        continue;
-      }
-      built = result.world;
-      move("running", "level rule", `sweeping every What-if over 20 starts: the world's values and 19 within a tenth of them`);
-      swept = sweepLevels(built);
-      sink.artifact("level-rule", swept);
-      // Beside the level rule, the visibility rule (ADR-0037): the difference must show on the chart and in the scene.
-      const seen = visibilityOf(built);
-      sink.artifact("visibility", seen);
-      const passes = (index: number): boolean => (swept[index]?.meets ?? false) && (seen[index]?.visible ?? false);
-      const failing = swept.filter((_, index) => !passes(index));
-      if (failing.length === 0) break;
-      const words = failing.map((level) => {
-        const visible = seen[level.order - 1];
-        const problems = [
-          ...(level.meets ? [] : [`its claim holds on ${level.holds} of 20 starts, fewer than 16`]),
-          ...(visible && !visible.visible ? [`its difference is too small to see: ${visible.why ?? ""}`] : []),
+        built = result.world;
+        move("running", "level rule", `sweeping every What-if over 20 starts: the world's values and 19 within a tenth of them`);
+        swept = sweepLevels(built);
+        sink.artifact("level-rule", swept);
+        // Beside the level rule, the visibility rule: the difference must show on the chart and in the scene.
+        const seen = visibilityOf(built);
+        sink.artifact("visibility", seen);
+        // And the findings check: the hook on the headline result, three levels on anchored findings.
+        const found = checkFindings(plan, reading.value, text);
+        sink.artifact("findings", found);
+        const problemsOf = (index: number): string[] => {
+          const level = swept[index];
+          const visible = seen[index];
+          return [
+            ...(level && !level.meets ? [`its claim holds on ${level.holds} of 20 starts, fewer than 16`] : []),
+            ...(visible && !visible.visible ? [`its difference is too small to see: ${visible.why ?? ""}`] : []),
+            ...(found.levels[index] ?? []),
+          ];
+        };
+        const failing = plan.levels.map((_, index) => index).filter((index) => problemsOf(index).length > 0);
+        if (failing.length === 0 && found.world.length === 0) break;
+        const words = [
+          ...failing.map((index) => `level ${index + 1} ("${plan.levels[index]?.title ?? ""}"): ${problemsOf(index).join("; ")}`),
+          ...found.world,
         ];
-        return `level ${level.order} ("${level.title}"): ${problems.join("; ")}; choose a What-if or a claim that holds clearly and shows`;
-      });
-      if (repairs < MAX_REPAIRS) {
-        await replan(words);
+        if (repairs < MAX_REPAIRS) {
+          await replan(words);
+          continue;
+        }
+        const keep = plan.levels.length - failing.length;
+        if (keep < 3) throw new Stop("failed", `too few levels meet the rules: ${words.join("; ")}`);
+        drop(new Set(failing));
+        if (checkFindings(plan, reading.value, text).world.length > 0) throw new Stop("failed", `the levels left do not test enough of the paper's findings: ${words.join("; ")}`);
+        say("level rule", `dropped ${failing.length} level(s) the rules refuse, keeping ${keep}`);
+        move("repairing", "level rule", "rebuilding without the dropped levels");
+      }
+      say("level rule", `every level meets the rule, shows its difference and tests what the paper found: ${swept.map((level) => `level ${level.order} ${level.holds} of 20`).join(", ")}`);
+
+      // Checking: provenance, then the reviewer, who can suggest but never overturn a check.
+      move("checking", "provenance", "checking every anchor quotes the source exactly");
+      const provenance = checkProvenance(spec, text);
+      sink.artifact("provenance", provenance);
+      if (provenance.length > 0) throw new Stop("failed", `provenance fails: ${provenance.slice(0, 3).map((problem) => `${problem.path}: ${problem.message}`).join("; ")}`);
+      say("review", "the reviewer reads the world and the checks' results");
+      const reviewerModel = modelFor("reviewer");
+      const checks = ["The builder: passed, the family's checks included.", `The level rule: ${swept.map((level) => `level ${level.order} holds on ${level.holds} of 20`).join("; ")}.`, "The visibility rule: every level's difference shows on its chart and in the scene.", "Provenance: every anchor quotes the source exactly."].join("\n");
+      const worldWords = plan.levels.map((level: PlanLevel, index) => `Level ${index + 1}, ${level.title}: ${level.goal} Control: ${level.control.label}. What if: ${level.whatIf.prompt} It states: ${level.effect}`).join("\n");
+      const reviewed: Review = (await review(input.client, reviewerModel, { title, world: worldWords, checks, passages }, { structuredOutput: structured(reviewerModel) })).value;
+      sink.artifact("review", reviewed);
+      // A level the reviewer finds definitional teaches nothing the paper found: repaired, or dropped when no repair is left.
+      const definitional = [...new Set(reviewed.findings.filter((finding) => finding.severity === "blocking" && finding.kind === "definitional" && finding.level !== null && finding.level <= plan.levels.length).map((finding) => (finding.level ?? 1) - 1))];
+      const blocking = reviewed.findings.filter((finding) => finding.severity === "blocking");
+      if (definitional.length > 0) {
+        const words = definitional.map((index) => `level ${index + 1} ("${plan.levels[index]?.title ?? ""}"): the reviewer finds its effect follows from the model's definitions alone: ${reviewed.findings.filter((finding) => finding.level === index + 1 && finding.kind === "definitional").map((finding) => `${finding.finding} ${finding.suggestion}`).join(" ")}; test one of the paper's findings instead`);
+        if (repairs < MAX_REPAIRS) {
+          await replan(words);
+          continue;
+        }
+        if (plan.levels.length - definitional.length < 3) throw new Stop("needs_information", `the reviewer finds ${definitional.length} level(s) follow from the model's definitions alone, and no repair is left: ${words.join("; ")}. The owner decides.`);
+        drop(new Set(definitional));
+        if (checkFindings(plan, reading.value, text).world.length > 0) throw new Stop("needs_information", `dropping the levels the reviewer finds definitional leaves too few on the paper's findings: ${words.join("; ")}. The owner decides.`);
+        move("repairing", "review", `dropping ${definitional.length} level(s) the reviewer finds definitional, keeping ${plan.levels.length}`);
         continue;
       }
-      const keep = plan.levels.filter((_, index) => passes(index));
-      if (keep.length < 3) throw new Stop("failed", `too few levels meet the level rule and show their difference: ${words.join("; ")}`);
-      plan = { ...plan, levels: keep };
-      explanation = { levels: explanation.levels.filter((_, index) => passes(index)) };
-      say("level rule", `dropped ${failing.length} level(s) the rules refuse, keeping ${keep.length}`);
-      move("repairing", "level rule", "rebuilding without the dropped levels");
+      if (blocking.length > 0) {
+        say("review", `the reviewer found ${blocking.length} blocking finding(s), advice only: the checks decide. ${blocking.map((finding) => finding.finding).join(" ")}`);
+      } else say("review", `the reviewer found nothing blocking (${reviewed.findings.length} piece(s) of advice)`);
+      break;
     }
-    say("level rule", `every level meets the rule and shows its difference: ${swept.map((level) => `level ${level.order} ${level.holds} of 20`).join(", ")}`);
-
-    // Checking: provenance, then the reviewer, who can suggest but never overturn.
-    move("checking", "provenance", "checking every anchor quotes the source exactly");
-    const provenance = checkProvenance(spec, text);
-    sink.artifact("provenance", provenance);
-    if (provenance.length > 0) throw new Stop("failed", `provenance fails: ${provenance.slice(0, 3).map((problem) => `${problem.path}: ${problem.message}`).join("; ")}`);
-    say("review", "the reviewer reads the world and the checks' results");
-    const reviewerModel = modelFor("reviewer");
-    const checks = ["The builder: passed, the family's checks included.", `The level rule: ${swept.map((level) => `level ${level.order} holds on ${level.holds} of 20`).join("; ")}.`, "Provenance: every anchor quotes the source exactly."].join("\n");
-    const worldWords = plan.levels.map((level: PlanLevel, index) => `Level ${index + 1}, ${level.title}: ${level.goal} Control: ${level.control.label}. What if: ${level.whatIf.prompt} It states: ${level.effect}`).join("\n");
-    const reviewed: Review = (await review(input.client, reviewerModel, { title, world: worldWords, checks, passages }, { structuredOutput: structured(reviewerModel) })).value;
-    sink.artifact("review", reviewed);
-    const blocking = reviewed.findings.filter((finding) => finding.severity === "blocking");
-    if (blocking.length > 0) {
-      say("review", `the reviewer found ${blocking.length} blocking finding(s), advice only: the checks decide. ${blocking.map((finding) => finding.finding).join(" ")}`);
-    } else say("review", `the reviewer found nothing blocking (${reviewed.findings.length} piece(s) of advice)`);
     sink.artifact("world", spec);
-    move("ready", "ready", `the world is built and checked: ${plan.levels.length} levels, every one meeting the level rule, every anchor in the source`);
+    move("ready", "ready", `the world is built and checked: ${plan.levels.length} levels, every one meeting the level rule, showing its difference and testing the paper's findings, every anchor in the source`);
     return { state, message: "ready", world: spec };
   } catch (error) {
     const stop = error instanceof Stop ? error : new Stop("failed", error instanceof Error ? error.message.split("\n")[0] ?? "" : String(error));

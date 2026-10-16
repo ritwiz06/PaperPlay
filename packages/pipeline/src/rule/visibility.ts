@@ -73,11 +73,16 @@ function niceAtLeast(value: number): number {
   return 10 * power;
 }
 
-/** Whether a compartment model's compartments are shares of a population: none has a unit, and at the start they add up to one. */
+/**
+ * Whether a compartment model's compartments are shares of a population: none has a unit, each
+ * starts between none and all, and together they start at no more than the whole. A paper's shares
+ * need not add up to one: the hepatitis C paper's start at 0.825 of its population.
+ */
 export function sharesOf(model: CompartmentModel, params: Params): boolean {
   if (!model.spec.compartments.every((compartment) => Object.keys(compartment.unit).length === 0)) return false;
-  const total = Object.values(model.init(params, 0).compartments).reduce((sum, value) => sum + value, 0);
-  return total > 0.95 && total < 1.05;
+  const values = Object.values(model.init(params, 0).compartments);
+  const total = values.reduce((sum, value) => sum + value, 0);
+  return values.every((value) => value >= 0 && value <= 1) && total > 0 && total <= 1.05;
 }
 
 /** One world's samples of every observable, from step 0, every SAMPLE_STEPS steps, to the level's time. */

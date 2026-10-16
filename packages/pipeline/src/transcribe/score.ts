@@ -93,11 +93,14 @@ export interface ReadingScore {
   /** The overlap of its model equations with the gold's, as intersection over union. */
   readonly equations: number;
   readonly resultQuoteFound: boolean;
-  readonly claimQuotesFound: number;
-  readonly claimQuotesTotal: number;
+  /** Its findings whose quotes the source holds, of all it gives (ADR-0037). */
+  readonly findingQuotesFound: number;
+  readonly findingQuotesTotal: number;
+  /** Whether it gives enough anchored findings, the headline included, for three levels to test. */
+  readonly enoughFindings: boolean;
 }
 
-export function scoreReading(reading: { readonly modelEquations: readonly string[]; readonly result: { readonly quote: string }; readonly claims: readonly { readonly quote: string }[] }, gold: Gold, source: SourceText): ReadingScore {
+export function scoreReading(reading: { readonly modelEquations: readonly string[]; readonly result: { readonly quote: string }; readonly findings: readonly { readonly quote: string }[] }, gold: Gold, source: SourceText): ReadingScore {
   const mine = new Set(reading.modelEquations);
   const theirs = new Set(gold.modelEquations);
   const union = new Set([...mine, ...theirs]).size;
@@ -105,7 +108,8 @@ export function scoreReading(reading: { readonly modelEquations: readonly string
   return {
     equations: union === 0 ? 0 : both / union,
     resultQuoteFound: findQuote(source.text, reading.result.quote) !== null,
-    claimQuotesFound: reading.claims.filter((claim) => findQuote(source.text, claim.quote) !== null).length,
-    claimQuotesTotal: reading.claims.length,
+    findingQuotesFound: reading.findings.filter((finding) => findQuote(source.text, finding.quote) !== null).length,
+    findingQuotesTotal: reading.findings.length,
+    enoughFindings: [reading.result, ...reading.findings].filter((finding) => findQuote(source.text, finding.quote) !== null).length >= 3,
   };
 }

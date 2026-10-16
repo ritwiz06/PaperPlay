@@ -89,6 +89,8 @@ export function assembleWorld(input: AssembleInput): Assembled {
   const plan = namedInModel(input.plan, input.model);
   const model = steppedFor(input.model, plan);
   const notes: string[] = [];
+  /** A finding by its number in the planner's list: 0 the headline result, then the reading's findings. */
+  const findingOf = (number: number | null) => (number === null ? null : number === 0 ? reading.result : (reading.findings[number - 1] ?? null));
   const time = TIME_WORDS[model.timeUnit];
   const anchored = (quote: string | null | undefined, what: string): Anchor[] => {
     if (!quote) return [];
@@ -128,10 +130,16 @@ export function assembleWorld(input: AssembleInput): Assembled {
           return { summary: { kind: "lowest", from: at }, label: `Lowest ${measured?.name.toLowerCase() ?? planned.difference.compartment} from ${time.one} ${figure(at)}`, unit: unitOf(planned.difference.compartment) };
         case "total":
           return { summary: { kind: "total" }, label: `${measured?.name ?? planned.difference.compartment} summed over ${figure(planned.difference.time)} ${time.many}`, unit: `${unitOf(planned.difference.compartment)} × ${time.many}` };
+        case "peak":
+          return { summary: { kind: "peak" }, label: `Highest ${measured?.name.toLowerCase() ?? planned.difference.compartment} within ${figure(planned.difference.time)} ${time.many}`, unit: unitOf(planned.difference.compartment) };
+        case "mean":
+          return { summary: { kind: "mean" }, label: `Average ${measured?.name.toLowerCase() ?? planned.difference.compartment} over ${figure(planned.difference.time)} ${time.many}`, unit: unitOf(planned.difference.compartment) };
       }
     };
     const { summary, label, unit } = summaryOf();
-    const passage = anchored(planned.passage?.quote, `level ${index + 1}'s passage`);
+    // The level's passage: the plan's, else the quote of the finding it tests (ADR-0037).
+    const finding = findingOf(planned.finding);
+    const passage = anchored(planned.passage?.quote ?? finding?.quote, `level ${index + 1}'s passage`);
     const advancedAnchors = anchored(words?.advanced.quote, `level ${index + 1}'s equation`);
     const afterAnchors = anchored(words?.afterwards.quote, `level ${index + 1}'s closing line`);
     const readings = [...(words?.guide.readings ?? [{ atLeast: 0, words: "as measured" }])].sort((a, b) => b.atLeast - a.atLeast).filter((reading, at, all) => at === 0 || reading.atLeast < (all[at - 1]?.atLeast ?? Infinity));
@@ -193,9 +201,9 @@ export function assembleWorld(input: AssembleInput): Assembled {
 
   const levels = plan.levels.map((planned, index) => level(planned, explanation.levels[index], index));
   const resultAnchors = anchored(reading.result.quote, "the paper's result");
-  const claims = reading.claims.map((claim, index) => {
-    const anchors = anchored(claim.quote, `claim ${index + 1}`);
-    return { id: `c${index + 1}`, claim: claim.text, dependsOn: [], anchors, origin: origin(anchors) };
+  const claims = reading.findings.map((finding, index) => {
+    const anchors = anchored(finding.quote, `finding ${index + 1}`);
+    return { id: `c${index + 1}`, claim: finding.text, dependsOn: [], anchors, origin: origin(anchors) };
   });
   const front = source.sections[0];
   const spec = {

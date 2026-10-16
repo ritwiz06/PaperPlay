@@ -55,15 +55,16 @@ export function rankReaders(results: BakeoffResults): Ranked[] {
       const rows = results.readings.filter((entry) => entry.model === candidate.model);
       const equations = rows.length ? sum(rows.map((row) => row.score?.equations ?? 0)) / rows.length : 0;
       const results_ = rows.filter((row) => row.score?.resultQuoteFound).length;
-      const claimsFound = sum(rows.map((row) => row.score?.claimQuotesFound ?? 0));
-      const claimsTotal = sum(rows.map((row) => row.score?.claimQuotesTotal ?? 0));
+      const claimsFound = sum(rows.map((row) => row.score?.findingQuotesFound ?? 0));
+      const claimsTotal = sum(rows.map((row) => row.score?.findingQuotesTotal ?? 0));
+      const enough = rows.filter((row) => row.score?.enoughFindings).length;
       return {
         model: candidate.model,
         vendor: candidate.vendor,
-        // What the pipeline uses of a reading: its result's and its claims' quotes, which become the
-        // world's anchors. Its list of the model's equations is advice the transcribers do not need.
-        key: [results_, claimsTotal ? claimsFound / claimsTotal : 0, equations, -failuresOf(results, candidate.model), -order],
-        cells: [fraction(results_, rows.length), fraction(claimsFound, claimsTotal), equations.toFixed(2), String(rows.filter((row) => !row.outcome.ok).length)],
+        // What the pipeline uses of a reading: its headline result and findings, anchored, which its
+        // levels test (ADR-0037). Its list of the model's equations is advice the transcribers do not need.
+        key: [results_, enough, claimsTotal ? claimsFound / claimsTotal : 0, equations, -failuresOf(results, candidate.model), -order],
+        cells: [fraction(results_, rows.length), fraction(enough, rows.length), fraction(claimsFound, claimsTotal), equations.toFixed(2), String(rows.filter((row) => !row.outcome.ok).length)],
       };
     })
     .sort((a, b) => better(a.key, b.key));
@@ -116,13 +117,14 @@ export function rankPlanners(results: BakeoffResults, design: DesignResults): Ra
       const levels = sum(rows.map((row) => row.score.levels));
       const built = sum(rows.map((row) => row.score.built));
       const meet = sum(rows.map((row) => row.score.meetRule));
+      const onFindings = rows.filter((row) => row.score.onFindings).length;
       return {
         model: candidate.model,
         vendor: candidate.vendor,
         // How many levels meet the rule, before the fraction: a paper whose call failed then counts
         // as none, where a fraction alone would leave it out and reward the failure.
-        key: [meet, levels ? meet / levels : 0, built, -failuresOf(results, candidate.model), -order],
-        cells: [fraction(meet, levels), fraction(built, levels), String(rows.filter((row) => !row.ok).length), rows.map((row) => row.score.note).filter(Boolean)[0]?.replaceAll("|", "/") ?? ""],
+        key: [meet, onFindings, levels ? meet / levels : 0, built, -failuresOf(results, candidate.model), -order],
+        cells: [fraction(meet, levels), fraction(onFindings, rows.length), fraction(built, levels), String(rows.filter((row) => !row.ok).length), rows.map((row) => row.score.note).filter(Boolean)[0]?.replaceAll("|", "/") ?? ""],
       };
     })
     .sort((a, b) => better(a.key, b.key));
@@ -136,11 +138,12 @@ export function rankReviewers(results: BakeoffResults, design: DesignResults): R
       const planted = row?.planted ?? 0;
       const falseBlocks = row?.falseBlocks ?? 0;
       const overturned = row?.calledFailedAcceptable ?? false;
+      const definitional = row?.definitional ?? false;
       return {
         model: candidate.model,
         vendor: candidate.vendor,
-        key: [overturned ? 0 : 1, found - falseBlocks, -failuresOf(results, candidate.model), -order],
-        cells: [fraction(found, planted), String(falseBlocks), overturned ? "**yes**" : "no", row?.ok === false ? "1" : "0"],
+        key: [overturned ? 0 : 1, found - falseBlocks, definitional ? 1 : 0, -failuresOf(results, candidate.model), -order],
+        cells: [fraction(found, planted), definitional ? "yes" : "no", String(falseBlocks), overturned ? "**yes**" : "no", row?.ok === false ? "1" : "0"],
       };
     })
     .sort((a, b) => better(a.key, b.key));
@@ -185,11 +188,11 @@ export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { 
     "",
     "## Reading",
     "",
-    "Ranked by what the pipeline uses of a reading, its quotes, which become the world's anchors: the result's quote found",
-    "in the source, then the claims' quotes found, then the overlap of the equations it says define the model with the",
-    "gold's (intersection over union), which the pipeline does not use.",
+    "Ranked by what the pipeline uses of a reading: the headline result's quote found in the source, then whether it gives",
+    "enough anchored findings, the headline included, for three levels to test (ADR-0037), then its findings' quotes found,",
+    "then the overlap of the equations it says define the model with the gold's, which the pipeline does not use.",
     "",
-    ...table(["Result quoted", "Claims quoted", "Equations overlap", "Failed calls"], readers, excluded),
+    ...table(["Headline quoted", "Enough findings", "Findings quoted", "Equations overlap", "Failed calls"], readers, excluded),
     "",
     "## Routing",
     "",
@@ -203,20 +206,22 @@ export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { 
           "## Planning",
           "",
           "Each model planned a world from each gold paper's verified model and the best reader's reading, in plain JSON. Each",
-          "planned level was assembled and built alone, then swept by the level rule over 20 starts. Ranked by the levels",
-          "meeting the rule, then by their share of the levels planned, then by the levels that build. A first plan only: in a",
-          "job, the controller shows the planner each failing level's measurement and asks it to change that level.",
+          "planned level was assembled and built alone, then swept by the level rule over 20 starts and held to the visibility",
+          "rule; each plan was held to the findings check (ADR-0037). Ranked by the levels meeting both rules, then the worlds",
+          "passing the findings check, then the share of levels planned that meet both, then the levels that build. A first plan",
+          "only: in a job, the controller shows the planner each failing level's measurement and asks it to change that level.",
           "",
-          ...table(["Levels meeting the rule", "Levels that build", "Failed calls", "First problem"], rankPlanners(results, design), excluded),
+          ...table(["Levels meeting both rules", "Worlds on the findings", "Levels that build", "Failed calls", "First problem"], rankPlanners(results, design), excluded),
           "",
           "## Reviewing",
           "",
-          "Each model reviewed a tuberculosis world in words with three faults planted: level 2 claims, as the paper's, what the",
-          "paper does not say; level 3 states an effect far beyond its measurement; level 4 fails the level rule. Ranked by never",
-          "calling the failed check acceptable, then the planted faults it blocks (levels 2 and 3), less any block on level 1,",
-          "which has no fault.",
+          "Each model reviewed a tuberculosis world in words with four faults planted: level 2 claims, as the paper's, what the",
+          "paper does not say; level 3 states an effect far beyond its measurement; level 4 fails the level rule; level 5's effect",
+          "follows from the model's definitions alone. Ranked by never calling the failed check acceptable, then the planted",
+          "faults it blocks (levels 2, 3 and 5), less any block on level 1, which has no fault, then whether it names level 5",
+          "definitional.",
           "",
-          ...table(["Faults blocked", "Wrong blocks", "Called a failed check acceptable", "Failed calls"], rankReviewers(results, design), excluded),
+          ...table(["Faults blocked", "Definitional named", "Wrong blocks", "Called a failed check acceptable", "Failed calls"], rankReviewers(results, design), excluded),
           "",
         ]
       : []),
@@ -230,7 +235,7 @@ export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { 
     `| router | ${pick(routers, excluded)?.model ?? "none"} | the best router |`,
     ...(design
       ? [
-          `| planner | ${pick(rankPlanners(results, design), excluded)?.model ?? "none"} | the most levels meeting the level rule |`,
+          `| planner | ${pick(rankPlanners(results, design), excluded)?.model ?? "none"} | the most levels meeting both rules, then worlds on the paper's findings |`,
           `| explainer | ${pick(rankPlanners(results, design), excluded)?.model ?? "none"} | the planner's model, which knows the plan; its words are held by the schema and their quotes by provenance, not ranked |`,
           `| reviewer | ${pick(rankReviewers(results, design), excluded)?.model ?? "none"} | the most planted faults found, none blocked wrongly, no failed check called acceptable |`,
         ]

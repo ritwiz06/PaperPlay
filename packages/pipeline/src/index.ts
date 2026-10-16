@@ -19,3 +19,4 @@ export {
 export { claimHolds, SAMPLE_STEPS, sampleCount, summarise } from "./builder/difference.ts";
 export { NEIGHBOURHOOD, SKIES, startsOf, sweepAccuracy, sweepLevels, worldsAt, type AccuracyResult, type LevelResult, type SkyResult, type Start } from "./rule/sweep.ts";
 export { chartTopOf, LENS_FIGURES, SHARE_TOWN, sharesOf, TOWN_FIGURES, townFigureCounts, townLensOf, VISIBLE_FIGURES, VISIBLE_SHARE, visibilityOf, type Lens, type LevelVisibility } from "./rule/visibility.ts";
+export { checkFindings, LEVELS_ON_FINDINGS, type FindingsCheck } from "./rule/findings.ts";
