@@ -35,14 +35,26 @@ from the model's definitions; its readout called shares "people × years".
    checked is what is drawn. The town kit's figure count stays in the stage core, which may import
    no runtime code; the pipeline keeps a copy, and `scripts/test/town-figures.test.ts` holds the
    two equal.
-2. **Shares of a population** (every compartment without a unit, adding up to one at the start)
-   are shown as people in a town of 10,000 (`SHARE_TOWN`), a teaching choice said under the
-   readout; the measurements stay the model's own.
+2. **Shares of a population** (every compartment without a unit, each starting between none and
+   all, together no more than the whole: the hepatitis C paper's start at 0.825) are shown as
+   people in a town of 10,000 (`SHARE_TOWN`), a teaching choice said under the readout; the
+   measurements stay the model's own.
 3. **Summaries a person can feel:** `peak` and `mean` join `at`, `first-reach`, `lowest` and
    `total` in `worldspec/3`'s contract.
-4. **In stages, as ADR-0036 explains:** the rules above are deterministic and land first. The
-   prompts that ask for findings, for summaries a person can feel, and for a reviewer that flags
-   definitional levels land with the next bake-off run.
+4. **Findings, not definitions,** landing with the prompts and the bake-off's run on them:
+   - **the reader** gives the paper's headline result and its findings (results, thresholds,
+     conclusions), each quoted;
+   - **the planner** names, for each level, the finding it tests; the hook tests the headline. It
+     is told the visibility rule, to prefer the peak, a value at a time, a time to a threshold or
+     the mean, and what share values mean;
+   - **the findings check** (`rule/findings.ts`), deterministic, beside the two rules: the hook on
+     the headline result, at least three levels on findings whose quotes the source holds, and a
+     total over time only where the level's finding is about a total; a level that fails is
+     repaired like any other;
+   - **the reviewer** names each finding's kind; a level it finds definitional, blocking, is sent
+     back to the planner, within the job's two repairs, or dropped when three levels remain, or
+     the job goes to the owner;
+   - **the transcriber** gives share units for compartments that are shares of a population.
 5. **The first generated world is kept as made, not replayed.** Under the visibility rule its
    job's level 5 fails, so the job takes a path its recordings never saw. Its world stays, at
    `/world/generated/pmc-PMC12334037`, and a test holds it as made: every level meets the level

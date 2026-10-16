@@ -100,6 +100,26 @@ prompt changes the owner asked for at the same time (value sets, findings, visib
 since each changes a stage's prompt and so its recordings. The first generated world's job keeps
 the models it was made with, in `fixtures/jobs/`, and replays as it was.
 
+## Amendment, 2026-10-16: the bake-off on the final prompts, and the picks
+
+The bake-off ran again, whole, on the prompts that ask for value sets (ADR-0036), share units,
+findings, visible differences and definitional reviews (ADR-0037), with the eleven candidates the
+first amendment names. Scoring follows what the pipeline now uses: a transcription by its
+equations, then whether the value-set rule picks the gold's set; a reading by its headline quoted,
+then whether it gives enough anchored findings for three levels; a plan by its levels meeting both
+the level rule and the visibility rule, then whether it passes the findings check; a reviewer by
+the faults it blocks among four planted, one of them a definitional level.
+
+The picks (`eval/models.md`, `apps/api/models.json`): reader qwen36-27b (Qwen); first transcriber
+qwen3-235b-a22b-thinking-2507 (Qwen); second transcriber inkling-small (Thinking Machines), another
+vendor; router glm-5-3 (Z.ai); planner, explainer and reviewer gemma4-31b-it (Google). The pair of
+transcribers agrees in equations and values on all three gold papers, and on the tuberculosis
+paper both pick its Ethiopian fit.
+
+Three reviewers tie at the top (gemma4-31b-it, qwen38-27b, qwen36-27b) and the declared rule takes
+the earliest, so the planner's own model reviews its plans. That is the rule's outcome, not a
+choice; whether a reviewer should come from another model than the planner is for the owner.
+
 ## Consequences
 
 - The picked pair agrees in equations on all three gold papers and in values on one.

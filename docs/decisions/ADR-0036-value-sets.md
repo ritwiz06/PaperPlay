@@ -40,9 +40,10 @@ paper has scenarios too: tBregs absent or present, two values of one rate.
    both sets, every value quoted from the paper's table, and picks the Ethiopian; the bake-off
    scores whether each transcriber's rule picks the gold's set, and how many of the gold's sets it
    lists.
-6. **In stages.** The transcriber stage keeps requesting the schema it has, so the recorded calls
-   still replay; it asks for value sets when the stages' prompts change together with the next
-   bake-off run (ADR-0037), and the controller's test of a job with two sets arrives then.
+6. **In stages.** The transcriber stage kept requesting the schema it had, so the recorded calls
+   still replayed; it asks for value sets since the stages' prompts changed together with the
+   bake-off's run on them (ADR-0035's second amendment), and the controller's test of a job with
+   two sets arrived then.
 
 ## Consequences
 

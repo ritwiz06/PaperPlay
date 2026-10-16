@@ -14,24 +14,26 @@ Updated 2026-10-16: the owner's answers, then lessons worth learning, then PDF i
   - **landed:** the models in testing excluded, five candidates added, interim picks (ADR-0035's
     amendment, at `77b816e`);
   - **landed:** several value sets in one paper, picked by rule (ADR-0036, at `b1d19d2`);
-  - **landing:** the visibility rule, the town's lens, share units, and peak and mean summaries
-    (`d3af3df`, ADR-0037);
-  - **next:** every prompt change with one bake-off run and the picks from it; then the hepatitis C
-    world regenerated and the tuberculosis paper re-run;
+  - **landed:** the visibility rule, the town's lens, share units, and peak and mean summaries
+    (ADR-0037, at `c270633`);
+  - **landing:** findings, not definitions, every prompt change, and the bake-off on them with the
+    picks (`43be8a0`, `b943b5b`; ADR-0035's second amendment, ADR-0037);
+  - **next:** the hepatitis C world regenerated and the tuberculosis paper re-run; PDF ingest is
+    written and tested on its own branch (`d407a2d`, ADR-0038), to land after them;
   - **then:** PDF ingest, the last of G3a.3.
 - **`main` moves only through `npm run land`** (ADR-0009, amended).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`. CI runs `check:gate` on every
   push and pull request.
-- **Branches:** `g3/visibility`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the compartment
+- **Branches:** `g3/lessons`, being landed; `g3/pdf-ingest`, waiting in its own worktree; `worktree-agent-ab8301aef54d2fcc8`, the compartment
   agent's own, whose three commits are on `main`.
-- **Working commit:** `d3af3df` on `g3/visibility`. `main` is at `b1d19d2`, whose CI passed.
+- **Working commit:** `b943b5b` on `g3/lessons`. `main` is at `c270633`, whose CI passed.
 - **Model provider:** Voyager, `https://openai.rc.asu.edu/v1`, its key `VOYAGER_API_KEY` in
   `apps/api/.env` only (ADR-0030); called only by `npm run pipeline:live`. Replies stream; a call
   may take up to 30 minutes.
-- **Models per stage** (`apps/api/models.json`, interim until the bake-off runs again): reader,
-  planner and explainer kimi-k2-7-code; first transcriber glm-5-3; second transcriber
-  kimi-k2-7-code; router and reviewer glm-5-3. Twelve models the portal marks "Testing in
-  progress" are excluded, as of the owner's snapshot of 2026-10-16.
+- **Models per stage** (`apps/api/models.json`, from the bake-off on the final prompts): reader
+  qwen36-27b; first transcriber qwen3-235b-a22b-thinking-2507; second transcriber inkling-small;
+  router glm-5-3; planner, explainer and reviewer gemma4-31b-it. Twelve models the portal marks
+  "Testing in progress" are excluded, as of the owner's snapshot of 2026-10-16.
 - **Primitives:** `flock.planar.weighted@3.1.0` (ADR-0025); `compartments.ode@1.0.0` (ADR-0028).
 - **Contracts:** `worldspec/3`, with `worldspec/2` still read (ADR-0027); `runrecord/3`
   (ADR-0023).
@@ -71,14 +73,16 @@ R11 16, R12 20. Land runs the gate again before it pushes.
 
 ## Decisions waiting on the owner
 
+0. **Whether the reviewer should come from another model than the planner.** Three reviewers tie
+   at the top and the declared rule picks gemma4-31b-it, the planner's own model (ADR-0035).
 1. **Paid branch protection on GitHub** (ADR-0009's amendment).
 2. **The deploy:** the owner connects Vercel (ADR-0017).
 
 ## Next three actions
 
-1. Land `g3/visibility`.
-2. Every prompt change, with one bake-off run and the picks from it.
-3. The hepatitis C world regenerated, the tuberculosis paper re-run, then PDF ingest.
+1. Land `g3/lessons`.
+2. The hepatitis C world regenerated, the tuberculosis paper re-run, with before and after.
+3. Land PDF ingest.
 
 ## Recommendations
 
