@@ -49,6 +49,27 @@ describe("[R11] the API's jobs", () => {
     }
   });
 
+  it("takes a PDF as itself, by its content type, naming the job after its file, and refuses a body that is not one", async () => {
+    const seen: unknown[] = [];
+    const runner: JobRunner = (source, sink) => {
+      seen.push(source);
+      sink.emit("parsing", "ingest", "reading the PDF");
+      return Promise.resolve({ state: "failed", message: "done", world: null });
+    };
+    const app = buildServer({ runner, dataFolder: null });
+    try {
+      const pdf = new TextEncoder().encode("%PDF-1.5\n% a file that begins as a PDF does\n");
+      const started = await app.inject({ method: "POST", url: "/jobs/pdf?name=hcv paper.pdf", headers: { "content-type": "application/pdf" }, payload: Buffer.from(pdf) });
+      expect(started.statusCode).toBe(202);
+      await settle();
+      expect(seen).toMatchObject([{ kind: "pdf", name: "hcv paper.pdf" }]);
+      expect((await app.inject({ method: "GET", url: `/jobs/${started.json<{ jobId: string }>().jobId}` })).json<{ source: string }>().source).toBe("pdf:hcv paper.pdf");
+      expect((await app.inject({ method: "POST", url: "/jobs/pdf", headers: { "content-type": "application/pdf" }, payload: Buffer.from("<html>no</html>") })).statusCode).toBe(400);
+    } finally {
+      await app.close();
+    }
+  });
+
   it("streams a job's real states in order, each with its sequence number, and ends the stream when the job ends", async () => {
     const app = buildServer({ runner: walk(["parsing", "planning", "building", "running", "checking", "ready"]), dataFolder: null });
     try {

@@ -19,6 +19,7 @@
   "dependencies": {
     "@paperplay/contracts": "*",
     "@paperplay/primitives": "*",
+    "pdfjs-dist": "^6.4.299",
     "zod": "^4.6.5"
   }
 }

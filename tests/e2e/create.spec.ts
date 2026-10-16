@@ -112,3 +112,18 @@ test("[R09] the production build plays a world generated beforehand, with no API
   await expect(page.getByRole("slider", { name: /Treatment adherence/ })).toBeVisible();
   expect(called).toBe(false);
 });
+
+test("[R11] /create sends a PDF from your files as itself, by its content type, and follows its job", async ({ page }) => {
+  let sent: { type: string | undefined; name: string | null; starts: string } | null = null;
+  await page.route("**/api/jobs/pdf*", async (route) => {
+    const request = route.request();
+    sent = { type: request.headers()["content-type"], name: new URL(request.url()).searchParams.get("name"), starts: (request.postDataBuffer() ?? Buffer.alloc(0)).subarray(0, 5).toString() };
+    await route.fulfill({ status: 202, contentType: "application/json", body: JSON.stringify({ jobId: JOB, state: "received" }) });
+  });
+  await page.route(`**/api/jobs/${JOB}/events`, (route) => route.fulfill({ status: 200, contentType: "text/event-stream", body: stream([["received", "received", "received a PDF, paper.pdf"], ["parsing", "ingest", "from the PDF, 1 display equation(s) could not be read: (6) on page 4, it is drawn with bracket glyphs"]]) }));
+  await page.goto("/create");
+  await page.getByLabel("Or a PDF from your files").setInputFiles({ name: "paper.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.5\n%test\n") });
+  await page.getByRole("button", { name: "Make a world" }).click();
+  await expect(page.getByText("from the PDF, 1 display equation(s) could not be read")).toBeVisible();
+  expect(sent).toEqual({ type: "application/pdf", name: "paper.pdf", starts: "%PDF-" });
+});

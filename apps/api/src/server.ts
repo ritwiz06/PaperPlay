@@ -1,6 +1,7 @@
 import { TERMINAL_STATES, type JobEvent } from "@paperplay/contracts";
 import Fastify, { type FastifyInstance } from "fastify";
 import { z } from "zod";
+import { PDF_LIMITS } from "@paperplay/pipeline/ingest";
 import { JobStore, parseSource, type JobRunner } from "./jobs.ts";
 
 /** The largest request body the API reads: a job's request is a line of JSON. */
@@ -32,6 +33,19 @@ export function buildServer(options: ServerOptions = {}): FastifyInstance {
     const source = parseSource(parsed.data.source);
     if (!source) return reply.code(400).send({ error: `${parsed.data.source} is not an arXiv id with its version or a PMCID` });
     const job = store.start(parsed.data.source, source);
+    return reply.code(202).send({ jobId: job.id, state: job.state, events: `/jobs/${job.id}/events` });
+  });
+
+  // A PDF from this machine (ADR-0038): its bytes, up to what the PDF reader takes, and its name.
+  app.addContentTypeParser("application/pdf", { parseAs: "buffer", bodyLimit: PDF_LIMITS.bytes }, (_request, body, done) => done(null, body));
+  app.post<{ Querystring: { name?: string } }>("/jobs/pdf", { bodyLimit: PDF_LIMITS.bytes }, async (request, reply) => {
+    if (!store) return reply.code(503).send({ error: "this server runs no jobs" });
+    const body = request.body;
+    if (!(body instanceof Buffer) || body.length === 0) return reply.code(400).send({ error: "send the PDF itself as the body, with content-type application/pdf" });
+    const bytes = new Uint8Array(body);
+    if (new TextDecoder().decode(bytes.slice(0, 5)) !== "%PDF-") return reply.code(400).send({ error: "the body is not a PDF: it does not begin %PDF-" });
+    const name = (request.query.name ?? "paper.pdf").replace(/[^\w .()-]/g, "_").slice(0, 120) || "paper.pdf";
+    const job = store.start(`pdf:${name}`, { kind: "pdf", bytes, name });
     return reply.code(202).send({ jobId: job.id, state: job.state, events: `/jobs/${job.id}/events` });
   });
 

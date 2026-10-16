@@ -7,7 +7,8 @@ import { ADAPTABLE_LICENCES, SourceRegisterEntry, SourceText } from "@paperplay/
 import type { FetchedSource } from "./fetch.ts";
 
 export { ARCHIVE_LIMITS, ArchiveError, readTar, safePath, unpackSource, type ArchiveFile } from "./archive.ts";
-export { fetchArxiv, fetchArxivAbstract, fetchPmc, IngestError, parseArxivId, type Fetch, type FetchedSource } from "./fetch.ts";
+export { fetchArxiv, fetchArxivAbstract, fetchPmc, fromOwnerPdf, IngestError, parseArxivId, type Fetch, type FetchedSource } from "./fetch.ts";
+export { equationsOf, extractPdf, PDF_LIMITS, PdfError, type PdfPaper, type RefusedEquation } from "./pdf.ts";
 export { extractJats, mathText, type JatsPaper } from "./jats.ts";
 export { closeOf, extractLatex, LatexError, macrosOf, mainFileOf, stripComments, type ExtractedPaper, type Macro, type TextEquation, type TextSection } from "./latex.ts";
 export { decodeEntities, descendants, firstOf, parseXml, textOf, XmlError, type XmlElement, type XmlNode } from "./xml.ts";

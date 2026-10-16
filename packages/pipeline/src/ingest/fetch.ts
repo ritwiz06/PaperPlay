@@ -9,6 +9,7 @@ import { licenceOf, type IngestRoute, type Licence } from "@paperplay/contracts"
 import { unpackSource, type ArchiveFile } from "./archive.ts";
 import { extractJats } from "./jats.ts";
 import { extractLatex, type ExtractedPaper } from "./latex.ts";
+import { extractPdf, type RefusedEquation } from "./pdf.ts";
 import { descendants, firstOf, parseXml, textOf } from "./xml.ts";
 
 export type Fetch = (url: string, init?: { readonly headers?: Record<string, string> }) => Promise<{ readonly ok: boolean; readonly status: number; arrayBuffer(): Promise<ArrayBuffer>; text(): Promise<string> }>;
@@ -27,6 +28,8 @@ export interface FetchedSource {
   readonly licenceEvidence: string;
   readonly sha256: string;
   readonly paper: ExtractedPaper;
+  /** From a PDF: the display equations it does not let us read, and why (ADR-0038). */
+  readonly refused?: readonly RefusedEquation[];
 }
 
 export class IngestError extends Error {
@@ -63,11 +66,14 @@ export async function fetchArxiv(fetch: Fetch, raw: string): Promise<FetchedSour
   const authors = descendants(meta, "author").map((author) => [textOf(firstOf(author, "forenames") ?? ""), textOf(firstOf(author, "keyname") ?? "")].map((part) => part.trim()).filter(Boolean).join(" "));
   const created = textOf(firstOf(meta, "created") ?? "").trim();
   const download = await get(fetch, `https://arxiv.org/src/${id}v${version}`);
-  const files = unpackSource(download.bytes, id.replace("/", "-"));
-  if (!files.some((file) => file.path.endsWith(".tex"))) throw new IngestError(`arXiv's source for ${id}v${version} holds no LaTeX, only ${files.map((file) => file.path).join(", ")}`);
+  // A submission made as a PDF alone has no LaTeX source: its text is read from the PDF (ADR-0038).
+  const isPdf = new TextDecoder().decode(download.bytes.slice(0, 5)) === "%PDF-";
+  const fromPdf = isPdf ? await extractPdf(download.bytes) : null;
+  const files = isPdf ? [] : unpackSource(download.bytes, id.replace("/", "-"));
+  if (!isPdf && !files.some((file) => file.path.endsWith(".tex"))) throw new IngestError(`arXiv's source for ${id}v${version} holds no LaTeX, only ${files.map((file) => file.path).join(", ")}`);
   return {
     sourceId: `arxiv-${id.replace("/", "-")}v${version}`,
-    route: "arxiv-source",
+    route: isPdf ? "pdf-text" : "arxiv-source",
     title: textOf(firstOf(meta, "title") ?? "").replace(/\s+/g, " ").trim(),
     authors,
     year: created ? Number(created.slice(0, 4)) : null,
@@ -77,8 +83,34 @@ export async function fetchArxiv(fetch: Fetch, raw: string): Promise<FetchedSour
     licenceUrl,
     licenceEvidence: `arXiv's OAI-PMH record for ${id}, its license field`,
     sha256: sha256(download.bytes),
-    paper: extractLatex(files),
+    paper: fromPdf ?? extractLatex(files),
+    ...(fromPdf ? { refused: fromPdf.refused } : {}),
     files,
+  };
+}
+
+/**
+ * A PDF from this machine, as the owner gives it to /create (ADR-0038): its text read from the PDF,
+ * its licence unknown, since a file states none the reader can trust, so its text is never kept.
+ */
+export async function fromOwnerPdf(bytes: Uint8Array, name: string): Promise<FetchedSource> {
+  const paper = await extractPdf(bytes);
+  const digest = sha256(bytes);
+  const firstLine = paper.text.split("\n").find((line) => line.trim().length > 12)?.trim() ?? name;
+  return {
+    sourceId: `pdf-${digest.slice(0, 16)}`,
+    route: "owner-pdf",
+    title: paper.title ?? firstLine.slice(0, 200),
+    authors: paper.authors.length > 0 ? paper.authors : ["Unknown"],
+    year: null,
+    venue: null,
+    identifiers: { file: name.slice(0, 200), sha256: digest },
+    licence: "unknown",
+    licenceUrl: null,
+    licenceEvidence: "a PDF given on this machine; the reader does not trust a licence a file states about itself",
+    sha256: digest,
+    paper,
+    refused: paper.refused,
   };
 }
 

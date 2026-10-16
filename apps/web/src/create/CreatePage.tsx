@@ -28,6 +28,7 @@ const ENDINGS: Readonly<Partial<Record<JobState, string>>> = {
 
 export function CreatePage() {
   const [source, setSource] = useState("");
+  const [file, setFile] = useState<File | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
   const [events, setEvents] = useState<JobEvent[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +41,11 @@ export function CreatePage() {
     setError(null);
     setEvents([]);
     stream.current?.close();
-    const response = await fetch("/api/jobs", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ source: source.trim() }) }).catch(() => null);
+    // A PDF from this machine goes as itself; an identifier as a line of JSON.
+    const request = file
+      ? fetch(`/api/jobs/pdf?name=${encodeURIComponent(file.name)}`, { method: "POST", headers: { "content-type": "application/pdf" }, body: file })
+      : fetch("/api/jobs", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ source: source.trim() }) });
+    const response = await request.catch(() => null);
     if (!response) {
       setError("The API is not running. Start it with npm run dev:api, or npm run pipeline:live -- serve for live model calls.");
       return;
@@ -79,15 +84,25 @@ export function CreatePage() {
       <header className="create-head">
         <p className="create-local">On this machine only: the public site never runs this page.</p>
         <h1>Make a world from a paper</h1>
-        <p>Paste an arXiv id with its version, or a PubMed Central id. PaperPlay makes worlds from compartment-model papers, so far.</p>
+        <p>Paste an arXiv id with its version or a PubMed Central id, or choose a PDF. PaperPlay makes worlds from compartment-model papers, so far.</p>
       </header>
       <form className="create-form" onSubmit={(event) => void start(event)}>
         <label htmlFor="create-source">Paper</label>
         <input id="create-source" value={source} onChange={(event) => setSource(event.target.value)} placeholder="arxiv:2506.19869v1 or pmc:PMC12334037" autoComplete="off" spellCheck={false} />
-        <button type="submit" className="create-go" disabled={source.trim().length === 0}>
+        <button type="submit" className="create-go" disabled={source.trim().length === 0 && file === null}>
           Make a world
         </button>
-        <p className="create-note">A PDF from your files comes with PDF ingest, next.</p>
+        <label htmlFor="create-file" className="create-file-label">
+          Or a PDF from your files
+        </label>
+        <input
+          id="create-file"
+          className="create-file"
+          type="file"
+          accept="application/pdf"
+          onChange={(event) => setFile(event.target.files?.[0] ?? null)}
+        />
+        <p className="create-note">A PDF's text is read as it is laid out; an equation it draws rather than writes is named and left out. Its licence is unknown, so nothing from it is kept.</p>
       </form>
       {error ? (
         <p className="create-error" role="alert">

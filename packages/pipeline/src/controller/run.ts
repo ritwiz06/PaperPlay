@@ -11,7 +11,7 @@ import { assembleWorld } from "../assemble/world.ts";
 import { chooseStep, describeBehaviour, horizonOf } from "../assemble/model.ts";
 import { buildWorld, type BuiltWorld } from "../builder/build.ts";
 import { checkProvenance } from "../checks/provenance.ts";
-import { fetchArxiv, fetchPmc, registerAndText, type Fetch } from "../ingest/index.ts";
+import { fetchArxiv, fetchPmc, fromOwnerPdf, registerAndText, type Fetch } from "../ingest/index.ts";
 import { completeStructured, type ModelClient, type Stage } from "../models/index.ts";
 import { sweepLevels, type LevelResult } from "../rule/sweep.ts";
 import { checkFindings } from "../rule/findings.ts";
@@ -43,7 +43,11 @@ export interface JobSink {
   artifact(name: string, value: unknown): void;
 }
 
-export type JobSource = { readonly kind: "arxiv" | "pmc"; readonly id: string } | { readonly kind: "ingested"; readonly text: SourceText; readonly register: SourceRegisterEntry };
+export type JobSource =
+  | { readonly kind: "arxiv" | "pmc"; readonly id: string }
+  /** A PDF given on this machine, its bytes and its file's name (ADR-0038). */
+  | { readonly kind: "pdf"; readonly bytes: Uint8Array; readonly name: string }
+  | { readonly kind: "ingested"; readonly text: SourceText; readonly register: SourceRegisterEntry };
 
 export interface JobInput {
   readonly source: JobSource;
@@ -92,7 +96,8 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     if (input.signal?.aborted) throw new Stop("cancelled", "the job was cancelled");
   };
 
-  sink.emit("received", "the request", `received ${input.source.kind === "ingested" ? input.source.register.sourceId : `${input.source.kind}:${input.source.id}`}`);
+  const asked = input.source.kind === "ingested" ? input.source.register.sourceId : input.source.kind === "pdf" ? `a PDF, ${input.source.name}` : `${input.source.kind}:${input.source.id}`;
+  sink.emit("received", "the request", `received ${asked}`);
   try {
     // Parsing: fetch and read the source with the restricted readers.
     move("parsing", "ingest", "fetching the source and reading it");
@@ -100,8 +105,11 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     let register: SourceRegisterEntry;
     if (input.source.kind === "ingested") ({ text, register } = { text: input.source.text, register: input.source.register });
     else {
-      const fetched = input.source.kind === "arxiv" ? await fetchArxiv(input.fetch, input.source.id) : await fetchPmc(input.fetch, input.source.id);
+      const given = input.source;
+      const fetched = given.kind === "pdf" ? await fromOwnerPdf(given.bytes, given.name) : given.kind === "arxiv" ? await fetchArxiv(input.fetch, given.id) : await fetchPmc(input.fetch, given.id);
       ({ entry: register, text } = registerAndText(fetched, input.now?.() ?? new Date().toISOString()));
+      // A PDF's display equations that could not be read are said, never guessed at.
+      if (fetched.refused && fetched.refused.length > 0) say("ingest", `from the PDF, ${fetched.refused.length} display equation(s) could not be read: ${fetched.refused.map((equation) => `(${equation.number}) on page ${equation.page}, ${equation.reason}`).join("; ")}`);
     }
     sink.artifact("register", register);
     sink.artifact("sanitiser", promptSource(text).removals);
