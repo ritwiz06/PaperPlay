@@ -9,7 +9,7 @@ import { join } from "node:path";
 import { SourceText } from "@paperplay/contracts";
 import type { ModelClient } from "@paperplay/pipeline/models";
 import { read, route, transcribe, type RouteDecision } from "@paperplay/pipeline/stages";
-import { Gold, matchModels, modelForComparison, scoreReading, scoreTranscription, Transcription, type ReadingScore, type TranscriptionScore } from "@paperplay/pipeline/transcribe";
+import { compareValueSets, Gold, matchModels, modelForComparison, pickValueSet, scoreReading, scoreTranscription, TranscriptionWithSets, withValueSet, type ReadingScore, type TranscriptionScore } from "@paperplay/pipeline/transcribe";
 
 const root = join(import.meta.dirname, "..", "..");
 
@@ -96,7 +96,7 @@ export async function runBakeoff(client: ModelClient, structuredOutput: Readonly
       for (const paper of papers) {
         const transcribed = await attempt(() => transcribe(client, model, paper.source, paper.title, { structuredOutput: structured }));
         // A failed call scores nothing, out of everything the gold holds.
-        const nothing: TranscriptionScore = { converted: false, structural: false, valuesRight: 0, valuesTotal: paper.gold.transcription.parameters.length + paper.gold.transcription.compartments.length, quotesFound: 0, quotesTotal: 0, problems: [] };
+        const nothing: TranscriptionScore = { converted: false, structural: false, valuesRight: 0, valuesTotal: paper.gold.transcription.parameters.length + paper.gold.transcription.compartments.length, quotesFound: 0, quotesTotal: 0, setsFound: 0, setsTotal: (paper.gold.transcription.valueSets ?? []).length, pickRight: paper.gold.picked ? false : null, problems: [] };
         transcriptions.push({ model, paper: paper.id, outcome: transcribed, score: transcribed.ok ? scoreTranscription(transcribed.value, paper.gold, paper.source) : nothing });
         const reading = await attempt(() => read(client, model, paper.source, paper.title, { structuredOutput: structured }));
         readings.push({ model, paper: paper.id, outcome: reading, score: reading.ok ? scoreReading(reading.value, paper.gold, paper.source) : null });
@@ -130,11 +130,23 @@ export function agreement(results: BakeoffResults, first: string, second: string
     const find = (model: string) => results.transcriptions.find((entry) => entry.model === model && entry.paper === paper.id)?.outcome;
     const a = find(first);
     const b = find(second);
-    if (!a?.ok || !b?.ok) return { paper: paper.id, structural: false, values: false, problems: ["a transcription failed"] };
-    const ma = modelForComparison(Transcription.parse(a.value), paper.source);
-    const mb = modelForComparison(Transcription.parse(b.value), paper.source);
-    if (!ma || !mb) return { paper: paper.id, structural: false, values: false, problems: ["a transcription did not convert"] };
+    if (!a?.ok || !b?.ok) return { paper: paper.id, structural: false, values: false, samePick: null, problems: ["a transcription failed"] };
+    // As the controller judges them: each on the set its rule picks, the two sets' lists compared.
+    const resolve = (value: unknown) => {
+      const transcription = TranscriptionWithSets.parse(value);
+      const sets = transcription.valueSets ?? [];
+      const pick = sets.length > 0 ? pickValueSet(sets, paper.source) : null;
+      return { sets, pick: pick?.set ?? null, ambiguous: pick && !pick.set ? pick.ambiguous : null, applied: pick?.set ? withValueSet(transcription, pick.set).transcription : transcription };
+    };
+    const ra = resolve(a.value);
+    const rb = resolve(b.value);
+    const sets = ra.sets.length + rb.sets.length > 0 ? compareValueSets(ra.sets, rb.sets) : null;
+    const samePick = sets ? (ra.pick && rb.pick ? sets.pairs[ra.pick.id] === rb.pick.id : false) : null;
+    const setProblems = [...(ra.ambiguous ? [`the first's rule cannot pick: ${ra.ambiguous}`] : []), ...(rb.ambiguous ? [`the second's rule cannot pick: ${rb.ambiguous}`] : []), ...(sets?.problems ?? []), ...(samePick === false && ra.pick && rb.pick ? [`the rule picks "${ra.pick.label}" from the first and "${rb.pick.label}" from the second`] : [])];
+    const ma = modelForComparison(ra.applied, paper.source);
+    const mb = modelForComparison(rb.applied, paper.source);
+    if (!ma || !mb) return { paper: paper.id, structural: false, values: false, samePick, problems: ["a transcription did not convert", ...setProblems] };
     const match = matchModels(ma, mb);
-    return { paper: paper.id, structural: match.structural, values: match.values, problems: match.problems.slice(0, 3) };
+    return { paper: paper.id, structural: match.structural, values: match.values, samePick, problems: [...setProblems, ...match.problems].slice(0, 4) };
   });
 }

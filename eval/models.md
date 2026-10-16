@@ -10,21 +10,22 @@ the gold answers are three CC BY papers' models transcribed by hand (`eval/gold/
 
 ## Transcription
 
-Each model transcribed each paper's model on its own. Ranked by equations that match the gold's up to renaming, then
-values read right (a value the paper also states for another scenario counts), then quotes the source holds.
+Each model transcribed each paper's model on its own. Ranked by equations that match the gold's up to renaming, then,
+on papers that state several value sets, whether the value-set rule picks the gold's set from the sets it lists, then
+values read right (a value the paper also states in another set counts), then quotes the source holds.
 
-| Rank | Model | Vendor | Equations match | Values right | Quotes found | Failed calls |
-|---|---|---|---|---|---|---|
-| 1 | glm-5-3 | Z.ai | 3/3 | 49/51 | 62/79 | 0 |
-| 2 | qwen35-397b-a17b (testing in progress, not picked) | Qwen | 3/3 | 40/51 | 70/77 | 0 |
-| 3 | kimi-k2-7-code | Moonshot AI | 2/3 | 31/51 | 39/79 | 0 |
-| 4 | deepseek-v4-1-flash (testing in progress, not picked) | DeepSeek | 2/3 | 26/51 | 71/71 | 0 |
-| 5 | gemma4-31b-it | Google | 2/3 | 23/51 | 68/79 | 0 |
-| 6 | minimax-m2-7 (testing in progress, not picked) | MiniMax | 2/3 | 21/51 | 65/88 | 0 |
-| 7 | llama4-maverick-17b | Meta | 2/3 | 21/51 | 46/77 | 0 |
-| 8 | mimo-v2-6-flash (testing in progress, not picked) | Xiaomi | 1/3 | 13/51 | 79/79 | 0 |
-| 9 | granite41-30b | IBM | 1/3 | 10/51 | 37/66 | 0 |
-| 10 | gpt-oss-120b | OpenAI | 0/3 | 0/51 | 62/79 | 0 |
+| Rank | Model | Vendor | Equations match | Set picked right | Value sets found | Values right | Quotes found | Failed calls |
+|---|---|---|---|---|---|---|---|---|
+| 1 | glm-5-3 | Z.ai | 3/3 | 0/1 | 0/2 | 49/51 | 62/79 | 0 |
+| 2 | qwen35-397b-a17b (testing in progress, not picked) | Qwen | 3/3 | 0/1 | 0/2 | 46/51 | 70/77 | 0 |
+| 3 | kimi-k2-7-code | Moonshot AI | 2/3 | 0/1 | 0/2 | 31/51 | 39/79 | 0 |
+| 4 | gemma4-31b-it | Google | 2/3 | 0/1 | 0/2 | 29/51 | 68/79 | 0 |
+| 5 | minimax-m2-7 (testing in progress, not picked) | MiniMax | 2/3 | 0/1 | 0/2 | 27/51 | 65/88 | 0 |
+| 6 | llama4-maverick-17b | Meta | 2/3 | 0/1 | 0/2 | 27/51 | 46/77 | 0 |
+| 7 | deepseek-v4-1-flash (testing in progress, not picked) | DeepSeek | 2/3 | 0/1 | 0/2 | 26/51 | 71/71 | 0 |
+| 8 | mimo-v2-6-flash (testing in progress, not picked) | Xiaomi | 1/3 | 0/1 | 0/2 | 13/51 | 79/79 | 0 |
+| 9 | granite41-30b | IBM | 1/3 | 0/1 | 0/2 | 10/51 | 37/66 | 0 |
+| 10 | gpt-oss-120b | OpenAI | 0/3 | 0/1 | 0/2 | 0/51 | 62/79 | 0 |
 
 **First transcription:** glm-5-3 (Z.ai). **Second, from another vendor:** kimi-k2-7-code (Moonshot AI).
 
@@ -32,11 +33,11 @@ values read right (a value the paper also states for another scenario counts), t
 
 The world is verified only where the two agree structurally, up to renaming (ADR-0024, item 2).
 
-| Paper | Equations agree | Values agree | What differs |
-|---|---|---|---|
-| arxiv-2506.19869v1 | yes | yes | nothing |
-| arxiv-2203.01434v2 | yes | yes | nothing |
-| pmc-PMC12334037 | yes | yes | nothing |
+| Paper | Equations agree | Same value set picked | Values agree | What differs |
+|---|---|---|---|---|
+| arxiv-2506.19869v1 | yes | one set | yes | nothing |
+| arxiv-2203.01434v2 | yes | one set | yes | nothing |
+| pmc-PMC12334037 | yes | one set | yes | nothing |
 
 ## Reading
 
@@ -136,11 +137,11 @@ None.
 - glm-5-3, planning arxiv-2506.19869v1: glm-5-3's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object
 - glm-5-3, planning arxiv-2203.01434v2: glm-5-3's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object
 - glm-5-3, planning pmc-PMC12334037: glm-5-3's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object
-- deepseek-v4-1-flash, planning arxiv-2506.19869v1: the gateway could not be reached: aborted (ECONNRESET)
-- deepseek-v4-1-flash, planning arxiv-2203.01434v2: the gateway could not be reached: aborted (ECONNRESET)
-- deepseek-v4-1-flash, planning pmc-PMC12334037: the gateway did not answer within 1800000 ms
+- deepseek-v4-1-flash, planning arxiv-2506.19869v1: no recording of this planner call to deepseek-v4-1-flash (prompt f8431d2e2547); record it with npm run pipeline:live
+- deepseek-v4-1-flash, planning arxiv-2203.01434v2: no recording of this planner call to deepseek-v4-1-flash (prompt e6c9400fb3b4); record it with npm run pipeline:live
+- deepseek-v4-1-flash, planning pmc-PMC12334037: no recording of this planner call to deepseek-v4-1-flash (prompt 78e3b1b280e3); record it with npm run pipeline:live
 - minimax-m2-7, planning arxiv-2506.19869v1: minimax-m2-7's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object
 - mimo-v2-6-flash, planning arxiv-2506.19869v1: mimo-v2-6-flash's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object
 - mimo-v2-6-flash, planning arxiv-2203.01434v2: mimo-v2-6-flash's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object
 - mimo-v2-6-flash, planning pmc-PMC12334037: mimo-v2-6-flash's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object
-- deepseek-v4-1-flash, reviewing: the gateway could not be reached: aborted (ECONNRESET)
+- deepseek-v4-1-flash, reviewing: no recording of this reviewer call to deepseek-v4-1-flash (prompt 3e361ff99e38); record it with npm run pipeline:live

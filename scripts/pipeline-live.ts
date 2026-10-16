@@ -13,13 +13,14 @@
  *            eval/bakeoff/results.json and eval/models.md
  *   design   runs every candidate on planning and reviewing, after bakeoff; writes
  *            eval/bakeoff/design.json and eval/models.md again
+ *   rescore  replays the recorded bake-off under today's scoring, calling nothing
  *   report   rewrites eval/models.md from the saved results, calling nothing
  *   serve    the API on 127.0.0.1 with live model calls, recorded (or replayed when recorded
  *            already), for /create on this machine
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { directoryStore, recordingClient, resumingClient } from "@paperplay/pipeline/models";
+import { directoryStore, recordingClient, replayClient, resumingClient } from "@paperplay/pipeline/models";
 import { CONFIG_FILE, loadModelConfig } from "../apps/api/src/models/config.ts";
 import { liveClient } from "../apps/api/src/models/live.ts";
 import { pipelineRunner } from "../apps/api/src/runner.ts";
@@ -134,6 +135,24 @@ async function design(): Promise<void> {
   console.log("wrote eval/bakeoff/design.json and eval/models.md");
 }
 
+/**
+ * The recorded bake-off scored again by today's rules, replaying its recordings, calling nothing:
+ * for a change to scoring or the gold answers, never to a stage's prompt, which needs a new run.
+ */
+async function rescore(): Promise<void> {
+  const config = loadModelConfig();
+  const store = directoryStore(RECORDINGS);
+  const folder = join(import.meta.dirname, "..", "eval", "bakeoff");
+  const recorded = JSON.parse(readFileSync(join(folder, "results.json"), "utf8")) as BakeoffResults;
+  const results = await runBakeoff(replayClient(store), config.structuredOutput, recorded.candidates);
+  writeFileSync(join(folder, "results.json"), `${JSON.stringify(results, null, 2)}\n`);
+  const best = rankReaders(results).find((row) => !config.excluded.models.includes(row.model))?.model;
+  const readings = Object.fromEntries(results.readings.filter((entry) => entry.model === best && entry.outcome.ok).map((entry) => [entry.paper, (entry.outcome as { value: unknown }).value])) as Record<string, never>;
+  const designed = await runDesignBakeoff(replayClient(store), config.structuredOutput, recorded.candidates, readings);
+  writeFileSync(join(folder, "design.json"), `${JSON.stringify(designed, null, 2)}\n`);
+  console.log("wrote eval/bakeoff/results.json and design.json, replayed; now npm run pipeline:live -- report");
+}
+
 /** eval/models.md again from eval/bakeoff/, with no call to the gateway. */
 async function report(): Promise<void> {
   const config = loadModelConfig();
@@ -162,7 +181,7 @@ async function serve(): Promise<void> {
   console.log(`PaperPlay API listening on http://127.0.0.1:${port}, with live model calls, recorded`);
 }
 
-const commands: Readonly<Record<string, () => Promise<void>>> = { models, probe, bakeoff, design, report, serve };
+const commands: Readonly<Record<string, () => Promise<void>>> = { models, probe, bakeoff, design, rescore, report, serve };
 const run = command === undefined ? undefined : commands[command];
 if (!run) {
   console.error(`usage: npm run pipeline:live -- <${Object.keys(commands).join("|")}>`);

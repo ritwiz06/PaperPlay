@@ -23,8 +23,9 @@ import { promptSource } from "../stages/source.ts";
 import { TRANSCRIBER_MAX_TOKENS, transcribe, transcriberMessages } from "../stages/transcriber.ts";
 import { toModelSpec } from "../transcribe/convert.ts";
 import { modelForComparison } from "../transcribe/score.ts";
+import { compareValueSets, pickValueSet, withValueSet } from "../transcribe/valuesets.ts";
 import { matchModels } from "../transcribe/match.ts";
-import { Transcription } from "../transcribe/schema.ts";
+import { Transcription, type TranscriptionWithSets } from "../transcribe/schema.ts";
 
 export const MAX_REPAIRS = 2;
 
@@ -127,18 +128,41 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     sink.artifact("transcription-second", second);
     // The first transcription's quotes become the world's anchors, so every one must be found; the
     // second exists to check the structure, so only its structure is compared, quotes aside.
+    // A paper with several value sets: each transcription's sets, the rule's pick from each, and the
+    // two compared by the values they share; the others become the model's named alternatives.
+    const resolved = (transcription: TranscriptionWithSets) => {
+      const sets = transcription.valueSets ?? [];
+      if (sets.length === 0) return { transcription, sets, pick: null, problems: [] as readonly string[] };
+      const pick = pickValueSet(sets, text);
+      if (!pick.set) return { transcription, sets, pick, problems: [] as readonly string[] };
+      const applied = withValueSet(transcription, pick.set);
+      return { transcription: applied.transcription, sets, pick, problems: applied.problems };
+    };
     const compare = () => {
-      const a = toModelSpec(first, text);
-      const b = modelForComparison(second, text);
+      const first_ = resolved(first);
+      const second_ = resolved(second);
+      const sets = first_.sets.length + second_.sets.length > 0 ? compareValueSets(first_.sets, second_.sets) : null;
+      const picked = (side: typeof first_) => (side.pick && side.pick.set ? side.pick.set : null);
+      const pickA = picked(first_);
+      const pickB = picked(second_);
+      const setProblems = [...first_.problems, ...(sets?.problems ?? [])];
+      if (pickA && pickB && sets?.pairs[pickA.id] !== pickB.id) setProblems.push(`the rule picks "${pickA.label}" from the first and "${pickB.label}" from the second, which are not the same set`);
+      const a = toModelSpec(first_.transcription, text, { alternatives: first_.sets.filter((set) => set !== pickA) });
+      const b = modelForComparison(second_.transcription, text);
       const match = a.model && b ? matchModels(a.model, b) : null;
-      return { a, b, match };
+      const ambiguous = [first_.pick, second_.pick].map((pick) => (pick && !pick.set ? pick.ambiguous : null)).find((reason) => reason !== null) ?? null;
+      return { a, b, match, sets, setProblems, pickA: first_.pick, ambiguous };
     };
     let compared = compare();
-    const agree = (): boolean => compared.match?.structural === true && compared.match.values && compared.a.problems.length === 0;
+    const undecided = (): void => {
+      if (compared.ambiguous) throw new Stop("needs_information", `the paper states several sets of values and the rule cannot pick one: ${compared.ambiguous}. The owner decides which a world uses.`);
+    };
+    undecided();
+    const agree = (): boolean => compared.match?.structural === true && compared.match.values && compared.a.problems.length === 0 && compared.setProblems.length === 0;
     if (!agree()) {
       if (repairs >= MAX_REPAIRS) throw new Stop("needs_information", "the two transcriptions disagree, and no repair is left");
       repairs++;
-      const why = [...compared.a.problems, ...(compared.b ? [] : ["the second transcription does not become a model"]), ...(compared.match?.problems ?? [])].slice(0, 8);
+      const why = [...compared.setProblems, ...compared.a.problems, ...(compared.b ? [] : ["the second transcription does not become a model"]), ...(compared.match?.problems ?? [])].slice(0, 8);
       move("repairing", "transcription", `the two transcriptions disagree (${why.join("; ") || "they could not be compared"}); asking the first transcriber to check against the paper`);
       const messages = transcriberMessages(text, title);
       const retried = await completeStructured(
@@ -157,9 +181,11 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       sink.artifact("transcription-first-repaired", first);
       compared = compare();
       move("planning", "transcription", agree() ? "the repaired transcription agrees with the second" : "the transcriptions still disagree");
-      if (!agree()) throw new Stop("needs_information", `the two transcriptions still disagree: ${[...compared.a.problems, ...(compared.match?.problems ?? [])].slice(0, 6).join("; ") || "they could not be compared"}. The model is not verified, so the owner decides.`);
+      undecided();
+      if (!agree()) throw new Stop("needs_information", `the two transcriptions still disagree: ${[...compared.setProblems, ...compared.a.problems, ...(compared.match?.problems ?? [])].slice(0, 6).join("; ") || "they could not be compared"}. The model is not verified, so the owner decides.`);
     }
     sink.artifact("match", compared.match);
+    if (compared.sets) sink.artifact("value-sets", { comparison: compared.sets, pick: compared.pickA });
     if (compared.a.unstated.length > 0) throw new Stop("needs_information", `the paper does not state ${compared.a.unstated.join(", ")}; a world needs every value`);
     const transcribed = compared.a.model;
     if (!transcribed) throw new Stop("failed", "the transcription did not become a model");
@@ -168,7 +194,8 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     if (dt === null) throw new Stop("unsupported", "the model is too stiff for the solver at any step it offers: the accuracy check refuses it, so it is never drawn wrong");
     const model: ModelSpec = { ...transcribed, solver: { ...transcribed.solver, dt } };
     sink.artifact("model", model);
-    say("transcription", `the two transcriptions agree up to renaming, values included; the solver's step is ${dt} ${model.timeUnit}`);
+    const onSet = compared.pickA?.set ? `, on the paper's set "${compared.pickA.set.label}" (${compared.pickA.reason})` : "";
+    say("transcription", `the two transcriptions agree up to renaming, values included${onSet}; the solver's step is ${dt} ${model.timeUnit}`);
     cancelled();
 
     say("planning", "planning the levels");

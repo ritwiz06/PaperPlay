@@ -166,6 +166,16 @@ describe("[R03] ModelSpec: parameters", () => {
   });
 });
 
+describe("[R03] ModelSpec: the paper's other value sets", () => {
+  it("keeps another set of values by name, setting only the model's parameters", () => {
+    const model = { ...sirModel(), alternatives: [{ id: "fitted", label: "values fitted to data", values: { beta: 0.5, seeded: 3 }, anchors: [anchor()] }] };
+    expect(issuesOf(ModelSpec, model)).toEqual([]);
+    const stray = { ...sirModel(), alternatives: [{ id: "fitted", label: "values fitted to data", values: { nowhere: 1 }, anchors: [] }] };
+    expect(issuesOf(ModelSpec, stray)).toEqual([{ code: "custom", path: "alternatives.0.values.nowhere" }]);
+    expect(issuesOf(ModelSpec, { ...sirModel(), alternatives: [{ id: "fitted", label: "x", values: {}, anchors: [], extra: 1 }] })).toEqual([{ code: "unrecognized_keys", path: "alternatives.0" }]);
+  });
+});
+
 describe("[R03] ModelSpec: names", () => {
   it("uses each id once across compartments, parameters and observables", () => {
     const model = sirModel();

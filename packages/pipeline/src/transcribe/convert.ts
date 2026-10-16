@@ -7,7 +7,7 @@
  */
 import { ModelSpec, type Anchor, type Expr, type SourceText, type Unit } from "@paperplay/contracts";
 import { FormulaError, parseFormula } from "./formula.ts";
-import type { Transcription } from "./schema.ts";
+import type { Transcription, ValueSet } from "./schema.ts";
 
 export interface Conversion {
   /** The model, when everything parsed and every quote was found. */
@@ -179,7 +179,7 @@ const cleanUnit = (unit: Unit): Unit => Object.fromEntries(Object.entries(unit).
 /** A range a learner's control may span, a teaching choice around the paper's value. */
 const rangeAround = (value: number): [number, number] => (value > 0 ? [0, value * 4] : value < 0 ? [value * 4, 0] : [0, 1]);
 
-export function toModelSpec(transcription: Transcription, source: SourceText, options: { readonly dt?: number; readonly tolerance?: number } = {}): Conversion {
+export function toModelSpec(transcription: Transcription, source: SourceText, options: { readonly dt?: number; readonly tolerance?: number; readonly alternatives?: readonly ValueSet[] } = {}): Conversion {
   const problems: string[] = [];
   const unstated: string[] = [];
   const anchor = (quote: string, what: string): Anchor[] => {
@@ -264,6 +264,17 @@ export function toModelSpec(transcription: Transcription, source: SourceText, op
     steadyStates: [],
     observables: transcription.compartments.map((compartment) => ({ id: `level${camelId(compartment.id).replace(/^./, (first) => first.toUpperCase())}`, label: compartment.name, expr: { c: idOf(compartment.id) }, unit: cleanUnit(compartment.unit) })),
     solver: { dt: options.dt ?? 0.01, tolerance: options.tolerance ?? 1e-6 },
+    // The paper's other value sets, by the model's ids: a starting value is its compartment's parameter.
+    ...(options.alternatives && options.alternatives.length > 0
+      ? {
+          alternatives: options.alternatives.map((set) => ({
+            id: camelId(set.id),
+            label: set.label,
+            values: Object.fromEntries(set.values.filter((value) => names.parameters.has(value.of) || names.compartments.has(value.of)).map((value) => [names.compartments.has(value.of) ? `${idOf(value.of)}0` : idOf(value.of), value.value])),
+            anchors: [anchorOf(source, set.quote)].filter((found): found is Anchor => found !== null),
+          })),
+        }
+      : {}),
   };
   const parsed = ModelSpec.safeParse(candidate);
   if (!parsed.success) return { model: null, problems: parsed.error.issues.map((issue) => `${issue.path.join(".")}: ${issue.message}`), unstated };

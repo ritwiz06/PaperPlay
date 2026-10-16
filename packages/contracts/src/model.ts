@@ -175,6 +175,19 @@ const INVARIANT: Context = { parameters: true, compartments: true, what: "an inv
 const STEADY: Context = { parameters: true, compartments: false, what: "a steady state's value is made of parameters and numbers" };
 const OBSERVED: Context = { parameters: false, compartments: true, what: "an observable is made of compartments and numbers, since measuring sees only the state" };
 
+/**
+ * Another set of values the paper states, kept by name beside the one the model uses (the owner,
+ * 2026-10-16): unused for now, so a later world could offer it. Its values are the model's
+ * parameters, starting values included, by id.
+ */
+export const ModelAlternative = z.strictObject({
+  id: Name,
+  label: z.string().min(1).max(120),
+  values: z.record(Name, z.number()),
+  anchors: z.array(AnchorRef),
+});
+export type ModelAlternative = z.infer<typeof ModelAlternative>;
+
 export const ModelSpec = z
   .strictObject({
     timeUnit: TimeUnit,
@@ -185,6 +198,8 @@ export const ModelSpec = z
     steadyStates: z.array(ModelSteadyState),
     observables: z.array(ModelObservable).min(1),
     solver: ModelSolver,
+    /** The paper's other value sets, named, unused for now. */
+    alternatives: z.array(ModelAlternative).max(8).optional(),
   })
   .check((ctx) => {
     const spec = ctx.value;
@@ -201,6 +216,9 @@ export const ModelSpec = z
 
     const compartments = new Set(spec.compartments.map((compartment) => compartment.id));
     const parameters = new Set(spec.parameters.map((parameter) => parameter.id));
+    (spec.alternatives ?? []).forEach((alternative, index) => {
+      for (const id of Object.keys(alternative.values)) if (!parameters.has(id)) issue(`the alternative ${alternative.id} sets ${id}, which is not a parameter`, id, ["alternatives", index, "values", id]);
+    });
 
     spec.equations.forEach((equation, index) => {
       if (!compartments.has(equation.of)) issue(`there is no compartment ${equation.of} for this equation to govern`, equation.of, ["equations", index, "of"]);

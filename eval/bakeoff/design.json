@@ -77,7 +77,7 @@
       "model": "deepseek-v4-1-flash",
       "paper": "arxiv-2506.19869v1",
       "ok": false,
-      "error": "the gateway could not be reached: aborted (ECONNRESET)",
+      "error": "no recording of this planner call to deepseek-v4-1-flash (prompt f8431d2e2547); record it with npm run pipeline:live",
       "score": {
         "levels": 0,
         "built": 0,
@@ -89,7 +89,7 @@
       "model": "deepseek-v4-1-flash",
       "paper": "arxiv-2203.01434v2",
       "ok": false,
-      "error": "the gateway could not be reached: aborted (ECONNRESET)",
+      "error": "no recording of this planner call to deepseek-v4-1-flash (prompt e6c9400fb3b4); record it with npm run pipeline:live",
       "score": {
         "levels": 0,
         "built": 0,
@@ -101,7 +101,7 @@
       "model": "deepseek-v4-1-flash",
       "paper": "pmc-PMC12334037",
       "ok": false,
-      "error": "the gateway did not answer within 1800000 ms",
+      "error": "no recording of this planner call to deepseek-v4-1-flash (prompt 78e3b1b280e3); record it with npm run pipeline:live",
       "score": {
         "levels": 0,
         "built": 0,
@@ -384,7 +384,7 @@
     {
       "model": "deepseek-v4-1-flash",
       "ok": false,
-      "error": "the gateway could not be reached: aborted (ECONNRESET)",
+      "error": "no recording of this reviewer call to deepseek-v4-1-flash (prompt 3e361ff99e38); record it with npm run pipeline:live",
       "found": 0,
       "planted": 2,
       "falseBlocks": 0,

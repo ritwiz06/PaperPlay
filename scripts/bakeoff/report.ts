@@ -34,11 +34,16 @@ export function rankTranscribers(results: BakeoffResults): Ranked[] {
       const quotesFound = sum(scores.map((score) => score?.quotesFound ?? 0));
       const quotesTotal = sum(scores.map((score) => score?.quotesTotal ?? 0));
       const failed = rows.filter((row) => !row.outcome.ok).length;
+      // Papers with several value sets: the gold's sets each lists, and whether the rule picks the gold's.
+      const withSets = scores.filter((score) => (score?.setsTotal ?? 0) > 0);
+      const setsFound = sum(withSets.map((score) => score?.setsFound ?? 0));
+      const setsTotal = sum(withSets.map((score) => score?.setsTotal ?? 0));
+      const picksRight = withSets.filter((score) => score?.pickRight === true).length;
       return {
         model: candidate.model,
         vendor: candidate.vendor,
-        key: [structural, valuesTotal ? valuesRight / valuesTotal : 0, quotesTotal ? quotesFound / quotesTotal : 0, -failuresOf(results, candidate.model), -order],
-        cells: [fraction(structural, rows.length), fraction(valuesRight, valuesTotal), fraction(quotesFound, quotesTotal), String(failed)],
+        key: [structural, picksRight, valuesTotal ? valuesRight / valuesTotal : 0, quotesTotal ? quotesFound / quotesTotal : 0, -failuresOf(results, candidate.model), -order],
+        cells: [fraction(structural, rows.length), fraction(picksRight, withSets.length), fraction(setsFound, setsTotal), fraction(valuesRight, valuesTotal), fraction(quotesFound, quotesTotal), String(failed)],
       };
     })
     .sort((a, b) => better(a.key, b.key));
@@ -141,7 +146,7 @@ export function rankReviewers(results: BakeoffResults, design: DesignResults): R
     .sort((a, b) => better(a.key, b.key));
 }
 
-export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { readonly paper: string; readonly structural: boolean; readonly values: boolean; readonly problems: readonly string[] }[], meta: { readonly date: string }, design?: DesignResults, excluded: Exclusion = NONE): string {
+export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { readonly paper: string; readonly structural: boolean; readonly values: boolean; readonly samePick?: boolean | null; readonly problems: readonly string[] }[], meta: { readonly date: string }, design?: DesignResults, excluded: Exclusion = NONE): string {
   const transcribers = rankTranscribers(results);
   const readers = rankReaders(results);
   const routers = rankRouters(results);
@@ -162,10 +167,11 @@ export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { 
     "",
     "## Transcription",
     "",
-    "Each model transcribed each paper's model on its own. Ranked by equations that match the gold's up to renaming, then",
-    "values read right (a value the paper also states for another scenario counts), then quotes the source holds.",
+    "Each model transcribed each paper's model on its own. Ranked by equations that match the gold's up to renaming, then,",
+    "on papers that state several value sets, whether the value-set rule picks the gold's set from the sets it lists, then",
+    "values read right (a value the paper also states in another set counts), then quotes the source holds.",
     "",
-    ...table(["Equations match", "Values right", "Quotes found", "Failed calls"], transcribers, excluded),
+    ...table(["Equations match", "Set picked right", "Value sets found", "Values right", "Quotes found", "Failed calls"], transcribers, excluded),
     "",
     `**First transcription:** ${pair.first ? `${pair.first.model} (${pair.first.vendor})` : "none"}. **Second, from another vendor:** ${pair.second ? `${pair.second.model} (${pair.second.vendor})` : "none"}.`,
     "",
@@ -173,9 +179,9 @@ export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { 
     "",
     "The world is verified only where the two agree structurally, up to renaming (ADR-0024, item 2).",
     "",
-    "| Paper | Equations agree | Values agree | What differs |",
-    "|---|---|---|---|",
-    ...agreement.map((row) => `| ${row.paper} | ${row.structural ? "yes" : "**no**"} | ${row.values ? "yes" : "**no**"} | ${row.problems.join("; ").replaceAll("|", "/") || "nothing"} |`),
+    "| Paper | Equations agree | Same value set picked | Values agree | What differs |",
+    "|---|---|---|---|---|",
+    ...agreement.map((row) => `| ${row.paper} | ${row.structural ? "yes" : "**no**"} | ${row.samePick === null || row.samePick === undefined ? "one set" : row.samePick ? "yes" : "**no**"} | ${row.values ? "yes" : "**no**"} | ${row.problems.join("; ").replaceAll("|", "/") || "nothing"} |`),
     "",
     "## Reading",
     "",

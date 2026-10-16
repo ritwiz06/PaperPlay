@@ -7,7 +7,8 @@ import { anchorOf, camelId, findQuote, idsFor, toModelSpec } from "../src/transc
 import { Gold } from "../src/transcribe/gold.ts";
 import { FormulaError, formulaOf, parseFormula } from "../src/transcribe/formula.ts";
 import { matchModels } from "../src/transcribe/match.ts";
-import { Transcription } from "../src/transcribe/schema.ts";
+import { TranscriptionWithSets } from "../src/transcribe/schema.ts";
+import { compareValueSets, pickValueSet, withValueSet } from "../src/transcribe/valuesets.ts";
 
 // Transcription (ADR-0024, item 2): a model as a transcriber writes it, parsed by the closed
 // grammar, anchored by quotes found in the source, and compared with a second transcription up
@@ -19,7 +20,7 @@ const goldOf = (id: string) => {
   const gold = Gold.parse(JSON.parse(readFileSync(join(root, "eval", "gold", `${id}.json`), "utf8")));
   const source = SourceText.parse(JSON.parse(readFileSync(join(root, "fixtures", "sources", `${id}.json`), "utf8")));
   expect(gold.modelEquations.every((equation) => source.equations.some((candidate) => candidate.id === equation))).toBe(true);
-  return { transcription: Transcription.parse(gold.transcription), source };
+  return { transcription: TranscriptionWithSets.parse(gold.transcription), source };
 };
 const names = { compartments: new Set(["S", "I", "R"]), parameters: new Set(["beta", "gamma", "N"]) };
 
@@ -149,5 +150,48 @@ describe("[R10] two transcriptions compared up to renaming", () => {
     const a = gold();
     const other = a.timeUnit === "day" ? "year" : "day";
     expect(matchModels(a, { ...a, timeUnit: other })).toMatchObject({ structural: false, problems: [`the first's rates are per ${a.timeUnit}, the second's per ${other}`] });
+  });
+});
+
+describe("[R08] several value sets in one paper", () => {
+  const { transcription: tb, source } = goldOf("arxiv-2506.19869v1");
+  const sets = tb.valueSets ?? [];
+
+  it("the tuberculosis gold lists both of the paper's sets, every value quoted from the source", () => {
+    expect(sets.map((set) => set.id)).toEqual(["synthetic", "ethiopia"]);
+    for (const set of sets) {
+      expect(findQuote(source.text, set.quote), set.id).not.toBeNull();
+      for (const value of set.values) if (value.quote) expect(findQuote(source.text, value.quote), `${set.id} ${value.of}`).not.toBeNull();
+    }
+  });
+
+  it("picks the set behind the main results, fitted before illustrative, then the first results table, and says why", () => {
+    expect(pickValueSet(sets, source)).toMatchObject({ set: { id: "ethiopia" }, reason: "the set the paper's main results use" });
+    const both = sets.map((set) => ({ ...set, mainResults: true }));
+    expect(pickValueSet(both, source)).toMatchObject({ set: { id: "ethiopia" }, reason: "the set the paper's main results use, fitted to data rather than illustrative" });
+    // Neither fitted nor marked: the set behind the earlier results table, Table [tab:my_label] here.
+    const plain = sets.map((set) => ({ ...set, mainResults: false, fittedToData: false }));
+    expect(pickValueSet(plain, source)).toMatchObject({ set: { id: "synthetic" } });
+    // Nothing to tell them apart: the owner decides.
+    const alike = plain.map((set) => ({ ...set, firstResult: null }));
+    expect(pickValueSet(alike, source)).toMatchObject({ set: null, ambiguous: expect.stringMatching(/are equally the paper's/) as unknown });
+  });
+
+  it("pairs two transcriptions' sets by the values they share, whatever they are called", () => {
+    const renamed = [...sets].reverse().map((set, index) => ({ ...set, id: `set${index}`, label: `another name ${index}` }));
+    expect(compareValueSets(sets, renamed)).toEqual({ pairs: { synthetic: "set1", ethiopia: "set0" }, problems: [] });
+    expect(compareValueSets(sets, renamed.slice(0, 1)).problems).toEqual(["the first lists 2 value sets, the second 1", 'the second has no set like the first\'s "the synthetic example case"']);
+  });
+
+  it("makes the picked set the model's values and keeps the other as a named alternative, by the model's ids", () => {
+    const chosen = sets.find((set) => set.id === "ethiopia");
+    if (!chosen) throw new Error("no Ethiopian set");
+    const applied = withValueSet(tb, chosen);
+    expect(applied.problems).toEqual([]);
+    const { model, problems } = toModelSpec(applied.transcription, source, { alternatives: sets.filter((set) => set !== chosen) });
+    expect(problems).toEqual([]);
+    expect(model?.parameters.find((parameter) => parameter.id === "beta")?.defaultValue).toBe(7.75e-7);
+    expect(model?.parameters.find((parameter) => parameter.id === "s0")?.defaultValue).toBe(7.505e7);
+    expect(model?.alternatives?.map((alternative) => [alternative.id, alternative.label, alternative.values.beta, alternative.values.s0])).toEqual([["synthetic", "the synthetic example case", 0.05, 861]]);
   });
 });

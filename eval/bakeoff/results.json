@@ -270,10 +270,13 @@
       "score": {
         "converted": true,
         "structural": true,
-        "valuesRight": 11,
+        "valuesRight": 17,
         "valuesTotal": 17,
         "quotesFound": 29,
         "quotesTotal": 29,
+        "setsFound": 0,
+        "setsTotal": 2,
+        "pickRight": false,
         "problems": []
       }
     },
@@ -480,6 +483,9 @@
         "valuesTotal": 15,
         "quotesFound": 12,
         "quotesTotal": 19,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": []
       }
     },
@@ -724,6 +730,9 @@
         "valuesTotal": 19,
         "quotesFound": 29,
         "quotesTotal": 29,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": []
       }
     },
@@ -958,6 +967,9 @@
         "valuesTotal": 17,
         "quotesFound": 29,
         "quotesTotal": 29,
+        "setsFound": 0,
+        "setsTotal": 2,
+        "pickRight": false,
         "problems": []
       }
     },
@@ -1164,6 +1176,9 @@
         "valuesTotal": 15,
         "quotesFound": 4,
         "quotesTotal": 21,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": []
       }
     },
@@ -1408,6 +1423,9 @@
         "valuesTotal": 19,
         "quotesFound": 29,
         "quotesTotal": 29,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": []
       }
     },
@@ -1642,6 +1660,9 @@
         "valuesTotal": 17,
         "quotesFound": 28,
         "quotesTotal": 28,
+        "setsFound": 0,
+        "setsTotal": 2,
+        "pickRight": false,
         "problems": []
       }
     },
@@ -1848,6 +1869,9 @@
         "valuesTotal": 15,
         "quotesFound": 19,
         "quotesTotal": 19,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": []
       }
     },
@@ -2092,6 +2116,9 @@
         "valuesTotal": 19,
         "quotesFound": 24,
         "quotesTotal": 24,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": [
           "the first's rates are per year, the second's per day"
         ]
@@ -2332,6 +2359,9 @@
         "valuesTotal": 17,
         "quotesFound": 29,
         "quotesTotal": 29,
+        "setsFound": 0,
+        "setsTotal": 2,
+        "pickRight": false,
         "problems": [
           "dS/dt = Λ + η*R + θ*V - (β*I + π + μ)*S: \"Λ\" is not part of a formula: use numbers, names, + - * / ^, brackets, exp and log, at character 0",
           "dV/dt = π*S - (θ + μ)*V: \"π\" is not part of a formula: use numbers, names, + - * / ^, brackets, exp and log, at character 0",
@@ -2542,6 +2572,9 @@
         "valuesTotal": 15,
         "quotesFound": 4,
         "quotesTotal": 19,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": [
           "compartment T: the quote \"dT/dt = aT(1-bT) - cNT\" is not in the source",
           "compartment N: the quote \"dN/dt = σ - θ_N N - γ R N\" is not in the source",
@@ -2805,6 +2838,9 @@
         "valuesTotal": 19,
         "quotesFound": 29,
         "quotesTotal": 31,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": [
           "the first's rates are per year, the second's per day"
         ]
@@ -3037,10 +3073,13 @@
       "score": {
         "converted": true,
         "structural": true,
-        "valuesRight": 11,
+        "valuesRight": 17,
         "valuesTotal": 17,
         "quotesFound": 22,
         "quotesTotal": 29,
+        "setsFound": 0,
+        "setsTotal": 2,
+        "pickRight": false,
         "problems": []
       }
     },
@@ -3247,6 +3286,9 @@
         "valuesTotal": 15,
         "quotesFound": 10,
         "quotesTotal": 19,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": []
       }
     },
@@ -3501,6 +3543,9 @@
         "valuesTotal": 19,
         "quotesFound": 14,
         "quotesTotal": 29,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": [
           "parameter b: the quote \"b = 0.01\" is not in the source",
           "parameter r: the quote \"r = 0.163\" is not in the source",
@@ -3739,6 +3784,9 @@
         "valuesTotal": 17,
         "quotesFound": 9,
         "quotesTotal": 29,
+        "setsFound": 0,
+        "setsTotal": 2,
+        "pickRight": false,
         "problems": [
           "ds/dt and ds/dt differ",
           "de/dt and de/dt differ",
@@ -3949,6 +3997,9 @@
         "valuesTotal": 15,
         "quotesFound": 1,
         "quotesTotal": 21,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": []
       }
     },
@@ -4179,6 +4230,9 @@
         "valuesTotal": 19,
         "quotesFound": 29,
         "quotesTotal": 29,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": []
       }
     },
@@ -4409,10 +4463,13 @@
       "score": {
         "converted": true,
         "structural": true,
-        "valuesRight": 11,
+        "valuesRight": 17,
         "valuesTotal": 17,
         "quotesFound": 29,
         "quotesTotal": 29,
+        "setsFound": 0,
+        "setsTotal": 2,
+        "pickRight": false,
         "problems": []
       }
     },
@@ -4619,6 +4676,9 @@
         "valuesTotal": 15,
         "quotesFound": 10,
         "quotesTotal": 21,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": []
       }
     },
@@ -4863,6 +4923,9 @@
         "valuesTotal": 19,
         "quotesFound": 29,
         "quotesTotal": 29,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": [
           "the first's rates are per year, the second's per day"
         ]
@@ -5092,10 +5155,13 @@
       "score": {
         "converted": true,
         "structural": true,
-        "valuesRight": 11,
+        "valuesRight": 17,
         "valuesTotal": 17,
         "quotesFound": 29,
         "quotesTotal": 29,
+        "setsFound": 0,
+        "setsTotal": 2,
+        "pickRight": false,
         "problems": []
       }
     },
@@ -5302,6 +5368,9 @@
         "valuesTotal": 15,
         "quotesFound": 23,
         "quotesTotal": 23,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": []
       }
     },
@@ -5617,6 +5686,9 @@
         "valuesTotal": 19,
         "quotesFound": 13,
         "quotesTotal": 36,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": [
           "the first has 19 parameters, the second 26"
         ]
@@ -5853,6 +5925,9 @@
         "valuesTotal": 17,
         "quotesFound": 18,
         "quotesTotal": 23,
+        "setsFound": 0,
+        "setsTotal": 2,
+        "pickRight": false,
         "problems": [
           "compartment V: the quote \"V(0) = V_0 >= 0\" is not in the source",
           "compartment E: the quote \"E(0) = E_0 >= 0\" is not in the source",
@@ -6063,6 +6138,9 @@
         "valuesTotal": 15,
         "quotesFound": 14,
         "quotesTotal": 19,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": []
       }
     },
@@ -6307,6 +6385,9 @@
         "valuesTotal": 19,
         "quotesFound": 5,
         "quotesTotal": 24,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": [
           "compartment S: the quote \"S(0)=0.8\" is not in the source",
           "compartment I: the quote \"I(0)=0.01\" is not in the source",
@@ -6545,6 +6626,9 @@
         "valuesTotal": 17,
         "quotesFound": 29,
         "quotesTotal": 29,
+        "setsFound": 0,
+        "setsTotal": 2,
+        "pickRight": false,
         "problems": [
           "the first's rates are per year, the second's per day"
         ]
@@ -6753,6 +6837,9 @@
         "valuesTotal": 15,
         "quotesFound": 21,
         "quotesTotal": 21,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": []
       }
     },
@@ -6994,6 +7081,9 @@
         "valuesTotal": 19,
         "quotesFound": 29,
         "quotesTotal": 29,
+        "setsFound": 0,
+        "setsTotal": 0,
+        "pickRight": null,
         "problems": [
           "the first's rates are per year, the second's per day"
         ]

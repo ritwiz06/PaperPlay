@@ -4,7 +4,7 @@
  * states for another scenario, and the qualitative result it shows. The bake-off scores against it.
  */
 import { z } from "zod";
-import { Transcription } from "./schema.ts";
+import { TranscriptionWithSets } from "./schema.ts";
 
 export const Gold = z.strictObject({
   schemaVersion: z.literal("gold/1"),
@@ -15,7 +15,9 @@ export const Gold = z.strictObject({
   modelEquations: z.array(z.string().min(1)).min(1),
   /** Other values the paper states for a parameter or a starting value, by the transcription's id, each counted right. */
   acceptableValues: z.record(z.string(), z.array(z.number()).min(1)),
-  transcription: Transcription,
+  /** When the paper states several value sets: the one the value-set rule should pick, by its id in the transcription's valueSets. */
+  picked: z.string().min(1).optional(),
+  transcription: TranscriptionWithSets,
   qualitative: z.strictObject({ text: z.string().min(1), quote: z.string().min(3).max(300) }),
 });
 export type Gold = z.infer<typeof Gold>;

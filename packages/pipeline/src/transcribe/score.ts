@@ -6,7 +6,8 @@ import type { SourceText } from "@paperplay/contracts";
 import { findQuote, toModelSpec } from "./convert.ts";
 import type { Gold } from "./gold.ts";
 import { matchModels } from "./match.ts";
-import type { Transcription } from "./schema.ts";
+import type { TranscriptionWithSets as Transcription, ValueSet } from "./schema.ts";
+import { compareValueSets, pickValueSet, withValueSet } from "./valuesets.ts";
 
 export interface TranscriptionScore {
   /** Whether it became a model at all: every formula parsed and every quote was found. */
@@ -19,12 +20,32 @@ export interface TranscriptionScore {
   /** Of its quotes, how many the source holds. */
   readonly quotesFound: number;
   readonly quotesTotal: number;
+  /** When the paper states several value sets: the gold's sets this one also lists, and whether its rule picks the gold's. */
+  readonly setsFound: number;
+  readonly setsTotal: number;
+  readonly pickRight: boolean | null;
   readonly problems: readonly string[];
 }
 
 const close = (a: number, b: number): boolean => Math.abs(a - b) <= 1e-6 * Math.max(Math.abs(a), Math.abs(b), 1e-300);
 
-export function scoreTranscription(transcription: Transcription, gold: Gold, source: SourceText): TranscriptionScore {
+/** A transcription with the value set its rule picks applied, when it lists sets; else as it is. */
+function applyPick(transcription: Transcription, source: SourceText, wanted?: string): { readonly transcription: Transcription; readonly picked: ValueSet | null } {
+  const sets = transcription.valueSets ?? [];
+  const chosen = wanted ? (sets.find((set) => set.id === wanted) ?? null) : sets.length > 0 ? pickValueSet(sets, source).set : null;
+  return chosen ? { transcription: withValueSet(transcription, chosen).transcription, picked: chosen } : { transcription, picked: null };
+}
+
+export function scoreTranscription(original: Transcription, gold: Gold, source: SourceText): TranscriptionScore {
+  // Each scored on the set its rule picks; the gold on the set it names.
+  const own = applyPick(original, source);
+  const golden = applyPick(gold.transcription, source, gold.picked);
+  const transcription = own.transcription;
+  const goldSets = gold.transcription.valueSets ?? [];
+  const sets = goldSets.length > 0 ? compareValueSets(goldSets, original.valueSets ?? []) : null;
+  const setsFound = sets ? Object.values(sets.pairs).filter((pair) => pair !== null).length : 0;
+  const pickRight = sets && golden.picked ? own.picked !== null && sets.pairs[golden.picked.id] === own.picked.id : null;
+  const setScore = { setsFound, setsTotal: goldSets.length, pickRight };
   const quotes = [
     ...transcription.compartments.flatMap((compartment) => [compartment.quote, ...(compartment.initialQuote ? [compartment.initialQuote] : [])]),
     ...transcription.parameters.map((parameter) => parameter.quote),
@@ -32,11 +53,11 @@ export function scoreTranscription(transcription: Transcription, gold: Gold, sou
   ];
   const quotesFound = quotes.filter((quote) => findQuote(source.text, quote) !== null).length;
   const mine = { model: modelForComparison(transcription, source), problems: [] as string[] };
-  const theirs = toModelSpec(gold.transcription, source);
+  const theirs = toModelSpec(golden.transcription, source);
   const valuesTotal = gold.transcription.parameters.length + gold.transcription.compartments.length;
   if (!mine.model || !theirs.model) {
     const strict = toModelSpec(transcription, source);
-    return { converted: false, structural: false, valuesRight: 0, valuesTotal, quotesFound, quotesTotal: quotes.length, problems: strict.problems.slice(0, 3) };
+    return { converted: false, structural: false, valuesRight: 0, valuesTotal, quotesFound, quotesTotal: quotes.length, ...setScore, problems: strict.problems.slice(0, 3) };
   }
   const match = matchModels(theirs.model, mine.model);
   let valuesRight = 0;
@@ -49,7 +70,7 @@ export function scoreTranscription(transcription: Transcription, gold: Gold, sou
       if (other && accepted.some((value) => close(value, other.defaultValue))) valuesRight++;
     });
   }
-  return { converted: true, structural: match.structural, valuesRight, valuesTotal, quotesFound, quotesTotal: quotes.length, problems: match.structural ? [] : match.problems.slice(0, 3) };
+  return { converted: true, structural: match.structural, valuesRight, valuesTotal, quotesFound, quotesTotal: quotes.length, ...setScore, problems: match.structural ? [] : match.problems.slice(0, 3) };
 }
 
 /**

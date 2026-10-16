@@ -7,5 +7,6 @@ export { anchorOf, camelId, findQuote, idsFor, sameSymbol, toModelSpec, type Con
 export { FormulaError, formulaOf, parseFormula, tokenize } from "./formula.ts";
 export { Gold } from "./gold.ts";
 export { matchModels, normalName, type ModelMatch } from "./match.ts";
-export { Transcription, TranscribedUnit } from "./schema.ts";
+export { Transcription, TranscribedUnit, TranscriptionWithSets, ValueSet } from "./schema.ts";
+export { compareValueSets, pickValueSet, withValueSet, type ValueSetComparison, type ValueSetPick } from "./valuesets.ts";
 export { modelForComparison, scoreReading, scoreTranscription, type ReadingScore, type TranscriptionScore } from "./score.ts";

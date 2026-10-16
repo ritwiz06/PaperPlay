@@ -22,6 +22,7 @@ const TEXT = [
   "The infection rate is beta = 0.0003 per person per day and the recovery rate is gamma = 0.1 per day.",
   "At the start S(0) = 995, I(0) = 5 and R(0) = 0.",
   "The epidemic ends before everyone has been infected.",
+  "An illustrative example instead takes beta = 0.0002 and gamma = 0.2.",
 ].join("\n");
 const offset = (needle: string): number => TEXT.indexOf(needle);
 const source: SourceText = SourceText.parse({
