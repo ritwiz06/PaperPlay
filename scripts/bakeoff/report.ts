@@ -123,7 +123,9 @@ export function rankPlanners(results: BakeoffResults, design: DesignResults): Ra
         vendor: candidate.vendor,
         // How many levels meet the rule, before the fraction: a paper whose call failed then counts
         // as none, where a fraction alone would leave it out and reward the failure.
-        key: [meet, onFindings, levels ? meet / levels : 0, built, -failuresOf(results, candidate.model), -order],
+        // A tie is broken by the stage's own failed calls first: a planner whose call failed on a
+        // paper did less than one that planned all three.
+        key: [meet, onFindings, levels ? meet / levels : 0, built, -rows.filter((row) => !row.ok).length, -failuresOf(results, candidate.model), -order],
         cells: [fraction(meet, levels), fraction(onFindings, rows.length), fraction(built, levels), String(rows.filter((row) => !row.ok).length), rows.map((row) => row.score.note).filter(Boolean)[0]?.replaceAll("|", "/") ?? ""],
       };
     })
@@ -142,7 +144,7 @@ export function rankReviewers(results: BakeoffResults, design: DesignResults): R
       return {
         model: candidate.model,
         vendor: candidate.vendor,
-        key: [overturned ? 0 : 1, found - falseBlocks, definitional ? 1 : 0, -failuresOf(results, candidate.model), -order],
+        key: [overturned ? 0 : 1, found - falseBlocks, definitional ? 1 : 0, row?.ok === false ? -1 : 0, -failuresOf(results, candidate.model), -order],
         cells: [fraction(found, planted), definitional ? "yes" : "no", String(falseBlocks), overturned ? "**yes**" : "no", row?.ok === false ? "1" : "0"],
       };
     })

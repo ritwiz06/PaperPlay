@@ -15,11 +15,16 @@ const Words = (max: number) => z.string().min(1).max(max);
 const UpTo = (words: number) => z.string().min(1).refine((text) => wordCount(text) <= words, { error: `at most ${words} words` });
 /**
  * A guide line with {to} where the learner's new value goes. A model that writes a value there
- * instead ("You raise the rate to 0.1, so …") has it mended to the placeholder, the one way that
- * slip can be read; anything else must still hold {to} exactly once.
+ * instead has it mended to the placeholder, in the two ways that slip can be read: a number ("You
+ * raise the rate to 0.1, so …"), or a value named in at most four words before the clause's comma
+ * ("You set the treatment rate to fast treatment, so …"). Anything else must still hold {to}
+ * exactly once.
  */
-export const mendTo = (text: unknown): unknown =>
-  typeof text === "string" && !text.includes("{to}") ? text.replace(/\s+to\s+[-−]?\d+(?:[.,]\d+)*(?:\s*%|\s*(?:per|a|an)\s+\w+)?/, "{to}") : text;
+export const mendTo = (text: unknown): unknown => {
+  if (typeof text !== "string" || text.includes("{to}")) return text;
+  const numbered = text.replace(/\s+to\s+[-−]?\d+(?:[.,]\d+)*(?:\s*%|\s*(?:per|a|an)\s+\w+)?/, "{to}");
+  return numbered !== text ? numbered : text.replace(/\s+to\s+[^\s,{}]+(?:\s+[^\s,{}]+){0,3}(?=,)/, "{to}");
+};
 const Did = z.preprocess(mendTo, z.string().refine((text) => text.split("{to}").length === 2 && !/[{}]/.test(text.replaceAll("{to}", "")), { error: "holds {to} exactly once, and no other braces" }));
 
 export const ExplainedLevel = z.strictObject({

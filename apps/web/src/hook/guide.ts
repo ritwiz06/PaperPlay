@@ -49,7 +49,9 @@ function didLine(script: GuideScript, control: GuideControl, { lastAction, value
   if (!lastAction) return { text: script.idle, origin };
   if (value <= control.min && script.atMinimum) return { text: script.atMinimum, origin };
   const to = depth === "beginner" ? "" : ` to ${value.toFixed(decimalsOf(control.step))}`;
-  return { text: (lastAction.to > lastAction.from ? script.raised : script.lowered).replace("{to}", to), origin };
+  // The placeholder brings its own "to": a line written "adherence to {to}, so" reads "adherence to
+  // 0.61, so", and at Beginner "adherence, so", never "to , so".
+  return { text: (lastAction.to > lastAction.from ? script.raised : script.lowered).replace(/(?:\s+to)?\s*\{to\}/, to), origin };
 }
 
 function sawLine(script: GuideScript, observable: Observable, { observed, trend, playing, depth }: GuideInput): GuideLine {

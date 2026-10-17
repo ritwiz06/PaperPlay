@@ -40,6 +40,13 @@ describe("the guide, from the hook level's script", () => {
     expect(`${did.text} ${saw.text}`).not.toMatch(/\d/);
   });
 
+  it("reads a line written with its own 'to' before the value's place as one 'to', at every depth", () => {
+    const script = { ...levelOf("hook").guide, raised: "You raise treatment adherence to {to}, so fewer people quit treatment." };
+    const lines = (depth: GuideInput["depth"]) => guideLines(script, { min: 0, step: 0.01 }, levelOf("hook").observable, { ...base, depth, lastAction: { from: 0.5, to: 0.61 }, value: 0.61 })[0].text;
+    expect(lines("intermediate")).toBe("You raise treatment adherence to 0.61, so fewer people quit treatment.");
+    expect(lines("beginner")).toBe("You raise treatment adherence, so fewer people quit treatment.");
+  });
+
   it("names the measure itself at Advanced", () => {
     expect(linesFor("hook", { ...base, depth: "advanced", observed: 0.913 })[1].text).toBe("Directional agreement 0.91 and holding: nearly every bird heads the same way.");
   });

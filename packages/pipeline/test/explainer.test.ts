@@ -12,6 +12,12 @@ describe("[R06] the explainer's guide lines", () => {
     expect(mendTo("You raised it, so it spreads.")).toBe("You raised it, so it spreads.");
   });
 
+  it("mend a value named in a few words before the clause's comma, and nothing longer or without a comma", () => {
+    expect(mendTo("You set the treatment rate to fast treatment, so the peak of infectious people lowers.")).toBe("You set the treatment rate{to}, so the peak of infectious people lowers.");
+    expect(mendTo("You moved people to a place where they are safe from harm, so fewer fall ill.")).toBe("You moved people to a place where they are safe from harm, so fewer fall ill.");
+    expect(mendTo("You raised it, so more people move to treatment.")).toBe("You raised it, so more people move to treatment.");
+  });
+
   it("still refuse a line with no place for the value", () => {
     const level = {
       beginner: { text: "Watch.", analogy: "Like a tide." },
