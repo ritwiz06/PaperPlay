@@ -123,6 +123,20 @@ equations. Each group is one number for the whole of it: nobody is followed one 
   data, a ModelSpec, one trusted solver runs it and any other model like it (ADR-0028).
 - **Learn more:** [Wikipedia, "Compartmental models in epidemiology"](https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology)
 
+### The basic reproduction number and the next-generation matrix
+
+R0 is how many people one infected person infects, on average, in a population where nobody is
+yet infected. Above 1 an infection spreads; below 1 it dies out. For a model with several
+infected groups, it is the largest eigenvalue of the next-generation matrix F·V⁻¹, where F holds
+how fast each infected group makes new infections and V how fast people leave each group, both
+at the disease-free state.
+
+- **Used in:** `packages/pipeline/src/reproduce/ngm.ts`
+- **Why here:** Running a paper's own numbers recomputes its R0 from the transcribed equations,
+  through this matrix, and compares it with the paper's formula at the same values; only when the
+  two agree can a world say the paper's headline does not appear at its listed values (ADR-0040).
+- **Learn more:** [van den Driessche and Watmough, "Reproduction numbers and sub-threshold endemic equilibria" (2002)](https://doi.org/10.1016/S0025-5564(02)00108-6)
+
 ### Runge–Kutta integration (RK4)
 
 To follow a model through time, take small steps. RK4 looks at the rate four times within each

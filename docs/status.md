@@ -27,13 +27,17 @@ session.
 - **`main` moves only through `npm run land`** (ADR-0009, amended).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`. CI runs `check:gate` on every
   push and pull request.
-- **The owner's two rules** (ADR-0039, CLAUDE.md's boundaries 9 and 10), landing on
-  `g3/machine-rules`: no address in an outbound request unless `PAPERPLAY_CONTACT_EMAIL` is set;
+- **The owner's two rules** (ADR-0039, CLAUDE.md's boundaries 9 and 10), landed at `814f482`: no address in an outbound request unless `PAPERPLAY_CONTACT_EMAIL` is set;
   live jobs and gates never share the machine, held by locks land, the gate and `pipeline:live`
   read.
-- **Branches:** `g3/machine-rules`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the
+- **Running the paper's own numbers** (ADR-0040), landing on `g3/reproducibility`: R0 from the
+  model's own equations beside the paper's formula, every value against its quote, other values
+  behind the headline. On the hepatitis C paper it confirms the headline's mismatch; on the
+  tuberculosis paper its formulas agree with the model and its stated R0 = 2.67 follows from
+  neither.
+- **Branches:** `g3/reproducibility`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the
   compartment agent's own, whose three commits are on `main`.
-- **Working commit:** `675795c` on `g3/machine-rules`. `main` is at `d9ec319`, whose CI passed.
+- **Working commit:** `ef4c054` on `g3/reproducibility`. `main` is at `814f482`, whose CI passed.
 - **Model provider:** Voyager, `https://openai.rc.asu.edu/v1`, its key `VOYAGER_API_KEY` in
   `apps/api/.env` only (ADR-0030); called only by `npm run pipeline:live`. Replies stream; a call
   may take up to 30 minutes.
@@ -52,28 +56,28 @@ session.
   town seen through a lens, each with its control, readout, guide, journal, prediction and fork. On
   this machine only, `/create` makes a world from an arXiv id, a PMCID or a PDF.
 
-## Latest check:gate (G1), 2026-10-16, on `g3/machine-rules` at 675795c
+## Latest check:gate (G1), 2026-10-16, on `g3/reproducibility` at ef4c054
 
 ```
 check:gate G1 · Playable baseline · tag v0.1.0
   runtime    node 24.21.0 (pinned 24.21.0)  ok
-  typecheck  ok      16.6 s
-  lint       ok      12.6 s
-  check:docs ok      0.2 s
-  test       ok      67.1 s
-  build      ok      0.5 s
-  test:e2e   ok      119.8 s
-  evidence   871 tests (vitest 790, playwright 81), 0 skipped
+  typecheck  ok      22.6 s
+  lint       ok      17.0 s
+  check:docs ok      0.3 s
+  test       ok      84.7 s
+  build      ok      0.6 s
+  test:e2e   ok      131.1 s
+  evidence   887 tests (vitest 803, playwright 84), 0 skipped
     R01  Deterministic, oracle-checked primitives      151 passing
     R02  Model/render separation                       9 passing
-    R03  Strict, versioned contracts                   152 passing
+    R03  Strict, versioned contracts                   153 passing
     R04  Playable local world                          20 passing
 
 G1 passed: every required check ran and every requirement has passing evidence.
 ```
 
-Ahead of their gate, from the same suites' reports: R05 9, R06 61, R07 40, R08 71, R09 46, R10 18,
-R11 23, R12 20. Land runs the gate again before it pushes.
+Ahead of their gate, from the same suites' reports: R05 10, R06 61, R07 40, R08 83, R09 46, R10 18,
+R11 23, R12 22. Land runs the gate again before it pushes.
 
 ## Blockers
 
@@ -89,8 +93,8 @@ The hook's rule when a headline does not show, and five levels, were answered on
 
 ## Next three actions
 
-1. Land `g3/machine-rules`.
-2. The reproducibility check, then five levels, then the two papers regenerated.
+1. Land `g3/reproducibility`.
+2. Five levels and the planner bake-off on the new prompts, then the two papers regenerated.
 3. G3a's close-out and the G3b plan.
 
 ## Recommendations
