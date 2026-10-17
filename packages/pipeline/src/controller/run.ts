@@ -8,7 +8,7 @@
 import { canMove, type JobState, type ModelSpec, type SourceRegisterEntry, type SourceText } from "@paperplay/contracts";
 import { registry } from "@paperplay/primitives";
 import { assembleWorld } from "../assemble/world.ts";
-import { chooseStep, describeBehaviour, describeResponse, horizonOf } from "../assemble/model.ts";
+import { chooseStep, describeBehaviour, describeResponse, horizonOf, responseRows } from "../assemble/model.ts";
 import { buildWorld, type BuiltWorld } from "../builder/build.ts";
 import { checkProvenance } from "../checks/provenance.ts";
 import { runOwnNumbers } from "../reproduce/index.ts";
@@ -24,7 +24,7 @@ import { review, type Review } from "../stages/reviewer.ts";
 import { route } from "../stages/router.ts";
 import { promptSource } from "../stages/source.ts";
 import { TRANSCRIBER_MAX_TOKENS, transcribe, transcriberMessages } from "../stages/transcriber.ts";
-import { toModelSpec } from "../transcribe/convert.ts";
+import { findQuote, toModelSpec } from "../transcribe/convert.ts";
 import { modelForComparison } from "../transcribe/score.ts";
 import { compareValueSets, pickValueSet, withValueSet } from "../transcribe/valuesets.ts";
 import { matchModels } from "../transcribe/match.ts";
@@ -220,7 +220,8 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     const behaviour = describeBehaviour(model, horizon);
     const response = describeResponse(model, horizon);
     const plannerModel = modelFor("planner");
-    let plan: Plan = (await planWorld(input.client, plannerModel, { title, reading: reading.value, model, example: input.example, behaviour, response })).value;
+    const forPlanner = { verdict: ownNumbers.verdict, summary: ownNumbers.summary, observation: ownNumbers.observation };
+    let plan: Plan = (await planWorld(input.client, plannerModel, { title, reading: reading.value, model, example: input.example, behaviour, response, ownNumbers: forPlanner })).value;
     const passages = promptSource(text, { maxCharacters: 60_000 }).block;
     const modelWords = `${describeBehaviour(model, horizon).split("\n").slice(0, 3).join("\n")}`;
     const explainerModel = modelFor("explainer");
@@ -230,7 +231,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     const replan = async (problems: readonly string[]): Promise<void> => {
       repairs++;
       move("repairing", "planning", `asking the planner to change only the levels with problems: ${problems.slice(0, 4).join("; ")}`);
-      const messages = plannerMessages({ title, reading: reading.value, model, example: input.example, behaviour, response });
+      const messages = plannerMessages({ title, reading: reading.value, model, example: input.example, behaviour, response, ownNumbers: forPlanner });
       const replanned = await completeStructured(
         input.client,
         { stage: "planner", model: plannerModel, messages: [...messages, { role: "assistant", content: JSON.stringify(plan) }, { role: "user", content: `These problems were found:\n${problems.map((line) => `- ${line}`).join("\n")}\nChange only the levels named, as little as fixes them, and give the whole plan again.` }], temperature: 0, maxTokens: PLANNER_MAX_TOKENS },
@@ -240,6 +241,51 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       plan = replanned.value;
       explanation = (await explain(input.client, explainerModel, { title, plan, passages, model: modelWords }, { structuredOutput: structured(explainerModel) })).value;
     };
+
+    /** How a level's control, and its What-if's value when another, move the model: its rows of the response table, for a repair (ADR-0040). */
+    const responseOf = (index: number): string => {
+      const level = plan.levels[index];
+      if (!level) return "";
+      const rows = responseRows(model, horizon, [...new Set([level.control.parameter, level.whatIf.parameter])]);
+      return rows === "" ? "" : `; how its control moves the model, each halved and doubled: ${rows.split("\n").join("; ")}`;
+    };
+
+    // The hook is never dropped (ADR-0040). When it fails after its repairs and the paper's own numbers
+    // confirmed its headline does not appear at the paper's values, the first passing level on an
+    // anchored finding takes its place, saying why; any other failing level is dropped, its reasons kept.
+    const findingsOf = [reading.value.result, ...reading.value.findings];
+    let hookFinding = 0;
+    let hookFallback: string | null = null;
+    const dropped: { readonly level: number; readonly title: string; readonly reasons: readonly string[] }[] = [];
+    const dropFailing = (failing: readonly number[], reasonsOf: (index: number) => readonly string[], stopAs: "failed" | "needs_information", words: readonly string[]): number => {
+      const failingSet = new Set(failing);
+      let hookFrom: number | null = null;
+      if (failingSet.has(0)) {
+        const candidates = plan.levels
+          .map((level, index) => ({ level, index }))
+          .filter(({ level, index }) => index !== 0 && !failingSet.has(index) && level.finding !== null && level.finding > 0 && findQuote(text.text, findingsOf[level.finding]?.quote ?? "") !== null)
+          .sort((a, b) => (a.level.finding ?? 0) - (b.level.finding ?? 0));
+        hookFrom = ownNumbers.verdict === "mismatch" ? (candidates[0]?.index ?? null) : null;
+        if (hookFrom === null) {
+          throw new Stop(stopAs, `level 1, the hook on the paper's headline, still fails after its repairs, and the hook is never dropped${ownNumbers.verdict === "mismatch" ? "; no other level tests an anchored finding the model shows" : ""}: ${words.join("; ")}`);
+        }
+      }
+      const order = [...(hookFrom === null ? [] : [hookFrom]), ...plan.levels.map((_, index) => index).filter((index) => !failingSet.has(index) && index !== hookFrom)];
+      if (order.length < 3) throw new Stop(stopAs, `too few levels meet the rules: ${words.join("; ")}`);
+      dropped.push(...failing.map((index) => ({ level: index + 1, title: plan.levels[index]?.title ?? "", reasons: reasonsOf(index) })));
+      if (hookFrom !== null) {
+        const finding = plan.levels[hookFrom]?.finding ?? 0;
+        hookFinding = finding;
+        hookFallback = `The paper's headline does not appear in this world at the values it lists, and its direction does not show here either, so this level tests another of its findings: ${findingsOf[finding]?.text ?? ""}`;
+      }
+      plan = { ...plan, levels: order.flatMap((index) => (plan.levels[index] ? [plan.levels[index]] : [])) };
+      explanation = { levels: order.flatMap((index) => (explanation.levels[index] ? [explanation.levels[index]] : [])) };
+      sink.artifact("dropped", dropped);
+      return order.length;
+    };
+    /** The check's findings for the world, with level 1's fallback said on its page and beside its goal. */
+    const ownNumbersForWorld = () =>
+      hookFallback === null ? ownNumbers : { ...ownNumbers, observation: hookFallback, statements: [...ownNumbers.statements, { text: hookFallback, origin: "computed-observation" as const, anchors: [] }] };
 
     /** What a level's first start, the world's own values, measured: so a repair can aim its claim. */
     const measuredAt = (level: LevelResult): string => {
@@ -256,15 +302,10 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     let built: BuiltWorld | null = null;
     let swept: LevelResult[] = [];
     let spec: Record<string, unknown> = {};
-    /** Drops the levels at these places, keeping the explanation in step. */
-    const drop = (indices: ReadonlySet<number>): void => {
-      plan = { ...plan, levels: plan.levels.filter((_, index) => !indices.has(index)) };
-      explanation = { levels: explanation.levels.filter((_, index) => !indices.has(index)) };
-    };
     for (;;) {
       for (;;) {
         move("building", "assembly", "assembling the world and building it against the solver");
-        const assembled = assembleWorld({ source: text, register, reading: reading.value, model, plan, explanation, routingReason: routed.value.reason, ownNumbers });
+        const assembled = assembleWorld({ source: text, register, reading: reading.value, model, plan, explanation, routingReason: routed.value.reason, ownNumbers: ownNumbersForWorld() });
         spec = assembled.spec;
         for (const note of assembled.notes) say("assembly", note);
         const result = buildWorld(spec, registry);
@@ -275,11 +316,11 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
             await replan(byLevel);
             continue;
           }
-          // No repair left: drop the levels that do not build, if three remain.
-          const failing = new Set(result.problems.map((problem) => /^levels\.(\d+)/.exec(problem.path)?.[1]).filter((index): index is string => index !== undefined).map(Number));
-          if (failing.size === 0 || plan.levels.length - failing.size < 3) throw new Stop("failed", `the world does not build: ${byLevel.slice(0, 4).join("; ")}`);
-          drop(failing);
-          move("repairing", "assembly", `dropping ${failing.size} level(s) that do not build, keeping ${plan.levels.length}`);
+          // No repair left: drop the levels that do not build, never the hook, if three remain.
+          const failing = [...new Set(result.problems.map((problem) => /^levels\.(\d+)/.exec(problem.path)?.[1]).filter((index): index is string => index !== undefined).map(Number))];
+          if (failing.length === 0) throw new Stop("failed", `the world does not build: ${byLevel.slice(0, 4).join("; ")}`);
+          const kept = dropFailing(failing, (index) => result.problems.filter((problem) => problem.path.startsWith(`levels.${index}.`)).map((problem) => problem.message), "failed", byLevel.slice(0, 4));
+          move("repairing", "assembly", `dropping ${failing.length} level(s) that do not build, keeping ${kept}: ${dropped.slice(-failing.length).map((entry) => `"${entry.title}", ${entry.reasons.join("; ")}`).join("; ")}`);
           continue;
         }
         built = result.world;
@@ -290,7 +331,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
         const seen = visibilityOf(built);
         sink.artifact("visibility", seen);
         // And the findings check: the hook on the headline result, three levels on anchored findings.
-        const found = checkFindings(plan, reading.value, text);
+        const found = checkFindings(plan, reading.value, text, hookFinding);
         sink.artifact("findings", found);
         const problemsOf = (index: number): string[] => {
           const level = swept[index];
@@ -308,14 +349,12 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
           ...found.world,
         ];
         if (repairs < MAX_REPAIRS) {
-          await replan(words);
+          await replan([...failing.map((index) => `level ${index + 1} ("${plan.levels[index]?.title ?? ""}"): ${problemsOf(index).join("; ")}${responseOf(index)}`), ...found.world]);
           continue;
         }
-        const keep = plan.levels.length - failing.length;
-        if (keep < 3) throw new Stop("failed", `too few levels meet the rules: ${words.join("; ")}`);
-        drop(new Set(failing));
-        if (checkFindings(plan, reading.value, text).world.length > 0) throw new Stop("failed", `the levels left do not test enough of the paper's findings: ${words.join("; ")}`);
-        say("level rule", `dropped ${failing.length} level(s) the rules refuse, keeping ${keep}`);
+        const keep = dropFailing(failing, problemsOf, "failed", words);
+        if (checkFindings(plan, reading.value, text, hookFinding).world.length > 0) throw new Stop("failed", `the levels left do not test enough of the paper's findings: ${words.join("; ")}`);
+        say("level rule", `dropped ${failing.length} level(s) the rules refuse, keeping ${keep}: ${dropped.slice(-failing.length).map((entry) => `"${entry.title}", ${entry.reasons.join("; ")}`).join(" | ")}${hookFallback !== null && failing.includes(0) ? `; level 1 now tests finding ${hookFinding}, as the headline does not show` : ""}`);
         move("repairing", "level rule", "rebuilding without the dropped levels");
       }
       say("level rule", `every level meets the rule, shows its difference and tests what the paper found: ${swept.map((level) => `level ${level.order} ${level.holds} of 20`).join(", ")}`);
@@ -337,13 +376,13 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       if (definitional.length > 0) {
         const words = definitional.map((index) => `level ${index + 1} ("${plan.levels[index]?.title ?? ""}"): the reviewer finds its effect follows from the model's definitions alone: ${reviewed.findings.filter((finding) => finding.level === index + 1 && finding.kind === "definitional").map((finding) => `${finding.finding} ${finding.suggestion}`).join(" ")}; test one of the paper's findings instead`);
         if (repairs < MAX_REPAIRS) {
-          await replan(words);
+          await replan(definitional.map((index, at) => `${words[at] ?? ""}${responseOf(index)}`));
           continue;
         }
-        if (plan.levels.length - definitional.length < 3) throw new Stop("needs_information", `the reviewer finds ${definitional.length} level(s) follow from the model's definitions alone, and no repair is left: ${words.join("; ")}. The owner decides.`);
-        drop(new Set(definitional));
-        if (checkFindings(plan, reading.value, text).world.length > 0) throw new Stop("needs_information", `dropping the levels the reviewer finds definitional leaves too few on the paper's findings: ${words.join("; ")}. The owner decides.`);
-        move("repairing", "review", `dropping ${definitional.length} level(s) the reviewer finds definitional, keeping ${plan.levels.length}`);
+        const reviewerWords = (index: number): string[] => reviewed.findings.filter((finding) => finding.level === index + 1 && finding.kind === "definitional").map((finding) => `the reviewer finds it definitional: ${finding.suggestion}`);
+        const keep = dropFailing(definitional, reviewerWords, "needs_information", words.map((line) => `${line}. The owner decides`));
+        if (checkFindings(plan, reading.value, text, hookFinding).world.length > 0) throw new Stop("needs_information", `dropping the levels the reviewer finds definitional leaves too few on the paper's findings: ${words.join("; ")}. The owner decides.`);
+        move("repairing", "review", `dropping ${definitional.length} level(s) the reviewer finds definitional, keeping ${keep}`);
         continue;
       }
       if (blocking.length > 0) {

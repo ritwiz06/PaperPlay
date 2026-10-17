@@ -2,8 +2,8 @@
   "schemaVersion": "job-record/1",
   "sourceId": "pmc-PMC12334037",
   "recordedOn": "2026-10-16",
-  "note": "The hepatitis C world regenerated under the visibility rule and the findings check (ADR-0037), on the bake-off's picks after the planner saw the model's response. It fails: at the paper's Table 1 values its headline, adherence above 52% curtailing spread, moves nothing visibly but the quit-treatment compartment, which the reviewer blocks as definitional. Kept so it replays to the same ending.",
-  "replays": true,
+  "note": "The hepatitis C world regenerated under the visibility rule and the findings check (ADR-0037), on the bake-off's picks after the planner saw the model's response. It fails: at the paper's Table 1 values its headline, adherence above 52% curtailing spread, moves nothing visibly but the quit-treatment compartment, which the reviewer blocks as definitional. Kept so it replays to the same ending. Kept as a record, not replayed: the planner now asks for five levels and is told the paper's own numbers (ADR-0040), so its recordings no longer answer.",
+  "replays": false,
   "stages": {
     "reader": "qwen36-27b",
     "transcriber": "qwen3-235b-a22b-thinking-2507",

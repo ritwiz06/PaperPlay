@@ -81,11 +81,17 @@ export const RESPONSE_SHOWN = 0.15;
  * numbers. Deterministic, for the planner, who otherwise chooses its What-ifs blind and finds out
  * from the level rule. A rate whose change moves nothing that much is named as moving nothing.
  */
-export function describeResponse(model: ModelSpec, time: number): string {
+/** One parameter's rows of the response table, halved and doubled: what a repair shows the planner of a level's control (ADR-0040). */
+export function responseRows(model: ModelSpec, time: number, parameterIds: readonly string[]): string {
+  const wanted = new Set(parameterIds);
+  return describeResponse(model, time, (parameter) => wanted.has(parameter.id));
+}
+
+export function describeResponse(model: ModelSpec, time: number, only: (parameter: ModelSpec["parameters"][number]) => boolean = () => true): string {
   const base = defaultsOf(model);
   const before = summaryOf(model, base, time);
   const shown = (value: number): string => Number(value.toPrecision(3)).toString();
-  const rates = model.parameters.filter((parameter) => !parameter.id.endsWith("0") && parameter.defaultValue !== 0);
+  const rates = model.parameters.filter((parameter) => !parameter.id.endsWith("0") && parameter.defaultValue !== 0 && only(parameter));
   const lines = rates.flatMap((parameter) =>
     [0.5, 2].map((factor) => {
       const value = parameter.defaultValue * factor;

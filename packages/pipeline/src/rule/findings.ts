@@ -34,7 +34,12 @@ export interface FindingsCheck {
   readonly onFindings: number;
 }
 
-export function checkFindings(plan: Plan, reading: Reading, source: SourceText): FindingsCheck {
+/**
+ * `hookFinding` is the finding level 1 tests: the headline, 0, unless the paper's own numbers
+ * confirmed its headline does not appear at its values and even its direction did not show, when
+ * the first anchored finding the model shows takes its place (ADR-0040).
+ */
+export function checkFindings(plan: Plan, reading: Reading, source: SourceText, hookFinding = 0): FindingsCheck {
   const findings = [reading.result, ...reading.findings];
   const anchored = findings.map((finding) => findQuote(source.text, finding.quote) !== null);
   let onFindings = 0;
@@ -42,7 +47,7 @@ export function checkFindings(plan: Plan, reading: Reading, source: SourceText):
     const problems: string[] = [];
     const finding = level.finding === null ? null : (findings[level.finding] ?? undefined);
     if (finding === undefined) problems.push(`it tests finding ${String(level.finding)}, which the reading does not have`);
-    if (index === 0 && level.finding !== 0) problems.push("level 1, the hook, must test the paper's headline result, finding 0");
+    if (index === 0 && level.finding !== hookFinding) problems.push(hookFinding === 0 ? "level 1, the hook, must test the paper's headline result, finding 0" : `level 1, the hook, must test finding ${hookFinding}, which takes the headline's place`);
     if (finding && level.finding !== null && anchored[level.finding]) onFindings++;
     if (level.difference.summary === "total" && !(finding && TOTAL.test(`${finding.text} ${finding.quote}`))) problems.push("it sums over time, which the paper's finding does not; use the peak, a value at a time, a time to a threshold or the mean");
     return problems;

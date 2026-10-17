@@ -10,7 +10,8 @@ import { buildWorld, checkFindings, sweepLevels, visibilityOf } from "@paperplay
 import { assembleWorld, chooseStep, describeBehaviour, describeResponse, horizonOf } from "@paperplay/pipeline/assemble";
 import type { ModelClient } from "@paperplay/pipeline/models";
 import { plan, promptSource, review, type Plan, type Reading } from "@paperplay/pipeline/stages";
-import { toModelSpec } from "@paperplay/pipeline/transcribe";
+import { runOwnNumbers } from "@paperplay/pipeline/reproduce";
+import { toModelSpec, TranscriptionWithSets, withValueSet } from "@paperplay/pipeline/transcribe";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { SourceRegister, type ModelSpec } from "@paperplay/contracts";
@@ -76,7 +77,10 @@ export function scorePlan(planned: Plan, context: { readonly paper: ReturnType<t
 
 /** A gold paper's model as the controller would plan from it: its step chosen, and the horizon it is described over. */
 const modelOf = (paper: ReturnType<typeof loadGoldPapers>[number]): { readonly model: ModelSpec; readonly horizon: number } => {
-  const model = toModelSpec(paper.gold.transcription, paper.source).model;
+  // On the set the paper's rule picks, as a job plans on it (ADR-0036): the tuberculosis paper's Ethiopian fit, not its synthetic example.
+  const transcription = TranscriptionWithSets.parse(paper.gold.transcription);
+  const picked = transcription.valueSets?.find((set) => set.id === paper.gold.picked);
+  const model = toModelSpec(picked ? withValueSet(transcription, picked).transcription : transcription, paper.source).model;
   if (!model) throw new Error(`${paper.id}'s gold does not convert`);
   const horizon = horizonOf(model);
   const dt = chooseStep(model, horizon * 2) ?? model.solver.dt;
@@ -116,7 +120,8 @@ export async function runDesignBakeoff(client: ModelClient, structuredOutput: Re
         const { model, horizon } = modelOf(paper);
         if (!reading) continue;
         try {
-          const { value } = await plan(client, name, { title: paper.title, reading, model, example, behaviour: describeBehaviour(model, horizon), response: describeResponse(model, horizon) });
+          const own = runOwnNumbers({ source: paper.source, model, headline: reading.result });
+          const { value } = await plan(client, name, { title: paper.title, reading, model, example, behaviour: describeBehaviour(model, horizon), response: describeResponse(model, horizon), ownNumbers: { verdict: own.verdict, summary: own.summary, observation: own.observation } });
           plans.push({ model: name, paper: paper.id, ok: true, error: null, score: scorePlan(value, { paper, reading, model }) });
         } catch (error) {
           plans.push({ model: name, paper: paper.id, ok: false, error: oneLine(error), score: { levels: 0, built: 0, meetRule: 0, onFindings: false, note: "" } });

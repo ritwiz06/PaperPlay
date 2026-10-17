@@ -61,7 +61,7 @@ export type Plan = z.infer<typeof Plan>;
 export const PLANNER_INSTRUCTIONS = [
   "You plan a small learning game, a playable world, from a scientific paper's compartment model, as a teacher would.",
   DATA_RULE,
-  "The world has 3 to 5 levels, the first of kind hook. Each level has exactly one control, one thing to watch, and one What-if: a second copy of the world, run beside the first, with one parameter or one starting value changed. The learner predicts what the What-if will do before it runs.",
+  "The world has five levels, the first of kind hook. Each level has exactly one control, one thing to watch, and one What-if: a second copy of the world, run beside the first, with one parameter or one starting value changed. The learner predicts what the What-if will do before it runs.",
   "Rules:",
   "- The control is a rate parameter of the model, never a starting value (one whose id ends in 0). Use parameter ids exactly as given.",
   "- The What-if changes one parameter, or one starting value, to one value. Prefer a change the paper itself discusses: a threshold, a treatment, a rate halved or doubled.",
@@ -84,7 +84,25 @@ const describeModel = (model: ModelSpec): string =>
     ...model.parameters.map((parameter) => `- ${parameter.id} (${parameter.symbol}): ${parameter.name} = ${parameter.defaultValue}`),
   ].join("\n");
 
-export function plannerMessages(input: { readonly title: string; readonly reading: Reading; readonly model: ModelSpec; readonly example: string; readonly behaviour: string; readonly response: string }): ChatMessage[] {
+/** What running the paper's own numbers tells the planner (ADR-0040): its summary, and, when the headline's mismatch is confirmed, what level 1 does. */
+export interface OwnNumbersForPlanner {
+  readonly verdict: "holds" | "mismatch" | "unresolved" | "not-applicable";
+  readonly summary: string;
+  readonly observation: string | null;
+}
+
+function ownNumbersSection(own: OwnNumbersForPlanner): string {
+  const lines = [`Running the paper's own numbers, before you plan (deterministic, from the model as solved and the paper's own formulas): ${own.summary}.`];
+  if (own.verdict === "mismatch") {
+    lines.push(
+      "The headline's threshold does not appear at the values the paper lists, and the check found no mistake of ours to explain it. Level 1 still tests the headline, finding 0, by its direction: choose a What-if that the response above shows moving a compartment visibly, and never claim the threshold itself.",
+      `The world states this beside level 1, as a computed observation: "${own.observation ?? ""}"`,
+    );
+  }
+  return lines.join("\n");
+}
+
+export function plannerMessages(input: { readonly title: string; readonly reading: Reading; readonly model: ModelSpec; readonly example: string; readonly behaviour: string; readonly response: string; readonly ownNumbers?: OwnNumbersForPlanner }): ChatMessage[] {
   return [
     { role: "system", content: PLANNER_INSTRUCTIONS },
     {
@@ -95,6 +113,7 @@ export function plannerMessages(input: { readonly title: string; readonly readin
         `The model, verified:\n${describeModel(input.model)}`,
         `How the model behaves at the paper's values, as solved:\n${input.behaviour}`,
         `How it responds to change, as solved: each rate halved and doubled, and every compartment whose peak, or value at the end, moves by 15% or more. Choose What-ifs from what moves; a change that moves nothing will fail the visibility rule:\n${input.response}`,
+        ...(input.ownNumbers ? [ownNumbersSection(input.ownNumbers)] : []),
         `A worked example, another world's levels:\n${input.example}`,
         "Plan the world.",
       ].join("\n\n"),

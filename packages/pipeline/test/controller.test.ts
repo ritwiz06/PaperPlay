@@ -25,6 +25,9 @@ const TEXT = [
   "An illustrative example instead takes beta = 0.0002 and gamma = 0.2.",
   "When the infected recover faster, the epidemic infects fewer people.",
   "Below a threshold of susceptible people, the illness fades out.",
+  "R_0 = \\frac{\\beta N}{\\gamma}",
+  "where $N = 995$ is the town.",
+  "A recovery rate above 50% brings the reproduction number below 1.",
 ].join("\n");
 const offset = (needle: string): number => TEXT.indexOf(needle);
 const source: SourceText = SourceText.parse({
@@ -37,7 +40,7 @@ const source: SourceText = SourceText.parse({
     { id: "s2-abstract", title: "Abstract", start: offset("Abstract"), end: offset("Model\n") },
     { id: "s3-model", title: "Model", start: offset("Model\n"), end: TEXT.length },
   ],
-  equations: [],
+  equations: [{ id: "eq1", labels: [], number: "1", latex: "R_0 = \\frac{\\beta N}{\\gamma}", sectionId: "s3-model", start: offset("R_0 = "), end: offset("R_0 = ") + "R_0 = \\frac{\\beta N}{\\gamma}".length }],
   macros: [],
 });
 const register: SourceRegisterEntry = {
@@ -229,10 +232,44 @@ describe("[R10] [R11] the controller", () => {
     const client = scripted(replies({ planner: [wrong, wrong, wrong], reviewer: [{ findings: [{ level: 1, severity: "advice", finding: "The world is acceptable." }] }] }));
     const { outcome, states } = await run(client);
     expect(outcome.state).toBe("failed");
-    expect(outcome.message).toMatch(/too few levels meet the rules/);
+    // The hook is never dropped (ADR-0040): with no confirmed mismatch to fall back on, the job stops on it.
+    expect(outcome.message).toMatch(/^level 1, the hook on the paper's headline, still fails after its repairs, and the hook is never dropped: level 1 \("An epidemic that ends by itself"\): its claim holds on/);
     expect(states.filter((state) => state === "repairing")).toHaveLength(2);
     expect(states).not.toContain("checking");
     expect(client.calls.filter((call) => call.stage === "reviewer")).toHaveLength(0);
+  }, 60_000);
+
+  it("drops a level other than the hook that still fails after its repairs, keeping why, and shows each repair its control's response", async () => {
+    const failing = planLevel(1, { title: "A level that fails", difference: { compartment: "s", summary: "at", at: 150, time: 150, relation: "higher", by: 20 } });
+    const plan = { ...good(), levels: [...good().levels, failing] };
+    const client = scripted(replies({ planner: [plan, plan, plan] }));
+    const { outcome, artifacts, events } = await run(client);
+    expect(outcome.state).toBe("ready");
+    expect(artifacts.get("dropped")).toEqual([{ level: 4, title: "A level that fails", reasons: [expect.stringMatching(/^its claim holds on \d+ of 20 starts, fewer than 16/)] }]);
+    expect(events.some((event) => /^dropped 1 level\(s\) the rules refuse, keeping 3: "A level that fails", its claim holds on/.test(event.message))).toBe(true);
+    const replan = client.calls.filter((call) => call.stage === "planner")[1];
+    expect(replan?.messages.map((message) => message.content).join("\n")).toMatch(/level 4 \("A level that fails"\): its claim holds on .*; how its control moves the model, each halved and doubled: beta halved .*gamma halved \(0\.1 to 0\.05\)/);
+    expect((artifacts.get("world") as { levels: unknown[] }).levels).toHaveLength(3);
+  }, 60_000);
+
+  it("falls back to the first anchored finding the model shows when the hook fails and the paper's own numbers confirm its headline does not appear (ADR-0040)", async () => {
+    const headline = { text: "Recovering faster than half stops the spread.", quote: "A recovery rate above 50% brings the reproduction number below 1." };
+    const reader = [{ question: "Why does an epidemic end?", mechanism: "Infection and recovery.", modelEquations: [], result: headline, findings: FINDINGS }];
+    const hookFails = planLevel(0, { difference: { compartment: "s", summary: "at", at: 150, time: 150, relation: "higher", by: 20 } });
+    const plan = { ...good(), levels: [hookFails, planLevel(1), planLevel(2), planLevel(1, { title: "Faster spread, again", kind: "idea" })] };
+    const client = scripted(replies({ reader, planner: [plan, plan, plan] }));
+    const { outcome, artifacts } = await run(client);
+    const own = artifacts.get("own-numbers") as { verdict: string; observation: string; formulas: { agrees: boolean }[] };
+    expect(own.verdict).toBe("mismatch");
+    expect(own.formulas.map((formula) => formula.agrees)).toEqual([true]);
+    // The planner was told what level 1 does when the headline's threshold does not appear.
+    expect(client.calls.find((call) => call.stage === "planner")?.messages.map((message) => message.content).join("\n")).toMatch(/Level 1 still tests the headline, finding 0, by its direction/);
+    expect(outcome.state).toBe("ready");
+    const world = artifacts.get("world") as { levels: { title: string; kind: string; observation?: { text: string; origin: string } }[]; ownNumbers: { statements: { text: string }[] } };
+    expect(world.levels.map((level) => [level.title, level.kind])).toEqual([["Faster spread", "hook"], ["A threshold", "idea"], ["Faster spread, again", "idea"]]);
+    expect(world.levels[0]?.observation).toEqual({ text: "The paper's headline does not appear in this world at the values it lists, and its direction does not show here either, so this level tests another of its findings: Faster recovery means fewer infected.", origin: "computed-observation", anchors: [] });
+    expect(world.ownNumbers.statements.at(-1)?.text).toBe(world.levels[0]?.observation?.text);
+    expect(artifacts.get("dropped")).toEqual([{ level: 1, title: "An epidemic that ends by itself", reasons: [expect.stringMatching(/^its claim holds on/)] }]);
   }, 60_000);
 
   it("checks only the second transcription's structure: a quote it miscopied does not stop the world", async () => {
