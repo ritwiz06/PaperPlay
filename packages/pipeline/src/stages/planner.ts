@@ -128,6 +128,6 @@ export function plannerMessages(input: { readonly title: string; readonly readin
 /** Room for a reasoning model to think before it writes a plan: 12,000 ran out while thinking. */
 export const PLANNER_MAX_TOKENS = 32_000;
 
-export function plan(client: ModelClient, model: string, input: Parameters<typeof plannerMessages>[0]) {
-  return completeStructured(client, { stage: "planner", model, messages: plannerMessages(input), temperature: 0, maxTokens: PLANNER_MAX_TOKENS }, Plan, { name: "plan", structuredOutput: false });
+export function plan(client: ModelClient, model: string, input: Parameters<typeof plannerMessages>[0], options: { readonly stage?: "planner" | "second-planner" } = {}) {
+  return completeStructured(client, { stage: options.stage ?? "planner", model, messages: plannerMessages(input), temperature: 0, maxTokens: PLANNER_MAX_TOKENS }, Plan, { name: "plan", structuredOutput: false });
 }

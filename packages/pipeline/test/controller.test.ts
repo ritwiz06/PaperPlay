@@ -272,6 +272,32 @@ describe("[R10] [R11] the controller", () => {
     expect(artifacts.get("dropped")).toEqual([{ level: 1, title: "An epidemic that ends by itself", reasons: [expect.stringMatching(/^its claim holds on/)] }]);
   }, 60_000);
 
+  it("asks two planners from different vendors and keeps the better level for each slot, recording each level's planner (ADR-0043)", async () => {
+    // With 300 susceptible the epidemic never starts, so more stay well: a claim of fewer fails.
+    const wrong = planLevel(2, { difference: { compartment: "s", summary: "at", at: 150, time: 150, relation: "lower", by: 20 } });
+    const first = { ...good(), levels: [planLevel(0), planLevel(1), wrong] };
+    const client = scripted(replies({ planner: [first], "second-planner": [good()] }));
+    const { outcome, states, artifacts, events } = await run(client, { stages: { ...config.stages, "second-planner": "m-second-planner" } });
+    expect(outcome.state).toBe("ready");
+    // The second planner's level 3 meets the rules where the first's does not: no repair is needed.
+    expect(states).not.toContain("repairing");
+    expect(artifacts.get("plan-sources")).toEqual([
+      { level: 1, title: "An epidemic that ends by itself", planner: "m-planner" },
+      { level: 2, title: "Faster spread", planner: "m-planner" },
+      { level: 3, title: "A threshold", planner: "m-second-planner" },
+    ]);
+    expect(events.some((event) => /^two planners planned: m-planner, 2 of 3 levels meeting the rules; m-second-planner, 3 of 3; kept level 1 from m-planner, level 2 from m-planner, level 3 from m-second-planner$/.test(event.message))).toBe(true);
+    expect(client.calls.filter((call) => call.stage === "second-planner").map((call) => call.model)).toEqual(["m-second-planner"]);
+  }, 60_000);
+
+  it("uses the first planner's plan alone when the second gives none the schema reads", async () => {
+    const client = scripted(replies({ "second-planner": [{ not: "a plan" }] }));
+    const { outcome, artifacts, events } = await run(client, { stages: { ...config.stages, "second-planner": "m-second-planner" } });
+    expect(outcome.state).toBe("ready");
+    expect(events.some((event) => /^the second planner, m-second-planner, gave no plan the schema reads .*; the first planner's plan is used alone$/.test(event.message))).toBe(true);
+    expect((artifacts.get("plan-sources") as { planner: string }[]).every((entry) => entry.planner === "m-planner")).toBe(true);
+  }, 60_000);
+
   it("checks only the second transcription's structure: a quote it miscopied does not stop the world", async () => {
     const miscopied = transcription(0.1) as { equations: { quote: string }[] };
     const second = { ...miscopied, equations: miscopied.equations.map((equation, index) => (index === 0 ? { ...equation, quote: "dS/dt = -beta S I, as copied wrongly" } : equation)) };

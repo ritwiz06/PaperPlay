@@ -132,8 +132,10 @@ paper found), then whether it names level 5 definitional.
 | second-transcriber | inkling-small | the best transcriber from another vendor |
 | router | glm-5-3 | the best router |
 | planner | kimi-k2-7-code | the most levels meeting both rules, then worlds on the paper's findings |
+| second-planner | glm-5-3 | the best planner from another vendor |
 | explainer | kimi-k2-7-code | the planner's model, which knows the plan; its words are held by the schema and their quotes by provenance, not ranked |
 | reviewer | glm-5-3 | the most planted faults found, none blocked wrongly, no failed check called acceptable |
+| second-reviewer | gemma4-31b-it | the best reviewer from another vendor |
 
 ## Failed calls
 

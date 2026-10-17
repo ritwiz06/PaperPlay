@@ -11,8 +11,10 @@
     "second-transcriber": "inkling-small",
     "router": "glm-5-3",
     "planner": "kimi-k2-7-code",
+    "second-planner": "glm-5-3",
     "explainer": "kimi-k2-7-code",
-    "reviewer": "glm-5-3"
+    "reviewer": "glm-5-3",
+    "second-reviewer": null
   },
   "excluded": {
     "asOf": "2026-10-16",

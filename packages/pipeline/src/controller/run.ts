@@ -34,7 +34,8 @@ export const MAX_REPAIRS = 2;
 
 export interface JobConfig {
   /** Each stage's model, from apps/api/models.json. */
-  readonly stages: Readonly<Record<Stage, string | null>>;
+  /** A model per stage; the second planner and second reviewer may be absent, as in a job recorded before them (ADR-0043, ADR-0044). */
+  readonly stages: Readonly<Partial<Record<Stage, string | null>>>;
   readonly structuredOutput: Readonly<Record<string, boolean>>;
 }
 
@@ -221,7 +222,85 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     const response = describeResponse(model, horizon);
     const plannerModel = modelFor("planner");
     const forPlanner = { verdict: ownNumbers.verdict, summary: ownNumbers.summary, observation: ownNumbers.observation };
-    let plan: Plan = (await planWorld(input.client, plannerModel, { title, reading: reading.value, model, example: input.example, behaviour, response, ownNumbers: forPlanner })).value;
+    const plannerInput = { title, reading: reading.value, model, example: input.example, behaviour, response, ownNumbers: forPlanner };
+
+    /**
+     * Every level of a plan judged by the deterministic rules before any words are written: the
+     * builder, the level rule, the visibility rule and the findings check. A level that does not
+     * build is judged by that alone, and the rest are built without it.
+     */
+    const assess = (candidate: Plan): { readonly problems: readonly (readonly string[])[]; readonly holds: readonly number[] } => {
+      const assembled = (levels: readonly number[]) => buildWorld(assembleWorld({ source: text, register, reading: reading.value, model, plan: { ...candidate, levels: levels.flatMap((index) => (candidate.levels[index] ? [candidate.levels[index]] : [])) }, explanation: { levels: [] }, routingReason: routed.value.reason, ownNumbers }).spec, registry);
+      const all = candidate.levels.map((_, index) => index);
+      let result = assembled(all);
+      const broken = new Map<number, string[]>();
+      if (!result.ok) {
+        for (const problem of result.problems) {
+          const at = /^levels\.(\d+)/.exec(problem.path)?.[1];
+          if (at !== undefined) broken.set(Number(at), [...(broken.get(Number(at)) ?? []), problem.message]);
+        }
+        const rest = all.filter((index) => !broken.has(index));
+        if (broken.size === 0 || rest.length === 0) return { problems: all.map(() => ["the world does not build"]), holds: all.map(() => 0) };
+        result = assembled(rest);
+        if (!result.ok) return { problems: all.map(() => ["the world does not build"]), holds: all.map(() => 0) };
+      }
+      const built = result.world;
+      const rest = all.filter((index) => !broken.has(index));
+      const swept = sweepLevels(built);
+      const seen = visibilityOf(built);
+      const found = checkFindings(candidate, reading.value, text);
+      const problems = all.map((index) => {
+        const at = rest.indexOf(index);
+        if (at < 0) return broken.get(index) ?? [];
+        const level = swept[at];
+        const visible = seen[at];
+        return [...(level && !level.meets ? [`its claim holds on ${level.holds} of 20 starts`] : []), ...(visible && !visible.visible ? ["its difference is too small to see"] : []), ...(found.levels[index] ?? [])];
+      });
+      return { problems, holds: all.map((index) => swept[rest.indexOf(index)]?.holds ?? 0) };
+    };
+
+    // Two planners from different vendors (ADR-0043): each plans the world; the deterministic rules
+    // judge every level of both, and each slot keeps the better level, the first planner's on a tie.
+    const secondPlannerModel = input.config.stages["second-planner"] ?? null;
+    const [firstPlan, secondPlan] = await Promise.all([
+      planWorld(input.client, plannerModel, plannerInput),
+      secondPlannerModel === null
+        ? Promise.resolve(null)
+        : planWorld(input.client, secondPlannerModel, plannerInput, { stage: "second-planner" }).catch((error: unknown) => {
+            say("planning", `the second planner, ${secondPlannerModel}, gave no plan the schema reads (${(error instanceof Error ? error.message : String(error)).split("\n")[0] ?? ""}); the first planner's plan is used alone`);
+            return null;
+          }),
+    ]);
+    let plan: Plan = firstPlan.value;
+    /** Which planner each level came from, in step with the plan (ADR-0043). */
+    let sources: string[] = plan.levels.map(() => plannerModel);
+    if (secondPlan && secondPlannerModel !== null) {
+      const a = firstPlan.value;
+      const b = secondPlan.value;
+      const [ja, jb] = [assess(a), assess(b)];
+      const score = (problems: readonly string[] | undefined, holds: number | undefined): readonly number[] => (problems === undefined ? [-1, -Infinity, -1] : [problems.length === 0 ? 1 : 0, -problems.length, holds ?? 0]);
+      const secondWins = (index: number): boolean => {
+        const [sa, sb] = [score(a.levels[index] ? ja.problems[index] : undefined, ja.holds[index]), score(b.levels[index] ? jb.problems[index] : undefined, jb.holds[index])];
+        for (let at = 0; at < sa.length; at++) if ((sb[at] ?? 0) !== (sa[at] ?? 0)) return (sb[at] ?? 0) > (sa[at] ?? 0);
+        return false;
+      };
+      const slots = Array.from({ length: Math.max(a.levels.length, b.levels.length) }, (_, index) => index);
+      const picks = slots.map((index) => (secondWins(index) ? "second" : "first"));
+      let merged: Plan = { ...a, levels: slots.flatMap((index) => { const level = picks[index] === "second" ? b.levels[index] : a.levels[index]; return level ? [level] : []; }) };
+      let mergedSources = slots.flatMap((index) => ((picks[index] === "second" ? b.levels[index] : a.levels[index]) ? [picks[index] === "second" ? secondPlannerModel : plannerModel] : []));
+      // The kept levels must still test enough of the paper's findings together; if not, the better whole plan.
+      if (checkFindings(merged, reading.value, text).world.length > 0) {
+        const passing = (judged: typeof ja) => judged.problems.filter((problems) => problems.length === 0).length;
+        const whole = passing(jb) > passing(ja) ? "second" : "first";
+        merged = whole === "second" ? b : a;
+        mergedSources = merged.levels.map(() => (whole === "second" ? secondPlannerModel : plannerModel));
+      }
+      plan = merged;
+      sources = mergedSources;
+      sink.artifact("plan-choice", slots.map((index) => ({ level: index + 1, kept: picks[index] === "second" ? secondPlannerModel : plannerModel, first: { title: a.levels[index]?.title ?? null, problems: ja.problems[index] ?? [] }, second: { title: b.levels[index]?.title ?? null, problems: jb.problems[index] ?? [] } })));
+      const passingOf = (judged: typeof ja, candidate: Plan) => `${judged.problems.filter((problems, index) => problems.length === 0 && candidate.levels[index]).length} of ${candidate.levels.length}`;
+      say("planning", `two planners planned: ${plannerModel}, ${passingOf(ja, a)} levels meeting the rules; ${secondPlannerModel}, ${passingOf(jb, b)}; kept ${sources.map((source, index) => `level ${index + 1} from ${source}`).join(", ")}`);
+    }
     const passages = promptSource(text, { maxCharacters: 60_000 }).block;
     const modelWords = `${describeBehaviour(model, horizon).split("\n").slice(0, 3).join("\n")}`;
     const explainerModel = modelFor("explainer");
@@ -238,6 +317,8 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
         Plan,
         { name: "plan", structuredOutput: false },
       );
+      // A level the repair changed is the repairing planner's now.
+      sources = replanned.value.levels.map((level, index) => (JSON.stringify(level) === JSON.stringify(plan.levels[index]) ? (sources[index] ?? plannerModel) : `${plannerModel}, in repair`));
       plan = replanned.value;
       explanation = (await explain(input.client, explainerModel, { title, plan, passages, model: modelWords }, { structuredOutput: structured(explainerModel) })).value;
     };
@@ -278,6 +359,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
         hookFinding = finding;
         hookFallback = `The paper's headline does not appear in this world at the values it lists, and its direction does not show here either, so this level tests another of its findings: ${findingsOf[finding]?.text ?? ""}`;
       }
+      sources = order.map((index) => sources[index] ?? plannerModel);
       plan = { ...plan, levels: order.flatMap((index) => (plan.levels[index] ? [plan.levels[index]] : [])) };
       explanation = { levels: order.flatMap((index) => (explanation.levels[index] ? [explanation.levels[index]] : [])) };
       sink.artifact("dropped", dropped);
@@ -390,6 +472,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       } else say("review", `the reviewer found nothing blocking (${reviewed.findings.length} piece(s) of advice)`);
       break;
     }
+    sink.artifact("plan-sources", plan.levels.map((level, index) => ({ level: index + 1, title: level.title, planner: sources[index] ?? plannerModel })));
     sink.artifact("world", spec);
     move("ready", "ready", `the world is built and checked: ${plan.levels.length} levels, every one meeting the level rule, showing its difference and testing the paper's findings, every anchor in the source`);
     return { state, message: "ready", world: spec };

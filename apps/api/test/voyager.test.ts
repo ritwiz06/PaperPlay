@@ -150,7 +150,7 @@ describe("[R09] the live client", () => {
   it("is configured from apps/api/models.json: the gateway, the limits, a budget and a model per stage", () => {
     const config = loadModelConfig();
     expect(config.baseUrl).toBe("https://openai.rc.asu.edu/v1");
-    expect(Object.keys(config.stages).sort()).toEqual(["explainer", "planner", "reader", "reviewer", "router", "second-transcriber", "transcriber"]);
+    expect(Object.keys(config.stages).sort()).toEqual(["explainer", "planner", "reader", "reviewer", "router", "second-planner", "second-reviewer", "second-transcriber", "transcriber"]);
     expect(config.jobTokenBudget).toBeGreaterThan(0);
   });
 

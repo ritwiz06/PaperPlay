@@ -95,6 +95,8 @@ export interface Exclusion {
 const NONE: Exclusion = { asOf: "", models: [] };
 /** The best of a table that may be picked. */
 const pick = (ranked: readonly Ranked[], excluded: Exclusion): Ranked | undefined => ranked.find((row) => !excluded.models.includes(row.model));
+/** The best of another vendor than `first`'s, for a stage asked twice (ADR-0043, ADR-0044). */
+const pickOther = (ranked: readonly Ranked[], excluded: Exclusion, first: Ranked | undefined): Ranked | undefined => (first ? ranked.find((row) => !excluded.models.includes(row.model) && row.vendor !== first.vendor) : undefined);
 
 /** The best transcriber, and the best of another vendor for the second transcription, neither excluded. */
 export function transcriberPair(results: BakeoffResults, excluded: Exclusion = NONE): { readonly first: Candidate | null; readonly second: Candidate | null } {
@@ -238,8 +240,10 @@ export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { 
     ...(design
       ? [
           `| planner | ${pick(rankPlanners(results, design), excluded)?.model ?? "none"} | the most levels meeting both rules, then worlds on the paper's findings |`,
+          `| second-planner | ${pickOther(rankPlanners(results, design), excluded, pick(rankPlanners(results, design), excluded))?.model ?? "none"} | the best planner from another vendor |`,
           `| explainer | ${pick(rankPlanners(results, design), excluded)?.model ?? "none"} | the planner's model, which knows the plan; its words are held by the schema and their quotes by provenance, not ranked |`,
           `| reviewer | ${pick(rankReviewers(results, design), excluded)?.model ?? "none"} | the most planted faults found, none blocked wrongly, no failed check called acceptable |`,
+          `| second-reviewer | ${pickOther(rankReviewers(results, design), excluded, pick(rankReviewers(results, design), excluded))?.model ?? "none"} | the best reviewer from another vendor |`,
         ]
       : ["| planner, explainer, reviewer | not yet | their bake-off runs after this one |"]),
     "",
