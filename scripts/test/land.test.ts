@@ -5,6 +5,7 @@ import { dirname, join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { pushRefusals, readRecord, writeRecord } from "../land/guard.ts";
 import { land, type LandOptions } from "../land/land.ts";
+import { writeLock } from "../machine/locks.ts";
 
 // Land and the pre-push hook (ADR-0009), each run against a throwaway repository with a bare
 // remote. The repository carries the real hook and a planted check:gate; a stand-in for the
@@ -105,6 +106,15 @@ describe("npm run land refuses", () => {
     expect(remoteHas(box, "main")).toBe(start);
     expect(git(box.work, "rev-parse", "main")).toBe(start);
   };
+
+  it("while a live pipeline runs on the machine, before anything else (ADR-0039)", async () => {
+    const release = writeLock(join(box.gitDir, "paperplay-locks"), "live", "pipeline:live serve");
+    expect((await land(box.options())).reason).toMatch(/a live pipeline is running: pipeline:live serve \(pid \d+, since .+\)\. Live jobs and gates never share the machine/);
+    expect(remoteHas(box, "g2/topic")).toBeUndefined();
+    expect(box.ghCalls()).toEqual([]);
+    nothingMoved();
+    release();
+  });
 
   it("a dirty tree, before running the gate or pushing", async () => {
     writeFileSync(join(box.work, "notes.txt"), "uncommitted\n");

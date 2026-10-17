@@ -51,6 +51,8 @@ docs/               README (index), project-brief, roadmap, status, requirements
 6. **No fake progress.** Show real job states (`received → parsing → planning → building → running → checking → ready`, plus `needs_information | unsupported | repairing | failed | cancelled`). Never a timed progress bar. `ready` is unreachable while any required check is pending or failed.
 7. **Secrets live in `apps/api/.env` only.** A build step greps the client bundle for key prefixes and fails if found.
 8. **Every WorldSpec level has exactly one manipulable action and exactly one counterfactual.** This is enforced in Zod `.refine()`, not in prose.
+9. **No personal data in any outbound request unless the owner opted in.** An API that asks for a contact address gets `PAPERPLAY_CONTACT_EMAIL` from `apps/api/.env`, which the owner sets and which is unset by default; unset, no request carries an address, and nothing else personal is ever sent. Every source fetch goes through `outboundFetch` (`apps/api/src/contact.ts`); a test holds it (ADR-0039).
+10. **Live jobs and gates never share the machine.** `npm run land` and `npm run check:gate` refuse while `npm run pipeline:live` runs, and `pipeline:live` refuses while a gate runs (locks in the git directory, ADR-0039). Don't loosen the first-frame timeouts to get a gate through.
 
 ## Branches (ADR-0009)
 - `main` is the line of record: every commit it points to passed `check:gate` locally and CI on that same commit, and gate tags are cut on it.

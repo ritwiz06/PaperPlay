@@ -12,6 +12,7 @@ import { join } from "node:path";
 import { performance } from "node:perf_hooks";
 import { evaluateGate, fromPlaywrightReport, fromVitestReport, type TestResult } from "./gate/evidence.ts";
 import { reviewProblems } from "./gate/worlds.ts";
+import { heldLocks, holdLock, lockDir, whyNoGate } from "./machine/locks.ts";
 
 interface Gate {
   title: string;
@@ -38,6 +39,16 @@ if (!gate) {
   console.error(`check:gate: unknown gate "${gateId}". Known gates: ${Object.keys(gates.gates).join(", ")}`);
   process.exit(2);
 }
+
+// Live jobs and gates never share the machine (ADR-0039): no gate while a live pipeline runs, and
+// none starts while this one does.
+const locks = lockDir(root);
+const refusal = whyNoGate(heldLocks(locks, "live"));
+if (refusal !== null) {
+  console.error(`check:gate refused: ${refusal}.`);
+  process.exit(1);
+}
+holdLock(locks, "gate", `check:gate ${gateId}`);
 
 const scripts = (readJson(join(root, "package.json")) as { scripts: Record<string, string> }).scripts;
 const reports: Record<string, { file: string; parse: (report: unknown) => TestResult[] }> = {

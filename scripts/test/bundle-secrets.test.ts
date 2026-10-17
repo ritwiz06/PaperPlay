@@ -28,8 +28,9 @@ describe("[R09] the bundle secret check", () => {
   });
 
   it("finds a value from apps/api/.env however it is written, and names the variable, never the value", () => {
-    const values = secretValues(`# a comment\nVOYAGER_API_KEY=${PLANTED}\nexport OTHER_TOKEN="a-long-enough-token"\nPORT=8787\nSHORT_KEY=abc\n`);
-    expect(values.map((entry) => entry.name)).toEqual(["VOYAGER_API_KEY", "OTHER_TOKEN"]);
+    const values = secretValues(`# a comment\nVOYAGER_API_KEY=${PLANTED}\nexport OTHER_TOKEN="a-long-enough-token"\nPORT=8787\nSHORT_KEY=abc\nPAPERPLAY_CONTACT_EMAIL=o@x.io\n`);
+    expect(values.map((entry) => entry.name)).toEqual(["VOYAGER_API_KEY", "OTHER_TOKEN", "PAPERPLAY_CONTACT_EMAIL"]);
+    expect(findSecrets([{ name: "app.js", text: "mailto:o@x.io" }], values)).toEqual([{ file: "app.js", rule: "the value of PAPERPLAY_CONTACT_EMAIL from apps/api/.env" }]);
     const findings = findSecrets([{ name: "index.html", text: `<p>a-long-enough-token</p>` }], values);
     expect(findings).toEqual([{ file: "index.html", rule: "the value of OTHER_TOKEN from apps/api/.env" }]);
     for (const finding of findings) expect(JSON.stringify(finding)).not.toContain("a-long-enough-token");

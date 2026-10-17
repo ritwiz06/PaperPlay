@@ -42,6 +42,20 @@ export class IngestError extends Error {
 const USER_AGENT = "PaperPlay/0.1 (ASU research prototype; local ingest of open-access sources)";
 const sha256 = (bytes: Uint8Array): string => createHash("sha256").update(bytes).digest("hex");
 
+/**
+ * The network a source is fetched over, carrying the owner's contact address only where the owner
+ * set one (ADR-0039). NCBI's E-utilities ask for a tool name and an address with each request, and
+ * arXiv for one in the user agent; set, they get it; unset, no request carries an address, or any
+ * other personal data.
+ */
+export function withContact(network: Fetch, contact: string | null): Fetch {
+  if (contact === null) return network;
+  return (url, init) => {
+    const target = /^https:\/\/eutils\.ncbi\.nlm\.nih\.gov\//.test(url) ? `${url}${url.includes("?") ? "&" : "?"}tool=paperplay&email=${encodeURIComponent(contact)}` : url;
+    return network(target, { ...init, headers: { ...init?.headers, "user-agent": `${init?.headers?.["user-agent"] ?? USER_AGENT} (mailto:${contact})` } });
+  };
+}
+
 async function get(fetch: Fetch, url: string): Promise<{ readonly bytes: Uint8Array }> {
   const response = await fetch(url, { headers: { "user-agent": USER_AGENT } });
   if (!response.ok) throw new IngestError(`${url} answered ${response.status}`);

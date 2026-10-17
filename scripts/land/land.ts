@@ -2,6 +2,7 @@
  * Land a branch on main (ADR-0009): the only routine way main moves.
  *
  * In order, and refusing at the first problem:
+ * 0. no live pipeline is running on this machine (ADR-0039);
  * 1. the branch is a `<gate>/<topic>` branch, not main or a detached HEAD, its tree is clean,
  *    and it sits on top of origin's main;
  * 2. `npm run check:gate` exits 0, read from its own exit status, and leaves the tree as it was;
@@ -16,6 +17,7 @@
  */
 import { spawnSync, type SpawnSyncReturns } from "node:child_process";
 import { setTimeout as sleep } from "node:timers/promises";
+import { heldLocks, lockDir, whyNoGate } from "../machine/locks.ts";
 import { writeRecord, type LandRecord } from "./guard.ts";
 
 export interface LandOptions {
@@ -74,6 +76,10 @@ export async function land(options: LandOptions): Promise<LandResult> {
 
   let sha: string | undefined;
   try {
+    // 0. Live jobs and gates never share the machine (ADR-0039): nothing runs while a live pipeline does.
+    const refusal = whyNoGate(heldLocks(lockDir(root), "live"));
+    if (refusal !== null) throw new Refusal(refusal);
+
     // 1. What is being landed.
     const branch = gitOut(["rev-parse", "--abbrev-ref", "HEAD"]);
     if (branch === "HEAD") throw new Refusal("HEAD is detached: land a branch");

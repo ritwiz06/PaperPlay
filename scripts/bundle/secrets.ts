@@ -31,14 +31,17 @@ export const RULES: readonly Rule[] = Object.freeze([
   { rule: "the model gateway's host (openai.rc.asu.edu), which only apps/api may call", pattern: /openai\.rc\.asu\.edu/ },
 ]);
 
-/** Values in an env file worth guarding: those of variables named as keys, secrets or tokens, long enough to be one. */
+/**
+ * Values in an env file worth guarding: those of variables named as keys, secrets or tokens, long
+ * enough to be one, and the owner's contact address, whatever its length (ADR-0039).
+ */
 export function secretValues(env: string): { readonly name: string; readonly value: string }[] {
   return env.split(/\r?\n/).flatMap((line) => {
     const match = /^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/.exec(line);
     if (!match) return [];
     const [, name = "", raw = ""] = match;
     const value = raw.trim().replace(/^(["'])(.*)\1$/, "$2");
-    return /(KEY|SECRET|TOKEN|PASSWORD)/.test(name) && value.length >= 12 ? [{ name, value }] : [];
+    return (/(KEY|SECRET|TOKEN|PASSWORD)/.test(name) && value.length >= 12) || (/(EMAIL|CONTACT)/.test(name) && value.length > 0) ? [{ name, value }] : [];
   });
 }
 

@@ -13,6 +13,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { SourceRegister } from "@paperplay/contracts";
 import { fetchArxiv, fetchPmc, registerAndText, type Fetch } from "@paperplay/pipeline/ingest";
+import { outboundFetch } from "../apps/api/src/contact.ts";
 
 const SOURCES = join(import.meta.dirname, "..", "fixtures", "sources");
 const REGISTER = join(SOURCES, "register.json");
@@ -23,7 +24,7 @@ if (wanted.length === 0) {
 }
 
 const register = existsSync(REGISTER) ? SourceRegister.parse(JSON.parse(readFileSync(REGISTER, "utf8"))) : { schemaVersion: "sourceregister/1" as const, sources: [] };
-const network: Fetch = (url, init) => globalThis.fetch(url, init);
+const network: Fetch = outboundFetch();
 let failed = false;
 for (const raw of wanted) {
   try {

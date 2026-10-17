@@ -21,13 +21,19 @@ export function liveRefusal(env: Readonly<Record<string, string | undefined>> = 
   return null;
 }
 
+/** A value set in apps/api/.env, or "" when the file or the line is missing or empty. */
+export function envValue(name: string, file: string = ENV_FILE): string {
+  if (!existsSync(file)) return "";
+  const line = readFileSync(file, "utf8")
+    .split(/\r?\n/)
+    .find((entry) => entry.trim().startsWith(`${name}=`));
+  return line?.slice(line.indexOf("=") + 1).trim().replace(/^(["'])(.*)\1$/, "$2") ?? "";
+}
+
 /** The key, from apps/api/.env. Its value is never printed; a missing key is named, not shown. */
 export function readKey(file: string = ENV_FILE): string {
   if (!existsSync(file)) throw new Error(`${KEY_NAME} must be in ${file}, which does not exist`);
-  const line = readFileSync(file, "utf8")
-    .split(/\r?\n/)
-    .find((entry) => entry.trim().startsWith(`${KEY_NAME}=`));
-  const value = line?.slice(line.indexOf("=") + 1).trim().replace(/^(["'])(.*)\1$/, "$2") ?? "";
+  const value = envValue(KEY_NAME, file);
   if (value.length === 0) throw new Error(`${file} does not set ${KEY_NAME}`);
   return value;
 }

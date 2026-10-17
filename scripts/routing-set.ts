@@ -10,6 +10,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { SourceText } from "@paperplay/contracts";
 import { fetchArxivAbstract } from "@paperplay/pipeline/ingest";
+import { outboundFetch } from "../apps/api/src/contact.ts";
 
 const root = join(import.meta.dirname, "..");
 interface Expected {
@@ -48,7 +49,7 @@ for (const [id, expected] of GOLD) {
 for (const [id, expected] of ARXIV) {
   for (let attempt = 1; ; attempt++) {
     try {
-      const paper = await fetchArxivAbstract((url, init) => fetch(url, init), id);
+      const paper = await fetchArxivAbstract(outboundFetch(), id);
       papers.push({ id: `arxiv-${id.replace("/", "-")}`, title: paper.title, abstract: paper.abstract, equations: [], expected });
       break;
     } catch (error) {

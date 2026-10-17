@@ -7,6 +7,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { runJob, type JobSink, type JobSource } from "@paperplay/pipeline/controller";
+import type { Fetch } from "@paperplay/pipeline/ingest";
 import { budgetedClient, newTrace, type ModelClient } from "@paperplay/pipeline/models";
 import type { ModelConfig } from "./models/config.ts";
 import type { JobRunner } from "./jobs.ts";
@@ -30,7 +31,7 @@ export function workedExample(): string {
   ].join("\n");
 }
 
-export function pipelineRunner(client: ModelClient, config: ModelConfig, fetch: (url: string, init?: { readonly headers?: Record<string, string> }) => Promise<Response>): JobRunner {
+export function pipelineRunner(client: ModelClient, config: ModelConfig, fetch: Fetch): JobRunner {
   const example = workedExample();
   return async (source: JobSource, sink: JobSink, signal: AbortSignal) => {
     const trace = newTrace(config.jobTokenBudget);

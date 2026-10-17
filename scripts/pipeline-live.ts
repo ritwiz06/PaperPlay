@@ -21,6 +21,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { directoryStore, recordingClient, replayClient, resumingClient } from "@paperplay/pipeline/models";
+import { outboundFetch } from "../apps/api/src/contact.ts";
 import { CONFIG_FILE, loadModelConfig } from "../apps/api/src/models/config.ts";
 import { liveClient } from "../apps/api/src/models/live.ts";
 import { pipelineRunner } from "../apps/api/src/runner.ts";
@@ -29,6 +30,7 @@ import { runDesignBakeoff, type DesignResults } from "./bakeoff/design.ts";
 import { rankReaders, toModelsMarkdown, transcriberPair } from "./bakeoff/report.ts";
 import { agreement, CANDIDATES, runBakeoff, type BakeoffResults } from "./bakeoff/run.ts";
 import { probeModel, type ProbeResult } from "./live/probe.ts";
+import { heldLocks, holdLock, lockDir, whyNoLive } from "./machine/locks.ts";
 
 const RECORDINGS = join(import.meta.dirname, "..", "fixtures", "recordings");
 const [command] = process.argv.slice(2);
@@ -176,7 +178,7 @@ async function serve(): Promise<void> {
   // A call already recorded is replayed, so a job run again is the same job, at once.
   const client = resumingClient(liveClient(config), directoryStore(RECORDINGS));
   const port = Number(process.env.PORT ?? 8787);
-  const app = buildServer({ runner: pipelineRunner(client, config, (url, init) => fetch(url, init)) });
+  const app = buildServer({ runner: pipelineRunner(client, config, outboundFetch()) });
   await app.listen({ host: "127.0.0.1", port });
   console.log(`PaperPlay API listening on http://127.0.0.1:${port}, with live model calls, recorded`);
 }
@@ -186,5 +188,16 @@ const run = command === undefined ? undefined : commands[command];
 if (!run) {
   console.error(`usage: npm run pipeline:live -- <${Object.keys(commands).join("|")}>`);
   process.exit(2);
+}
+// Live jobs and gates never share the machine (ADR-0039): a command that calls the gateway holds
+// a live lock while it runs, and does not start while a gate runs. rescore and report call nothing.
+if (!["rescore", "report"].includes(command ?? "")) {
+  const locks = lockDir(join(import.meta.dirname, ".."));
+  const refusal = whyNoLive(heldLocks(locks, "gate"));
+  if (refusal !== null) {
+    console.error(`pipeline:live refused: ${refusal}.`);
+    process.exit(1);
+  }
+  holdLock(locks, "live", `pipeline:live ${command ?? ""}`);
 }
 await run();
