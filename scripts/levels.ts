@@ -25,7 +25,7 @@ const runtime = `node ${process.versions.node}`;
 function flocking(): Swept {
   const world = referenceWorld();
   const levels = sweepLevels(world);
-  const text = toMarkdown(levels, rejoinCandidate(), { primitive: `${flock.id}@${flock.version}`, runtime, status: `a ${world.status}` });
+  const text = toMarkdown(levels, rejoinCandidate(), { primitive: `${flock.id}@${flock.version}`, runtime, status: world.status === "reviewed" ? "reviewed against its source map (ADR-0045)" : "a draft" });
   return { fixture: "flocking-reference.json", record: "levels.md", text, levels, accurate: true };
 }
 

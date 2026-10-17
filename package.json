@@ -27,6 +27,8 @@
     "sweep:groups": "node scripts/group-measure.ts",
     "sweep:levels": "node scripts/levels.ts",
     "fixture:threshold-town": "node scripts/threshold-town.ts",
+    "sources:map": "node scripts/source-map.ts map",
+    "sources:check": "node scripts/source-map.ts check",
     "pipeline:live": "node scripts/pipeline-live.ts",
     "ingest": "node scripts/ingest.ts",
     "routing-set": "node scripts/routing-set.ts",

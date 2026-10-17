@@ -73,6 +73,27 @@
       "accessedAt": "2026-10-14T20:24:55.386Z",
       "textKept": true,
       "attribution": "Tinashe Victor Mupedza et al., \"Modeling the effects of treatment adherence challenges on the transmission dynamics of hepatitis C virus\", 2025, PLOS One. Licence: https://creativecommons.org/licenses/by/4.0/."
+    },
+    {
+      "sourceId": "reynolds1987",
+      "title": "Flocks, Herds, and Schools: A Distributed Behavioral Model",
+      "authors": [
+        "Craig W. Reynolds"
+      ],
+      "year": 1987,
+      "venue": "Computer Graphics 21(4), SIGGRAPH '87 Conference Proceedings, 25–34",
+      "identifiers": {
+        "doi": "10.1145/37402.37406",
+        "url": "https://www.red3d.com/cwr/papers/1987/SIGGRAPH87.pdf"
+      },
+      "route": "pdf-text",
+      "licence": "other",
+      "licenceUrl": "https://www.red3d.com/cwr/boids/",
+      "licenceEvidence": "Copyright 1987 ACM. The copy read is the author's own, on his site red3d.com, linked from his boids page: a reprint of 1995 made by OCR from the printed pages, without the figures, which its first page says may hold OCR errors. No licence beyond reading is stated, so only anchors and short quotes are kept, and the text is not.",
+      "sha256": "51d39235fc07ddeeb4dea0c7ad780a8c5785a7961982e52447da72a28fd103b0",
+      "accessedAt": "2026-10-17T19:01:24.059Z",
+      "textKept": false,
+      "attribution": "Craig W. Reynolds, “Flocks, Herds, and Schools: A Distributed Behavioral Model”, Computer Graphics 21(4), SIGGRAPH '87, 25–34. © 1987 ACM. Quoted from the author's copy at red3d.com."
     }
   ]
 }

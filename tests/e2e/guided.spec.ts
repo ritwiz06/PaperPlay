@@ -68,7 +68,7 @@ for (const size of SIZES) {
       // Seed 5: seeing the whole flock reaches agreement 0.9 at 19.6 s, against 17.7 s.
       await expect(note).toContainText("On this sky: About the same, or slower.");
       await expect(note).toContainText("The paper argues that a bird perceives only the flockmates near it");
-      await expect(note.locator(".origin-tag-placeholder")).toHaveCount(1);
+      await expect(note.locator(".origin-tag-placeholder")).toHaveCount(0);
       await expect(note).toContainText("Why might seeing more birds not help a flock agree sooner?");
       await expect(page.locator("[data-effect]")).toContainText("Seeing the whole flock does not reliably bring order sooner");
       await expect(page.locator("main")).not.toContainText(/\b(right|wrong|correct|incorrect|score|points?)\b/i);

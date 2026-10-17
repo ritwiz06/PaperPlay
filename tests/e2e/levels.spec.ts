@@ -104,7 +104,8 @@ test("[R06] the journal gains each level's page as it is reached; the bonus page
   await expect(journal.locator("[data-page]")).toHaveCount(6);
   await expect(journal.locator(".locked-list")).toHaveCount(0);
   for (const level of LEVELS.slice(0, 5)) {
-    await expect(journal.locator(`[data-page="${level.id}"] .passage .origin-tag`)).toHaveText(/Paper.*placeholder/);
+    await expect(journal.locator(`[data-page="${level.id}"] .passage .origin-tag-paper-derived`)).toBeVisible();
+    await expect(journal.locator(`[data-page="${level.id}"] .passage .origin-tag-placeholder`)).toHaveCount(0);
   }
   const bonus = journal.locator('[data-page="result"]');
   await expect(bonus.locator(".page-level")).toContainText("a bonus page");

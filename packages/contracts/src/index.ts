@@ -12,6 +12,7 @@ export * from "./primitive.ts";
 export * from "./provenance.ts";
 export * from "./run.ts";
 export * from "./source.ts";
+export * from "./sourcemap.ts";
 export * from "./time.ts";
 export * from "./worldspec.ts";
 export * from "./worldspec-v3.ts";

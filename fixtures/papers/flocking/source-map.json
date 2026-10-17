@@ -1,0 +1,220 @@
+{
+  "schemaVersion": "sourcemap/1",
+  "sourceId": "reynolds1987",
+  "url": "https://www.red3d.com/cwr/papers/1987/SIGGRAPH87.pdf",
+  "sha256": "51d39235fc07ddeeb4dea0c7ad780a8c5785a7961982e52447da72a28fd103b0",
+  "textSha256": "b93939655edc497fe27843d52330c0019734ae20a5fbf0ea85679521d44d4263",
+  "textLength": 61578,
+  "manifest": {
+    "schemaVersion": "sourcemanifest/1",
+    "sourceId": "reynolds1987",
+    "title": "Flocks, Herds, and Schools: A Distributed Behavioral Model",
+    "authors": [
+      "Craig W. Reynolds"
+    ],
+    "year": 1987,
+    "venue": "Computer Graphics 21(4), SIGGRAPH '87 Conference Proceedings, 25–34",
+    "sha256": "51d39235fc07ddeeb4dea0c7ad780a8c5785a7961982e52447da72a28fd103b0",
+    "accessedAt": "2026-10-17T19:01:24.059Z",
+    "localCopyPermitted": false,
+    "sections": [
+      {
+        "id": "page-1",
+        "title": "Page 1"
+      },
+      {
+        "id": "page-2",
+        "title": "Page 2"
+      },
+      {
+        "id": "page-3",
+        "title": "Page 3"
+      },
+      {
+        "id": "page-4",
+        "title": "Page 4"
+      },
+      {
+        "id": "page-5",
+        "title": "Page 5"
+      },
+      {
+        "id": "page-6",
+        "title": "Page 6"
+      },
+      {
+        "id": "page-7",
+        "title": "Page 7"
+      },
+      {
+        "id": "page-8",
+        "title": "Page 8"
+      },
+      {
+        "id": "page-9",
+        "title": "Page 9"
+      },
+      {
+        "id": "page-10",
+        "title": "Page 10"
+      },
+      {
+        "id": "page-11",
+        "title": "Page 11"
+      },
+      {
+        "id": "page-12",
+        "title": "Page 12"
+      },
+      {
+        "id": "page-13",
+        "title": "Page 13"
+      }
+    ]
+  },
+  "claims": [
+    {
+      "id": "emergence",
+      "paraphrase": "A flock's motion is the result of many birds each following simple behaviours.",
+      "anchor": {
+        "sourceId": "reynolds1987",
+        "sectionId": "page-1",
+        "charStart": 1000,
+        "charEnd": 1152,
+        "quote": "The aggregate motion of the simulated flock is the result of the dense interaction of the relatively simple behaviors of the individual simulated birds."
+      }
+    },
+    {
+      "id": "own-course",
+      "paraphrase": "The model is distributed: no bird leads, each chooses its own course.",
+      "anchor": {
+        "sourceId": "reynolds1987",
+        "sectionId": "page-1",
+        "charStart": 584,
+        "charEnd": 750,
+        "quote": "The aggregate motion of the simulated flock is created by a distributed behavioral model much like that at work in a natural flock; the birds choose their own course."
+      }
+    },
+    {
+      "id": "local-perception",
+      "paraphrase": "A bird in a large flock perceives only part of it: what is near it.",
+      "anchor": {
+        "sourceId": "reynolds1987",
+        "sectionId": "page-5",
+        "charStart": 22722,
+        "charEnd": 22812,
+        "quote": "an individual bird must have a localized and filtered perception of the rest of the flock."
+      }
+    },
+    {
+      "id": "locality-matters",
+      "paraphrase": "Flocking depends on each bird's limited, local view.",
+      "anchor": {
+        "sourceId": "reynolds1987",
+        "sectionId": "page-7",
+        "charStart": 33948,
+        "charEnd": 34091,
+        "quote": "the aggregate motion that we intuitively recognize as \"flocking\" (or schooling or herding) depends upon a limited, localized view of the world."
+      }
+    },
+    {
+      "id": "nearby-flockmates",
+      "paraphrase": "Every behaviour is stated in terms of the flockmates near a bird.",
+      "anchor": {
+        "sourceId": "reynolds1987",
+        "sectionId": "page-8",
+        "charStart": 34093,
+        "charEnd": 34182,
+        "quote": "The behaviors that make up the flocking model are stated in terms of \"nearby flockmates.\""
+      }
+    },
+    {
+      "id": "collision-avoidance",
+      "paraphrase": "The first behaviour: avoid colliding with nearby flockmates.",
+      "anchor": {
+        "sourceId": "reynolds1987",
+        "sectionId": "page-6",
+        "charStart": 24336,
+        "charEnd": 24399,
+        "quote": "1. Collision Avoidance: avoid collisions with nearby flockmates"
+      }
+    },
+    {
+      "id": "velocity-matching",
+      "paraphrase": "The second behaviour: match the velocity of nearby flockmates.",
+      "anchor": {
+        "sourceId": "reynolds1987",
+        "sectionId": "page-6",
+        "charStart": 24400,
+        "charEnd": 24470,
+        "quote": "2. Velocity Matching: attempt to match velocity with nearby flockmates"
+      }
+    },
+    {
+      "id": "flock-centering",
+      "paraphrase": "The third behaviour: stay close to nearby flockmates.",
+      "anchor": {
+        "sourceId": "reynolds1987",
+        "sectionId": "page-6",
+        "charStart": 24471,
+        "charEnd": 24533,
+        "quote": "3. Flock Centering: attempt to stay close to nearby flockmates"
+      }
+    },
+    {
+      "id": "static-avoidance",
+      "paraphrase": "Collision avoidance reads where flockmates are, not how they move.",
+      "anchor": {
+        "sourceId": "reynolds1987",
+        "sectionId": "page-6",
+        "charStart": 25306,
+        "charEnd": 25412,
+        "quote": "Static collision avoidance is based on the relative position of the flockmates and ignores their velocity."
+      }
+    },
+    {
+      "id": "split-around-obstacles",
+      "paraphrase": "Real flocks split to pass an obstacle, and a model must too.",
+      "anchor": {
+        "sourceId": "reynolds1987",
+        "sectionId": "page-6",
+        "charStart": 26877,
+        "charEnd": 26936,
+        "quote": "Real flocks sometimes split apart to go around an obstacle."
+      }
+    },
+    {
+      "id": "split-and-join",
+      "paraphrase": "Flocks join, and around obstacles a large flock can split into smaller ones.",
+      "anchor": {
+        "sourceId": "reynolds1987",
+        "sectionId": "page-8",
+        "charStart": 37569,
+        "charEnd": 37738,
+        "quote": "Solitary boids and smaller flocks join to become larger flocks, and in the presence of external obstacles (discussed below), larger flocks can split into smaller flocks."
+      }
+    },
+    {
+      "id": "obstacle-planning",
+      "paraphrase": "Avoiding an obstacle is planned early, not corrected at the last moment.",
+      "anchor": {
+        "sourceId": "reynolds1987",
+        "sectionId": "page-9",
+        "charStart": 44495,
+        "charEnd": 44602,
+        "quote": "avoiding an obstacle should involve long-range planning rather than panicky corrections at the last minute."
+      }
+    },
+    {
+      "id": "obstacle-priority",
+      "paraphrase": "Avoiding an obstacle can override flock centering for a time.",
+      "anchor": {
+        "sourceId": "reynolds1987",
+        "sectionId": "page-7",
+        "charStart": 32024,
+        "charEnd": 32138,
+        "quote": "the flock centering urge could be correctly ignored temporarily in favor of a maneuver to avoid a static obstacle."
+      }
+    }
+  ]
+}

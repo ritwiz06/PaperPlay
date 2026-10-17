@@ -15,10 +15,18 @@ describe("[R03] a gate's reviewed worlds", () => {
     expect(gates.gates.G1?.reviewedWorlds).toBeUndefined();
   });
 
-  it("refuses the flocking world while it is a draft, naming its placeholders and pending source", () => {
-    const problems = reviewProblems(path, reference);
+  it("passes the flocking world, reviewed against its source map (ADR-0045)", () => {
+    expect(reviewProblems(path, reference)).toEqual([]);
+  });
+
+  it("refuses a draft, naming its placeholders and pending source", () => {
+    // The world as it was before its source map: every anchor a placeholder, its source pending.
+    const asDraft = (value: unknown): unknown =>
+      Array.isArray(value) ? value.map(asDraft) : typeof value === "object" && value !== null ? Object.fromEntries(Object.entries(value).map(([key, child]) => [key, key === "anchors" && Array.isArray(child) ? child.map(() => ({ placeholder: true, sourceId: "reynolds1987", need: "A passage." })) : asDraft(child)])) : value;
+    const draft = { ...(asDraft(reference) as object), status: "draft", source: { pending: true, sourceId: "reynolds1987", title: "A paper", authors: ["A. Author"], year: 1987, need: "Its PDF." } };
+    const problems = reviewProblems(path, draft);
     expect(problems).toHaveLength(1);
-    expect(problems[0]).toMatch(/is a draft: it holds \d+ placeholder anchors, and its source is pending/);
+    expect(problems[0]).toMatch(/is a draft: it holds \d+ placeholder anchors?, and its source is pending/);
   });
 
   it("passes a reviewed spec, whose anchors are all real", () => {
@@ -27,6 +35,6 @@ describe("[R03] a gate's reviewed worlds", () => {
 
   it("refuses a spec that does not parse, and a draft even with every anchor real", () => {
     expect(reviewProblems(path, { ...reference, schemaVersion: "worldspec/1" })[0]).toMatch(/is not a valid WorldSpec/);
-    expect(reviewProblems(path, { ...reference, status: "reviewed" })[0]).toMatch(/is not a valid WorldSpec/);
+    expect(reviewProblems(path, { ...reference, source: { pending: true, sourceId: "reynolds1987", title: "A paper", authors: ["A. Author"], year: 1987, need: "Its PDF." } })[0]).toMatch(/is not a valid WorldSpec/);
   });
 });

@@ -84,7 +84,7 @@ test.describe("on a desktop", () => {
     await expect(pageForHook).toHaveClass(/highlighted/);
     const passage = pageForHook.getByRole("button", { name: /Try it: Move together/ });
     await expect(passage).toBeFocused();
-    await expect(passage).toContainText("Placeholder");
+    await expect(passage).toContainText("2. Velocity Matching: attempt to match velocity with nearby flockmates");
 
     await passage.click();
     await expect(page.getByRole("slider", { name: "Move together" })).toBeFocused();
@@ -99,10 +99,11 @@ test.describe("on a desktop", () => {
     await expect(pageForHook).toHaveClass(/highlighted/);
   });
 
-  test("[R05] the control's chip says its rule is paper-derived, a placeholder until the source map; its name and range are teaching choices in the journal", async ({ page }) => {
+  test("[R05] the control's chip says its rule is paper-derived, anchored in the source map; its name and range are teaching choices in the journal", async ({ page }) => {
     await openHook(page);
     const card = page.getByRole("region", { name: "A flock with no leader" });
-    await expect(card.locator(".control-line .origin-tag")).toHaveText(/Paper.*placeholder/);
+    await expect(card.locator(".control-line .origin-tag")).toHaveText(/Paper/);
+    await expect(card.locator(".control-line .origin-tag-placeholder")).toHaveCount(0);
     await expect(card.locator(".control-line .origin-tag-teaching-choice")).toHaveCount(0);
     await page.getByRole("button", { name: "Journal" }).click();
     const detail = page.locator('[data-page="hook"] .page-detail');

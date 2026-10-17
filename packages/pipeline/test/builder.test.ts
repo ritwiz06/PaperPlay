@@ -24,11 +24,11 @@ const level = (spec: typeof reference, index: number): Record<string, Record<str
 const pathsOf = (result: BuildResult): string[] => (result.ok ? [] : result.problems.map((problem) => problem.path));
 
 describe("[R08] the builder", () => {
-  it("builds the reference world: six levels on flock.planar.weighted@3.1.0, a draft", () => {
+  it("builds the reference world: six levels on flock.planar.weighted@3.1.0, reviewed", () => {
     const result = buildWorld(reference, registry);
     expect(result.ok, JSON.stringify(result.ok ? null : result.problems)).toBe(true);
     if (!result.ok) return;
-    expect(result.world.status).toBe("draft");
+    expect(result.world.status).toBe("reviewed");
     expect(result.world.levels.map((built) => built.id)).toEqual(["hook", "background", "idea", "method", "evaluation", "result"]);
     expect(result.world.levels.every((built) => built.primitive === registry.get({ id: "flock.planar.weighted", version: "3.1.0" }))).toBe(true);
   });

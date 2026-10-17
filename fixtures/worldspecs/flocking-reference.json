@@ -1,9 +1,9 @@
 {
   "schemaVersion": "worldspec/3",
-  "status": "draft",
+  "status": "reviewed",
   "title": "Murmuration Valley",
   "source": {
-    "pending": true,
+    "schemaVersion": "sourcemanifest/1",
     "sourceId": "reynolds1987",
     "title": "Flocks, Herds, and Schools: A Distributed Behavioral Model",
     "authors": [
@@ -11,7 +11,63 @@
     ],
     "year": 1987,
     "venue": "Computer Graphics 21(4), SIGGRAPH '87 Conference Proceedings, 25–34",
-    "need": "The owner's PDF, for the source map: its digest, sections, pages and character ranges."
+    "sha256": "51d39235fc07ddeeb4dea0c7ad780a8c5785a7961982e52447da72a28fd103b0",
+    "accessedAt": "2026-10-17T19:01:24.059Z",
+    "localCopyPermitted": false,
+    "sections": [
+      {
+        "id": "page-1",
+        "title": "Page 1"
+      },
+      {
+        "id": "page-2",
+        "title": "Page 2"
+      },
+      {
+        "id": "page-3",
+        "title": "Page 3"
+      },
+      {
+        "id": "page-4",
+        "title": "Page 4"
+      },
+      {
+        "id": "page-5",
+        "title": "Page 5"
+      },
+      {
+        "id": "page-6",
+        "title": "Page 6"
+      },
+      {
+        "id": "page-7",
+        "title": "Page 7"
+      },
+      {
+        "id": "page-8",
+        "title": "Page 8"
+      },
+      {
+        "id": "page-9",
+        "title": "Page 9"
+      },
+      {
+        "id": "page-10",
+        "title": "Page 10"
+      },
+      {
+        "id": "page-11",
+        "title": "Page 11"
+      },
+      {
+        "id": "page-12",
+        "title": "Page 12"
+      },
+      {
+        "id": "page-13",
+        "title": "Page 13"
+      }
+    ]
   },
   "digest": {
     "question": "How can a flock move as one when no bird leads?",
@@ -19,9 +75,11 @@
       "text": "Each bird follows a few simple rules about the birds near it, and the flock's motion emerges from them.",
       "anchors": [
         {
-          "placeholder": true,
           "sourceId": "reynolds1987",
-          "need": "The paper's statement that flock motion emerges from each bird's local behaviours."
+          "sectionId": "page-1",
+          "charStart": 1000,
+          "charEnd": 1152,
+          "quote": "The aggregate motion of the simulated flock is the result of the dense interaction of the relatively simple behaviors of the individual simulated birds."
         }
       ]
     },
@@ -32,9 +90,18 @@
         "dependsOn": [],
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "reynolds1987",
-            "need": "The paper's argument that a flock member perceives only nearby flockmates, and why that locality matters."
+            "sectionId": "page-5",
+            "charStart": 22722,
+            "charEnd": 22812,
+            "quote": "an individual bird must have a localized and filtered perception of the rest of the flock."
+          },
+          {
+            "sourceId": "reynolds1987",
+            "sectionId": "page-7",
+            "charStart": 33948,
+            "charEnd": 34091,
+            "quote": "the aggregate motion that we intuitively recognize as \"flocking\" (or schooling or herding) depends upon a limited, localized view of the world."
           }
         ],
         "origin": "paper-derived"
@@ -47,9 +114,25 @@
         ],
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "reynolds1987",
-            "need": "The paper's statement of its three behaviours, and its description of collision avoidance."
+            "sectionId": "page-6",
+            "charStart": 24336,
+            "charEnd": 24399,
+            "quote": "1. Collision Avoidance: avoid collisions with nearby flockmates"
+          },
+          {
+            "sourceId": "reynolds1987",
+            "sectionId": "page-6",
+            "charStart": 24400,
+            "charEnd": 24470,
+            "quote": "2. Velocity Matching: attempt to match velocity with nearby flockmates"
+          },
+          {
+            "sourceId": "reynolds1987",
+            "sectionId": "page-6",
+            "charStart": 24471,
+            "charEnd": 24533,
+            "quote": "3. Flock Centering: attempt to stay close to nearby flockmates"
           }
         ],
         "origin": "paper-derived"
@@ -62,9 +145,18 @@
         ],
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "reynolds1987",
-            "need": "The paper's statement that flock motion emerges from each bird's local behaviours."
+            "sectionId": "page-1",
+            "charStart": 1000,
+            "charEnd": 1152,
+            "quote": "The aggregate motion of the simulated flock is the result of the dense interaction of the relatively simple behaviors of the individual simulated birds."
+          },
+          {
+            "sourceId": "reynolds1987",
+            "sectionId": "page-1",
+            "charStart": 584,
+            "charEnd": 750,
+            "quote": "The aggregate motion of the simulated flock is created by a distributed behavioral model much like that at work in a natural flock; the birds choose their own course."
           }
         ],
         "origin": "paper-derived"
@@ -147,9 +239,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "reynolds1987",
-            "need": "The paper's description of velocity matching: a bird matching the velocity of the flockmates near it."
+            "sectionId": "page-6",
+            "charStart": 24400,
+            "charEnd": 24470,
+            "quote": "2. Velocity Matching: attempt to match velocity with nearby flockmates"
           }
         ]
       },
@@ -248,9 +342,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "reynolds1987",
-            "need": "The paper's description of velocity matching: a bird matching the velocity of the flockmates near it."
+            "sectionId": "page-6",
+            "charStart": 24400,
+            "charEnd": 24470,
+            "quote": "2. Velocity Matching: attempt to match velocity with nearby flockmates"
           }
         ]
       },
@@ -300,13 +396,15 @@
         "observeMetricId": "directionalAgreement",
         "explainPrompt": "Why does copying the headings of nearby birds, and nothing more, line up the whole flock?",
         "explanation": {
-          "text": "The paper says that matching the velocity of nearby flockmates is what keeps a flock flying the same way.",
+          "text": "The paper's second behaviour is velocity matching: each bird attempts to match velocity with the flockmates near it.",
           "origin": "paper-derived",
           "anchors": [
             {
-              "placeholder": true,
               "sourceId": "reynolds1987",
-              "need": "The paper's description of velocity matching, and how it keeps a flock flying the same way."
+              "sectionId": "page-6",
+              "charStart": 24400,
+              "charEnd": 24470,
+              "quote": "2. Velocity Matching: attempt to match velocity with nearby flockmates"
             }
           ]
         }
@@ -342,9 +440,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "reynolds1987",
-            "need": "The paper's argument that a flock member perceives only nearby flockmates, and why that locality matters."
+            "sectionId": "page-8",
+            "charStart": 34093,
+            "charEnd": 34182,
+            "quote": "The behaviors that make up the flocking model are stated in terms of \"nearby flockmates.\""
           }
         ]
       },
@@ -444,9 +544,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "reynolds1987",
-            "need": "The paper's argument that a flock member perceives only nearby flockmates, and why that locality matters."
+            "sectionId": "page-5",
+            "charStart": 22722,
+            "charEnd": 22812,
+            "quote": "an individual bird must have a localized and filtered perception of the rest of the flock."
           }
         ]
       },
@@ -495,13 +597,22 @@
         "observeMetricId": "directionalAgreement",
         "explainPrompt": "Why might seeing more birds not help a flock agree sooner?",
         "explanation": {
-          "text": "The paper argues that a bird perceives only the flockmates near it, and says why that locality matters.",
+          "text": "The paper argues that a bird perceives only the flockmates near it, and that flocking depends on that limited, local view.",
           "origin": "paper-derived",
           "anchors": [
             {
-              "placeholder": true,
               "sourceId": "reynolds1987",
-              "need": "The paper's argument that a flock member perceives only nearby flockmates, and why that locality matters."
+              "sectionId": "page-5",
+              "charStart": 22722,
+              "charEnd": 22812,
+              "quote": "an individual bird must have a localized and filtered perception of the rest of the flock."
+            },
+            {
+              "sourceId": "reynolds1987",
+              "sectionId": "page-7",
+              "charStart": 33948,
+              "charEnd": 34091,
+              "quote": "the aggregate motion that we intuitively recognize as \"flocking\" (or schooling or herding) depends upon a limited, localized view of the world."
             }
           ]
         }
@@ -537,9 +648,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "reynolds1987",
-            "need": "The paper's statement of its three behaviours, and its description of collision avoidance."
+            "sectionId": "page-6",
+            "charStart": 24336,
+            "charEnd": 24399,
+            "quote": "1. Collision Avoidance: avoid collisions with nearby flockmates"
           }
         ]
       },
@@ -638,9 +751,25 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "reynolds1987",
-            "need": "The paper's statement of its three behaviours, and its description of collision avoidance."
+            "sectionId": "page-6",
+            "charStart": 24336,
+            "charEnd": 24399,
+            "quote": "1. Collision Avoidance: avoid collisions with nearby flockmates"
+          },
+          {
+            "sourceId": "reynolds1987",
+            "sectionId": "page-6",
+            "charStart": 24400,
+            "charEnd": 24470,
+            "quote": "2. Velocity Matching: attempt to match velocity with nearby flockmates"
+          },
+          {
+            "sourceId": "reynolds1987",
+            "sectionId": "page-6",
+            "charStart": 24471,
+            "charEnd": 24533,
+            "quote": "3. Flock Centering: attempt to stay close to nearby flockmates"
           }
         ]
       },
@@ -694,9 +823,11 @@
           "origin": "paper-derived",
           "anchors": [
             {
-              "placeholder": true,
               "sourceId": "reynolds1987",
-              "need": "The paper's description of collision avoidance, the urge to keep away from nearby flockmates."
+              "sectionId": "page-6",
+              "charStart": 24336,
+              "charEnd": 24399,
+              "quote": "1. Collision Avoidance: avoid collisions with nearby flockmates"
             }
           ]
         }
@@ -732,9 +863,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "reynolds1987",
-            "need": "The paper's description of flock centering."
+            "sectionId": "page-6",
+            "charStart": 24471,
+            "charEnd": 24533,
+            "quote": "3. Flock Centering: attempt to stay close to nearby flockmates"
           }
         ]
       },
@@ -833,9 +966,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "reynolds1987",
-            "need": "The paper's description of flock centering."
+            "sectionId": "page-6",
+            "charStart": 24471,
+            "charEnd": 24533,
+            "quote": "3. Flock Centering: attempt to stay close to nearby flockmates"
           }
         ]
       },
@@ -885,13 +1020,15 @@
         "observeMetricId": "groupSpread",
         "explainPrompt": "Why does a flock need a pull toward its middle, as well as matching headings?",
         "explanation": {
-          "text": "The paper's flock centering is the urge to stay close to nearby flockmates; without it, nothing pulls a straying bird back.",
+          "text": "The paper's third behaviour is flock centering: each bird attempts to stay close to the flockmates near it.",
           "origin": "paper-derived",
           "anchors": [
             {
-              "placeholder": true,
               "sourceId": "reynolds1987",
-              "need": "The paper's description of flock centering, the urge to stay close to nearby flockmates."
+              "sectionId": "page-6",
+              "charStart": 24471,
+              "charEnd": 24533,
+              "quote": "3. Flock Centering: attempt to stay close to nearby flockmates"
             }
           ]
         }
@@ -927,9 +1064,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "reynolds1987",
-            "need": "The paper's discussion of avoiding environmental obstacles, and its observation that flocks split around obstacles and re-form."
+            "sectionId": "page-9",
+            "charStart": 44495,
+            "charEnd": 44602,
+            "quote": "avoiding an obstacle should involve long-range planning rather than panicky corrections at the last minute."
           }
         ]
       },
@@ -1061,9 +1200,18 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "reynolds1987",
-            "need": "The paper's discussion of avoiding environmental obstacles, and its observation that flocks split around obstacles and re-form."
+            "sectionId": "page-6",
+            "charStart": 26877,
+            "charEnd": 26936,
+            "quote": "Real flocks sometimes split apart to go around an obstacle."
+          },
+          {
+            "sourceId": "reynolds1987",
+            "sectionId": "page-8",
+            "charStart": 37569,
+            "charEnd": 37738,
+            "quote": "Solitary boids and smaller flocks join to become larger flocks, and in the presence of external obstacles (discussed below), larger flocks can split into smaller flocks."
           }
         ]
       },
@@ -1108,13 +1256,15 @@
         "observeMetricId": "birdsAtObstacles",
         "explainPrompt": "What would a flock model that ignores rocks fail to show about real flocks?",
         "explanation": {
-          "text": "The paper treats avoiding obstacles as a behaviour of its own, added to the three urges: without it, nothing turns a bird from a rock.",
+          "text": "The paper treats avoiding an obstacle as a manoeuvre of its own, which may for a while override flock centering.",
           "origin": "paper-derived",
           "anchors": [
             {
-              "placeholder": true,
               "sourceId": "reynolds1987",
-              "need": "The paper's discussion of avoiding environmental obstacles."
+              "sectionId": "page-7",
+              "charStart": 32024,
+              "charEnd": 32138,
+              "quote": "the flock centering urge could be correctly ignored temporarily in favor of a maneuver to avoid a static obstacle."
             }
           ]
         }

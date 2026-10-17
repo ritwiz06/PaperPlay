@@ -124,10 +124,10 @@ describe("[R06] guided exploration, from level 2's script", () => {
       ["learner", "You said: Faster."],
       ["computed-observation", "On this sky: About the same, or slower."],
       ["computed-observation", "Across 20 skies: Faster on 6, about the same, or slower on 14."],
-      ["paper-derived", "The paper argues that a bird perceives only the flockmates near it, and says why that locality matters."],
+      ["paper-derived", "The paper argues that a bird perceives only the flockmates near it, and that flocking depends on that limited, local view."],
       ["teaching-choice", "Why might seeing more birds not help a flock agree sooner?"],
     ]);
-    expect(done[3]?.placeholder).toBe(true);
+    expect(done[3]?.placeholder).toBe(false);
     const words = done.map((line) => line.text).join(" ");
     expect(words).not.toMatch(/\b(right|wrong|correct|incorrect|score|points?)\b/i);
   });
