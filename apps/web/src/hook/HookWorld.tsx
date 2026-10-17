@@ -558,6 +558,7 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
             kicker={level.bonus ? `Bonus level, ${level.order} of ${LEVELS.length}` : `Level ${level.order} of ${LEVELS.length}`}
             title={level.title}
             goal={level.goal}
+            {...(level.observation ? { observation: { text: level.observation.text, origin: level.observation.origin } } : {})}
             control={{
               label: level.action.label,
               min,
@@ -659,6 +660,7 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
         })}
         stillToFind={LEVELS.filter((entry) => !visited.has(entry.id)).map((entry) => ({ number: entry.order, title: entry.bonus ? `Bonus: ${entry.title}` : entry.title }))}
         cannotShow={cannotShow}
+        ownNumbers={(WORLD.ownNumbers?.statements ?? []).map((statement) => ({ text: statement.text, origin: statement.origin, placeholder: placeholderOnly(statement.anchors) }))}
       />
     </main>
   );

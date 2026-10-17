@@ -113,6 +113,10 @@ export type EquationsBinding = z.infer<typeof EquationsBinding>;
 export const BindingV3 = z.discriminatedUnion("type", [...Binding.options, EquationsBinding]);
 export type BindingV3 = z.infer<typeof BindingV3>;
 
+/** Something the world cannot show, with where the statement comes from: its journal page says each one. */
+export const Limit = z.strictObject({ text: z.string().min(1), origin: Origin, anchors: z.array(AnchorRef) }).refine(paperDerivedHasAnchors, NEEDS_ANCHOR);
+export type Limit = z.infer<typeof Limit>;
+
 /**
  * Exactly one manipulable and exactly one counterfactual, each a single object, never a list,
  * and a prediction before the What-if, which version 3 requires of every level (ADR-0023).
@@ -143,6 +147,12 @@ export const LevelV3 = z
     furtherReading: z.array(z.string().min(1)).max(3),
     /** One line: what you now know going into the next level. */
     carryForward: z.string().min(1),
+    /**
+     * What the level card states beside the goal when the level cannot test what the paper says as
+     * it says it: "At the values the paper lists in Table 1, R0 stays between 0.65 and 0.78 …", a
+     * computed observation from running the paper's own numbers (ADR-0040).
+     */
+    observation: Limit.optional(),
   })
   .refine((level) => level.guidedExploration.interveneActionId === level.manipulable.actionId, {
     error: "exploration must intervene on the level's manipulable",
@@ -203,9 +213,17 @@ export const DesignSpecV3 = z.strictObject({
 });
 export type DesignSpecV3 = z.infer<typeof DesignSpecV3>;
 
-/** Something the world cannot show, with where the statement comes from: its journal page says each one. */
-export const Limit = z.strictObject({ text: z.string().min(1), origin: Origin, anchors: z.array(AnchorRef) }).refine(paperDerivedHasAnchors, NEEDS_ANCHOR);
-export type Limit = z.infer<typeof Limit>;
+/**
+ * Running the paper's own numbers (ADR-0040): the reproduction number from the model's own
+ * equations beside the paper's formula, every value against its quote, and where else the check
+ * looked, each statement with its origin, for the journal's page of that name.
+ */
+export const OwnNumbers = z.strictObject({
+  /** Whether the paper's headline appears at the values it lists: "holds", "mismatch" when the check confirms it does not, "unresolved", or "not-applicable" when the headline states no threshold to check. */
+  verdict: z.enum(["holds", "mismatch", "unresolved", "not-applicable"]),
+  statements: z.array(Limit).min(1),
+});
+export type OwnNumbers = z.infer<typeof OwnNumbers>;
 
 export const WorldSpecV3 = z
   .strictObject({
@@ -227,6 +245,8 @@ export const WorldSpecV3 = z
     checks: z.strictObject({ suiteIds: z.array(Id).min(1), suiteVersions: z.record(Id, z.string().min(1)) }),
     /** What this world cannot show: at least one statement, each with its origin, for the journal's page. */
     limits: z.array(Limit).min(1),
+    /** The paper's own numbers, run again, for the journal's page: a generated world's, where the check ran (ADR-0040). */
+    ownNumbers: OwnNumbers.optional(),
   })
   .check((ctx) => {
     const spec = ctx.value;

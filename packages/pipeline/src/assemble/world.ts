@@ -11,6 +11,7 @@ import { formatUnit } from "@paperplay/primitives/compartments";
 import { chooseStep, defaultsOf } from "./model.ts";
 import type { Explanation, ExplainedLevel } from "../stages/explainer.ts";
 import type { Plan, PlanLevel } from "../stages/planner.ts";
+import type { ReproducibilityCheck } from "../reproduce/index.ts";
 import type { Reading } from "../stages/reader.ts";
 import { anchorOf, camelId, sameSymbol } from "../transcribe/convert.ts";
 
@@ -22,6 +23,8 @@ export interface AssembleInput {
   readonly plan: Plan;
   readonly explanation: Explanation;
   readonly routingReason: string;
+  /** The paper's own numbers, run again (ADR-0040): the journal's page, and level 1's observation when the headline's mismatch is confirmed. */
+  readonly ownNumbers?: Pick<ReproducibilityCheck, "verdict" | "statements" | "observation">;
 }
 
 export interface Assembled {
@@ -234,7 +237,9 @@ export function assembleWorld(input: AssembleInput): Assembled {
     };
   };
 
-  const levels = plan.levels.map((planned, index) => level(planned, explanation.levels[index], index));
+  // Level 1 says, as a computed observation, what the check confirmed: that the headline cannot appear here as the paper words it.
+  const observation = input.ownNumbers?.observation ?? null;
+  const levels = plan.levels.map((planned, index) => ({ ...level(planned, explanation.levels[index], index), ...(index === 0 && observation !== null ? { observation: { text: observation, origin: "computed-observation", anchors: [] } } : {}) }));
   const resultAnchors = anchored(reading.result.quote, "the paper's result");
   const claims = reading.findings.map((finding, index) => {
     const anchors = anchored(finding.quote, `finding ${index + 1}`);
@@ -278,6 +283,7 @@ export function assembleWorld(input: AssembleInput): Assembled {
       ...plan.limits.map((text) => ({ text, origin: "teaching-choice", anchors: [] })),
       { text: "A draft until the owner reviews it.", origin: "teaching-choice", anchors: [] },
     ],
+    ...(input.ownNumbers ? { ownNumbers: { verdict: input.ownNumbers.verdict, statements: input.ownNumbers.statements } } : {}),
   };
   return { spec, notes };
 }

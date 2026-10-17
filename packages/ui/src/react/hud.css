@@ -390,6 +390,16 @@
   margin: 2px 0 0;
   color: var(--sub);
 }
+/* What the level says of the paper's numbers, run again (ADR-0040): beside the goal, with its origin. */
+.level-observation {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 6px 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--ink);
+}
 .control-line {
   display: flex;
   flex-wrap: wrap;

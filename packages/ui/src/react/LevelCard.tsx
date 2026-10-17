@@ -27,6 +27,8 @@ export interface LevelCardProps {
   readonly title: string;
   /** One sentence: what to do here. */
   readonly goal: string;
+  /** Said beside the goal, with its origin, when the level cannot test the paper's words as written (ADR-0040). */
+  readonly observation?: { readonly text: string; readonly origin: Origin };
   readonly control: LevelControl;
   readonly depth: Depth;
   /** The elements the level's depth variant shows, by id; every other element is hidden. */
@@ -54,7 +56,7 @@ const decimalsOf = (step: number): number => Math.max(0, -Math.floor(Math.log10(
  * one compact row (title, slider, readout, What if) and a chevron opens the rest.
  */
 export function LevelCard(props: LevelCardProps) {
-  const { kicker, title, goal, control, depth, visible, onDepth, onChange, onControlFocus, onFromPaper, readout, equation, whatIfOpen, whatIfId, onWhatIf, sliderRef } = props;
+  const { kicker, title, goal, observation, control, depth, visible, onDepth, onChange, onControlFocus, onFromPaper, readout, equation, whatIfOpen, whatIfId, onWhatIf, sliderRef } = props;
   const id = useId();
   const [expanded, setExpanded] = useState(false);
   const sliderId = `${id}-control`;
@@ -108,6 +110,12 @@ export function LevelCard(props: LevelCardProps) {
         <p id={`${id}-goal`} className="level-goal">
           {goal}
         </p>
+        {observation ? (
+          <p className="level-observation" data-observation>
+            <OriginTag origin={observation.origin} quiet />
+            <span>{observation.text}</span>
+          </p>
+        ) : null}
         <div className="control-line">
           <label htmlFor={sliderId}>{control.label}</label>
           <OriginTag origin={control.origin} placeholder={control.placeholder ?? false} quiet />

@@ -11,6 +11,7 @@ import { assembleWorld } from "../assemble/world.ts";
 import { chooseStep, describeBehaviour, describeResponse, horizonOf } from "../assemble/model.ts";
 import { buildWorld, type BuiltWorld } from "../builder/build.ts";
 import { checkProvenance } from "../checks/provenance.ts";
+import { runOwnNumbers } from "../reproduce/index.ts";
 import { fetchArxiv, fetchPmc, fromOwnerPdf, registerAndText, type Fetch } from "../ingest/index.ts";
 import { completeStructured, type ModelClient, type Stage } from "../models/index.ts";
 import { sweepLevels, type LevelResult } from "../rule/sweep.ts";
@@ -208,6 +209,13 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     say("transcription", `the two transcriptions agree up to renaming, values included${onSet}; the solver's step is ${dt} ${model.timeUnit}`);
     cancelled();
 
+    // Running the paper's own numbers (ADR-0040): deterministic, with no model call, before anything is planned.
+    const ownNumbers = runOwnNumbers({ source: text, model, headline: reading.value.result });
+    sink.artifact("own-numbers", ownNumbers);
+    say("own numbers", `running the paper's own numbers: ${ownNumbers.summary}`);
+    if (ownNumbers.stop !== null) throw new Stop("needs_information", ownNumbers.stop);
+    cancelled();
+
     say("planning", "planning the levels");
     const behaviour = describeBehaviour(model, horizon);
     const response = describeResponse(model, horizon);
@@ -256,7 +264,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     for (;;) {
       for (;;) {
         move("building", "assembly", "assembling the world and building it against the solver");
-        const assembled = assembleWorld({ source: text, register, reading: reading.value, model, plan, explanation, routingReason: routed.value.reason });
+        const assembled = assembleWorld({ source: text, register, reading: reading.value, model, plan, explanation, routingReason: routed.value.reason, ownNumbers });
         spec = assembled.spec;
         for (const note of assembled.notes) say("assembly", note);
         const result = buildWorld(spec, registry);

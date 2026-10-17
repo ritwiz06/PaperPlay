@@ -27,6 +27,7 @@ import {
   type LevelKind,
   type LevelV3,
   type Limit,
+  type OwnNumbers,
   type MeasuredDifferenceV3,
   type Observable,
   type Origin,
@@ -137,6 +138,8 @@ export interface BuiltLevel {
   readonly exploration: GuidedExploration;
   readonly furtherReading: readonly string[];
   readonly carryForward: string;
+  /** What the level card states beside the goal, when the level cannot test the paper's words as written (ADR-0040). */
+  readonly observation?: Limit;
 }
 
 export interface BuiltWorld {
@@ -157,6 +160,8 @@ export interface BuiltWorld {
   readonly levels: readonly BuiltLevel[];
   /** What the world cannot show, for its journal page. */
   readonly limits: readonly Limit[];
+  /** The paper's own numbers, run again, for its journal page (ADR-0040). */
+  readonly ownNumbers?: OwnNumbers;
 }
 
 export type BuildResult = { readonly ok: true; readonly world: BuiltWorld } | { readonly ok: false; readonly problems: readonly BuildProblem[] };
@@ -219,6 +224,7 @@ export function buildWorld(input: unknown, registry: PrimitiveRegistry): BuildRe
       openingSeed: spec.openingSeed,
       levels,
       limits: spec.limits,
+      ...(spec.ownNumbers ? { ownNumbers: spec.ownNumbers } : {}),
     }),
   };
 }
@@ -397,6 +403,7 @@ function buildLevel(level: LevelV3, at: (string | number)[], spec: WorldSpecV3, 
     exploration: level.guidedExploration,
     furtherReading: level.furtherReading,
     carryForward: level.carryForward,
+    ...(level.observation ? { observation: level.observation } : {}),
   };
 }
 

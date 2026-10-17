@@ -195,6 +195,12 @@ describe("[R10] [R11] the controller", () => {
     const swept = artifacts.get("level-rule") as { meets: boolean; holds: number }[];
     expect(swept.map((level) => level.meets)).toEqual([true, true, true]);
     expect(artifacts.get("provenance")).toEqual([]);
+    // The paper's own numbers ran before planning (ADR-0040); its headline states no threshold, so no level says anything of it.
+    expect(artifacts.get("own-numbers")).toMatchObject({ schemaVersion: "reproducibility/1", verdict: "not-applicable", stop: null, observation: null });
+    const world = artifacts.get("world") as { ownNumbers?: { verdict: string; statements: unknown[] }; levels: { observation?: unknown }[] };
+    expect(world.ownNumbers?.verdict).toBe("not-applicable");
+    expect(world.ownNumbers?.statements.length).toBeGreaterThan(0);
+    expect(world.levels.every((level) => level.observation === undefined)).toBe(true);
   }, 60_000);
 
   it("spends one repair when the two transcriptions disagree, and hands the job to the owner when they still do", async () => {

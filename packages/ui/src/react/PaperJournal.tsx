@@ -48,14 +48,16 @@ export interface PaperJournalProps {
   readonly onTryIt: (pageId: string) => void;
   /** What the world cannot show (ADR-0027): its limits, and how its scene kit draws what it does not measure. Open from the start. */
   readonly cannotShow?: readonly CannotShowItem[];
+  /** Running the paper's own numbers (ADR-0040): each statement with its origin. Open from the start. */
+  readonly ownNumbers?: readonly CannotShowItem[];
 }
 
 /**
  * The paper journal (ADR-0008): a slide-over, opened on demand, holding each reached level's
- * passage, the depth toggle, the page of what the world cannot show, and the origin legend. Opening it moves focus to the highlighted
+ * passage, the depth toggle, the page running the paper's own numbers, the page of what the world cannot show, and the origin legend. Opening it moves focus to the highlighted
  * passage, or to Close; Escape closes it.
  */
-export function PaperJournal({ open, onClose, depth, onDepth, pages, stillToFind, highlighted, onTryIt, cannotShow = [] }: PaperJournalProps) {
+export function PaperJournal({ open, onClose, depth, onDepth, pages, stillToFind, highlighted, onTryIt, cannotShow = [], ownNumbers = [] }: PaperJournalProps) {
   const closeButton = useRef<HTMLButtonElement>(null);
   const passages = useRef(new Map<string, HTMLButtonElement>());
   useEffect(() => {
@@ -123,6 +125,20 @@ export function PaperJournal({ open, onClose, depth, onDepth, pages, stillToFind
           </li>
         ) : null}
       </ol>
+
+      {ownNumbers.length > 0 ? (
+        <section className="cannot-show" aria-labelledby="journal-own-numbers-title" data-section="own-numbers">
+          <h3 id="journal-own-numbers-title">Running the paper&apos;s own numbers</h3>
+          <ul>
+            {ownNumbers.map((item) => (
+              <li key={item.text}>
+                <OriginTag origin={item.origin} placeholder={item.placeholder ?? false} quiet />
+                <span>{item.text}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       {cannotShow.length > 0 ? (
         <section className="cannot-show" aria-labelledby="journal-cannot-show-title" data-section="cannot-show">
