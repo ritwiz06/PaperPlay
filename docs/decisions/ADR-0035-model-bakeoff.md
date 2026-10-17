@@ -140,6 +140,29 @@ Picks: planner and explainer qwen36-27b (Qwen); reviewer gemma4-31b-it (Google),
 reviewer is now another model than the planner, which answers the question this ADR left the owner.
 The other stages are unchanged.
 
+## Amendment, 2026-10-17: five levels, the paper's own numbers, and new picks
+
+The planner now asks for five levels and is told the paper's own numbers (ADR-0040, ADR-0041),
+and the bake-off plans the tuberculosis paper on its picked Ethiopian set, as a job does. That
+changed every planner's prompt, so the planners ran again (`design-v4`); the reviewers replayed.
+kimi-k2-7-code made 9 of 15 levels meet both rules, every one of its three worlds on the paper's
+findings; glm-5-3 made 7 of 10, with one paper failed; qwen36-27b, the pick before, 5 of 15.
+
+Picks: planner and explainer kimi-k2-7-code (Moonshot AI); reviewer gemma4-31b-it (Google),
+unchanged at first, then glm-5-3 (Z.ai), below. The other stages are unchanged.
+
+**The reviewers' world gained two levels with no fault.** In the jobs on these picks, gemma4-31b-it
+blocked as definitional every level the rules had passed, the tuberculosis paper's own reported
+finding among them ("the infectious population decreases as the treatment rate of infected
+individuals increases"), while in the bake-off it had blocked only the planted faults. The
+bake-off's world had one level without a fault, so a reviewer that blocks everything could not
+show it. Levels 6 and 7 now test what the tuberculosis paper found, and a block on level 1, 6 or 7
+counts as wrong. The reviewers ran again on it (`design-v5`). gemma4-31b-it still blocks exactly
+the planted faults there; its over-blocking shows only on worlds a planner made. Four reviewers
+now tie at the top (glm-5-3, gemma4-31b-it, qwen38-27b, muse-glimmer-30b: every planted fault,
+level 5 named definitional, no wrong block), and the declared order takes glm-5-3, which becomes
+the reviewer. It is slow: its review here took about an hour and a half.
+
 ## Consequences
 
 - The picked pair agrees in equations on all three gold papers and in values on one.

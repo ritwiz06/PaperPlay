@@ -11,63 +11,61 @@ session.
   current until G2's evidence exists (ADR-0009).
 - **G3a.1 and G3a.2 are done** (ADR-0025 to ADR-0029).
 - **G3a.3, the pipeline on the compartment family:** every item is built, PDF ingest the last
-  (landed at `bf0a265`, ADR-0038). The first generated world plays (ADR-0030 to ADR-0035). The
-  owner's answers of 2026-10-16 all landed: the models in testing excluded (ADR-0035's
-  amendments), several value sets picked by rule (ADR-0036), the visibility rule, the lens, share
-  units and findings, not definitions (ADR-0037).
-- **No world yet under the rules of 2026-10-16.** The hepatitis C world, regenerated, and the
-  tuberculosis paper, re-run, are recorded jobs that both fail (ADR-0037's amendment, landed at
-  `d9ec319`). The owner has answered both decisions: a reproducibility check before the hook
-  bends, and five levels; they are next:
-  - hepatitis C: at its own Table 1 values the paper's reproduction number is 0.65 to 0.78 for
-    every adherence, so its headline, adherence above 52% ending spread, shows only in the
-    quit-treatment compartment, which the reviewer blocks as definitional;
-  - tuberculosis: the value-set rule picks the Ethiopian fit and both transcriptions agree on it;
-    the plan's three levels are the fewest a world keeps, and one fails its repair.
+  (ADR-0038). The owner's rules and decisions of 2026-10-16, all on `main` or landing:
+  - **landed:** the machine's rules (ADR-0039, at `814f482`); running the paper's own numbers
+    (ADR-0040, at `39b7a4f`);
+  - **landing on `g3/five-levels`:** five levels, the hook never dropped, the planner told the
+    paper's own numbers (ADR-0041); the planners' bake-off on them, picking kimi-k2-7-code; the
+    reviewers' world with levels that have no fault, picking glm-5-3.
+- **Two worlds made under every rule:** the hepatitis C paper, `/world/generated/pmc-PMC12334037-2026-10-17`,
+  its level 1 saying the 52% threshold does not appear at Table 1's values (R0 0.762 by its
+  equation (7) and by the model's own equations); and the tuberculosis paper,
+  `/world/generated/arxiv-2506.19869v1`, on its Ethiopian set. Each has five levels, every one
+  meeting the level rule, the visibility rule and the findings check, and a journal page running
+  the paper's own numbers. Both jobs are recorded and replay to their worlds.
 - **`main` moves only through `npm run land`** (ADR-0009, amended).
 - **Repository:** the private `ritwiz06/PaperPlay` is `origin`. CI runs `check:gate` on every
   push and pull request.
-- **The owner's two rules** (ADR-0039, CLAUDE.md's boundaries 9 and 10), landed at `814f482`: no address in an outbound request unless `PAPERPLAY_CONTACT_EMAIL` is set;
-  live jobs and gates never share the machine, held by locks land, the gate and `pipeline:live`
-  read.
-- **Running the paper's own numbers** (ADR-0040), landing on `g3/reproducibility`: R0 from the
-  model's own equations beside the paper's formula, every value against its quote, other values
-  behind the headline. On the hepatitis C paper it confirms the headline's mismatch; on the
-  tuberculosis paper its formulas agree with the model and its stated R0 = 2.67 follows from
-  neither.
-- **Branches:** `g3/reproducibility`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the
+- **The owner's two rules** (ADR-0039, CLAUDE.md's boundaries 9 and 10), landed at `814f482`:
+  no address in an outbound request unless `PAPERPLAY_CONTACT_EMAIL` is set; live jobs and gates
+  never share the machine, held by locks land, the gate and `pipeline:live` read.
+- **Running the paper's own numbers** (ADR-0040), landed at `39b7a4f`: R0 from the model's own
+  equations beside the paper's formula, every value against its quote, other values behind the
+  headline. On the hepatitis C paper it confirms the headline's mismatch; on the tuberculosis
+  paper its formulas agree with the model and its stated R0 = 2.67 follows from neither.
+- **Branches:** `g3/five-levels`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the
   compartment agent's own, whose three commits are on `main`.
-- **Working commit:** `ef4c054` on `g3/reproducibility`. `main` is at `814f482`, whose CI passed.
+- **Working commit:** `ec2688d` on `g3/five-levels`. `main` is at `39b7a4f`, whose CI passed.
 - **Model provider:** Voyager, `https://openai.rc.asu.edu/v1`, its key `VOYAGER_API_KEY` in
   `apps/api/.env` only (ADR-0030); called only by `npm run pipeline:live`. Replies stream; a call
   may take up to 30 minutes.
 - **Models per stage** (`apps/api/models.json`, from the bake-off, its planners run again with the
   model's response in front of them): reader qwen36-27b; first transcriber
   qwen3-235b-a22b-thinking-2507; second transcriber inkling-small; router glm-5-3; planner and
-  explainer qwen36-27b; reviewer gemma4-31b-it. Twelve models the portal marks "Testing in
+  explainer kimi-k2-7-code; reviewer glm-5-3. A job may spend 1,200,000 tokens. Twelve models the portal marks "Testing in
   progress" are excluded, as of the owner's snapshot of 2026-10-16.
 - **Primitives:** `flock.planar.weighted@3.1.0` (ADR-0025); `compartments.ode@1.0.0` (ADR-0028).
 - **Contracts:** `worldspec/3`, with `worldspec/2` still read (ADR-0027); `runrecord/3`
   (ADR-0023).
 - **Runtime:** Node 24.21.0, pinned in `.node-version`.
 - **What a learner can do:** the six flocking levels on `/world/hook`, Threshold Town's five on
-  `/world/epidemic`, and the first generated world's five on
-  `/world/generated/pmc-PMC12334037`, now with its fork's chart fitted to what it measures and its
+  `/world/epidemic`, the first generated world's five on `/world/generated/pmc-PMC12334037`, and
+  the two worlds of 2026-10-17 above, now with its fork's chart fitted to what it measures and its
   town seen through a lens, each with its control, readout, guide, journal, prediction and fork. On
   this machine only, `/create` makes a world from an arXiv id, a PMCID or a PDF.
 
-## Latest check:gate (G1), 2026-10-16, on `g3/reproducibility` at ef4c054
+## Latest check:gate (G1), 2026-10-17, on `g3/five-levels` at ec2688d
 
 ```
 check:gate G1 · Playable baseline · tag v0.1.0
   runtime    node 24.21.0 (pinned 24.21.0)  ok
-  typecheck  ok      22.6 s
-  lint       ok      17.0 s
-  check:docs ok      0.3 s
-  test       ok      84.7 s
-  build      ok      0.6 s
-  test:e2e   ok      131.1 s
-  evidence   887 tests (vitest 803, playwright 84), 0 skipped
+  typecheck  ok      15.8 s
+  lint       ok      12.1 s
+  check:docs ok      0.2 s
+  test       ok      75.2 s
+  build      ok      0.5 s
+  test:e2e   ok      110.4 s
+  evidence   895 tests (vitest 809, playwright 86), 0 skipped
     R01  Deterministic, oracle-checked primitives      151 passing
     R02  Model/render separation                       9 passing
     R03  Strict, versioned contracts                   153 passing
@@ -76,8 +74,8 @@ check:gate G1 · Playable baseline · tag v0.1.0
 G1 passed: every required check ran and every requirement has passing evidence.
 ```
 
-Ahead of their gate, from the same suites' reports: R05 10, R06 61, R07 40, R08 83, R09 46, R10 18,
-R11 23, R12 22. Land runs the gate again before it pushes.
+Ahead of their gate, from the same suites' reports: R05 12, R06 63, R07 40, R08 83, R09 46, R10 22,
+R11 27, R12 22. Land runs the gate again before it pushes.
 
 ## Blockers
 
@@ -86,16 +84,21 @@ R11 23, R12 22. Land runs the gate again before it pushes.
 
 ## Decisions waiting on the owner
 
-1. **Paid branch protection on GitHub** (ADR-0009's amendment).
-2. **The deploy:** the owner connects Vercel (ADR-0017).
-
-The hook's rule when a headline does not show, and five levels, were answered on 2026-10-16.
+1. **What counts as definitional** (ADR-0041's consequences): gemma4-31b-it blocked levels on what
+   the papers report; glm-5-3 let through a level gemma4-31b-it rightly blocked. A level on a
+   reported finding, in the paper's direction, never definitional; a flag that must name its
+   equation term; or two reviewers from different vendors who must agree.
+2. **Whether a reviewer's "unsupported" sends a level back,** as "definitional" does: today it is
+   advice.
+3. **The decisions the G3b plan needs** (`docs/design/g3b.md`, landing next).
+4. **Paid branch protection on GitHub** (ADR-0009's amendment).
+5. **The deploy:** the owner connects Vercel (ADR-0017).
 
 ## Next three actions
 
-1. Land `g3/reproducibility`.
-2. Five levels and the planner bake-off on the new prompts, then the two papers regenerated.
-3. G3a's close-out and the G3b plan.
+1. Land `g3/five-levels`.
+2. G3a's close-out and the G3b plan, docs only, landed.
+3. The owner's answers on what counts as definitional.
 
 ## Recommendations
 
