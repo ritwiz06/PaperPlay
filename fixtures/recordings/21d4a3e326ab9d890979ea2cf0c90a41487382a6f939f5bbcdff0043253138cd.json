@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "21d4a3e326ab9d890979ea2cf0c90a41487382a6f939f5bbcdff0043253138cd",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"advanced\": {\n    \"equation\": \"λ = β_{1} I + β_{2} C + β_{3} C_{q} ,\",\n    \"quote\": \"$β_{3}$ exerts the strongest influence on the reproduction number.\",\n    \"text\": \"The control is beta three, the transmission rate from the quitters compartment. The watched value is cQ, the fraction of chronically infected people who stopped treatment. The model assumes quitters spread the virus more easily than people who stay on treatment. The force of infection is shown above, so a larger beta three adds more infection pressure from cQ. The what-if sets beta three to zero point one. At time two hundred, the cQ peak is higher by more than zero point zero zero six. The paper states that beta three exerts the strongest influence on the reproduction number.\"\n  },\n  \"afterwards\": {\n    \"question\": \"Why might quitters matter more than people who stay on treatment?\",\n    \"quote\": \"$β_{3}$ exerts the strongest influence on the reproduction number.\",\n    \"text\": \"The what-if is in. When quitters pass the virus on twice as easily, the cQ peak is higher by more than zero point zero zero six. The paper says this happens because beta three exerts the strongest influence on the reproduction number.\"\n  },\n  \"beginner\": {\n    \"analogy\": \"Imagine people who start medicine but stop early. They still carry the germ and can pass it on more easily. In this level, you make quitting spread the germ more or less easily. It is like turning up,\",\n    \"text\": \"Imagine people who start medicine but stop early. They still carry the germ and can pass it on more easily. In this level, you make quitting spread the germ more or less easily. It is like turning up the heat under a pot. More heat means more steam. More spread means more quitters at the peak.\"\n  },\n  \"guide\": {\n    \"falling\": \"cQ is dropping\",\n    \"idle\": \"Try changing how easily quitters pass the virus, then watch the quitters peak.\",\n    \"lowered\": \"You lower beta three {to}, so the cQ peak drops.\",\n    \"raised\": \"You raise beta three {to}, so the cQ peak climbs.\",\n    \"readings\": [\n      {\n        \"atLeast\": 0.02,\n        \"words\": \"cQ above 0.02\"\n      },\n      {\n        \"atLeast\": 0.01,\n        \"words\": \"cQ above 0.01\"\n      },\n      {\n        \"atLeast\": 0,\n        \"words\": \"cQ above 0\"\n      }\n    ],\n    \"rising\": \"cQ is climbing\"\n  },\n  \"intermediate\": {\n    \"text\": \"You control beta three, the transmission rate by quitters. You watch cQ, the share of people who quit treatment and stay chronically infected. The model starts with almost no quitters. If you raise beta three, quitters pass the virus more easily, so the cQ peak grows. If you lower beta three, the peak shrinks. The what-if sets beta three to zero point one, about twice its baseline. At that setting, the cQ peak at time two hundred is higher by more than zero point zero zero six. The paper says beta three exerts the strongest influence on the reproduction number.\"\n  }\n}",
+    "usage": {
+      "promptTokens": 14203,
+      "completionTokens": 7730,
+      "totalTokens": 21933
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T09:51:19.966Z"
+}

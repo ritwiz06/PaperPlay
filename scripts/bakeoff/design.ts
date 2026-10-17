@@ -87,21 +87,29 @@ const modelOf = (paper: ReturnType<typeof loadGoldPapers>[number]): { readonly m
   return { model: { ...model, solver: { ...model.solver, dt } }, horizon };
 };
 
-/** The world the reviewers read: a tuberculosis world in words, with three faults planted in it. */
+/** The world the reviewers read: a tuberculosis world in words, with four faults planted in it and three levels without one. */
 export const REVIEW_WORLD = [
   "Level 1, Vaccination slows the spread: Change the vaccination rate and watch the infectious. What if: what if no one were vaccinated? It states: with no vaccination, more than 5 more people are infectious at year 20 than in this world.",
   "Level 2, Treatment and the threshold: Change the treatment rate and watch the infectious. It states, as the paper's: \"The paper shows that vaccinating every newborn would eliminate tuberculosis within ten years.\"",
   "Level 3, Faster progression: Change the progression rate and watch the exposed. What if: what if the exposed became infectious twice as fast? It states: the epidemic doubles in size and the disease can never be controlled.",
   "Level 4, Recovery after treatment: Change the recovery rate of the treated and watch the recovered. What if: what if recovery were twice as fast? It states: more people are recovered at year 30.",
   "Level 5, No treatment: Change the treatment rate and watch the treated. What if: what if no one were treated? It states: with no treatment, no one is ever in the treated compartment.",
+  "Level 6, Treatment shrinks the outbreak: Change the treatment rate and watch the infectious. What if: what if treatment were twice as fast? It states: the infectious peak is lower by more than 100,000 people.",
+  "Level 7, Contact and the exposed: Change the contact rate and watch the exposed. What if: what if the contact rate were half as high? It states: the exposed peak is lower by more than 1,000,000 people.",
 ].join("\n");
 export const REVIEW_CHECKS = [
   "The builder: passed, the family's checks included.",
-  "The level rule: level 1 holds on 20 of 20; level 2 holds on 20 of 20; level 3 holds on 18 of 20, its measured difference is 6 more exposed people at year 10; level 4 holds on 9 of 20 and FAILS the rule; level 5 holds on 20 of 20.",
+  "The level rule: level 1 holds on 20 of 20; level 2 holds on 20 of 20; level 3 holds on 18 of 20, its measured difference is 6 more exposed people at year 10; level 4 holds on 9 of 20 and FAILS the rule; level 5 holds on 20 of 20; level 6 holds on 20 of 20; level 7 holds on 19 of 20.",
   "Provenance: level 2's quote is not in the source.",
 ].join("\n");
 /** The levels with a planted fault a reviewer should block: an unsupported claim, an overstatement, and level 5, which follows from a definition (ADR-0037). */
 export const PLANTED = [2, 3, 5] as const;
+/**
+ * The levels with no fault, a reviewer's block on any of which is wrong: level 1, and levels 6 and 7,
+ * which test what the tuberculosis paper itself found (treatment lowers the infectious; contact
+ * raises the exposed). Three, so a reviewer that blocks everything shows it (ADR-0035's amendment).
+ */
+export const CLEAN = [1, 6, 7] as const;
 /** The planted level whose effect follows from the model's definitions alone. */
 export const DEFINITIONAL = 5;
 
@@ -139,7 +147,7 @@ export async function runDesignBakeoff(client: ModelClient, structuredOutput: Re
           error: null,
           found: PLANTED.filter((level) => blocked.has(level)).length,
           planted: PLANTED.length,
-          falseBlocks: blocked.has(1) ? 1 : 0,
+          falseBlocks: CLEAN.filter((level) => blocked.has(level)).length,
           calledFailedAcceptable: value.findings.some((finding) => finding.level === 4 && /\b(acceptable|fine|ok|passes)\b/i.test(finding.finding) && !/\bnot\b/i.test(finding.finding)),
           definitional: value.findings.some((finding) => finding.level === DEFINITIONAL && finding.severity === "blocking" && finding.kind === "definitional"),
         };

@@ -113,6 +113,26 @@ test("[R09] the production build plays a world generated beforehand, with no API
   expect(called).toBe(false);
 });
 
+for (const world of [
+  { id: "pmc-PMC12334037-2026-10-17", title: "Hepatitis C treatment town", observation: "the 52% threshold doesn't appear here" },
+  { id: "arxiv-2506.19869v1", title: "TB Town: Above the Threshold", observation: null },
+] as const) {
+  test(`[R05] the production build plays ${world.title}, generated under the rules of 2026-10-16, with the paper's own numbers in its journal`, async ({ page }) => {
+    let called = false;
+    await page.route("**/api/**", (route) => {
+      called = true;
+      return route.abort();
+    });
+    await page.goto(`http://127.0.0.1:4318/world/generated/${world.id}`);
+    await expect(page.getByRole("heading", { name: world.title, level: 1 })).toBeVisible({ timeout: 30_000 });
+    if (world.observation) await expect(page.locator("[data-observation]")).toContainText(world.observation);
+    else await expect(page.locator("[data-observation]")).toHaveCount(0);
+    await page.getByRole("button", { name: "Journal" }).click();
+    await expect(page.getByRole("region", { name: "Running the paper's own numbers" }).locator("li").first()).toBeVisible();
+    expect(called).toBe(false);
+  });
+}
+
 test("[R11] /create sends a PDF from your files as itself, by its content type, and follows its job", async ({ page }) => {
   let sent: { type: string | undefined; name: string | null; starts: string } | null = null;
   await page.route("**/api/jobs/pdf*", async (route) => {

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "gemma4-31b-it",
+  "promptHash": "5efd5bc0e5d64e984d57149d3d4aa61ef1da01caff7371c7b6748923c4510b5b",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"findings\": [{\"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 2, \"severity\": \"blocking\", \"suggestion\": \"Change the 'What-if' to test the effect of the contact rate on the infectious population (I) or exposed population (E) instead of the vaccinated population (V). The current level teaches that increasing contact rate reduces the vaccinated population, which is a direct consequence of the model definition (S is depleted faster, leaving fewer people to be vaccinated), rather than a finding of the TB-\" \n    }\n    ]\n}",
+    "usage": {
+      "promptTokens": 21821,
+      "completionTokens": 126,
+      "totalTokens": 21947
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T09:33:16.812Z"
+}

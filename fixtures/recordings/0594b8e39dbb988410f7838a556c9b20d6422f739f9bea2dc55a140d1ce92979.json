@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "0594b8e39dbb988410f7838a556c9b20d6422f739f9bea2dc55a140d1ce92979",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"advanced\": {\n    \"equation\": \"dE/dt = βSI − (γ + μ)E and dI/dt = γE − (δ + τ + μ)I\",\n    \"quote\": \"dE/dt = βSI − (γ + μ)E and dI/dt = γE − (δ + τ + μ)I\",\n    \"text\": \"The control is gamma, the rate at which exposed individuals become infectious. The watched value is infectious people, the I compartment. The model starts with many exposed and infectious people, so tuberculosis is already multiplying. When gamma doubles, more exposed people move into the infectious compartment each year. The infectious peak at year thirty-eight becomes more than four million higher.\"\n  },\n  \"afterwards\": {\n    \"question\": \"What change would help lower the infectious peak?\",\n    \"quote\": \"The results suggest that optimal conditions could lead to the elimination of TB.\",\n    \"text\": \"Doubling the progression rate made the infectious peak more than four million higher. The paper says, 'The results suggest that optimal conditions could lead to the elimination of TB.'\"\n  },\n  \"beginner\": {\n    \"analogy\": \"Latent tuberculosis is like a sleeping fire. If it wakes faster, more people become sick at once. In this town, the disease is already above the safe level. You can make latent TB progress half asfast\",\n    \"text\": \"Latent tuberculosis is like a sleeping fire. If it wakes faster, more people become sick at once. In this town, the disease is already above the safe level. You can make latent TB progress half as fast or twice as fast. Watch how many infectious people appear. Doubling the speed makes the outbreak worse.\"\n  },\n  \"guide\": {\n    \"falling\": \"infectious people fall\",\n    \"idle\": \"Drag the slider to set the progression rate.\",\n    \"lowered\": \"You lower the progression rate to half as fast, so fewer exposed people become infectious each year.\",\n    \"raised\": \"You raise the progression rate to twice as fast, so more exposed people become infectious each year.\",\n    \"readings\": [\n      {\n        \"atLeast\": 12000000,\n        \"words\": \"above twelve million people\"\n      },\n      {\n        \"atLeast\": 8000000,\n        \"words\": \"above eight million people\"\n      },\n      {\n        \"atLeast\": 4000000,\n        \"words\": \"above four million people\"\n      },\n      {\n        \"atLeast\": 200000,\n        \"words\": \"above two hundred thousand people\"\n      }\n    ],\n    \"rising\": \"infectious people climb\"\n  },\n  \"intermediate\": {\n    \"text\": \"The control is the progression rate to active TB, called gamma. The watched value is the number of infectious people. In this town, tuberculosis is already above the elimination threshold. You can set gamma to half as fast or twice as fast. The model starts with many susceptible, exposed, and infectious people. If latent TB progresses twice as fast, the infectious peak at year thirty-eight is more than four million higher. Faster progression moves people from the exposed compartment into the infectious compartment more quickly. That makes the outbreak climb. Try the control and watch the infectious people curve.\"\n  }\n}",
+    "usage": {
+      "promptTokens": 22699,
+      "completionTokens": 5304,
+      "totalTokens": 28003
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T09:42:19.900Z"
+}

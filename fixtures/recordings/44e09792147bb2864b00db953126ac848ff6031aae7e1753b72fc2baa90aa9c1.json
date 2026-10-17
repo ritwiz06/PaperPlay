@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "qwen36-27b",
+  "promptHash": "44e09792147bb2864b00db953126ac848ff6031aae7e1753b72fc2baa90aa9c1",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"findings\": [{\"finding\": \"Level 2: The statement is labelled 'as the paper's' but is not supported by the source (confirmed by the provenance check). It also discusses vaccination while the level manipulates the treatment rate ($δ$), creating a confusing mismatch. This teaches something false/misleading about the paper.\", \"kind\": \"definitional\", \"level\": 2, \"severity\": \"blocking\", \"suggestion\": \"Replace the statement with one that accurately reflects the paper's sensitivity analysis on the treatment rate, e.g., 'Increasing the treatment rate lowers the effective reproduction number and reduces the long-term number of infectious individuals.'\"}, {\"finding\": \"Level 3: The claim 'the epidemic doubles in size and the disease can never be controlled' is worded far more strongly than the measurement. The check reports a difference of only 6 more exposed individuals at year 10, and the paper only notes that higher progression rates increase spread, not that it becomes uncontrollable.\", \"kind\": \"definitional\", \"level\": 3, \"severity\": \"advice\", \"suggestion\": \"Reword the claim to match the actual measured effect, e.g., 'Increasing the progression rate leads to a higher number of exposed individuals and increases the overall disease burden.'\"}, {\"finding\": \"Level 4: Fails the level rule (9 of 20). The check result cannot be changed.\", \"kind\": \"definitional\", \"level\": 4, \"severity\": \"blocking\", \"suggestion\": \"None (check failure stands per rules).\"}, {\"finding\": \"Level 5: Setting the treatment rate to zero removes the inflow to the treated compartment ($δI = 0$), so the compartment stays empty by mathematical definition alone. This teaches nothing from the paper's findings.\", \"kind\": \"definitional\", \"level\": 5, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test a paper finding, e.g., 'What if the treatment rate were doubled?' to demonstrate the paper's result that higher treatment rates significantly reduce TB incidence and lower $R_v$.\"}]}",
+    "usage": {
+      "promptTokens": 23015,
+      "completionTokens": 5095,
+      "totalTokens": 28110
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T10:15:08.008Z"
+}

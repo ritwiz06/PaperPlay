@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "gemma4-31b-it",
+  "promptHash": "8571d7d41450742cf766ff42212e0c7be7b28de4e25aeca824b9a6466b124c41",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"findings\": [{\"finding\": \"Level 5 is definitional.\", \"kind\": \"definitional\", \"level\": 5, \"severity\": \"blocking\", \"suggestion\": \"Change the 'What-if' to test a paper finding, such as: 'What if the treatment adherence proportion increases?' and observe the effect on the number of chronically infected individuals who quit treatment (Cq).\"}]}",
+    "usage": {
+      "promptTokens": 13053,
+      "completionTokens": 82,
+      "totalTokens": 13135
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T10:39:08.020Z"
+}

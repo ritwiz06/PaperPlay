@@ -9,9 +9,9 @@
       "score": {
         "levels": 5,
         "built": 5,
-        "meetRule": 5,
+        "meetRule": 4,
         "onFindings": true,
-        "note": ""
+        "note": "level 1: holds on 0 of 20"
       }
     },
     {
@@ -33,7 +33,7 @@
       "ok": true,
       "error": null,
       "score": {
-        "levels": 4,
+        "levels": 5,
         "built": 4,
         "meetRule": 3,
         "onFindings": true,
@@ -46,11 +46,11 @@
       "ok": true,
       "error": null,
       "score": {
-        "levels": 4,
+        "levels": 5,
         "built": 4,
-        "meetRule": 1,
+        "meetRule": 0,
         "onFindings": true,
-        "note": "level 2: holds on 14 of 20"
+        "note": "level 1: holds on 0 of 20"
       }
     },
     {
@@ -59,11 +59,11 @@
       "ok": true,
       "error": null,
       "score": {
-        "levels": 3,
-        "built": 3,
-        "meetRule": 0,
-        "onFindings": false,
-        "note": "level 1: holds on 0 of 20"
+        "levels": 5,
+        "built": 5,
+        "meetRule": 1,
+        "onFindings": true,
+        "note": "level 1: holds on 13 of 20"
       }
     },
     {
@@ -72,11 +72,11 @@
       "ok": true,
       "error": null,
       "score": {
-        "levels": 3,
-        "built": 3,
+        "levels": 5,
+        "built": 1,
         "meetRule": 0,
         "onFindings": true,
-        "note": "level 1: holds on 0 of 20"
+        "note": "level 1: holds on 8 of 20"
       }
     },
     {
@@ -85,11 +85,11 @@
       "ok": true,
       "error": null,
       "score": {
-        "levels": 3,
-        "built": 3,
+        "levels": 5,
+        "built": 5,
         "meetRule": 1,
         "onFindings": true,
-        "note": "level 1: holds on 8 of 20"
+        "note": "level 1: holds on 0 of 20"
       }
     },
     {
@@ -111,11 +111,11 @@
       "ok": true,
       "error": null,
       "score": {
-        "levels": 3,
-        "built": 2,
-        "meetRule": 0,
+        "levels": 5,
+        "built": 4,
+        "meetRule": 3,
         "onFindings": true,
-        "note": "level 1: holds on 0 of 20"
+        "note": "level 3: holds on 6 of 20"
       }
     },
     {
@@ -124,11 +124,11 @@
       "ok": true,
       "error": null,
       "score": {
-        "levels": 4,
-        "built": 4,
+        "levels": 5,
+        "built": 5,
         "meetRule": 4,
         "onFindings": true,
-        "note": ""
+        "note": "level 5: holds on 0 of 20"
       }
     },
     {
@@ -137,11 +137,11 @@
       "ok": true,
       "error": null,
       "score": {
-        "levels": 3,
-        "built": 2,
-        "meetRule": 0,
-        "onFindings": false,
-        "note": "level 1: In the other world: At a step of 0.2 days the run broke down: Breast cancer cells (t) would become NaN at step 4, not a finite number, so the step is r"
+        "levels": 5,
+        "built": 3,
+        "meetRule": 2,
+        "onFindings": true,
+        "note": "level 1: In the other world: At a step of 0.2 days the run broke down: Breast cancer cells (t) would become NaN at step 3, not a finite number, so the step is r"
       }
     },
     {
@@ -150,11 +150,11 @@
       "ok": true,
       "error": null,
       "score": {
-        "levels": 4,
-        "built": 2,
-        "meetRule": 2,
+        "levels": 5,
+        "built": 5,
+        "meetRule": 3,
         "onFindings": true,
-        "note": "level 1: must be a camelCase parameter name"
+        "note": "level 2: holds on 0 of 20"
       }
     },
     {
@@ -163,9 +163,9 @@
       "ok": true,
       "error": null,
       "score": {
-        "levels": 3,
-        "built": 3,
-        "meetRule": 0,
+        "levels": 5,
+        "built": 5,
+        "meetRule": 2,
         "onFindings": true,
         "note": "level 1: holds on 0 of 20"
       }
@@ -176,10 +176,10 @@
       "ok": true,
       "error": null,
       "score": {
-        "levels": 3,
-        "built": 3,
-        "meetRule": 0,
-        "onFindings": false,
+        "levels": 5,
+        "built": 5,
+        "meetRule": 1,
+        "onFindings": true,
         "note": "level 1: holds on 0 of 20"
       }
     },
@@ -189,11 +189,11 @@
       "ok": true,
       "error": null,
       "score": {
-        "levels": 3,
-        "built": 3,
+        "levels": 5,
+        "built": 5,
         "meetRule": 0,
         "onFindings": true,
-        "note": "level 1: holds on 0 of 20"
+        "note": "level 1: holds on 8 of 20"
       }
     },
     {
@@ -216,10 +216,10 @@
       "error": null,
       "score": {
         "levels": 5,
-        "built": 0,
-        "meetRule": 0,
+        "built": 5,
+        "meetRule": 1,
         "onFindings": true,
-        "note": "level 1: must be a camelCase parameter name"
+        "note": "level 1: holds on 0 of 20"
       }
     },
     {
@@ -228,11 +228,11 @@
       "ok": true,
       "error": null,
       "score": {
-        "levels": 3,
-        "built": 3,
+        "levels": 5,
+        "built": 5,
         "meetRule": 1,
         "onFindings": true,
-        "note": "level 1: holds on 0 of 20"
+        "note": "level 2: holds on 1 of 20"
       }
     },
     {
@@ -241,11 +241,11 @@
       "ok": true,
       "error": null,
       "score": {
-        "levels": 4,
-        "built": 4,
-        "meetRule": 3,
+        "levels": 5,
+        "built": 5,
+        "meetRule": 2,
         "onFindings": true,
-        "note": "level 4: too small to see"
+        "note": "level 2: holds on 0 of 20"
       }
     },
     {
@@ -254,11 +254,11 @@
       "ok": true,
       "error": null,
       "score": {
-        "levels": 4,
-        "built": 4,
+        "levels": 5,
+        "built": 5,
         "meetRule": 0,
         "onFindings": true,
-        "note": "level 1: holds on 0 of 20"
+        "note": "level 1: holds on 12 of 20"
       }
     },
     {
@@ -267,167 +267,167 @@
       "ok": true,
       "error": null,
       "score": {
-        "levels": 3,
-        "built": 3,
+        "levels": 5,
+        "built": 5,
+        "meetRule": 1,
+        "onFindings": true,
+        "note": "level 1: holds on 15 of 20"
+      }
+    },
+    {
+      "model": "qwen38-27b",
+      "paper": "arxiv-2506.19869v1",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 5,
+        "built": 5,
+        "meetRule": 4,
+        "onFindings": true,
+        "note": "level 2: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "qwen38-27b",
+      "paper": "arxiv-2203.01434v2",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 4,
+        "built": 4,
+        "meetRule": 0,
+        "onFindings": false,
+        "note": "level 1: holds on 9 of 20"
+      }
+    },
+    {
+      "model": "qwen38-27b",
+      "paper": "pmc-PMC12334037",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 5,
+        "built": 5,
+        "meetRule": 1,
+        "onFindings": true,
+        "note": "level 1: holds on 9 of 20"
+      }
+    },
+    {
+      "model": "qwen3-235b-a22b-thinking-2507",
+      "paper": "arxiv-2506.19869v1",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 5,
+        "built": 5,
+        "meetRule": 3,
+        "onFindings": true,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "qwen3-235b-a22b-thinking-2507",
+      "paper": "arxiv-2203.01434v2",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 5,
+        "built": 4,
+        "meetRule": 0,
+        "onFindings": true,
+        "note": "level 1: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "qwen3-235b-a22b-thinking-2507",
+      "paper": "pmc-PMC12334037",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 5,
+        "built": 5,
+        "meetRule": 3,
+        "onFindings": true,
+        "note": "level 3: holds on 13 of 20"
+      }
+    },
+    {
+      "model": "qwen36-27b",
+      "paper": "arxiv-2506.19869v1",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 5,
+        "built": 5,
         "meetRule": 2,
+        "onFindings": true,
+        "note": "level 2: holds on 0 of 20"
+      }
+    },
+    {
+      "model": "qwen36-27b",
+      "paper": "arxiv-2203.01434v2",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 5,
+        "built": 5,
+        "meetRule": 0,
+        "onFindings": true,
+        "note": "level 1: holds on 11 of 20"
+      }
+    },
+    {
+      "model": "qwen36-27b",
+      "paper": "pmc-PMC12334037",
+      "ok": true,
+      "error": null,
+      "score": {
+        "levels": 5,
+        "built": 5,
+        "meetRule": 3,
         "onFindings": true,
         "note": "level 3: holds on 14 of 20"
       }
     },
     {
-      "model": "qwen38-27b",
+      "model": "muse-glimmer-30b",
       "paper": "arxiv-2506.19869v1",
       "ok": true,
       "error": null,
       "score": {
-        "levels": 4,
-        "built": 4,
+        "levels": 5,
+        "built": 5,
         "meetRule": 3,
         "onFindings": true,
-        "note": "level 1: holds on 0 of 20"
+        "note": "level 1: holds on 10 of 20"
       }
     },
     {
-      "model": "qwen38-27b",
+      "model": "muse-glimmer-30b",
       "paper": "arxiv-2203.01434v2",
       "ok": true,
       "error": null,
       "score": {
-        "levels": 4,
-        "built": 0,
-        "meetRule": 0,
-        "onFindings": true,
-        "note": "level 1: must be a camelCase parameter name"
-      }
-    },
-    {
-      "model": "qwen38-27b",
-      "paper": "pmc-PMC12334037",
-      "ok": true,
-      "error": null,
-      "score": {
-        "levels": 4,
-        "built": 4,
-        "meetRule": 2,
-        "onFindings": true,
-        "note": "level 2: holds on 15 of 20"
-      }
-    },
-    {
-      "model": "qwen3-235b-a22b-thinking-2507",
-      "paper": "arxiv-2506.19869v1",
-      "ok": true,
-      "error": null,
-      "score": {
-        "levels": 3,
-        "built": 3,
-        "meetRule": 3,
-        "onFindings": true,
-        "note": ""
-      }
-    },
-    {
-      "model": "qwen3-235b-a22b-thinking-2507",
-      "paper": "arxiv-2203.01434v2",
-      "ok": true,
-      "error": null,
-      "score": {
-        "levels": 4,
-        "built": 0,
-        "meetRule": 0,
-        "onFindings": true,
-        "note": "level 1: must be a camelCase parameter name"
-      }
-    },
-    {
-      "model": "qwen3-235b-a22b-thinking-2507",
-      "paper": "pmc-PMC12334037",
-      "ok": true,
-      "error": null,
-      "score": {
-        "levels": 3,
-        "built": 3,
+        "levels": 5,
+        "built": 5,
         "meetRule": 1,
         "onFindings": true,
-        "note": "level 1: holds on 0 of 20"
+        "note": "level 2: holds on 13 of 20"
       }
     },
     {
-      "model": "qwen36-27b",
-      "paper": "arxiv-2506.19869v1",
-      "ok": true,
-      "error": null,
-      "score": {
-        "levels": 3,
-        "built": 3,
-        "meetRule": 3,
-        "onFindings": true,
-        "note": ""
-      }
-    },
-    {
-      "model": "qwen36-27b",
-      "paper": "arxiv-2203.01434v2",
-      "ok": true,
-      "error": null,
-      "score": {
-        "levels": 3,
-        "built": 3,
-        "meetRule": 3,
-        "onFindings": false,
-        "note": "only 2 level(s) test one of the paper's findings whose quote the source holds; at least 3 must"
-      }
-    },
-    {
-      "model": "qwen36-27b",
+      "model": "muse-glimmer-30b",
       "paper": "pmc-PMC12334037",
       "ok": true,
       "error": null,
       "score": {
-        "levels": 3,
+        "levels": 5,
         "built": 3,
         "meetRule": 2,
         "onFindings": true,
-        "note": "level 3: holds on 2 of 20"
-      }
-    },
-    {
-      "model": "muse-glimmer-30b",
-      "paper": "arxiv-2506.19869v1",
-      "ok": true,
-      "error": null,
-      "score": {
-        "levels": 4,
-        "built": 4,
-        "meetRule": 3,
-        "onFindings": true,
-        "note": "level 3: holds on 8 of 20"
-      }
-    },
-    {
-      "model": "muse-glimmer-30b",
-      "paper": "arxiv-2203.01434v2",
-      "ok": true,
-      "error": null,
-      "score": {
-        "levels": 3,
-        "built": 3,
-        "meetRule": 0,
-        "onFindings": false,
-        "note": "level 1: holds on 7 of 20"
-      }
-    },
-    {
-      "model": "muse-glimmer-30b",
-      "paper": "pmc-PMC12334037",
-      "ok": true,
-      "error": null,
-      "score": {
-        "levels": 3,
-        "built": 3,
-        "meetRule": 3,
-        "onFindings": true,
-        "note": ""
+        "note": "level 1: must be a camelCase parameter name"
       }
     }
   ],
@@ -436,11 +436,11 @@
       "model": "glm-5-3",
       "ok": true,
       "error": null,
-      "found": 1,
+      "found": 3,
       "planted": 3,
       "falseBlocks": 0,
       "calledFailedAcceptable": false,
-      "definitional": false
+      "definitional": true
     },
     {
       "model": "gpt-oss-120b",
@@ -526,7 +526,7 @@
       "model": "qwen36-27b",
       "ok": true,
       "error": null,
-      "found": 3,
+      "found": 2,
       "planted": 3,
       "falseBlocks": 0,
       "calledFailedAcceptable": false,
@@ -536,7 +536,7 @@
       "model": "muse-glimmer-30b",
       "ok": true,
       "error": null,
-      "found": 2,
+      "found": 3,
       "planted": 3,
       "falseBlocks": 0,
       "calledFailedAcceptable": false,

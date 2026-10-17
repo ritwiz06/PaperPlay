@@ -4,15 +4,15 @@
   "retries": 3,
   "backoffMs": 2000,
   "minIntervalMs": 1000,
-  "jobTokenBudget": 600000,
+  "jobTokenBudget": 1200000,
   "stages": {
     "reader": "qwen36-27b",
     "transcriber": "qwen3-235b-a22b-thinking-2507",
     "second-transcriber": "inkling-small",
     "router": "glm-5-3",
-    "planner": "qwen36-27b",
-    "explainer": "qwen36-27b",
-    "reviewer": "gemma4-31b-it"
+    "planner": "kimi-k2-7-code",
+    "explainer": "kimi-k2-7-code",
+    "reviewer": "glm-5-3"
   },
   "excluded": {
     "asOf": "2026-10-16",

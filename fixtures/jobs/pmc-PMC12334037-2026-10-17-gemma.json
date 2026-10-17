@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "job-record/1",
+  "sourceId": "pmc-PMC12334037",
+  "recordedOn": "2026-10-17",
+  "note": "The hepatitis C world under the rules of 2026-10-16 and the owner's decisions after them: running the paper's own numbers confirms its headline's mismatch (R0 0.762 by equation (7) and by the model's own equations at Table 1's values), the planner asks for five levels, the hook is never dropped. Every level meets the level rule, the visibility rule and the findings check; the reviewer finds level 5 definitional and it is dropped, then finds levels 2 to 4 definitional, and with no repair left too few levels would remain, so the job goes to the owner. Kept so it replays to the same ending.",
+  "replays": true,
+  "stages": {
+    "reader": "qwen36-27b",
+    "transcriber": "qwen3-235b-a22b-thinking-2507",
+    "second-transcriber": "inkling-small",
+    "router": "glm-5-3",
+    "planner": "kimi-k2-7-code",
+    "explainer": "kimi-k2-7-code",
+    "reviewer": "gemma4-31b-it"
+  },
+  "structuredOutput": {
+    "gemma4-31b-it": true,
+    "glm-5-3": true,
+    "inkling-small": true,
+    "kimi-k2-7-code": true,
+    "qwen3-235b-a22b-thinking-2507": true,
+    "qwen36-27b": true
+  },
+  "outcome": "needs_information",
+  "states": [
+    "received",
+    "parsing",
+    "planning",
+    "building",
+    "repairing",
+    "building",
+    "running",
+    "checking",
+    "repairing",
+    "building",
+    "running",
+    "checking",
+    "repairing",
+    "building",
+    "running",
+    "checking",
+    "needs_information"
+  ],
+  "message": "too few levels meet the rules: level 2 (\"The quitters spread it most\"): the reviewer finds its effect follows from the model's definitions alone: blocking Change the 'What-if' to test the impact of the transmission rate of quitters on the basic reproduction number $R_0$ or the total number of infections, rather than just the peak of the quitters compartment itself.; test one of the paper's findings instead. The owner decides; level 3 (\"Faster chronic recovery\"): the reviewer finds its effect follows from the model's definitions alone: blocking Change the 'What-if' to test how increasing the ch"
+}

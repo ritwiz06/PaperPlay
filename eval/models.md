@@ -89,36 +89,36 @@ only: in a job, the controller shows the planner each failing level's measuremen
 
 | Rank | Model | Vendor | Levels meeting both rules | Worlds on the findings | Levels that build | Failed calls | First problem |
 |---|---|---|---|---|---|---|---|
-| 1 | qwen36-27b | Qwen | 8/9 | 2/3 | 9/9 | 0 | only 2 level(s) test one of the paper's findings whose quote the source holds; at least 3 must |
-| 2 | glm-5-3 | Z.ai | 8/9 | 2/3 | 9/9 | 1 | level 1: holds on 14 of 20 |
-| 3 | muse-glimmer-30b | Muse | 6/10 | 2/3 | 10/10 | 0 | level 3: holds on 8 of 20 |
-| 4 | kimi-k2-7-code | Moonshot AI | 6/11 | 2/3 | 8/11 | 0 | level 1: In the other world: At a step of 0.2 days the run broke down: Breast cancer cells (t) would become NaN at step 4, not a finite number, so the step is r |
-| 5 | inkling-small | Thinking Machines | 5/11 | 3/3 | 11/11 | 0 | level 4: too small to see |
-| 6 | qwen38-27b | Qwen | 5/12 | 3/3 | 8/12 | 0 | level 1: holds on 0 of 20 |
-| 7 | qwen3-235b-a22b-thinking-2507 | Qwen | 4/10 | 3/3 | 6/10 | 0 | level 1: must be a camelCase parameter name |
-| 8 | granite41-30b | IBM | 2/13 | 3/3 | 8/13 | 0 | level 1: holds on 0 of 20 |
-| 9 | llama4-maverick-17b | Meta | 1/9 | 2/3 | 8/9 | 0 | level 1: holds on 8 of 20 |
-| 10 | gpt-oss-120b | OpenAI | 1/10 | 2/3 | 10/10 | 0 | level 2: holds on 14 of 20 |
-| 11 | gemma4-31b-it | Google | 0/9 | 2/3 | 9/9 | 0 | level 1: holds on 0 of 20 |
+| 1 | kimi-k2-7-code | Moonshot AI | 9/15 | 3/3 | 13/15 | 0 | level 5: holds on 0 of 20 |
+| 2 | glm-5-3 | Z.ai | 7/10 | 2/3 | 9/10 | 1 | level 1: holds on 0 of 20 |
+| 3 | qwen3-235b-a22b-thinking-2507 | Qwen | 6/15 | 3/3 | 14/15 | 0 | level 1: holds on 0 of 20 |
+| 4 | muse-glimmer-30b | Muse | 6/15 | 3/3 | 13/15 | 0 | level 1: holds on 10 of 20 |
+| 5 | qwen36-27b | Qwen | 5/15 | 3/3 | 15/15 | 0 | level 2: holds on 0 of 20 |
+| 6 | qwen38-27b | Qwen | 5/14 | 2/3 | 14/14 | 0 | level 2: holds on 0 of 20 |
+| 7 | llama4-maverick-17b | Meta | 4/13 | 2/3 | 12/13 | 0 | level 1: holds on 0 of 20 |
+| 8 | gemma4-31b-it | Google | 3/15 | 3/3 | 15/15 | 0 | level 1: holds on 0 of 20 |
+| 9 | granite41-30b | IBM | 3/15 | 3/3 | 15/15 | 0 | level 1: holds on 0 of 20 |
+| 10 | inkling-small | Thinking Machines | 3/15 | 3/3 | 15/15 | 0 | level 2: holds on 0 of 20 |
+| 11 | gpt-oss-120b | OpenAI | 1/15 | 3/3 | 10/15 | 0 | level 1: holds on 0 of 20 |
 
 ## Reviewing
 
 Each model reviewed a tuberculosis world in words with four faults planted: level 2 claims, as the paper's, what the
 paper does not say; level 3 states an effect far beyond its measurement; level 4 fails the level rule; level 5's effect
 follows from the model's definitions alone. Ranked by never calling the failed check acceptable, then the planted
-faults it blocks (levels 2, 3 and 5), less any block on level 1, which has no fault, then whether it names level 5
-definitional.
+faults it blocks (levels 2, 3 and 5), less any block on levels 1, 6 and 7, which have no fault (6 and 7 test what the
+paper found), then whether it names level 5 definitional.
 
 | Rank | Model | Vendor | Faults blocked | Definitional named | Wrong blocks | Called a failed check acceptable | Failed calls |
 |---|---|---|---|---|---|---|---|
-| 1 | gemma4-31b-it | Google | 3/3 | yes | 0 | no | 0 |
-| 2 | qwen38-27b | Qwen | 3/3 | yes | 0 | no | 0 |
-| 3 | qwen36-27b | Qwen | 3/3 | yes | 0 | no | 0 |
-| 4 | gpt-oss-120b | OpenAI | 2/3 | yes | 0 | no | 0 |
-| 5 | inkling-small | Thinking Machines | 2/3 | yes | 0 | no | 0 |
-| 6 | qwen3-235b-a22b-thinking-2507 | Qwen | 2/3 | yes | 0 | no | 0 |
-| 7 | muse-glimmer-30b | Muse | 2/3 | yes | 0 | no | 0 |
-| 8 | glm-5-3 | Z.ai | 1/3 | no | 0 | no | 0 |
+| 1 | glm-5-3 | Z.ai | 3/3 | yes | 0 | no | 0 |
+| 2 | gemma4-31b-it | Google | 3/3 | yes | 0 | no | 0 |
+| 3 | qwen38-27b | Qwen | 3/3 | yes | 0 | no | 0 |
+| 4 | muse-glimmer-30b | Muse | 3/3 | yes | 0 | no | 0 |
+| 5 | gpt-oss-120b | OpenAI | 2/3 | yes | 0 | no | 0 |
+| 6 | inkling-small | Thinking Machines | 2/3 | yes | 0 | no | 0 |
+| 7 | qwen3-235b-a22b-thinking-2507 | Qwen | 2/3 | yes | 0 | no | 0 |
+| 8 | qwen36-27b | Qwen | 2/3 | yes | 0 | no | 0 |
 | 9 | kimi-k2-7-code | Moonshot AI | 1/3 | no | 0 | no | 0 |
 | 10 | granite41-30b | IBM | 1/3 | no | 0 | no | 0 |
 | 11 | llama4-maverick-17b | Meta | 0/3 | no | 0 | no | 0 |
@@ -131,9 +131,9 @@ definitional.
 | transcriber | qwen3-235b-a22b-thinking-2507 | the best transcriber |
 | second-transcriber | inkling-small | the best transcriber from another vendor |
 | router | glm-5-3 | the best router |
-| planner | qwen36-27b | the most levels meeting both rules, then worlds on the paper's findings |
-| explainer | qwen36-27b | the planner's model, which knows the plan; its words are held by the schema and their quotes by provenance, not ranked |
-| reviewer | gemma4-31b-it | the most planted faults found, none blocked wrongly, no failed check called acceptable |
+| planner | kimi-k2-7-code | the most levels meeting both rules, then worlds on the paper's findings |
+| explainer | kimi-k2-7-code | the planner's model, which knows the plan; its words are held by the schema and their quotes by provenance, not ranked |
+| reviewer | glm-5-3 | the most planted faults found, none blocked wrongly, no failed check called acceptable |
 
 ## Failed calls
 

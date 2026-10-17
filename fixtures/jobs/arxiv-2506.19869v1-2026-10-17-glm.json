@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "job-record/1",
+  "sourceId": "arxiv-2506.19869v1",
+  "recordedOn": "2026-10-17",
+  "note": "The tuberculosis paper's world, ready: its Ethiopian set picked, its own numbers run (both formulas agree with the model's equations; its stated R0 = 2.67 follows from neither, said on the journal's page), five levels planned and repaired until every one meets the level rule, the visibility rule and the findings check, then reviewed by glm-5-3, the reviewer since the reviewers' world gained levels with no fault. Its one blocking finding, that level 2's words imply a mechanism the model lacks, is advice: the checks decide.",
+  "replays": true,
+  "stages": {
+    "reader": "qwen36-27b",
+    "transcriber": "qwen3-235b-a22b-thinking-2507",
+    "second-transcriber": "inkling-small",
+    "router": "glm-5-3",
+    "planner": "kimi-k2-7-code",
+    "explainer": "kimi-k2-7-code",
+    "reviewer": "glm-5-3"
+  },
+  "structuredOutput": {
+    "glm-5-3": true,
+    "inkling-small": true,
+    "kimi-k2-7-code": true,
+    "qwen3-235b-a22b-thinking-2507": true,
+    "qwen36-27b": true
+  },
+  "outcome": "ready",
+  "states": [
+    "received",
+    "parsing",
+    "planning",
+    "building",
+    "running",
+    "repairing",
+    "building",
+    "running",
+    "checking",
+    "ready"
+  ],
+  "world": "fixtures/worldspecs/generated/arxiv-2506.19869v1.json"
+}

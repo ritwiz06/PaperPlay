@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "job-record/1",
+  "sourceId": "arxiv-2506.19869v1",
+  "recordedOn": "2026-10-17",
+  "note": "The tuberculosis paper under the rules of 2026-10-16 and the owner's decisions after them: its Ethiopian set picked, running its own numbers finds both formulas agreeing with the model's equations and its stated R0 = 2.67 following from neither; five levels planned. After its repairs four levels meet every rule, one dropped; the reviewer finds all four definitional, the hook among them, which is never dropped, so the job goes to the owner. Kept so it replays to the same ending.",
+  "replays": true,
+  "stages": {
+    "reader": "qwen36-27b",
+    "transcriber": "qwen3-235b-a22b-thinking-2507",
+    "second-transcriber": "inkling-small",
+    "router": "glm-5-3",
+    "planner": "kimi-k2-7-code",
+    "explainer": "kimi-k2-7-code",
+    "reviewer": "gemma4-31b-it"
+  },
+  "structuredOutput": {
+    "gemma4-31b-it": true,
+    "glm-5-3": true,
+    "inkling-small": true,
+    "kimi-k2-7-code": true,
+    "qwen3-235b-a22b-thinking-2507": true,
+    "qwen36-27b": true
+  },
+  "outcome": "needs_information",
+  "states": [
+    "received",
+    "parsing",
+    "planning",
+    "building",
+    "running",
+    "repairing",
+    "building",
+    "running",
+    "checking",
+    "repairing",
+    "building",
+    "running",
+    "repairing",
+    "building",
+    "running",
+    "checking",
+    "needs_information"
+  ],
+  "message": "level 1, the hook on the paper's headline, still fails after its repairs, and the hook is never dropped: level 1 (\"Above the elimination threshold\"): the reviewer finds its effect follows from the model's definitions alone: blocking Change the 'What-if' to test the effect of the contact rate (beta) on the infectious peak, as the paper specifically analyzes the effect of beta on the infected population in the 'Results and Discussions' section.; test one of the paper's findings instead. The owner decides; level 2 (\"Treatment shrinks the outbreak\"): the reviewer finds its effect follows from the "
+}

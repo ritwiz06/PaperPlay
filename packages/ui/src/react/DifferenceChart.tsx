@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
+import { chartLabel as label, chartTick as tick } from "./numbers.ts";
 
 export interface DifferenceChartProps {
   /** What is charted, in words: "Directional agreement". */
@@ -28,7 +29,6 @@ const BOTTOM_GAP = 22;
 /** Drawn at its own width, one unit to a CSS pixel, so its text keeps its size on any screen. */
 const NARROW = 480;
 
-const label = (value: number): string => (Number.isInteger(value) ? String(value) : value.toFixed(value < 1 ? 2 : 1));
 
 /**
  * The fork's chart (ADR-0008): the measured difference's metric in both worlds over the level's
@@ -71,7 +71,7 @@ export function DifferenceChart({ metricName, duration, interval, unit, here, th
         <line className="chart-axis" x1={LEFT} y1={TOP} x2={LEFT} y2={BOTTOM} />
         {[0, top / 2, top].map((value) => (
           <text key={`y${value}`} className="chart-tick" x={LEFT - 6} y={y(value) + 4} textAnchor="end">
-            {label(value)}
+            {tick(value)}
           </text>
         ))}
         {[0, duration / 2, duration].map((value) => (

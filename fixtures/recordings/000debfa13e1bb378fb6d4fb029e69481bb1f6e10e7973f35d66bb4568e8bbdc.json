@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "000debfa13e1bb378fb6d4fb029e69481bb1f6e10e7973f35d66bb4568e8bbdc",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"advanced\": {\n    \"equation\": \"The chronic recovery rate rho controls how quickly people leave the treated chronic compartment C. It also appears in the quitter compartment Cq. The paper writes: $q3$. When rho doubles, the quitters\",\n    \"quote\": \"$q3$\"\n  ,\n  \"text\": \"The chronic recovery rate rho controls how quickly people leave the treated chronic compartment C. It also appears in the quitter compartment Cq. The paper writes: $q3$. When rho doubles, the quitters peak at time 200 is lower by more than 0.001. Faster recovery drains the chronic pool, so fewer people flow into the quitters compartment at the peak.\"\n}  ,\n  \"afterwards\": {\n    \"question\": \"If chronic recovery kept speeding up, what would happen to the reproduction number?\",\n    \"quote\": \"When ρ approaches a value of approximately 0.19, we observe that $ℛ_{0}$ falls below 1.\",\n    \"text\": \"The model shows that faster chronic recovery lowers the quitters peak. The paper notes, 'When ρ approaches a value of approximately 0.19, we observe that $ℛ_{0}$ falls below 1.'\"\n  },\n  \"beginner\": {\n    \"analogy\": \"Think of chronic infection as a leaky bucket. Faster recovery is like patching the hole so water drains out sooner. If people recover faster from chronic hepatitis C, fewer remain in the quitters\",\n    \"text\": \"Think of chronic infection as a leaky bucket. Faster recovery is like patching the hole so water drains out sooner. If people recover faster from chronic hepatitis C, fewer remain in the quitters group at the outbreak's peak.\"\n  },\n  \"guide\": {\n    \"falling\": \"quitters are falling\",\n    \"idle\": \"Drag the slider to change how fast chronic infections recover.\",\n    \"lowered\": \"You lower the chronic recovery rate rho to {to}, so people leave chronic infection slower.\",\n    \"raised\": \"You raise the chronic recovery rate rho to {to}, so people leave chronic infection faster.\",\n    \"readings\": [\n      {\n        \"atLeast\": 0.013,\n        \"words\": \"more than 0.013 of the population are quitters\"\n      },\n      {\n        \"atLeast\": 0.01,\n        \"words\": \"more than 0.010 of the population are quitters\"\n      },\n      {\n        \"atLeast\": 0.005,\n        \"words\": \"more than 0.005 of the population are quitters\"\n      },\n      {\n        \"atLeast\": 0,\n        \"words\": \"0 or more of the population are quitters\"\n      }\n    ],\n    \"rising\": \"quitters are rising\"\n  },\n  \"intermediate\": {\n    \"text\": \"You are changing the chronic recovery rate, called rho. You are watching the quitters compartment, called cQ. When rho doubles to 0.106, the quitters peak at time 200 is lower by more than 0.001. Faster recovery moves people out of chronic infection, so fewer remain in the quitters group at the peak.\"\n  }\n}",
+    "usage": {
+      "promptTokens": 14201,
+      "completionTokens": 9547,
+      "totalTokens": 23748
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T09:29:07.187Z"
+}

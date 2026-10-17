@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "48176eb3e109b770948a1f640e0d664ec5d4c15ed7662b6d1f2f2f1c96398a4f",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"advanced\": {\n    \"equation\": \"λ = β_{1} I + β_{2} C + β_{3} C_{q} ,\",\n    \"quote\": \"$β_{3}$ exerts the strongest influence on the reproduction number.\",\n    \"text\": \"The control is beta three, the transmission rate by quitters. The watched value is quitters, c q. Raising beta three makes quitters more contagious. The force of infection is λ = β_{1} I + β_{2} C + β_{3} C_{q} , where beta three scales the quitters compartment. When beta three doubles to point one, the quitters peak is higher by more than point zero zero six. The paper states that beta three exerts the strongest influence on the reproduction number.\"\n  },\n  \"afterwards\": {\n    \"question\": \"Why do you think quitters have a stronger effect than people who stay on treatment?\",\n    \"quote\": \"$β_{3}$ exerts the strongest influence on the reproduction number.\",\n    \"text\": \"The result is in. When quitters pass the virus on twice as easily, the quitters peak is higher by more than point zero zero six.\"\n  },\n  \"beginner\": {\n    \"analogy\": \"Think of it like a leaky pipe. A bigger hole lets more water spray out.\",\n    \"text\": \"Some people stop taking their medicine too soon. They still carry the virus and can pass it to others. In this model, quitters spread the illness more easily than others when their transmission rate is high. If quitters become more contagious, more people end up in the quitters group at the worst point of the outbreak.\"\n  },\n  \"guide\": {\n    \"falling\": \"quitters are decreasing\",\n    \"idle\": \"Change how easily quitters pass on the virus and watch the quitters peak.\",\n    \"lowered\": \"You lower transmission by quitters to {to}, so quitters pass the virus on less easily.\",\n    \"raised\": \"You raise transmission by quitters to {to}, so quitters pass the virus on more easily.\",\n    \"readings\": [\n      {\n        \"atLeast\": 0.02,\n        \"words\": \"quitters are above 0.02\"\n      },\n      {\n        \"atLeast\": 0.015,\n        \"words\": \"quitters are above 0.015\"\n      },\n      {\n        \"atLeast\": 0.005,\n        \"words\": \"quitters are above 0.005\"\n      },\n      {\n        \"atLeast\": 0,\n        \"words\": \"quitters are above 0\"\n      }\n    ],\n    \"rising\": \"quitters are increasing\"\n  },\n  \"intermediate\": {\n    \"text\": \"The control is beta three, the transmission rate by quitters. It ranges from hard to catch to very catchy. The watched value is quitters, shown as c q. When you raise beta three, quitters pass the virus on more easily. The model then shows more people in the quitters compartment at the outbreak's peak. When beta three doubles, the quitters peak is higher by more than point zero zero six. This means the town where quitters spread twice as easily has more quitters at the peak than this town. The paper says beta three exerts the strongest influence on the reproduction number.\"\n  }\n}",
+    "usage": {
+      "promptTokens": 14203,
+      "completionTokens": 11336,
+      "totalTokens": 25539
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T09:15:40.685Z"
+}

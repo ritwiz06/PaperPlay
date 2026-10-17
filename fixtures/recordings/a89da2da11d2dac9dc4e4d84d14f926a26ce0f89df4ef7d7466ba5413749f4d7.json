@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "muse-glimmer-30b",
+  "promptHash": "a89da2da11d2dac9dc4e4d84d14f926a26ce0f89df4ef7d7466ba5413749f4d7",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"findings\":[{\"level\":2,\"severity\":\"blocking\",\"kind\":\"unsupported\",\"finding\":\"The level attributes to the paper the claim 'The paper shows that vaccinating every newborn would eliminate tuberculosis within ten years.' Provenance check reports the quote is not in the source, and the level is about treatment rate not vaccination.\",\"suggestion\":\"Remove the unattributed quote and replace it with a paper-supported statement about treatment, e.g., sensitivity analysis shows higher treatment rate δ lowers R_v and infectious prevalence.\"},{\"level\":3,\"severity\":\"blocking\",\"kind\":\"overstated\",\"finding\":\"The level states the epidemic doubles in size and the disease can never be controlled when progression is doubled, but the check measured only about 6 more exposed people at year 10, far from doubling or loss of control.\",\"suggestion\":\"Revise the statement to match the measured effect, e.g., note a modest increase in exposed at year 10 with faster progression, consistent with γ having positive sensitivity on R_v.\"},{\"level\":4,\"severity\":\"blocking\",\"kind\":\"definitional\",\"finding\":\"Changing the recovery rate α only increases flow T→R, so more recovered at year 30 follows from model definitions alone. The level fails its rule 9/20.\",\"suggestion\":\"Replace the What-if with a paper-grounded test, e.g., vary treatment rate δ and watch infectious decline, reflecting the paper’s finding that higher treatment lowers TB burden.\"},{\"level\":5,\"severity\":\"blocking\",\"kind\":\"definitional\",\"finding\":\"What-if no one were treated sets δ to zero, emptying the treated compartment by definition. The effect is definitional and teaches no paper finding.\",\"suggestion\":\"Change the What-if to a paper-supported comparison, e.g., what if treatment rate is doubled, the infectious peak is lower, reflecting the negative sensitivity of δ on R_v.\"}]}",
+    "usage": {
+      "promptTokens": 20492,
+      "completionTokens": 2797,
+      "totalTokens": 23289
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T10:13:23.729Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "0958d71d93e58b9fa7bf475cbeb92abb4e9394f3dce4c1c616bd41b29720f8a0",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"findings\": [\n    {\n      \"finding\": \"Level 2 — Blocking\",\n      \"kind\": \"unsupported\",\n      \"level\": 2,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace the attributed quote with a claim the paper actually makes, and align the level title. The paper does not say that “vaccinating every newborn would eliminate tuberculosis within ten years”; it only says optimal conditions could lead to elimination. A paper-supported replacement would be: “The paper shows that increasing the treatment rate reduces the infectious population and may lead to局部\"\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 21315,
+      "completionTokens": 6979,
+      "totalTokens": 28294
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T10:15:47.380Z"
+}

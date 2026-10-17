@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "1610eb0dbfd54b9f44cb9b9864d011c1342348c17bd15e1a9047d0464fd7da85",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"advanced\": {\n    \"equation\": \"dI/dt = γE − (δ + τ + μ)I\",\n    \"quote\": \"The paper writes this as: \frac{dI}{dt} &= \famma E - (\felta + \tau + \fu)I \textbackslash\textbackslash\",\n    \"text\": \"The relevant equation is the paper's own. Doubling gamma to 0.45 raises the infectious peak by more than four million. This shows faster progression from exposed to active TB makes the outbreak worse while the town remains above the elimination threshold.\"\n  },\n  \"afterwards\": {\n    \"question\": \"What would happen if you instead slowed progression to half as fast?\",\n    \"quote\": \"The results suggest that optimal conditions could lead to the elimination of TB.\",\n    \"text\": \"Doubling the progression rate made the infectious peak more than four million higher. The town is already above the elimination threshold, so faster progression worsens the outbreak. The paper says, 'The results suggest that optimal conditions could lead to the elimination of TB.' What would happen?\"\n  },\n  \"beginner\": {\n    \"analogy\": \"Imagine latent TB is a line of dominoes waiting to fall. Speeding up the push makes more dominoes fall sooner. In this town, doubling how fast latent infection becomes active TB makes the outbreak of \",\n    \"text\": \"Imagine latent TB is a line of dominoes waiting to fall. Speeding up the push makes more dominoes fall sooner. In this town, doubling how fast latent infection becomes active TB makes the outbreak of infectious people climb even higher.\"\n  },\n  \"guide\": {\n    \"falling\": \"infectious people fall\",\n    \"idle\": \"Try changing how fast latent TB becomes active and watch the infectious peak.\",\n    \"lowered\": \"You lower gamma to half as fast, so latent TB becomes active TB later.\",\n    \"raised\": \"You raise gamma to twice as fast, so latent TB becomes active TB sooner.\",\n    \"readings\": [\n      {\n        \"atLeast\": 15750000,\n        \"words\": \"more than fifteen million infectious people\"\n      },\n      {\n        \"atLeast\": 11750000,\n        \"words\": \"more than eleven million infectious people\"\n      },\n      {\n        \"atLeast\": 8626000,\n        \"words\": \"more than eight million infectious people\"\n      },\n      {\n        \"atLeast\": 0,\n        \"words\": \"zero infectious people\"\n      }\n    ],\n    \"rising\": \"infectious people rise\"\n  },\n  \"intermediate\": {\n    \"text\": \"You change the progression rate gamma, which moves people from exposed to infectious. Set it to twice as fast. The model then shows that the peak of infectious people becomes more than four million higher at year thirty eight. This means faster progression from latent to active TB pushes the outbreak above the already high level. The town is above the elimination threshold, so speeding up this step makes the disease spread worse.\"\n  }\n}",
+    "usage": {
+      "promptTokens": 22693,
+      "completionTokens": 8471,
+      "totalTokens": 31164
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T09:16:16.223Z"
+}

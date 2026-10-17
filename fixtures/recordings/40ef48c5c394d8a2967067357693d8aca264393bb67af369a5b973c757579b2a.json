@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "qwen3-235b-a22b-thinking-2507",
+  "promptHash": "40ef48c5c394d8a2967067357693d8aca264393bb67af369a5b973c757579b2a",
+  "response": {
+    "model": "qwen3-235b-a22b-thinking-2507",
+    "text": "{\"findings\": [{\"finding\": \"Level 2 presents a statement as the paper's finding that is not supported by the paper. The claim 'The paper shows that vaccinating every newborn would eliminate tuberculosis within ten years' does not appear in the source material. While the paper discusses vaccination as a factor that can help control TB (stating 'optimal conditions could lead to the elimination of TB'), it does not make this 10\" , \"kind\": \"unsupported\" , \"level\": 2 , \"severity\": \"blocking\" , \"suggestion\": \"Replace with an actual paper finding about vaccination effects. For example: 'The paper shows vaccination rate has a negative sensitivity index, meaning higher vaccination reduces transmission (Υ^R_v_π = -π/(θ+π+μ) < 0).'\"}, {\"finding\": \"Level 5 is definitional. Setting treatment rate to zero means no one enters the treated compartment, which follows directly from the model structure (dT/dt = δI - ...) rather than teaching any specific finding from the paper about TB dynamics.\" , \"kind\": \"definitional\" , \"level\": 5 , \"severity\": \"blocking\" , \"suggestion\": \"Change the What-if to test a paper finding. For example: 'What if treatment were delayed by 6 months? It states: the infectious period increases by 30%, raising R_v above 1 in high-transmission settings (per sensitivity analysis showing Υ^R_v_δ < 0).'\"}, {\"finding\": \"Level 3's claim is worded more strongly than measurements support. The statement 'the epidemic doubles in size and the disease can never be controlled' overstates the effect, as the check shows only '6 more exposed people at year 10' (not doubling), and the paper shows disease can be controlled if R_v < 1 through other interventions.\" , \"kind\": \"overstated\" , \"level\": 3 , \"severity\": \"advice\" , \"suggestion\": \"Rephrase to match measured effect: 'the exposed population increases by 6 people at year 10, and R_v exceeds 1 making elimination more difficult without additional interventions.'\"}]}",
+    "usage": {
+      "promptTokens": 22755,
+      "completionTokens": 4918,
+      "totalTokens": 27673
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T10:18:14.374Z"
+}

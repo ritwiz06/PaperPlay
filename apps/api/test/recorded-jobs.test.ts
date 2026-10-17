@@ -47,7 +47,8 @@ describe("[R10] [R11] the recorded live jobs", () => {
       );
       expect(outcome.state).toBe(record.outcome);
       if (record.states) expect(states).toEqual(record.states);
-      if (record.message) expect(outcome.message).toBe(record.message);
+      // A job's events keep a message's first 600 characters, so a record holds what its events showed.
+      if (record.message) expect(outcome.message.slice(0, 600)).toBe(record.message);
       if (record.world) {
         const withoutFetchTime = (world: { source: Record<string, unknown> }) => ({ ...world, source: { ...world.source, accessedAt: null } });
         expect(withoutFetchTime(artifacts.get("world") as { source: Record<string, unknown> })).toEqual(withoutFetchTime(read(record.world) as { source: Record<string, unknown> }));

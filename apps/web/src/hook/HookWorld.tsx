@@ -353,7 +353,9 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
     if (difference.unit === timeWords.many) return `${value.toFixed(1)} ${timeWords.short}`;
     if (scale) return `${Math.round(shown(value)).toLocaleString("en-GB")} ${difference.summary.kind === "total" ? `${scale.unit} × ${timeWords.many}` : scale.unit}`;
     // A share reads as the number alone: "0.93", not "0.93 fraction from 0 to 1".
-    return difference.unit.startsWith("fraction") ? value.toFixed(2) : `${value.toFixed(2)} ${difference.unit}`;
+    if (difference.unit.startsWith("fraction")) return value.toFixed(2);
+    // A count in the thousands or more reads whole, with its separators: "13,568,700 people", not "13568699.92 people".
+    return `${Math.abs(value) >= 1000 ? Math.round(value).toLocaleString("en-GB") : value.toFixed(2)} ${difference.unit}`;
   };
   const threshold = difference.summary.kind === "first-reach" ? difference.summary.threshold : undefined;
   const lensNote = play.sceneNote?.(level) ?? null;
