@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "qwen36-27b",
+  "promptHash": "4c4d6b05fcebac5e9448aa89f858d4ba5fb2db86f084884d85069c0513f3907b",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"advanced\": {\"equation\": \"ℛ₀ = ℛ_I + ℛ_C + ℛ_{C_q} = (bβ₁)/(μm₁) + (brβ₂(1−η))/(μm₁m₂) + (rbδβ₃(1−η)(1−θ))/(μm₁m₂m₃)\", \"quote\": \"$β_{3}$ exerts the strongest influence on the reproduction number.\", \"text\": \"Quitters transmit the virus at rate β₃. This parameter drives infections from those who quit treatment. The reproduction number includes a term for quitters. Higher β₃ raises the reproduction number and increases recovered cases. The paper notes: $β_{3}$ exerts the strongest influence on the reproduction number.\"}, \"afterwards\": {\"question\": \"How does reducing transmission from quitters help control the disease?\", \"quote\": \"$β_{3}$ exerts the strongest influence on the reproduction number.\", \"text\": \"Quitters spread the virus more, causing more recoveries. The paper states: $β_{3}$ exerts the strongest influence on the reproduction number.\"}, \"beginner\": {\"analogy\": \"Imagine a game of tag where some players should rest but keep running. If these runners touch more people, more players get tagged. Tagged players eventually sit down. If the runners are very active, \", \"text\": \"many more people get tagged and sit down. Quitters are like active runners who should rest. When they spread the virus more, more people get sick and recover, raising the count of recovered people.\"}, \"guide\": {\"falling\": \"Recovered falls.\", \"idle\": \"Adjust transmission from quitters to see how it changes recovered people.\", \"lowered\": \"You lower transmission from quitters to low, so recovered people decrease.\", \"raised\": \"You raise transmission from quitters to high, so recovered people increase.\", \"readings\": [{\"atLeast\": 0.02, \"words\": \"Recovered above 0.02\"}, {\"atLeast\": 0.01, \"words\": \"Recovered above 0.01\"}, {\"atLeast\": 0, \"words\": \"Recovered above 0\"}], \"rising\": \"Recovered rises.\"}, \"intermediate\": {\"text\": \"You adjust Transmission from quitters. Observe the Recovered value. Quitters stop treatment early and spread the virus more. Higher Transmission from quitters causes more infections. More infections lead to more recoveries. The model indicates that quitters strongly influence the disease spread. Raising Transmission from quitters increases the peak of Recovered people.\"}}",
+    "usage": {
+      "promptTokens": 14092,
+      "completionTokens": 6444,
+      "totalTokens": 20536
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T01:45:54.462Z"
+}

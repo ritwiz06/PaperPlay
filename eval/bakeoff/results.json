@@ -2657,15 +2657,15 @@
         "structural": false,
         "valuesRight": 0,
         "valuesTotal": 19,
-        "quotesFound": 10,
+        "quotesFound": 11,
         "quotesTotal": 29,
         "setsFound": 0,
         "setsTotal": 0,
         "pickRight": null,
         "problems": [
-          "compartment S: the quote \"S : susceptible to infection\" is not in the source",
           "compartment I: the quote \"I : acutely infected\" is not in the source",
-          "compartment C: the quote \"C : chronically infected under treatment\" is not in the source"
+          "compartment C: the quote \"C : chronically infected under treatment\" is not in the source",
+          "compartment C_q: the quote \"Cq : chronically infected after quitting treatment prematurely\" is not in the source"
         ]
       }
     },
@@ -7242,7 +7242,7 @@
         "structural": true,
         "valuesRight": 17,
         "valuesTotal": 17,
-        "quotesFound": 28,
+        "quotesFound": 29,
         "quotesTotal": 29,
         "setsFound": 2,
         "setsTotal": 2,
@@ -9623,7 +9623,7 @@
       "score": {
         "equations": 1,
         "resultQuoteFound": false,
-        "findingQuotesFound": 3,
+        "findingQuotesFound": 4,
         "findingQuotesTotal": 8,
         "enoughFindings": true
       }
@@ -9851,7 +9851,7 @@
       },
       "score": {
         "equations": 1,
-        "resultQuoteFound": false,
+        "resultQuoteFound": true,
         "findingQuotesFound": 0,
         "findingQuotesTotal": 4,
         "enoughFindings": false
@@ -10280,7 +10280,7 @@
       "score": {
         "equations": 0.6666666666666666,
         "resultQuoteFound": true,
-        "findingQuotesFound": 3,
+        "findingQuotesFound": 4,
         "findingQuotesTotal": 4,
         "enoughFindings": true
       }
@@ -10999,7 +10999,7 @@
       "score": {
         "equations": 1,
         "resultQuoteFound": true,
-        "findingQuotesFound": 3,
+        "findingQuotesFound": 4,
         "findingQuotesTotal": 4,
         "enoughFindings": true
       }
@@ -11332,9 +11332,9 @@
       "score": {
         "equations": 0.6666666666666666,
         "resultQuoteFound": true,
-        "findingQuotesFound": 1,
+        "findingQuotesFound": 2,
         "findingQuotesTotal": 5,
-        "enoughFindings": false
+        "enoughFindings": true
       }
     }
   ],

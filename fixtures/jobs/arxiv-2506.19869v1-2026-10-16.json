@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "job-record/1",
+  "sourceId": "arxiv-2506.19869v1",
+  "recordedOn": "2026-10-16",
+  "note": "The tuberculosis paper re-run under the value-set rule (ADR-0036): both transcriptions list the synthetic and the Ethiopian sets, the rule picks the Ethiopian fit, the set the paper's main results use, and the two agree on it, values included. Planning then fails: the planner gives three levels, the fewest a world keeps, and the level the reviewer sends back as a duplicate of level 1 no longer meets the level rule after its repair. Kept so it replays to the same ending.",
+  "replays": true,
+  "stages": {
+    "reader": "qwen36-27b",
+    "transcriber": "qwen3-235b-a22b-thinking-2507",
+    "second-transcriber": "inkling-small",
+    "router": "glm-5-3",
+    "planner": "qwen36-27b",
+    "explainer": "qwen36-27b",
+    "reviewer": "gemma4-31b-it"
+  },
+  "structuredOutput": {
+    "gemma4-31b-it": true,
+    "glm-5-3": true,
+    "inkling-small": true,
+    "qwen3-235b-a22b-thinking-2507": true,
+    "qwen36-27b": true
+  },
+  "outcome": "failed",
+  "states": [
+    "received",
+    "parsing",
+    "planning",
+    "building",
+    "running",
+    "repairing",
+    "building",
+    "running",
+    "checking",
+    "repairing",
+    "building",
+    "running",
+    "failed"
+  ],
+  "message": "too few levels meet the rules: level 2 (\"Treating the Infectious\"): its claim holds on 0 of 20 starts, fewer than 16; at the world's own values this world measures never and the What-if never, the same"
+}

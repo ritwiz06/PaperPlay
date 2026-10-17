@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "qwen36-27b",
+  "promptHash": "bddbebe0e92cb1e28990bc45813ca12e182d915facec770f0f621bd806e3b46f",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"advanced\": {\"equation\": \"dE/dt = βSI − (γ + μ)E\", \"quote\": \"Parameters with negative sensitivity indices have the effect of lowering the community's TB burden if their values increases\", \"text\": \"The model tracks how vaccination alters disease flow. The exposed compartment follows the equation dE/dt = βSI − (γ + μ)E. Vaccination reduces the susceptible pool S, which directly lowers the new infection term βSI. The paper states: Parameters with negative sensitivity indices have the effect of lowering the community's TB burden if their values increases. The vaccination rate carries a negative sensitivity index. Raising it shrinks the exposed peak. The system moves closer to the elimination threshold. You can observe this shift by doubling the rate. The curve drops significantly.\"}, \"afterwards\": {\"question\": \"How might this finding shape public health planning in high burden regions?\", \"quote\": \"Parameters with negative sensitivity indices have the effect of lowering the community's TB burden if their values increases\", \"text\": \"The simulation confirms that doubling the rate cuts the exposed peak by millions. The paper notes that higher vaccination coverage reduces the pool of people at risk of progressing to active disease. It also states: Parameters with negative sensitivity indices have the effect of lowering the disease\"}, \"beginner\": {\"analogy\": \"Think of a crowded room where a cold spreads easily. Giving everyone a protective coat keeps the chill away. When more people wear coats, fewer catch the cold. Vaccination works like those coats. The\", \"text\": \"Think of a crowded room where a cold spreads easily. Giving everyone a protective coat keeps the chill away. When more people wear coats, fewer catch the cold. Vaccination works like those coats. Higher coverage means fewer people get exposed to the illness. The disease struggles to find new hosts. Communities stay healthier when protection reaches more individuals.\"}, \"guide\": {\"falling\": \"the curve declines.\", \"idle\": \"Watch the exposed population curve as you adjust the slider.\", \"lowered\": \"You lower the vaccination rate {to} low coverage, so the peak rises.\", \"raised\": \"You raise the vaccination rate {to} high coverage, so the peak drops.\", \"readings\": [{\"atLeast\": 40000000, \"words\": \"above 40000000\"}, {\"atLeast\": 30000000, \"words\": \"above 30000000\"}, {\"atLeast\": 20000000, \"words\": \"above 20000000\"}, {\"atLeast\": 10000000, \"words\": \"above 10000000\"}, {\"atLeast\": 0, \"words\": \"0\"}], \"rising\": \"the curve climbs.\"}, \"intermediate\": {\"text\": \"Adjust the vaccination rate to see how it changes exposed people (e). A higher vaccination rate moves more individuals into the protected group. This reduces the pool of susceptible hosts. Fewer susceptible hosts mean fewer new exposures. The model shows that increasing the vaccination rate lowers the peak of exposed people (e). The system shifts toward fewer latent infections. You can test this by raising the control. Watch how the curve responds to stronger coverage.\"}}",
+    "usage": {
+      "promptTokens": 23871,
+      "completionTokens": 7644,
+      "totalTokens": 31515
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T01:12:54.339Z"
+}

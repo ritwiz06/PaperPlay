@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "qwen36-27b",
+  "promptHash": "031e85c2cee5dddb448bf07dfa51052f6dd022f6ab912e8e3b73383445258eb7",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"advanced\": {\"equation\": \"dI/dt = γE − (δ + τ + μ)I\", \"quote\": \"The result revealed that the infectious population decreases as the treatment rate of infected individuals increases\", \"text\": \"The model tracks infectious people using the equation dI/dt = γE − (δ + τ + μ)I. The parameter δ is the treatment rate. Raising δ speeds the flow from infectious to treated. Doubling the treatment rate lowers infectious people at year thirty eight by over one million. The paper confirms this relationship.\"}, \"afterwards\": {\"question\": \"How does faster treatment change the long term burden?\", \"quote\": \"The result revealed that the infectious population decreases as the treatment rate of infected individuals increases\", \"text\": \"Doubling the treatment rate lowers infectious people at year thirty eight by more than one million. This aligns with the paper's finding.\"}, \"beginner\": {\"analogy\": \"Imagine a room where people pass a cold. If you help sick people recover quickly, they leave the room sooner. Fewer sick people stay to pass the cold to others. Over time, the number of sick people.  \", \"text\": \"Fast recovery shrinks the crowd of illness.\"}, \"guide\": {\"falling\": \"Infectious people fall.\", \"idle\": \"Adjust the treatment rate to see how it affects infectious people over time.\", \"lowered\": \"You lower the treatment rate to slow treatment, so infectious people rise.\", \"raised\": \"You raise the treatment rate to fast treatment, so infectious people drop.\", \"readings\": [{\"atLeast\": 10000000, \"words\": \"10000000 infectious people\"}, {\"atLeast\": 5000000, \"words\": \"5000000 infectious people\"}, {\"atLeast\": 1000000, \"words\": \"1000000 infectious people\"}, {\"atLeast\": 0, \"words\": \"0 infectious people\"}], \"rising\": \"Infectious people rise.\"}, \"intermediate\": {\"text\": \"You adjust the treatment rate. You watch infectious people. Raising the treatment rate reduces infectious people. Doubling the treatment rate lowers infectious people at year thirty eight by over one million. Faster treatment reduces the long term burden of active cases.\"}}",
+    "usage": {
+      "promptTokens": 23872,
+      "completionTokens": 7394,
+      "totalTokens": 31266
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T01:05:55.283Z"
+}

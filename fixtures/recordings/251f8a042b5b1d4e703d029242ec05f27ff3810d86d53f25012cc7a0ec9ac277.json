@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "251f8a042b5b1d4e703d029242ec05f27ff3810d86d53f25012cc7a0ec9ac277",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"compartments\", \"family\": \"compartments\", \"mechanism\": \"A deterministic compartmental ODE model (S, I, C, C_q, R) of HCV transmission with treatment adherence parameters, force of infection λ = β₁I + β₂C + β₃C_q, next-generation-matrix computation of ℛ₀, and equilibrium/stability analysis.\", \"reason\":\": The paper's mechanism is a well-mixed compartment model solved as equations: five coupled ODE compartments, a mass-action force of infection, and reproduction-number/stability analysis. No network structure or agent-level rules appear, so the released compartments family covers it as stated.\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 1613,
+      "completionTokens": 163,
+      "totalTokens": 1776
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T22:06:13.622Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "6479eabb936e812b206a16a941e8bd251eacc8c532468e73a8f2263696c73b2e",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"compartments\", \"family\": \"compartments\", \"mechanism\": \"SVEITRS compartmental ODE model of TB transmission with vaccination, latency, treatment, and recovery compartments, parameterized with Ethiopian data and analyzed for R0, equilibria, and sensitivity\", \"reason\":\": The paper's core mechanism is a well-mixed compartmental system of ODEs (S, V, E, I, T, R) with mass-action transmission (βSI), flow rates between compartments, and analysis of disease-free/endemic equilibria and R0. This is exactly the compartments family, which is released, so it is tier A.\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 1690,
+      "completionTokens": 170,
+      "totalTokens": 1860
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T22:53:42.848Z"
+}

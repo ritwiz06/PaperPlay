@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "qwen36-27b",
+  "promptHash": "f6622333e58ce6f8f0e64cc7d54662da81ebf8921b1a05bc17fd2f03233c2f55",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"advanced\": {\"equation\": \"dE/dt = βSI − (γ + μ)E\", \"quote\": \"Parameters with negative sensitivity indices ($mu$, $pi$, $delta$, $tau$) have the effect of lowering the community's TB burden if their values increases\", \"text\": \"The model tracks how individuals move between health states. The change in exposed people follows the equation dE/dt = βSI − (γ + μ)E. This shows that new exposures depend on contact between susceptible and infectious individuals, while people leave the exposed class by becoming infectious or dying. Increasing the vaccination rate reduces the susceptible pool, which directly lowers the contact term. The paper states: \"}, \"afterwards\": {\"question\": \"How might this reduction in exposed individuals affect the number of people who eventually become infectious?\", \"quote\": \"Parameters with negative sensitivity indices ($mu$, $pi$, $delta$, $tau$) have the effect of lowering the community's TB burden if their values increases\", \"text\": \"The simulation shows that doubling the vaccination rate cuts the peak of exposed people by more than five million. This matches the paper's finding that \"}, \"beginner\": {\"analogy\": \"Imagine a crowd walking through light rain. Some people carry umbrellas that keep them dry. When more people open their umbrellas, fewer get wet. Vaccination works like those umbrellas. It protects\", \"text\": \"Imagine a crowd walking through light rain. Some people carry umbrellas that keep them dry. When more people open their umbrellas, fewer get wet. Vaccination works like those umbrellas. It protects people from catching the disease. When more people receive the vaccine, fewer individuals become exposed to the illness. The shield covers more of the crowd, so the number of people waiting to get sick drops noticeably.\"}, \"guide\": {\"falling\": \"The line drops.\", \"idle\": \"Watch the curve before you change the slider.\", \"lowered\": \"You lower the vaccination rate {to} low coverage, so the exposed peak rises.\", \"raised\": \"You raise the vaccination rate {to} high coverage, so the exposed peak falls.\", \"readings\": [{\"atLeast\": 40000000, \"words\": \"Above forty million people\"}, {\"atLeast\": 20000000, \"words\": \"Above twenty million people\"}, {\"atLeast\": 10000000, \"words\": \"Above ten million people\"}, {\"atLeast\": 0, \"words\": \"Zero people\"}], \"rising\": \"The line climbs.\"}, \"intermediate\": {\"text\": \"You adjust the vaccination rate to see how it changes the number of exposed people. The model tracks individuals who have caught the bacteria but are not yet sick. When you increase the vaccination rate, more susceptible individuals move directly into the vaccinated group. This reduces the pool of people who can become exposed. As a result, the peak number of exposed people drops. The model shows that higher vaccination coverage limits how many individuals enter the latent stage. You can observe this shift by watching the exposed people curve flatten and fall.\"}}",
+    "usage": {
+      "promptTokens": 23906,
+      "completionTokens": 6491,
+      "totalTokens": 30397
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T02:05:55.525Z"
+}

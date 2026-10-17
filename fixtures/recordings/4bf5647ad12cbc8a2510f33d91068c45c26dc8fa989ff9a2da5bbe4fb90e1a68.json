@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "qwen36-27b",
+  "promptHash": "4bf5647ad12cbc8a2510f33d91068c45c26dc8fa989ff9a2da5bbe4fb90e1a68",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"advanced\": {\"equation\": \"𝒰^{ℛ_v}_π = -π / (θ + π + μ) < 0\", \"quote\": \"Parameters with negative sensitivity indices have the effect of lowering the community's TB burden if their values increases\", \"text\": \"The sensitivity index for the vaccination rate is negative. Increasing the vaccination rate lowers the reproduction number. The equation is 𝒰^{ℛ_v}_π = -π / (θ + π + μ) < 0. The paper states: \"}, \"afterwards\": {\"question\": \"How does vaccination change the number of exposed people over time?\", \"quote\": \"Parameters with negative sensitivity indices have the effect of lowering the community's TB burden if their values increases\", \"text\": \"Doubling the vaccination rate lowers the peak of exposed people by more than five million. This matches the paper's finding that vaccination reduces the burden. The paper states: \"}, \"beginner\": {\"analogy\": \"Imagine a crowd where a cold spreads. Vaccination acts like a shield for many people. When more people hold up shields, fewer get the cold. The shield stops the germ from reaching them. So, higher疫苗接种\", \"text\": \"Imagine a crowd where a cold spreads. Vaccination acts like a shield for many people. When more people hold up shields, fewer get the cold. The shield stops the germ from reaching them. So, higher vaccination means fewer people catch the illness.\"}, \"guide\": {\"falling\": \"Exposed people decrease.\", \"idle\": \"Adjust the vaccination rate to see how it changes exposed people.\", \"lowered\": \"You lower the vaccination rate to {to}, so exposed people rise.\", \"raised\": \"You raise the vaccination rate to {to}, so exposed people drop.\", \"readings\": [{\"atLeast\": 47190000, \"words\": \"47190000\"}, {\"atLeast\": 33520000, \"words\": \"33520000\"}, {\"atLeast\": 15030000, \"words\": \"15030000\"}], \"rising\": \"Exposed people increase.\"}, \"intermediate\": {\"text\": \"You control the vaccination rate. You watch exposed people. Exposed people have the germ but show no symptoms. Increasing the vaccination rate moves people away from risk. The model shows that a higher vaccination rate lowers the peak of exposed people. Doubling the vaccination rate reduces the peak number of exposed people by more than five million. This happens because vaccination protects susceptible individuals from becoming exposed.\"}}",
+    "usage": {
+      "promptTokens": 23862,
+      "completionTokens": 6873,
+      "totalTokens": 30735
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T01:30:35.160Z"
+}

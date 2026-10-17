@@ -10,8 +10,8 @@
     "transcriber": "qwen3-235b-a22b-thinking-2507",
     "second-transcriber": "inkling-small",
     "router": "glm-5-3",
-    "planner": "gemma4-31b-it",
-    "explainer": "gemma4-31b-it",
+    "planner": "qwen36-27b",
+    "explainer": "qwen36-27b",
     "reviewer": "gemma4-31b-it"
   },
   "excluded": {

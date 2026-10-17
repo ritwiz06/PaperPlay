@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "qwen36-27b",
+  "promptHash": "b7b0f36a25729929363dd0cef5efbb381c0e2f8ef979bf94aae60546711ef8b7",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"advanced\": {\"equation\": \"dI/dt = γE − (δ + τ + μ)I\", \"quote\": \"The exact formula is: dI/dt = γE − (δ + τ + μ)I.\", \"text\": \"The model tracks how infectious people change over time. The rate of change depends on new infections and removals. The equation is dI/dt = γE − (δ + τ + μ)I. Here, δ represents the treatment rate. Increasing δ removes people from the infectious class faster. This lowers the peak of infectious people. Decreasing δ slows removal. This raises the peak. The paper states that treatment speed directly shapes the infection curve. The exact formula is: dI/dt = γE − (δ + τ + μ)I.\"}, \"afterwards\": {\"question\": \"How might slower treatment change the long term outcome?\", \"quote\": \"The results suggest that optimal conditions could lead to the elimination of TB.\", \"text\": \"Doubling the treatment rate lowers the peak by more than four million. This matches the paper finding that faster care reduces cases. The authors note that The results suggest that optimal conditions could lead to the elimination of TB. How might slower treatment change the long term outcome?\"}, \"beginner\": {\"analogy\": \"Imagine a crowded room where a cold spreads quickly. If you hand out medicine faster, fewer people stay sick at once. The crowd of sick people never grows as large. Quick care stops the wave from re\", \"text\": \"Imagine a crowded room where a cold spreads quickly. If you hand out medicine faster, fewer people stay sick at once. The crowd of sick people never grows as large. Quick care stops the wave from reaching its highest point. Slower care lets the wave build up. Faster treatment keeps the peak lower.\"}, \"guide\": {\"falling\": \"The curve drops.\", \"idle\": \"Adjust the treatment rate to see how it changes the infection peak.\", \"lowered\": \"You lower the treatment rate to {to}, so the peak of infectious people rises.\", \"raised\": \"You raise the treatment rate to {to}, so the peak of infectious people drops.\", \"readings\": [{\"atLeast\": 10000000, \"words\": \"Above ten million\"}, {\"atLeast\": 5000000, \"words\": \"Above five million\"}, {\"atLeast\": 1000000, \"words\": \"Above one million\"}, {\"atLeast\": 0, \"words\": \"Below one million\"}], \"rising\": \"The curve climbs.\"}, \"intermediate\": {\"text\": \"You adjust the treatment rate to see how it changes the number of infectious people. The model tracks infectious people over time. When you increase the treatment rate, patients move to recovery faster. This reduces the peak number of infectious people. When you decrease the treatment rate, patients stay infectious longer. This raises the peak number of infectious people. The goal is to observe how treatment speed shapes the infection curve.\"}}",
+    "usage": {
+      "promptTokens": 23871,
+      "completionTokens": 6981,
+      "totalTokens": 30852
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T01:01:43.917Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "qwen36-27b",
+  "promptHash": "8946fdc17ada4a2642374af37a4c7d8f54c88a07dc4bc4edd2b346e527959eb7",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"advanced\": {\"equation\": \"dI/dt = γE − (δ + τ + μ)I\", \"quote\": \"The results suggest that optimal conditions could lead to the elimination of TB.\", \"text\": \"The model tracks the change in infectious people over time. This rate balances new infections against removals. Treatment removes infectious individuals at the treatment rate. The equation captures this flow. Increasing the treatment rate strengthens the removal effect. This reduces the peak of infection. The paper presents the system dynamics using this equation.\"}, \"afterwards\": {\"question\": \"How does reducing the peak infection help control the outbreak?\", \"quote\": \"The results suggest that optimal conditions could lead to the elimination of TB.\", \"text\": \"Doubling the treatment rate lowers the peak of infectious people by more than four million. This aligns with the paper's analysis that higher treatment rates decrease the community's tuberculosis burden. The paper states: The results suggest that optimal conditions could lead to the elimination ofTB\"}, \"beginner\": {\"analogy\": \"Imagine a crowd gathering at a concert. People arrive and leave. Treatment is like opening more exits. If you open more exits, the crowd does not get as large. Faster treatment keeps the number ofin\", \"text\": \"Imagine a crowd gathering at a concert. People arrive and leave. Treatment is like opening more exits. If you open more exits, the crowd does not get as large. Faster treatment keeps the number of infectious people lower. You can see how changing the treatment speed affects the peak of the outbreak.\"}, \"guide\": {\"falling\": \"Infectious people decrease.\", \"idle\": \"Adjust the treatment rate to see how it changes the peak of infectious people.\", \"lowered\": \"You set the treatment rate to slow treatment, so the peak of infectious people rises.\", \"raised\": \"You set the treatment rate to fast treatment, so the peak of infectious people lowers.\", \"readings\": [{\"atLeast\": 10000000, \"words\": \"The count is above 10 million people.\"}, {\"atLeast\": 5000000, \"words\": \"The count is above 5 million people.\"}, {\"atLeast\": 1000000, \"words\": \"The count is above 1 million people.\"}, {\"atLeast\": 0, \"words\": \"The count is below 1 million people.\"}], \"rising\": \"Infectious people increase.\"}, \"intermediate\": {\"text\": \"You adjust the treatment rate to see its effect on infectious people. The model tracks how quickly infectious individuals receive care. Increasing the treatment rate moves people out of the infectious group faster. This action lowers the peak number of infectious people. Doubling the treatment rate reduces the peak by more than four million. The paper notes that higher treatment rates decrease the community's tuberculosis burden.\"}}",
+    "usage": {
+      "promptTokens": 23906,
+      "completionTokens": 7307,
+      "totalTokens": 31213
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T01:37:22.718Z"
+}

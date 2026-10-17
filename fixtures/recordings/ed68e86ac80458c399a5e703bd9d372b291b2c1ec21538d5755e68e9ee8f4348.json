@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "gemma4-31b-it",
+  "promptHash": "ed68e86ac80458c399a5e703bd9d372b291b2c1ec21538d5755e68e9ee8f4348",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"findings\": [{\"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 1, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test the impact of adherence on the reproduction number $R_0$ or the number of acutely infected individuals (I), as the current level only tests the definitional flow from C to Cq.\"}, {\"finding\": \"blocking\", \"kind\": \"unsupported\", \"level\": 2, \"severity\": \"blocking\", \"suggestion\": \"Change the statement to 'Quitters spread the virus more easily, increasing the number of infected individuals' and the check to measure a change in the infected compartments (I, C, or Cq). Increasing the transmission rate from quitters increases the force of infection, which leads to more infections and fewer recovered people over time, not more.\"}, {\"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 3, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test the impact of the chronic recovery rate on the reproduction number $R_0$, as the current level only tests the definitional effect of increasing the exit rate from the Cq compartment.\"}]}",
+    "usage": {
+      "promptTokens": 12881,
+      "completionTokens": 262,
+      "totalTokens": 13143
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T01:35:33.942Z"
+}

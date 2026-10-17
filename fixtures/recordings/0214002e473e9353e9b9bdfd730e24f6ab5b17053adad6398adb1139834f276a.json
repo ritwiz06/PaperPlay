@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "planner",
+  "model": "muse-glimmer-30b",
+  "promptHash": "0214002e473e9353e9b9bdfd730e24f6ab5b17053adad6398adb1139834f276a",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"title\":\"HCV adherence learning game\",\"perWatchSecond\":2,\"levels\":[{\"kind\":\"hook\",\"finding\":0,\"title\":\"Adherence stops spread\",\"goal\":\"Raise treatment adherence to see if the epidemic fades.\",\"control\":{\"parameter\":\"theta\",\"label\":\"Treatment adherence proportion\",\"lowEnd\":\"0.25\",\"highEnd\":\"1.0\"},\"watch\":\"cq\",\"whatIf\":{\"prompt\":\"What if adherence rises to 100%?\",\"parameter\":\"theta\",\"value\":1.0},\"difference\":{\"compartment\":\"cq\",\"summary\":\"peak\",\"at\":null,\"time\":80,\"relation\":\"lower\",\"by\":0.01},\"effect\":\"The what-if world's chronically infected quit treatment peak is lower by more than 0.01.\",\"prediction\":{\"prompt\":\"Will the quit-treatment peak be higher or lower?\",\"claimed\":\"lower\",\"other\":\"higher\"},\"passage\":{\"title\":\"Headline result\",\"quote\":\"an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\"},\"carryForward\":\"Adherence can stop transmission.\"},{\"kind\":\"result\",\"finding\":4,\"title\":\"Quitters drive spread\",\"goal\":\"Increase transmission from quitters to see impact on recovered.\",\"control\":{\"parameter\":\"beta3\",\"label\":\"Transmission from quit treatment\",\"lowEnd\":\"0.025\",\"highEnd\":\"0.1\"},\"watch\":\"r\",\"whatIf\":{\"prompt\":\"What if transmission from quitters doubles?\",\"parameter\":\"beta3\",\"value\":0.1},\"difference\":{\"compartment\":\"r\",\"summary\":\"peak\",\"at\":null,\"time\":80,\"relation\":\"higher\",\"by\":0.01},\"effect\":\"The what-if world's recovered peak is higher by more than 0.01.\",\"prediction\":{\"prompt\":\"Will the recovered peak be higher or lower?\",\"claimed\":\"higher\",\"other\":\"lower\"},\"passage\":{\"title\":\"Quitters risk\",\"quote\":\"$β_{3}$ exerts the strongest influence on the reproduction number.\"},\"carryForward\":\"Quitters are key transmitters.\"},{\"kind\":\"result\",\"finding\":3,\"title\":\"Faster acute recovery helps\",\"goal\":\"Slow acute recovery to see more acute infections.\",\"control\":{\"parameter\":\"r2\",\"label\":\"Rate of leaving acute stage\",\"lowEnd\":\"0.08\",\"highEnd\":\"0.33\"},\"watch\":\"i\",\"whatIf\":{\"prompt\":\"What if acute stage lasts twice as long?\",\"parameter\":\"r2\",\"value\":0.0815},\"difference\":{\"compartment\":\"i\",\"summary\":\"peak\",\"at\":null,\"time\":80,\"relation\":\"higher\",\"by\":0.04},\"effect\":\"The what-if world's acutely infected peak is higher by more than 0.04.\",\"prediction\":{\"prompt\":\"Will the acutely infected peak be higher or lower?\",\"claimed\":\"higher\",\"other\":\"lower\"},\"passage\":{\"title\":\"Synergistic impact\",\"quote\":\"Our model unraveled the synergistic impact of simultaneously enhancing the recovery rate of acutely infected individuals and treatment adherence on reducing $ℛ_{0}$.\"},\"carryForward\":\"Acute recovery rate matters.\"}],\"limits\":[\"Time unit is year.\",\"Compartments are population shares.\",\"Control is a rate parameter not a starting value.\"]}",
+    "usage": {
+      "promptTokens": 4353,
+      "completionTokens": 7851,
+      "totalTokens": 12204
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T22:48:55.325Z"
+}

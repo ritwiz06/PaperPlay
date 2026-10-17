@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "qwen36-27b",
+  "promptHash": "d7bd9da49ae999771f5ec46f45b5b5ef3fb4d63a204ecea1ea9a53b288f4757d",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"advanced\": {\"equation\": \"dI/dt = γE − (δ + τ + μ)I\", \"quote\": \"The result revealed that the infectious population decreases as the treatment rate of infected individuals increases\", \"text\": \"The model tracks infectious people with the equation dI/dt = γE − (δ + τ + μ)I. The paper writes it as the quoted formula. The term δ represents the treatment rate. Increasing δ raises the removal rate from the infectious compartment. This reduces the growth of the infectious population. The paper states that higher treatment rates lower the disease burden. The equation shows that δ appears in a negative term. A larger δ makes the derivative more negative. This pulls the infectious count down faster. The model confirms that faster treatment shrinks the peak of infection.\"}, \"afterwards\": {\"question\": \"How might this change the total number of cases over ten years?\", \"quote\": \"The result revealed that the infectious population decreases as the treatment rate of infected individuals increases\", \"text\": \"The model shows that doubling the treatment rate cuts the peak by more than four million. The paper confirms this pattern. It states the quoted sentence. Faster care moves patients out of the infectious group quickly. This shrinks the maximum number of sick people.\"}, \"beginner\": {\"analogy\": \"bathtub drain\", \"text\": \"Imagine a crowded room where people pass a cold. If you quickly move sick people to a quiet corner to rest, fewer people stay sick at once. Faster treatment works like a strong drain in a bathtub. It pulls water away before the tub overflows. When doctors treat patients quickly, the number of sick people drops. Slower treatment lets the crowd of sick people grow larger. Quick care keeps the room clear.\"}, \"guide\": {\"falling\": \"The count drops.\", \"idle\": \"Watch the curve as you change the treatment rate.\", \"lowered\": \"You lower the treatment rate to slow treatment, so the peak climbs.\", \"raised\": \"You raise the treatment rate to fast treatment, so the peak drops.\", \"readings\": [{\"atLeast\": 10000000, \"words\": \"10000000 people\"}, {\"atLeast\": 5000000, \"words\": \"5000000 people\"}, {\"atLeast\": 1000000, \"words\": \"1000000 people\"}, {\"atLeast\": 0, \"words\": \"0 people\"}], \"rising\": \"The count climbs.\"}, \"intermediate\": {\"text\": \"You adjust the treatment rate to see how it changes the number of infectious people. The model tracks infectious people over time. When you set the treatment rate to slow treatment, the curve for infectious people rises higher. When you switch to fast treatment, the curve stays lower. The treatment rate moves patients out of the infectious group and into care. Faster treatment removes people from the infectious pool more quickly. This lowers the peak count of infectious people. The model shows that increasing the treatment rate directly reduces the maximum number of infectious people at any time.\"}}",
+    "usage": {
+      "promptTokens": 23863,
+      "completionTokens": 7215,
+      "totalTokens": 31078
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T01:23:43.427Z"
+}

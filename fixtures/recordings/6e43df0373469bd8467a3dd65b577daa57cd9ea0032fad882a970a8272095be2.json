@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "planner",
+  "model": "glm-5-3",
+  "promptHash": "6e43df0373469bd8467a3dd65b577daa57cd9ea0032fad882a970a8272095be2",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "",
+    "usage": {
+      "promptTokens": 4674,
+      "completionTokens": 32000,
+      "totalTokens": 36674
+    },
+    "finishReason": "length"
+  },
+  "recordedAt": "2026-10-16T23:29:58.400Z"
+}

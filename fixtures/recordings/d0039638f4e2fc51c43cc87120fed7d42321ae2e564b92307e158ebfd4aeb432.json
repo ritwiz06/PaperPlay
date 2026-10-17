@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "qwen36-27b",
+  "promptHash": "d0039638f4e2fc51c43cc87120fed7d42321ae2e564b92307e158ebfd4aeb432",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"advanced\": {\"equation\": \"dCq/dt = δ(1−θ)C − (αρ + μ + ν)Cq\", \"quote\": \"When ρ approaches a value of approximately 0.19, we observe that $ℛ_{0}$ falls below 1.\", \"text\": \"The rate of change for chronically infected quitters depends on recovery. The equation shows how rho affects cQ. Increasing rho increases the removal rate from cQ. This lowers the peak of cQ. The paper states that raising rho to 0.19 drops the reproduction number below one.\"}, \"afterwards\": {\"question\": \"What other factors might influence recovery rates?\", \"quote\": \"When ρ approaches a value of approximately 0.19, we observe that $ℛ_{0}$ falls below 1.\", \"text\": \"Raising chronic recovery to 0.19 reduces the peak of chronically infected quitters. The paper links this value to epidemic control.\"}, \"beginner\": {\"analogy\": \"Imagine a bucket with a hole. The hole lets water escape. If you patch the hole quickly, less water spills out. Here, the virus is the water. People who quit treatment are the spilled water. If the身体清\", \"text\": \"Imagine a bucket with a hole. The hole lets water escape. If you patch the hole quickly, less water spills out. Here, the virus is the water. People who quit treatment are the spilled water. If the body clears the virus faster, fewer people end up quitting treatment with the virus still inside. Speeding up recovery helps keep the virus contained.\"}, \"guide\": {\"falling\": \"Quitters recover.\", \"idle\": \"Watch how the chronic recovery rate changes the number of chronically infected quitters.\", \"lowered\": \"You lower the chronic recovery rate to 0.01, so the peak of quitters rises.\", \"raised\": \"You raise the chronic recovery rate to 0.19, so the peak of quitters drops.\", \"readings\": [{\"atLeast\": 0.014, \"words\": \"0.014 or more\"}, {\"atLeast\": 0.01, \"words\": \"0.01 or more\"}, {\"atLeast\": 0.005, \"words\": \"0.005 or more\"}, {\"atLeast\": 0, \"words\": \"0 or more\"}], \"rising\": \"Quitters accumulate.\"}, \"intermediate\": {\"text\": \"Adjust the Chronic recovery rate to see how it affects the number of Chronically infected after quitting treatment. When the Chronic recovery rate increases, the body clears the virus more effectively. This reduces the pool of people who stop treatment while still infected. The model shows that a higher Chronic recovery rate leads to a lower peak of Chronically infected after quitting treatment. Faster recovery means fewer people carry the virus after leaving care.\"}}",
+    "usage": {
+      "promptTokens": 14098,
+      "completionTokens": 6916,
+      "totalTokens": 21014
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T01:35:24.123Z"
+}

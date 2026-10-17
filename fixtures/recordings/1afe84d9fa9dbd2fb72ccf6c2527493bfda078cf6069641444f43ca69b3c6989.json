@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "qwen36-27b",
+  "promptHash": "1afe84d9fa9dbd2fb72ccf6c2527493bfda078cf6069641444f43ca69b3c6989",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"advanced\": {\"equation\": \"ℛ₀ = ℛ_I + ℛ_C + ℛ_{C_q} = bβ₁/(μm₁) + brβ₂(1−η)/(μm₁m₂) + rbδβ₃(1−η)(1−θ)/(μm₁m₂m₃)\", \"quote\": \"an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\", \"text\": \"The reproduction number depends on adherence. The model gives: ℛ₀ = ℛ_I + ℛ_C + ℛ_{C_q} = bβ₁/(μm₁) + brβ₂(1−η)/(μm₁m₂) + rbδβ₃(1−η)(1−θ)/(μm₁m₂m₃). Higher theta reduces the last term. This lowers the reproduction number. When adherence rises, the virus spreads less.\"}, \"afterwards\": {\"question\": \"Does higher adherence lower the peak of acutely infected people?\", \"quote\": \"an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\", \"text\": \"The paper confirms that better adherence reduces infections. It notes that an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread. Does higher adherence lower the peak of acutely infected people?\"}, \"beginner\": {\"analogy\": \"leaky bucket\", \"text\": \"Imagine a leaky bucket. If you keep the lid tight, water stays inside. If the lid is loose, water spills out and makes a mess. Treatment is like the lid. When patients stick to their medicine, the virus stays contained. When they stop, the virus spreads to others. Keeping the lid tight stops the mess.\"}, \"guide\": {\"falling\": \"Acutely infected fall.\", \"idle\": \"Watch how treatment adherence affects acutely infected people.\", \"lowered\": \"You lower treatment adherence {to}, so acutely infected people rise.\", \"raised\": \"You raise treatment adherence {to}, so acutely infected people drop.\", \"readings\": [{\"atLeast\": 0.012, \"words\": \"Acutely infected above 0.012\"}, {\"atLeast\": 0.01, \"words\": \"Acutely infected above 0.01\"}, {\"atLeast\": 0.005, \"words\": \"Acutely infected above 0.005\"}, {\"atLeast\": 0.0, \"words\": \"Acutely infected above 0.0\"}], \"rising\": \"Acutely infected rise.\"}, \"intermediate\": {\"text\": \"Adjust treatment adherence to see how it affects acutely infected people. Higher adherence means more patients finish their medicine. This reduces the chance of passing the virus to others. Watch the number of acutely infected people change. When adherence is low, more people get sick. When adherence is high, fewer people get sick. The model shows that sticking to treatment lowers the count of new infections.\"}}",
+    "usage": {
+      "promptTokens": 14090,
+      "completionTokens": 6993,
+      "totalTokens": 21083
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T01:42:30.275Z"
+}

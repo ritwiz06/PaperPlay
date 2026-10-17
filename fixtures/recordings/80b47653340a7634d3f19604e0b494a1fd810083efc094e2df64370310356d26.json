@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "qwen36-27b",
+  "promptHash": "80b47653340a7634d3f19604e0b494a1fd810083efc094e2df64370310356d26",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"advanced\": {\"equation\": \"dI/dt = γE − (δ + τ + μ)I\", \"quote\": \"The results suggest that optimal conditions could lead to the elimination of TB.\", \"text\": \"The model tracks how the infectious population changes over time. The relevant equation is dI/dt = γE − (δ + τ + μ)I. This formula shows that new infections enter the group from the exposed class, while treatment, disease death, and natural death remove individuals. Increasing the treatment rate raises the removal term. A larger removal term reduces the growth of the infectious group. The system reaches a lower peak when treatment moves faster. The paper states that optimal conditions could lead to the elimination of TB. Faster treatment pushes the system toward that threshold.\"}, \"afterwards\": {\"question\": \"What happens to the peak if you change the treatment speed again?\", \"quote\": \"The results suggest that optimal conditions could lead to the elimination of TB.\", \"text\": \"The simulation matches the paper's finding. The results suggest that optimal conditions could lead to the elimination of TB. What happens to the peak if you change the treatment speed again?\"}, \"beginner\": {\"analogy\": \"crowded room with a cough\", \"text\": \"Imagine a crowded room where a cough spreads quickly. If you help sick people leave the room faster, fewer people catch the cough at once. The crowd of sick people never grows as large. Quick care stops the wave from reaching its highest point.\"}, \"guide\": {\"falling\": \"The curve drops.\", \"idle\": \"Adjust the treatment rate to watch the infectious population change.\", \"lowered\": \"You lower the treatment rate {to} slow treatment, so the peak rises.\", \"raised\": \"You raise the treatment rate {to} fast treatment, so the peak drops.\", \"readings\": [{\"atLeast\": 10000000, \"words\": \"Above ten million people are infectious.\"}, {\"atLeast\": 5000000, \"words\": \"Above five million people are infectious.\"}, {\"atLeast\": 1000000, \"words\": \"Above one million people are infectious.\"}, {\"atLeast\": 0, \"words\": \"Below one million people are infectious.\"}], \"rising\": \"The curve climbs.\"}, \"intermediate\": {\"text\": \"You adjust the treatment rate to see how it changes the number of infectious people. When you increase the treatment rate, sick individuals recover or enter care more quickly. This removes them from the group that spreads the disease. The model shows that a higher treatment rate reduces the peak number of infectious people. Faster care limits how many people become sick at the same time. The watched value drops because treatment pulls individuals out of the infectious stage.\"}}",
+    "usage": {
+      "promptTokens": 23862,
+      "completionTokens": 6701,
+      "totalTokens": 30563
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T01:19:45.319Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "qwen36-27b",
+  "promptHash": "b6ca8b05cb552ce6b93bf426c9031c164266944511cb4e3bf29cd576114a5e00",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"advanced\": {\"equation\": \"null\", \"quote\": \"null\", \"text\": \"The model tracks infectious people using the equation dI/dt = γE − (δ + τ + μ)I. Here, δ is the treatment rate. Increasing δ raises the removal term, which lowers the growth of infectious people. The paper shows that higher treatment rates reduce the infectious population over time.\"}, \"afterwards\": {\"question\": \"How does increasing the treatment rate affect the long-term number of infectious people?\", \"quote\": \"The result revealed that the infectious population decreases as the treatment rate of infected individuals increases; in the long run, this may lead to the eradication of the disease from the community.\", \"text\": \"Doubling the treatment rate lowers infectious people by more than one million after 38 years. The paper states: 'The result revealed that the infectious population decreases as the treatment rate of infected individuals increases; in the long run, this may lead to the eradication of the disease from\"}, \"beginner\": {\"analogy\": \"Think of infectious people like water filling a bucket. Treatment is a drain at the bottom. A faster drain lets water out quicker, so the bucket stays lower. Faster treatment keeps the number of sick \", \"text\": \"Faster treatment reduces infectious people. The model shows that treating people quickly lowers the number of infectious cases over time. This helps control the spread of tuberculosis.\"}, \"guide\": {\"falling\": \"Infectious people decrease.\", \"idle\": \"Adjust the treatment rate to see how it changes infectious people over time.\", \"lowered\": \"You lower the treatment rate to Slow treatment, so infectious people remain high.\", \"raised\": \"You raise the treatment rate to Fast treatment, so infectious people decrease.\", \"readings\": [{\"atLeast\": 10000000, \"words\": \"Above 10 million\"}, {\"atLeast\": 5000000, \"words\": \"Above 5 million\"}, {\"atLeast\": 1000000, \"words\": \"Above 1 million\"}, {\"atLeast\": 0, \"words\": \"0\"}], \"rising\": \"Infectious people increase.\"}, \"intermediate\": {\"text\": \"The control is the treatment rate. The watched value is infectious people. Raising the treatment rate moves infectious people from the infectious class to the treated class faster. This reduces the number of infectious people over time. The model shows that faster treatment lowers the peak and long-term burden of infectious cases.\"}}",
+    "usage": {
+      "promptTokens": 23907,
+      "completionTokens": 6380,
+      "totalTokens": 30287
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T02:01:32.268Z"
+}

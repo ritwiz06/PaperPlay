@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "qwen36-27b",
+  "promptHash": "ef8abf143201aefe123ac1c5a6017d53c0ee19469f7bd1255c171c047c75ca65",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"advanced\": {\"equation\": \"dCq/dt = δ(1 − θ)C − (αρ + μ + ν)Cq\", \"quote\": \"an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\", \"text\": \"The model tracks how adherence affects quitters. The rate of change for quitters depends on adherence. The equation is dCq/dt = δ(1 − θ)C − (αρ + μ + ν)Cq. Here θ is the adherence proportion. As θ increases, the term δ(1 − θ)C decreases. Fewer people move from treatment to quitting. The paper notes that an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread. Higher adherence reduces the flow into the quitter compartment.\"}, \"afterwards\": {\"question\": \"How does adherence affect the reproduction number?\", \"quote\": \"an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\", \"text\": \"Raising adherence to 60% lowers the peak of quitters. This matches the paper's finding that an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread. Fewer quitters mean less transmission.\"}, \"beginner\": {\"analogy\": \"leaky bucket\", \"text\": \"Imagine a leaky bucket. If you patch the holes, less water spills out. Treatment is like the patch. When patients stick to their medicine, fewer people stop early. Stopping early lets the virus spread. Keeping the patch strong keeps the virus contained.\"}, \"guide\": {\"falling\": \"Quitters decrease.\", \"idle\": \"Adjust the slider to change treatment adherence.\", \"lowered\": \"You lower adherence to Low, so more people quit treatment.\", \"raised\": \"You raise adherence to High, so fewer people quit treatment.\", \"readings\": [{\"atLeast\": 0.014, \"words\": \"Above 0.014\"}, {\"atLeast\": 0.01, \"words\": \"Above 0.01\"}, {\"atLeast\": 0.005, \"words\": \"Above 0.005\"}, {\"atLeast\": 0, \"words\": \"Above 0\"}], \"rising\": \"Quitters increase.\"}, \"intermediate\": {\"text\": \"Adjust Treatment adherence to see its effect. Watch the number of Chronically infected after quitting treatment. Higher adherence means more people finish their course. Fewer people quit treatment. The pool of quitters shrinks. Quitters can spread the virus more easily. Reducing this group helps stop the spread.\"}}",
+    "usage": {
+      "promptTokens": 14101,
+      "completionTokens": 5596,
+      "totalTokens": 19697
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T01:01:45.766Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "planner",
+  "model": "muse-glimmer-30b",
+  "promptHash": "cf4b35e1a90b585aeb9abc8d4686b8aff97419dacd0d11afb620efa1dbed5f7d",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"title\":\"tBreg Breast Cancer Game\",\"perWatchSecond\":1,\"levels\":[{\"kind\":\"hook\",\"finding\":0,\"title\":\"Tumour growth surge\",\"goal\":\"See how faster tumour growth changes the peak cancer cell count.\",\"control\":{\"parameter\":\"a\",\"label\":\"Tumour growth rate\",\"lowEnd\":\"0.075\",\"highEnd\":\"0.3\"},\"watch\":\"t\",\"whatIf\":{\"prompt\":\"Tumour growth rate doubled\",\"parameter\":\"a\",\"value\":0.3},\"difference\":{\"compartment\":\"t\",\"summary\":\"peak\",\"at\":null,\"time\":67,\"relation\":\"higher\",\"by\":2000000},\"effect\":\"The what-if world has a higher tumor peak by more than 2000000 cells.\",\"prediction\":{\"prompt\":\"Will the tumor peak be higher or lower?\",\"claimed\":\"higher\",\"other\":\"lower\"},\"passage\":{\"title\":\"Headline result\",\"quote\":\"a sufficiently large number of tBregs can cause the breast tumour to reach its carrying capacity, regardless of the rate of NK-induced breast cancer cell death.\"},\"carryForward\":\"Faster growth drives large peaks even with immune pressure.\"},{\"kind\":\"background\",\"finding\":2,\"title\":\"NK killing matters without tBregs\",\"goal\":\"Test how reduced NK killing changes tumor peak.\",\"control\":{\"parameter\":\"c\",\"label\":\"NK-induced tumour death rate\",\"lowEnd\":\"1e-10\",\"highEnd\":\"4e-10\"},\"watch\":\"t\",\"whatIf\":{\"prompt\":\"NK killing rate halved\",\"parameter\":\"c\",\"value\":1e-10},\"difference\":{\"compartment\":\"t\",\"summary\":\"peak\",\"at\":null,\"time\":67,\"relation\":\"higher\",\"by\":3000},\"effect\":\"The what-if world has a higher tumor peak by more than 3000 cells.\",\"prediction\":{\"prompt\":\"Will the tumor peak be higher or lower?\",\"claimed\":\"higher\",\"other\":\"lower\"},\"passage\":{\"title\":\"No tBregs control\",\"quote\":\"when tBregs do not exist in the body, the only way for the breast tumour to reach its carrying capacity is for the rate of NK-induced breast cancer cell death to be tending to 0\"},\"carryForward\":\"Lower NK killing lets tumors grow.\"},{\"kind\":\"result\",\"finding\":4,\"title\":\"NK killing threshold\",\"goal\":\"See how stronger NK killing suppresses tumor peak.\",\"control\":{\"parameter\":\"c\",\"label\":\"NK-induced tumour death rate\",\"lowEnd\":\"1e-10\",\"highEnd\":\"4e-10\"},\"watch\":\"t\",\"whatIf\":{\"prompt\":\"NK killing rate doubled\",\"parameter\":\"c\",\"value\":4e-10},\"difference\":{\"compartment\":\"t\",\"summary\":\"peak\",\"at\":null,\"time\":67,\"relation\":\"lower\",\"by\":90},\"effect\":\"The what-if world has a lower tumor peak by more than 90 cells.\",\"prediction\":{\"prompt\":\"Will the tumor peak be higher or lower?\",\"claimed\":\"lower\",\"other\":\"higher\"},\"passage\":{\"title\":\"Bifurcation threshold\",\"quote\":\"System [reducedModel] experiences a transcritical bifurcation at the equilibrium point E1 ≡ E2 as the parameter c varies through c1.\"},\"carryForward\":\"Strong NK killing can suppress tumor growth.\"}],\"limits\":[\"Time per level must allow 4x playback within 20 seconds\",\"Difference must be visible on chart\",\"Control is a rate parameter not a starting value\"]}",
+    "usage": {
+      "promptTokens": 3939,
+      "completionTokens": 8930,
+      "totalTokens": 12869
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-16T22:46:14.847Z"
+}
