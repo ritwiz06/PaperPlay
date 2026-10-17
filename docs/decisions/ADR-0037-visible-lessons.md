@@ -58,8 +58,63 @@ from the model's definitions; its readout called shares "people × years".
 5. **The first generated world is kept as made, not replayed.** Under the visibility rule its
    job's level 5 fails, so the job takes a path its recordings never saw. Its world stays, at
    `/world/generated/pmc-PMC12334037`, and a test holds it as made: every level meets the level
-   rule, three need a lens, and level 5 shows nothing. The regenerated world takes its place in the
-   replay tests.
+   rule, three need a lens, and level 5 shows nothing. The regeneration's job, which fails (see the
+   amendment), takes its place in the replay tests.
+
+## Amendment, 2026-10-16: what regenerating the hepatitis C world needed
+
+Running the hepatitis C paper through the job under these rules failed at each step in turn; each
+fix is deterministic, or tells a model what the solver measures:
+
+1. **The explainer writes one level per call,** held by the schema where the model honours one.
+   gemma4-31b-it, writing a whole world in plain JSON, nested a level's guide inside another
+   field; held by the schema for a whole world, it once wrote whitespace until its limit. One level
+   at a time it wrote every level whole. A guide line that writes the What-if's value where `{to}`
+   belongs ("raised to 0.6") has its value put back as `{to}` (`mendTo`), since the value is shown
+   by the shell.
+2. **The assembler fills what a plan leaves out:** a difference read `at` no time is read at the
+   level's own time; a What-if outside its parameter's range widens the range to hold it (a
+   parameter's range is a teaching choice); and when a level's time would take longer than 20
+   seconds at the fastest speed, the world's pace is raised to fit, said in its notes. Before, the
+   planner traded one level's time against the watching bound and the visibility rule, repair
+   after repair.
+3. **The planner sees how the model responds** (`describeResponse`): each rate halved and
+   doubled, solved, and every compartment whose peak, or whose end where it is visible, moves by
+   15% or more. A repair message says what the world measures at its own values, so a claim can
+   be aimed. Without them the planner chose What-ifs the model barely notices.
+4. **Recorded jobs replay** (`apps/api/test/recorded-jobs.test.ts`): a job record in
+   `fixtures/jobs/` marked `replays` runs again from its recordings to the same world, or the same
+   ending, in the gate.
+5. **A guide line's value, wherever the model put it:** the shell reads a "to" written before
+   `{to}` as the one the value brings, so "adherence to {to}, so" reads "adherence to 0.61, so", and
+   "adherence, so" at Beginner, where it read "to , so" in the first generated world too; the
+   explainer's mend also reads a value named in at most four words before the clause's comma ("to
+   fast treatment, so"), which qwen36-27b wrote twice and failed a job on.
+
+### The outcome: neither paper makes a world under these rules
+
+Both jobs are recorded and replay to their endings (`fixtures/jobs/`):
+
+- **Hepatitis C fails on its headline.** The paper's headline is that "an adherence level
+  exceeding 52% causes the reproduction number to drop below 1". At the values of its own Table 1,
+  its equation (7) gives a reproduction number of 0.76 at the table's adherence of 0.5, and between
+  0.65 and 0.78 for every adherence from none to all: below 1 throughout, and barely moved by
+  adherence. The 52% threshold of its Figure 7 must come from values the paper does not state. So at
+  the world's values adherence moves nothing visibly but the quit-treatment compartment, whose
+  emptying at full adherence is definitional. The planner tried 0.6 on the quitters (too small to
+  see), full adherence on the quitters (the reviewer blocks it as definitional), and 0.6 on the
+  acutely infected (too small), and the repairs ran out. Full adherence on the acutely infected,
+  a peak lower by a fifth, would meet every rule; no round tried it. The first generated world is
+  kept as made, at its path.
+- **Tuberculosis picks its set and fails in planning.** Both transcriptions list the synthetic and
+  the Ethiopian sets, the rule picks the Ethiopian fit, and they agree on it, values included
+  (ADR-0036). The planner gives three levels, the fewest a world keeps; the reviewer sends level 2
+  back as repeating level 1, and its repair no longer meets the level rule, so no level can be
+  dropped.
+
+Whether the hook may test the headline's direction where its threshold does not hold at the
+paper's values, or fall to another anchored finding with the reason said on screen, is the
+owner's; so is whether a plan should hold more levels than the fewest a world keeps.
 
 ## Consequences
 

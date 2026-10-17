@@ -17,7 +17,7 @@ calendar promises.
 |---|---|---|---|---|
 | G1 Playable baseline | v0.1.0 | 21–28 h | R01–R04 | Passed and tagged v0.1.0 on 2026-10-01 |
 | G2 Verified authored world | v0.2.0 | 21–28 h | R01–R08, R12 | Its interface is done; it waits for the Reynolds PDF and the source map |
-| G3a Generalize, compartments, the pipeline on them | Chosen when it passes | 52–72 h | R01–R12 | G3a.1 and G3a.2 done; G3a.3, the pipeline, next |
+| G3a Generalize, compartments, the pipeline on them | Chosen when it passes | 52–72 h | R01–R12 | G3a.1 and G3a.2 done; G3a.3's items built, PDF ingest the last; a world under the rules of 2026-10-16 waits on the owner |
 | G3b Routing, the explainer tier, learning toys | Chosen when it passes | 22–32 h | R01–R12 | Not started |
 | G4 Evaluation and feature freeze | v0.4.0 | 20–28 h | R01–R12, plus evaluation checks | Not started |
 | G5 Delivery | v1.0.0 | 9–12 h | R01–R12 | Not started |
@@ -203,6 +203,10 @@ G3a.3, the pipeline on a known family (24–32 h):
 - [x] The first generated world, from one of the three gold papers, end to end: one recorded
   live run, replayed in tests (the owner's G3a.3 request replaced Elowitz and Leibler with a
   compartment paper, 2026-10-14): PMC12334037, hepatitis C (2026-10-16, `eb5aab9`, ADR-0035).
+- [ ] A world regenerated under the owner's rules of 2026-10-16, lessons visible and on the paper's
+  findings (ADR-0037): the hepatitis C and tuberculosis jobs are recorded and both fail; the owner
+  decides how the hook treats a headline the paper's values do not show, and how many levels a
+  plan holds.
 
 After G3a's first generated world (owner, 2026-10-09):
 - [ ] Replay export and import with `npm run replay`, and `/world/local` in the shell.
@@ -298,3 +302,4 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-10 | A fork in every family but the agents' tells its run from the start, and a run with an end can start again | An epidemic opened after it ends shows nothing (ADR-0029) |
 | 2026-10-10 | The levels sweep runs every authored world, over its family's variation, and holds a compartment world's every run to the accuracy check | ADR-0024's level rule for models with no chance in them (ADR-0029) |
 | 2026-10-14 | The model provider is ASU Research Computing's Voyager gateway, not the Anthropic SDK; tests and CI replay recorded calls; generation runs only locally | Owner decision (ADR-0030) |
+| 2026-10-16 | Models in testing excluded; several value sets picked by rule; a visibility rule beside the level rule, levels on the paper's findings with the hook on its headline, shares as their own unit; then PDF ingest, the last of G3a.3 | Owner decisions (ADR-0035's amendments, ADR-0036, ADR-0037, ADR-0038) |

@@ -45,6 +45,15 @@ paper has scenarios too: tBregs absent or present, two values of one rate.
    bake-off's run on them (ADR-0035's second amendment), and the controller's test of a job with
    two sets arrived then.
 
+## Amendment, 2026-10-16: the tuberculosis paper re-run
+
+The paper ran again on the picks of ADR-0035's amendments. Its first attempt stopped on a quote
+whose capital the paper does not have (ADR-0032's amendment); after that, both transcriptions
+listed the synthetic and the Ethiopian sets, the rule picked the Ethiopian fit, "the set the paper's
+main results use", and the two transcriptions agreed on it, values included. The job then failed in
+planning (ADR-0037's amendment). It is recorded, `fixtures/jobs/arxiv-2506.19869v1-2026-10-16.json`,
+and replays to that ending.
+
 ## Consequences
 
 - A paper with an illustrative and a fitted set becomes a world on the fitted set, the other kept

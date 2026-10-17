@@ -50,6 +50,16 @@ score against, made by hand from the same extracted text the pipeline reads.
    Kermack and McKendrick's 1927 paper is not among them: its PDF is not in the repository, and
    it is not under CC BY.
 
+## Amendment, 2026-10-16: a capital at a quote's start
+
+The tuberculosis paper's job stopped on one quote: the first transcriber gave "Exposed individuals
+are TB-infected but not yet infectious …", which the paper writes mid-sentence, "Thus, exposed
+individuals are …". Its repair returned the same quote, and the job went to the owner over a
+capital letter. A quote is now found also with its first letter's case the other way
+(`findQuote`), after exactly, through whitespace and through notation; only the first letter folds.
+The anchor holds the source's own span, so the provenance check, which compares an anchor with the
+source exactly, is unchanged.
+
 ## Consequences
 
 - The bake-off scores transcriptions, readings and their quotes against the gold

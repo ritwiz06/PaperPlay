@@ -120,6 +120,26 @@ Three reviewers tie at the top (gemma4-31b-it, qwen38-27b, qwen36-27b) and the d
 the earliest, so the planner's own model reviews its plans. That is the rule's outcome, not a
 choice; whether a reviewer should come from another model than the planner is for the owner.
 
+## Amendment, 2026-10-16: the planners shown the model's response, and new picks
+
+Regenerating the hepatitis C world showed planners choosing What-ifs the model barely notices, so
+the planner's prompt now holds the model's response to each rate halved and doubled (ADR-0037's
+amendment). That changed the planner's prompt, so every planner ran again on the three papers
+(`design-v3`); the reviewers replayed. The bake-off was then rescored, calling nothing, under
+the quote rule of ADR-0032's amendment, which finds a few more quotes and moves no pick but the
+readers' order below the first.
+
+With the response in front of them, planners did far better: glm-5-3 and qwen36-27b each made 8
+of 9 levels meet both rules, where the best had made 5 of 9; gemma4-31b-it, the earlier pick, made
+none. The two tie on every key the rule names. The report broke the tie by list order, because the
+failed calls it counted were the transcribers', readers' and routers' only; glm-5-3's planner
+failed on one of the three papers, as it ran out of room. A planner's and a reviewer's own failed
+calls now break a tie before list order, and qwen36-27b, which planned all three, is picked.
+
+Picks: planner and explainer qwen36-27b (Qwen); reviewer gemma4-31b-it (Google), unchanged. The
+reviewer is now another model than the planner, which answers the question this ADR left the owner.
+The other stages are unchanged.
+
 ## Consequences
 
 - The picked pair agrees in equations on all three gold papers and in values on one.
