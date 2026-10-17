@@ -131,6 +131,25 @@ describe("[R06] guided exploration, from level 2's script", () => {
     const words = done.map((line) => line.text).join(" ");
     expect(words).not.toMatch(/\b(right|wrong|correct|incorrect|score|points?)\b/i);
   });
+
+  it("gives the paper's own words their own line and origin, after the world's words (ADR-0042)", () => {
+    const split = { ...exploration, explanation: { text: "The other world's peak was higher.", origin: "teaching-choice" as const, anchors: [] }, paperSays: { text: "“The flock forms by itself.”", origin: "paper-derived" as const, anchors: exploration.explanation.anchors } };
+    const done = explorationLines(split, claim, { predicted: 0, change: "x", done: true, holdsHere: true });
+    expect(done.slice(3).map((line) => [line.origin, line.text])).toEqual([
+      ["teaching-choice", "The other world's peak was higher."],
+      ["paper-derived", "The paper: “The flock forms by itself.”"],
+      ["teaching-choice", "Why might seeing more birds not help a flock agree sooner?"],
+    ]);
+  });
+});
+
+describe("[R06] the guide in a share world's unit (ADR-0042)", () => {
+  const level = levelOf("hook");
+  it("writes the reading and its words as people in the town, never as shares", () => {
+    const script = { ...level.guide, readings: [{ atLeast: 0.01, words: "recovered is above 0.01" }, { atLeast: 0, words: "hardly any" }] };
+    const [, saw] = guideLines(script, { min: 0, step: 0.01 }, level.observable, { lastAction: null, value: 0.5, observed: 0.0233, trend: "steady", playing: true, depth: "intermediate", scale: { factor: 10_000, unit: "people" } });
+    expect(saw.text).toMatch(/ 233 people and .*: recovered is above 100 people\.$/);
+  });
 });
 
 describe("[R06] guided exploration on every level", () => {

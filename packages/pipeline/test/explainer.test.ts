@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { narrationOf } from "../src/assemble/world.ts";
 import { ExplainedLevel, mendTo } from "../src/stages/explainer.ts";
 
 // The explainer's guide lines (ADR-0037): {to} marks where the learner's new value goes. A value a
@@ -29,5 +30,15 @@ describe("[R06] the explainer's guide lines", () => {
     const parsed = ExplainedLevel.safeParse(level);
     expect(parsed.success).toBe(false);
     expect(parsed.error?.issues.map((issue) => issue.path.join("."))).toEqual(["guide.raised"]);
+  });
+});
+
+describe("[R05] a closing line's own words, the paper's quote taken out (ADR-0042)", () => {
+  it("drops the sentence that quotes the paper, keeping the world's words and their question", () => {
+    const text = "Doubling the progression rate made the infectious peak more than four million higher. The town is already above the threshold. The paper says, 'The results suggest that optimal conditions could lead to the elimination of TB.' What would happen?";
+    expect(narrationOf(text, "The results suggest that optimal conditions could lead to the elimination of TB.")).toBe("Doubling the progression rate made the infectious peak more than four million higher. The town is already above the threshold. What would happen?");
+    expect(narrationOf("Adherence helps. As the authors note, \"adherence matters\".", null)).toBe("Adherence helps.");
+    expect(narrationOf("Adherence helps, as the model shows.", null)).toBe("Adherence helps, as the model shows.");
+    expect(narrationOf("The paper finds \"adherence matters\". It helps.", null)).toBe("It helps.");
   });
 });

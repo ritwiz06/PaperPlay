@@ -114,6 +114,20 @@ function roundUp(value: number): number {
   return 10 * power;
 }
 
+/**
+ * A closing line's own words, the paper's quote taken out: a sentence that quotes the paper, or
+ * says "the paper says" and quotes it, becomes the paper's own statement (ADR-0042).
+ */
+export function narrationOf(text: string, quote: string | null): string {
+  const sentences = text.match(/[^.!?]+(?:[.!?]+["'”’]?|$)\s*/g) ?? [text];
+  const head = quote ? quote.slice(0, 24).toLowerCase() : null;
+  return sentences
+    .filter((sentence) => !(head && sentence.toLowerCase().includes(head)) && !/\bthe (paper|authors?) (says?|states?|writes?|notes?|reports?|finds?|concludes?)\b[^.]*["'“‘]/i.test(sentence))
+    .join("")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export function assembleWorld(input: AssembleInput): Assembled {
   const { source, explanation, reading } = input;
   const plan = namedInModel(input.plan, input.model);
@@ -230,7 +244,10 @@ export function assembleWorld(input: AssembleInput): Assembled {
         interveneActionId: kebab(planned.control.parameter),
         observeMetricId: observableOf(planned.watch),
         explainPrompt: words?.afterwards.question ?? "Why?",
-        explanation: { text: words?.afterwards.text ?? planned.effect, origin: origin(afterAnchors), anchors: afterAnchors },
+        // One origin a sentence (ADR-0042): the world's words are a teaching choice, and the paper's
+        // quote, when the source holds it, is its own statement, paper-derived.
+        explanation: { text: narrationOf(words?.afterwards.text ?? planned.effect, words?.afterwards.quote ?? null) || planned.effect, origin: "teaching-choice", anchors: [] },
+        ...(afterAnchors.length > 0 && afterAnchors[0] ? { paperSays: { text: `“${afterAnchors[0].quote}”`, origin: "paper-derived", anchors: afterAnchors } } : {}),
       },
       furtherReading: [],
       carryForward: planned.carryForward,

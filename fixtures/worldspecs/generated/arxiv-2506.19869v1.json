@@ -1376,7 +1376,12 @@
         "observeMetricId": "levelI",
         "explainPrompt": "What would happen if you instead slowed progression to half as fast?",
         "explanation": {
-          "text": "Doubling the progression rate made the infectious peak more than four million higher. The town is already above the elimination threshold, so faster progression worsens the outbreak. The paper says, 'The results suggest that optimal conditions could lead to the elimination of TB.' What would happen?",
+          "text": "Doubling the progression rate made the infectious peak more than four million higher. The town is already above the elimination threshold, so faster progression worsens the outbreak. What would happen?",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "paperSays": {
+          "text": "“The results suggest that optimal conditions could lead to the elimination of TB.”",
           "origin": "paper-derived",
           "anchors": [
             {
@@ -2517,7 +2522,12 @@
         "observeMetricId": "levelV",
         "explainPrompt": "Why does more contact leave fewer people in the protected vaccinated group?",
         "explanation": {
-          "text": "The result is in. Doubling the contact rate lowered the vaccinated peak. The paper's sensitivity analysis says: contact rate ($beta$), recruitment rate ($Lambda$), the loss of protection for the vaccination rate ($theta$), and rate of progression from the exposed class to the infectious class ($ga$)",
+          "text": "The result is in. Doubling the contact rate lowered the vaccinated peak.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "paperSays": {
+          "text": "“contact rate ($\\beta$), recruitment rate ($\\Lambda$), the loss of protection for the vaccination rate ($\\theta$), and rate of progression from the exposed class to the infectious class ($\\gamma$) were the most important factors.”",
           "origin": "paper-derived",
           "anchors": [
             {
@@ -3663,6 +3673,11 @@
         "explainPrompt": "What other change could help pull even more infectious people out of the outbreak?",
         "explanation": {
           "text": "The result is in. Doubling the treatment rate made the infectious peak more than three million people lower. The paper says that as treatment rises, the infectious population falls.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "paperSays": {
+          "text": "“The result revealed that the infectious population decreases as the treatment rate of infected individuals increases; in the long run, this may lead to the eradication of the disease from the community.”",
           "origin": "paper-derived",
           "anchors": [
             {
@@ -5925,7 +5940,7 @@
         "observeMetricId": "levelI",
         "explainPrompt": "What would happen if the town cut recruitment in half instead?",
         "explanation": {
-          "text": "The result is in. Doubling recruitment pushed infectious people more than two million higher at year thirty eight. The paper says, 'We obtained R0 = 2.67 for the estimated model parameters, which are greater than one, indicating that the tuberculosis is continuously multiplying.' Because the number",
+          "text": "The result is in. Doubling recruitment pushed infectious people more than two million higher at year thirty eight. 67 for the estimated model parameters, which are greater than one, indicating that the tuberculosis is continuously multiplying.' Because the number",
           "origin": "teaching-choice",
           "anchors": []
         }

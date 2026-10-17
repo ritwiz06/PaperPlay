@@ -38,6 +38,7 @@ import type { BuiltWorld } from "@paperplay/pipeline";
 import { openFork, type Fork, type ForkSnapshot } from "../world/fork.ts";
 import type { PlayableWorld, PlaySession } from "../worlds/types.ts";
 import { acrossWords, explorationLines, guideLines, trendOf, type Trend } from "./guide.ts";
+import { claimWords } from "./units.ts";
 
 const DEPTH_KEY = "paperplay.depth";
 /** About a second and a half of readouts, for the guide's trend. */
@@ -196,6 +197,8 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
     ...WORLD.kit.disclosures.map((text) => ({ text, origin: "teaching-choice" as const })),
   ];
   const level = levelAt(index);
+  /** A share world's numbers as people in its town, wherever the world writes one (ADR-0037, ADR-0042). */
+  const scale = play.displayScale?.(level) ?? null;
   const metric = level.observable.metricId;
   const timestep = level.primitive.fixedTimestep;
   const [min, max] = level.action.range;
@@ -220,6 +223,7 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
     trend,
     playing: snapshot.playing,
     depth,
+    scale,
   });
   const lines: readonly GuideLine[] = [notice ? { text: notice, origin: "teaching-choice" } : did, saw];
   const levels: readonly MapLevel[] = LEVELS.map((entry, at) => ({
@@ -345,7 +349,6 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
 
   const difference = whatIfSpec.difference;
   // Shares of a population, shown as people in a stated town (ADR-0037); a time stays a time.
-  const scale = play.displayScale?.(level) ?? null;
   const shown = (value: number): number => (scale && difference.unit !== timeWords.many ? value * scale.factor : value);
   const measured = (value: number): string => {
     if (Number.isNaN(value)) return "not measured yet";
@@ -434,7 +437,9 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
             )}
             {exploring && !forkView.done ? null : (
               <p data-effect="">
-                <OriginTag origin={whatIfSpec.origin} placeholder={placeholderOnly(whatIfSpec.anchors)} quiet /> The level states: {whatIfSpec.effect}
+                <OriginTag origin={whatIfSpec.origin} placeholder={placeholderOnly(whatIfSpec.anchors)} quiet /> The level states:{" "}
+                {/* A claim in the chart's unit (ADR-0042): a share world's, from its data, as people. */}
+                {scale && claim.kind === "each" ? claimWords(difference.label, claim, scale) : whatIfSpec.effect}
               </p>
             )}
           </>

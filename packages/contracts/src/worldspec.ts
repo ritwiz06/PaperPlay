@@ -265,6 +265,11 @@ export const GuidedExploration = z.strictObject({
   explainPrompt: z.string().min(1),
   /** What the guide says once the result is in, connecting it to the paper. */
   explanation: z.strictObject({ text: z.string().min(1), origin: Origin, anchors: z.array(AnchorRef) }).refine(paperDerivedHasAnchors, NEEDS_ANCHOR),
+  /**
+   * The paper's own words the closing line rests on, as their own statement with their own origin,
+   * so no sentence mixes the world's words with the paper's (ADR-0042).
+   */
+  paperSays: z.strictObject({ text: z.string().min(1), origin: Origin, anchors: z.array(AnchorRef) }).refine(paperDerivedHasAnchors, NEEDS_ANCHOR).optional(),
 });
 export type GuidedExploration = z.infer<typeof GuidedExploration>;
 

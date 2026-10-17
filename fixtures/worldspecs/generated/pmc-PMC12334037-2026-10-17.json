@@ -1370,6 +1370,11 @@
         "explainPrompt": "What other change could help push the recovered peak even higher?",
         "explanation": {
           "text": "The result matches the paper's finding. Full adherence pushes more people through treatment and into the recovered group.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "paperSays": {
+          "text": "“an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.”",
           "origin": "paper-derived",
           "anchors": [
             {
@@ -2535,6 +2540,11 @@
         "explainPrompt": "Why might quitters matter more than people who stay on treatment?",
         "explanation": {
           "text": "The what-if is in. When quitters pass the virus on twice as easily, the cQ peak is higher by more than zero point zero zero six. The paper says this happens because beta three exerts the strongest influence on the reproduction number.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "paperSays": {
+          "text": "“$β_{3}$ exerts the strongest influence on the reproduction number.”",
           "origin": "paper-derived",
           "anchors": [
             {
@@ -3698,7 +3708,12 @@
         "observeMetricId": "levelCQ",
         "explainPrompt": "What would happen if recovery became even faster?",
         "explanation": {
-          "text": "At this faster recovery rate, the quitters peak dropped by more than 0.001. The paper says: 'When ρ approaches a value of approximately 0.19, we observe that $ℛ_{0}$ falls below 1.' What would happen if recovery became even faster?",
+          "text": "At this faster recovery rate, the quitters peak dropped by more than 0.001. 19, we observe that $ℛ_{0}$ falls below 1.' What would happen if recovery became even faster?",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "paperSays": {
+          "text": "“When ρ approaches a value of approximately 0.19, we observe that $ℛ_{0}$ falls below 1.”",
           "origin": "paper-derived",
           "anchors": [
             {
@@ -4854,7 +4869,7 @@
         "observeMetricId": "levelR",
         "explainPrompt": "What else could you change to see this synergy grow?",
         "explanation": {
-          "text": "The result is in. The model shows that faster acute recovery pushes more people into the recovered group at the peak. The paper says: Our model unraveled the synergistic impact of simultaneously enhancing the recovery rate of acutely infected individuals and treatment adherence on reducing ℛ0.",
+          "text": "The result is in. The model shows that faster acute recovery pushes more people into the recovered group at the peak.",
           "origin": "teaching-choice",
           "anchors": []
         }
@@ -6002,7 +6017,12 @@
         "observeMetricId": "levelCQ",
         "explainPrompt": "If more people quit treatment, what happens to adherence and the reproduction number?",
         "explanation": {
-          "text": "The result is in. The model shows that doubling the quitting rate pushes more people into the quitters group. The paper states that an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.",
+          "text": "The result is in. The model shows that doubling the quitting rate pushes more people into the quitters group.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "paperSays": {
+          "text": "“an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.”",
           "origin": "paper-derived",
           "anchors": [
             {

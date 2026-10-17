@@ -6,6 +6,7 @@
  */
 import { isPlaceholder, RULE_HOLDS, RULE_SEEDS, type DifferenceClaim, type GuidedExploration, type GuideScript, type Observable, type Variation } from "@paperplay/contracts";
 import type { Depth, GuideLine } from "@paperplay/ui/react";
+import { asPeople, inDisplayUnits, type DisplayScale } from "./units.ts";
 
 export type Trend = "rising" | "falling" | "steady";
 
@@ -24,6 +25,8 @@ export interface GuideInput {
   readonly trend: Trend;
   readonly playing: boolean;
   readonly depth: Depth;
+  /** A share world's numbers as people in its town, as its chart shows them (ADR-0042). */
+  readonly scale?: DisplayScale | null;
 }
 
 /** The words of the first reading whose threshold the value reaches, or of the last. */
@@ -54,9 +57,9 @@ function didLine(script: GuideScript, control: GuideControl, { lastAction, value
   return { text: (lastAction.to > lastAction.from ? script.raised : script.lowered).replace(/(?:\s+to)?\s*\{to\}/, to), origin };
 }
 
-function sawLine(script: GuideScript, observable: Observable, { observed, trend, playing, depth }: GuideInput): GuideLine {
+function sawLine(script: GuideScript, observable: Observable, { observed, trend, playing, depth, scale = null }: GuideInput): GuideLine {
   const origin = "computed-observation";
-  const words = describeReading(script.readings, observed);
+  const words = inDisplayUnits(describeReading(script.readings, observed), scale);
   const paused = playing ? "" : "Paused. ";
   if (depth === "beginner") {
     const motion = !playing || trend === "steady" ? "" : `, ${script.trend[trend].beginner}`;
@@ -65,7 +68,7 @@ function sawLine(script: GuideScript, observable: Observable, { observed, trend,
   const decimals = depth === "advanced" ? observable.decimals : Math.max(observable.decimals - 1, 0);
   const label = depth === "advanced" ? observable.label : observable.shortLabel;
   const motion = !playing ? "" : ` and ${trend === "steady" ? script.trend.steady : script.trend[trend].measured}`;
-  return { text: `${paused}${label} ${observed.toFixed(decimals)}${motion}: ${words}.`, origin };
+  return { text: `${paused}${label} ${scale ? asPeople(observed, scale) : observed.toFixed(decimals)}${motion}: ${words}.`, origin };
 }
 
 export function guideLines(script: GuideScript, control: GuideControl, observable: Observable, input: GuideInput): readonly [GuideLine, GuideLine] {
@@ -130,8 +133,10 @@ export function explorationLines(
         : `${across}, the level's statement holds on at least ${RULE_HOLDS}.`,
     origin: "computed-observation",
   });
-  const { explanation } = exploration;
+  const { explanation, paperSays } = exploration;
   lines.push({ text: explanation.text, origin: explanation.origin, placeholder: explanation.anchors.length > 0 && explanation.anchors.every(isPlaceholder) });
+  // The paper's own words, on their own line with their own origin (ADR-0042).
+  if (paperSays) lines.push({ text: `The paper: ${paperSays.text}`, origin: paperSays.origin, placeholder: paperSays.anchors.length > 0 && paperSays.anchors.every(isPlaceholder) });
   lines.push({ text: exploration.explainPrompt, origin: "teaching-choice" });
   return lines;
 }

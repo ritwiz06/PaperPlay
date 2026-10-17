@@ -90,6 +90,14 @@ describe("[R03] worldspec/3's own rules", () => {
     expect(paths({ ...v3(), limits: [{ text: "Only small towns.", origin: "paper-derived", anchors: [anchor()] }] })).toEqual([]);
   });
 
+  it("may carry the paper's own words beside a closing line, a statement of their own, anchored (ADR-0042)", () => {
+    const [first, ...rest] = v3().levels;
+    if (!first) throw new Error("a world has levels");
+    const exploration = (paperSays: unknown) => ({ ...v3(), levels: [{ ...first, guidedExploration: { ...first.guidedExploration, paperSays } }, ...rest] });
+    expect(paths(exploration({ text: "“The flock forms by itself.”", origin: "paper-derived", anchors: [anchor()] }))).toEqual([]);
+    expect(paths(exploration({ text: "“The flock forms by itself.”", origin: "paper-derived", anchors: [] }))).toEqual(["levels.0.guidedExploration.paperSays.anchors"]);
+  });
+
   it("may carry the paper's own numbers, run again, and an observation on a level, a paper-derived statement with its anchor (ADR-0040)", () => {
     const own = (statements: unknown[]) => ({ ...v3(), ownNumbers: { verdict: "mismatch", statements } });
     expect(paths(own([{ text: "R0 by the paper's formula: 0.762.", origin: "computed-observation", anchors: [] }]))).toEqual([]);
