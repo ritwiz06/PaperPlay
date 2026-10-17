@@ -1,8 +1,7 @@
 # Status
 
-Updated 2026-10-16, the session running into 2026-10-17: the owner's two rules, the
-reproducibility check, five levels, two worlds made under every rule, G3a's close-out and the G3b
-plan ([log](sessions/2026-10-16-2.md)). This file is rewritten every session.
+Updated 2026-10-17: the owner's answers, review rules, two planners, the G2 sources and the
+learning family ([log](sessions/2026-10-17.md)). This file is rewritten every session.
 
 ## Where we are
 
@@ -31,9 +30,11 @@ plan ([log](sessions/2026-10-16-2.md)). This file is rewritten every session.
   equations beside the paper's formula, every value against its quote, other values behind the
   headline. On the hepatitis C paper it confirms the headline's mismatch; on the tuberculosis
   paper its formulas agree with the model and its stated R0 = 2.67 follows from neither.
-- **Branches:** `g3/close-out`, docs only, being landed; `worktree-agent-ab8301aef54d2fcc8`, the
+- **One origin a sentence, every number in the chart's unit** (ADR-0042), landing on
+  `g3/one-origin`.
+- **Branches:** `g3/one-origin`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the
   compartment agent's own, whose three commits are on `main`.
-- **Working commit:** `4d787c5`, `main`, whose CI passed; `g3/close-out` adds docs only.
+- **Working commit:** `da78721` on `g3/one-origin`. `main` is at `7d2bb24`, whose CI passed.
 - **Model provider:** Voyager, `https://openai.rc.asu.edu/v1`, its key `VOYAGER_API_KEY` in
   `apps/api/.env` only (ADR-0030); called only by `npm run pipeline:live`. Replies stream; a call
   may take up to 30 minutes.
@@ -52,28 +53,27 @@ plan ([log](sessions/2026-10-16-2.md)). This file is rewritten every session.
   town seen through a lens, each with its control, readout, guide, journal, prediction and fork. On
   this machine only, `/create` makes a world from an arXiv id, a PMCID or a PDF.
 
-## Latest check:gate (G1), 2026-10-17, on `g3/close-out`, `main`'s 4d787c5 with its docs
+## Latest check:gate (G1), 2026-10-17, on `g3/one-origin` at da78721
 
 ```
 check:gate G1 · Playable baseline · tag v0.1.0
   runtime    node 24.21.0 (pinned 24.21.0)  ok
-  typecheck  ok      15.8 s
-  lint       ok      12.0 s
-  check:docs ok      0.2 s
-  test       ok      75.2 s
-  build      ok      0.5 s
-  test:e2e   ok      106.0 s
-  evidence   895 tests (vitest 809, playwright 86), 0 skipped
+  typecheck  ok      22.5 s
+  lint       ok      16.2 s
+  check:docs ok      0.4 s
+  test       ok      106.8 s
+  build      ok      0.7 s
+  test:e2e   ok      127.8 s
+  evidence   901 tests (vitest 815, playwright 86), 0 skipped
     R01  Deterministic, oracle-checked primitives      151 passing
     R02  Model/render separation                       9 passing
-    R03  Strict, versioned contracts                   153 passing
+    R03  Strict, versioned contracts                   154 passing
     R04  Playable local world                          20 passing
 
 G1 passed: every required check ran and every requirement has passing evidence.
 ```
 
-Ahead of their gate, from the same suites' reports: R05 12, R06 63, R07 40, R08 83, R09 46, R10 22,
-R11 27, R12 22. Land runs the gate again before it pushes.
+Ahead of their gate, from the same suites' reports: R05 13, R06 67, R07 40, R08 83, R09 46, R10 22, R11 27, R12 22. Land runs the gate again before it pushes.
 
 ## Blockers
 
