@@ -90,6 +90,17 @@ describe("[R03] worldspec/3's own rules", () => {
     expect(paths({ ...v3(), limits: [{ text: "Only small towns.", origin: "paper-derived", anchors: [anchor()] }] })).toEqual([]);
   });
 
+  it("may carry the paper's own numbers, run again, and an observation on a level, a paper-derived statement with its anchor (ADR-0040)", () => {
+    const own = (statements: unknown[]) => ({ ...v3(), ownNumbers: { verdict: "mismatch", statements } });
+    expect(paths(own([{ text: "R0 by the paper's formula: 0.762.", origin: "computed-observation", anchors: [] }]))).toEqual([]);
+    expect(paths(own([]))).toEqual(["ownNumbers.statements"]);
+    expect(paths(own([{ text: "The paper's headline.", origin: "paper-derived", anchors: [] }]))).toEqual(["ownNumbers.statements.0.anchors"]);
+    expect(paths({ ...v3(), ownNumbers: { verdict: "proven", statements: [{ text: "x", origin: "teaching-choice", anchors: [] }] } })).toEqual(["ownNumbers.verdict"]);
+    const [first, ...rest] = v3().levels;
+    expect(paths({ ...v3(), levels: [{ ...first, observation: { text: "At the values the paper lists, R0 stays below 1.", origin: "computed-observation", anchors: [] } }, ...rest] })).toEqual([]);
+    expect(paths({ ...v3(), levels: [{ ...first, observation: { text: "The paper says so.", origin: "paper-derived", anchors: [] } }, ...rest] })).toEqual(["levels.0.observation.anchors"]);
+  });
+
   it("routes tier A to a released primitive and tier B to an unmerged one, and keeps a world on an unmerged primitive a draft", () => {
     const unmerged = { status: "unmerged", pullRequest: "https://github.com/ritwiz06/PaperPlay/pull/1" };
     const routed = (routing: Record<string, unknown>, status: "draft" | "reviewed" = "reviewed") => ({ ...v3(), status, routing: { ...v3().routing, ...routing } });
