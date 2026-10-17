@@ -7,6 +7,32 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-17 · G3a.3, the pipeline on the compartment family, and G3a's close-out
+
+- Branches: the G3a.3 branches of 2026-10-14 to 2026-10-17, from `g3/secrets` to `g3/five-levels`,
+  each landed through `npm run land`.
+- Commits: `9251435`, `796fdc4`, `3aead5f`, `2577025`, `16dac04`, `870c541`, `d08c88e`, `08127e3`, `4b93b58`, `43edeaf`,
+  `53f55e1`, `61d6bbf`, `c261409`, `eb5aab9`, `d133792`, `7c17f96`, `d3af3df`, `43be8a0`,
+  `b943b5b`, `8391216`, `f7da06c`, `8eefb73`, `ada5723`, `456defe`, `675795c`, `124d00f`,
+  `ef4c054`, `d362648`, `ec2688d`.
+- Shipped (ADR-0030 to ADR-0041):
+  - **The pipeline from a paper to a checked world:** ingest from arXiv's LaTeX, PubMed
+    Central's JATS and PDF, the sanitiser; routing, reading, two transcriptions from different
+    vendors that must agree, value sets picked by rule; running the paper's own numbers; planning
+    five levels, explaining them, the level rule, the visibility rule, the findings check,
+    provenance and the reviewer, with at most two scoped repairs and the hook never dropped; real
+    job states over server-sent events; `/create` on this machine.
+  - **Every model call recorded and replayed;** models picked per stage by a bake-off against
+    three gold transcriptions, rerun as the prompts changed.
+  - **Three generated worlds:** the first hepatitis C world, kept as made; the hepatitis C and
+    tuberculosis worlds of 2026-10-17, made under every rule, their jobs replayed in the tests.
+  - **The machine's rules:** no address out unless the owner sets one; live jobs and gates never
+    share the machine.
+- Evidence: R01 151, R02 9, R03 153, R04 20, R05 12, R06 63, R07 40, R08 83, R09 46, R10 22,
+  R11 27, R12 22.
+- Gate: `check:gate` passed G1 on `g3/five-levels` at `ec2688d` (895 tests, 0 skipped); land's own
+  run follows. G3a's close-out is in the roadmap.
+
 ## 2026-10-10 · The town kit and Threshold Town, and the end of G3a.2
 
 - Branch: `g3/kermack-mckendrick`

@@ -17,8 +17,8 @@ calendar promises.
 |---|---|---|---|---|
 | G1 Playable baseline | v0.1.0 | 21–28 h | R01–R04 | Passed and tagged v0.1.0 on 2026-10-01 |
 | G2 Verified authored world | v0.2.0 | 21–28 h | R01–R08, R12 | Its interface is done; it waits for the Reynolds PDF and the source map |
-| G3a Generalize, compartments, the pipeline on them | Chosen when it passes | 52–72 h | R01–R12 | G3a.1 and G3a.2 done; G3a.3's items built, PDF ingest the last; a world under the rules of 2026-10-16 waits on the owner |
-| G3b Routing, the explainer tier, learning toys | Chosen when it passes | 22–32 h | R01–R12 | Not started |
+| G3a Generalize, compartments, the pipeline on them | Chosen when it passes | 52–72 h | R01–R12 | Every item built; closed out 2026-10-17, two worlds made under every rule; what counts as definitional waits on the owner |
+| G3b Routing, the explainer tier, learning toys | Chosen when it passes | 49–71 h (design/g3b.md) | R01–R12 | Planned, waiting on the owner's decisions |
 | G4 Evaluation and feature freeze | v0.4.0 | 20–28 h | R01–R12, plus evaluation checks | Not started |
 | G5 Delivery | v1.0.0 | 9–12 h | R01–R12 | Not started |
 
@@ -203,10 +203,51 @@ G3a.3, the pipeline on a known family (24–32 h):
 - [x] The first generated world, from one of the three gold papers, end to end: one recorded
   live run, replayed in tests (the owner's G3a.3 request replaced Elowitz and Leibler with a
   compartment paper, 2026-10-14): PMC12334037, hepatitis C (2026-10-16, `eb5aab9`, ADR-0035).
-- [ ] A world regenerated under the owner's rules of 2026-10-16, lessons visible and on the paper's
-  findings (ADR-0037): the hepatitis C and tuberculosis jobs are recorded and both fail; the owner
-  decides how the hook treats a headline the paper's values do not show, and how many levels a
-  plan holds.
+- [x] Worlds made under the owner's rules of 2026-10-16: running the paper's own numbers, five
+  levels, the hook never dropped; the hepatitis C and tuberculosis worlds, ready and replayed
+  (2026-10-17, `ec2688d`, ADR-0039 to ADR-0041).
+
+### G3a close-out, 2026-10-17
+
+**What G3a set out to do** (ADR-0024): make the code general beyond flocking, add a second family
+by hand, and run the pipeline on that family, from a paper to a checked, playable world, honest
+when it cannot make one.
+
+**What holds:**
+- **General code:** primitive families, scene kits across three layers, `worldspec/3`, the generic
+  session and fork; the flocking world plays exactly as before, held to records made before the
+  refactor.
+- **The compartment family:** models as data, one RK4 solver with its accuracy check, units,
+  positivity and conservation checks, hand-derived oracles; the town kit; Threshold Town by hand.
+- **The pipeline, end to end:** ingest from arXiv's LaTeX, PubMed Central's JATS and PDF; the
+  sanitiser; routing, reading, two transcriptions from different vendors that must agree, value
+  sets picked by rule; planning, explaining, the level rule, the visibility rule, the findings
+  check, running the paper's own numbers, provenance and the reviewer, with at most two scoped
+  repairs; real job states over server-sent events; `/create`; every live call recorded and
+  replayed in the tests; models chosen by a bake-off against gold answers.
+- **Honest failure:** a job that cannot make a world says exactly why: transcriptions that
+  disagree, a value set the rule cannot pick, a hook that cannot be made to show, a mistake of ours
+  found by running the paper's own numbers.
+- **The machine's rules:** no personal data out unless the owner sets it; live jobs and gates never
+  share the machine.
+
+**What does not hold, or not yet:**
+- **No world yet under every rule of 2026-10-16.** The hepatitis C and tuberculosis jobs, on five
+  levels with the paper's own numbers, make worlds whose every level meets the level rule, the
+  visibility rule and the findings check; the reviewer then finds levels definitional, among them
+  findings the papers themselves report, and both jobs go to the owner. What counts as
+  definitional is the owner's to settle (ADR-0041's consequences).
+- **The model stages are the least steady part.** The planner's pick changed three times in two
+  days as its prompt changed, and the reviewer that blocks the bake-off's planted faults exactly
+  blocks most levels of a planner's world as definitional.
+- The reproducibility check reads the reproduction number only; other headline quantities rest on
+  the level rule and the visibility rule alone.
+- G2's evidence still waits on the Reynolds PDF; replay export and `/world/local` in the shell,
+  and the stale-evidence rule, are not done.
+
+**Effort:** planned 52–72 h. Used, by session wall clock, which includes waiting on live model
+calls and on CI: 2026-10-10 about 9 h; 2026-10-14 about 6 h; 2026-10-15 about 4 h; 2026-10-16
+about 20 h across two sessions; 2026-10-17 about 5 h. About 44 h of sessions.
 
 After G3a's first generated world (owner, 2026-10-09):
 - [ ] Replay export and import with `npm run replay`, and `/world/local` in the shell.
@@ -215,10 +256,17 @@ After G3a's first generated world (owner, 2026-10-09):
 
 ### G3b Routing, the explainer tier, and the learning family
 
-- [ ] The router across families; `explainerspec/1` and its page; PubMed Central ingest by a
-  supported route, tested on one CC BY compartment-model paper (8–12 h).
-- [ ] Learning toys on the valley as a loss landscape: Adam beside SGD, then dropout on a tiny
-  network, with the miniature label enforced (14–20 h).
+Planned in [design/g3b.md](design/g3b.md), for the owner's review (2026-10-17); its seven
+decisions wait on the owner. PubMed Central ingest, once here, landed in G3a.3.
+- [ ] G3b.1a: the router across families, its routing set grown to sixteen papers (4–6 h).
+- [ ] G3b.1b: `explainerspec/1`, its page, one tier C paper end to end (6–8 h).
+- [ ] G3b.2a: `learning.landscape@1` and `OptimizerSpec`, update rules as data, with oracles
+  (8–12 h).
+- [ ] G3b.2b: the landscape kit, the loss surface as terrain (6–8 h).
+- [ ] G3b.2c: Adam authored by hand first (4–6 h).
+- [ ] G3b.2d: the pipeline on learning, its bake-off scenario and its own-numbers check (8–12 h).
+- [ ] G3b.2e: Adam through the pipeline, recorded and replayed (3–5 h).
+- [ ] G3b.2f: `learning.network@1` and Dropout through the pipeline (10–14 h).
 
 Later:
 - The widget tier, behind `FEATURE_WIDGETS=1` (stretch).
@@ -255,7 +303,7 @@ commit times). The owner's own focused hours are not tracked unless logged.
 |---|---|---|
 | G1 | 21–28 h | 2026-09-28 to 2026-10-01, about 8.3 h of sessions: 1.4 h (09-28), 5.4 h (09-30) and 1.5 h (10-01). Under plan, because Claude Code did the building; the owner's own review time is not tracked |
 | G2 | 21–28 h | G2's early RunRecord and replay work. Then five sessions on 2026-10-09:<br>• 00:51 to 01:45, about 0.9 h: `main`, ADR-0008, the axe scan, the demo capture, the hook spike and the plan change.<br>• 10:25 to 11:05, about 0.7 h: `origin`, CI, `--frames` and the capture finding.<br>• 11:06 to about 12:05, about 1 h: the canonical capture, the shell, the world art, the capture's camera and the level script.<br>• 12:08 to about 14:25, about 2.3 h: the group measure, WorldSpec and the builder, the six levels from the spec, the stage split and the deploy configuration.<br>• 15:08 to about 16:20, about 1.2 h: the level rule, flock 3.1.0, the fork, guided exploration, the speed control and the CSP.<br>• 20:15 to about 22:10, about 1.9 h: `npm run land` and the hook, the direction (ADR-0021), level 5's readout and its fork's stall, context loss and the phone chart, a prediction before every What-if, and the plan for every paper. |
-| G3a | 52–72 h | 2026-10-10, 00:13 to about 09:20, about 9 h of one session: the owner's answers, G3a.1 (records, families, scene kits, `worldspec/3`) and G3a.2 (the compartment family, the town kit, Threshold Town), six branches landed through `npm run land`, then a closing record. Its wall clock includes about 2 h of waiting on CI |
+| G3a | 52–72 h | About 44 h of session wall clock, which includes waiting on live model calls and on CI:<br>• 2026-10-10, about 9 h: the owner's answers, G3a.1 and G3a.2, six branches landed.<br>• 2026-10-14, about 6 h: the gateway, ingest, transcriptions, the pipeline, `/create`.<br>• 2026-10-15, about 4 h: the bake-off and its fixes.<br>• 2026-10-16, about 20 h across two sessions: the first generated world, the models in testing excluded, value sets, visible lessons, findings, PDF ingest, the machine's rules, running the paper's own numbers.<br>• 2026-10-17, about 5 h: five levels, the bake-off again, the two worlds, the close-out and the G3b plan. |
 | G3b–G5 | As in Gates | None yet |
 
 ## Plan changes
@@ -302,4 +350,5 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-10 | A fork in every family but the agents' tells its run from the start, and a run with an end can start again | An epidemic opened after it ends shows nothing (ADR-0029) |
 | 2026-10-10 | The levels sweep runs every authored world, over its family's variation, and holds a compartment world's every run to the accuracy check | ADR-0024's level rule for models with no chance in them (ADR-0029) |
 | 2026-10-14 | The model provider is ASU Research Computing's Voyager gateway, not the Anthropic SDK; tests and CI replay recorded calls; generation runs only locally | Owner decision (ADR-0030) |
+| 2026-10-17 | G3a closed out: every item built, two worlds made under every rule. G3b planned in design/g3b.md at 49–71 h, a smaller G3b at 29–43 h, its decisions the owner's | Owner request, 2026-10-16 |
 | 2026-10-16 | Models in testing excluded; several value sets picked by rule; a visibility rule beside the level rule, levels on the paper's findings with the hook on its headline, shares as their own unit; then PDF ingest, the last of G3a.3 | Owner decisions (ADR-0035's amendments, ADR-0036, ADR-0037, ADR-0038) |
