@@ -1,15 +1,16 @@
 /**
  * The bake-off's second half (owner, 2026-10-14): planning and reviewing. A planner is given each
  * gold paper's verified model, as the controller would be, and scored by what its plan becomes:
- * levels that build, and levels that meet the level rule over 20 starts. A reviewer is given a world
- * with faults planted in it and scored on finding them, without blocking the level that has none.
+ * levels that build, and levels that meet the level rule over 20 starts. A reviewer is given worlds
+ * with faults in them, planted or kept from live runs, and scored on blocking them without blocking
+ * the levels that have none (`eval/bakeoff/review-cases.json`).
  * Pure functions of the model client, so a test replays the recordings to the same scores.
  */
 import { registry } from "@paperplay/primitives";
-import { buildWorld, checkFindings, sweepLevels, visibilityOf } from "@paperplay/pipeline";
+import { buildWorld, checkFindings, describeDirectEffect, directEffectOf, sweepLevels, termHolds, visibilityOf } from "@paperplay/pipeline";
 import { assembleWorld, chooseStep, describeBehaviour, describeResponse, horizonOf } from "@paperplay/pipeline/assemble";
 import type { ModelClient } from "@paperplay/pipeline/models";
-import { plan, promptSource, review, type Plan, type Reading } from "@paperplay/pipeline/stages";
+import { equationsOf, plan, promptSource, review, type Plan, type Reading, type Review } from "@paperplay/pipeline/stages";
 import { runOwnNumbers } from "@paperplay/pipeline/reproduce";
 import { toModelSpec, TranscriptionWithSets, withValueSet } from "@paperplay/pipeline/transcribe";
 import { readFileSync } from "node:fs";
@@ -32,7 +33,25 @@ export interface PlanScore {
 export interface DesignResults {
   readonly schemaVersion: "bakeoff-design/1";
   readonly plans: readonly { readonly model: string; readonly paper: string; readonly ok: boolean; readonly error: string | null; readonly score: PlanScore }[];
-  readonly reviews: readonly { readonly model: string; readonly ok: boolean; readonly error: string | null; readonly found: number; readonly planted: number; readonly falseBlocks: number; readonly calledFailedAcceptable: boolean; readonly definitional: boolean }[];
+  readonly reviews: readonly ReviewScore[];
+}
+
+export interface ReviewScore {
+  readonly model: string;
+  readonly ok: boolean;
+  readonly error: string | null;
+  /** Faults blocked, of those planted or kept from live runs. */
+  readonly found: number;
+  readonly planted: number;
+  /** Definitional faults blocked as definitional with a valid term. */
+  readonly definitional: number;
+  readonly definitionalPlanted: number;
+  /** Clean levels blocked, of the clean levels. */
+  readonly falseBlocks: number;
+  readonly clean: number;
+  /** Definitional blocks naming no term of the measured compartment's equation holding the control: the controller ignores them. */
+  readonly invalidTerms: number;
+  readonly calledFailedAcceptable: boolean;
 }
 
 /** Placeholder words for each level, so a plan can be assembled and built without the explainer. */
@@ -87,31 +106,83 @@ const modelOf = (paper: ReturnType<typeof loadGoldPapers>[number]): { readonly m
   return { model: { ...model, solver: { ...model.solver, dt } }, horizon };
 };
 
-/** The world the reviewers read: a tuberculosis world in words, with four faults planted in it and three levels without one. */
-export const REVIEW_WORLD = [
-  "Level 1, Vaccination slows the spread: Change the vaccination rate and watch the infectious. What if: what if no one were vaccinated? It states: with no vaccination, more than 5 more people are infectious at year 20 than in this world.",
-  "Level 2, Treatment and the threshold: Change the treatment rate and watch the infectious. It states, as the paper's: \"The paper shows that vaccinating every newborn would eliminate tuberculosis within ten years.\"",
-  "Level 3, Faster progression: Change the progression rate and watch the exposed. What if: what if the exposed became infectious twice as fast? It states: the epidemic doubles in size and the disease can never be controlled.",
-  "Level 4, Recovery after treatment: Change the recovery rate of the treated and watch the recovered. What if: what if recovery were twice as fast? It states: more people are recovered at year 30.",
-  "Level 5, No treatment: Change the treatment rate and watch the treated. What if: what if no one were treated? It states: with no treatment, no one is ever in the treated compartment.",
-  "Level 6, Treatment shrinks the outbreak: Change the treatment rate and watch the infectious. What if: what if treatment were twice as fast? It states: the infectious peak is lower by more than 100,000 people.",
-  "Level 7, Contact and the exposed: Change the contact rate and watch the exposed. What if: what if the contact rate were half as high? It states: the exposed peak is lower by more than 1,000,000 people.",
-].join("\n");
-export const REVIEW_CHECKS = [
-  "The builder: passed, the family's checks included.",
-  "The level rule: level 1 holds on 20 of 20; level 2 holds on 20 of 20; level 3 holds on 18 of 20, its measured difference is 6 more exposed people at year 10; level 4 holds on 9 of 20 and FAILS the rule; level 5 holds on 20 of 20; level 6 holds on 20 of 20; level 7 holds on 19 of 20.",
-  "Provenance: level 2's quote is not in the source.",
-].join("\n");
-/** The levels with a planted fault a reviewer should block: an unsupported claim, an overstatement, and level 5, which follows from a definition (ADR-0037). */
-export const PLANTED = [2, 3, 5] as const;
+/** A level the reviewers are scored on: its words, what it measures, and what a reviewer should do with it. */
+export interface ReviewCaseLevel {
+  readonly title: string;
+  readonly words: string;
+  readonly control: string;
+  readonly compartment: string;
+  readonly summary: string;
+  readonly at: number | null;
+  readonly time: number;
+  /** A fault a reviewer should block; a clean level, a block on which is wrong; or unscored. */
+  readonly expect: "fault" | "clean" | "unscored";
+  readonly kind: "definitional" | "unsupported" | "overstated" | null;
+  /** Where the case came from: planted, or a live run's mistake, kept (ADR-0044). */
+  readonly origin: string;
+}
+
+export interface ReviewCases {
+  readonly schemaVersion: "review-cases/1";
+  readonly note: string;
+  readonly worlds: readonly { readonly id: string; readonly paper: string; readonly checks: string; readonly failedCheck: number | null; readonly levels: readonly ReviewCaseLevel[] }[];
+}
+
+/** The worlds the reviewers are scored on, `eval/bakeoff/review-cases.json`: planted faults, and every reviewer mistake a live run revealed. */
+export const loadReviewCases = (): ReviewCases => JSON.parse(readFileSync(join(root, "eval", "bakeoff", "review-cases.json"), "utf8")) as ReviewCases;
+
 /**
- * The levels with no fault, a reviewer's block on any of which is wrong: level 1, and levels 6 and 7,
- * which test what the tuberculosis paper itself found (treatment lowers the infectious; contact
- * raises the exposed). Three, so a reviewer that blocks everything shows it (ADR-0035's amendment).
+ * One reviewer's score over every case world. A fault counts as found when the reviewer blocks it,
+ * and a definitional fault only when the block is of that kind and names a term of the measured
+ * compartment's equation holding the control, as the controller requires (ADR-0044); a block on a
+ * clean level is wrong, whatever its kind.
  */
-export const CLEAN = [1, 6, 7] as const;
-/** The planted level whose effect follows from the model's definitions alone. */
-export const DEFINITIONAL = 5;
+export function scoreReview(cases: ReviewCases, reviews: Readonly<Record<string, Review>>, models: Readonly<Record<string, ModelSpec>>): Omit<ReviewScore, "model" | "ok" | "error"> {
+  let found = 0;
+  let definitional = 0;
+  let falseBlocks = 0;
+  let invalidTerms = 0;
+  let calledFailedAcceptable = false;
+  for (const world of cases.worlds) {
+    const review = reviews[world.id];
+    const model = models[world.paper];
+    if (!review || !model) continue;
+    world.levels.forEach((level, index) => {
+      const blocks = review.findings.filter((finding) => finding.level === index + 1 && finding.severity === "blocking");
+      const validTerm = (term: string | null) => termHolds(model, level.compartment, level.control, term).valid;
+      invalidTerms += blocks.filter((finding) => finding.kind === "definitional" && !validTerm(finding.term)).length;
+      if (level.expect === "fault" && level.kind === "definitional" && blocks.some((finding) => finding.kind === "definitional" && validTerm(finding.term))) {
+        found++;
+        definitional++;
+      } else if (level.expect === "fault" && level.kind !== "definitional" && blocks.length > 0) found++;
+      if (level.expect === "clean" && blocks.length > 0) falseBlocks++;
+    });
+    if (world.failedCheck !== null) calledFailedAcceptable ||= review.findings.some((finding) => finding.level === world.failedCheck && /\b(acceptable|fine|ok|passes)\b/i.test(finding.finding) && !/\bnot\b/i.test(finding.finding));
+  }
+  const all = cases.worlds.flatMap((world) => world.levels);
+  return {
+    found,
+    planted: all.filter((level) => level.expect === "fault").length,
+    definitional,
+    definitionalPlanted: all.filter((level) => level.expect === "fault" && level.kind === "definitional").length,
+    falseBlocks,
+    clean: all.filter((level) => level.expect === "clean").length,
+    invalidTerms,
+    calledFailedAcceptable,
+  };
+}
+
+/** A case world as a reviewer reads it, with the equations and each level's direct-effect tag, as in a job. */
+export function reviewInputOf(world: ReviewCases["worlds"][number], paper: ReturnType<typeof loadGoldPapers>[number], model: ModelSpec) {
+  return {
+    title: paper.title,
+    world: world.levels.map((level, index) => `Level ${index + 1}, ${level.title}: ${level.words}`).join("\n"),
+    checks: world.checks,
+    passages: promptSource(paper.source, { maxCharacters: 60_000 }).block,
+    equations: equationsOf(model),
+    evidence: world.levels.map((level, index) => `Level ${index + 1}: ${describeDirectEffect(directEffectOf(model, level.control, level.compartment, level))}.`).join("\n"),
+  };
+}
 
 /** An error in one line: its message's lines joined, so a Zod issue list is not cut to its "[". */
 const oneLine = (error: unknown): string => (error instanceof Error ? error.message : String(error)).replace(/\s+/g, " ").trim().slice(0, 400);
@@ -135,24 +206,24 @@ export async function runDesignBakeoff(client: ModelClient, structuredOutput: Re
           plans.push({ model: name, paper: paper.id, ok: false, error: oneLine(error), score: { levels: 0, built: 0, meetRule: 0, onFindings: false, note: "" } });
         }
       }
-      let reviewed;
+      let reviewed: ReviewScore;
       try {
-        const tuberculosis = papers.find((paper) => paper.id === "arxiv-2506.19869v1");
-        if (!tuberculosis) throw new Error("the tuberculosis paper is missing");
-        const { value } = await review(client, name, { title: tuberculosis.title, world: REVIEW_WORLD, checks: REVIEW_CHECKS, passages: promptSource(tuberculosis.source, { maxCharacters: 60_000 }).block }, { structuredOutput: structured });
-        const blocked = new Set(value.findings.filter((finding) => finding.severity === "blocking").map((finding) => finding.level));
-        reviewed = {
-          model: name,
-          ok: true,
-          error: null,
-          found: PLANTED.filter((level) => blocked.has(level)).length,
-          planted: PLANTED.length,
-          falseBlocks: CLEAN.filter((level) => blocked.has(level)).length,
-          calledFailedAcceptable: value.findings.some((finding) => finding.level === 4 && /\b(acceptable|fine|ok|passes)\b/i.test(finding.finding) && !/\bnot\b/i.test(finding.finding)),
-          definitional: value.findings.some((finding) => finding.level === DEFINITIONAL && finding.severity === "blocking" && finding.kind === "definitional"),
-        };
+        const cases = loadReviewCases();
+        const models = Object.fromEntries(papers.map((paper) => [paper.id, modelOf(paper).model]));
+        const reviews = Object.fromEntries(
+          await Promise.all(
+            cases.worlds.map(async (world) => {
+              const paper = papers.find((entry) => entry.id === world.paper);
+              const model = models[world.paper];
+              if (!paper || !model) throw new Error(`${world.id}'s paper, ${world.paper}, is not a gold paper`);
+              const { value } = await review(client, name, reviewInputOf(world, paper, model), { structuredOutput: structured });
+              return [world.id, value] as const;
+            }),
+          ),
+        );
+        reviewed = { model: name, ok: true, error: null, ...scoreReview(cases, reviews, models) };
       } catch (error) {
-        reviewed = { model: name, ok: false, error: oneLine(error), found: 0, planted: PLANTED.length, falseBlocks: 0, calledFailedAcceptable: false, definitional: false };
+        reviewed = { model: name, ok: false, error: oneLine(error), ...scoreReview(loadReviewCases(), {}, {}) };
       }
       return { plans, reviewed };
     }),

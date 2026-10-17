@@ -342,15 +342,69 @@ describe("[R10] [R11] the controller", () => {
     expect(replan?.messages.map((message) => message.content).join("\n")).toMatch(/level 1, the hook, must test the paper's headline result, finding 0/);
   }, 60_000);
 
-  it("sends a level the reviewer finds definitional back to the planner, then checks the world again", async () => {
-    const definitional = { findings: [{ level: 2, severity: "blocking", kind: "definitional", finding: "Doubling the infection rate spreading it faster follows from the rate's definition.", suggestion: "Test the threshold instead." }] };
-    const client = scripted(replies({ reviewer: [definitional, { findings: [] }] }));
-    const { outcome, states } = await run(client);
+  // Level 2 measured as a mean, which is not emergent, so a definitional block on it can stand (ADR-0044).
+  const onAverage = () => planLevel(1, { difference: { compartment: "i", summary: "mean", at: null, time: 60, relation: "higher", by: 5 }, effect: "Twice as easily, more than 5 more people are infected on average over 60 days." });
+  const averagePlan = () => ({ ...good(), levels: [planLevel(0), onAverage(), planLevel(2)] });
+  const block = (kind: "definitional" | "unsupported", term: string | null = null) => ({ findings: [{ level: 2, severity: "blocking", kind, finding: kind === "definitional" ? "Faster recovery emptying the infected follows from the rate's definition." : "Its goal says recovery spreads the illness, which the equations do not.", suggestion: "Change level 2 alone.", term }] });
+  const twoReviewers = { stages: { ...config.stages, "second-reviewer": "m-second-reviewer" } };
+
+  it("sends a level the reviewer finds definitional, naming its term, back to the planner, then checks the world again", async () => {
+    const client = scripted(replies({ planner: [averagePlan(), good()], reviewer: [block("definitional", "gamma*i"), { findings: [] }] }));
+    const { outcome, states, artifacts } = await run(client);
     expect(outcome.state).toBe("ready");
     expect(states).toEqual(["received", "parsing", "planning", "building", "running", "checking", "repairing", "building", "running", "checking", "ready"]);
     const replan = client.calls.filter((call) => call.stage === "planner")[1];
     expect(replan?.messages.map((message) => message.content).join("\n")).toMatch(/level 2 \("Faster spread"\): the reviewer finds its effect follows from the model's definitions alone/);
     expect(client.calls.filter((call) => call.stage === "reviewer")).toHaveLength(2);
+    // The reviewer was given the equations and each level's direct-effect tag.
+    const asked = client.calls.find((call) => call.stage === "reviewer")?.messages.map((message) => message.content).join("\n") ?? "";
+    expect(asked).toMatch(/di\/dt = /);
+    expect(asked).toMatch(/Level 2: its control gamma appears directly in di\/dt, the measured compartment's own equation, taking from it \(.+\); the level measures its level or total\./);
+    expect((artifacts.get("review-decisions") as { stands: boolean }[])[0]).toMatchObject({ pass: 1, reviewer: "m-reviewer", level: 2, kind: "definitional", valid: true, stands: true });
+  }, 60_000);
+
+  it("lets a block stand only when a second reviewer from another vendor makes it too", async () => {
+    const alone = scripted(replies({ planner: [averagePlan()], reviewer: [block("definitional", "gamma*i")], "second-reviewer": [{ findings: [] }] }));
+    const one = await run(alone, twoReviewers);
+    expect(one.outcome.state).toBe("ready");
+    expect(one.states).not.toContain("repairing");
+    expect(one.artifacts.get("review-decisions")).toEqual([{ pass: 1, reviewer: "m-reviewer", level: 2, kind: "definitional", blocking: true, term: "gamma*i", valid: true, stands: false, reason: "di/dt holds i × gamma, which holds gamma; m-second-reviewer makes no such block" }]);
+    expect(one.events.some((event) => event.message === "level 2: m-reviewer's definitional block does not stand: di/dt holds i × gamma, which holds gamma; m-second-reviewer makes no such block")).toBe(true);
+    expect(alone.calls.filter((call) => call.stage === "second-reviewer").map((call) => call.model)).toEqual(["m-second-reviewer"]);
+
+    const both = scripted(replies({ planner: [averagePlan(), good()], reviewer: [block("definitional", "gamma*i"), { findings: [] }], "second-reviewer": [block("definitional", "gamma * i"), { findings: [] }] }));
+    const agreed = await run(both, twoReviewers);
+    expect(agreed.outcome.state).toBe("ready");
+    expect(agreed.states).toContain("repairing");
+    expect(both.calls.filter((call) => call.stage === "planner")[1]?.messages.map((message) => message.content).join("\n")).toMatch(/level 2 \("Faster spread"\): both reviewers find its effect follows from the model's definitions alone/);
+  }, 60_000);
+
+  it("ignores, and records, a definitional block that names no valid term or measures an emergent summary", async () => {
+    const termless = await run(scripted(replies({ planner: [averagePlan()], reviewer: [block("definitional", null)] })));
+    expect(termless.outcome.state).toBe("ready");
+    expect(termless.states).not.toContain("repairing");
+    expect(termless.artifacts.get("review-decisions")).toMatchObject([{ level: 2, valid: false, stands: false, reason: "it names no term; a definitional block must name a term of di/dt holding the control" }]);
+    // The plan's own level 2 measures when 100 are first infected at once: emergent, whatever the term.
+    const emergent = await run(scripted(replies({ reviewer: [block("definitional", "gamma*i")] })));
+    expect(emergent.outcome.state).toBe("ready");
+    expect(emergent.states).not.toContain("repairing");
+    expect(emergent.artifacts.get("review-decisions")).toMatchObject([{ level: 2, valid: false, reason: "the level measures the first-reach of i, an emergent summary, which is never definitional" }]);
+  }, 60_000);
+
+  it("sends words that misdescribe the model back to the explainer once, and drops the level if they still do", async () => {
+    const reworded = { ...words(), goal: "Change how fast people recover, and watch the infected.", effect: "Twice as easily, 100 people are infected at once more than 5 days sooner." };
+    const fixed = scripted(replies({ explainer: [words(), words(), words(), reworded], reviewer: [block("unsupported"), { findings: [] }] }));
+    const once = await run(fixed);
+    expect(once.outcome.state).toBe("ready");
+    expect(once.states).toEqual(["received", "parsing", "planning", "building", "running", "checking", "repairing", "building", "running", "checking", "ready"]);
+    const asked = fixed.calls.filter((call) => call.stage === "explainer")[3]?.messages.map((message) => message.content).join("\n") ?? "";
+    expect(asked).toMatch(/The reviewers found that level 2's words misdescribe the model: Its goal says recovery spreads the illness/);
+    expect(fixed.calls.filter((call) => call.stage === "planner")).toHaveLength(1);
+    expect((once.artifacts.get("world") as { levels: { goal: string }[] }).levels[1]?.goal).toBe("Change how fast people recover, and watch the infected.");
+
+    // Still misdescribed after its words were written again: dropped, which leaves too few levels here.
+    const stuck = await run(scripted(replies({ explainer: [words(), words(), words(), reworded], reviewer: [block("unsupported")] })));
+    expect(stuck.outcome).toMatchObject({ state: "needs_information", message: expect.stringMatching(/^too few levels meet the rules: level 2 \("Faster spread"\): its words still misdescribe the model after they were written again/) as unknown });
   }, 60_000);
 
   it("stops as unsupported when the router sends the paper to another family", async () => {

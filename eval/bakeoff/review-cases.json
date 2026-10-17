@@ -1,0 +1,234 @@
+{
+  "schemaVersion": "review-cases/1",
+  "note": "The worlds the reviewers are scored on (ADR-0035, ADR-0044). Each level is a fault a reviewer should block, a clean level a block on which is wrong, or unscored; each says where it came from. Every reviewer mistake a live run reveals is added here and kept.",
+  "worlds": [
+    {
+      "id": "tuberculosis-planted",
+      "paper": "arxiv-2506.19869v1",
+      "checks": "The builder: passed, the family's checks included.\nThe level rule: level 1 holds on 20 of 20; level 2 holds on 20 of 20; level 3 holds on 18 of 20, its measured difference is 6 more exposed people at year 10; level 4 holds on 9 of 20 and FAILS the rule; level 5 holds on 20 of 20; level 6 holds on 20 of 20; level 7 holds on 19 of 20.\nProvenance: level 2's quote is not in the source.",
+      "failedCheck": 4,
+      "levels": [
+        {
+          "title": "Vaccination slows the spread",
+          "words": "Change the vaccination rate and watch the infectious. What if: what if no one were vaccinated? It states: with no vaccination, more than 5 more people are infectious at year 20 than in this world.",
+          "control": "pi",
+          "compartment": "i",
+          "summary": "at",
+          "at": 20,
+          "time": 30,
+          "expect": "clean",
+          "kind": null,
+          "origin": "planted, 2026-10-14: no fault"
+        },
+        {
+          "title": "Treatment and the threshold",
+          "words": "Change the treatment rate and watch the infectious. It states, as the paper's: \"The paper shows that vaccinating every newborn would eliminate tuberculosis within ten years.\"",
+          "control": "delta",
+          "compartment": "i",
+          "summary": "peak",
+          "at": null,
+          "time": 30,
+          "expect": "fault",
+          "kind": "unsupported",
+          "origin": "planted, 2026-10-14: a claim given as the paper's that the paper does not make"
+        },
+        {
+          "title": "Faster progression",
+          "words": "Change the progression rate and watch the exposed. What if: what if the exposed became infectious twice as fast? It states: the epidemic doubles in size and the disease can never be controlled.",
+          "control": "gamma",
+          "compartment": "e",
+          "summary": "at",
+          "at": 10,
+          "time": 30,
+          "expect": "fault",
+          "kind": "overstated",
+          "origin": "planted, 2026-10-14: an effect far beyond its measurement"
+        },
+        {
+          "title": "Recovery after treatment",
+          "words": "Change the recovery rate of the treated and watch the recovered. What if: what if recovery were twice as fast? It states: more people are recovered at year 30.",
+          "control": "alpha",
+          "compartment": "r",
+          "summary": "at",
+          "at": 30,
+          "time": 30,
+          "expect": "unscored",
+          "kind": null,
+          "origin": "planted, 2026-10-14: it fails the level rule; a reviewer must not call that acceptable"
+        },
+        {
+          "title": "No treatment",
+          "words": "Change the treatment rate and watch the treated. What if: what if no one were treated? It states: with no treatment, no one is ever in the treated compartment.",
+          "control": "delta",
+          "compartment": "t",
+          "summary": "mean",
+          "at": null,
+          "time": 30,
+          "expect": "fault",
+          "kind": "definitional",
+          "origin": "planted, 2026-10-14: the treated compartment is fed only by treatment (ADR-0037)"
+        },
+        {
+          "title": "Treatment shrinks the outbreak",
+          "words": "Change the treatment rate and watch the infectious. What if: what if treatment were twice as fast? It states: the infectious peak is lower by more than 100,000 people.",
+          "control": "delta",
+          "compartment": "i",
+          "summary": "peak",
+          "at": null,
+          "time": 30,
+          "expect": "clean",
+          "kind": null,
+          "origin": "planted, 2026-10-15: it tests what the paper found"
+        },
+        {
+          "title": "Contact and the exposed",
+          "words": "Change the contact rate and watch the exposed. What if: what if the contact rate were half as high? It states: the exposed peak is lower by more than 1,000,000 people.",
+          "control": "beta",
+          "compartment": "e",
+          "summary": "peak",
+          "at": null,
+          "time": 30,
+          "expect": "clean",
+          "kind": null,
+          "origin": "planted, 2026-10-15: it tests what the paper found"
+        }
+      ]
+    },
+    {
+      "id": "tuberculosis-ready",
+      "paper": "arxiv-2506.19869v1",
+      "checks": "The builder: passed, the family's checks included.\nThe level rule: level 1 holds on 20 of 20; level 2 holds on 20 of 20; level 3 holds on 20 of 20; level 4 holds on 20 of 20; level 5 holds on 20 of 20.\nThe visibility rule: every level's difference shows on its chart and in the scene.\nProvenance: every anchor quotes the source exactly.",
+      "failedCheck": null,
+      "levels": [
+        {
+          "title": "Above the elimination threshold",
+          "words": "Speed up the move from latent to active TB and see the outbreak climb even higher in a town already above the elimination threshold. Control: Progression to active TB. What if: What if latent TB progressed twice as fast? It states: Doubling the progression rate makes the infectious peak more than 4 million higher.",
+          "control": "gamma",
+          "compartment": "i",
+          "summary": "peak",
+          "at": null,
+          "time": 38,
+          "expect": "clean",
+          "kind": null,
+          "origin": "the 2026-10-17 tuberculosis job: gemma4-31b-it blocked it as definitional, though it tests one of the paper's findings (ADR-0044)"
+        },
+        {
+          "title": "Contact rate drives spread",
+          "words": "Raise the contact rate and see how fast people leave the protected vaccinated group. Control: Contact rate. What if: What if people contacted others twice as often? It states: Doubling the contact rate makes the vaccinated peak more than 3 million lower.",
+          "control": "beta",
+          "compartment": "v",
+          "summary": "peak",
+          "at": null,
+          "time": 38,
+          "expect": "unscored",
+          "kind": null,
+          "origin": "the 2026-10-17 tuberculosis world: glm-5-3 found its words imply a mechanism the model lacks; whether they do is not settled"
+        },
+        {
+          "title": "Treatment shrinks the outbreak",
+          "words": "Speed up treatment and see infectious cases fall. Control: Treatment rate. What if: What if infectious people were treated twice as fast? It states: Doubling the treatment rate makes the infectious peak more than 3 million lower.",
+          "control": "delta",
+          "compartment": "i",
+          "summary": "peak",
+          "at": null,
+          "time": 38,
+          "expect": "clean",
+          "kind": null,
+          "origin": "the 2026-10-17 tuberculosis job: gemma4-31b-it blocked it as definitional, though it tests one of the paper's findings (ADR-0044)"
+        },
+        {
+          "title": "Vaccination protects the town",
+          "words": "Raise vaccination coverage and watch the exposed group shrink. Control: Vaccination rate. What if: What if vaccination coverage were doubled? It states: Doubling the vaccination rate makes the exposed peak more than 5 million lower.",
+          "control": "pi",
+          "compartment": "e",
+          "summary": "peak",
+          "at": null,
+          "time": 38,
+          "expect": "clean",
+          "kind": null,
+          "origin": "the 2026-10-17 tuberculosis job: gemma4-31b-it blocked it as definitional, though it tests one of the paper's findings (ADR-0044)"
+        },
+        {
+          "title": "The disease is already multiplying",
+          "words": "Add more people to the town each year and see how fast infectious cases rise. Control: Recruitment rate. What if: What if twice as many people joined the town each year? It states: Doubling the recruitment rate makes the number of infectious people at year 38 more than 2 million higher.",
+          "control": "lambda",
+          "compartment": "i",
+          "summary": "at",
+          "at": 38,
+          "time": 39,
+          "expect": "clean",
+          "kind": null,
+          "origin": "the 2026-10-17 tuberculosis job: gemma4-31b-it blocked it as definitional, though it tests one of the paper's findings (ADR-0044)"
+        }
+      ]
+    },
+    {
+      "id": "hepatitis-c-ready",
+      "paper": "pmc-PMC12334037",
+      "checks": "The builder: passed, the family's checks included.\nThe level rule: level 1 holds on 20 of 20; level 2 holds on 18 of 20; level 3 holds on 20 of 20; level 4 holds on 20 of 20; level 5 holds on 20 of 20.\nThe visibility rule: every level's difference shows on its chart and in the scene.\nProvenance: every anchor quotes the source exactly.",
+      "failedCheck": null,
+      "levels": [
+        {
+          "title": "Can adherence stop the virus?",
+          "words": "Change treatment adherence and see how many people recover at the outbreak's peak. Control: Treatment adherence proportion. What if: What if everyone stuck to treatment? It states: When everyone adheres, the recovered group peaks higher by more than 0.004.",
+          "control": "theta",
+          "compartment": "r",
+          "summary": "peak",
+          "at": null,
+          "time": 200,
+          "expect": "clean",
+          "kind": null,
+          "origin": "the 2026-10-17 hepatitis C world: no reviewer blocked it"
+        },
+        {
+          "title": "The quitters spread it most",
+          "words": "Change how easily people who quit treatment pass on the virus and watch the quitters peak. Control: Transmission by quitters. What if: What if quitters passed it on twice as easily? It states: When quitters pass the virus on twice as easily, the quitters peak is higher by more than 0.006.",
+          "control": "beta3",
+          "compartment": "cq",
+          "summary": "peak",
+          "at": null,
+          "time": 200,
+          "expect": "unscored",
+          "kind": null,
+          "origin": "the 2026-10-17 hepatitis C world: gemma4-31b-it blocked it as definitional; not yet ruled on"
+        },
+        {
+          "title": "Faster chronic recovery",
+          "words": "Raise the recovery rate for chronic infections and watch the quitters peak fall. Control: Chronic recovery rate. What if: What if chronic recovery were twice as fast? It states: When chronic recovery doubles, the quitters peak is lower by more than 0.001.",
+          "control": "rho",
+          "compartment": "cq",
+          "summary": "peak",
+          "at": null,
+          "time": 200,
+          "expect": "unscored",
+          "kind": null,
+          "origin": "the 2026-10-17 hepatitis C world: gemma4-31b-it blocked it as definitional; not yet ruled on"
+        },
+        {
+          "title": "Acute recovery helps",
+          "words": "Speed up recovery from acute infection and watch the recovered group peak rise. Control: Acute recovery rate. What if: What if acutely infected people recovered twice as fast? It states: When acute recovery doubles, the recovered group peaks higher by more than 0.005.",
+          "control": "eta",
+          "compartment": "r",
+          "summary": "peak",
+          "at": null,
+          "time": 200,
+          "expect": "unscored",
+          "kind": null,
+          "origin": "the 2026-10-17 hepatitis C world: gemma4-31b-it blocked it as definitional; not yet ruled on"
+        },
+        {
+          "title": "When people quit treatment",
+          "words": "Make quitting treatment more common and watch the quitters peak rise. Control: Treatment quitting rate. What if: What if people quit treatment twice as often? It states: When the quitting rate doubles, the quitters peak is higher by more than 0.001.",
+          "control": "delta",
+          "compartment": "cq",
+          "summary": "peak",
+          "at": null,
+          "time": 200,
+          "expect": "fault",
+          "kind": "definitional",
+          "origin": "the 2026-10-17 hepatitis C world: the owner's ruling, a true fault (ADR-0044); glm-5-3 did not block it"
+        }
+      ]
+    }
+  ]
+}

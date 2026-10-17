@@ -7,7 +7,7 @@
  */
 import { canMove, type JobState, type ModelSpec, type SourceRegisterEntry, type SourceText } from "@paperplay/contracts";
 import { registry } from "@paperplay/primitives";
-import { assembleWorld } from "../assemble/world.ts";
+import { assembleWorld, namedInModel } from "../assemble/world.ts";
 import { chooseStep, describeBehaviour, describeResponse, horizonOf, responseRows } from "../assemble/model.ts";
 import { buildWorld, type BuiltWorld } from "../builder/build.ts";
 import { checkProvenance } from "../checks/provenance.ts";
@@ -15,12 +15,13 @@ import { runOwnNumbers } from "../reproduce/index.ts";
 import { fetchArxiv, fetchPmc, fromOwnerPdf, registerAndText, type Fetch } from "../ingest/index.ts";
 import { completeStructured, type ModelClient, type Stage } from "../models/index.ts";
 import { sweepLevels, type LevelResult } from "../rule/sweep.ts";
+import { decideReviews, describeDirectEffect, directEffectOf, type ReviewRecord } from "../rule/direct.ts";
 import { checkFindings } from "../rule/findings.ts";
 import { visibilityOf } from "../rule/visibility.ts";
-import { explain, type Explanation } from "../stages/explainer.ts";
+import { explain, reword, type Explanation } from "../stages/explainer.ts";
 import { plan as planWorld, Plan, PLANNER_MAX_TOKENS, plannerMessages, type PlanLevel } from "../stages/planner.ts";
 import { read } from "../stages/reader.ts";
-import { review, type Review } from "../stages/reviewer.ts";
+import { equationsOf, review } from "../stages/reviewer.ts";
 import { route } from "../stages/router.ts";
 import { promptSource } from "../stages/source.ts";
 import { TRANSCRIBER_MAX_TOKENS, transcribe, transcriberMessages } from "../stages/transcriber.ts";
@@ -338,6 +339,11 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     let hookFinding = 0;
     let hookFallback: string | null = null;
     const dropped: { readonly level: number; readonly title: string; readonly reasons: readonly string[] }[] = [];
+    /** The levels whose words were written again once already, by title (ADR-0044). */
+    const reworded = new Set<string>();
+    /** Every review's decisions, pass by pass, each with its reason (ADR-0044). */
+    const reviewDecisions: (ReviewRecord & { readonly pass: number })[] = [];
+    let reviewPasses = 0;
     const dropFailing = (failing: readonly number[], reasonsOf: (index: number) => readonly string[], stopAs: "failed" | "needs_information", words: readonly string[]): number => {
       const failingSet = new Set(failing);
       let hookFrom: number | null = null;
@@ -446,30 +452,70 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       const provenance = checkProvenance(spec, text);
       sink.artifact("provenance", provenance);
       if (provenance.length > 0) throw new Stop("failed", `provenance fails: ${provenance.slice(0, 3).map((problem) => `${problem.path}: ${problem.message}`).join("; ")}`);
-      say("review", "the reviewer reads the world and the checks' results");
+      // Two reviewers of different vendors (ADR-0044), each given the equations and every level's
+      // direct-effect tag. A block stands only where both make it; a definitional block must name a
+      // term of the measured compartment's own equation holding the control, and is never one on an
+      // emergent summary. Every decision is kept, with its reason.
       const reviewerModel = modelFor("reviewer");
+      const secondReviewerModel = input.config.stages["second-reviewer"] ?? null;
+      say("review", secondReviewerModel === null ? "the reviewer reads the world and the checks' results" : `two reviewers, ${reviewerModel} and ${secondReviewerModel}, read the world and the checks' results`);
       const checks = ["The builder: passed, the family's checks included.", `The level rule: ${swept.map((level) => `level ${level.order} holds on ${level.holds} of 20`).join("; ")}.`, "The visibility rule: every level's difference shows on its chart and in the scene.", "Provenance: every anchor quotes the source exactly."].join("\n");
       const worldWords = plan.levels.map((level: PlanLevel, index) => `Level ${index + 1}, ${level.title}: ${level.goal} Control: ${level.control.label}. What if: ${level.whatIf.prompt} It states: ${level.effect}`).join("\n");
-      const reviewed: Review = (await review(input.client, reviewerModel, { title, world: worldWords, checks, passages }, { structuredOutput: structured(reviewerModel) })).value;
+      const named = namedInModel(plan, model);
+      const tags = named.levels.map((level) => directEffectOf(model, level.control.parameter, level.difference.compartment, level.difference));
+      const reviewInput = { title, world: worldWords, checks, passages, equations: equationsOf(model), evidence: tags.map((tag, index) => `Level ${index + 1}: ${describeDirectEffect(tag)}.`).join("\n") };
+      const [reviewed, secondReviewed] = await Promise.all([
+        review(input.client, reviewerModel, reviewInput, { structuredOutput: structured(reviewerModel) }).then((result) => result.value),
+        secondReviewerModel === null ? Promise.resolve(null) : review(input.client, secondReviewerModel, reviewInput, { structuredOutput: structured(secondReviewerModel), stage: "second-reviewer" }).then((result) => result.value),
+      ]);
       sink.artifact("review", reviewed);
-      // A level the reviewer finds definitional teaches nothing the paper found: repaired, or dropped when no repair is left.
-      const definitional = [...new Set(reviewed.findings.filter((finding) => finding.severity === "blocking" && finding.kind === "definitional" && finding.level !== null && finding.level <= plan.levels.length).map((finding) => (finding.level ?? 1) - 1))];
-      const blocking = reviewed.findings.filter((finding) => finding.severity === "blocking");
+      if (secondReviewed) sink.artifact("second-review", secondReviewed);
+      const decisions = decideReviews(model, named, tags, [{ model: reviewerModel, review: reviewed }, ...(secondReviewed && secondReviewerModel ? [{ model: secondReviewerModel, review: secondReviewed }] : [])]);
+      reviewPasses++;
+      reviewDecisions.push(...decisions.records.map((record) => ({ pass: reviewPasses, ...record })));
+      sink.artifact("review-decisions", reviewDecisions);
+      for (const record of decisions.records.filter((entry) => entry.blocking && !entry.stands)) say("review", `level ${record.level ?? "?"}: ${record.reviewer}'s ${record.kind} block does not stand: ${record.reason}`);
+      const definitional = decisions.standing("definitional");
+      const misworded = decisions.standing("unsupported");
+      const blocksOn = (index: number, kind: string): string => [reviewed, secondReviewed].flatMap((entry) => entry?.findings.filter((finding) => finding.level === index + 1 && finding.kind === kind && finding.severity === "blocking") ?? []).map((finding) => `${finding.finding} ${finding.suggestion}`).join(" ");
       if (definitional.length > 0) {
-        const words = definitional.map((index) => `level ${index + 1} ("${plan.levels[index]?.title ?? ""}"): the reviewer finds its effect follows from the model's definitions alone: ${reviewed.findings.filter((finding) => finding.level === index + 1 && finding.kind === "definitional").map((finding) => `${finding.finding} ${finding.suggestion}`).join(" ")}; test one of the paper's findings instead`);
+        const words = definitional.map((index) => `level ${index + 1} ("${plan.levels[index]?.title ?? ""}"): ${secondReviewed ? "both reviewers find" : "the reviewer finds"} its effect follows from the model's definitions alone: ${blocksOn(index, "definitional")}; test one of the paper's findings instead`);
         if (repairs < MAX_REPAIRS) {
           await replan(definitional.map((index, at) => `${words[at] ?? ""}${responseOf(index)}`));
           continue;
         }
-        const reviewerWords = (index: number): string[] => reviewed.findings.filter((finding) => finding.level === index + 1 && finding.kind === "definitional").map((finding) => `the reviewer finds it definitional: ${finding.suggestion}`);
+        const reviewerWords = (index: number): string[] => [`definitional, by ${decisions.records.filter((record) => record.level === index + 1 && record.kind === "definitional" && record.stands).map((record) => `${record.reviewer} (${record.term ?? ""})`).join(" and ")}`];
         const keep = dropFailing(definitional, reviewerWords, "needs_information", words.map((line) => `${line}. The owner decides`));
-        if (checkFindings(plan, reading.value, text, hookFinding).world.length > 0) throw new Stop("needs_information", `dropping the levels the reviewer finds definitional leaves too few on the paper's findings: ${words.join("; ")}. The owner decides.`);
-        move("repairing", "review", `dropping ${definitional.length} level(s) the reviewer finds definitional, keeping ${keep}`);
+        if (checkFindings(plan, reading.value, text, hookFinding).world.length > 0) throw new Stop("needs_information", `dropping the levels the reviewers find definitional leaves too few on the paper's findings: ${words.join("; ")}. The owner decides.`);
+        move("repairing", "review", `dropping ${definitional.length} level(s) the reviewers find definitional, keeping ${keep}`);
         continue;
       }
+      // Words that misdescribe the model go back to the explainer, once a level; if they survive it, the level is dropped.
+      if (misworded.length > 0) {
+        const again = misworded.filter((index) => reworded.has(plan.levels[index]?.title ?? ""));
+        const first = misworded.filter((index) => !again.includes(index));
+        if (again.length > 0) {
+          const words = again.map((index) => `level ${index + 1} ("${plan.levels[index]?.title ?? ""}"): its words still misdescribe the model after they were written again: ${blocksOn(index, "unsupported")}`);
+          const keep = dropFailing(again, (index) => [`its words still misdescribe the model after they were written again: ${blocksOn(index, "unsupported")}`], "needs_information", words.map((line) => `${line}. The owner decides`));
+          if (checkFindings(plan, reading.value, text, hookFinding).world.length > 0) throw new Stop("needs_information", `dropping the levels whose words still misdescribe the model leaves too few on the paper's findings: ${words.join("; ")}. The owner decides.`);
+          move("repairing", "review", `dropping ${again.length} level(s) whose words still misdescribe the model, keeping ${keep}`);
+          continue;
+        }
+        move("repairing", "review", `writing again the words of ${first.map((index) => `level ${index + 1} ("${plan.levels[index]?.title ?? ""}")`).join(", ")}, which ${secondReviewed ? "both reviewers find" : "the reviewer finds"} misdescribe the model`);
+        for (const index of first) {
+          const problem = `${blocksOn(index, "unsupported")}\nThe model's equations, in its ids:\n${equationsOf(model)}`;
+          const words = (await reword(input.client, explainerModel, { title, plan, passages, model: modelWords }, index, problem, { structuredOutput: structured(explainerModel) })).value;
+          const { goal, effect, ...level } = words;
+          reworded.add(plan.levels[index]?.title ?? "");
+          plan = { ...plan, levels: plan.levels.map((entry, at) => (at === index ? { ...entry, goal, effect } : entry)) };
+          explanation = { levels: explanation.levels.map((entry, at) => (at === index ? level : entry)) };
+        }
+        continue;
+      }
+      const blocking = [reviewed, secondReviewed].flatMap((entry) => entry?.findings.filter((finding) => finding.severity === "blocking") ?? []);
       if (blocking.length > 0) {
-        say("review", `the reviewer found ${blocking.length} blocking finding(s), advice only: the checks decide. ${blocking.map((finding) => finding.finding).join(" ")}`);
-      } else say("review", `the reviewer found nothing blocking (${reviewed.findings.length} piece(s) of advice)`);
+        say("review", `the reviewers found ${blocking.length} blocking finding(s) that do not stand, advice only: the checks decide. ${blocking.map((finding) => finding.finding).join(" ")}`);
+      } else say("review", `the reviewer found nothing blocking (${reviewed.findings.length + (secondReviewed?.findings.length ?? 0)} piece(s) of advice)`);
       break;
     }
     sink.artifact("plan-sources", plan.levels.map((level, index) => ({ level: index + 1, title: level.title, planner: sources[index] ?? plannerModel })));

@@ -60,6 +60,7 @@ export const EXPLAINER_INSTRUCTIONS = [
   "- guide: idle, a sentence before the learner acts; raised and lowered, each 'You … {to}, so …' with {to} exactly once where the new value goes; readings, 2 to 5 descriptions of the watched value, highest threshold first, each a lower bound in the value's own units, the last the bottom of its range; rising and falling, a short clause each.",
   "- afterwards: what the guide says once the What-if's result is in, connecting it to the paper, with a verbatim quote of the paper where it says so (else null), and a question for the learner.",
   "Rules: plain, short sentences in sentence case; say only what the paper or the model states; never present your own inference as the paper's; every quote copied character for character, 3 to 200 characters.",
+  "Numbers as the chart shows them: when the model's compartments are shares of a population, adding up to one, write every amount as people in a town of 10,000, never as a share: a share of 0.004 is 40 people.",
 ].join("\n");
 
 export function explainerMessages(input: { readonly title: string; readonly plan: Plan; readonly passages: string; readonly model: string }, level: number): ChatMessage[] {
@@ -88,3 +89,22 @@ export async function explain(client: ModelClient, model: string, input: Paramet
   }
   return { value: Explanation.parse({ levels }) };
 }
+
+/** A level's words written again where the reviewers found they misdescribe the model (ADR-0044): its words, its goal and its effect sentence, its claim unchanged. */
+export const RewordedLevel = z.strictObject({ ...ExplainedLevel.shape, goal: z.string().min(1).max(200), effect: z.string().min(1).max(300) });
+export type RewordedLevel = z.infer<typeof RewordedLevel>;
+
+/** One scoped wording repair: the level's words, goal and effect sentence again, saying only what the model's equations do. */
+export async function reword(client: ModelClient, model: string, input: Parameters<typeof explainerMessages>[0], level: number, problem: string, options: { readonly structuredOutput: boolean }): Promise<{ readonly value: RewordedLevel }> {
+  const planned = input.plan.levels[level];
+  const messages: ChatMessage[] = [
+    ...explainerMessages(input, level),
+    {
+      role: "user",
+      content: `The reviewers found that level ${level + 1}'s words misdescribe the model: ${problem}\nWrite this level's words again, with its goal and its effect sentence, saying only what the model's equations do. Its claim stays as it is: the effect sentence states the same measured difference as this one, in words the equations support: "${planned?.effect ?? ""}"`,
+    },
+  ];
+  const words = await completeStructured(client, { stage: "explainer", model, messages, temperature: 0, maxTokens: 16_000 }, RewordedLevel, { name: "reworded_level", structuredOutput: options.structuredOutput });
+  return { value: words.value };
+}
+
