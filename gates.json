@@ -1,6 +1,6 @@
 {
   "$comment": "Read by scripts/check-gate.ts. A test proves a requirement by carrying its id in its title, e.g. \"[R01] \u2026\". Requirement text lives in docs/requirements.md. Each later gate's script list grows when that gate begins. check:docs keeps docs/ consistent with the repository (scripts/docs/check.ts). A gate's reviewedWorlds must each be a WorldSpec with status reviewed: no placeholder anchor, no pending source (scripts/gate/worlds.ts).",
-  "current": "G1",
+  "current": "G2",
   "requirements": {
     "R01": "Deterministic, oracle-checked primitives",
     "R02": "Model/render separation",

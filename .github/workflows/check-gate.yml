@@ -1,7 +1,9 @@
-# check:gate on every push and pull request, on Linux with the pinned Node (ADR-0011).
-# The capture job films the demo on the canonical capture runtime, a pinned ubuntu-24.04
-# image: published videos come from it, since a capture's bytes hold per runtime
-# (ADR-0010). It is not part of the gate and runs on main and on demand only.
+# check:gate on every push and pull request, on Linux with the pinned Node (ADR-0011). A push to
+# main runs it only when the same commit has not already passed on its branch: npm run land moves
+# main only to a commit whose branch run passed, so the run on main would repeat it (ADR-0048).
+# The capture job films the demo on the canonical capture runtime, a pinned ubuntu-24.04 image:
+# published videos come from it, since a capture's bytes hold per runtime (ADR-0010). It is not
+# part of the gate and runs on demand only, from the Actions tab (ADR-0048).
 name: check-gate
 
 on:
@@ -20,10 +22,32 @@ concurrency:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
+  # On a push to main: has this exact commit already passed check:gate on its branch?
+  passed:
+    name: already passed on its branch
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      passed: ${{ steps.look.outputs.passed }}
+    steps:
+      - id: look
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          count=$(gh api "repos/${{ github.repository }}/actions/workflows/check-gate.yml/runs?head_sha=${{ github.sha }}&status=success&per_page=100" \
+            --jq '[.workflow_runs[] | select(.head_branch != "main")] | length')
+          echo "passed=$([ "${count:-0}" -gt 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          echo "runs that passed this commit on a branch: ${count:-0}"
+
   gate:
     name: check:gate (ubuntu-latest, Node from .node-version)
+    needs: passed
+    # Every other push and pull request runs it; main runs it unless its branch run already passed.
+    if: always() && needs.passed.outputs.passed != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -51,7 +75,7 @@ jobs:
 
   capture:
     name: capture:demo on the canonical runtime (ubuntu-24.04)
-    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    if: github.event_name == 'workflow_dispatch'
     # Pinned, not ubuntu-latest, so the canonical bytes do not move when the image does.
     runs-on: ubuntu-24.04
     timeout-minutes: 30
