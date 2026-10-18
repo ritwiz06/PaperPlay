@@ -18,7 +18,7 @@ calendar promises.
 | G1 Playable baseline | v0.1.0 | 21–28 h | R01–R04 | Passed and tagged v0.1.0 on 2026-10-01 |
 | G2 Verified authored world | v0.2.0 | 21–28 h | R01–R08, R12 | The flocking world reviewed against its source map on 2026-10-17 (ADR-0045); tagged when the owner says |
 | G3a Generalize, compartments, the pipeline on them | Chosen when it passes | 52–72 h | R01–R12 | Every item built; closed out 2026-10-17, two worlds made under every rule; what counts as definitional held by code from 2026-10-17, both worlds regenerated under it (ADR-0044) |
-| G3b Routing, the explainer tier, learning toys | Chosen when it passes | 49–71 h (design/g3b.md) | R01–R12 | Planned, waiting on the owner's decisions |
+| G3b Routing, the explainer tier, learning toys | Chosen when it passes | 29–43 h and Momentum Valley (ADR-0046) | R01–R12 | The owner's decisions taken; the learning family, the landscape kit and Momentum Valley done (ADR-0047) |
 | G4 Evaluation and feature freeze | v0.4.0 | 20–28 h | R01–R12, plus evaluation checks | Not started |
 | G5 Delivery | v1.0.0 | 9–12 h | R01–R12 | Not started |
 
@@ -259,17 +259,25 @@ After G3a's first generated world (owner, 2026-10-09):
 
 ### G3b Routing, the explainer tier, and the learning family
 
-Planned in [design/g3b.md](design/g3b.md), for the owner's review (2026-10-17); its seven
-decisions wait on the owner. PubMed Central ingest, once here, landed in G3a.3.
+Planned in [design/g3b.md](design/g3b.md); the owner's decisions of 2026-10-17 are its §4
+(ADR-0046): update rules as data, attention after G4, Adam from its LaTeX with Reddi et al. 2018 a
+possible bonus level, Dropout from the 2014 JMLR paper with the paper's keep-probability, G3b's gate
+Adam alone, tier C now and minimal, and the level rule's starts over seeds or a neighbourhood. A
+hand-authored momentum world is the family's reference; Adam is the first generated world, held
+out. PubMed Central ingest, once here, landed in G3a.3.
 - [ ] G3b.1a: the router across families, its routing set grown to sixteen papers (4–6 h).
-- [ ] G3b.1b: `explainerspec/1`, its page, one tier C paper end to end (6–8 h).
-- [ ] G3b.2a: `learning.landscape@1` and `OptimizerSpec`, update rules as data, with oracles
-  (8–12 h).
-- [ ] G3b.2b: the landscape kit, the loss surface as terrain (6–8 h).
-- [ ] G3b.2c: Adam authored by hand first (4–6 h).
-- [ ] G3b.2d: the pipeline on learning, its bake-off scenario and its own-numbers check (8–12 h).
-- [ ] G3b.2e: Adam through the pipeline, recorded and replayed (3–5 h).
-- [ ] G3b.2f: `learning.network@1` and Dropout through the pipeline (10–14 h).
+- [ ] G3b.1b: tier C at its smallest: `explainerspec/1`, its page, one tier C paper end to end.
+- [x] G3b.2a: `learning.landscape@1.0.0` and `OptimizerSpec`, update rules as data, with oracles
+  derived by hand (2026-10-17, `7f25db9`, ADR-0047).
+- [x] G3b.2b: the landscape kit, the loss surface as terrain, both balls in a fork, the miniature
+  label at every depth (2026-10-17, `7f25db9`, ADR-0047).
+- [x] Momentum Valley, the family's reference, from Sutskever et al. 2013: five levels meeting the
+  level rule and the visibility rule, reviewed against its source map (2026-10-17, `7f25db9`,
+  `9e46daa`, ADR-0047). It takes the place of authoring Adam by hand (G3b.2c).
+- [ ] G3b.2d: the pipeline on learning: the transcriber's grammar for algorithms, the planner's and
+  explainer's worked example, the bake-off's learning scenario, the own-numbers check (8–12 h).
+- [ ] G3b.2e: Adam through the pipeline, recorded and replayed: G3b's gate (3–5 h).
+- [ ] After G3b's gate: `learning.network@1` and Dropout through the pipeline (10–14 h).
 
 Later:
 - The widget tier, behind `FEATURE_WIDGETS=1` (stretch).
@@ -354,6 +362,7 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-10 | The levels sweep runs every authored world, over its family's variation, and holds a compartment world's every run to the accuracy check | ADR-0024's level rule for models with no chance in them (ADR-0029) |
 | 2026-10-14 | The model provider is ASU Research Computing's Voyager gateway, not the Anthropic SDK; tests and CI replay recorded calls; generation runs only locally | Owner decision (ADR-0030) |
 | 2026-10-17 | G3a closed out: every item built, two worlds made under every rule. G3b planned in design/g3b.md at 49–71 h, a smaller G3b at 29–43 h, its decisions the owner's | Owner request, 2026-10-16 |
+| 2026-10-17 | G3b's decisions: update rules as data, attention after G4, G3b's gate Adam alone, tier C now and minimal; a hand-authored momentum world as the learning family's reference | Owner decisions (ADR-0046) |
 | 2026-10-17 | What counts as definitional held by code: the direct-effect tag, a named term, emergent summaries exempt, two reviewers who must agree, unsupported words written again; the reviewers' bake-off reads its cases from data and keeps every live mistake | Owner decision (ADR-0044) |
 | 2026-10-17 | G2's source is Reynolds's own copy on red3d.com, not the owner's PDF; Threshold Town's waits on a browser download, the Royal Society refusing this machine's requests | Owner instruction (ADR-0045) |
 | 2026-10-16 | Models in testing excluded; several value sets picked by rule; a visibility rule beside the level rule, levels on the paper's findings with the hook on its headline, shares as their own unit; then PDF ingest, the last of G3a.3 | Owner decisions (ADR-0035's amendments, ADR-0036, ADR-0037, ADR-0038) |

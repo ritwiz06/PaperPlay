@@ -227,6 +227,18 @@ v·ω divided by gravity. Turning harder or faster means leaning further.
   states, purely for display, and never feeds back into the simulation.
 - **Learn more:** [Banked turn](https://en.wikipedia.org/wiki/Banked_turn)
 
+### Momentum and Nesterov's accelerated gradient
+
+Gradient descent steps against the slope. Momentum keeps a velocity, a running sum of past steps
+each decayed by μ, so the step grows where the slope keeps pointing the same way, towards ε/(1 − μ)
+times a plain step, and swings across a steep valley. Nesterov's method takes the gradient a step
+ahead, at θ + μ·v, which damps the swing where the curvature is high.
+
+- **Used in:** `scripts/fixtures/momentum.ts`, `fixtures/oracles/learning.landscape/`, `packages/primitives/src/learning/MODEL.md`
+- **Why here:** Momentum Valley, the learning family's reference world, teaches both on an oblong
+  bowl like Sutskever et al. 2013's own example; its oracles are their closed forms (ADR-0047).
+- **Learn more:** [Sutskever et al. 2013, On the importance of initialization and momentum in deep learning](https://proceedings.mlr.press/v28/sutskever13.html)
+
 ## Engineering
 
 
