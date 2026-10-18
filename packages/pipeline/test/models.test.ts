@@ -145,6 +145,17 @@ describe("structured replies", () => {
     expect(await completeStructured(client, { ...request(), maxTokens: 16_000 }, Groups, { name: "groups", structuredOutput: false, moreRoom: true })).toEqual({ value: { groups: ["S"] }, attempts: 2 });
     expect(calls.map((call) => call.maxTokens)).toEqual([16_000, 32_000]);
     expect(calls[1]?.messages).toEqual(calls[0]?.messages);
+
+    // Held by a schema, it is asked afresh for plain JSON, also with twice the room.
+    const held: ChatRequest[] = [];
+    const schemaClient: ModelClient = {
+      complete(next) {
+        held.push(next);
+        return Promise.resolve(held.length === 1 ? { ...reply("", 10), finishReason: "length" } : reply('{"groups":["S"]}', 10));
+      },
+    };
+    expect(await completeStructured(schemaClient, { ...request(), maxTokens: 16_000 }, Groups, { name: "groups", structuredOutput: true, moreRoom: true })).toEqual({ value: { groups: ["S"] }, attempts: 2 });
+    expect(held.map((call) => [call.maxTokens, call.jsonSchema === undefined])).toEqual([[16_000, false], [32_000, true]]);
   });
 
   it("fails after a second invalid reply, saying why", async () => {

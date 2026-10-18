@@ -123,14 +123,15 @@ export async function completeStructured<T>(
       problem = `It is not valid JSON: ${error instanceof Error ? error.message : String(error)}`;
     }
     if (attempt === 2) throw new ModelError("invalid-response", `${request.model}'s ${request.stage} reply was invalid twice. ${problem}`);
+    // A reply that ran out of room before it wrote anything has nothing to correct: with `moreRoom`,
+    // it is asked again with twice the room, as a reasoning model thinking at length needs.
+    const roomless = options.moreRoom === true && response.finishReason === "length" && response.text.trim() === "" && room !== undefined;
     if (structured && (response.finishReason === "length" || response.text.trim() === "")) {
       structured = false;
       messages = plainly();
-    } else if (options.moreRoom === true && response.finishReason === "length" && response.text.trim() === "" && room !== undefined) {
-      // A reply that ran out of room before it wrote anything has nothing to correct: the same
-      // question again, with twice the room, as a reasoning model thinking at length needs.
-      room *= 2;
-    } else messages.push({ role: "assistant", content: response.text }, { role: "user", content: `That reply cannot be used. ${problem}\nReply again with one corrected JSON object only.` });
+      if (roomless) room = (room ?? 0) * 2;
+    } else if (roomless) room = (room ?? 0) * 2;
+    else messages.push({ role: "assistant", content: response.text }, { role: "user", content: `That reply cannot be used. ${problem}\nReply again with one corrected JSON object only.` });
   }
   throw new ModelError("invalid-response", "unreachable");
 }
