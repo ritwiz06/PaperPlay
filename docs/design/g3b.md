@@ -1,6 +1,6 @@
 # G3b: routing, the explainer tier, and the learning family
 
-A plan for the owner's review, 2026-10-17. Nothing here is built. It refines
+A plan for the owner's review, 2026-10-17; the owner's decisions are §4, and its first step is built (ADR-0047). It refines
 [every-paper.md](every-paper.md) §2–§6 with what G3a taught: equations as data, two transcriptions
 from different vendors that must agree, the level rule, the visibility rule, the findings check
 running the paper's own numbers, and five levels with the hook never dropped (ADR-0024 to
@@ -173,21 +173,41 @@ against 24–32 h planned.
 pipeline's second family (G3b.2d) and the explainer tier, which every-paper.md counted under G3b.1.
 A smaller G3b is Adam alone, hand-authored and then generated, with tier C deferred: 29–43 h.
 
-## 4. Decisions G3b needs from the owner
+## 4. The owner's decisions (2026-10-17, ADR-0046)
 
-1. **Update rules as data** (`OptimizerSpec`, recommended), or a coded registry of optimizers.
-   Data takes a paper's own variant and keeps the two-vendor agreement; a registry is quicker.
-2. **The attention toy:** in G3b, or after G4. I recommend after: Adam and Dropout already test the
-   family.
-3. **Adam's source:** arXiv v8's LaTeX (recommended), under arXiv's licence: anchors and short
-   quotes only, its text not kept.
-4. **Dropout's source:** the 2012 arXiv predecessor's LaTeX, or the 2014 JMLR PDF through PDF
-   ingest; and the convention shown, keep or drop.
-5. **G3b's gate:** both papers through the pipeline (the full plan), or Adam through the pipeline
-   and Dropout hand-authored (the smaller one).
-6. **Tier C in G3b, or after G4.**
-7. **The level rule's seeds for learning toys:** 16 of 20, as for flocking, or stricter for a
-   deterministic optimizer on a noiseless surface, where every seed gives the same run.
+1. **Update rules as data:** an `OptimizerSpec`, run by one trusted interpreter.
+2. **The attention toy waits until after G4.**
+3. **Adam** from arXiv 1412.6980's LaTeX source. Reddi, Kale and Kumar 2018 ("On the convergence of
+   Adam and beyond") is a possible bonus level, beyond the paper, labelled as such.
+4. **Dropout** from Srivastava et al. 2014, JMLR. The world shows the paper's own p, the
+   keep-probability, "share of units kept" at Beginner; the journal notes that today's libraries set
+   the drop rate.
+5. **G3b's gate is Adam alone,** through the pipeline; Dropout follows.
+6. **Tier C now, minimal.**
+7. **The level rule for learning toys:** 20 starts, at least 16 holding; seeds where a toy has real
+   randomness, ±10% moves of its hyperparameters and starting point where it has none.
+
+**The reference pattern is kept:** a momentum world, hand-authored from Sutskever, Martens, Dahl and
+Hinton 2013 (ICML, open access), is the learning family's reference, as the flocking world is the
+generator's. Adam is the first generated world, and held out from the planner's and explainer's
+examples.
+
+### What this changes above
+
+- §2.1: the first primitive is `learning.landscape@1.0.0`, on a quadratic surface; Rosenbrock's
+  valley and a noisy bowl come when a level needs them. Its oracles are §2.1's plain descent and
+  momentum's known behaviour (ADR-0047); Adam's one-step oracle comes with Adam.
+- §2.4: Dropout's source is the 2014 JMLR paper, through PDF ingest, anchors and short quotes only.
+- §2.6: the level rule's variation is seeds only for a toy with chance in it.
+- §3: G3b is Adam through the pipeline, the explainer page at its smallest, and the momentum world:
+  the smaller plan's 29–43 h, and the momentum world's.
+
+### The first step, done (2026-10-17, ADR-0047)
+
+The learning family (`OptimizerSpec`, `learning.landscape@1.0.0`, its oracles), the landscape kit
+(terrain, a ball and its trail, both worlds' balls on one surface in a fork, the miniature label on
+the world card and the level card at every depth), and Momentum Valley at `/world/momentum`: five
+levels, each meeting the level rule and the visibility rule.
 
 ## Later: equations drawn as images in a PDF
 

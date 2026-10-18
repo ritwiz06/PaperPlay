@@ -1,0 +1,185 @@
+{
+  "schemaVersion": "sourcemap/1",
+  "sourceId": "sutskever2013",
+  "url": "https://proceedings.mlr.press/v28/sutskever13.pdf",
+  "sha256": "0ffbc02e2ce6ddcb50705615389829896b700289548be4afacd9a57903e1a1c9",
+  "textSha256": "54fb056ca285d3985583e779d3f61ff4e282333f1f11210ae9028272854297ef",
+  "textLength": 46291,
+  "manifest": {
+    "schemaVersion": "sourcemanifest/1",
+    "sourceId": "sutskever2013",
+    "title": "On the importance of initialization and momentum in deep learning",
+    "authors": [
+      "Ilya Sutskever",
+      "James Martens",
+      "George Dahl",
+      "Geoffrey Hinton"
+    ],
+    "year": 2013,
+    "venue": "Proceedings of the 30th International Conference on Machine Learning, PMLR 28(3), 1139–1147",
+    "sha256": "0ffbc02e2ce6ddcb50705615389829896b700289548be4afacd9a57903e1a1c9",
+    "accessedAt": "2026-10-18T20:51:56.072Z",
+    "localCopyPermitted": false,
+    "sections": [
+      {
+        "id": "page-1",
+        "title": "Page 1"
+      },
+      {
+        "id": "page-2",
+        "title": "Page 2"
+      },
+      {
+        "id": "page-3",
+        "title": "Page 3"
+      },
+      {
+        "id": "page-4",
+        "title": "Page 4"
+      },
+      {
+        "id": "page-5",
+        "title": "Page 5"
+      },
+      {
+        "id": "page-6",
+        "title": "Page 6"
+      },
+      {
+        "id": "page-7",
+        "title": "Page 7"
+      },
+      {
+        "id": "page-8",
+        "title": "Page 8"
+      },
+      {
+        "id": "page-9",
+        "title": "Page 9"
+      }
+    ]
+  },
+  "claims": [
+    {
+      "id": "accelerates",
+      "paraphrase": "Classical momentum accumulates a velocity in directions where the loss keeps falling.",
+      "anchor": {
+        "sourceId": "sutskever2013",
+        "sectionId": "page-2",
+        "charStart": 8147,
+        "charEnd": 8303,
+        "quote": "is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations"
+      }
+    },
+    {
+      "id": "amplified",
+      "paraphrase": "Directions of low curvature persist across steps, and momentum amplifies them.",
+      "anchor": {
+        "sourceId": "sutskever2013",
+        "sectionId": "page-2",
+        "charStart": 8661,
+        "charEnd": 8727,
+        "quote": "they will tend to persist across iterations and be amplified by CM"
+      }
+    },
+    {
+      "id": "correction",
+      "paraphrase": "Both methods decay the velocity and add a gradient-based correction to it.",
+      "anchor": {
+        "sourceId": "sutskever2013",
+        "sectionId": "page-3",
+        "charStart": 12721,
+        "charEnd": 12852,
+        "quote": "both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)"
+      }
+    },
+    {
+      "id": "partial",
+      "paraphrase": "Nesterov's method first moves part of the way, then takes the gradient there.",
+      "anchor": {
+        "sourceId": "sutskever2013",
+        "sectionId": "page-3",
+        "charStart": 12959,
+        "charEnd": 12994,
+        "quote": "NAG first performs a partial update"
+      }
+    },
+    {
+      "id": "stably",
+      "paraphrase": "Nesterov's method behaves more stably than classical momentum, especially at high momentum.",
+      "anchor": {
+        "sourceId": "sutskever2013",
+        "sectionId": "page-3",
+        "charStart": 13191,
+        "charEnd": 13282,
+        "quote": "letting it behave more stably than CM in many situations, especially for higher values of μ"
+      }
+    },
+    {
+      "id": "oscillations",
+      "paraphrase": "On an oblong bowl, classical momentum oscillates across the steep direction; Nesterov's method all but avoids it.",
+      "anchor": {
+        "sourceId": "sutskever2013",
+        "sectionId": "page-3",
+        "charStart": 14125,
+        "charEnd": 14293,
+        "quote": "While the optimization path taken by CM exhibits large oscillations along the high-curvature vertical direction, NAG is able to avoid these oscillations almost entirely"
+      }
+    },
+    {
+      "id": "tolerant",
+      "paraphrase": "So Nesterov's method tolerates larger momentum than classical momentum does.",
+      "anchor": {
+        "sourceId": "sutskever2013",
+        "sectionId": "page-3",
+        "charStart": 14414,
+        "charEnd": 14479,
+        "quote": "thus making NAG more tolerant of large values of μ compared to CM"
+      }
+    },
+    {
+      "id": "oblong",
+      "paraphrase": "The paper's own two-dimensional example: an oblong quadratic, both methods with the same constants.",
+      "anchor": {
+        "sourceId": "sutskever2013",
+        "sectionId": "page-3",
+        "charStart": 13993,
+        "charEnd": 14094,
+        "quote": "a two-dimensional oblong quadratic objective, both with the same momentum and learning rate constants"
+      }
+    },
+    {
+      "id": "aggressive",
+      "paraphrase": "Late in training, both methods' aggressiveness prevents fine convergence.",
+      "anchor": {
+        "sourceId": "sutskever2013",
+        "sectionId": "page-5",
+        "charStart": 22602,
+        "charEnd": 22662,
+        "quote": "the overly aggressive nature of CM or NAG would prevent this"
+      }
+    },
+    {
+      "id": "crucial",
+      "paraphrase": "Both the initialization and the momentum are crucial.",
+      "anchor": {
+        "sourceId": "sutskever2013",
+        "sectionId": "page-1",
+        "charStart": 770,
+        "charEnd": 835,
+        "quote": "We find that both the initialization and the momentum are crucial"
+      }
+    },
+    {
+      "id": "poorly-tuned",
+      "paraphrase": "Well-initialized networks train markedly worse when momentum is absent or poorly tuned.",
+      "anchor": {
+        "sourceId": "sutskever2013",
+        "sectionId": "page-1",
+        "charStart": 906,
+        "charEnd": 998,
+        "quote": "well-initialized networks perform markedly worse when the momentum is absent or poorly tuned"
+      }
+    }
+  ]
+}

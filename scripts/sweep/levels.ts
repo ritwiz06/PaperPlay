@@ -158,8 +158,8 @@ export function toNeighbourhoodMarkdown(
     "`scripts/test/levels.test.ts` fails if this file drifts from a fresh run.",
     "",
     rule
-      ? `Primitive: ${meta.solver}, the update rule ${rule.spec.optimizer.name}, one update a step. Runtime: ${meta.runtime}. WorldSpec: fixtures/worldspecs/${fixture}, a ${world.status}. ADR-0018, ADR-0046, ADR-0047.`
-      : `Solver: ${meta.solver}, RK4 at a step of ${figure(dt)} ${time.many}. Runtime: ${meta.runtime}. WorldSpec: fixtures/worldspecs/${fixture}, a ${world.status}. ADR-0018, ADR-0024, ADR-0028.`,
+      ? `Primitive: ${meta.solver}, the update rule ${rule.spec.optimizer.name}, one update a step. Runtime: ${meta.runtime}. WorldSpec: fixtures/worldspecs/${fixture}, ${world.status === "reviewed" ? "reviewed against its source map" : "a draft"}. ADR-0018, ADR-0046, ADR-0047.`
+      : `Solver: ${meta.solver}, RK4 at a step of ${figure(dt)} ${time.many}. Runtime: ${meta.runtime}. WorldSpec: fixtures/worldspecs/${fixture}, ${world.status === "reviewed" ? "reviewed against its source map" : "a draft"}. ADR-0018, ADR-0024, ADR-0028.`,
     "",
     "## The rule",
     "",

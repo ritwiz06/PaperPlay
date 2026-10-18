@@ -4,10 +4,12 @@
  * fixtures/worldspecs/sutskever-2013-momentum.json. Classical momentum and Nesterov's accelerated
  * gradient, one update rule with a lookahead, on an oblong bowl like the paper's own two-dimensional
  * example. Written here once; `npm run fixture:momentum` writes the JSON, and a test holds the JSON
- * to it. A draft until its source map exists: every anchor is a placeholder naming its claim.
+ * to it. Every anchor comes from its source map, fixtures/papers/momentum/source-map.json, made from
+ * the paper's open copy on PMLR, whose text is not kept (ADR-0045, ADR-0047).
  */
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
-const SOURCE = "sutskever2013";
 /** The paper's passages this world rests on, by claim: each the short quote its source map will locate. */
 export const CLAIMS = {
   accelerates: "is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations",
@@ -23,7 +25,18 @@ export const CLAIMS = {
   poorlyTuned: "well-initialized networks perform markedly worse when the momentum is absent or poorly tuned",
 } as const;
 export type Claim = keyof typeof CLAIMS;
-const need = (...claims: Claim[]) => claims.map((claim) => ({ placeholder: true, sourceId: SOURCE, need: `The paper's passage: "${CLAIMS[claim]}"` }));
+/** The source map: each claim's anchor, located in the paper and checked against a fresh fetch by `npm run sources:check`. */
+const SOURCE_MAP = JSON.parse(readFileSync(join(import.meta.dirname, "..", "..", "fixtures", "papers", "momentum", "source-map.json"), "utf8")) as {
+  readonly manifest: Record<string, unknown>;
+  readonly claims: readonly { readonly id: string; readonly anchor: { readonly quote: string } }[];
+};
+const anchorOf = (claim: Claim) => {
+  const id = claim.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+  const found = SOURCE_MAP.claims.find((entry) => entry.id === id);
+  if (!found || found.anchor.quote !== CLAIMS[claim]) throw new Error(`the source map has no claim ${id} quoting "${CLAIMS[claim]}"`);
+  return found.anchor;
+};
+const need = (...claims: Claim[]) => claims.map(anchorOf);
 
 const c = (id: string) => ({ c: id });
 const p = (id: string) => ({ p: id });
@@ -372,17 +385,9 @@ const levels = [
 /** The WorldSpec, as plain data for the builder to check. */
 export const momentumWorld = () => ({
   schemaVersion: "worldspec/3",
-  status: "draft",
+  status: "reviewed",
   title: "Momentum Valley",
-  source: {
-    pending: true,
-    sourceId: SOURCE,
-    title: "On the importance of initialization and momentum in deep learning",
-    authors: ["Ilya Sutskever", "James Martens", "George Dahl", "Geoffrey Hinton"],
-    year: 2013,
-    venue: "Proceedings of the 30th International Conference on Machine Learning, PMLR 28(3), 1139–1147",
-    need: "The source map, from the paper's open copy on PMLR: its digest, pages and character ranges.",
-  },
+  source: SOURCE_MAP.manifest,
   digest: {
     question: "Why does momentum speed up gradient descent, and when does it get in the way?",
     hookResult: { text: "Momentum lets descent build up speed in directions that keep reducing the loss, and training does markedly worse when it is absent or poorly tuned.", anchors: need("accelerates", "poorlyTuned") },
@@ -421,7 +426,6 @@ export const momentumWorld = () => ({
       origin: "teaching-choice",
       anchors: [],
     },
-    { text: "A draft: its anchors are placeholders until its source map exists, and no passage is quoted yet.", origin: "teaching-choice", anchors: [] },
   ],
 });
 

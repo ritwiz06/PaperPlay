@@ -1,9 +1,9 @@
 {
   "schemaVersion": "worldspec/3",
-  "status": "draft",
+  "status": "reviewed",
   "title": "Momentum Valley",
   "source": {
-    "pending": true,
+    "schemaVersion": "sourcemanifest/1",
     "sourceId": "sutskever2013",
     "title": "On the importance of initialization and momentum in deep learning",
     "authors": [
@@ -14,7 +14,47 @@
     ],
     "year": 2013,
     "venue": "Proceedings of the 30th International Conference on Machine Learning, PMLR 28(3), 1139–1147",
-    "need": "The source map, from the paper's open copy on PMLR: its digest, pages and character ranges."
+    "sha256": "0ffbc02e2ce6ddcb50705615389829896b700289548be4afacd9a57903e1a1c9",
+    "accessedAt": "2026-10-18T20:51:56.072Z",
+    "localCopyPermitted": false,
+    "sections": [
+      {
+        "id": "page-1",
+        "title": "Page 1"
+      },
+      {
+        "id": "page-2",
+        "title": "Page 2"
+      },
+      {
+        "id": "page-3",
+        "title": "Page 3"
+      },
+      {
+        "id": "page-4",
+        "title": "Page 4"
+      },
+      {
+        "id": "page-5",
+        "title": "Page 5"
+      },
+      {
+        "id": "page-6",
+        "title": "Page 6"
+      },
+      {
+        "id": "page-7",
+        "title": "Page 7"
+      },
+      {
+        "id": "page-8",
+        "title": "Page 8"
+      },
+      {
+        "id": "page-9",
+        "title": "Page 9"
+      }
+    ]
   },
   "digest": {
     "question": "Why does momentum speed up gradient descent, and when does it get in the way?",
@@ -22,14 +62,18 @@
       "text": "Momentum lets descent build up speed in directions that keep reducing the loss, and training does markedly worse when it is absent or poorly tuned.",
       "anchors": [
         {
-          "placeholder": true,
           "sourceId": "sutskever2013",
-          "need": "The paper's passage: \"is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations\""
+          "sectionId": "page-2",
+          "charStart": 8147,
+          "charEnd": 8303,
+          "quote": "is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations"
         },
         {
-          "placeholder": true,
           "sourceId": "sutskever2013",
-          "need": "The paper's passage: \"well-initialized networks perform markedly worse when the momentum is absent or poorly tuned\""
+          "sectionId": "page-1",
+          "charStart": 906,
+          "charEnd": 998,
+          "quote": "well-initialized networks perform markedly worse when the momentum is absent or poorly tuned"
         }
       ]
     },
@@ -40,9 +84,11 @@
         "dependsOn": [],
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "sutskever2013",
-            "need": "The paper's passage: \"is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations\""
+            "sectionId": "page-2",
+            "charStart": 8147,
+            "charEnd": 8303,
+            "quote": "is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations"
           }
         ],
         "origin": "paper-derived"
@@ -55,9 +101,11 @@
         ],
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "sutskever2013",
-            "need": "The paper's passage: \"they will tend to persist across iterations and be amplified by CM\""
+            "sectionId": "page-2",
+            "charStart": 8661,
+            "charEnd": 8727,
+            "quote": "they will tend to persist across iterations and be amplified by CM"
           }
         ],
         "origin": "paper-derived"
@@ -70,9 +118,11 @@
         ],
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "sutskever2013",
-            "need": "The paper's passage: \"While the optimization path taken by CM exhibits large oscillations along the high-curvature vertical direction, NAG is able to avoid these oscillations almost entirely\""
+            "sectionId": "page-3",
+            "charStart": 14125,
+            "charEnd": 14293,
+            "quote": "While the optimization path taken by CM exhibits large oscillations along the high-curvature vertical direction, NAG is able to avoid these oscillations almost entirely"
           }
         ],
         "origin": "paper-derived"
@@ -85,14 +135,18 @@
         ],
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "sutskever2013",
-            "need": "The paper's passage: \"thus making NAG more tolerant of large values of μ compared to CM\""
+            "sectionId": "page-3",
+            "charStart": 14414,
+            "charEnd": 14479,
+            "quote": "thus making NAG more tolerant of large values of μ compared to CM"
           },
           {
-            "placeholder": true,
             "sourceId": "sutskever2013",
-            "need": "The paper's passage: \"letting it behave more stably than CM in many situations, especially for higher values of μ\""
+            "sectionId": "page-3",
+            "charStart": 13191,
+            "charEnd": 13282,
+            "quote": "letting it behave more stably than CM in many situations, especially for higher values of μ"
           }
         ],
         "origin": "paper-derived"
@@ -177,9 +231,11 @@
                 },
                 "anchors": [
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations\""
+                    "sectionId": "page-2",
+                    "charStart": 8147,
+                    "charEnd": 8303,
+                    "quote": "is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations"
                   }
                 ]
               }
@@ -278,14 +334,18 @@
                 },
                 "anchors": [
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)\""
+                    "sectionId": "page-3",
+                    "charStart": 12721,
+                    "charEnd": 12852,
+                    "quote": "both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)"
                   },
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"NAG first performs a partial update\""
+                    "sectionId": "page-3",
+                    "charStart": 12959,
+                    "charEnd": 12994,
+                    "quote": "NAG first performs a partial update"
                   }
                 ]
               },
@@ -304,9 +364,11 @@
                 },
                 "anchors": [
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)\""
+                    "sectionId": "page-3",
+                    "charStart": 12721,
+                    "charEnd": 12852,
+                    "quote": "both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)"
                   }
                 ]
               }
@@ -362,9 +424,11 @@
             "origin": "teaching-choice",
             "anchors": [
               {
-                "placeholder": true,
                 "sourceId": "sutskever2013",
-                "need": "The paper's passage: \"a two-dimensional oblong quadratic objective, both with the same momentum and learning rate constants\""
+                "sectionId": "page-3",
+                "charStart": 13993,
+                "charEnd": 14094,
+                "quote": "a two-dimensional oblong quadratic objective, both with the same momentum and learning rate constants"
               }
             ]
           }
@@ -385,9 +449,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "sutskever2013",
-            "need": "The paper's passage: \"is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations\""
+            "sectionId": "page-2",
+            "charStart": 8147,
+            "charEnd": 8303,
+            "quote": "is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations"
           }
         ]
       },
@@ -480,14 +546,18 @@
           "origin": "paper-derived",
           "anchors": [
             {
-              "placeholder": true,
               "sourceId": "sutskever2013",
-              "need": "The paper's passage: \"both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)\""
+              "sectionId": "page-3",
+              "charStart": 12721,
+              "charEnd": 12852,
+              "quote": "both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)"
             },
             {
-              "placeholder": true,
               "sourceId": "sutskever2013",
-              "need": "The paper's passage: \"is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations\""
+              "sectionId": "page-2",
+              "charStart": 8147,
+              "charEnd": 8303,
+              "quote": "is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations"
             }
           ]
         }
@@ -497,9 +567,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "sutskever2013",
-            "need": "The paper's passage: \"is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations\""
+            "sectionId": "page-2",
+            "charStart": 8147,
+            "charEnd": 8303,
+            "quote": "is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations"
           }
         ]
       },
@@ -552,9 +624,11 @@
           "origin": "paper-derived",
           "anchors": [
             {
-              "placeholder": true,
               "sourceId": "sutskever2013",
-              "need": "The paper's passage: \"We find that both the initialization and the momentum are crucial\""
+              "sectionId": "page-1",
+              "charStart": 770,
+              "charEnd": 835,
+              "quote": "We find that both the initialization and the momentum are crucial"
             }
           ]
         }
@@ -597,9 +671,11 @@
                 },
                 "anchors": [
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations\""
+                    "sectionId": "page-2",
+                    "charStart": 8147,
+                    "charEnd": 8303,
+                    "quote": "is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations"
                   }
                 ]
               }
@@ -698,14 +774,18 @@
                 },
                 "anchors": [
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)\""
+                    "sectionId": "page-3",
+                    "charStart": 12721,
+                    "charEnd": 12852,
+                    "quote": "both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)"
                   },
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"NAG first performs a partial update\""
+                    "sectionId": "page-3",
+                    "charStart": 12959,
+                    "charEnd": 12994,
+                    "quote": "NAG first performs a partial update"
                   }
                 ]
               },
@@ -724,9 +804,11 @@
                 },
                 "anchors": [
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)\""
+                    "sectionId": "page-3",
+                    "charStart": 12721,
+                    "charEnd": 12852,
+                    "quote": "both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)"
                   }
                 ]
               }
@@ -782,9 +864,11 @@
             "origin": "teaching-choice",
             "anchors": [
               {
-                "placeholder": true,
                 "sourceId": "sutskever2013",
-                "need": "The paper's passage: \"a two-dimensional oblong quadratic objective, both with the same momentum and learning rate constants\""
+                "sectionId": "page-3",
+                "charStart": 13993,
+                "charEnd": 14094,
+                "quote": "a two-dimensional oblong quadratic objective, both with the same momentum and learning rate constants"
               }
             ]
           }
@@ -807,9 +891,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "sutskever2013",
-            "need": "The paper's passage: \"both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)\""
+            "sectionId": "page-3",
+            "charStart": 12721,
+            "charEnd": 12852,
+            "quote": "both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)"
           }
         ]
       },
@@ -907,9 +993,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "sutskever2013",
-            "need": "The paper's passage: \"they will tend to persist across iterations and be amplified by CM\""
+            "sectionId": "page-2",
+            "charStart": 8661,
+            "charEnd": 8727,
+            "quote": "they will tend to persist across iterations and be amplified by CM"
           }
         ]
       },
@@ -962,9 +1050,11 @@
           "origin": "paper-derived",
           "anchors": [
             {
-              "placeholder": true,
               "sourceId": "sutskever2013",
-              "need": "The paper's passage: \"they will tend to persist across iterations and be amplified by CM\""
+              "sectionId": "page-2",
+              "charStart": 8661,
+              "charEnd": 8727,
+              "quote": "they will tend to persist across iterations and be amplified by CM"
             }
           ]
         }
@@ -1007,9 +1097,11 @@
                 },
                 "anchors": [
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations\""
+                    "sectionId": "page-2",
+                    "charStart": 8147,
+                    "charEnd": 8303,
+                    "quote": "is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations"
                   }
                 ]
               }
@@ -1108,14 +1200,18 @@
                 },
                 "anchors": [
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)\""
+                    "sectionId": "page-3",
+                    "charStart": 12721,
+                    "charEnd": 12852,
+                    "quote": "both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)"
                   },
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"NAG first performs a partial update\""
+                    "sectionId": "page-3",
+                    "charStart": 12959,
+                    "charEnd": 12994,
+                    "quote": "NAG first performs a partial update"
                   }
                 ]
               },
@@ -1134,9 +1230,11 @@
                 },
                 "anchors": [
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)\""
+                    "sectionId": "page-3",
+                    "charStart": 12721,
+                    "charEnd": 12852,
+                    "quote": "both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)"
                   }
                 ]
               }
@@ -1192,9 +1290,11 @@
             "origin": "teaching-choice",
             "anchors": [
               {
-                "placeholder": true,
                 "sourceId": "sutskever2013",
-                "need": "The paper's passage: \"a two-dimensional oblong quadratic objective, both with the same momentum and learning rate constants\""
+                "sectionId": "page-3",
+                "charStart": 13993,
+                "charEnd": 14094,
+                "quote": "a two-dimensional oblong quadratic objective, both with the same momentum and learning rate constants"
               }
             ]
           }
@@ -1217,9 +1317,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "sutskever2013",
-            "need": "The paper's passage: \"is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations\""
+            "sectionId": "page-2",
+            "charStart": 8147,
+            "charEnd": 8303,
+            "quote": "is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations"
           }
         ]
       },
@@ -1311,9 +1413,11 @@
           "origin": "paper-derived",
           "anchors": [
             {
-              "placeholder": true,
               "sourceId": "sutskever2013",
-              "need": "The paper's passage: \"NAG first performs a partial update\""
+              "sectionId": "page-3",
+              "charStart": 12959,
+              "charEnd": 12994,
+              "quote": "NAG first performs a partial update"
             }
           ]
         }
@@ -1323,9 +1427,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "sutskever2013",
-            "need": "The paper's passage: \"While the optimization path taken by CM exhibits large oscillations along the high-curvature vertical direction, NAG is able to avoid these oscillations almost entirely\""
+            "sectionId": "page-3",
+            "charStart": 14125,
+            "charEnd": 14293,
+            "quote": "While the optimization path taken by CM exhibits large oscillations along the high-curvature vertical direction, NAG is able to avoid these oscillations almost entirely"
           }
         ]
       },
@@ -1378,9 +1484,11 @@
           "origin": "paper-derived",
           "anchors": [
             {
-              "placeholder": true,
               "sourceId": "sutskever2013",
-              "need": "The paper's passage: \"While the optimization path taken by CM exhibits large oscillations along the high-curvature vertical direction, NAG is able to avoid these oscillations almost entirely\""
+              "sectionId": "page-3",
+              "charStart": 14125,
+              "charEnd": 14293,
+              "quote": "While the optimization path taken by CM exhibits large oscillations along the high-curvature vertical direction, NAG is able to avoid these oscillations almost entirely"
             }
           ]
         }
@@ -1423,9 +1531,11 @@
                 },
                 "anchors": [
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations\""
+                    "sectionId": "page-2",
+                    "charStart": 8147,
+                    "charEnd": 8303,
+                    "quote": "is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations"
                   }
                 ]
               }
@@ -1524,14 +1634,18 @@
                 },
                 "anchors": [
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)\""
+                    "sectionId": "page-3",
+                    "charStart": 12721,
+                    "charEnd": 12852,
+                    "quote": "both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)"
                   },
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"NAG first performs a partial update\""
+                    "sectionId": "page-3",
+                    "charStart": 12959,
+                    "charEnd": 12994,
+                    "quote": "NAG first performs a partial update"
                   }
                 ]
               },
@@ -1550,9 +1664,11 @@
                 },
                 "anchors": [
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)\""
+                    "sectionId": "page-3",
+                    "charStart": 12721,
+                    "charEnd": 12852,
+                    "quote": "both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)"
                   }
                 ]
               }
@@ -1608,9 +1724,11 @@
             "origin": "teaching-choice",
             "anchors": [
               {
-                "placeholder": true,
                 "sourceId": "sutskever2013",
-                "need": "The paper's passage: \"a two-dimensional oblong quadratic objective, both with the same momentum and learning rate constants\""
+                "sectionId": "page-3",
+                "charStart": 13993,
+                "charEnd": 14094,
+                "quote": "a two-dimensional oblong quadratic objective, both with the same momentum and learning rate constants"
               }
             ]
           }
@@ -1631,9 +1749,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "sutskever2013",
-            "need": "The paper's passage: \"is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations\""
+            "sectionId": "page-2",
+            "charStart": 8147,
+            "charEnd": 8303,
+            "quote": "is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations"
           }
         ]
       },
@@ -1732,9 +1852,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "sutskever2013",
-            "need": "The paper's passage: \"the overly aggressive nature of CM or NAG would prevent this\""
+            "sectionId": "page-5",
+            "charStart": 22602,
+            "charEnd": 22662,
+            "quote": "the overly aggressive nature of CM or NAG would prevent this"
           }
         ]
       },
@@ -1787,9 +1909,11 @@
           "origin": "paper-derived",
           "anchors": [
             {
-              "placeholder": true,
               "sourceId": "sutskever2013",
-              "need": "The paper's passage: \"the overly aggressive nature of CM or NAG would prevent this\""
+              "sectionId": "page-5",
+              "charStart": 22602,
+              "charEnd": 22662,
+              "quote": "the overly aggressive nature of CM or NAG would prevent this"
             }
           ]
         }
@@ -1832,9 +1956,11 @@
                 },
                 "anchors": [
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations\""
+                    "sectionId": "page-2",
+                    "charStart": 8147,
+                    "charEnd": 8303,
+                    "quote": "is a technique for accelerating gradient descent that accumulates a velocity vector in directions of persistent reduction in the objective across iterations"
                   }
                 ]
               }
@@ -1933,14 +2059,18 @@
                 },
                 "anchors": [
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)\""
+                    "sectionId": "page-3",
+                    "charStart": 12721,
+                    "charEnd": 12852,
+                    "quote": "both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)"
                   },
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"NAG first performs a partial update\""
+                    "sectionId": "page-3",
+                    "charStart": 12959,
+                    "charEnd": 12994,
+                    "quote": "NAG first performs a partial update"
                   }
                 ]
               },
@@ -1959,9 +2089,11 @@
                 },
                 "anchors": [
                   {
-                    "placeholder": true,
                     "sourceId": "sutskever2013",
-                    "need": "The paper's passage: \"both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)\""
+                    "sectionId": "page-3",
+                    "charStart": 12721,
+                    "charEnd": 12852,
+                    "quote": "both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)"
                   }
                 ]
               }
@@ -2017,9 +2149,11 @@
             "origin": "teaching-choice",
             "anchors": [
               {
-                "placeholder": true,
                 "sourceId": "sutskever2013",
-                "need": "The paper's passage: \"a two-dimensional oblong quadratic objective, both with the same momentum and learning rate constants\""
+                "sectionId": "page-3",
+                "charStart": 13993,
+                "charEnd": 14094,
+                "quote": "a two-dimensional oblong quadratic objective, both with the same momentum and learning rate constants"
               }
             ]
           }
@@ -2042,9 +2176,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "sutskever2013",
-            "need": "The paper's passage: \"both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)\""
+            "sectionId": "page-3",
+            "charStart": 12721,
+            "charEnd": 12852,
+            "quote": "both CM and NAG compute the new velocity by applying a gradient-based correction to the previous velocity vector (which is decayed)"
           }
         ]
       },
@@ -2142,9 +2278,11 @@
         "origin": "paper-derived",
         "anchors": [
           {
-            "placeholder": true,
             "sourceId": "sutskever2013",
-            "need": "The paper's passage: \"well-initialized networks perform markedly worse when the momentum is absent or poorly tuned\""
+            "sectionId": "page-1",
+            "charStart": 906,
+            "charEnd": 998,
+            "quote": "well-initialized networks perform markedly worse when the momentum is absent or poorly tuned"
           }
         ]
       },
@@ -2197,9 +2335,11 @@
           "origin": "paper-derived",
           "anchors": [
             {
-              "placeholder": true,
               "sourceId": "sutskever2013",
-              "need": "The paper's passage: \"well-initialized networks perform markedly worse when the momentum is absent or poorly tuned\""
+              "sectionId": "page-1",
+              "charStart": 906,
+              "charEnd": 998,
+              "quote": "well-initialized networks perform markedly worse when the momentum is absent or poorly tuned"
             }
           ]
         }
@@ -2244,11 +2384,6 @@
     },
     {
       "text": "The surface has no noise and the rule no chance, so the same settings always give the same run. Each level's statement is checked on the world's own settings and starting point and on 19 others, each within a tenth of them, not on 20 seeds.",
-      "origin": "teaching-choice",
-      "anchors": []
-    },
-    {
-      "text": "A draft: its anchors are placeholders until its source map exists, and no passage is quoted yet.",
       "origin": "teaching-choice",
       "anchors": []
     }

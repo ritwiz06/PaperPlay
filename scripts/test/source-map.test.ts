@@ -4,8 +4,9 @@ import { isPlaceholder, SourceMap, SourceRegister, WorldSpec, type AnchorRef } f
 import { describe, expect, it } from "vitest";
 
 // The flocking world's anchors, held to its source map (ADR-0045): Reynolds's paper from the
-// author's own copy, whose text is not kept. `npm run sources:check` shows against a fresh fetch
-// that each quote is where the map says; this test shows the world quotes only what the map holds.
+// author's own copy, whose text is not kept; and Momentum Valley's, from the paper's open copy on
+// PMLR (ADR-0047). `npm run sources:check` shows against a fresh fetch that each quote is where the
+// map says; this test shows each world quotes only what its map holds.
 
 const root = join(import.meta.dirname, "..", "..");
 const read = (path: string): unknown => JSON.parse(readFileSync(join(root, path), "utf8"));
@@ -43,6 +44,27 @@ describe("[R05] the flocking world's source map", () => {
     expect(anchors.length).toBeGreaterThanOrEqual(19);
     expect(anchors.filter(isPlaceholder)).toEqual([]);
     const mapped = sourceMap.claims.map((claim) => JSON.stringify(claim.anchor));
+    for (const anchor of anchors) expect(mapped, JSON.stringify(anchor)).toContain(JSON.stringify(anchor));
+  });
+});
+
+describe("[R05] Momentum Valley's source map (ADR-0047)", () => {
+  const momentumMap = SourceMap.parse(read("fixtures/papers/momentum/source-map.json"));
+  const momentum = WorldSpec.parse(read("fixtures/worldspecs/sutskever-2013-momentum.json"));
+  const registered = SourceRegister.parse(read("fixtures/sources/register.json")).sources.find((source) => source.sourceId === "sutskever2013");
+
+  it("registers the paper as the authors' and PMLR's copyright, free to read, its text not kept, and keeps short quotes only", () => {
+    expect(registered).toMatchObject({ route: "pdf-text", licence: "other", textKept: false, sha256: momentumMap.sha256, identifiers: { url: momentumMap.url } });
+    expect(registered?.licenceEvidence).toMatch(/Copyright © The authors and PMLR/);
+    for (const claim of momentumMap.claims) expect(claim.anchor.quote.length, claim.id).toBeLessThanOrEqual(200);
+  });
+
+  it("is the reviewed world's source, and every anchor the world holds is one the map holds", () => {
+    expect(momentum.status).toBe("reviewed");
+    expect(momentum.source).toEqual(momentumMap.manifest);
+    const anchors = anchorsIn(momentum);
+    expect(anchors.filter(isPlaceholder)).toEqual([]);
+    const mapped = momentumMap.claims.map((claim) => JSON.stringify(claim.anchor));
     for (const anchor of anchors) expect(mapped, JSON.stringify(anchor)).toContain(JSON.stringify(anchor));
   });
 });

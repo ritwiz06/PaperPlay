@@ -94,6 +94,30 @@
       "accessedAt": "2026-10-17T19:01:24.059Z",
       "textKept": false,
       "attribution": "Craig W. Reynolds, “Flocks, Herds, and Schools: A Distributed Behavioral Model”, Computer Graphics 21(4), SIGGRAPH '87, 25–34. © 1987 ACM. Quoted from the author's copy at red3d.com."
+    },
+    {
+      "sourceId": "sutskever2013",
+      "title": "On the importance of initialization and momentum in deep learning",
+      "authors": [
+        "Ilya Sutskever",
+        "James Martens",
+        "George Dahl",
+        "Geoffrey Hinton"
+      ],
+      "year": 2013,
+      "venue": "Proceedings of the 30th International Conference on Machine Learning, PMLR 28(3), 1139–1147",
+      "identifiers": {
+        "pmlr": "v28/sutskever13",
+        "url": "https://proceedings.mlr.press/v28/sutskever13.pdf"
+      },
+      "route": "pdf-text",
+      "licence": "other",
+      "licenceUrl": "https://proceedings.mlr.press/v28/sutskever13.html",
+      "licenceEvidence": "The paper's page in the Proceedings of Machine Learning Research states \"Copyright © The authors and PMLR\". It is free to read; no licence beyond reading is stated, so only anchors and short quotes are kept, and the text is not.",
+      "sha256": "0ffbc02e2ce6ddcb50705615389829896b700289548be4afacd9a57903e1a1c9",
+      "accessedAt": "2026-10-18T20:51:56.072Z",
+      "textKept": false,
+      "attribution": "Ilya Sutskever, James Martens, George Dahl and Geoffrey Hinton, “On the importance of initialization and momentum in deep learning”, ICML 2013, PMLR 28(3), 1139–1147. © The authors and PMLR."
     }
   ]
 }
