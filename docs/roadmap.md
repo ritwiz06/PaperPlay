@@ -16,7 +16,7 @@ calendar promises.
 | Gate | Tag | Planned effort | Requirements enforced | State |
 |---|---|---|---|---|
 | G1 Playable baseline | v0.1.0 | 21–28 h | R01–R04 | Passed and tagged v0.1.0 on 2026-10-01 |
-| G2 Verified authored world | v0.2.0 | 21–28 h | R01–R08, R12 | The flocking world reviewed against its source map on 2026-10-17 (ADR-0045); tagged when the owner says |
+| G2 Verified authored world | v0.2.0 | 21–28 h | R01–R08, R12 | Passed and tagged v0.2.0 on 2026-10-18, G2 current from then; release notes in `docs/releases/v0.2.0.md` |
 | G3a Generalize, compartments, the pipeline on them | Chosen when it passes | 52–72 h | R01–R12 | Every item built; closed out 2026-10-17, two worlds made under every rule; what counts as definitional held by code from 2026-10-17, both worlds regenerated under it (ADR-0044) |
 | G3b Routing, the explainer tier, learning toys | Chosen when it passes | 29–43 h and Momentum Valley (ADR-0046) | R01–R12 | The owner's decisions taken; the learning family, the landscape kit and Momentum Valley done (ADR-0047) |
 | G4 Evaluation and feature freeze | v0.4.0 | 20–28 h | R01–R12, plus evaluation checks | Not started |
@@ -362,6 +362,7 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-10 | The levels sweep runs every authored world, over its family's variation, and holds a compartment world's every run to the accuracy check | ADR-0024's level rule for models with no chance in them (ADR-0029) |
 | 2026-10-14 | The model provider is ASU Research Computing's Voyager gateway, not the Anthropic SDK; tests and CI replay recorded calls; generation runs only locally | Owner decision (ADR-0030) |
 | 2026-10-17 | G3a closed out: every item built, two worlds made under every rule. G3b planned in design/g3b.md at 49–71 h, a smaller G3b at 29–43 h, its decisions the owner's | Owner request, 2026-10-16 |
+| 2026-10-18 | G2 made current and tagged v0.2.0; CI's gate skipped on main when its branch passed, the capture on demand only | Owner decisions (ADR-0048) |
 | 2026-10-17 | G3b's decisions: update rules as data, attention after G4, G3b's gate Adam alone, tier C now and minimal; a hand-authored momentum world as the learning family's reference | Owner decisions (ADR-0046) |
 | 2026-10-17 | What counts as definitional held by code: the direct-effect tag, a named term, emergent summaries exempt, two reviewers who must agree, unsupported words written again; the reviewers' bake-off reads its cases from data and keeps every live mistake | Owner decision (ADR-0044) |
 | 2026-10-17 | G2's source is Reynolds's own copy on red3d.com, not the owner's PDF; Threshold Town's waits on a browser download, the Royal Society refusing this machine's requests | Owner instruction (ADR-0045) |

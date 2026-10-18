@@ -250,9 +250,10 @@ flowchart LR
   axe scans. ESLint 10 has type-aware rules and the
   boundary rules above.
 - **CI:** `.github/workflows/check-gate.yml` runs `check:gate` on ubuntu-latest, with the
-  Node in `.node-version`, on every push and pull request. On `main` and on demand, a second
-  job films the demo capture on Linux, so its hashes can be compared with the Mac's
-  (ADR-0011). Every invariant below is checked on both runtimes:
+  Node in `.node-version`, on every push and pull request; on a push to `main` only when the same
+  commit has not already passed on its branch, as `npm run land` guarantees it has. On demand, a
+  second job films the demo capture on Linux, so its hashes can be compared with the Mac's
+  (ADR-0011, ADR-0048). Every invariant below is checked on both runtimes:
   - macOS on arm64, locally;
   - Linux on x86-64, in CI.
 

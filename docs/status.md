@@ -1,20 +1,13 @@
 # Status
 
-Updated 2026-10-17: the owner's answers, review rules, two planners, the G2 sources and the
-learning family ([log](sessions/2026-10-17.md)). This file is rewritten every session.
+Updated 2026-10-18: decisions, fixes, a library page and a UI atlas
+([log](sessions/2026-10-18.md)). This file is rewritten every session.
 
 ## Where we are
 
-- **Gate:** G1 Playable baseline **passed**, and is tagged `v0.1.0` at `3448e5b`. G2's flocking
-  world is reviewed against its source map, Reynolds's paper from his own site (ADR-0045);
-  `gates.json` keeps G1 current until the owner moves it to G2 (ADR-0009). G2's own gate,
-  `npm run check:gate -- G2`, passed at `0a24c13`: every check, the reviewed world, and R01–R08 and
-  R12 with passing evidence (the session log has its output).
-- **The review rules** (ADR-0044), landed at `95713ad`: the direct-effect tag, named terms checked
-  by code, emergent summaries never definitional, two reviewers who must agree, and misworded levels
-  written again. Both worlds regenerated under them, 2026-10-18: hepatitis C at
-  `/world/generated/pmc-PMC12334037-2026-10-18`, every level new; tuberculosis at
-  `/world/generated/arxiv-2506.19869v1-2026-10-18`, its level 2's words written again.
+- **Gate:** G2 Verified authored world is current (2026-10-18), and `v0.2.0` is cut on the commit
+  that made it so, with release notes in `docs/releases/v0.2.0.md` listing what G2 deferred and why.
+  G1 is tagged `v0.1.0` at `3448e5b`.
 - **G2's sources** (ADR-0045), landed at `4922f96`: Reynolds 1987 in the source register (ACM's
   copyright, the author's copy, its text not kept), `fixtures/papers/flocking/source-map.json` with
   13 claims, the flocking world's 19 placeholders now anchors. Kermack and McKendrick 1927 is free
@@ -49,14 +42,13 @@ learning family ([log](sessions/2026-10-17.md)). This file is rewritten every se
 - **One origin a sentence, every number in the chart's unit** (ADR-0042), landed at `938475a`.
 - **Plans from two planners** (ADR-0043), landed at `8df84c3`: kimi-k2-7-code and glm-5-3, the
   better level kept for each slot.
-- **Branches:** `g3/session-close`, this log's close, being landed; `worktree-agent-ab8301aef54d2fcc8`,
-  the compartment agent's own, whose three commits are on `main`.
-- **Working commit:** `fcd3c43` on `main`, where every branch of 2026-10-17 has landed.
-- **CI and billing:** on 2026-10-18 GitHub refused to start the jobs of the run on `main` at `95713ad`
-  ("recent account payments have failed or your spending limit needs to be increased"); the same
-  commit's run on its branch had passed, and the next run on `main`, at `fcd3c43`, passed, `check:gate`
-  and `capture:demo` both (run 39168707730). The Actions minutes on the private repository are the
-  owner's to check.
+- **Branches:** `g2/ci-minutes`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the compartment
+  agent's own, whose three commits are on `main`.
+- **Working commit:** `c946b97` on `main`.
+- **CI and billing:** about 2,082 Actions minutes from 1 to 18 October against GitHub Free's 2,000
+  for a private repository; GitHub refused a run on `main` on 2026-10-18. From `g2/ci-minutes`, a
+  push to `main` runs the gate only when its branch run did not already pass, and the capture runs
+  on demand only (ADR-0048).
 - **Model provider:** Voyager, `https://openai.rc.asu.edu/v1`, its key `VOYAGER_API_KEY` in
   `apps/api/.env` only (ADR-0030); called only by `npm run pipeline:live`. Replies stream; a call
   may take up to 30 minutes.
@@ -106,16 +98,13 @@ Ahead of their gate, from the same suites' reports: R01 160, R02 14, R03 159, R0
 
 ## Decisions waiting on the owner
 
-1. **Hepatitis C's level 5:** emergent, so never definitional by rule 3, yet ruled a fault; the
-   regenerated world ships its mirror image (ADR-0044). Which rule gives way.
-2. **Whether an unsupported block needs both reviewers:** agreement lost kimi-k2-7-code's right block
-   on the new hepatitis C world's level 3 (ADR-0044).
-3. **Whether G2 is passed and tagged:** the flocking world is reviewed; `gates.json` keeps G1
-   current until the owner moves it (ADR-0009).
-4. **Paid branch protection on GitHub** (ADR-0009's amendment).
-5. **The deploy:** the owner connects Vercel (ADR-0017).
+1. **The Actions minutes:** about 2,082 used from 1 to 18 October against GitHub Free's 2,000 for a
+   private repository; the owner checks the plan or the spending limit (ADR-0048).
+2. **Paid branch protection on GitHub** (ADR-0009's amendment).
+3. **The deploy:** the owner connects Vercel (ADR-0017).
 
-The owner's G3b decisions of 2026-10-17 are ADR-0046; G3b's first step is ADR-0047.
+The owner settled what counts as definitional, unsupported wording, reviewers' independence and G2
+on 2026-10-18; they land this session.
 
 ## Next three actions
 
