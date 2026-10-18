@@ -91,7 +91,12 @@ export async function explain(client: ModelClient, model: string, input: Paramet
 }
 
 /** A level's words written again where the reviewers found they misdescribe the model (ADR-0044): its words, its goal and its effect sentence, its claim unchanged. */
-export const RewordedLevel = z.strictObject({ ...ExplainedLevel.shape, goal: z.string().min(1).max(200), effect: z.string().min(1).max(300) });
+/**
+ * Bounded by words, not characters: a character limit in a schema lets a model's constrained reply
+ * stop mid-word, as a goal once did ("The vaccinated group's o"). Each ends a sentence.
+ */
+const Sentences = (words: number) => UpTo(words).refine((text) => /[.!?]["”’)]?$/.test(text.trim()), { error: "must end a sentence" });
+export const RewordedLevel = z.strictObject({ ...ExplainedLevel.shape, goal: Sentences(30), effect: Sentences(50) });
 export type RewordedLevel = z.infer<typeof RewordedLevel>;
 
 /** One scoped wording repair: the level's words, goal and effect sentence again, saying only what the model's equations do. */
@@ -101,7 +106,7 @@ export async function reword(client: ModelClient, model: string, input: Paramete
     ...explainerMessages(input, level),
     {
       role: "user",
-      content: `The reviewers found that level ${level + 1}'s words misdescribe the model: ${problem}\nWrite this level's words again, with its goal and its effect sentence, saying only what the model's equations do. Its claim stays as it is: the effect sentence states the same measured difference as this one, in words the equations support: "${planned?.effect ?? ""}"`,
+      content: `The reviewers found that level ${level + 1}'s words misdescribe the model: ${problem}\nWrite this level's words again, with its goal, one sentence of at most 30 words, and its effect, at most 50 words, saying only what the model's equations do. Its claim stays as it is: the effect sentence states the same measured difference as this one, in words the equations support: "${planned?.effect ?? ""}"`,
     },
   ];
   const words = await completeStructured(client, { stage: "explainer", model, messages, temperature: 0, maxTokens: 16_000 }, RewordedLevel, { name: "reworded_level", structuredOutput: options.structuredOutput, moreRoom: true });
