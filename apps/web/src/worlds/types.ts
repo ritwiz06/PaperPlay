@@ -39,6 +39,11 @@ export interface PlayableWorld {
   lookFor?(level: BuiltLevel): unknown;
   /** A teaching choice in how the level is drawn, said on screen beside the fork, such as a lens; null when there is none. */
   sceneNote?(level: BuiltLevel): string | null;
+  /**
+   * In a fork, what a pane draws from both worlds' inputs, when its kit draws the other world beside
+   * its own, as the landscape draws both balls on one surface (ADR-0047). Absent, each pane draws its own world.
+   */
+  forkInput?(own: unknown, other: unknown, pane: "here" | "there"): unknown;
   /** How measured values are shown, when not as the model counts them: shares as people in a stated town. */
   displayScale?(level: BuiltLevel): { readonly factor: number; readonly unit: string } | null;
 }

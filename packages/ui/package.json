@@ -12,10 +12,12 @@
     "./stage-core": "./src/stage-core/index.ts",
     "./stage-core/valley": "./src/stage-core/kits/valley/index.ts",
     "./stage-core/town": "./src/stage-core/kits/town/index.ts",
+    "./stage-core/landscape": "./src/stage-core/kits/landscape/index.ts",
     "./three-adapter": "./src/three-adapter/index.ts",
     "./react": "./src/react/index.ts",
     "./react/valley": "./src/react/kits/valley/index.ts",
-    "./react/town": "./src/react/kits/town/index.ts"
+    "./react/town": "./src/react/kits/town/index.ts",
+    "./react/landscape": "./src/react/kits/landscape/index.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json && tsc -p src/stage-core/tsconfig.json && tsc -p src/three-adapter/tsconfig.json && tsc -p src/react/tsconfig.json && tsc -p test/tsconfig.json"

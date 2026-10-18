@@ -2,6 +2,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { SCENE_KITS } from "@paperplay/contracts";
 import { describe, expect, it } from "vitest";
+import { landscapeStage } from "../src/stage-core/kits/landscape/index.ts";
 import { FIGURES, townStage } from "../src/stage-core/kits/town/index.ts";
 import { valleyStage } from "../src/stage-core/kits/valley/index.ts";
 import { THREE_KITS } from "../src/three-adapter/kits/index.ts";
@@ -9,7 +10,7 @@ import { THREE_KITS } from "../src/three-adapter/kits/index.ts";
 // Scene kits (ADR-0026): each kit's halves agree on its id, and its Three.js half, like the base
 // adapter, can draw only what a frame description tells it.
 
-const STAGE_KITS = [valleyStage, townStage];
+const STAGE_KITS = [valleyStage, townStage, landscapeStage];
 
 /** Every TypeScript file under a folder, its subfolders included. */
 function sources(dir: string): string[] {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Expr, MODEL_LIMITS, ModelSpec, TimeUnit } from "../src/index.ts";
+import { Expr, MODEL_LIMITS, ModelSpec, ModelTimeUnit, TimeUnit } from "../src/index.ts";
 import { anchor, issuesOf, placeholder } from "./examples.ts";
 import { c, decayChain, infection, n, neg, p, parameter, sirModel, type ModelInput } from "./model-examples.ts";
 
@@ -32,9 +32,11 @@ describe("[R03] ModelSpec: a complete model", () => {
     expect(issuesOf(ModelSpec, model)).toEqual([]);
   });
 
-  it("measures time in one of six units", () => {
-    expect(TimeUnit.options).toEqual(["second", "minute", "hour", "day", "week", "year"]);
+  it("measures time in one of six units, never a learning toy's step", () => {
+    expect(ModelTimeUnit.options).toEqual(["second", "minute", "hour", "day", "week", "year"]);
+    expect(TimeUnit.options).toEqual([...ModelTimeUnit.options, "step"]);
     expect(issuesOf(ModelSpec, { ...sirModel(), timeUnit: "fortnight" })).toEqual([{ code: "invalid_value", path: "timeUnit" }]);
+    expect(issuesOf(ModelSpec, { ...sirModel(), timeUnit: "step" })).toEqual([{ code: "invalid_value", path: "timeUnit" }]);
   });
 
   it("rejects unknown keys at the top, in a compartment, in a parameter and in the solver", () => {

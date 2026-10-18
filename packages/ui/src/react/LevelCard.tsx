@@ -46,6 +46,8 @@ export interface LevelCardProps {
   readonly whatIfId: string;
   readonly onWhatIf: () => void;
   readonly sliderRef?: Ref<HTMLInputElement>;
+  /** The family's label, shown at every depth and never dropped, when the family has one: "miniature: the idea at toy scale". */
+  readonly familyLabel?: string;
 }
 
 const decimalsOf = (step: number): number => Math.max(0, -Math.floor(Math.log10(step) + 1e-9));
@@ -56,7 +58,7 @@ const decimalsOf = (step: number): number => Math.max(0, -Math.floor(Math.log10(
  * one compact row (title, slider, readout, What if) and a chevron opens the rest.
  */
 export function LevelCard(props: LevelCardProps) {
-  const { kicker, title, goal, observation, control, depth, visible, onDepth, onChange, onControlFocus, onFromPaper, readout, equation, whatIfOpen, whatIfId, onWhatIf, sliderRef } = props;
+  const { kicker, title, goal, observation, control, depth, visible, onDepth, onChange, onControlFocus, onFromPaper, readout, equation, whatIfOpen, whatIfId, onWhatIf, sliderRef, familyLabel } = props;
   const id = useId();
   const [expanded, setExpanded] = useState(false);
   const sliderId = `${id}-control`;
@@ -106,6 +108,11 @@ export function LevelCard(props: LevelCardProps) {
         <h2 id={`${id}-title`}>{title}</h2>
         {fromPaper(true)}
       </div>
+      {familyLabel ? (
+        <p className="level-family" data-family-label>
+          {familyLabel}
+        </p>
+      ) : null}
       <div id={`${id}-more`} className="level-more">
         <p id={`${id}-goal`} className="level-goal">
           {goal}
@@ -134,7 +141,7 @@ export function LevelCard(props: LevelCardProps) {
             value={control.value}
             aria-label={control.label}
             aria-describedby={`${id}-goal`}
-            aria-valuetext={`${shown} ${control.unit}`}
+            aria-valuetext={control.unit === "dimensionless" ? shown : `${shown} ${control.unit}`}
             onChange={(event) => onChange(Number(event.currentTarget.value))}
             onFocus={onControlFocus}
           />

@@ -10,15 +10,22 @@
  *   for a stated amount: a teaching choice, said on screen. A level the lens cannot show either
  *   fails, and is repaired like any other.
  *
+ * - **In the scene,** for the landscape kit: the two balls, this world's optimizer and the
+ *   What-if's on one surface, must stand at least VISIBLE_APART of the surface's width apart at
+ *   some moment (ADR-0047).
+ *
  * Pure and deterministic. The shell draws its chart's axis and the town's lens from the same
  * functions, so what is checked is what is drawn.
  */
 import type { CompartmentModel } from "@paperplay/primitives/compartments";
+import type { LandscapeModel } from "@paperplay/primitives/learning";
 import type { BuiltLevel, BuiltWorld } from "../builder/build.ts";
 import { SAMPLE_STEPS, sampleCount } from "../builder/difference.ts";
 
 /** The two curves must part by at least this share of the chart's height. */
 export const VISIBLE_SHARE = 0.1;
+/** On the landscape, the two balls must stand at least this share of the surface's width apart at some moment. */
+export const VISIBLE_APART = 0.05;
 /** At least this many figures must differ between the two towns. */
 export const VISIBLE_FIGURES = 3;
 /** Through a lens, the largest amount of the measured compartment is drawn as about this many figures. */
@@ -116,9 +123,22 @@ export interface LevelVisibility {
   readonly chart: { readonly top: number; readonly gap: number; readonly share: number; readonly visible: boolean };
   /** For the town kit: the figures that differ at most, with the lens when one is needed; null for a scene this rule does not measure. */
   readonly scene: { readonly lens: Lens | null; readonly figures: number; readonly visible: boolean } | null;
+  /** For the landscape kit: how far apart the two balls stand at most, as a share of the surface's width; null for another kit. */
+  readonly balls: { readonly apart: number; readonly visible: boolean } | null;
   readonly visible: boolean;
   /** Why not, in words, for the planner. */
   readonly why: string | null;
+}
+
+/** How far apart a level's two balls stand at most, as a share of the surface's width, at the samples the chart draws. */
+export function ballsApartOf(level: BuiltLevel, seed: number): number | null {
+  const model = level.primitive as unknown as Partial<LandscapeModel>;
+  if (!model.spec) return null;
+  const [low, high] = model.spec.surface.extent.x;
+  const here = samples(level, level.params, seed);
+  const there = samples(level, level.fork.params, seed);
+  const apart = here.map((sample, at) => Math.hypot((sample.x ?? 0) - (there[at]?.x ?? 0), (sample.y ?? 0) - (there[at]?.y ?? 0)) / (high - low));
+  return Math.max(0, ...apart.filter((value) => Number.isFinite(value)));
 }
 
 /** The lens a town needs for a level, or null when its 120 figures show the difference already. */
@@ -156,10 +176,13 @@ export function visibilityOf(world: BuiltWorld): LevelVisibility[] {
     const chart = { top, gap, share, visible: share >= VISIBLE_SHARE };
     const town = world.kit.id === "town" ? townLensOf(level, world.openingSeed) : null;
     const scene = town ? { lens: town.lens, figures: town.figures, visible: town.figures >= VISIBLE_FIGURES } : null;
+    const apart = world.kit.id === "landscape" ? ballsApartOf(level, world.openingSeed) : null;
+    const balls = apart === null ? null : { apart, visible: apart >= VISIBLE_APART };
     const reasons = [
       ...(chart.visible ? [] : [`its two curves part by ${(share * 100).toFixed(1)}% of the chart's height at most, less than ${VISIBLE_SHARE * 100}%`]),
       ...(scene && !scene.visible ? [`in the town at most ${scene.figures} figure(s) differ${scene.lens ? ", even through a lens" : ""}, fewer than ${VISIBLE_FIGURES}`] : []),
+      ...(balls && !balls.visible ? [`on the landscape the two balls stand at most ${(balls.apart * 100).toFixed(1)}% of the surface's width apart, less than ${VISIBLE_APART * 100}%`] : []),
     ];
-    return { id: level.id, order: index + 1, title: level.title, chart, scene, visible: reasons.length === 0, why: reasons.length > 0 ? reasons.join("; ") : null };
+    return { id: level.id, order: index + 1, title: level.title, chart, scene, balls, visible: reasons.length === 0, why: reasons.length > 0 ? reasons.join("; ") : null };
   });
 }

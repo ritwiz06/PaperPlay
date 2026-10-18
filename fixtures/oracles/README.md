@@ -8,7 +8,8 @@ wrong.
 
 - Derive it from the primitive's written equations (for `flock.planar.weighted`, see
   `packages/primitives/src/agents/flock/MODEL.md`; for `compartments.ode`,
-  `packages/primitives/src/compartments/MODEL.md`). Never copy a number from running the
+  `packages/primitives/src/compartments/MODEL.md`; for `learning.landscape`,
+  `packages/primitives/src/learning/MODEL.md`). Never copy a number from running the
   implementation. A calculator is fine; a result printed by `step` is not.
 - Put the derivation in the fixture, step by step, citing the equations it uses, so
   anyone can check it with pencil and paper.
@@ -34,3 +35,4 @@ wrong.
 | `conserved-invariant` | A stated invariant held over a run, and whether the conservation check proves it symbolically |
 | `accuracy-verdict` | Whether the accuracy check accepts a model at its declared step, or refuses it as stiff or unstable |
 | `steady-states` | Which stated steady states the steady-state check accepts, and which it refuses |
+| `bound` | An update rule's run on either side of a derived limit: inside it, below a bound; outside it, above one |

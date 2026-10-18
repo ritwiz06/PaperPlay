@@ -5,7 +5,7 @@
  * become a real anchor. A transcriber never invents a value: one the paper does not state is null,
  * and says so. The gold answers are written in the same form.
  */
-import { TimeUnit } from "@paperplay/contracts";
+import { ModelTimeUnit } from "@paperplay/contracts";
 import { z } from "zod";
 
 const Name = z.string().regex(/^[A-Za-z][A-Za-z0-9_]*$/, "a plain name: a letter, then letters, digits or underscores");
@@ -49,7 +49,7 @@ export type ValueSet = z.infer<typeof ValueSet>;
 
 export const Transcription = z.strictObject({
   /** The unit the paper's rates are per: day, week, year… */
-  timeUnit: TimeUnit,
+  timeUnit: ModelTimeUnit,
   compartments: z
     .array(
       z.strictObject({

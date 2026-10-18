@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { FamilyId } from "./families.ts";
 import { Id } from "./ids.ts";
+import { UpdateRuleBinding } from "./learning.ts";
 import { ModelSpec } from "./model.ts";
 import { actionWith, ParameterName, PrimitiveRef } from "./primitive.ts";
 import { Origin, SourceManifest } from "./provenance.ts";
@@ -109,8 +110,8 @@ export const EquationsBinding = z.strictObject({
 });
 export type EquationsBinding = z.infer<typeof EquationsBinding>;
 
-/** A primitive with its parameters, a model with its solver, or a sandboxed widget. */
-export const BindingV3 = z.discriminatedUnion("type", [...Binding.options, EquationsBinding]);
+/** A primitive with its parameters, a model or an update rule with the primitive that runs it, or a sandboxed widget. */
+export const BindingV3 = z.discriminatedUnion("type", [...Binding.options, EquationsBinding, UpdateRuleBinding]);
 export type BindingV3 = z.infer<typeof BindingV3>;
 
 /** Something the world cannot show, with where the statement comes from: its journal page says each one. */

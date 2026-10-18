@@ -1,0 +1,37 @@
+{
+  "oracle": "oracle/1",
+  "id": "learning.landscape.replay-bitwise",
+  "primitive": {
+    "id": "learning.landscape",
+    "version": "1.0.0"
+  },
+  "basis": "derived",
+  "kind": "replay",
+  "claim": "The same rule, surface and settings give the same run bit for bit, whatever the seed, and a state read back from JSON runs on exactly as before.",
+  "derivation": [
+    "Nothing in the primitive is random and every sum runs in a fixed order, so the run is a pure function of the spec and the parameters (ADR-0047)."
+  ],
+  "rule": "nesterov",
+  "surface": {
+    "hx": 1,
+    "hy": 25,
+    "cx": 0,
+    "cy": 0,
+    "gx": 0,
+    "gy": 0
+  },
+  "hyper": {
+    "eps": 0.03,
+    "mu": 0.95
+  },
+  "start": [
+    -4,
+    1.5
+  ],
+  "steps": 300,
+  "seeds": [
+    0,
+    7,
+    4294967295
+  ]
+}

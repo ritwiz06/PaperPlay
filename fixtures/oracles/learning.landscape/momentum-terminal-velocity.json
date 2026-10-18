@@ -1,0 +1,42 @@
+{
+  "oracle": "oracle/1",
+  "id": "learning.momentum.terminal-velocity",
+  "primitive": {
+    "id": "learning.landscape",
+    "version": "1.0.0"
+  },
+  "basis": "derived",
+  "kind": "trajectory",
+  "claim": "On a plain incline, momentum's step grows towards ε·c/(1 − μ), ten times plain descent's ε·c at μ = 0.9: the known reason momentum crosses a gentle slope faster.",
+  "derivation": [
+    "On f = c·x, ∇f = c everywhere, so v_{k} = μ·v_{k−1} − ε·c from v_0 = 0.",
+    "Summing the geometric series: v_k = −ε·c·(1 − μ^k)/(1 − μ), which tends to −ε·c/(1 − μ).",
+    "θ_k = θ_0 + Σ_{j=1..k} v_j = θ_0 − (ε·c/(1 − μ))·(k − μ·(1 − μ^k)/(1 − μ)).",
+    "With ε = 0.1, μ = 0.9, c = 1, θ_0 = 0, k = 50, by exact fractions."
+  ],
+  "rule": "momentum",
+  "surface": {
+    "hx": 0,
+    "hy": 0,
+    "cx": 0,
+    "cy": 0,
+    "gx": 1,
+    "gy": 0
+  },
+  "hyper": {
+    "eps": 0.1,
+    "mu": 0.9
+  },
+  "start": [
+    0,
+    0
+  ],
+  "expect": [
+    {
+      "step": 50,
+      "x": -41.04638397686588,
+      "v": -0.9948462247926799
+    }
+  ],
+  "relativeTolerance": 1e-12
+}

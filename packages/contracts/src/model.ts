@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Origin } from "./provenance.ts";
-import { TimeUnit } from "./time.ts";
+import { ModelTimeUnit } from "./time.ts";
 import { AnchorRef } from "./worldspec.ts";
 
 // A compartment model as data (docs/design/every-paper.md §2.2): every equation is an expression
@@ -190,7 +190,7 @@ export type ModelAlternative = z.infer<typeof ModelAlternative>;
 
 export const ModelSpec = z
   .strictObject({
-    timeUnit: TimeUnit,
+    timeUnit: ModelTimeUnit,
     compartments: z.array(ModelCompartment).min(1).max(MODEL_LIMITS.compartments),
     parameters: z.array(ModelParameter).max(MODEL_LIMITS.parameters),
     equations: z.array(ModelEquation),

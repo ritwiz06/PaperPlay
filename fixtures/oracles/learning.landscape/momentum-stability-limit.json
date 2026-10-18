@@ -1,0 +1,53 @@
+{
+  "oracle": "oracle/1",
+  "id": "learning.momentum.stability-limit",
+  "primitive": {
+    "id": "learning.landscape",
+    "version": "1.0.0"
+  },
+  "basis": "derived",
+  "kind": "bound",
+  "claim": "Classical momentum on a curvature h converges exactly while 0 < ε·h < 2·(1 + μ): at μ = 0.9 the limit is ε·h = 3.8, nearly twice plain descent's 2.",
+  "derivation": [
+    "On f = ½·h·x², (θ, v) evolves by v' = μ·v − ε·h·θ, θ' = θ + v' = (1 − ε·h)·θ + μ·v.",
+    "The iteration matrix [[1 − ε·h, μ], [−ε·h, μ]] has trace 1 + μ − ε·h and determinant μ, so its eigenvalues solve λ² − (1 + μ − ε·h)·λ + μ = 0.",
+    "For 0 ≤ μ < 1 both lie inside the unit circle exactly when |1 + μ − ε·h| < 1 + μ, that is 0 < ε·h < 2·(1 + μ).",
+    "On h = 1 with μ = 0.9. For ε = 3.7 the trace is −1.8 and 1.8² < 4·0.9, so the roots are complex, ρ·e^{±iφ} with ρ = √0.9 = 0.94868 and cos φ = −1.8/(2ρ) = −0.94868, sin φ = 0.31623. Then θ_k = ρ^k·(A·cos kφ + B·sin kφ), with A = θ_0 = 1 and θ_1 = 1 − 3.7 = −2.7 = ρ·(A·cos φ + B·sin φ), so B = (−2.7/ρ + 0.94868)/0.31623 = −6.0, and |θ_k| ≤ √(A² + B²)·ρ^k = 6.083·ρ^k: after 200 steps at most 6.083 × 2.65e-5 = 1.6e-4, below 1e-3.",
+    "For ε = 3.9 the trace is −2, and the roots are −1 ± √0.1, real: λ₁ = −0.68377, λ₂ = −1.31623. θ_k = a·λ₂^k + b·λ₁^k with θ_0 = 1 and θ_1 = 1 − 3.9 = −2.9, so a = (θ_1 − λ₁·θ_0)/(λ₂ − λ₁) = 3.504 and |θ_200| ≥ 3.504·1.31623^200 − 1 > 1e24, above 1e3."
+  ],
+  "rule": "momentum",
+  "surface": {
+    "hx": 1,
+    "hy": 0,
+    "cx": 0,
+    "cy": 0,
+    "gx": 0,
+    "gy": 0
+  },
+  "cases": [
+    {
+      "hyper": {
+        "eps": 3.7,
+        "mu": 0.9
+      },
+      "start": [
+        1,
+        0
+      ],
+      "step": 200,
+      "below": 0.001
+    },
+    {
+      "hyper": {
+        "eps": 3.9,
+        "mu": 0.9
+      },
+      "start": [
+        1,
+        0
+      ],
+      "step": 200,
+      "above": 1000.0
+    }
+  ]
+}

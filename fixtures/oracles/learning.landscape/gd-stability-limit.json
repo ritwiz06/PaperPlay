@@ -1,0 +1,50 @@
+{
+  "oracle": "oracle/1",
+  "id": "learning.gd.stability-limit",
+  "primitive": {
+    "id": "learning.landscape",
+    "version": "1.0.0"
+  },
+  "basis": "derived",
+  "kind": "trajectory",
+  "claim": "Gradient descent on a curvature h converges only while ε·h < 2: on h = 10, ε = 0.19 (ε·h = 1.9) shrinks y by −0.9 a step, ε = 0.21 (ε·h = 2.1) grows it by −1.1.",
+  "derivation": [
+    "y_{k+1} = (1 − ε·h)·y_k, so |y_k| = |1 − ε·h|^k·|y_0|.",
+    "|1 − ε·h| < 1 exactly when 0 < ε·h < 2.",
+    "From y_0 = 1 after 20 steps: (−0.9)^20 and (−1.1)^20."
+  ],
+  "rule": "gd",
+  "surface": {
+    "hx": 0,
+    "hy": 10,
+    "cx": 0,
+    "cy": 0,
+    "gx": 0,
+    "gy": 0
+  },
+  "cases": [
+    {
+      "hyper": {
+        "eps": 0.19
+      },
+      "start": [
+        0,
+        1
+      ],
+      "step": 20,
+      "y": 0.1215766545905693
+    },
+    {
+      "hyper": {
+        "eps": 0.21
+      },
+      "start": [
+        0,
+        1
+      ],
+      "step": 20,
+      "y": 6.7274999493256
+    }
+  ],
+  "relativeTolerance": 1e-12
+}

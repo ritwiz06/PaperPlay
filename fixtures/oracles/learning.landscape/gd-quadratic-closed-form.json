@@ -1,0 +1,61 @@
+{
+  "oracle": "oracle/1",
+  "id": "learning.gd.quadratic-closed-form",
+  "primitive": {
+    "id": "learning.landscape",
+    "version": "1.0.0"
+  },
+  "basis": "derived",
+  "kind": "trajectory",
+  "claim": "Plain gradient descent on f = ½(x² + 10y²) from (1, 1) with ε = 0.05 shrinks each coordinate by a fixed factor a step: x by 1 − 0.05·1 = 0.95, y by 1 − 0.05·10 = 0.5.",
+  "derivation": [
+    "The rule: θ ← θ − ε·g, with g = ∂f/∂θ.",
+    "On f = ½(hx·x² + hy·y²), g = hx·x in the first coordinate and hy·y in the second.",
+    "So x_{k+1} = (1 − ε·hx)·x_k and y_{k+1} = (1 − ε·hy)·y_k: x_k = 0.95^k and y_k = 0.5^k from (1, 1).",
+    "Values by exact fractions, rounded once to the nearest double."
+  ],
+  "rule": "gd",
+  "surface": {
+    "hx": 1,
+    "hy": 10,
+    "cx": 0,
+    "cy": 0,
+    "gx": 0,
+    "gy": 0
+  },
+  "hyper": {
+    "eps": 0.05
+  },
+  "start": [
+    1,
+    1
+  ],
+  "expect": [
+    {
+      "step": 1,
+      "x": 0.95,
+      "y": 0.5
+    },
+    {
+      "step": 2,
+      "x": 0.9025,
+      "y": 0.25
+    },
+    {
+      "step": 5,
+      "x": 0.7737809375,
+      "y": 0.03125
+    },
+    {
+      "step": 10,
+      "x": 0.5987369392383789,
+      "y": 0.0009765625
+    },
+    {
+      "step": 40,
+      "x": 0.12851215656510337,
+      "y": 9.094947017729282e-13
+    }
+  ],
+  "relativeTolerance": 1e-13
+}

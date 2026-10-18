@@ -148,6 +148,8 @@ interface ForkRun {
 }
 
 const capitalise = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
+/** A unit after a number, with its space; nothing for a pure number, which a learning toy's loss is (ADR-0047). */
+const unitAfter = (unit: string): string => (unit === "dimensionless" ? "" : ` ${unit}`);
 
 export function HookWorld({ play }: { readonly play: PlayableWorld }) {
   const WORLD = play.world;
@@ -157,11 +159,11 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
   /** What one run of the world is called: "On this sky", "Across 20 skies". */
   const runWords = WORLD.kit.run;
   /** Where the level rule checked each statement: across 20 skies, or a world's values and 19 near them. */
-  const across = acrossWords(runWords, WORLD.family.variation);
+  const across = acrossWords(runWords, WORLD.variation);
   /** Whether a run is a story with an end, as an epidemic's is: it can be started again, and every fork tells it from its start. */
   const ends = WORLD.family.forkFrom === "start";
   /** What a restarting fork does, in words: a flock's restarts from its seed; a model with no chance in it starts again from time 0. */
-  const restartWords = WORLD.family.variation === "seeds" ? " Both worlds restart from the same seed." : ` Both worlds start again from ${timeWords.one} 0.`;
+  const restartWords = WORLD.variation === "seeds" ? " Both worlds restart from the same seed." : ` Both worlds start again from ${timeWords.one} 0.`;
   const Mark = play.mark;
   const levelAt = (index: number): BuiltLevel => levelOf(LEVELS, index);
   const [session] = useState<PlaySession>(() => play.createSession(play.options(levelAt(0), !prefersReducedMotion())));
@@ -318,8 +320,8 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
     setRun({
       fork,
       resume,
-      here: { tick: (seconds) => fork.tick(seconds), stageInput: () => fork.here.stageInput(), emphasis: () => fork.here.emphasis(), version: () => fork.here.version() },
-      there: { tick: () => 0, stageInput: () => fork.there.stageInput(), emphasis: () => fork.there.emphasis(), version: () => fork.there.version() },
+      here: { tick: (seconds) => fork.tick(seconds), stageInput: () => (play.forkInput ? play.forkInput(fork.here.stageInput(), fork.there.stageInput(), "here") : fork.here.stageInput()), emphasis: () => fork.here.emphasis(), version: () => fork.here.version() },
+      there: { tick: () => 0, stageInput: () => (play.forkInput ? play.forkInput(fork.there.stageInput(), fork.here.stageInput(), "there") : fork.there.stageInput()), emphasis: () => fork.there.emphasis(), version: () => fork.there.version() },
     });
     setForkView(fork.snapshot());
     setWhatIf(false);
@@ -358,7 +360,7 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
     // A share reads as the number alone: "0.93", not "0.93 fraction from 0 to 1".
     if (difference.unit.startsWith("fraction")) return value.toFixed(2);
     // A count in the thousands or more reads whole, with its separators: "13,568,700 people", not "13568699.92 people".
-    return `${Math.abs(value) >= 1000 ? Math.round(value).toLocaleString("en-GB") : value.toFixed(2)} ${difference.unit}`;
+    return `${Math.abs(value) >= 1000 ? Math.round(value).toLocaleString("en-GB") : value.toFixed(2)}${unitAfter(difference.unit)}`;
   };
   const threshold = difference.summary.kind === "first-reach" ? difference.summary.threshold : undefined;
   const lensNote = play.sceneNote?.(level) ?? null;
@@ -367,7 +369,7 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
   const acrossSkies =
     claim.kind === "each"
       ? `${across}, the level's statement holds on at least ${RULE_HOLDS}.`
-      : `${across}, the other world was ${claim.relation} by more than ${claim.by} ${difference.unit} on ${claim.holds}, and not on ${RULE_SEEDS - claim.holds}.`;
+      : `${across}, the other world was ${claim.relation} by more than ${claim.by}${unitAfter(difference.unit)} on ${claim.holds}, and not on ${RULE_SEEDS - claim.holds}.`;
   const predicted = predictions[level.id];
   const exploring = level.exploration !== null && predicted !== undefined;
   const forkGuide =
@@ -427,7 +429,7 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
                   ? forkView.holds
                     ? `${capitalise(runWords.on)} this ${runWords.one}, the level's statement holds.`
                     : `${capitalise(runWords.on)} this ${runWords.one}, the level's statement does not hold.`
-                  : `${capitalise(runWords.on)} this ${runWords.one}, the other world was ${forkView.holds ? "" : "not "}${claim.relation} by more than ${claim.by} ${difference.unit}.`}{" "}
+                  : `${capitalise(runWords.on)} this ${runWords.one}, the other world was ${forkView.holds ? "" : "not "}${claim.relation} by more than ${claim.by}${unitAfter(difference.unit)}.`}{" "}
                 {acrossSkies}
               </p>
             ) : (
@@ -480,7 +482,14 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
             <Mark />
             <div>
               <h1>{WORLD.title}</h1>
-              <p>A PaperPlay world about {play.about}</p>
+              <p>
+                A PaperPlay world about {play.about}
+                {WORLD.family.label ? (
+                  <span className="world-family" data-family-label>
+                    {WORLD.family.label}
+                  </span>
+                ) : null}
+              </p>
             </div>
           </div>
 
@@ -587,6 +596,7 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
             }}
             onFromPaper={(from) => openJournal(from, true)}
             readout={play.readout(level, snapshot, visible.has("readout-number"), yaw)}
+            {...(WORLD.family.label ? { familyLabel: WORLD.family.label } : {})}
             equation={
               advanced.equation ? (
                 <p>
@@ -633,7 +643,8 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
               <>
                 <p>
                   <OriginTag origin="teaching-choice" quiet /> Called “{entry.action.label}” here. It runs from {entry.action.range[0]},{" "}
-                  {entry.action.ends[0].toLowerCase()}, to {entry.action.range[1]}, {entry.action.ends[1].toLowerCase()}, {entry.action.unit}, and starts at{" "}
+                  {entry.action.ends[0].toLowerCase()}, to {entry.action.range[1]}, {entry.action.ends[1].toLowerCase()}
+                  {entry.action.unit === "dimensionless" ? "" : `, ${entry.action.unit}`}, and starts at{" "}
                   {entry.action.defaultValue}.
                 </p>
                 <p>

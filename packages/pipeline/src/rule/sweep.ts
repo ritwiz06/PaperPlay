@@ -30,7 +30,7 @@ export interface Start {
  * mulberry32(k) in the parameters' alphabetical order.
  */
 export function startsOf(world: BuiltWorld): Start[] {
-  const { variation } = world.family;
+  const { variation } = world;
   if (variation === "seeds") return SKIES.map((seed) => ({ start: seed, seed, factors: {} }));
   if (variation !== "neighbourhood") throw new Error(`the levels sweep cannot vary a world over ${variation} yet`);
   const names = [...new Set(world.levels.flatMap((level) => Object.keys(level.params)))].sort();

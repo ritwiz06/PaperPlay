@@ -4,7 +4,7 @@
  * Checks every level's stated effect against the level rule (ADR-0018, ADR-0024) in every
  * authored world: the flocking world on skies 1 to 20, writing eval/sweeps/levels.md, and
  * Threshold Town on its 20 starts, writing eval/sweeps/levels-kermack-mckendrick-1927.md with its
- * accuracy check. With --print, it prints one world's record instead: the flocking world's, or
+ * accuracy check, and the momentum world on its 20 starts, writing eval/sweeps/levels-sutskever-2013.md. With --print, it prints one world's record instead: the flocking world's, or
  * the one whose fixture is named after it. Exits non-zero if any level fails the rule.
  */
 import { writeFileSync } from "node:fs";
@@ -40,7 +40,18 @@ function thresholdTown(): Swept {
   return { fixture, record: "levels-kermack-mckendrick-1927.md", text, levels, accurate: accuracy.every((row) => row.ratio <= 1) };
 }
 
-const WORLDS: Readonly<Record<string, () => Swept>> = { "flocking-reference.json": flocking, "kermack-mckendrick-1927.json": thresholdTown };
+/** The momentum world (ADR-0047): no chance in the toy, so 20 starts, each hyperparameter and starting coordinate within a tenth. */
+function momentum(): Swept {
+  const fixture = "sutskever-2013-momentum.json";
+  const world = referenceWorld(join(FIXTURES, fixture));
+  const starts = startsOf(world);
+  const levels = sweepLevels(world, starts);
+  const primitive = world.levels[0]?.primitiveRef;
+  const text = toNeighbourhoodMarkdown(world, fixture, levels, starts, [], { solver: `${primitive?.id ?? "?"}@${primitive?.version ?? "?"}`, runtime });
+  return { fixture, record: "levels-sutskever-2013.md", text, levels, accurate: true };
+}
+
+const WORLDS: Readonly<Record<string, () => Swept>> = { "flocking-reference.json": flocking, "kermack-mckendrick-1927.json": thresholdTown, "sutskever-2013-momentum.json": momentum };
 const passes = (swept: Swept): boolean => swept.accurate && swept.levels.every((level) => level.meets);
 
 // With --print, one record goes to standard output instead, for the test that re-runs it.

@@ -349,6 +349,7 @@
   grid-template-areas:
     "kicker depth"
     "title title"
+    "family family"
     "more more"
     "slider slider"
     "readout whatif"
@@ -356,6 +357,29 @@
   align-items: center;
   column-gap: 12px;
   padding: 14px 18px 16px;
+}
+/* A family's label, such as a learning toy's "miniature", on its own row at every depth and size. */
+.level-family {
+  grid-area: family;
+  justify-self: start;
+  margin: 2px 0 0;
+  padding: 1px 8px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--lime);
+  color: var(--ink);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.world-family {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 6px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--lime);
+  color: var(--ink);
+  font-weight: 600;
 }
 .level-kicker {
   grid-area: kicker;
@@ -676,6 +700,27 @@
   color: var(--sub);
 }
 
+/* The landscape's readout: the level's measurement, or at Beginner how far down the ball has come. */
+.descent {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+}
+.descent-line {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+.descent-name {
+  color: var(--sub);
+}
+.descent-amount {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
 /* The spread dial: a ring as wide as the flock spreads, like the one on the ground. */
 .spread-ring {
   fill: none;
@@ -994,6 +1039,7 @@
     grid-template-columns: minmax(0, 1fr) auto auto;
     grid-template-areas:
       "title title whatif"
+      "family family family"
       "slider readout whatif"
       "more more more"
       "kicker depth depth"
@@ -1002,16 +1048,19 @@
     padding: 6px 12px 8px;
   }
   /* A town's readout is a labelled bar, too wide for the slider's row: it takes a row of its own. */
-  .level-card:has(.compartments) {
+  .level-card:has(.compartments),
+  .level-card:has(.descent) {
     grid-template-areas:
       "title title whatif"
+      "family family family"
       "slider slider whatif"
       "readout readout readout"
       "more more more"
       "kicker depth depth"
       "advanced advanced advanced";
   }
-  .level-card:has(.compartments) .level-readout {
+  .level-card:has(.compartments) .level-readout,
+  .level-card:has(.descent) .level-readout {
     margin-top: 4px;
   }
   .level-readout .dial {

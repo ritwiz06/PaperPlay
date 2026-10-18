@@ -36,6 +36,7 @@ export interface PrimitiveTime {
 /** The space a primitive's world lies in, naming the variables that size it. */
 export type PrimitiveSpace =
   | { readonly kind: Extract<SpaceKind, "torus2d">; readonly width: string; readonly height: string }
+  | { readonly kind: Extract<SpaceKind, "surface2d"> }
   | { readonly kind: Extract<SpaceKind, "none"> };
 
 /** Something a learner can place in a primitive's world. */
@@ -53,6 +54,11 @@ export interface Primitive<P, S, O extends Record<string, number> = Record<strin
   readonly version: string;
   /** The family it belongs to (`FAMILIES` in contracts), whose checks and labels it carries. */
   readonly family: FamilyId;
+  /**
+   * Whether a run draws on its seed. A primitive that never does says so, and the level rule then
+   * varies its worlds over a neighbourhood where its family allows (ADR-0046). Absent means it does.
+   */
+  readonly chance?: boolean;
   /** Model time per step, in `time.unit`; a render loop takes this many steps whatever its frame rate. */
   readonly fixedTimestep: number;
   readonly time: PrimitiveTime;

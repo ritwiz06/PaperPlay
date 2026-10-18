@@ -7,6 +7,7 @@ export * from "./families.ts";
 export * from "./ids.ts";
 export * from "./job.ts";
 export * from "./kits.ts";
+export * from "./learning.ts";
 export * from "./model.ts";
 export * from "./primitive.ts";
 export * from "./provenance.ts";

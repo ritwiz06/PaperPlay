@@ -22,6 +22,7 @@ import {
   type DesignSpecV3,
   type Explanation,
   type Family,
+  type Variation,
   type GuideScript,
   type GuidedExploration,
   type LevelKind,
@@ -150,6 +151,11 @@ export interface BuiltWorld {
   readonly routing: Routing;
   /** The family the world's primitive belongs to, with its label when it has one. */
   readonly family: Family;
+  /**
+   * How the level rule varies the world: the family's own, or, for a world whose primitive never
+   * draws on chance, the family's variation without chance when it has one (ADR-0046).
+   */
+  readonly variation: Variation;
   readonly design: DesignSpecV3;
   /** The scene kit that draws it. */
   readonly kit: SceneKitManifest;
@@ -217,6 +223,7 @@ export function buildWorld(input: unknown, registry: PrimitiveRegistry): BuildRe
       digest: spec.digest,
       routing: spec.routing,
       family: FAMILIES[first.family],
+      variation: variationOf(FAMILIES[first.family], levels),
       design: spec.design,
       kit,
       timeUnit: spec.timeUnit,
@@ -227,6 +234,12 @@ export function buildWorld(input: unknown, registry: PrimitiveRegistry): BuildRe
       ...(spec.ownNumbers ? { ownNumbers: spec.ownNumbers } : {}),
     }),
   };
+}
+
+/** A world's variation: without chance when every level's primitive says it never draws on its seed and the family varies such worlds otherwise. */
+function variationOf(family: Family, levels: readonly BuiltLevel[]): Variation {
+  const withoutChance = levels.every((level) => level.primitive.chance === false);
+  return withoutChance && family.variationWithoutChance ? family.variationWithoutChance : family.variation;
 }
 
 type Report = (path: (string | number)[], message: string) => void;

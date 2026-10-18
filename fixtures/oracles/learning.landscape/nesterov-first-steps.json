@@ -1,0 +1,59 @@
+{
+  "oracle": "oracle/1",
+  "id": "learning.nesterov.first-steps",
+  "primitive": {
+    "id": "learning.landscape",
+    "version": "1.0.0"
+  },
+  "basis": "derived",
+  "kind": "trajectory",
+  "claim": "The first four steps of Nesterov's accelerated gradient on f = ½x², by hand.",
+  "derivation": [
+    "The rule, as Sutskever et al. 2013 write it: v_{t+1} = μ·v_t − ε·∇f(θ_t + μ·v_t), θ_{t+1} = θ_t + v_{t+1}.",
+    "On f = ½x², ∇f(θ) = θ. With ε = 0.1, μ = 0.9, θ_0 = 1, v_0 = 0:",
+    "step 1: v = -0.1, θ = 0.9",
+    "step 2: v = -0.171, θ = 0.729",
+    "step 3: v = -0.21141, θ = 0.51759",
+    "step 4: v = -0.2230011, θ = 0.2945889"
+  ],
+  "rule": "nesterov",
+  "surface": {
+    "hx": 1,
+    "hy": 0,
+    "cx": 0,
+    "cy": 0,
+    "gx": 0,
+    "gy": 0
+  },
+  "hyper": {
+    "eps": 0.1,
+    "mu": 0.9
+  },
+  "start": [
+    1,
+    0
+  ],
+  "expect": [
+    {
+      "step": 1,
+      "x": 0.9,
+      "v": -0.1
+    },
+    {
+      "step": 2,
+      "x": 0.729,
+      "v": -0.171
+    },
+    {
+      "step": 3,
+      "x": 0.51759,
+      "v": -0.21141
+    },
+    {
+      "step": 4,
+      "x": 0.2945889,
+      "v": -0.2230011
+    }
+  ],
+  "relativeTolerance": 1e-13
+}

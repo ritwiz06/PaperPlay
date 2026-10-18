@@ -69,3 +69,23 @@ describe("[R06] Threshold Town's levels sweep (ADR-0024)", () => {
     for (const row of rows) expect(row.at(-1), row[0]).toBe("yes |");
   });
 });
+
+// The momentum world (ADR-0047): no chance in the toy, so the rule's 20 starts are the world's own
+// settings and starting point and 19 within a tenth of them.
+const momentum = readFileSync(join(root, "eval", "sweeps", "levels-sutskever-2013.md"), "utf8");
+
+describe("[R06] the momentum world's levels sweep (ADR-0047)", () => {
+  it("re-runs on its 20 starts and matches eval/sweeps/levels-sutskever-2013.md byte for byte", () => {
+    const fresh = execFileSync(process.execPath, [join(root, "scripts", "levels.ts"), "--print", "sutskever-2013-momentum.json"], { cwd: root, encoding: "utf8" });
+    expect(fresh).toBe(momentum);
+  }, 120_000);
+
+  it("records five levels, each holding on at least 16 of 20 starts", () => {
+    const rows = (momentum.split("## Results")[1]?.split("\n## ")[0] ?? "").split("\n").filter((line) => /^\| \d · /.test(line)).map((line) => line.split(" | "));
+    expect(rows).toHaveLength(5);
+    for (const row of rows) {
+      expect(row.at(-1), row[0]).toBe("yes |");
+      expect(Number(/^(\d+) of 20$/.exec(row.at(-2) ?? "")?.[1]), row[0]).toBeGreaterThanOrEqual(RULE_HOLDS);
+    }
+  });
+});

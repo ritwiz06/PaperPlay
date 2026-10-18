@@ -1,6 +1,8 @@
-import type { ModelSpec, PrimitiveRef } from "@paperplay/contracts";
+import { DescentSpec, ModelSpec, type PrimitiveRef } from "@paperplay/contracts";
+import type { z } from "zod";
 import { flockPlanarWeighted } from "./agents/flock/index.ts";
 import { compartmentsOde } from "./compartments/index.ts";
+import { learningLandscape } from "./learning/index.ts";
 import type { ModelShowing } from "./compartments/primitive.ts";
 import type { Primitive } from "./types.ts";
 
@@ -11,9 +13,12 @@ import type { Primitive } from "./types.ts";
 export interface Solver {
   readonly id: string;
   readonly version: string;
-  /** The primitive for one model; a RangeError when the model cannot run, such as when its units disagree. */
-  bind(model: ModelSpec, showing: ModelShowing): Primitive<unknown, unknown>;
+  /** The primitive for one model; a RangeError when the model cannot run, such as when its units disagree, or is not the solver's kind. */
+  bind(model: SolverModel, showing: ModelShowing): Primitive<unknown, unknown>;
 }
+
+/** What a solver binds: a compartment model, or an update rule on its surface. */
+export type SolverModel = ModelSpec | DescentSpec;
 
 export interface PrimitiveRegistry {
   has(ref: PrimitiveRef): boolean;
@@ -48,5 +53,24 @@ export function createRegistry(primitives: readonly Primitive<unknown, unknown>[
   };
 }
 
+/** A solver that binds one kind of model, refusing any other with a RangeError, as a model that cannot run is refused. */
+function solverOf<M>(solver: { readonly id: string; readonly version: string; bind(model: M, showing: ModelShowing): Primitive<unknown, unknown> }, kind: z.ZodType<M>, words: string): Solver {
+  return Object.freeze({
+    id: solver.id,
+    version: solver.version,
+    bind: (model: SolverModel, showing: ModelShowing) => {
+      const parsed = kind.safeParse(model);
+      if (!parsed.success) throw new RangeError(`${solver.id}@${solver.version} binds ${words}, and this is not one: ${parsed.error.issues.slice(0, 3).map((issue) => `${issue.path.join(".")}: ${issue.message}`).join("; ")}`);
+      return solver.bind(parsed.data, showing);
+    },
+  });
+}
+
 /** Adding a primitive or a solver here requires an ADR. */
-export const registry: PrimitiveRegistry = createRegistry([flockPlanarWeighted], [compartmentsOde]);
+export const registry: PrimitiveRegistry = createRegistry(
+  [flockPlanarWeighted],
+  [
+    solverOf(compartmentsOde, ModelSpec, "a compartment model"),
+    solverOf(learningLandscape, DescentSpec, "an update rule on a surface"),
+  ],
+);

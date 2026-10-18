@@ -4,6 +4,7 @@ import { HookWorld } from "./hook/HookWorld.tsx";
 import { LocalWorld } from "./world/LocalWorld.tsx";
 import { THRESHOLD_TOWN_PLAY } from "./worlds/epidemic.tsx";
 import { FLOCKING_PLAY } from "./worlds/flocking.tsx";
+import { MOMENTUM_PLAY } from "./worlds/momentum.tsx";
 import { GeneratedWorld } from "./worlds/GeneratedWorld.tsx";
 
 /** /create, on a development server only: a production build holds none of it (ADR-0030). */
@@ -24,6 +25,7 @@ export function App() {
   // The game-first shell (ADR-0008) owns the whole window: no masthead over its stage.
   if (path === "/world/hook") return <HookWorld play={FLOCKING_PLAY} />;
   if (path === "/world/epidemic") return <HookWorld play={THRESHOLD_TOWN_PLAY} />;
+  if (path === "/world/momentum") return <HookWorld play={MOMENTUM_PLAY} />;
   const generated = /^\/world\/generated\/([A-Za-z0-9._-]+)$/.exec(path)?.[1];
   if (generated) return <Generated id={generated} />;
   if (import.meta.env.DEV) {
