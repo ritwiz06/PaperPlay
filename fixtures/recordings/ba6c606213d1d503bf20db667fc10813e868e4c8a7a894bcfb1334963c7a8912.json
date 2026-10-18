@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "inkling-small",
+  "promptHash": "ba6c606213d1d503bf20db667fc10813e868e4c8a7a894bcfb1334963c7a8912",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\"findings\":[{\"level\":3,\"severity\":\"blocking\",\"kind\":\"unsupported\",\"finding\":\"The level is titled 'Two levers work together' and claims to test recovery alongside adherence, but only eta is a control and the what-if varies only eta, so synergy is never shown; also eta is the proportion of acute cases that recover, not a rate, so 'recovered twice as fast' misdescribes it.\",\"suggestion\":\"Reframe the level to 'How acute recovery proportion affects recovered peak', label the control 'Proportion of acute cases recovering (eta)', change the what-if to 'What if 60% of acute cases recovered, eta at 0.6?', and remove synergy language; or add theta as a second control with a joint what-if.\",\"term\":\"eta\"},{\"level\":4,\"severity\":\"blocking\",\"kind\":\"other\",\"finding\":\"The level asks to find the chronic recovery rate that pushes R0 below 1, but the observable is the quitters' peak (Cq), which does not reveal the R0 threshold; varying rho and watching Cq cannot teach when R0<1.\",\"suggestion\":\"Either switch the watch to R0 (or persistence) and state the 0.19 threshold directly, or reframe the level as 'See how faster chronic recovery shrinks the untreated pool' and adjust the statement to match the Cq peak observation.\",\"term\":null}]}",
+    "usage": {
+      "promptTokens": 14194,
+      "completionTokens": 4259,
+      "totalTokens": 18453
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T20:01:24.050Z"
+}

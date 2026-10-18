@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "b6aa6db8779b9f1540f108b664fef482cc12c737156136fd6055a0c9aa217369",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\"beginner\":{\"text\":\"This level lets you change how often people meet. More contact lets tuberculosis spread faster, so fewer people stay in the protected vaccinated group. Watch the vaccinated line on the chart.\",\"analogy\":\"It is like opening more doors at a party. Germs move through the room faster, so fewer guests stay in the safe corner.\"},\"intermediate\":{\"text\":\"In this level you control the contact rate, called beta. Beta measures how often susceptible and infectious people meet. You can set it to half as much contact or twice as much contact. The value you watch is the number of vaccinated people, called V. When contact doubles, the disease spreads faster, so susceptible people move into the exposed group sooner. That leaves fewer people in the vaccinated compartment. The model shows that doubling beta makes the peak of vaccinated people more than three million lower at year thirty eight. Try the what if question to see the change.\"},\"advanced\":{\"text\":\"The contact rate beta appears in the equation for new exposed people. When beta is larger, more susceptible people become exposed each day. That leaves fewer people to move into the vaccinated compartment, so the vaccinated peak falls. The model uses this equation:\",\"equation\":\"dE/dt = βSI - (γ + μ)E\",\"quote\":\"\\\\frac{dE}{dt} &= \\\\beta SI - (\\\\gamma + \\\\mu)E \\\\\\\\\"},\"guide\":{\"idle\":\"Change the contact rate, then watch the vaccinated line.\",\"raised\":\"You raise the contact rate {to} twice as much contact, so people meet more often and the vaccinated group shrinks.\",\"lowered\":\"You lower the contact rate {to} half as much contact, so people meet less often and the vaccinated group grows.\",\"readings\":[{\"atLeast\":5924000,\"words\":\"about six million vaccinated people or more\"},{\"atLeast\":1771000,\"words\":\"about two million vaccinated people or more\"},{\"atLeast\":0,\"words\":\"zero vaccinated people or more\"}],\"rising\":\"vaccinated people rise\",\"falling\":\"vaccinated people fall\"},\"afterwards\":{\"text\":\"Doubling the contact rate made the vaccinated peak more than three million lower. The paper also says higher contact rates increase spread.\",\"quote\":\"higher recruitment rates, contact rates, infection rates, and loss of vaccine protection increase its spread.\",\"question\":\"What real-world steps could lower the contact rate in a town?\"}}",
+    "usage": {
+      "promptTokens": 23206,
+      "completionTokens": 14015,
+      "totalTokens": 37221
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T19:52:53.821Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "e85373b463b104d7321da9235dc3215166532c9f8faa7ca3b0e8b7d4ece58eec",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"advanced\": {\n    \"equation\": \"dE/dt = βSI − (γ + μ)E\"\n  , \"quote\": null\n  , \"text\": \"The contact rate β appears in the exposed equation. It controls how fast susceptible people meet infectious people and enter the exposed class.\"\n  }\n, \"afterwards\": {\n    \"question\": \"If raising contact pulls more susceptibles into the exposed class before they can be vaccinated, what other control might keep the vaccinated group larger?\"\n  , \"quote\": \"contact rate ($beta$), recruitment rate ($Lambda$), the loss of protection for the vaccination rate ($theta$), and rate of progression from the exposed class to the infectious class ($gamma$) were the most important factors.\"\n  , \"text\": \"The paper says contact rate was one of the most important factors increasing TB spread. Your change shows that higher contact lowers the vaccinated peak because more susceptibles are infected before they can be vaccinated.\"\n  }\n, \"beginner\": {\n    \"analogy\": \"Imagine a queue for a free umbrella. If a rainstorm hits harder, more people get wet before they reach the umbrella stand, so the line for umbrellas shrinks.\"\n  , \"text\": \"Turn up how often people meet, and watch the group of protected vaccinated people get smaller.\"\n  }\n, \"effect\": \"Doubling the contact rate makes the vaccinated peak more than 3 million lower. Higher contact moves more susceptibles into the exposed class, so fewer remain to flow into vaccinated through pi times s. The vaccinated compartment's own outflow is unchanged.\"\n, \"goal\": \"Raise the contact rate and watch the vaccinated peak fall because more susceptibles are infected before they can be vaccinated.\"\n, \"guide\": {\n    \"falling\": \"the vaccinated peak drops\"\n  , \"idle\": \"Try changing the contact rate and see how the vaccinated group responds.\"\n  , \"lowered\": \"You lower the contact rate to half as much contact, so fewer susceptibles become exposed and more can flow into vaccinated.\"\n  , \"raised\": \"You raise the contact rate to twice as much contact, so more susceptibles become exposed before they can be vaccinated.\"\n  , \"readings\": [\n      { \"atLeast\": 5924000, \"words\": \"more than 5.9 million vaccinated people\" }\n    , { \"atLeast\": 3000000, \"words\": \"more than 3 million vaccinated people\" }\n    , { \"atLeast\": 0, \"words\": \"from zero up to the original peak\" }\n    ]\n  , \"rising\": \"the vaccinated peak climbs\"\n  }\n, \"intermediate\": {\n    \"text\": \"The control is the contact rate β. The watched value is the number of vaccinated people V. Raising β does not change V's outflow, but it lowers V's inflow by removing susceptibles first.\"\n  }\n}",
+    "usage": {
+      "promptTokens": 23344,
+      "completionTokens": 3416,
+      "totalTokens": 26760
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T20:23:24.905Z"
+}

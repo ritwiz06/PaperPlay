@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "902e80a00875833c8d9d8f85130261fdfdf71a8219b1f919a2d176b05cd83759",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"advanced\": {\n    \"equation\": \"dE/dt = βSI − (γ + μ)E\"\n  , \"quote\": null\n  , \"text\": \"The contact rate β appears only in the equation for exposed people. Raising β sends more susceptible people into the exposed compartment. That leaves fewer susceptibles available to flow into the vaccinated compartment, whose own outflow is unchanged because β does not appear in dV/dt.\"\n  }\n, \"afterwards\": {\n    \"question\": \"If more contact pulls susceptibles into exposure before they can be vaccinated, what else could lower the number of people who ever enter the vaccinated group?\"\n  , \"quote\": \"contact rate ($beta$), recruitment rate ($Lambda$), the loss of protection for the vaccination rate ($theta$), and rate of progression from the exposed class to the infectious class ($gamma$) were the most important factors.\"\n  , \"text\": \"The paper lists the contact rate as one of the most important factors that increase TB spread. Doubling the contact rate made the vaccinated peak more than 3 million lower because more susceptibles became exposed first.\"\n  }\n, \"beginner\": {\n    \"analogy\": \"Think of contact like shaking a tree: more shaking knocks more apples loose before anyone can put them in the protected basket, so the basket ends up with fewer apples.\"\n  , \"text\": \"When people contact each other more often, more susceptible people catch TB and move into the exposed group. That means fewer people are left to be vaccinated, so the vaccinated group peaks lower.\"\n  }\n, \"effect\": \"Doubling the contact rate makes the vaccinated peak more than 3 million lower.\"\n, \"goal\": \"Raise the contact rate and watch the vaccinated peak fall. More contact moves susceptibles into the exposed compartment, so fewer susceptibles remain to flow into vaccination. The vaccinated group's o\" \n, \"guide\": {\n    \"falling\": \"the vaccinated peak drops\"\n  , \"idle\": \"Move the contact rate up or down and watch what happens to the vaccinated group.\"\n  , \"lowered\": \"You lower the contact rate to {to}, so fewer susceptibles become exposed and more remain to enter vaccination.\"\n  , \"raised\": \"You raise the contact rate to {to}, so more susceptibles become exposed and fewer remain to enter vaccination.\"\n  , \"readings\": [\n      { \"atLeast\": 5924000, \"words\": \"more than 5.9 million vaccinated people\" }\n    , { \"atLeast\": 1771000, \"words\": \"more than 1.7 million vaccinated people\" }\n    , { \"atLeast\": 881000, \"words\": \"about 880 thousand vaccinated people or fewer\" }\n    ]\n  , \"rising\": \"the vaccinated peak climbs\"\n  }\n, \"intermediate\": {\n    \"text\": \"The control is the contact rate β. The watched value is the number of vaccinated people V. Raising β increases the term βSI in the exposed equation, so more susceptibles leave S for E. The vaccinated compartment gains people only through πS, so a smaller S means a lower vaccinated peak. The vaccinated compartment loses people through (θ + μ)V, which does not depend on β.\"\n  }\n}",
+    "usage": {
+      "promptTokens": 23329,
+      "completionTokens": 4717,
+      "totalTokens": 28046
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T20:15:38.289Z"
+}

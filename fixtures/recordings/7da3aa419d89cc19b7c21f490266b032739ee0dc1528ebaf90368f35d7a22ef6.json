@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "muse-glimmer-30b",
+  "promptHash": "7da3aa419d89cc19b7c21f490266b032739ee0dc1528ebaf90368f35d7a22ef6",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"findings\":[{\"level\":3,\"severity\":\"blocking\",\"kind\":\"unsupported\",\"finding\":\"The level calls the control “Recovery rate in acute cases” and the what-if “acutely infected people recovered twice as fast, eta at 0.6”. In the model eta is the proportion of acutely infected who recover temporarily, not a rate; the acute leaving rate is r2. The paper’s synergistic result concerns the acute recovery rate r together with adherence, not eta alone, so the description misrepresents the model and does not test the reported finding.\",\"suggestion\":\"Rename the control to the acute leaving rate r2, the paper’s recovery rate of acutely infected individuals, and describe the what-if as increasing r2. Design the level to vary r2 together with adherence to test the paper’s reported synergistic reduction in R0, e.g., watch R0 or the acute infected peak.\",\"term\":null}]}",
+    "usage": {
+      "promptTokens": 13760,
+      "completionTokens": 5991,
+      "totalTokens": 19751
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T19:48:20.165Z"
+}

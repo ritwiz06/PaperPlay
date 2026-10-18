@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "qwen36-27b",
+  "promptHash": "41bbe84f3b8f65cfb744ee8b71ee8715f134a11168f93955acae8786e5d0f6f8",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"findings\": [{\"finding\": \"Level 3: Confusing word / misdescription. The control is labeled 'Recovery rate in acute cases' and the What-if says 'twice as fast', but the paper and model define `eta` as a proportion (0.3), not a rate. The actual rate of leaving the acute stage is `r2`. Calling `eta` a rate and saying it acts 'faster' misdescribes the model's structure.\", \"kind\": \"unsupported\", \"level\": 3, \"severity\": \"blocking\", \"suggestion\": \"Rename the control to 'Proportion of acutely infected who recover' and change 'twice as fast' to 'twice as likely to recover'.\", \"term\": null}, {\"finding\": \"Level 3: Claim worded more strongly than its measurement. The statement claims the change 'clears infection sooner', but the level measures the peak of recovered people, not time to clearance or speed of clearance. A higher peak does not necessarily mean faster clearance.\", \"kind\": \"overstated\", \"level\": 3, \"severity\": \"advice\", \"suggestion\": \"Change 'clears infection sooner' to 'increases the recovered peak' to accurately reflect what the chart measures.\", \"term\": null}, {\"finding\": \"Level 3: What-if mismatch. The level title 'Two levers work together' implies testing the synergistic effect of both acute recovery and treatment adherence, but the What-if only varies `eta`. This single-parameter change cannot teach how the two levers interact.\", \"kind\": \"unsupported\", \"level\": 3, \"severity\": \"blocking\", \"suggestion\": \"Change the title to 'Higher acute recovery proportion' to match the single-parameter test, or adjust the What-if to vary both `eta` and `theta` to actually test the paper's finding on synergy.\", \"term\": null}]}",
+    "usage": {
+      "promptTokens": 14263,
+      "completionTokens": 10138,
+      "totalTokens": 24401
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T19:51:15.148Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "muse-glimmer-30b",
+  "promptHash": "316a0fffc85b2bdfa5ec4041bd2ac61f7a9d68ec8afb47df36222bb1b638b1eb",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"findings\":[{\"level\":3,\"severity\":\"blocking\",\"kind\":\"unsupported\",\"finding\":\"Level calls control 'Recovery rate in acute cases' and what-if 'eta at 0.6'. In the model eta is the proportion of acutely infected who recover, not a rate; the acute leaving rate is r2. The paper's synergistic result concerns r with adherence, not eta.\",\"suggestion\":\"Rename control to acute leaving rate r2, the paper's recovery rate of acutely infected individuals, and test increasing r2 together with adherence. Measure R0 or acute infected peak to reflect the reported synergistic reduction.\",\"term\":null}]}",
+    "usage": {
+      "promptTokens": 14001,
+      "completionTokens": 312,
+      "totalTokens": 14313
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T19:48:28.891Z"
+}

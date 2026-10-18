@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "granite41-30b",
+  "promptHash": "7801e457e5c04b623d79e83c737ec7b9386d4739af55e21f3fbf306cf7127944",
+  "response": {
+    "model": "granite41-30b",
+    "text": "{\n  \"findings\": [\n    {\n      \"finding\": \"unsupported\",\n      \"kind\": \"unsupported\",\n      \"level\": 3,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Rewrite the statement 'Recovering acutely infected people twice as fast, on top of treatment adherence, clears infection sooner: the other world's peak of recovered people is higher by more than 0.003.' to 'Recovering acutely infected people twice as fast (eta at 0.6) leads to a higher peak of recovered individuals by more than 0.003, assuming treatment adherence remains unchanged.' The original w\" \n    ,\n      \"term\": null\n    },\n    {\n      \"finding\": \"definitional\",\n      \"kind\": \"definitional\",\n      \"level\": 4,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace the level with a What-if that tests a paper's finding, e.g., 'What if the chronic recovery rate is set to the value that the paper identifies as reducing the reproduction number below 1 (rho = 0.19)? Observe the change in the basic reproduction number R0.' The current level is definitional because a larger inflow to recovery (higher rho) directly reduces the chronic compartment cq in its o\" \n    ,\n      \"term\": \"− (α × rho + mu + nu) × cq\"\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 14069,
+      "completionTokens": 300,
+      "totalTokens": 14369
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T19:46:32.593Z"
+}

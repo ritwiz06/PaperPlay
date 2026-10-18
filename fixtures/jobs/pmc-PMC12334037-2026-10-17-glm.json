@@ -2,8 +2,8 @@
   "schemaVersion": "job-record/1",
   "sourceId": "pmc-PMC12334037",
   "recordedOn": "2026-10-17",
-  "note": "The hepatitis C world, ready, under the rules of 2026-10-16 and the decisions after them: running its own numbers confirms its headline's mismatch, so level 1 tests the headline's direction and says, as a computed observation, that the 52% threshold does not appear at Table 1's values; five levels, every one meeting the level rule, the visibility rule and the findings check after one repair; reviewed by glm-5-3, nothing blocking. The first generated world stays at its own path.",
-  "replays": true,
+  "note": "The hepatitis C world, ready, under the rules of 2026-10-16 and the decisions after them: running its own numbers confirms its headline's mismatch, so level 1 tests the headline's direction and says, as a computed observation, that the 52% threshold does not appear at Table 1's values; five levels, every one meeting the level rule, the visibility rule and the findings check after one repair; reviewed by glm-5-3, nothing blocking. The first generated world stays at its own path. Kept as a record, not replayed: the reviewer is now given the equations and each level's direct-effect tag, and a second reviewer reads beside it (ADR-0044), so its recordings no longer answer.",
+  "replays": false,
   "stages": {
     "reader": "qwen36-27b",
     "transcriber": "qwen3-235b-a22b-thinking-2507",

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "gemma4-31b-it",
+  "promptHash": "dee459ce0625d6e96d9c1495f393c20124e4a3159810f3781c80a7201b611ad6",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"findings\": [{\"finding\": \"blocking\", \"kind\": \"unsupported\", \"level\": 3, \"severity\": \"blocking\", \"suggestion\": \"Rewrite the statement to: 'Recovering acutely infected people twice as fast, on top of treatment adherence, increases the number of people who reach recovery: the other world's peak of recovered people is higher by more than 0.003.'\", \"term\": \"eta * r2 * i\"}, {\"finding\": \"advice\", \"kind\": \"unsupported\", \"level\": 2, \"severity\": \"advice\", \"suggestion\": \"Rewrite the statement to: 'When quitters pass on the virus twice as easily, they drive a bigger outbreak, leading to more people becoming infected and eventually entering the quitter pool: the other world's peak of chronically infected quitters is higher by more than 0.004.'\", \"term\": \"beta3\"}]}",
+    "usage": {
+      "promptTokens": 14041,
+      "completionTokens": 201,
+      "totalTokens": 14242
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T19:46:35.957Z"
+}

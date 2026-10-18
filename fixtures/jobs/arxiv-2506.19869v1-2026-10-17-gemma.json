@@ -2,8 +2,8 @@
   "schemaVersion": "job-record/1",
   "sourceId": "arxiv-2506.19869v1",
   "recordedOn": "2026-10-17",
-  "note": "The tuberculosis paper under the rules of 2026-10-16 and the owner's decisions after them: its Ethiopian set picked, running its own numbers finds both formulas agreeing with the model's equations and its stated R0 = 2.67 following from neither; five levels planned. After its repairs four levels meet every rule, one dropped; the reviewer finds all four definitional, the hook among them, which is never dropped, so the job goes to the owner. Kept so it replays to the same ending.",
-  "replays": true,
+  "note": "The tuberculosis paper under the rules of 2026-10-16 and the owner's decisions after them: its Ethiopian set picked, running its own numbers finds both formulas agreeing with the model's equations and its stated R0 = 2.67 following from neither; five levels planned. After its repairs four levels meet every rule, one dropped; the reviewer finds all four definitional, the hook among them, which is never dropped, so the job goes to the owner. Kept so it replays to the same ending. Kept as a record, not replayed: the reviewer is now given the equations and each level's direct-effect tag, and a second reviewer reads beside it (ADR-0044), so its recordings no longer answer.",
+  "replays": false,
   "stages": {
     "reader": "qwen36-27b",
     "transcriber": "qwen3-235b-a22b-thinking-2507",

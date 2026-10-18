@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "266ad3718a10d17b7c1ce23e04b5d6b9b68413ebbe8ce494a46ec37b35aed51c",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\"beginner\":{\"text\":\"This level looks at how often people meet. The contact rate sets how fast mixing happens. More contact lets tuberculosis spread faster so fewer people stay in the vaccinated group.\",\"analogy\":\"It is like a party where guests shake hands more often. A handshake is a chance for a germ to hop to a new person so a busier room spreads coughs much faster.\"},\"intermediate\":{\"text\":\"The control is the contact rate called beta. The watched value is the number of vaccinated people called V. You move beta between half as much contact and twice as much contact. Raising beta makes people mix more so the disease pulls people out of the vaccinated compartment faster. Doubling the contact rate makes the peak of vaccinated people more than three million lower. This shows contact rate is a strong driver of protection.\"},\"advanced\":{\"text\":\"The contact rate beta enters the effective reproduction number for the SVEITRS tuberculosis model. A larger beta means more mixing so more susceptible people move into the exposed class and the vaccinated compartment shrinks. The paper states the control reproduction number as follows.\",\"equation\":\"ℛ_v = (Λ β γ (θ + μ))/(μ (δ + τ + μ)(θ + π + μ)(γ + μ))\",\"quote\":\"\\\\mathscr{R}_v = \\\\frac{\\\\varLambda \\\\beta \\\\gamma (\\\\theta + \\\\mu)}{\\\\mu (\\\\delta + \\\\tau + \\\\mu)(\\\\theta + \\\\pi + \\\\mu)(\\\\gamma + \\\\mu)}\"},\"guide\":{\"idle\":\"Try changing the contact rate and watch what happens to the vaccinated group.\",\"raised\":\"You raise the contact rate to twice as much contact so more mixing pulls people out of the vaccinated group.\",\"lowered\":\"You lower the contact rate to half as much contact so less mixing lets the vaccinated group grow.\",\"readings\":[{\"atLeast\":5000000,\"words\":\"at least five million vaccinated people\"},{\"atLeast\":3000000,\"words\":\"at least three million vaccinated people\"},{\"atLeast\":1000000,\"words\":\"at least one million vaccinated people\"},{\"atLeast\":0,\"words\":\"at least zero vaccinated people\"}],\"rising\":\"vaccinated people fall\",\"falling\":\"vaccinated people rise\"},\"afterwards\":{\"text\":\"Doubling the contact rate lowered the peak of vaccinated people by more than three million. The paper lists the contact rate as one of the most important factors that increase the reproduction number.\",\"quote\":\"contact rate $(\\\\beta)$, recruitment rate $(\\\\varLambda)$, the loss of protection for the vaccination rate $(\\\\theta)$, and rate of progression from the exposed class to the infectious class $(\\\\gamma)$ were the most important factors.\",\"question\":\"Why does raising the contact rate make the vaccinated compartment smaller instead of larger?\"}}",
+    "usage": {
+      "promptTokens": 23206,
+      "completionTokens": 5294,
+      "totalTokens": 28500
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T19:29:55.028Z"
+}

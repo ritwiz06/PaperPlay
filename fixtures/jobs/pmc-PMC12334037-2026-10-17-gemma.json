@@ -2,8 +2,8 @@
   "schemaVersion": "job-record/1",
   "sourceId": "pmc-PMC12334037",
   "recordedOn": "2026-10-17",
-  "note": "The hepatitis C world under the rules of 2026-10-16 and the owner's decisions after them: running the paper's own numbers confirms its headline's mismatch (R0 0.762 by equation (7) and by the model's own equations at Table 1's values), the planner asks for five levels, the hook is never dropped. Every level meets the level rule, the visibility rule and the findings check; the reviewer finds level 5 definitional and it is dropped, then finds levels 2 to 4 definitional, and with no repair left too few levels would remain, so the job goes to the owner. Kept so it replays to the same ending.",
-  "replays": true,
+  "note": "The hepatitis C world under the rules of 2026-10-16 and the owner's decisions after them: running the paper's own numbers confirms its headline's mismatch (R0 0.762 by equation (7) and by the model's own equations at Table 1's values), the planner asks for five levels, the hook is never dropped. Every level meets the level rule, the visibility rule and the findings check; the reviewer finds level 5 definitional and it is dropped, then finds levels 2 to 4 definitional, and with no repair left too few levels would remain, so the job goes to the owner. Kept so it replays to the same ending. Kept as a record, not replayed: the reviewer is now given the equations and each level's direct-effect tag, and a second reviewer reads beside it (ADR-0044), so its recordings no longer answer.",
+  "replays": false,
   "stages": {
     "reader": "qwen36-27b",
     "transcriber": "qwen3-235b-a22b-thinking-2507",

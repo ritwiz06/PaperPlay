@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "06134e381526d6ac85c03dfb8e2a4b8d7c8ab4797060261e2b71e9c24e6eecdc",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"advanced\": {\n    \"equation\": \"ℛ_v = Λ β γ (θ + μ) / [μ (δ + τ + μ)(θ + π + μ)(γ + μ)]\",\n    \"quote\": \"ℛ_v = Λ β γ (θ + μ) / [μ (δ + τ + μ)(θ + π + μ)(γ + μ)]\",\n    \"text\": \"The contact rate beta appears in the effective reproduction number. The paper gives the equation above. Because beta is in the numerator, raising it raises the reproduction number. The model then moves people out of the vaccinated compartment faster. Doubling beta makes the vaccinated peak more than three million lower. Halving beta lets more people stay vaccinated. The sensitivity analysis names beta as one of the most important factors.\"\n  },\n  \"afterwards\": {\n    \"question\": \"What could health workers do to make people mix less often?\",\n    \"quote\": \"higher recruitment rates, contact rates, infection rates, and loss of vaccine protection increase its spread.\",\n    \"text\": \"The what-if result matches the paper. More contact helps tuberculosis spread.\"\n  },\n  \"beginner\": {\n    \"analogy\": \"Imagine a town where people shake hands more often. Germs travel faster, so the protected group shrinks. In this level, you control how much contact people have. Watch the vaccinated group. More接触pull\",\n    \"text\": \"Imagine a town where people shake hands more often. Germs travel faster, so the protected group shrinks. In this level, you control how much contact people have. Watch the vaccinated group. More contact pulls people out of protection. Less contact keeps more people protected.\"\n  },\n  \"guide\": {\n    \"falling\": \"fewer people are vaccinated\",\n    \"idle\": \"Drag the contact rate slider to change how much people mix, then watch the vaccinated group.\",\n    \"lowered\": \"You lower the contact rate to {to}, so less mixing keeps more people in the vaccinated group.\",\n    \"raised\": \"You raise the contact rate to {to}, so more mixing pulls people out of the vaccinated group.\",\n    \"readings\": [\n      {\n        \"atLeast\": 5000000,\n        \"words\": \"more than five million vaccinated people\"\n      },\n      {\n        \"atLeast\": 3000000,\n        \"words\": \"more than three million vaccinated people\"\n      },\n      {\n        \"atLeast\": 1000000,\n        \"words\": \"more than one million vaccinated people\"\n      },\n      {\n        \"atLeast\": 0,\n        \"words\": \"more than zero vaccinated people\"\n      }\n    ],\n    \"rising\": \"more people are vaccinated\"\n  },\n  \"intermediate\": {\n    \"text\": \"You control the contact rate, called beta. You can set it to half as much contact or twice as much contact. The value to watch is vaccinated people. When the contact rate doubles, people mix more and leave the vaccinated group faster. The model shows that doubling the contact rate makes the vaccinated peak more than three million lower. When the contact rate is halved, fewer people mix, so more people stay vaccinated. The paper says the contact rate is one of the most important factors for tuberculosis spread.\"\n  }\n}",
+    "usage": {
+      "promptTokens": 22747,
+      "completionTokens": 11085,
+      "totalTokens": 33832
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T18:55:57.399Z"
+}

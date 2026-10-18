@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "job-record/1",
+  "sourceId": "arxiv-2506.19869v1",
+  "recordedOn": "2026-10-18",
+  "note": "The tuberculosis world under the review rules (ADR-0044): two planners, kimi-k2-7-code's plan kept on a tie, its level 5 repaired; then two reviewers given the equations and each level's direct-effect tag. Both blocked level 2 as unsupported, its words saying more contact makes people leave the vaccinated group, which no term of dv/dt does; the explainer wrote that level's words again, and on the second reading nothing blocked. Two earlier runs are not kept: in the first the explainer's reply ran out of room before it wrote anything, now asked again with twice the room; in the second the rewritten goal stopped mid-word at a character limit, now a bound in words.",
+  "replays": true,
+  "stages": {
+    "reader": "qwen36-27b",
+    "transcriber": "qwen3-235b-a22b-thinking-2507",
+    "second-transcriber": "inkling-small",
+    "router": "glm-5-3",
+    "planner": "kimi-k2-7-code",
+    "second-planner": "glm-5-3",
+    "explainer": "kimi-k2-7-code",
+    "reviewer": "glm-5-3",
+    "second-reviewer": "kimi-k2-7-code"
+  },
+  "structuredOutput": {
+    "glm-5-3": true,
+    "inkling-small": true,
+    "kimi-k2-7-code": true,
+    "qwen3-235b-a22b-thinking-2507": true,
+    "qwen36-27b": true
+  },
+  "outcome": "ready",
+  "states": [
+    "received",
+    "parsing",
+    "planning",
+    "building",
+    "running",
+    "repairing",
+    "building",
+    "running",
+    "checking",
+    "repairing",
+    "building",
+    "running",
+    "checking",
+    "ready"
+  ],
+  "world": "fixtures/worldspecs/generated/arxiv-2506.19869v1-2026-10-18.json"
+}

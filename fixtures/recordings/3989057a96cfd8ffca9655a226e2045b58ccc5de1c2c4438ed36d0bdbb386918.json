@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "3989057a96cfd8ffca9655a226e2045b58ccc5de1c2c4438ed36d0bdbb386918",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"advanced\": {\n    \"equation\": \"λ = β_{1} I + β_{2} C + β_{3} C_{q} .\",\n    \"quote\": \"λ = β_{1} I + β_{2} C + β_{3} C_{q} .\",\n    \"text\": \"The quitters' transmission rate beta3 enters the force of infection. The paper writes: λ = β_{1} I + β_{2} C + β_{3} C_{q} . A larger beta3 raises the contribution of the cQ compartment to new infections. In the model, quitters pass the virus on more easily when beta3 is high, so the peak of chronically infected people after quitting treatment, cQ, is expected to be higher.\"\n  },\n  \"afterwards\": {\n    \"question\": \"Why do you think quitters have a stronger effect than people who stay in treatment?\",\n    \"quote\": \"$β_{3}$ exerts the strongest influence on the reproduction number.\",\n    \"text\": \"With beta3 at 0.1, quitters pass the virus on twice as easily. The other world's peak of chronically infected quitters is higher by more than 40 people. The paper says, '$β_{3}$ exerts the strongest influence on the reproduction number.' Why do you think quitters have a stronger effect than people谁\"\n  },\n  \"beginner\": {\n    \"analogy\": \"leaky pipe\",\n    \"text\": \"Imagine a town where some people stop taking their medicine. Those quitters pass the virus on more easily, like a leaky pipe that spills more water the bigger the hole. In this level you widen or narrow that leak by moving the transmission rate for quitters. Watch the peak of chronically infected people who quit treatment. More spread means more quitters at the worst moment.\"\n  },\n  \"guide\": {\n    \"falling\": \"the cQ peak is dropping\",\n    \"idle\": \"Move beta3, the transmission rate from quitters, and watch the cQ peak.\",\n    \"lowered\": \"You lower beta3 to {to}, so quitters pass the virus on less easily and the cQ peak falls.\",\n    \"raised\": \"You raise beta3 to {to}, so quitters pass the virus on more easily and the cQ peak rises.\",\n    \"readings\": [\n      {\n        \"atLeast\": 180,\n        \"words\": \"above 180 chronically infected quitters\"\n      },\n      {\n        \"atLeast\": 140,\n        \"words\": \"above 140 chronically infected quitters\"\n      },\n      {\n        \"atLeast\": 100,\n        \"words\": \"above 100 chronically infected quitters\"\n      },\n      {\n        \"atLeast\": 50,\n        \"words\": \"above 50 chronically infected quitters\"\n      },\n      {\n        \"atLeast\": 0,\n        \"words\": \"above 0 chronically infected quitters\"\n      }\n    ],\n    \"rising\": \"the cQ peak is climbing\"\n  },\n  \"intermediate\": {\n    \"text\": \"The control is beta3, the transmission rate from quitters. It ranges from 0.025, where quitters pass the virus on rarely, to 0.1, where they pass it on easily. The watched value is the peak of chronically infected people after quitting treatment, called cQ. A higher beta3 means quitters cause more new infections, so the cQ peak is expected to rise. In this level you move beta3 and watch the cQ peak. The model starts with 150 people under chronic treatment and no quitters, so the quitters pool is built by people who leave treatment.\"\n  }\n}",
+    "usage": {
+      "promptTokens": 14673,
+      "completionTokens": 11612,
+      "totalTokens": 26285
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T18:53:43.293Z"
+}

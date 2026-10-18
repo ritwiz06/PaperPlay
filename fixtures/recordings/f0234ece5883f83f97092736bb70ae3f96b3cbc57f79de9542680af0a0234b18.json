@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "qwen38-27b",
+  "promptHash": "f0234ece5883f83f97092736bb70ae3f96b3cbc57f79de9542680af0a0234b18",
+  "response": {
+    "model": "qwen38-27b",
+    "text": "{\n  \"findings\": [\n    {\n      \"finding\": \"Level 3's narrative says acutely infected people 'recovered twice as fast,' but eta is a proportion (the fraction of acute cases that recover), not a rate. Doubling eta from 0.3 to 0.6 means twice the proportion recover, not that recovery happens twice as quickly. 'Twice as fast' would describe a change in r2 (the rate of leaving the acute stage), which is a different parameter. A learner could be\",\n      \"kind\": \"unsupported\",\n      \"level\": 3,\n      \"severity\": \"advice\",\n      \"suggestion\": \"In Level 3, change the What-if narrative from 'acutely infected people recovered twice as fast, eta at 0.6' to 'twice the proportion of acutely infected people recover, eta at 0.6.' The parameter eta is a fraction, not a rate, so 'as fast' misdescribes what is being changed.\"\n   \n  ,\n      \"term\": null\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 14263,
+      "completionTokens": 7078,
+      "totalTokens": 21341
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T19:50:31.979Z"
+}

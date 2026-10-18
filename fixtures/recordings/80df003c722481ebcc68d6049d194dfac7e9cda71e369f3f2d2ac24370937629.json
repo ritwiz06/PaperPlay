@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "glm-5-3",
+  "promptHash": "80df003c722481ebcc68d6049d194dfac7e9cda71e369f3f2d2ac24370937629",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{ \"findings\": [ { \"finding\": \"Level 3's What-if misdescribes the model: eta is a proportion, not a speed\", \"kind\": \"unsupported\", \"level\": 3, \"severity\": \"blocking\", \"suggestion\": \"Rewrite the level's words. The claim 'Recovering acutely infected people twice as fast, eta at 0.6' is wrong: in the equations eta only splits the outflow from the acute class — di/dt loses people at the fixed rate (mu + r2) regardless of eta, and dr/dt gains i*eta*r2 while dc/dt loses (1-eta)*r2*i. The paper's model description says 'a proportion η of these recover temporarily, while theremaining\" , \"term\": \"eta\" } ] }",
+    "usage": {
+      "promptTokens": 14640,
+      "completionTokens": 14342,
+      "totalTokens": 28982
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T19:58:42.347Z"
+}

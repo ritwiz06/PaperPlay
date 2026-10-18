@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "1ae38740950fca55f4aff1a65c688d70777a32c2464d23927331b31f6328fb2a",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"advanced\": {\n    \"equation\": \"ℛ₀ = ℛ_I + ℛ_C + ℛ_{C_q} = (b β₁)/(μ m₁) + (b r β₂ (1 − η))/(μ m₁ m₂) + (r b δ β₃ (1 − η)(1 − θ))/(μ m₁ m₂ m₃)\",\n    \"quote\": \"ℛ_{0} = ℛ_{I} + ℛ_{C} + ℛ_{C_{q}} = \textbackslash frac{b β_{1}}{μ m_{1}} + \textbackslash frac{b r β_{2} ( 1 − η )}{μ m_{1} m_{2}} + \textbackslash frac{r b δ β_{3} ( 1 − η ) ( 1 − θ )}{μ m_{1} m_{2} m_{3}} ,\",\n    \"text\": \"The reproduction number adds three transmission paths. The quitters' share is the beta three term. The paper writes the equation exactly as shown above and states that '$β_{3}$ exerts the strongest influence on the reproduction number.'\"\n  },\n  \"afterwards\": {\n    \"question\": \"Why does this mean keeping people in treatment is so important?\",\n    \"quote\": \"$β_{3}$ exerts the strongest influence on the reproduction number.\",\n    \"text\": \"With beta3 at 0.1, the peak of cQ is higher by more than 40 people in a town of ten thousand. The paper says that quitters' transmission has the strongest influence.\"\n  },\n  \"beginner\": {\n    \"analogy\": \"Think of quitters as smokers walking through a dry forest. Each one drops more sparks than a treated patient. The fire grows faster. If they pass the virus easily then the peak of sick quitters climbs\",\n    \"text\": \"Think of quitters as smokers walking through a dry forest. Each one drops more sparks than a treated patient. The fire grows faster. If they pass the virus easily then the peak of sick quitters climbs. Keeping them in treatment is like stamping out sparks before they spread.\"\n  },\n  \"guide\": {\n    \"falling\": \"cQ falls as quitters spread the virus more slowly\",\n    \"idle\": \"Move the beta3 slider and watch the peak of cQ\",\n    \"lowered\": \"You lower beta3 to {to}, so quitters pass the virus less easily\",\n    \"raised\": \"You raise beta3 to {to}, so quitters pass the virus more easily\",\n    \"readings\": [\n      {\n        \"atLeast\": 180,\n        \"words\": \"cQ is above 180 people\"\n      },\n      {\n        \"atLeast\": 140,\n        \"words\": \"cQ is above 140 people\"\n      },\n      {\n        \"atLeast\": 100,\n        \"words\": \"cQ is above 100 people\"\n      },\n      {\n        \"atLeast\": 40,\n        \"words\": \"cQ is above 40 people\"\n      },\n      {\n        \"atLeast\": 0,\n        \"words\": \"cQ is above 0 people\"\n      }\n    ],\n    \"rising\": \"cQ rises as quitters spread the virus faster\"\n  },\n  \"intermediate\": {\n    \"text\": \"Move the control called beta3, the transmission rate from quitters. It ranges from 0.025, where quitters pass the virus on rarely, to 0.1, where they pass it on easily. Watch the peak of cQ, the chronically infected after quitting. The model says that if beta3 is set to 0.1, the other world's peak of cQ is higher by more than 40 people in a town of ten thousand at time 100. Quitters spread the virus most, so raising their transmission rate drives a bigger outbreak.\"\n  }\n}",
+    "usage": {
+      "promptTokens": 14687,
+      "completionTokens": 15400,
+      "totalTokens": 30087
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T19:22:16.412Z"
+}

@@ -229,6 +229,74 @@
           "origin": "the 2026-10-17 hepatitis C world: the owner's ruling, a true fault (ADR-0044); glm-5-3 did not block it"
         }
       ]
+    },
+    {
+      "id": "hepatitis-c-2026-10-18",
+      "paper": "pmc-PMC12334037",
+      "checks": "The builder: passed, the family's checks included.\nThe level rule: level 1 holds on 20 of 20; level 2 holds on 20 of 20; level 3 holds on 20 of 20; level 4 holds on 20 of 20; level 5 holds on 20 of 20.\nThe visibility rule: every level's difference shows on its chart and in the scene.\nProvenance: every anchor quotes the source exactly.",
+      "failedCheck": null,
+      "levels": [
+        {
+          "title": "Sticking to treatment slows the spread",
+          "words": "See whether better treatment adherence curbs the epidemic. Move adherence and watch the peak of chronically infected people who quit treatment. Control: Treatment adherence proportion. What if: What if everyone stuck to their treatment, adherence 1? It states: With everyone sticking to treatment, no one enters the untreated chronic pool, so the pool of quitters shrinks: the other world's peak of chronically infected quitters is lower by more than 0.001.",
+          "control": "theta",
+          "compartment": "cq",
+          "summary": "peak",
+          "at": null,
+          "time": 60,
+          "expect": "unscored",
+          "kind": null,
+          "origin": "the 2026-10-18 hepatitis C world: no reviewer blocked it"
+        },
+        {
+          "title": "Quitters spread the virus most",
+          "words": "Explore how much the chronically infected who quit treatment drive the epidemic. Move their transmission rate and watch the quitters' peak. Control: Transmission rate from quitters. What if: What if quitters passed on the virus twice as easily, beta3 at 0.1? It states: When quitters pass on the virus twice as easily, they drive a bigger outbreak: the other world's peak of chronically infected quitters is higher by more than 0.004.",
+          "control": "beta3",
+          "compartment": "cq",
+          "summary": "peak",
+          "at": null,
+          "time": 100,
+          "expect": "unscored",
+          "kind": null,
+          "origin": "the 2026-10-18 hepatitis C world: no reviewer blocked it"
+        },
+        {
+          "title": "Two levers work together",
+          "words": "Test how faster recovery of acutely infected people works alongside adherence to cut transmission. Watch the peak of recovered people. Control: Recovery rate in acute cases. What if: What if acutely infected people recovered twice as fast, eta at 0.6? It states: Recovering acutely infected people twice as fast, on top of treatment adherence, clears infection sooner: the other world's peak of recovered people is higher by more than 0.003.",
+          "control": "eta",
+          "compartment": "r",
+          "summary": "peak",
+          "at": null,
+          "time": 100,
+          "expect": "fault",
+          "kind": "unsupported",
+          "origin": "the 2026-10-18 hepatitis C world: its words call η a rate, 'recovering twice as fast', where the model's η is the share of the acutely infected who recover; kimi-k2-7-code blocked it, glm-5-3 called it advice, so the block did not stand (ADR-0044)"
+        },
+        {
+          "title": "A faster chronic recovery rate",
+          "words": "Find the chronic recovery rate the paper says pushes the reproduction number below 1. Move the chronic recovery rate and watch the quitters' peak. Control: Chronic recovery rate. What if: What if the chronic recovery rate rose to the paper's 0.19? It states: At a chronic recovery rate of 0.19, chronic infections clear faster and fewer people are left untreated: the other world's peak of quitters is lower by more than 0.002.",
+          "control": "rho",
+          "compartment": "cq",
+          "summary": "peak",
+          "at": null,
+          "time": 80,
+          "expect": "unscored",
+          "kind": null,
+          "origin": "the 2026-10-18 hepatitis C world: no reviewer blocked it"
+        },
+        {
+          "title": "Fewer quitters, smaller outbreak",
+          "words": "See how fewer people quitting treatment, like better adherence, shrinks the untreated pool. Move the quitting rate and watch the quitters' peak. Control: Treatment quitting rate. What if: What if only half as many people quit treatment, delta at 0.3? It states: With only half as many people quitting treatment, the untreated pool stays smaller: the other world's peak of quitters is lower by more than 0.0015.",
+          "control": "delta",
+          "compartment": "cq",
+          "summary": "peak",
+          "at": null,
+          "time": 80,
+          "expect": "fault",
+          "kind": "definitional",
+          "origin": "the 2026-10-18 hepatitis C world: the 2026-10-17 world's level 5 turned round, fewer quitters giving fewer quitters, which the owner ruled a fault; the tag calls its peak emergent, and no reviewer blocked it (ADR-0044's conflict)"
+        }
+      ]
     }
   ]
 }

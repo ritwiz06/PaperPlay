@@ -1,0 +1,6075 @@
+{
+  "schemaVersion": "worldspec/3",
+  "status": "draft",
+  "title": "TB Town: Above the Threshold",
+  "source": {
+    "schemaVersion": "sourcemanifest/1",
+    "sourceId": "arxiv-2506.19869v1",
+    "title": "Modeling Transmission Dynamics of Tuberculosis: Parameter Estimation and Sensitivity Analysis Using Real-World Data",
+    "authors": [
+      "Moksina Seyid",
+      "Abdu Mohammed Seid",
+      "Yassin Tesfaw Abebe"
+    ],
+    "year": 2025,
+    "venue": "arXiv:2506.19869v1 [q-bio.PE]",
+    "sha256": "19a941808decf9471c7e61008557cb2b32e28a86507f043950036a816b7ad9d8",
+    "accessedAt": "2026-10-18T20:21:32.924Z",
+    "localCopyPermitted": true,
+    "sections": [
+      {
+        "id": "front",
+        "title": "Title"
+      },
+      {
+        "id": "s2-abstract",
+        "title": "Abstract"
+      },
+      {
+        "id": "s3-introduction",
+        "title": "Introduction"
+      },
+      {
+        "id": "s4-model-formulation",
+        "title": "Model Formulation"
+      },
+      {
+        "id": "s5-model-analysis",
+        "title": "Model Analysis"
+      },
+      {
+        "id": "s6-positivity-of-solutions",
+        "title": "Positivity of Solutions"
+      },
+      {
+        "id": "s7-invariant-region-boundedness-of-the-solu",
+        "title": "Invariant Region (Boundedness of the solution)"
+      },
+      {
+        "id": "s8-analysis-of-disease-free-equilibrium-e-0",
+        "title": "Analysis of Disease-Free Equilibrium $(\\mathscr{E}_0)$, and Basic Reproduction Number $(\\mathscr{R}_0)$"
+      },
+      {
+        "id": "s9-basic-reproductive-number",
+        "title": "Basic Reproductive Number"
+      },
+      {
+        "id": "s10-stability-analysis",
+        "title": "Stability Analysis"
+      },
+      {
+        "id": "s11-local-stability-of-the-disease-free-equi",
+        "title": "Local Stability of the Disease-Free Equilibrium Point"
+      },
+      {
+        "id": "s12-global-stability-of-the-disease-free-equ",
+        "title": "Global Stability of the Disease-Free Equilibrium Point"
+      },
+      {
+        "id": "s13-endemic-equilibrium-point-e-and-sensitiv",
+        "title": "Endemic Equilibrium Point $(\\mathscr{E}^*)$, and Sensitivity Analysis"
+      },
+      {
+        "id": "s14-local-stability-of-the-endemic-equilibri",
+        "title": "Local Stability of the Endemic Equilibrium Point"
+      },
+      {
+        "id": "s15-global-stability-of-endemic-equilibrium",
+        "title": "Global Stability of Endemic Equilibrium Point"
+      },
+      {
+        "id": "s16-sensitivity-analysis",
+        "title": "Sensitivity Analysis"
+      },
+      {
+        "id": "s17-parameter-estimation",
+        "title": "Parameter Estimation"
+      },
+      {
+        "id": "s18-nonlinear-least-squares",
+        "title": "Nonlinear least squares"
+      },
+      {
+        "id": "s19-maximum-likelihood-estimation",
+        "title": "Maximum likelihood estimation"
+      },
+      {
+        "id": "s20-synthetic-example-case",
+        "title": "Synthetic Example Case"
+      },
+      {
+        "id": "s21-results-and-discussions",
+        "title": "Results and Discussions"
+      },
+      {
+        "id": "s22-effect-of-contact-rate-on-the-tb-exposed",
+        "title": "Effect of contact rate $(\\beta)$ on the TB-exposed population"
+      },
+      {
+        "id": "s23-effect-of-contact-rate-on-the-tb-infecte",
+        "title": "Effect of contact rate $(\\beta)$ on the TB-infected population"
+      },
+      {
+        "id": "s24-effect-of-infection-rate-on-the-tb-expos",
+        "title": "Effect of infection rate $(\\gamma)$ on the TB-exposed population"
+      },
+      {
+        "id": "s25-effect-of-the-infection-rate-on-the-tb-i",
+        "title": "Effect of the infection rate $(\\gamma)$ on the TB-infected population"
+      },
+      {
+        "id": "s26-effect-of-the-treatment-rate-on-the-tb-i",
+        "title": "Effect of the treatment rate $\\delta$ on the TB-infected population"
+      },
+      {
+        "id": "s27-conclusions",
+        "title": "Conclusions"
+      },
+      {
+        "id": "s28-acknowledgments",
+        "title": "ACKNOWLEDGMENTS"
+      },
+      {
+        "id": "s29-author-declarations",
+        "title": "AUTHOR DECLARATIONS"
+      },
+      {
+        "id": "s30-conflict-of-interest",
+        "title": "Conflict of interest"
+      },
+      {
+        "id": "s31-author-contributions",
+        "title": "Author Contributions"
+      },
+      {
+        "id": "s32-data-availability",
+        "title": "DATA AVAILABILITY"
+      }
+    ]
+  },
+  "digest": {
+    "question": "The study asks how tuberculosis spreads in Ethiopia and which epidemiological factors most strongly influence its transmission, aiming to estimate key model parameters using real-world data from 2011–2021 to inform public health interventions.",
+    "hookResult": {
+      "text": "The model shows that TB can be eliminated if the reproduction number is kept below one, but it will persist endemically if that threshold is exceeded.",
+      "anchors": [
+        {
+          "sourceId": "arxiv-2506.19869v1",
+          "sectionId": "s2-abstract",
+          "charStart": 841,
+          "charEnd": 921,
+          "quote": "The results suggest that optimal conditions could lead to the elimination of TB."
+        }
+      ]
+    },
+    "causalChain": [
+      {
+        "id": "c1",
+        "claim": "Using Ethiopian data from 2011–2021, the model estimates a basic reproduction number of 2.67, confirming that TB is actively spreading in the region.",
+        "dependsOn": [],
+        "anchors": [],
+        "origin": "teaching-choice"
+      },
+      {
+        "id": "c2",
+        "claim": "Increasing the treatment rate for infectious individuals significantly reduces the number of cases and could eventually eliminate TB locally.",
+        "dependsOn": [],
+        "anchors": [
+          {
+            "sourceId": "arxiv-2506.19869v1",
+            "sectionId": "s26-effect-of-the-treatment-rate-on-the-tb-i",
+            "charStart": 55442,
+            "charEnd": 55644,
+            "quote": "The result revealed that the infectious population decreases as the treatment rate of infected individuals increases; in the long run, this may lead to the eradication of the disease from the community."
+          }
+        ],
+        "origin": "paper-derived"
+      },
+      {
+        "id": "c3",
+        "claim": "Sensitivity analysis identifies contact rate, population recruitment, waning vaccine protection, and progression from latent to active infection as the primary drivers that increase TB transmission.",
+        "dependsOn": [],
+        "anchors": [
+          {
+            "sourceId": "arxiv-2506.19869v1",
+            "sectionId": "s27-conclusions",
+            "charStart": 56923,
+            "charEnd": 57151,
+            "quote": "contact rate ($\\beta$), recruitment rate ($\\Lambda$), the loss of protection for the vaccination rate ($\\theta$), and rate of progression from the exposed class to the infectious class ($\\gamma$) were the most important factors."
+          }
+        ],
+        "origin": "paper-derived"
+      },
+      {
+        "id": "c4",
+        "claim": "Conversely, higher vaccination coverage, faster treatment, and higher disease-related or natural death rates reduce the overall TB burden.",
+        "dependsOn": [],
+        "anchors": [
+          {
+            "sourceId": "arxiv-2506.19869v1",
+            "sectionId": "s16-sensitivity-analysis",
+            "charStart": 37348,
+            "charEnd": 37500,
+            "quote": "Parameters with negative sensitivity indices $(\\mu, \\pi, \\delta, \\tau )$ have the effect of lowering the community's TB burden if their values increases"
+          }
+        ],
+        "origin": "paper-derived"
+      }
+    ]
+  },
+  "routing": {
+    "tier": "A",
+    "family": "compartments",
+    "reason": ": The paper's core mechanism is a well-mixed compartmental system of ODEs (S, V, E, I, T, R) with mass-action transmission (βSI), flow rates between compartments, and analysis of disease-free/endemic equilibria and R0. This is exactly the compartments family, which is released, so it is tier A.",
+    "primitive": {
+      "status": "released"
+    }
+  },
+  "design": {
+    "world": "town",
+    "palette": "cream-teal",
+    "density": "comfortable",
+    "sections": [
+      {
+        "levelId": "hook",
+        "chartType": "line",
+        "motion": "none"
+      },
+      {
+        "levelId": "level-2",
+        "chartType": "line",
+        "motion": "none"
+      },
+      {
+        "levelId": "level-3",
+        "chartType": "line",
+        "motion": "none"
+      },
+      {
+        "levelId": "level-4",
+        "chartType": "line",
+        "motion": "none"
+      },
+      {
+        "levelId": "level-5",
+        "chartType": "line",
+        "motion": "none"
+      }
+    ]
+  },
+  "timeUnit": "year",
+  "openingSeed": 0,
+  "levels": [
+    {
+      "id": "hook",
+      "order": 1,
+      "kind": "hook",
+      "title": "Above the elimination threshold",
+      "goal": "Speed up the move from latent to active TB and see the outbreak climb even higher in a town already above the elimination threshold.",
+      "bonus": false,
+      "binding": {
+        "type": "equations",
+        "solver": {
+          "id": "compartments.ode",
+          "version": "1.0.0"
+        },
+        "model": {
+          "timeUnit": "year",
+          "compartments": [
+            {
+              "id": "s",
+              "name": "Susceptible",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "s0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 11776,
+                  "charEnd": 11853,
+                  "quote": "Susceptible individuals are people of all ages who can contract tuberculosis."
+                }
+              ]
+            },
+            {
+              "id": "v",
+              "name": "Vaccinated",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "v0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 12004,
+                  "charEnd": 12140,
+                  "quote": "A fraction of the susceptible population is vaccinated, and individuals who have received vaccinations have partial immunity against TB."
+                }
+              ]
+            },
+            {
+              "id": "e",
+              "name": "Exposed",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "e0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 12543,
+                  "charEnd": 12642,
+                  "quote": "exposed individuals are TB-infected but not yet infectious and do not show symptoms of the disease."
+                }
+              ]
+            },
+            {
+              "id": "i",
+              "name": "Infectious",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "i0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 12810,
+                  "charEnd": 12872,
+                  "quote": "Infectious individuals have the ability to spread the disease."
+                }
+              ]
+            },
+            {
+              "id": "t",
+              "name": "Treated",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "t0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 13081,
+                  "charEnd": 13140,
+                  "quote": "Treated individuals have received treatment for the disease"
+                }
+              ]
+            },
+            {
+              "id": "r",
+              "name": "Recovered",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "r0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 13146,
+                  "charEnd": 13208,
+                  "quote": "recovered individuals are people who are cured of the disease."
+                }
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "id": "lambda",
+              "symbol": "Λ",
+              "name": "Recruitment rate",
+              "unit": {
+                "people": 1,
+                "time": -1
+              },
+              "range": [
+                0,
+                6632000
+              ],
+              "defaultValue": 1658000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47486,
+                  "charEnd": 47545,
+                  "quote": "\\Lambda$ | Recruitment rate | $1.658\\times10^6$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "beta",
+              "symbol": "β",
+              "name": "Contact rate",
+              "unit": {
+                "people": -1,
+                "time": -1
+              },
+              "range": [
+                0,
+                0.0000031
+              ],
+              "defaultValue": 7.75e-7,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47547,
+                  "charEnd": 47607,
+                  "quote": "\\beta$ | The contact rate | $7.75\\times 10^{-7}$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "gamma",
+              "symbol": "γ",
+              "name": "Infection rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.9
+              ],
+              "defaultValue": 0.225,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47609,
+                  "charEnd": 47656,
+                  "quote": "\\gamma$ | Infection rate | $0.225 $ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "mu",
+              "symbol": "μ",
+              "name": "Natural death rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.0628
+              ],
+              "defaultValue": 0.0157,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47658,
+                  "charEnd": 47706,
+                  "quote": "\\mu$ | Natural death rate | $0.0157$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "pi",
+              "symbol": "π",
+              "name": "Vaccination rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2.852
+              ],
+              "defaultValue": 0.713,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47708,
+                  "charEnd": 47754,
+                  "quote": "\\pi$ | Vaccination rate | $0.713$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "eta",
+              "symbol": "η",
+              "name": "Loss of immunity rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.8
+              ],
+              "defaultValue": 0.2,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47756,
+                  "charEnd": 47820,
+                  "quote": "\\eta$ | loss rate of immunity by recovered one | $0.2$ | Assumed"
+                }
+              ]
+            },
+            {
+              "id": "theta",
+              "symbol": "θ",
+              "name": "Vaccine waning rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2
+              ],
+              "defaultValue": 0.5,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47822,
+                  "charEnd": 47887,
+                  "quote": "\\theta$ | Loss of protection for vaccination | $0.5$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "delta",
+              "symbol": "δ",
+              "name": "Treatment rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2.68
+              ],
+              "defaultValue": 0.67,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47889,
+                  "charEnd": 47943,
+                  "quote": "\\delta$ | treatment rate of I(t) | $0.67$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "tau",
+              "symbol": "τ",
+              "name": "Disease-induced death rate (infectious)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                1.064
+              ],
+              "defaultValue": 0.266,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47945,
+                  "charEnd": 48010,
+                  "quote": "\\tau$ | disease-causing death rate of I(t) | $0.266$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "alpha",
+              "symbol": "α",
+              "name": "Recovery rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                3.56
+              ],
+              "defaultValue": 0.89,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 48012,
+                  "charEnd": 48081,
+                  "quote": "\\alpha$ | Recovery rate for treated individuals | $0.89$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "omega",
+              "symbol": "ω",
+              "name": "Disease-induced death rate (treated)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.44
+              ],
+              "defaultValue": 0.11,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 48083,
+                  "charEnd": 48149,
+                  "quote": "\\omega$ | disease-causing death rate of T(t) | $0.11$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "s0",
+              "symbol": "S(0)",
+              "name": "Susceptible at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                300200000
+              ],
+              "defaultValue": 75050000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47005,
+                  "charEnd": 47086,
+                  "quote": "S_0$ | Initial number of susceptible individuals | $7.505\\times 10^7$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "v0",
+              "symbol": "V(0)",
+              "name": "Vaccinated at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                4820000
+              ],
+              "defaultValue": 1205000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47088,
+                  "charEnd": 47167,
+                  "quote": "V_0$ | Initial number of vaccinated individuals | $1.205\\times10^6$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "e0",
+              "symbol": "E(0)",
+              "name": "Exposed at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                60120000
+              ],
+              "defaultValue": 15030000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47169,
+                  "charEnd": 47245,
+                  "quote": "E_0$ | Initial number of exposed individuals | $1.503\\times10^7$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "i0",
+              "symbol": "I(0)",
+              "name": "Infectious at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                929200
+              ],
+              "defaultValue": 232300,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47247,
+                  "charEnd": 47327,
+                  "quote": "I_0$ | Initial number of infectious individuals | $2.323\\times10^5$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "t0",
+              "symbol": "T(0)",
+              "name": "Treated at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                624000
+              ],
+              "defaultValue": 156000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47329,
+                  "charEnd": 47405,
+                  "quote": "T_0$ | Initial number of treated individuals | $1.56\\times10^5$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "r0",
+              "symbol": "R(0)",
+              "name": "Recovered at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                556000
+              ],
+              "defaultValue": 139000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47407,
+                  "charEnd": 47484,
+                  "quote": "R_0$ | Initial number of recovery individuals | $1.39\\times10^5$ | [citation]"
+                }
+              ]
+            }
+          ],
+          "equations": [
+            {
+              "of": "s",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "add",
+                  "args": [
+                    {
+                      "p": "lambda"
+                    },
+                    {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "p": "eta"
+                        },
+                        {
+                          "c": "r"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "p": "theta"
+                        },
+                        {
+                          "c": "v"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "p": "beta"
+                            },
+                            {
+                              "c": "i"
+                            }
+                          ]
+                        },
+                        {
+                          "p": "pi"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "s"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14186,
+                  "charEnd": 14255,
+                  "quote": "\\frac{dS}{dt} &= \\Lambda + \\eta R + \\theta V - (\\beta I + \\pi + \\mu)S"
+                }
+              ]
+            },
+            {
+              "of": "v",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "pi"
+                    },
+                    {
+                      "c": "s"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "theta"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "v"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14259,
+                  "charEnd": 14299,
+                  "quote": "\\frac{dV}{dt} &= \\pi S - (\\theta + \\mu)V"
+                }
+              ]
+            },
+            {
+              "of": "e",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "beta"
+                    },
+                    {
+                      "c": "s"
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "gamma"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "e"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14303,
+                  "charEnd": 14346,
+                  "quote": "\\frac{dE}{dt} &= \\beta SI - (\\gamma + \\mu)E"
+                }
+              ]
+            },
+            {
+              "of": "i",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "gamma"
+                    },
+                    {
+                      "c": "e"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "delta"
+                        },
+                        {
+                          "p": "tau"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14350,
+                  "charEnd": 14400,
+                  "quote": "\\frac{dI}{dt} &= \\gamma E - (\\delta + \\tau + \\mu)I"
+                }
+              ]
+            },
+            {
+              "of": "t",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "delta"
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "alpha"
+                        },
+                        {
+                          "p": "omega"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "t"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14404,
+                  "charEnd": 14456,
+                  "quote": "\\frac{dT}{dt} &= \\delta I - (\\alpha + \\omega + \\mu)T"
+                }
+              ]
+            },
+            {
+              "of": "r",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "alpha"
+                    },
+                    {
+                      "c": "t"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "eta"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "r"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14460,
+                  "charEnd": 14501,
+                  "quote": "\\frac{dR}{dt} &= \\alpha T - (\\eta + \\mu)R"
+                }
+              ]
+            }
+          ],
+          "invariants": [],
+          "steadyStates": [],
+          "observables": [
+            {
+              "id": "levelS",
+              "label": "Susceptible",
+              "expr": {
+                "c": "s"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelV",
+              "label": "Vaccinated",
+              "expr": {
+                "c": "v"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelE",
+              "label": "Exposed",
+              "expr": {
+                "c": "e"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelI",
+              "label": "Infectious",
+              "expr": {
+                "c": "i"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelT",
+              "label": "Treated",
+              "expr": {
+                "c": "t"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelR",
+              "label": "Recovered",
+              "expr": {
+                "c": "r"
+              },
+              "unit": {
+                "people": 1
+              }
+            }
+          ],
+          "solver": {
+            "dt": 0.02,
+            "tolerance": 0.000001
+          },
+          "alternatives": [
+            {
+              "id": "synthetic",
+              "label": "Synthetic example case",
+              "values": {
+                "lambda": 15,
+                "beta": 0.05,
+                "gamma": 0.48,
+                "mu": 0.0157,
+                "pi": 0.1,
+                "eta": 0.2,
+                "theta": 0.5,
+                "delta": 0.67,
+                "tau": 0.275,
+                "alpha": 0.88,
+                "omega": 0.12,
+                "s0": 861,
+                "v0": 100,
+                "e0": 20,
+                "i0": 10,
+                "t0": 6,
+                "r0": 3
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 43955,
+                  "charEnd": 44181,
+                  "quote": "\\beta = 0.05, \\gamma = 0.48, \\varLambda = 15, \\eta = 0.2, \\theta = 0.5, \\pi = 0.1, \\mu = 0.0157, \\delta = 0.67, \\tau = 0.275, \\alpha = 0.88, \\omega = 0.12, S(0) = 861, V(0) = 100, E(0) = 20, I(0) = 10, T(0) = 6$, and $R(0) = 3"
+                }
+              ]
+            }
+          ]
+        },
+        "params": {},
+        "perWatchSecond": 0.5
+      },
+      "manipulable": {
+        "actionId": "gamma",
+        "label": "Progression to active TB",
+        "targetVariable": "gamma",
+        "range": [
+          0.05625,
+          0.9
+        ],
+        "unit": "per year",
+        "defaultValue": 0.225,
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "arxiv-2506.19869v1",
+            "sectionId": "s20-synthetic-example-case",
+            "charStart": 47609,
+            "charEnd": 47656,
+            "quote": "\\gamma$ | Infection rate | $0.225 $ | Estimated"
+          }
+        ]
+      },
+      "slider": {
+        "step": 0.0056,
+        "ends": [
+          "half as fast",
+          "twice as fast"
+        ]
+      },
+      "observable": {
+        "metricId": "levelI",
+        "label": "Infectious",
+        "shortLabel": "Infectious",
+        "unit": "people",
+        "decimals": 0,
+        "origin": "computed-observation"
+      },
+      "counterfactual": {
+        "prompt": "What if latent TB progressed twice as fast?",
+        "altParams": {
+          "gamma": 0.45
+        },
+        "expectedQualitativeEffect": "Doubling the progression rate makes the infectious peak more than 4 million higher.",
+        "origin": "teaching-choice",
+        "isSpeculative": false,
+        "anchors": [],
+        "difference": {
+          "metricId": "levelI",
+          "label": "Highest infectious within 38 years",
+          "unit": "people",
+          "summary": {
+            "kind": "peak"
+          },
+          "time": 38,
+          "claim": {
+            "kind": "each",
+            "relation": "higher",
+            "by": 4000000
+          }
+        }
+      },
+      "setup": [],
+      "explanation": {
+        "beginner": {
+          "text": "Think of latent tuberculosis as a line of dominoes waiting to fall. The progression rate is how hard you flick the table. Flick harder and the dominoes fall sooner. In this town, latent cases are already above the level where tb could fade away. If latent tb progresses faster, more people become infectious sooner and the outbreak grows bigger. Slowing it down would let fewer dominoes fall at once.",
+          "show": [
+            "range-words",
+            "analogy"
+          ],
+          "hide": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "analogy": "Think of latent tuberculosis as a line of dominoes waiting to fall. The progression rate is how hard you flick the table. Flick harder and the dominoes fall sooner. In this town, latent cases are уже ",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "intermediate": {
+          "text": "The control is gamma, the progression to active tb. The watched value is infectious people. In the model, gamma moves exposed people into the infectious compartment. Raising gamma makes latent cases become active faster. The town is already above the elimination threshold, so faster progression feeds the outbreak. Doubling gamma makes the infectious peak more than 4 million higher at year 38. Slowing gamma would delay the rise and lower the peak. The paper found that the rate of progression from the exposed class to the infectious class is one of the most important factors driving spread.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number"
+          ],
+          "hide": [
+            "range-words",
+            "equation",
+            "analogy"
+          ],
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "advanced": {
+          "text": "The parameter gamma is the rate at which exposed individuals become infectious. It appears in the equation for the infectious compartment. The paper writes it as: dI/dt = γE - (δ + τ + μ)I. A larger gamma sends people from E to I more quickly. In the simulation, doubling gamma raises the infectious peak by more than 4 million people at year 38. The town is above the elimination threshold, so this change worsens the outbreak. The sensitivity analysis also lists gamma as one of the most important factors increasing the reproduction number.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "hide": [
+            "range-words",
+            "analogy"
+          ],
+          "equation": "dI/dt = γE - (δ + τ + μ)I",
+          "origin": "paper-derived",
+          "anchors": [
+            {
+              "sourceId": "arxiv-2506.19869v1",
+              "sectionId": "s4-model-formulation",
+              "charStart": 14350,
+              "charEnd": 14400,
+              "quote": "\\frac{dI}{dt} &= \\gamma E - (\\delta + \\tau + \\mu)I"
+            }
+          ]
+        }
+      },
+      "caption": {
+        "text": "Headline result",
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "arxiv-2506.19869v1",
+            "sectionId": "s2-abstract",
+            "charStart": 841,
+            "charEnd": 921,
+            "quote": "The results suggest that optimal conditions could lead to the elimination of TB."
+          }
+        ]
+      },
+      "guide": {
+        "idle": "Drag the slider to change how fast latent tb becomes active, then watch the infectious curve.",
+        "raised": "You set progression to active TB {to}, so more exposed people become infectious sooner.",
+        "lowered": "You set progression to active TB {to}, so fewer exposed people become infectious soon.",
+        "readings": [
+          {
+            "atLeast": 12000000,
+            "words": "above 12 million infectious people"
+          },
+          {
+            "atLeast": 8000000,
+            "words": "above 8 million infectious people"
+          },
+          {
+            "atLeast": 4000000,
+            "words": "above 4 million infectious people"
+          },
+          {
+            "atLeast": 1000000,
+            "words": "above 1 million infectious people"
+          },
+          {
+            "atLeast": 0,
+            "words": "above zero infectious people"
+          }
+        ],
+        "trend": {
+          "rising": {
+            "beginner": "infectious people rising",
+            "measured": "rising"
+          },
+          "falling": {
+            "beginner": "infectious people falling",
+            "measured": "falling"
+          },
+          "steady": "holding",
+          "within": 380000
+        }
+      },
+      "guidedExploration": {
+        "predictPrompt": "Will doubling the progression rate make the infectious peak higher or lower?",
+        "choices": [
+          "Higher",
+          "Lower"
+        ],
+        "interveneActionId": "gamma",
+        "observeMetricId": "levelI",
+        "explainPrompt": "What change would slow the move from latent to active tb?",
+        "explanation": {
+          "text": "The what-if result is in. Doubling the progression rate made the infectious peak more than 4 million people higher. The model is above the elimination threshold.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "paperSays": {
+          "text": "“The results suggest that optimal conditions could lead to the elimination of TB.”",
+          "origin": "paper-derived",
+          "anchors": [
+            {
+              "sourceId": "arxiv-2506.19869v1",
+              "sectionId": "s2-abstract",
+              "charStart": 841,
+              "charEnd": 921,
+              "quote": "The results suggest that optimal conditions could lead to the elimination of TB."
+            }
+          ]
+        }
+      },
+      "furtherReading": [],
+      "carryForward": "The town is above the elimination threshold; faster progression makes the outbreak worse."
+    },
+    {
+      "id": "level-2",
+      "order": 2,
+      "kind": "background",
+      "title": "Contact rate drives spread",
+      "goal": "Raise the contact rate and watch the vaccinated peak fall because more susceptibles are infected before they can be vaccinated.",
+      "bonus": false,
+      "binding": {
+        "type": "equations",
+        "solver": {
+          "id": "compartments.ode",
+          "version": "1.0.0"
+        },
+        "model": {
+          "timeUnit": "year",
+          "compartments": [
+            {
+              "id": "s",
+              "name": "Susceptible",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "s0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 11776,
+                  "charEnd": 11853,
+                  "quote": "Susceptible individuals are people of all ages who can contract tuberculosis."
+                }
+              ]
+            },
+            {
+              "id": "v",
+              "name": "Vaccinated",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "v0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 12004,
+                  "charEnd": 12140,
+                  "quote": "A fraction of the susceptible population is vaccinated, and individuals who have received vaccinations have partial immunity against TB."
+                }
+              ]
+            },
+            {
+              "id": "e",
+              "name": "Exposed",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "e0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 12543,
+                  "charEnd": 12642,
+                  "quote": "exposed individuals are TB-infected but not yet infectious and do not show symptoms of the disease."
+                }
+              ]
+            },
+            {
+              "id": "i",
+              "name": "Infectious",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "i0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 12810,
+                  "charEnd": 12872,
+                  "quote": "Infectious individuals have the ability to spread the disease."
+                }
+              ]
+            },
+            {
+              "id": "t",
+              "name": "Treated",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "t0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 13081,
+                  "charEnd": 13140,
+                  "quote": "Treated individuals have received treatment for the disease"
+                }
+              ]
+            },
+            {
+              "id": "r",
+              "name": "Recovered",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "r0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 13146,
+                  "charEnd": 13208,
+                  "quote": "recovered individuals are people who are cured of the disease."
+                }
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "id": "lambda",
+              "symbol": "Λ",
+              "name": "Recruitment rate",
+              "unit": {
+                "people": 1,
+                "time": -1
+              },
+              "range": [
+                0,
+                6632000
+              ],
+              "defaultValue": 1658000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47486,
+                  "charEnd": 47545,
+                  "quote": "\\Lambda$ | Recruitment rate | $1.658\\times10^6$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "beta",
+              "symbol": "β",
+              "name": "Contact rate",
+              "unit": {
+                "people": -1,
+                "time": -1
+              },
+              "range": [
+                0,
+                0.0000031
+              ],
+              "defaultValue": 7.75e-7,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47547,
+                  "charEnd": 47607,
+                  "quote": "\\beta$ | The contact rate | $7.75\\times 10^{-7}$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "gamma",
+              "symbol": "γ",
+              "name": "Infection rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.9
+              ],
+              "defaultValue": 0.225,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47609,
+                  "charEnd": 47656,
+                  "quote": "\\gamma$ | Infection rate | $0.225 $ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "mu",
+              "symbol": "μ",
+              "name": "Natural death rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.0628
+              ],
+              "defaultValue": 0.0157,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47658,
+                  "charEnd": 47706,
+                  "quote": "\\mu$ | Natural death rate | $0.0157$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "pi",
+              "symbol": "π",
+              "name": "Vaccination rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2.852
+              ],
+              "defaultValue": 0.713,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47708,
+                  "charEnd": 47754,
+                  "quote": "\\pi$ | Vaccination rate | $0.713$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "eta",
+              "symbol": "η",
+              "name": "Loss of immunity rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.8
+              ],
+              "defaultValue": 0.2,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47756,
+                  "charEnd": 47820,
+                  "quote": "\\eta$ | loss rate of immunity by recovered one | $0.2$ | Assumed"
+                }
+              ]
+            },
+            {
+              "id": "theta",
+              "symbol": "θ",
+              "name": "Vaccine waning rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2
+              ],
+              "defaultValue": 0.5,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47822,
+                  "charEnd": 47887,
+                  "quote": "\\theta$ | Loss of protection for vaccination | $0.5$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "delta",
+              "symbol": "δ",
+              "name": "Treatment rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2.68
+              ],
+              "defaultValue": 0.67,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47889,
+                  "charEnd": 47943,
+                  "quote": "\\delta$ | treatment rate of I(t) | $0.67$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "tau",
+              "symbol": "τ",
+              "name": "Disease-induced death rate (infectious)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                1.064
+              ],
+              "defaultValue": 0.266,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47945,
+                  "charEnd": 48010,
+                  "quote": "\\tau$ | disease-causing death rate of I(t) | $0.266$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "alpha",
+              "symbol": "α",
+              "name": "Recovery rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                3.56
+              ],
+              "defaultValue": 0.89,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 48012,
+                  "charEnd": 48081,
+                  "quote": "\\alpha$ | Recovery rate for treated individuals | $0.89$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "omega",
+              "symbol": "ω",
+              "name": "Disease-induced death rate (treated)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.44
+              ],
+              "defaultValue": 0.11,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 48083,
+                  "charEnd": 48149,
+                  "quote": "\\omega$ | disease-causing death rate of T(t) | $0.11$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "s0",
+              "symbol": "S(0)",
+              "name": "Susceptible at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                300200000
+              ],
+              "defaultValue": 75050000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47005,
+                  "charEnd": 47086,
+                  "quote": "S_0$ | Initial number of susceptible individuals | $7.505\\times 10^7$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "v0",
+              "symbol": "V(0)",
+              "name": "Vaccinated at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                4820000
+              ],
+              "defaultValue": 1205000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47088,
+                  "charEnd": 47167,
+                  "quote": "V_0$ | Initial number of vaccinated individuals | $1.205\\times10^6$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "e0",
+              "symbol": "E(0)",
+              "name": "Exposed at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                60120000
+              ],
+              "defaultValue": 15030000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47169,
+                  "charEnd": 47245,
+                  "quote": "E_0$ | Initial number of exposed individuals | $1.503\\times10^7$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "i0",
+              "symbol": "I(0)",
+              "name": "Infectious at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                929200
+              ],
+              "defaultValue": 232300,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47247,
+                  "charEnd": 47327,
+                  "quote": "I_0$ | Initial number of infectious individuals | $2.323\\times10^5$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "t0",
+              "symbol": "T(0)",
+              "name": "Treated at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                624000
+              ],
+              "defaultValue": 156000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47329,
+                  "charEnd": 47405,
+                  "quote": "T_0$ | Initial number of treated individuals | $1.56\\times10^5$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "r0",
+              "symbol": "R(0)",
+              "name": "Recovered at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                556000
+              ],
+              "defaultValue": 139000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47407,
+                  "charEnd": 47484,
+                  "quote": "R_0$ | Initial number of recovery individuals | $1.39\\times10^5$ | [citation]"
+                }
+              ]
+            }
+          ],
+          "equations": [
+            {
+              "of": "s",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "add",
+                  "args": [
+                    {
+                      "p": "lambda"
+                    },
+                    {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "p": "eta"
+                        },
+                        {
+                          "c": "r"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "p": "theta"
+                        },
+                        {
+                          "c": "v"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "p": "beta"
+                            },
+                            {
+                              "c": "i"
+                            }
+                          ]
+                        },
+                        {
+                          "p": "pi"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "s"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14186,
+                  "charEnd": 14255,
+                  "quote": "\\frac{dS}{dt} &= \\Lambda + \\eta R + \\theta V - (\\beta I + \\pi + \\mu)S"
+                }
+              ]
+            },
+            {
+              "of": "v",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "pi"
+                    },
+                    {
+                      "c": "s"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "theta"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "v"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14259,
+                  "charEnd": 14299,
+                  "quote": "\\frac{dV}{dt} &= \\pi S - (\\theta + \\mu)V"
+                }
+              ]
+            },
+            {
+              "of": "e",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "beta"
+                    },
+                    {
+                      "c": "s"
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "gamma"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "e"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14303,
+                  "charEnd": 14346,
+                  "quote": "\\frac{dE}{dt} &= \\beta SI - (\\gamma + \\mu)E"
+                }
+              ]
+            },
+            {
+              "of": "i",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "gamma"
+                    },
+                    {
+                      "c": "e"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "delta"
+                        },
+                        {
+                          "p": "tau"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14350,
+                  "charEnd": 14400,
+                  "quote": "\\frac{dI}{dt} &= \\gamma E - (\\delta + \\tau + \\mu)I"
+                }
+              ]
+            },
+            {
+              "of": "t",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "delta"
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "alpha"
+                        },
+                        {
+                          "p": "omega"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "t"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14404,
+                  "charEnd": 14456,
+                  "quote": "\\frac{dT}{dt} &= \\delta I - (\\alpha + \\omega + \\mu)T"
+                }
+              ]
+            },
+            {
+              "of": "r",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "alpha"
+                    },
+                    {
+                      "c": "t"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "eta"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "r"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14460,
+                  "charEnd": 14501,
+                  "quote": "\\frac{dR}{dt} &= \\alpha T - (\\eta + \\mu)R"
+                }
+              ]
+            }
+          ],
+          "invariants": [],
+          "steadyStates": [],
+          "observables": [
+            {
+              "id": "levelS",
+              "label": "Susceptible",
+              "expr": {
+                "c": "s"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelV",
+              "label": "Vaccinated",
+              "expr": {
+                "c": "v"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelE",
+              "label": "Exposed",
+              "expr": {
+                "c": "e"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelI",
+              "label": "Infectious",
+              "expr": {
+                "c": "i"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelT",
+              "label": "Treated",
+              "expr": {
+                "c": "t"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelR",
+              "label": "Recovered",
+              "expr": {
+                "c": "r"
+              },
+              "unit": {
+                "people": 1
+              }
+            }
+          ],
+          "solver": {
+            "dt": 0.02,
+            "tolerance": 0.000001
+          },
+          "alternatives": [
+            {
+              "id": "synthetic",
+              "label": "Synthetic example case",
+              "values": {
+                "lambda": 15,
+                "beta": 0.05,
+                "gamma": 0.48,
+                "mu": 0.0157,
+                "pi": 0.1,
+                "eta": 0.2,
+                "theta": 0.5,
+                "delta": 0.67,
+                "tau": 0.275,
+                "alpha": 0.88,
+                "omega": 0.12,
+                "s0": 861,
+                "v0": 100,
+                "e0": 20,
+                "i0": 10,
+                "t0": 6,
+                "r0": 3
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 43955,
+                  "charEnd": 44181,
+                  "quote": "\\beta = 0.05, \\gamma = 0.48, \\varLambda = 15, \\eta = 0.2, \\theta = 0.5, \\pi = 0.1, \\mu = 0.0157, \\delta = 0.67, \\tau = 0.275, \\alpha = 0.88, \\omega = 0.12, S(0) = 861, V(0) = 100, E(0) = 20, I(0) = 10, T(0) = 6$, and $R(0) = 3"
+                }
+              ]
+            }
+          ]
+        },
+        "params": {},
+        "perWatchSecond": 0.5
+      },
+      "manipulable": {
+        "actionId": "beta",
+        "label": "Contact rate",
+        "targetVariable": "beta",
+        "range": [
+          1.9375e-7,
+          0.0000031
+        ],
+        "unit": "per person per year",
+        "defaultValue": 7.75e-7,
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "arxiv-2506.19869v1",
+            "sectionId": "s20-synthetic-example-case",
+            "charStart": 47547,
+            "charEnd": 47607,
+            "quote": "\\beta$ | The contact rate | $7.75\\times 10^{-7}$ | Estimated"
+          }
+        ]
+      },
+      "slider": {
+        "step": 1.9e-8,
+        "ends": [
+          "half as much contact",
+          "twice as much contact"
+        ]
+      },
+      "observable": {
+        "metricId": "levelV",
+        "label": "Vaccinated",
+        "shortLabel": "Vaccinated",
+        "unit": "people",
+        "decimals": 0,
+        "origin": "computed-observation"
+      },
+      "counterfactual": {
+        "prompt": "What if people contacted others twice as often?",
+        "altParams": {
+          "beta": 0.00000155
+        },
+        "expectedQualitativeEffect": "Doubling the contact rate makes the vaccinated peak more than 3 million lower. Higher contact moves more susceptibles into the exposed class, so fewer remain to flow into vaccinated through pi times s. The vaccinated compartment's own outflow is unchanged.",
+        "origin": "teaching-choice",
+        "isSpeculative": false,
+        "anchors": [],
+        "difference": {
+          "metricId": "levelV",
+          "label": "Highest vaccinated within 38 years",
+          "unit": "people",
+          "summary": {
+            "kind": "peak"
+          },
+          "time": 38,
+          "claim": {
+            "kind": "each",
+            "relation": "lower",
+            "by": 3000000
+          }
+        }
+      },
+      "setup": [],
+      "explanation": {
+        "beginner": {
+          "text": "Turn up how often people meet, and watch the group of protected vaccinated people get smaller.",
+          "show": [
+            "range-words",
+            "analogy"
+          ],
+          "hide": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "analogy": "Imagine a queue for a free umbrella. If a rainstorm hits harder, more people get wet before they reach the umbrella stand, so the line for umbrellas shrinks.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "intermediate": {
+          "text": "The control is the contact rate β. The watched value is the number of vaccinated people V. Raising β does not change V's outflow, but it lowers V's inflow by removing susceptibles first.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number"
+          ],
+          "hide": [
+            "range-words",
+            "equation",
+            "analogy"
+          ],
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "advanced": {
+          "text": "The contact rate β appears in the exposed equation. It controls how fast susceptible people meet infectious people and enter the exposed class.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "hide": [
+            "range-words",
+            "analogy"
+          ],
+          "equation": "dE/dt = βSI − (γ + μ)E",
+          "origin": "teaching-choice",
+          "anchors": []
+        }
+      },
+      "caption": {
+        "text": "Sensitivity analysis",
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "arxiv-2506.19869v1",
+            "sectionId": "s27-conclusions",
+            "charStart": 56923,
+            "charEnd": 57151,
+            "quote": "contact rate ($\\beta$), recruitment rate ($\\Lambda$), the loss of protection for the vaccination rate ($\\theta$), and rate of progression from the exposed class to the infectious class ($\\gamma$) were the most important factors."
+          }
+        ]
+      },
+      "guide": {
+        "idle": "Try changing the contact rate and see how the vaccinated group responds.",
+        "raised": "You raise the contact rate{to}, so more susceptibles become exposed before they can be vaccinated.",
+        "lowered": "You lower the contact rate{to}, so fewer susceptibles become exposed and more can flow into vaccinated.",
+        "readings": [
+          {
+            "atLeast": 5924000,
+            "words": "more than 5.9 million vaccinated people"
+          },
+          {
+            "atLeast": 3000000,
+            "words": "more than 3 million vaccinated people"
+          },
+          {
+            "atLeast": 0,
+            "words": "from zero up to the original peak"
+          }
+        ],
+        "trend": {
+          "rising": {
+            "beginner": "the vaccinated peak climbs",
+            "measured": "rising"
+          },
+          "falling": {
+            "beginner": "the vaccinated peak drops",
+            "measured": "falling"
+          },
+          "steady": "holding",
+          "within": 380000
+        }
+      },
+      "guidedExploration": {
+        "predictPrompt": "Will doubling the contact rate make the vaccinated peak higher or lower?",
+        "choices": [
+          "Lower",
+          "Higher"
+        ],
+        "interveneActionId": "beta",
+        "observeMetricId": "levelV",
+        "explainPrompt": "If raising contact pulls more susceptibles into the exposed class before they can be vaccinated, what other control might keep the vaccinated group larger?",
+        "explanation": {
+          "text": "The paper says contact rate was one of the most important factors increasing TB spread. Your change shows that higher contact lowers the vaccinated peak because more susceptibles are infected before they can be vaccinated.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "paperSays": {
+          "text": "“contact rate ($\\beta$), recruitment rate ($\\Lambda$), the loss of protection for the vaccination rate ($\\theta$), and rate of progression from the exposed class to the infectious class ($\\gamma$) were the most important factors.”",
+          "origin": "paper-derived",
+          "anchors": [
+            {
+              "sourceId": "arxiv-2506.19869v1",
+              "sectionId": "s27-conclusions",
+              "charStart": 56923,
+              "charEnd": 57151,
+              "quote": "contact rate ($\\beta$), recruitment rate ($\\Lambda$), the loss of protection for the vaccination rate ($\\theta$), and rate of progression from the exposed class to the infectious class ($\\gamma$) were the most important factors."
+            }
+          ]
+        }
+      },
+      "furtherReading": [],
+      "carryForward": "Contact rate is a major lever: more contact means fewer people stay protected."
+    },
+    {
+      "id": "level-3",
+      "order": 3,
+      "kind": "idea",
+      "title": "Treatment shrinks the outbreak",
+      "goal": "Speed up treatment and see infectious cases fall.",
+      "bonus": false,
+      "binding": {
+        "type": "equations",
+        "solver": {
+          "id": "compartments.ode",
+          "version": "1.0.0"
+        },
+        "model": {
+          "timeUnit": "year",
+          "compartments": [
+            {
+              "id": "s",
+              "name": "Susceptible",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "s0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 11776,
+                  "charEnd": 11853,
+                  "quote": "Susceptible individuals are people of all ages who can contract tuberculosis."
+                }
+              ]
+            },
+            {
+              "id": "v",
+              "name": "Vaccinated",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "v0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 12004,
+                  "charEnd": 12140,
+                  "quote": "A fraction of the susceptible population is vaccinated, and individuals who have received vaccinations have partial immunity against TB."
+                }
+              ]
+            },
+            {
+              "id": "e",
+              "name": "Exposed",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "e0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 12543,
+                  "charEnd": 12642,
+                  "quote": "exposed individuals are TB-infected but not yet infectious and do not show symptoms of the disease."
+                }
+              ]
+            },
+            {
+              "id": "i",
+              "name": "Infectious",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "i0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 12810,
+                  "charEnd": 12872,
+                  "quote": "Infectious individuals have the ability to spread the disease."
+                }
+              ]
+            },
+            {
+              "id": "t",
+              "name": "Treated",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "t0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 13081,
+                  "charEnd": 13140,
+                  "quote": "Treated individuals have received treatment for the disease"
+                }
+              ]
+            },
+            {
+              "id": "r",
+              "name": "Recovered",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "r0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 13146,
+                  "charEnd": 13208,
+                  "quote": "recovered individuals are people who are cured of the disease."
+                }
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "id": "lambda",
+              "symbol": "Λ",
+              "name": "Recruitment rate",
+              "unit": {
+                "people": 1,
+                "time": -1
+              },
+              "range": [
+                0,
+                6632000
+              ],
+              "defaultValue": 1658000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47486,
+                  "charEnd": 47545,
+                  "quote": "\\Lambda$ | Recruitment rate | $1.658\\times10^6$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "beta",
+              "symbol": "β",
+              "name": "Contact rate",
+              "unit": {
+                "people": -1,
+                "time": -1
+              },
+              "range": [
+                0,
+                0.0000031
+              ],
+              "defaultValue": 7.75e-7,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47547,
+                  "charEnd": 47607,
+                  "quote": "\\beta$ | The contact rate | $7.75\\times 10^{-7}$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "gamma",
+              "symbol": "γ",
+              "name": "Infection rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.9
+              ],
+              "defaultValue": 0.225,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47609,
+                  "charEnd": 47656,
+                  "quote": "\\gamma$ | Infection rate | $0.225 $ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "mu",
+              "symbol": "μ",
+              "name": "Natural death rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.0628
+              ],
+              "defaultValue": 0.0157,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47658,
+                  "charEnd": 47706,
+                  "quote": "\\mu$ | Natural death rate | $0.0157$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "pi",
+              "symbol": "π",
+              "name": "Vaccination rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2.852
+              ],
+              "defaultValue": 0.713,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47708,
+                  "charEnd": 47754,
+                  "quote": "\\pi$ | Vaccination rate | $0.713$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "eta",
+              "symbol": "η",
+              "name": "Loss of immunity rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.8
+              ],
+              "defaultValue": 0.2,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47756,
+                  "charEnd": 47820,
+                  "quote": "\\eta$ | loss rate of immunity by recovered one | $0.2$ | Assumed"
+                }
+              ]
+            },
+            {
+              "id": "theta",
+              "symbol": "θ",
+              "name": "Vaccine waning rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2
+              ],
+              "defaultValue": 0.5,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47822,
+                  "charEnd": 47887,
+                  "quote": "\\theta$ | Loss of protection for vaccination | $0.5$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "delta",
+              "symbol": "δ",
+              "name": "Treatment rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2.68
+              ],
+              "defaultValue": 0.67,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47889,
+                  "charEnd": 47943,
+                  "quote": "\\delta$ | treatment rate of I(t) | $0.67$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "tau",
+              "symbol": "τ",
+              "name": "Disease-induced death rate (infectious)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                1.064
+              ],
+              "defaultValue": 0.266,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47945,
+                  "charEnd": 48010,
+                  "quote": "\\tau$ | disease-causing death rate of I(t) | $0.266$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "alpha",
+              "symbol": "α",
+              "name": "Recovery rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                3.56
+              ],
+              "defaultValue": 0.89,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 48012,
+                  "charEnd": 48081,
+                  "quote": "\\alpha$ | Recovery rate for treated individuals | $0.89$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "omega",
+              "symbol": "ω",
+              "name": "Disease-induced death rate (treated)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.44
+              ],
+              "defaultValue": 0.11,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 48083,
+                  "charEnd": 48149,
+                  "quote": "\\omega$ | disease-causing death rate of T(t) | $0.11$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "s0",
+              "symbol": "S(0)",
+              "name": "Susceptible at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                300200000
+              ],
+              "defaultValue": 75050000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47005,
+                  "charEnd": 47086,
+                  "quote": "S_0$ | Initial number of susceptible individuals | $7.505\\times 10^7$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "v0",
+              "symbol": "V(0)",
+              "name": "Vaccinated at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                4820000
+              ],
+              "defaultValue": 1205000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47088,
+                  "charEnd": 47167,
+                  "quote": "V_0$ | Initial number of vaccinated individuals | $1.205\\times10^6$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "e0",
+              "symbol": "E(0)",
+              "name": "Exposed at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                60120000
+              ],
+              "defaultValue": 15030000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47169,
+                  "charEnd": 47245,
+                  "quote": "E_0$ | Initial number of exposed individuals | $1.503\\times10^7$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "i0",
+              "symbol": "I(0)",
+              "name": "Infectious at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                929200
+              ],
+              "defaultValue": 232300,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47247,
+                  "charEnd": 47327,
+                  "quote": "I_0$ | Initial number of infectious individuals | $2.323\\times10^5$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "t0",
+              "symbol": "T(0)",
+              "name": "Treated at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                624000
+              ],
+              "defaultValue": 156000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47329,
+                  "charEnd": 47405,
+                  "quote": "T_0$ | Initial number of treated individuals | $1.56\\times10^5$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "r0",
+              "symbol": "R(0)",
+              "name": "Recovered at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                556000
+              ],
+              "defaultValue": 139000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47407,
+                  "charEnd": 47484,
+                  "quote": "R_0$ | Initial number of recovery individuals | $1.39\\times10^5$ | [citation]"
+                }
+              ]
+            }
+          ],
+          "equations": [
+            {
+              "of": "s",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "add",
+                  "args": [
+                    {
+                      "p": "lambda"
+                    },
+                    {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "p": "eta"
+                        },
+                        {
+                          "c": "r"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "p": "theta"
+                        },
+                        {
+                          "c": "v"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "p": "beta"
+                            },
+                            {
+                              "c": "i"
+                            }
+                          ]
+                        },
+                        {
+                          "p": "pi"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "s"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14186,
+                  "charEnd": 14255,
+                  "quote": "\\frac{dS}{dt} &= \\Lambda + \\eta R + \\theta V - (\\beta I + \\pi + \\mu)S"
+                }
+              ]
+            },
+            {
+              "of": "v",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "pi"
+                    },
+                    {
+                      "c": "s"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "theta"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "v"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14259,
+                  "charEnd": 14299,
+                  "quote": "\\frac{dV}{dt} &= \\pi S - (\\theta + \\mu)V"
+                }
+              ]
+            },
+            {
+              "of": "e",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "beta"
+                    },
+                    {
+                      "c": "s"
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "gamma"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "e"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14303,
+                  "charEnd": 14346,
+                  "quote": "\\frac{dE}{dt} &= \\beta SI - (\\gamma + \\mu)E"
+                }
+              ]
+            },
+            {
+              "of": "i",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "gamma"
+                    },
+                    {
+                      "c": "e"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "delta"
+                        },
+                        {
+                          "p": "tau"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14350,
+                  "charEnd": 14400,
+                  "quote": "\\frac{dI}{dt} &= \\gamma E - (\\delta + \\tau + \\mu)I"
+                }
+              ]
+            },
+            {
+              "of": "t",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "delta"
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "alpha"
+                        },
+                        {
+                          "p": "omega"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "t"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14404,
+                  "charEnd": 14456,
+                  "quote": "\\frac{dT}{dt} &= \\delta I - (\\alpha + \\omega + \\mu)T"
+                }
+              ]
+            },
+            {
+              "of": "r",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "alpha"
+                    },
+                    {
+                      "c": "t"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "eta"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "r"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14460,
+                  "charEnd": 14501,
+                  "quote": "\\frac{dR}{dt} &= \\alpha T - (\\eta + \\mu)R"
+                }
+              ]
+            }
+          ],
+          "invariants": [],
+          "steadyStates": [],
+          "observables": [
+            {
+              "id": "levelS",
+              "label": "Susceptible",
+              "expr": {
+                "c": "s"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelV",
+              "label": "Vaccinated",
+              "expr": {
+                "c": "v"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelE",
+              "label": "Exposed",
+              "expr": {
+                "c": "e"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelI",
+              "label": "Infectious",
+              "expr": {
+                "c": "i"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelT",
+              "label": "Treated",
+              "expr": {
+                "c": "t"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelR",
+              "label": "Recovered",
+              "expr": {
+                "c": "r"
+              },
+              "unit": {
+                "people": 1
+              }
+            }
+          ],
+          "solver": {
+            "dt": 0.02,
+            "tolerance": 0.000001
+          },
+          "alternatives": [
+            {
+              "id": "synthetic",
+              "label": "Synthetic example case",
+              "values": {
+                "lambda": 15,
+                "beta": 0.05,
+                "gamma": 0.48,
+                "mu": 0.0157,
+                "pi": 0.1,
+                "eta": 0.2,
+                "theta": 0.5,
+                "delta": 0.67,
+                "tau": 0.275,
+                "alpha": 0.88,
+                "omega": 0.12,
+                "s0": 861,
+                "v0": 100,
+                "e0": 20,
+                "i0": 10,
+                "t0": 6,
+                "r0": 3
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 43955,
+                  "charEnd": 44181,
+                  "quote": "\\beta = 0.05, \\gamma = 0.48, \\varLambda = 15, \\eta = 0.2, \\theta = 0.5, \\pi = 0.1, \\mu = 0.0157, \\delta = 0.67, \\tau = 0.275, \\alpha = 0.88, \\omega = 0.12, S(0) = 861, V(0) = 100, E(0) = 20, I(0) = 10, T(0) = 6$, and $R(0) = 3"
+                }
+              ]
+            }
+          ]
+        },
+        "params": {},
+        "perWatchSecond": 0.5
+      },
+      "manipulable": {
+        "actionId": "delta",
+        "label": "Treatment rate",
+        "targetVariable": "delta",
+        "range": [
+          0.1675,
+          2.68
+        ],
+        "unit": "per year",
+        "defaultValue": 0.67,
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "arxiv-2506.19869v1",
+            "sectionId": "s20-synthetic-example-case",
+            "charStart": 47889,
+            "charEnd": 47943,
+            "quote": "\\delta$ | treatment rate of I(t) | $0.67$ | [citation]"
+          }
+        ]
+      },
+      "slider": {
+        "step": 0.017,
+        "ends": [
+          "half as fast",
+          "twice as fast"
+        ]
+      },
+      "observable": {
+        "metricId": "levelI",
+        "label": "Infectious",
+        "shortLabel": "Infectious",
+        "unit": "people",
+        "decimals": 0,
+        "origin": "computed-observation"
+      },
+      "counterfactual": {
+        "prompt": "What if infectious people were treated twice as fast?",
+        "altParams": {
+          "delta": 1.34
+        },
+        "expectedQualitativeEffect": "Doubling the treatment rate makes the infectious peak more than 3 million lower.",
+        "origin": "teaching-choice",
+        "isSpeculative": false,
+        "anchors": [],
+        "difference": {
+          "metricId": "levelI",
+          "label": "Highest infectious within 38 years",
+          "unit": "people",
+          "summary": {
+            "kind": "peak"
+          },
+          "time": 38,
+          "claim": {
+            "kind": "each",
+            "relation": "lower",
+            "by": 3000000
+          }
+        }
+      },
+      "setup": [],
+      "explanation": {
+        "beginner": {
+          "text": "Think of infectious people as water in a bathtub. Treatment is the drain. When you open the drain wider, water leaves faster. The tub does not overflow as much. In the same way, faster treatment pulls sick people out of the infectious group. The outbreak peak becomes smaller. Slower treatment is like a partly blocked drain. The water stays high longer. So speeding up treatment helps shrink the outbreak.",
+          "show": [
+            "range-words",
+            "analogy"
+          ],
+          "hide": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "analogy": "Think of infectious people as water in a bathtub. Treatment is the drain. When you open the drain wider, water leaves faster. The tub does not overflow as much. In the same way, faster treatment pulls",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "intermediate": {
+          "text": "The control is the treatment rate. The watched value is infectious people. The model starts with about two hundred thirty two thousand infectious people. When the treatment rate is doubled, infectious people leave the infectious compartment faster. The peak of infectious people becomes more than three million lower. When the treatment rate is halved, the peak becomes higher. Faster treatment moves people into the treated compartment. Slower treatment lets them stay infectious longer. The model shows that raising the treatment rate lowers the infectious peak.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number"
+          ],
+          "hide": [
+            "range-words",
+            "equation",
+            "analogy"
+          ],
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "advanced": {
+          "text": "The relevant equations from the paper are dI/dt = γE − (δ + τ + μ)I and dT/dt = δI − (α + ω + μ)T. The treatment rate δ appears in both. A higher δ moves infectious people into the treated compartment faster. The model doubles δ from its estimated value to 1.34. The peak of infectious people falls by more than three million. The paper states that the infectious population decreases as the treatment rate of infected individuals increases. This matches the model result.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "hide": [
+            "range-words",
+            "analogy"
+          ],
+          "equation": "dI/dt = γE − (δ + τ + μ)I; dT/dt = δI − (α + ω + μ)T",
+          "origin": "teaching-choice",
+          "anchors": []
+        }
+      },
+      "caption": {
+        "text": "Treatment conclusion",
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "arxiv-2506.19869v1",
+            "sectionId": "s26-effect-of-the-treatment-rate-on-the-tb-i",
+            "charStart": 55442,
+            "charEnd": 55644,
+            "quote": "The result revealed that the infectious population decreases as the treatment rate of infected individuals increases; in the long run, this may lead to the eradication of the disease from the community."
+          }
+        ]
+      },
+      "guide": {
+        "idle": "The treatment rate controls how fast infectious people move into treatment.",
+        "raised": "You raise the treatment rate{to}, so more infectious people leave the infectious compartment each year.",
+        "lowered": "You lower the treatment rate{to}, so fewer infectious people leave the infectious compartment each year.",
+        "readings": [
+          {
+            "atLeast": 10000000,
+            "words": "more than ten million infectious people"
+          },
+          {
+            "atLeast": 5000000,
+            "words": "more than five million infectious people"
+          },
+          {
+            "atLeast": 1000000,
+            "words": "more than one million infectious people"
+          },
+          {
+            "atLeast": 0,
+            "words": "zero infectious people"
+          }
+        ],
+        "trend": {
+          "rising": {
+            "beginner": "infectious people rise",
+            "measured": "rising"
+          },
+          "falling": {
+            "beginner": "infectious people fall",
+            "measured": "falling"
+          },
+          "steady": "holding",
+          "within": 380000
+        }
+      },
+      "guidedExploration": {
+        "predictPrompt": "Will doubling the treatment rate make the infectious peak higher or lower?",
+        "choices": [
+          "Lower",
+          "Higher"
+        ],
+        "interveneActionId": "delta",
+        "observeMetricId": "levelI",
+        "explainPrompt": "What would happen if treatment were even faster?",
+        "explanation": {
+          "text": "The model shows that doubling the treatment rate lowers the infectious peak. The paper says,",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "paperSays": {
+          "text": "“The result revealed that the infectious population decreases as the treatment rate of infected individuals increases”",
+          "origin": "paper-derived",
+          "anchors": [
+            {
+              "sourceId": "arxiv-2506.19869v1",
+              "sectionId": "s26-effect-of-the-treatment-rate-on-the-tb-i",
+              "charStart": 55442,
+              "charEnd": 55558,
+              "quote": "The result revealed that the infectious population decreases as the treatment rate of infected individuals increases"
+            }
+          ]
+        }
+      },
+      "furtherReading": [],
+      "carryForward": "Faster treatment pulls people out of the infectious compartment."
+    },
+    {
+      "id": "level-4",
+      "order": 4,
+      "kind": "method",
+      "title": "Vaccination protects the town",
+      "goal": "Raise vaccination coverage and watch the exposed group shrink.",
+      "bonus": false,
+      "binding": {
+        "type": "equations",
+        "solver": {
+          "id": "compartments.ode",
+          "version": "1.0.0"
+        },
+        "model": {
+          "timeUnit": "year",
+          "compartments": [
+            {
+              "id": "s",
+              "name": "Susceptible",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "s0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 11776,
+                  "charEnd": 11853,
+                  "quote": "Susceptible individuals are people of all ages who can contract tuberculosis."
+                }
+              ]
+            },
+            {
+              "id": "v",
+              "name": "Vaccinated",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "v0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 12004,
+                  "charEnd": 12140,
+                  "quote": "A fraction of the susceptible population is vaccinated, and individuals who have received vaccinations have partial immunity against TB."
+                }
+              ]
+            },
+            {
+              "id": "e",
+              "name": "Exposed",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "e0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 12543,
+                  "charEnd": 12642,
+                  "quote": "exposed individuals are TB-infected but not yet infectious and do not show symptoms of the disease."
+                }
+              ]
+            },
+            {
+              "id": "i",
+              "name": "Infectious",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "i0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 12810,
+                  "charEnd": 12872,
+                  "quote": "Infectious individuals have the ability to spread the disease."
+                }
+              ]
+            },
+            {
+              "id": "t",
+              "name": "Treated",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "t0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 13081,
+                  "charEnd": 13140,
+                  "quote": "Treated individuals have received treatment for the disease"
+                }
+              ]
+            },
+            {
+              "id": "r",
+              "name": "Recovered",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "r0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 13146,
+                  "charEnd": 13208,
+                  "quote": "recovered individuals are people who are cured of the disease."
+                }
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "id": "lambda",
+              "symbol": "Λ",
+              "name": "Recruitment rate",
+              "unit": {
+                "people": 1,
+                "time": -1
+              },
+              "range": [
+                0,
+                6632000
+              ],
+              "defaultValue": 1658000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47486,
+                  "charEnd": 47545,
+                  "quote": "\\Lambda$ | Recruitment rate | $1.658\\times10^6$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "beta",
+              "symbol": "β",
+              "name": "Contact rate",
+              "unit": {
+                "people": -1,
+                "time": -1
+              },
+              "range": [
+                0,
+                0.0000031
+              ],
+              "defaultValue": 7.75e-7,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47547,
+                  "charEnd": 47607,
+                  "quote": "\\beta$ | The contact rate | $7.75\\times 10^{-7}$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "gamma",
+              "symbol": "γ",
+              "name": "Infection rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.9
+              ],
+              "defaultValue": 0.225,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47609,
+                  "charEnd": 47656,
+                  "quote": "\\gamma$ | Infection rate | $0.225 $ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "mu",
+              "symbol": "μ",
+              "name": "Natural death rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.0628
+              ],
+              "defaultValue": 0.0157,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47658,
+                  "charEnd": 47706,
+                  "quote": "\\mu$ | Natural death rate | $0.0157$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "pi",
+              "symbol": "π",
+              "name": "Vaccination rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2.852
+              ],
+              "defaultValue": 0.713,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47708,
+                  "charEnd": 47754,
+                  "quote": "\\pi$ | Vaccination rate | $0.713$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "eta",
+              "symbol": "η",
+              "name": "Loss of immunity rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.8
+              ],
+              "defaultValue": 0.2,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47756,
+                  "charEnd": 47820,
+                  "quote": "\\eta$ | loss rate of immunity by recovered one | $0.2$ | Assumed"
+                }
+              ]
+            },
+            {
+              "id": "theta",
+              "symbol": "θ",
+              "name": "Vaccine waning rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2
+              ],
+              "defaultValue": 0.5,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47822,
+                  "charEnd": 47887,
+                  "quote": "\\theta$ | Loss of protection for vaccination | $0.5$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "delta",
+              "symbol": "δ",
+              "name": "Treatment rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2.68
+              ],
+              "defaultValue": 0.67,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47889,
+                  "charEnd": 47943,
+                  "quote": "\\delta$ | treatment rate of I(t) | $0.67$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "tau",
+              "symbol": "τ",
+              "name": "Disease-induced death rate (infectious)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                1.064
+              ],
+              "defaultValue": 0.266,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47945,
+                  "charEnd": 48010,
+                  "quote": "\\tau$ | disease-causing death rate of I(t) | $0.266$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "alpha",
+              "symbol": "α",
+              "name": "Recovery rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                3.56
+              ],
+              "defaultValue": 0.89,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 48012,
+                  "charEnd": 48081,
+                  "quote": "\\alpha$ | Recovery rate for treated individuals | $0.89$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "omega",
+              "symbol": "ω",
+              "name": "Disease-induced death rate (treated)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.44
+              ],
+              "defaultValue": 0.11,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 48083,
+                  "charEnd": 48149,
+                  "quote": "\\omega$ | disease-causing death rate of T(t) | $0.11$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "s0",
+              "symbol": "S(0)",
+              "name": "Susceptible at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                300200000
+              ],
+              "defaultValue": 75050000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47005,
+                  "charEnd": 47086,
+                  "quote": "S_0$ | Initial number of susceptible individuals | $7.505\\times 10^7$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "v0",
+              "symbol": "V(0)",
+              "name": "Vaccinated at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                4820000
+              ],
+              "defaultValue": 1205000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47088,
+                  "charEnd": 47167,
+                  "quote": "V_0$ | Initial number of vaccinated individuals | $1.205\\times10^6$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "e0",
+              "symbol": "E(0)",
+              "name": "Exposed at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                60120000
+              ],
+              "defaultValue": 15030000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47169,
+                  "charEnd": 47245,
+                  "quote": "E_0$ | Initial number of exposed individuals | $1.503\\times10^7$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "i0",
+              "symbol": "I(0)",
+              "name": "Infectious at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                929200
+              ],
+              "defaultValue": 232300,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47247,
+                  "charEnd": 47327,
+                  "quote": "I_0$ | Initial number of infectious individuals | $2.323\\times10^5$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "t0",
+              "symbol": "T(0)",
+              "name": "Treated at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                624000
+              ],
+              "defaultValue": 156000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47329,
+                  "charEnd": 47405,
+                  "quote": "T_0$ | Initial number of treated individuals | $1.56\\times10^5$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "r0",
+              "symbol": "R(0)",
+              "name": "Recovered at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                556000
+              ],
+              "defaultValue": 139000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47407,
+                  "charEnd": 47484,
+                  "quote": "R_0$ | Initial number of recovery individuals | $1.39\\times10^5$ | [citation]"
+                }
+              ]
+            }
+          ],
+          "equations": [
+            {
+              "of": "s",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "add",
+                  "args": [
+                    {
+                      "p": "lambda"
+                    },
+                    {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "p": "eta"
+                        },
+                        {
+                          "c": "r"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "p": "theta"
+                        },
+                        {
+                          "c": "v"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "p": "beta"
+                            },
+                            {
+                              "c": "i"
+                            }
+                          ]
+                        },
+                        {
+                          "p": "pi"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "s"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14186,
+                  "charEnd": 14255,
+                  "quote": "\\frac{dS}{dt} &= \\Lambda + \\eta R + \\theta V - (\\beta I + \\pi + \\mu)S"
+                }
+              ]
+            },
+            {
+              "of": "v",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "pi"
+                    },
+                    {
+                      "c": "s"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "theta"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "v"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14259,
+                  "charEnd": 14299,
+                  "quote": "\\frac{dV}{dt} &= \\pi S - (\\theta + \\mu)V"
+                }
+              ]
+            },
+            {
+              "of": "e",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "beta"
+                    },
+                    {
+                      "c": "s"
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "gamma"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "e"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14303,
+                  "charEnd": 14346,
+                  "quote": "\\frac{dE}{dt} &= \\beta SI - (\\gamma + \\mu)E"
+                }
+              ]
+            },
+            {
+              "of": "i",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "gamma"
+                    },
+                    {
+                      "c": "e"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "delta"
+                        },
+                        {
+                          "p": "tau"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14350,
+                  "charEnd": 14400,
+                  "quote": "\\frac{dI}{dt} &= \\gamma E - (\\delta + \\tau + \\mu)I"
+                }
+              ]
+            },
+            {
+              "of": "t",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "delta"
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "alpha"
+                        },
+                        {
+                          "p": "omega"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "t"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14404,
+                  "charEnd": 14456,
+                  "quote": "\\frac{dT}{dt} &= \\delta I - (\\alpha + \\omega + \\mu)T"
+                }
+              ]
+            },
+            {
+              "of": "r",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "alpha"
+                    },
+                    {
+                      "c": "t"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "eta"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "r"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14460,
+                  "charEnd": 14501,
+                  "quote": "\\frac{dR}{dt} &= \\alpha T - (\\eta + \\mu)R"
+                }
+              ]
+            }
+          ],
+          "invariants": [],
+          "steadyStates": [],
+          "observables": [
+            {
+              "id": "levelS",
+              "label": "Susceptible",
+              "expr": {
+                "c": "s"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelV",
+              "label": "Vaccinated",
+              "expr": {
+                "c": "v"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelE",
+              "label": "Exposed",
+              "expr": {
+                "c": "e"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelI",
+              "label": "Infectious",
+              "expr": {
+                "c": "i"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelT",
+              "label": "Treated",
+              "expr": {
+                "c": "t"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelR",
+              "label": "Recovered",
+              "expr": {
+                "c": "r"
+              },
+              "unit": {
+                "people": 1
+              }
+            }
+          ],
+          "solver": {
+            "dt": 0.02,
+            "tolerance": 0.000001
+          },
+          "alternatives": [
+            {
+              "id": "synthetic",
+              "label": "Synthetic example case",
+              "values": {
+                "lambda": 15,
+                "beta": 0.05,
+                "gamma": 0.48,
+                "mu": 0.0157,
+                "pi": 0.1,
+                "eta": 0.2,
+                "theta": 0.5,
+                "delta": 0.67,
+                "tau": 0.275,
+                "alpha": 0.88,
+                "omega": 0.12,
+                "s0": 861,
+                "v0": 100,
+                "e0": 20,
+                "i0": 10,
+                "t0": 6,
+                "r0": 3
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 43955,
+                  "charEnd": 44181,
+                  "quote": "\\beta = 0.05, \\gamma = 0.48, \\varLambda = 15, \\eta = 0.2, \\theta = 0.5, \\pi = 0.1, \\mu = 0.0157, \\delta = 0.67, \\tau = 0.275, \\alpha = 0.88, \\omega = 0.12, S(0) = 861, V(0) = 100, E(0) = 20, I(0) = 10, T(0) = 6$, and $R(0) = 3"
+                }
+              ]
+            }
+          ]
+        },
+        "params": {},
+        "perWatchSecond": 0.5
+      },
+      "manipulable": {
+        "actionId": "pi",
+        "label": "Vaccination rate",
+        "targetVariable": "pi",
+        "range": [
+          0.17825,
+          2.852
+        ],
+        "unit": "per year",
+        "defaultValue": 0.713,
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "arxiv-2506.19869v1",
+            "sectionId": "s20-synthetic-example-case",
+            "charStart": 47708,
+            "charEnd": 47754,
+            "quote": "\\pi$ | Vaccination rate | $0.713$ | [citation]"
+          }
+        ]
+      },
+      "slider": {
+        "step": 0.018,
+        "ends": [
+          "half the coverage",
+          "double the coverage"
+        ]
+      },
+      "observable": {
+        "metricId": "levelE",
+        "label": "Exposed",
+        "shortLabel": "Exposed",
+        "unit": "people",
+        "decimals": 0,
+        "origin": "computed-observation"
+      },
+      "counterfactual": {
+        "prompt": "What if vaccination coverage were doubled?",
+        "altParams": {
+          "pi": 1.426
+        },
+        "expectedQualitativeEffect": "Doubling the vaccination rate makes the exposed peak more than 5 million lower.",
+        "origin": "teaching-choice",
+        "isSpeculative": false,
+        "anchors": [],
+        "difference": {
+          "metricId": "levelE",
+          "label": "Highest exposed within 38 years",
+          "unit": "people",
+          "summary": {
+            "kind": "peak"
+          },
+          "time": 38,
+          "claim": {
+            "kind": "each",
+            "relation": "lower",
+            "by": 5000000
+          }
+        }
+      },
+      "setup": [],
+      "explanation": {
+        "beginner": {
+          "text": "Imagine a town where people carry umbrellas before a rainstorm. Vaccination is like handing out umbrellas. If you hand out more umbrellas, fewer people get wet. In the model, raising vaccination coverage moves more susceptible people into the vaccinated group. The exposed group then shrinks. Lowering coverage has the opposite effect.",
+          "show": [
+            "range-words",
+            "analogy"
+          ],
+          "hide": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "analogy": "Imagine a town where people carry umbrellas before a rainstorm. Vaccination is like handing out umbrellas. If you hand out more umbrellas, fewer people get wet. In the model, raising vaccination cover",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "intermediate": {
+          "text": "The control is the vaccination rate, called pi. The watched value is the number of exposed people, called e. When you raise pi, more susceptible people move into the vaccinated compartment. Because vaccinated people have partial protection, fewer of them become exposed. The model starts with about fifteen million exposed people. The exposed peak reaches about forty-seven million people. Doubling the vaccination rate lowers that peak by more than five million people. Lowering pi has the opposite effect. The exposed peak rises.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number"
+          ],
+          "hide": [
+            "range-words",
+            "equation",
+            "analogy"
+          ],
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "advanced": {
+          "text": "The model tracks six groups. The vaccination rate pi appears in the equation for vaccinated people. The paper writes dV/dt = π S − (θ + μ)V. The exposed group changes by dE/dt = β S I − (γ + μ)E. When pi doubles, the flow from susceptible to vaccinated grows. Fewer susceptible people are then available to become exposed. The baseline exposed peak is about forty-seven million people. Doubling vaccination coverage lowers that peak by more than five million people. The sensitivity analysis lists pi among the parameters with negative sensitivity indices.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "hide": [
+            "range-words",
+            "analogy"
+          ],
+          "equation": "dV/dt = π S − (θ + μ)V",
+          "origin": "teaching-choice",
+          "anchors": []
+        }
+      },
+      "caption": {
+        "text": "Protective parameters",
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "arxiv-2506.19869v1",
+            "sectionId": "s16-sensitivity-analysis",
+            "charStart": 37348,
+            "charEnd": 37500,
+            "quote": "Parameters with negative sensitivity indices $(\\mu, \\pi, \\delta, \\tau )$ have the effect of lowering the community's TB burden if their values increases"
+          }
+        ]
+      },
+      "guide": {
+        "idle": "The vaccination rate controls how fast susceptible people become vaccinated.",
+        "raised": "You raise the vaccination rate to {to}, so more susceptible people move into the vaccinated compartment.",
+        "lowered": "You lower the vaccination rate to {to}, so fewer susceptible people move into the vaccinated compartment.",
+        "readings": [
+          {
+            "atLeast": 50000000,
+            "words": "above 50 million exposed people"
+          },
+          {
+            "atLeast": 45000000,
+            "words": "above 45 million exposed people"
+          },
+          {
+            "atLeast": 40000000,
+            "words": "above 40 million exposed people"
+          },
+          {
+            "atLeast": 35000000,
+            "words": "above 35 million exposed people"
+          },
+          {
+            "atLeast": 0,
+            "words": "0 exposed people or more"
+          }
+        ],
+        "trend": {
+          "rising": {
+            "beginner": "exposed people are rising",
+            "measured": "rising"
+          },
+          "falling": {
+            "beginner": "exposed people are falling",
+            "measured": "falling"
+          },
+          "steady": "holding",
+          "within": 380000
+        }
+      },
+      "guidedExploration": {
+        "predictPrompt": "Will doubling vaccination coverage make the exposed peak higher or lower?",
+        "choices": [
+          "Lower",
+          "Higher"
+        ],
+        "interveneActionId": "pi",
+        "observeMetricId": "levelE",
+        "explainPrompt": "Why does moving more susceptible people into the vaccinated compartment leave fewer people in the exposed compartment?",
+        "explanation": {
+          "text": "Doubling vaccination coverage lowered the exposed peak by more than five million people. Why does moving more susceptible peopleinto",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "paperSays": {
+          "text": "“Parameters with negative sensitivity indices $(\\mu, \\pi, \\delta, \\tau )$ have the effect of lowering the community's TB burden if their values increases”",
+          "origin": "paper-derived",
+          "anchors": [
+            {
+              "sourceId": "arxiv-2506.19869v1",
+              "sectionId": "s16-sensitivity-analysis",
+              "charStart": 37348,
+              "charEnd": 37500,
+              "quote": "Parameters with negative sensitivity indices $(\\mu, \\pi, \\delta, \\tau )$ have the effect of lowering the community's TB burden if their values increases"
+            }
+          ]
+        }
+      },
+      "furtherReading": [],
+      "carryForward": "Higher vaccination coverage shrinks the exposed pool."
+    },
+    {
+      "id": "level-5",
+      "order": 5,
+      "kind": "result",
+      "title": "The disease is already multiplying",
+      "goal": "Add more people to the town each year and see how fast infectious cases rise.",
+      "bonus": false,
+      "binding": {
+        "type": "equations",
+        "solver": {
+          "id": "compartments.ode",
+          "version": "1.0.0"
+        },
+        "model": {
+          "timeUnit": "year",
+          "compartments": [
+            {
+              "id": "s",
+              "name": "Susceptible",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "s0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 11776,
+                  "charEnd": 11853,
+                  "quote": "Susceptible individuals are people of all ages who can contract tuberculosis."
+                }
+              ]
+            },
+            {
+              "id": "v",
+              "name": "Vaccinated",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "v0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 12004,
+                  "charEnd": 12140,
+                  "quote": "A fraction of the susceptible population is vaccinated, and individuals who have received vaccinations have partial immunity against TB."
+                }
+              ]
+            },
+            {
+              "id": "e",
+              "name": "Exposed",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "e0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 12543,
+                  "charEnd": 12642,
+                  "quote": "exposed individuals are TB-infected but not yet infectious and do not show symptoms of the disease."
+                }
+              ]
+            },
+            {
+              "id": "i",
+              "name": "Infectious",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "i0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 12810,
+                  "charEnd": 12872,
+                  "quote": "Infectious individuals have the ability to spread the disease."
+                }
+              ]
+            },
+            {
+              "id": "t",
+              "name": "Treated",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "t0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 13081,
+                  "charEnd": 13140,
+                  "quote": "Treated individuals have received treatment for the disease"
+                }
+              ]
+            },
+            {
+              "id": "r",
+              "name": "Recovered",
+              "unit": {
+                "people": 1
+              },
+              "initial": {
+                "p": "r0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 13146,
+                  "charEnd": 13208,
+                  "quote": "recovered individuals are people who are cured of the disease."
+                }
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "id": "lambda",
+              "symbol": "Λ",
+              "name": "Recruitment rate",
+              "unit": {
+                "people": 1,
+                "time": -1
+              },
+              "range": [
+                0,
+                6632000
+              ],
+              "defaultValue": 1658000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47486,
+                  "charEnd": 47545,
+                  "quote": "\\Lambda$ | Recruitment rate | $1.658\\times10^6$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "beta",
+              "symbol": "β",
+              "name": "Contact rate",
+              "unit": {
+                "people": -1,
+                "time": -1
+              },
+              "range": [
+                0,
+                0.0000031
+              ],
+              "defaultValue": 7.75e-7,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47547,
+                  "charEnd": 47607,
+                  "quote": "\\beta$ | The contact rate | $7.75\\times 10^{-7}$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "gamma",
+              "symbol": "γ",
+              "name": "Infection rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.9
+              ],
+              "defaultValue": 0.225,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47609,
+                  "charEnd": 47656,
+                  "quote": "\\gamma$ | Infection rate | $0.225 $ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "mu",
+              "symbol": "μ",
+              "name": "Natural death rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.0628
+              ],
+              "defaultValue": 0.0157,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47658,
+                  "charEnd": 47706,
+                  "quote": "\\mu$ | Natural death rate | $0.0157$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "pi",
+              "symbol": "π",
+              "name": "Vaccination rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2.852
+              ],
+              "defaultValue": 0.713,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47708,
+                  "charEnd": 47754,
+                  "quote": "\\pi$ | Vaccination rate | $0.713$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "eta",
+              "symbol": "η",
+              "name": "Loss of immunity rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.8
+              ],
+              "defaultValue": 0.2,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47756,
+                  "charEnd": 47820,
+                  "quote": "\\eta$ | loss rate of immunity by recovered one | $0.2$ | Assumed"
+                }
+              ]
+            },
+            {
+              "id": "theta",
+              "symbol": "θ",
+              "name": "Vaccine waning rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2
+              ],
+              "defaultValue": 0.5,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47822,
+                  "charEnd": 47887,
+                  "quote": "\\theta$ | Loss of protection for vaccination | $0.5$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "delta",
+              "symbol": "δ",
+              "name": "Treatment rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2.68
+              ],
+              "defaultValue": 0.67,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47889,
+                  "charEnd": 47943,
+                  "quote": "\\delta$ | treatment rate of I(t) | $0.67$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "tau",
+              "symbol": "τ",
+              "name": "Disease-induced death rate (infectious)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                1.064
+              ],
+              "defaultValue": 0.266,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47945,
+                  "charEnd": 48010,
+                  "quote": "\\tau$ | disease-causing death rate of I(t) | $0.266$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "alpha",
+              "symbol": "α",
+              "name": "Recovery rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                3.56
+              ],
+              "defaultValue": 0.89,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 48012,
+                  "charEnd": 48081,
+                  "quote": "\\alpha$ | Recovery rate for treated individuals | $0.89$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "omega",
+              "symbol": "ω",
+              "name": "Disease-induced death rate (treated)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.44
+              ],
+              "defaultValue": 0.11,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 48083,
+                  "charEnd": 48149,
+                  "quote": "\\omega$ | disease-causing death rate of T(t) | $0.11$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "s0",
+              "symbol": "S(0)",
+              "name": "Susceptible at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                300200000
+              ],
+              "defaultValue": 75050000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47005,
+                  "charEnd": 47086,
+                  "quote": "S_0$ | Initial number of susceptible individuals | $7.505\\times 10^7$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "v0",
+              "symbol": "V(0)",
+              "name": "Vaccinated at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                4820000
+              ],
+              "defaultValue": 1205000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47088,
+                  "charEnd": 47167,
+                  "quote": "V_0$ | Initial number of vaccinated individuals | $1.205\\times10^6$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "e0",
+              "symbol": "E(0)",
+              "name": "Exposed at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                60120000
+              ],
+              "defaultValue": 15030000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47169,
+                  "charEnd": 47245,
+                  "quote": "E_0$ | Initial number of exposed individuals | $1.503\\times10^7$ | Estimated"
+                }
+              ]
+            },
+            {
+              "id": "i0",
+              "symbol": "I(0)",
+              "name": "Infectious at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                929200
+              ],
+              "defaultValue": 232300,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47247,
+                  "charEnd": 47327,
+                  "quote": "I_0$ | Initial number of infectious individuals | $2.323\\times10^5$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "t0",
+              "symbol": "T(0)",
+              "name": "Treated at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                624000
+              ],
+              "defaultValue": 156000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47329,
+                  "charEnd": 47405,
+                  "quote": "T_0$ | Initial number of treated individuals | $1.56\\times10^5$ | [citation]"
+                }
+              ]
+            },
+            {
+              "id": "r0",
+              "symbol": "R(0)",
+              "name": "Recovered at the start",
+              "unit": {
+                "people": 1
+              },
+              "range": [
+                0,
+                556000
+              ],
+              "defaultValue": 139000,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 47407,
+                  "charEnd": 47484,
+                  "quote": "R_0$ | Initial number of recovery individuals | $1.39\\times10^5$ | [citation]"
+                }
+              ]
+            }
+          ],
+          "equations": [
+            {
+              "of": "s",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "add",
+                  "args": [
+                    {
+                      "p": "lambda"
+                    },
+                    {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "p": "eta"
+                        },
+                        {
+                          "c": "r"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "p": "theta"
+                        },
+                        {
+                          "c": "v"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "p": "beta"
+                            },
+                            {
+                              "c": "i"
+                            }
+                          ]
+                        },
+                        {
+                          "p": "pi"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "s"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14186,
+                  "charEnd": 14255,
+                  "quote": "\\frac{dS}{dt} &= \\Lambda + \\eta R + \\theta V - (\\beta I + \\pi + \\mu)S"
+                }
+              ]
+            },
+            {
+              "of": "v",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "pi"
+                    },
+                    {
+                      "c": "s"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "theta"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "v"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14259,
+                  "charEnd": 14299,
+                  "quote": "\\frac{dV}{dt} &= \\pi S - (\\theta + \\mu)V"
+                }
+              ]
+            },
+            {
+              "of": "e",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "beta"
+                    },
+                    {
+                      "c": "s"
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "gamma"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "e"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14303,
+                  "charEnd": 14346,
+                  "quote": "\\frac{dE}{dt} &= \\beta SI - (\\gamma + \\mu)E"
+                }
+              ]
+            },
+            {
+              "of": "i",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "gamma"
+                    },
+                    {
+                      "c": "e"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "delta"
+                        },
+                        {
+                          "p": "tau"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14350,
+                  "charEnd": 14400,
+                  "quote": "\\frac{dI}{dt} &= \\gamma E - (\\delta + \\tau + \\mu)I"
+                }
+              ]
+            },
+            {
+              "of": "t",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "delta"
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "alpha"
+                        },
+                        {
+                          "p": "omega"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "t"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14404,
+                  "charEnd": 14456,
+                  "quote": "\\frac{dT}{dt} &= \\delta I - (\\alpha + \\omega + \\mu)T"
+                }
+              ]
+            },
+            {
+              "of": "r",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "alpha"
+                    },
+                    {
+                      "c": "t"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "eta"
+                        },
+                        {
+                          "p": "mu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "r"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s4-model-formulation",
+                  "charStart": 14460,
+                  "charEnd": 14501,
+                  "quote": "\\frac{dR}{dt} &= \\alpha T - (\\eta + \\mu)R"
+                }
+              ]
+            }
+          ],
+          "invariants": [],
+          "steadyStates": [],
+          "observables": [
+            {
+              "id": "levelS",
+              "label": "Susceptible",
+              "expr": {
+                "c": "s"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelV",
+              "label": "Vaccinated",
+              "expr": {
+                "c": "v"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelE",
+              "label": "Exposed",
+              "expr": {
+                "c": "e"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelI",
+              "label": "Infectious",
+              "expr": {
+                "c": "i"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelT",
+              "label": "Treated",
+              "expr": {
+                "c": "t"
+              },
+              "unit": {
+                "people": 1
+              }
+            },
+            {
+              "id": "levelR",
+              "label": "Recovered",
+              "expr": {
+                "c": "r"
+              },
+              "unit": {
+                "people": 1
+              }
+            }
+          ],
+          "solver": {
+            "dt": 0.02,
+            "tolerance": 0.000001
+          },
+          "alternatives": [
+            {
+              "id": "synthetic",
+              "label": "Synthetic example case",
+              "values": {
+                "lambda": 15,
+                "beta": 0.05,
+                "gamma": 0.48,
+                "mu": 0.0157,
+                "pi": 0.1,
+                "eta": 0.2,
+                "theta": 0.5,
+                "delta": 0.67,
+                "tau": 0.275,
+                "alpha": 0.88,
+                "omega": 0.12,
+                "s0": 861,
+                "v0": 100,
+                "e0": 20,
+                "i0": 10,
+                "t0": 6,
+                "r0": 3
+              },
+              "anchors": [
+                {
+                  "sourceId": "arxiv-2506.19869v1",
+                  "sectionId": "s20-synthetic-example-case",
+                  "charStart": 43955,
+                  "charEnd": 44181,
+                  "quote": "\\beta = 0.05, \\gamma = 0.48, \\varLambda = 15, \\eta = 0.2, \\theta = 0.5, \\pi = 0.1, \\mu = 0.0157, \\delta = 0.67, \\tau = 0.275, \\alpha = 0.88, \\omega = 0.12, S(0) = 861, V(0) = 100, E(0) = 20, I(0) = 10, T(0) = 6$, and $R(0) = 3"
+                }
+              ]
+            }
+          ]
+        },
+        "params": {},
+        "perWatchSecond": 0.5
+      },
+      "manipulable": {
+        "actionId": "lambda",
+        "label": "Recruitment rate",
+        "targetVariable": "lambda",
+        "range": [
+          414500,
+          6632000
+        ],
+        "unit": "people per year",
+        "defaultValue": 1658000,
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "arxiv-2506.19869v1",
+            "sectionId": "s20-synthetic-example-case",
+            "charStart": 47486,
+            "charEnd": 47545,
+            "quote": "\\Lambda$ | Recruitment rate | $1.658\\times10^6$ | Estimated"
+          }
+        ]
+      },
+      "slider": {
+        "step": 41000,
+        "ends": [
+          "half as many newcomers",
+          "twice as many newcomers"
+        ]
+      },
+      "observable": {
+        "metricId": "levelI",
+        "label": "Infectious",
+        "shortLabel": "Infectious",
+        "unit": "people",
+        "decimals": 0,
+        "origin": "computed-observation"
+      },
+      "counterfactual": {
+        "prompt": "What if twice as many people joined the town each year?",
+        "altParams": {
+          "lambda": 3316000
+        },
+        "expectedQualitativeEffect": "Doubling the recruitment rate makes the number of infectious people at year 38 more than 2 million higher.",
+        "origin": "teaching-choice",
+        "isSpeculative": false,
+        "anchors": [],
+        "difference": {
+          "metricId": "levelI",
+          "label": "Infectious at year 38",
+          "unit": "people",
+          "summary": {
+            "kind": "at",
+            "time": 38
+          },
+          "time": 39,
+          "claim": {
+            "kind": "each",
+            "relation": "higher",
+            "by": 2000000
+          }
+        }
+      },
+      "setup": [],
+      "explanation": {
+        "beginner": {
+          "text": "Imagine a town where new people arrive every year. If many more newcomers arrive, the disease finds more people to spread among. It is like adding more dry leaves to a small fire. The fire grows bigger. In the model, raising the recruitment rate makes the number of infectious people higher at year thirty eight. More people means tuberculosis keeps multiplying.",
+          "show": [
+            "range-words",
+            "analogy"
+          ],
+          "hide": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "analogy": "Imagine a town where new people arrive every year. If many more newcomers arrive, the disease finds more people to spread among. It is like adding more dry leaves to a small fire. The fire grows b",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "intermediate": {
+          "text": "The control is the recruitment rate, called lambda. It measures how many new people join the town each year. The watched value is the number of infectious people, called I. The model already has R naught above one, so tuberculosis is multiplying. The what-if asks what happens if twice as many people join the town each year. Doubling the recruitment rate gives the disease more susceptible people to spread among. In the model, this makes the number of infectious people at year thirty eight more than two million higher. More newcomers mean more contacts and more active cases. The paper says the reproduction number is greater than one, so the disease keeps growing. Adding people speeds that growth.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number"
+          ],
+          "hide": [
+            "range-words",
+            "equation",
+            "analogy"
+          ],
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "advanced": {
+          "text": "The control is the recruitment rate Λ. The watched value is infectious people I. The paper gives dN/dt = Λ − μN − τI − ωT. Raising Λ adds people to the total population, which feeds the susceptible compartment and lets tuberculosis spread to more people. The paper also writes dS/dt = Λ + ηR + θV − (βI + π + μ)S. Verbatim quote: 'We obtained $R_0 = 2.67$ for the estimated model parameters, which are greater than one, indicating that the tuberculosis is continuously multiplying.'",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "hide": [
+            "range-words",
+            "analogy"
+          ],
+          "equation": "dN/dt = Λ − μN − τI − ωT",
+          "origin": "teaching-choice",
+          "anchors": []
+        }
+      },
+      "caption": {
+        "text": "Reproduction number estimate",
+        "origin": "teaching-choice",
+        "anchors": []
+      },
+      "guide": {
+        "idle": "Move the recruitment rate slider and watch the infectious people curve.",
+        "raised": "You raise the recruitment rate{to} newcomers each year, so the susceptible pool grows and more people become infectious.",
+        "lowered": "You lower the recruitment rate{to} newcomers each year, so fewer people enter the town and the outbreak slows.",
+        "readings": [
+          {
+            "atLeast": 10000000,
+            "words": "more than 10 million infectious people"
+          },
+          {
+            "atLeast": 5000000,
+            "words": "more than 5 million infectious people"
+          },
+          {
+            "atLeast": 1000000,
+            "words": "more than 1 million infectious people"
+          },
+          {
+            "atLeast": 100000,
+            "words": "more than 100000 infectious people"
+          },
+          {
+            "atLeast": 0,
+            "words": "above zero infectious people"
+          }
+        ],
+        "trend": {
+          "rising": {
+            "beginner": "infectious people climb",
+            "measured": "rising"
+          },
+          "falling": {
+            "beginner": "infectious people drop",
+            "measured": "falling"
+          },
+          "steady": "holding",
+          "within": 380000
+        }
+      },
+      "guidedExploration": {
+        "predictPrompt": "Will doubling recruitment make infectious people at year 38 higher or lower?",
+        "choices": [
+          "Higher",
+          "Lower"
+        ],
+        "interveneActionId": "lambda",
+        "observeMetricId": "levelI",
+        "explainPrompt": "Why does a larger susceptible pool push a disease whose reproduction number is already above one?",
+        "explanation": {
+          "text": "The result is in. Doubling the recruitment rate made the number of infectious people at year thirty eight more than two million higher. 67$ for the estimated model parameters, which are greater than one, indicating that the tuberculosis is continuously multiplyi",
+          "origin": "teaching-choice",
+          "anchors": []
+        }
+      },
+      "furtherReading": [],
+      "carryForward": "More recruitment gives the disease more people to spread among."
+    }
+  ],
+  "primitivesUsed": [
+    {
+      "id": "compartments.ode",
+      "version": "1.0.0"
+    }
+  ],
+  "checks": {
+    "suiteIds": [
+      "worldspec-schema",
+      "builder-bindings",
+      "compartment-checks",
+      "level-rule",
+      "provenance"
+    ],
+    "suiteVersions": {
+      "worldspec-schema": "worldspec/3",
+      "builder-bindings": "1",
+      "compartment-checks": "1",
+      "level-rule": "1",
+      "provenance": "1"
+    }
+  },
+  "limits": [
+    {
+      "text": "A world generated from the paper by PaperPlay's pipeline, checked by its builder and its level rule; the levels, their words and their values are teaching choices, and the model is the paper's as transcribed.",
+      "origin": "teaching-choice",
+      "anchors": []
+    },
+    {
+      "text": "Each level changes one rate parameter and watches one compartment.",
+      "origin": "teaching-choice",
+      "anchors": []
+    },
+    {
+      "text": "The what-if world changes exactly one parameter or starting value.",
+      "origin": "teaching-choice",
+      "anchors": []
+    },
+    {
+      "text": "Predict the direction of the change before the second town runs.",
+      "origin": "teaching-choice",
+      "anchors": []
+    },
+    {
+      "text": "A claim must be clearly true on the paper's values and on 16 of 19 nearby starts.",
+      "origin": "teaching-choice",
+      "anchors": []
+    },
+    {
+      "text": "A draft until the owner reviews it.",
+      "origin": "teaching-choice",
+      "anchors": []
+    }
+  ],
+  "ownNumbers": {
+    "verdict": "not-applicable",
+    "statements": [
+      {
+        "text": "The paper's headline: \"The results suggest that optimal conditions could lead to the elimination of TB.\"",
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "arxiv-2506.19869v1",
+            "sectionId": "s2-abstract",
+            "charStart": 841,
+            "charEnd": 921,
+            "quote": "The results suggest that optimal conditions could lead to the elimination of TB."
+          }
+        ]
+      },
+      {
+        "text": "Rv by the paper's own formula, equation (9), at the values it lists: 33.7; the model's own equations give the same.",
+        "origin": "computed-observation",
+        "anchors": [
+          {
+            "sourceId": "arxiv-2506.19869v1",
+            "sectionId": "s9-basic-reproductive-number",
+            "charStart": 21410,
+            "charEnd": 21532,
+            "quote": "\\mathscr{R}_v = \\frac{\\varLambda \\beta \\gamma (\\theta + \\mu)}{\\mu (\\delta + \\tau + \\mu)(\\theta + \\pi + \\mu)(\\gamma + \\mu)}"
+          }
+        ]
+      },
+      {
+        "text": "R0 by the paper's own formula, equation (10), at the values it lists: 80.4; the model's own equations give the same with π, η, θ, α, ω set to none, as the formula leaves them out.",
+        "origin": "computed-observation",
+        "anchors": [
+          {
+            "sourceId": "arxiv-2506.19869v1",
+            "sectionId": "s9-basic-reproductive-number",
+            "charStart": 22276,
+            "charEnd": 22363,
+            "quote": "\\mathscr{R}_0 = \\frac{\\varLambda \\beta \\gamma}{\\mu (\\delta + \\tau + \\mu)(\\gamma + \\mu)}"
+          }
+        ]
+      },
+      {
+        "text": "The reproduction number computed from the model's own equations, through its next-generation matrix (infected: e, i): 33.7.",
+        "origin": "computed-observation",
+        "anchors": []
+      },
+      {
+        "text": "The paper states R0 = 2.67; at the values it lists, its formula gives 80.4, so the stated value may rest on values it doesn't list.",
+        "origin": "computed-observation",
+        "anchors": [
+          {
+            "sourceId": "arxiv-2506.19869v1",
+            "sectionId": "s21-results-and-discussions",
+            "charStart": 50752,
+            "charEnd": 50912,
+            "quote": "We obtained $\\mathscr{R}_0 = 2.67$ for the estimated model parameters, which are greater than one, indicating that the tuberculosis is continuously multiplying."
+          }
+        ]
+      },
+      {
+        "text": "Every value checked against its passage: 17 as written, 0 converted into years, 0 percentages read as fractions; none per another time unit than the model's.",
+        "origin": "computed-observation",
+        "anchors": []
+      },
+      {
+        "text": "Looked for other values behind the headline in the passages that state the headline; no figure: the headline's passages cite none; every figure caption (12); the sections Parameter Estimation; Maximum likelihood estimation: none found.",
+        "origin": "computed-observation",
+        "anchors": []
+      }
+    ]
+  }
+}

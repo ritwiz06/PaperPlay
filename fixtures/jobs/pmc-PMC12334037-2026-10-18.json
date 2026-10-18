@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "job-record/1",
+  "sourceId": "pmc-PMC12334037",
+  "recordedOn": "2026-10-18",
+  "note": "The hepatitis C world under the review rules (ADR-0044): two planners, glm-5-3's plan kept for every slot, its level 1 repaired by kimi-k2-7-code to meet the level rule; then two reviewers given the equations and each level's direct-effect tag. kimi-k2-7-code blocked level 3 as unsupported, its words calling the share η a rate; glm-5-3 made it advice, so the block did not stand and the world is ready. Both misses are now cases in the reviewers' bake-off.",
+  "replays": true,
+  "stages": {
+    "reader": "qwen36-27b",
+    "transcriber": "qwen3-235b-a22b-thinking-2507",
+    "second-transcriber": "inkling-small",
+    "router": "glm-5-3",
+    "planner": "kimi-k2-7-code",
+    "second-planner": "glm-5-3",
+    "explainer": "kimi-k2-7-code",
+    "reviewer": "glm-5-3",
+    "second-reviewer": "kimi-k2-7-code"
+  },
+  "structuredOutput": {
+    "glm-5-3": true,
+    "inkling-small": true,
+    "kimi-k2-7-code": true,
+    "qwen3-235b-a22b-thinking-2507": true,
+    "qwen36-27b": true
+  },
+  "outcome": "ready",
+  "states": [
+    "received",
+    "parsing",
+    "planning",
+    "building",
+    "running",
+    "repairing",
+    "building",
+    "running",
+    "checking",
+    "ready"
+  ],
+  "world": "fixtures/worldspecs/generated/pmc-PMC12334037-2026-10-18.json"
+}
