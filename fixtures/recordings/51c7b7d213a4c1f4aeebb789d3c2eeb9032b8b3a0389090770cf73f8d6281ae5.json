@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "granite41-30b",
+  "promptHash": "51c7b7d213a4c1f4aeebb789d3c2eeb9032b8b3a0389090770cf73f8d6281ae5",
+  "response": {
+    "model": "granite41-30b",
+    "text": "{\n  \"findings\": [\n    {\n      \"finding\": \"unsupported\",\n      \"kind\": \"unsupported\",\n      \"level\": 2,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Rewrite the statement to accurately reflect the paper's content. The paper does not claim that vaccinating every newborn would eliminate tuberculosis within ten years. Remove or replace the quote with a correct summary of the paper's findings related to vaccination and the basic reproduction number.\"\n      ,\n      \"term\": null\n    },\n    {\n      \"finding\": \"definitional\",\n      \"kind\": \"definitional\",\n      \"level\": 5,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace the statement with a level that tests a finding from the paper. For example, investigate how varying the treatment rate (delta) affects the peak number of infectious individuals or the time to reach the endemic equilibrium, which are emergent properties not directly definable from the equation dt/dt = delta × i − (alpha + omega + mu) × t alone.\",\n      \"term\": \"delta × i\"\n    },\n    {\n      \"finding\": \"advice\",\n      \"kind\": \"unsupported\",\n      \"level\": 3,\n      \"severity\": \"advice\",\n      \"suggestion\": \"Clarify the statement to avoid implying that faster progression (higher gamma) makes the disease uncontrollable. Instead, state that increasing gamma raises the peak and total number of exposed individuals, as supported by the equation de/dt = beta × s × i − (gamma + mu) × e.\",\n      \"term\": null\n    },\n    {\n      \"finding\": \"advice\",\n      \"kind\": \"unsupported\",\n      \"level\": 4,\n      \"severity\": \"advice\",\n      \"suggestion\": \"Modify the statement to specify the time frame or condition under which more people are recovered. The equation dr/dt = alpha × t − (eta + mu) × r shows that a higher alpha increases the recovered compartment over time, but the absolute number at year 30 depends on the entire system dynamics.\",\n      \"term\": null\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 23178,
+      "completionTokens": 448,
+      "totalTokens": 23626
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:53:01.514Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "qwen3-235b-a22b-thinking-2507",
+  "promptHash": "8d6e0f2b86272eae4e6b64bb5b23275f5f7fc567cd7d1f63f4c68a33012f482b",
+  "response": {
+    "model": "qwen3-235b-a22b-thinking-2507",
+    "text": "",
+    "usage": {
+      "promptTokens": 13941,
+      "completionTokens": 32000,
+      "totalTokens": 45941
+    },
+    "finishReason": "length"
+  },
+  "recordedAt": "2026-10-17T20:29:00.909Z"
+}

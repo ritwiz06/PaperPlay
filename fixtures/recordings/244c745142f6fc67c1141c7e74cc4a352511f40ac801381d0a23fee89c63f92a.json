@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "llama4-maverick-17b",
+  "promptHash": "244c745142f6fc67c1141c7e74cc4a352511f40ac801381d0a23fee89c63f92a",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"findings\": [\n{\n\"finding\": \"The level 'Can adherence stop the virus?' is blocking, of kind unsupported. The statement 'When everyone adheres, the recovered group peaks higher by more than 0.004' is not supported by the paper. The control 'Treatment adherence proportion' does not directly affect the 'Recovered' compartment's equation.\",\n\"kind\": \"unsupported\",\n\"level\": 1,\n\"severity\": \"blocking\",\n\"suggestion\": \"Rewrite the statement to reflect the actual effect of treatment adherence on a relevant compartment. For example, 'When everyone adheres, the chronically infected on treatment peak lower by more than some value.' Determine the actual value by running the simulation.\"\n    ,\n\"term\": \"N/A\"\n},\n{\n\"finding\": \"The level 'The quitters spread it most' is blocking, of kind unsupported. The statement 'When quitters pass the virus on twice as easily, the quitters peak is higher by more than 0.006' is not supported by the paper. The control 'Transmission by quitters' does not directly affect the 'Chronically infected, quit treatment' compartment's equation.\",\n\"kind\": \"unsupported\",\n\"level\": 2,\n\"severity\": \"blocking\",\n\"suggestion\": \"Rewrite the statement to reflect the actual effect of transmission by quitters on a relevant compartment. For example, 'When quitters pass the virus on twice as easily, the acutely infected peak is higher by more than some value.' Determine the actual value by running the simulation.\"\n    ,\n\"term\": \"N/A\"\n},\n{\n\"finding\": \"The level 'Faster chronic recovery' is of advice kind. The statement 'When chronic recovery doubles, the quitters peak is lower by more than 0.001' is a valid teaching. The control 'Chronic recovery rate' directly affects the 'Chronically infected, quit treatment' compartment's equation, but the level measures an emergent summary.\",\n\"kind\": \"definitional\",\n\"level\": 3,\n\"severity\": \"advice\",\n\"suggestion\": \"N/A\",\n\"term\": \"N/A\"\n},\n{\n\"finding\": \"The level 'Acute recovery helps' is of advice kind. The statement 'When acute recovery doubles, the recovered group peaks higher by more than 0.005' is a valid teaching. The control 'Acute recovery rate' directly affects the 'Recovered' compartment's equation, and the level measures an emergent summary.\",\n\"kind\": \"definitional\",\n\"level\": 4,\n\"severity\": \"advice\",\n\"suggestion\": \"N/A\",\n\"term\": \"N/A\"\n},\n{\n\"finding\": \"The level 'When people quit treatment' is of advice kind. The statement 'When the quitting rate doubles, the quitters peak is higher by more than 0.001' is a valid teaching. The control 'Treatment quitting rate' directly affects the 'Chronically infected, quit treatment' compartment's equation, and the level measures an emergent summary.\",\n\"kind\": \"definitional\",\n\"level\": 5,\n\"severity\": \"advice\",\n\"suggestion\": \"N/A\",\n\"term\": \"N/A\"\n}\n]}",
+    "usage": {
+      "promptTokens": 13317,
+      "completionTokens": 658,
+      "totalTokens": 13975
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:53:04.628Z"
+}

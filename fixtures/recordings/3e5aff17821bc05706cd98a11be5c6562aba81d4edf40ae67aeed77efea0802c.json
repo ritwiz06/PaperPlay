@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "gemma4-31b-it",
+  "promptHash": "3e5aff17821bc05706cd98a11be5c6562aba81d4edf40ae67aeed77efea0802c",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"findings\": [{\"finding\": \"blocking\", \"kind\": \"unsupported\", \"level\": 2, \"severity\": \"blocking\", \"suggestion\": \"Rewrite the level's words to describe the effect on the exposed or infectious population instead of the vaccinated group. The equations show that the contact rate (beta) affects the rate at which susceptible individuals become exposed (de/dt), but it has no direct or indirect effect on the rate at which people leave the vaccinated group (dv/dt), which is governed only by theta and mu.\" \n,\"term\": \"beta\"}]}",
+    "usage": {
+      "promptTokens": 22476,
+      "completionTokens": 124,
+      "totalTokens": 22600
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:53:00.398Z"
+}

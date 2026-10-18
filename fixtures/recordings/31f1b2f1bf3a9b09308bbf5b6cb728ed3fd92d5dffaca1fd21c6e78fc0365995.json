@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "inkling-small",
+  "promptHash": "31f1b2f1bf3a9b09308bbf5b6cb728ed3fd92d5dffaca1fd21c6e78fc0365995",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\n\n\n  \"findings\": [\n    {\n      \"finding\": \"Level 2 misattributes a claim to the paper.\",\n      \"kind\": \"unsupported\",\n      \"level\": 2,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace the quoted sentence with a claim actually in the paper. The text says: 'The paper shows that vaccinating every newborn would eliminate tuberculosis within ten years.' That sentence is not in the source; the paper never gives a ten-year elimination timeline for newborn vaccination. It reports sensitivity indices (pi lowers Rv) and equilibrium stability conditions, not a calendar prediction.\",\n      \"term\": \"The wrong words are 'The paper shows that vaccinating every newborn would eliminate tuberculosis within ten years.' They invent a specific timeline and outcome the paper does not state. Repair: change\" \n    },\n    {\n      \"finding\": \"Level 3 overstates the measured effect.\",\n      \"kind\": \"overstated\",\n      \"level\": 3,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Weaken the statement to match the check. The level claims 'the epidemic doubles in size and the disease can never be controlled,' but the check records only about 6 more exposed people at year 10. That is a small quantitative change, not a doubling or loss of control. Repair: replace with 'with faster progression, the exposed count is about 6 higher at year 10,' or ask a what-if that tests a paper\" \n    ,\n    \"term\": \"The claim is stronger than its measurement: 'the epidemic doubles in size and the disease can never be controlled' versus measured ~6 more exposed at year 10.\"\n    },\n    {\n      \"finding\": \"Level 4 fails its rule and teaches an unreliable effect.\",\n      \"kind\": \"unsupported\",\n      \"level\": 4,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"The check fails (9/20), so the statement 'more people are recovered at year 30' is not reliably produced by doubling alpha. Because recovered also loses immunity (eta) and the treated pool drains, the long-run recovered count does not consistently rise in the simulation. Repair: change the statement to a direct, reliable effect (e.g., 'the treated compartment empties faster') or change the what-if\" \n    ,\n    \"term\": \"The words 'more people are recovered at year 30' are wrong because the simulation does not consistently show it; the check fails.\"\n    },\n    {\n      \"finding\": \"Level 5 is purely definitional and teaches nothing the paper found.\",\n      \"kind\": \"definitional\",\n      \"level\": 5,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Set delta = 0 removes the inflow term delta*i from dt/dt, so with t(0)=0 the compartment stays empty by definition. This teaches no paper finding. Repair: keep delta as control but ask a what-if that tests a paper result, e.g., 'what if treatment were twice as fast?' and watch the infectious peak (as in Level 6), which relates to the sensitivity finding that delta lowers Rv.\",\n      \"term\": \"delta*i (the inflow term in dt/dt = delta*i - (alpha+omega+mu)*t)\"\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 23047,
+      "completionTokens": 4433,
+      "totalTokens": 27480
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:54:37.759Z"
+}

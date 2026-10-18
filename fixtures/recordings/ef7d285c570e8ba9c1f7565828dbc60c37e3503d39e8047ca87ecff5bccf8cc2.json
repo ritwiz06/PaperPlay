@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "muse-glimmer-30b",
+  "promptHash": "ef7d285c570e8ba9c1f7565828dbc60c37e3503d39e8047ca87ecff5bccf8cc2",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"findings\":[{\"level\":2,\"severity\":\"blocking\",\"kind\":\"unsupported\",\"finding\":\"The level attributes to the paper the claim 'The paper shows that vaccinating every newborn would eliminate tuberculosis within ten years.' This statement is not in the source, provenance fails, and it mismatches the level's treatment-rate control and infectious watch.\",\"suggestion\":\"Replace the quoted paper claim with a paper-supported statement about treatment rate, e.g., that higher treatment rate δ reduces R_v with negative sensitivity and can make the disease-free equilibrium locally asymptotically stable when R_v<1.\",\"term\":null},{\"level\":3,\"severity\":\"blocking\",\"kind\":\"overstated\",\"finding\":\"The What-if states the epidemic doubles in size and the disease can never be controlled when exposed become infectious twice as fast. The check shows only 6 more exposed people at year 10 on 18 of 20 runs, so the claim is far stronger than the measured effect and is not supported by the paper.\",\"suggestion\":\"Reword to reflect the paper's sensitivity result that higher progression rate γ increases R_v and raises exposed/infectious levels, e.g., 'exposed at year 10 increases modestly with faster progression'.\",\"term\":null},{\"level\":4,\"severity\":\"blocking\",\"kind\":\"unsupported\",\"finding\":\"The What-if claims more people are recovered at year 30 when recovery is twice as fast. The check holds on 9 of 20 and FAILS the rule, so the world would teach a false generalisation about the recovery rate effect.\",\"suggestion\":\"Revise the What-if to test a paper-supported finding, e.g., what if treatment rate δ were twice as fast, the infectious peak is lower, consistent with the paper's negative sensitivity of δ on R_v.\",\"term\":null},{\"level\":5,\"severity\":\"blocking\",\"kind\":\"definitional\",\"finding\":\"Setting treatment rate δ to zero empties the treated compartment it fills, so 'with no treatment, no one is ever in the treated compartment' follows directly from the model definition and teaches nothing the paper found.\",\"suggestion\":\"Replace with a What-if that tests a paper finding, e.g., what if treatment were twice as fast, the infectious peak is lower, reflecting the paper's negative sensitivity of δ on R_v and stability of the disease-free equilibrium.\",\"term\":\"delta * i\"}]}",
+    "usage": {
+      "promptTokens": 21259,
+      "completionTokens": 5543,
+      "totalTokens": 26802
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:54:29.697Z"
+}

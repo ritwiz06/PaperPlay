@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "gpt-oss-120b",
+  "promptHash": "0aac865876e01cfa7a31c47d15e5636b460f1105bf2fb5ce6335f3c46f0c6f39",
+  "response": {
+    "model": "gpt-oss-120b",
+    "text": "{\n  \"findings\": [\n    {\n      \"finding\": \"Level 1 – “Can adherence stop the virus?”\",\n      \"kind\": \"unsupported\",\n      \"level\": 1,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Rewrite the level so that it does **not** claim that adherence can stop the virus or that the recovered compartment peaks higher by a specific amount.  For example, change the title to *“How does treatment‑adherence affect the recovered compartment?”* and replace the “What‑if” statement with a neutral description such as *“What if the adherence proportion θ is set to 1 (full adherence)? Observe (a\" \n        , \"term\": null\n    },\n    {\n      \"finding\": \"Level 2 – “The quitters spread it most”\",\n      \"kind\": \"unsupported\",\n      \"level\": 2,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Remove the implication that quitters are the dominant source of transmission and delete the precise numeric claim about the peak.  A suitable rewrite is: *“How does increasing the transmission rate β₃ of quitters affect the size of the quitter compartment?”* and change the “What‑if” to *“What if β₃ is doubled? Observe the resulting change in the Cq peak.”*\",\n      \"term\": null\n    },\n    {\n      \"finding\": \"Level 3 – “Faster chronic recovery”\",\n      \"kind\": \"unsupported\",\n      \"level\": 3,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"The paper never quantifies a specific reduction of the Cq peak when ρ is doubled.  Re‑phrase the level to focus on the qualitative direction that the model predicts.  For example: *“What is the qualitative effect on the Cq peak when the chronic‑recovery rate ρ is increased?”* and keep the “What‑if” as *“What if ρ is multiplied by 2? Observe whether the Cq peak rises or falls.”*\",\n      \"term\": null\n    },\n    {\n      \"finding\": \"Level 4 – “Acute recovery helps”\",\n      \"kind\": \"unsupported\",\n      \"level\": 4,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"The control described (η) is the *proportion* of acutely infected individuals who recover, not the acute‑recovery *rate* r₂ that appears in the ODE for I.  The level therefore mis‑describes the model.  Rewrite it to use the correct parameter and drop the unsupported numeric claim.  Example: *“How does increasing the acute‑recovery proportion η affect the recovered compartment R?”* with the “What‑​\" \n        , \"term\": null\n    },\n    {\n      \"finding\": \"Level 5 – “When people quit treatment”\",\n      \"kind\": \"unsupported\",\n      \"level\": 5,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Delete the precise statement that the Cq peak is higher by “more than 0.001” because the paper provides no such measurement.  Re‑state the level as a qualitative exploration, e.g.: *“What is the effect on the Cq peak when the treatment‑quitting rate δ is increased?”* and keep the “What‑if” as *“What if δ is doubled? Observe the direction of change in the Cq peak.”*\",\n      \"term\": null\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 13814,
+      "completionTokens": 1604,
+      "totalTokens": 15418
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:54:24.263Z"
+}

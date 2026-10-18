@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "glm-5-3",
+  "promptHash": "2a09020f4b7b8db41bcd329ec4754ef4d4cd1c57cbd15e111bf553cff48a3956",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"findings\": [{\"finding\": \"Level 4 (Acute recovery helps) — blocking, kind: unsupported. The level's words misdescribe the model. Its control is eta, which the paper defines as a proportion, not a rate: 'Acutely infected individuals transition out of the acute stage at rate r, while a proportion η of these recover temporarily.' The speed at which acutely infected people leave the acute stage is r2, and eta does not appearin\" \t, \"kind\": \"unsupported\", \"level\": 4, \"severity\": \"blocking\", \"suggestion\": \"On level 4 only, fix the words to match the control. Either (a) rename the control 'Proportion of acute cases that recover' and reword the What-if as 'What if twice as many acutely infected people recovered instead of developing chronic infection?' (the claim about the recovered peak can stand, since it holds 20/20), or (b) if the level is meant to test the paper's actual finding about the acute *\"\n\t, \"term\": null}, {\"finding\": \"Level 2 (The quitters spread it most) — blocking. Two problems on this level. First, the level rule fails: the statement 'the quitters peak is higher by more than 0.006' holds on only 18 of 20 runs, yet it is worded as an unconditional claim; in 2 of 20 parameter settings the world would show the learner the opposite of what the level asserts, and a failed check cannot be waved through. Second, \"\n\t, \"kind\": \"overstated\", \"level\": 2, \"severity\": \"blocking\", \"suggestion\": \"Scoped to level 2: re-anchor the level to what the paper actually found and what holds robustly. The paper's Fig 6 finding is that beta3 exerts the strongest influence on the reproduction number — so measure R0 (or total infections) rather than the Cq peak, and restate the claim about that quantity, then re-run the family's checks. If the Cq-peak measurement must stay, the claim must be weakened\"\n\t, \"term\": null}, {\"finding\": \"Level 1 (Can adherence stop the virus?) — advice. The statement 'When everyone adheres, the recovered group peaks higher by more than 0.004' is true in the model (20/20) but is not something the paper reports: the paper's adherence results concern R0 (dropping below 1 above 52% adherence, Fig 7a) and the I, C, and Cq compartments (Figs 9–11) — it never reports dynamics of the recovered compartment\"\n\t, \"kind\": \"unsupported\", \"level\": 1, \"severity\": \"advice\", \"suggestion\": \"Scoped to level 1: either anchor the level to a finding the paper actually reports — e.g. the 52% adherence threshold for R0 < 1, or Fig 11's result that at 100% adherence there are no Cq cases (measuring the quitters compartment instead of the recovered peak) — or explicitly present the recovered-peak statement as a model exploration rather than a paper finding. The current claim itself need not\"\n\t, \"term\": null}]}",
+    "usage": {
+      "promptTokens": 14417,
+      "completionTokens": 7527,
+      "totalTokens": 21944
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:59:44.908Z"
+}

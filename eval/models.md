@@ -103,25 +103,29 @@ only: in a job, the controller shows the planner each failing level's measuremen
 
 ## Reviewing
 
-Each model reviewed a tuberculosis world in words with four faults planted: level 2 claims, as the paper's, what the
-paper does not say; level 3 states an effect far beyond its measurement; level 4 fails the level rule; level 5's effect
-follows from the model's definitions alone. Ranked by never calling the failed check acceptable, then the planted
-faults it blocks (levels 2, 3 and 5), less any block on levels 1, 6 and 7, which have no fault (6 and 7 test what the
-paper found), then whether it names level 5 definitional.
+Each model reviewed the worlds of `eval/bakeoff/review-cases.json`, as a job's reviewers do: in words, with the
+model's equations and each level's direct-effect tag (ADR-0044). A tuberculosis world with faults planted (a claim given
+as the paper's that it does not make, an effect far beyond its measurement, a level failing the level rule, a level
+following from a definition); the tuberculosis world of 2026-10-17, whose levels on the paper's findings a reviewer
+blocked as definitional; the hepatitis C world of 2026-10-17, whose level 5 the owner rules a definitional fault. Every
+reviewer mistake a live run reveals is added there. A definitional fault counts as blocked only with a term of the
+measured compartment's equation holding the control, as the controller requires. Ranked by never calling the failed
+check acceptable, then the faults it blocks less its blocks on clean levels, then the definitional faults it names with
+a valid term, then the fewest definitional blocks naming no valid term.
 
-| Rank | Model | Vendor | Faults blocked | Definitional named | Wrong blocks | Called a failed check acceptable | Failed calls |
-|---|---|---|---|---|---|---|---|
-| 1 | glm-5-3 | Z.ai | 3/3 | yes | 0 | no | 0 |
-| 2 | gemma4-31b-it | Google | 3/3 | yes | 0 | no | 0 |
-| 3 | qwen38-27b | Qwen | 3/3 | yes | 0 | no | 0 |
-| 4 | muse-glimmer-30b | Muse | 3/3 | yes | 0 | no | 0 |
-| 5 | gpt-oss-120b | OpenAI | 2/3 | yes | 0 | no | 0 |
-| 6 | inkling-small | Thinking Machines | 2/3 | yes | 0 | no | 0 |
-| 7 | qwen3-235b-a22b-thinking-2507 | Qwen | 2/3 | yes | 0 | no | 0 |
-| 8 | qwen36-27b | Qwen | 2/3 | yes | 0 | no | 0 |
-| 9 | kimi-k2-7-code | Moonshot AI | 1/3 | no | 0 | no | 0 |
-| 10 | granite41-30b | IBM | 1/3 | no | 0 | no | 0 |
-| 11 | llama4-maverick-17b | Meta | 0/3 | no | 0 | no | 0 |
+| Rank | Model | Vendor | Faults blocked | Definitional, with a valid term | Clean levels blocked | Terms not valid | Called a failed check acceptable | Failed calls |
+|---|---|---|---|---|---|---|---|---|
+| 1 | glm-5-3 | Z.ai | 3/4 | 1/2 | 0/8 | 0 | no | 0 |
+| 2 | kimi-k2-7-code | Moonshot AI | 3/4 | 1/2 | 0/8 | 0 | no | 0 |
+| 3 | gemma4-31b-it | Google | 3/4 | 1/2 | 0/8 | 0 | no | 0 |
+| 4 | qwen38-27b | Qwen | 3/4 | 1/2 | 0/8 | 0 | no | 0 |
+| 5 | qwen36-27b | Qwen | 3/4 | 1/2 | 0/8 | 0 | no | 0 |
+| 6 | muse-glimmer-30b | Muse | 3/4 | 1/2 | 0/8 | 0 | no | 0 |
+| 7 | inkling-small | Thinking Machines | 2/4 | 0/2 | 1/8 | 1 | no | 0 |
+| 8 | granite41-30b | IBM | 2/4 | 1/2 | 2/8 | 1 | no | 0 |
+| 9 | qwen3-235b-a22b-thinking-2507 | Qwen | 0/4 | 0/2 | 0/8 | 0 | no | 1 |
+| 10 | llama4-maverick-17b | Meta | 2/4 | 0/2 | 3/8 | 3 | no | 0 |
+| 11 | gpt-oss-120b | OpenAI | 2/4 | 0/2 | 5/8 | 2 | no | 0 |
 
 ## Proposed per stage
 
@@ -134,8 +138,8 @@ paper found), then whether it names level 5 definitional.
 | planner | kimi-k2-7-code | the most levels meeting both rules, then worlds on the paper's findings |
 | second-planner | glm-5-3 | the best planner from another vendor |
 | explainer | kimi-k2-7-code | the planner's model, which knows the plan; its words are held by the schema and their quotes by provenance, not ranked |
-| reviewer | glm-5-3 | the most planted faults found, none blocked wrongly, no failed check called acceptable |
-| second-reviewer | gemma4-31b-it | the best reviewer from another vendor |
+| reviewer | glm-5-3 | the most faults blocked less clean levels blocked, no failed check called acceptable |
+| second-reviewer | kimi-k2-7-code | the best reviewer from another vendor |
 
 ## Failed calls
 
@@ -144,3 +148,4 @@ None.
 ### Planning and reviewing
 
 - glm-5-3, planning arxiv-2203.01434v2: glm-5-3's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object
+- qwen3-235b-a22b-thinking-2507, reviewing: qwen3-235b-a22b-thinking-2507's reviewer reply was invalid twice. It is not valid JSON: the reply holds no JSON object

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "muse-glimmer-30b",
+  "promptHash": "a20f2a46fe9eb5b6e3605a10895e1bcbcb4addd364066e0eb45d46de7ac4015b",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"findings\":[{\"level\":4,\"severity\":\"blocking\",\"kind\":\"unsupported\",\"finding\":\"The level describes the control as Acute recovery rate and says speed up recovery from acute infection, but the model parameter used is eta, the proportion of acutely infected who recover temporarily, not the rate of leaving the acute stage r2. The words misdescribe the mechanism that the equations implement.\",\"suggestion\":\"Rename the control to proportion of acutely infected who recover temporarily and revise the What-if wording to reflect changing eta, or switch the control to r2 so the description of speeding up acute recovery matches the model.\",\"term\":null},{\"level\":1,\"severity\":\"advice\",\"kind\":\"overstated\",\"finding\":\"The level claims a quantitative recovered-peak increase when everyone adheres, but the paper only reports that adherence exceeding 52% drives R0 below 1 and discusses synergistic effects on R0, with no reported recovered-peak magnitude.\",\"suggestion\":\"Change the measured outcome to R0 or infected prevalence and frame the What-if around the paper’s 52% adherence threshold for R0<1 rather than a recovered-peak magnitude.\",\"term\":null}]}",
+    "usage": {
+      "promptTokens": 13538,
+      "completionTokens": 7803,
+      "totalTokens": 21341
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:55:14.776Z"
+}

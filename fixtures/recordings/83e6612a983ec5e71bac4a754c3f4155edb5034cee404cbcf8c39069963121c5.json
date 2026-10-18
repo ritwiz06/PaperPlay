@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "83e6612a983ec5e71bac4a754c3f4155edb5034cee404cbcf8c39069963121c5",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"findings\": [\n    {\n      \"finding\": \"Level 2 — blocking, unsupported\",\n      \"kind\": \"unsupported\",\n      \"level\": 2,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace the attributed quote with a paper-supported statement about treatment.\",\n      \"term\": null\n    },\n    {\n      \"finding\": \"Level 3 — blocking, unsupported / stronger than measurement\",\n      \"kind\": \"unsupported\",\n      \"level\": 3,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Reword the What-if claim to match the model's measured outcome.\",\n      \"term\": null\n    },\n    {\n      \"finding\": \"Level 4 — blocking, unsupported\",\n      \"kind\": \"unsupported\",\n      \"level\": 4,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Change the measured summary to one the model supports, such as the endemic-equilibrium level of recovered or the timing of the recovered peak.\",\n      \"term\": null\n    },\n    {\n      \"finding\": \"Level 5 — blocking, definitional\",\n      \"kind\": \"definitional\",\n      \"level\": 5,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Keep the treatment-rate control but watch the infectious compartment instead of the treated compartment.\",\n      \"term\": \"delta*i\"\n    },\n    {\n      \"finding\": \"Confusing compartment label — advice\",\n      \"kind\": \"unsupported\",\n      \"level\": 5,\n      \"severity\": \"advice\",\n      \"suggestion\": \"Rename the treated compartment id from `t` to `tr` (or uppercase `T`) in the model ids and level text to avoid confusion with the time variable `t`.\",\n      \"term\": null\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 22086,
+      "completionTokens": 9885,
+      "totalTokens": 31971
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:57:42.162Z"
+}

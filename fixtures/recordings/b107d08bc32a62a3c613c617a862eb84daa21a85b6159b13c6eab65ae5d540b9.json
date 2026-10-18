@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "gpt-oss-120b",
+  "promptHash": "b107d08bc32a62a3c613c617a862eb84daa21a85b6159b13c6eab65ae5d540b9",
+  "response": {
+    "model": "gpt-oss-120b",
+    "text": "{\n  \"findings\": [\n    {\n      \"finding\": \"unsupported‑statement\",\n      \"kind\": \"unsupported\",\n      \"level\": 1,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace the phrase “in a town already above the elimination threshold” with a neutral description that does not assume the town’s reproductive number. For example: “Speed up the move from latent to active TB and see the outbreak climb higher.” This wording is supported by the paper’s sensitivity analysis of γ but does not add an unwarranted premise.\"\n    ,\n      \"term\": null\n    },\n    {\n      \"finding\": \"mis‑described‑effect\",\n      \"kind\": \"unsupported\",\n      \"level\": 2,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"The level’s description says that raising the contact rate makes “people leave the protected vaccinated group” and that the vaccinated peak is “more than 3 million lower.” The model’s equations show that β appears only in the infection term of dE/dt and dS/dt; it does not appear in dv/dt, so the contact rate does not directly drive the size of the vaccinated compartment. Rewrite the description to\"\n      ,\n      \"term\": null\n    },\n    {\n      \"finding\": \"what‑if‑mismatch\",\n      \"kind\": \"unsupported\",\n      \"level\": 2,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"The “What‑if: What if people contacted others twice as often?” is meant to illustrate the effect of β on the spread of infection, yet the level’s measured outcome is the vaccinated‑population peak. Change the measured outcome to an infection‑related summary (e.g., the infectious‑population peak or the basic reproduction number) so the what‑if directly teaches the impact of β.\"\n    ,\n      \"term\": null\n    },\n    {\n      \"finding\": \"over‑strong‑claim\",\n      \"kind\": \"overstated\",\n      \"level\": 3,\n      \"severity\": \"advice\",\n      \"suggestion\": \"The statement “Doubling the treatment rate makes the infectious peak more than 3 million lower” is not quantified in the paper; the sensitivity analysis only shows the direction of change, not an exact magnitude. Re‑phrase to “Doubling the treatment rate substantially lowers the infectious‑population peak (the model predicts a large reduction).”\"\n    ,\n      \"term\": null\n    },\n    {\n      \"finding\": \"confusing‑word\",\n      \"kind\": \"unsupported\",\n      \"level\": 1,\n      \"severity\": \"advice\",\n      \"suggestion\": \"The term “elimination threshold” is not defined in the paper. Replace it with the standard phrase “basic reproduction number < 1” or “disease‑free equilibrium stability” to avoid ambiguity.\"\n    ,\n      \"term\": null\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 22944,
+      "completionTokens": 1450,
+      "totalTokens": 24394
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:53:56.351Z"
+}

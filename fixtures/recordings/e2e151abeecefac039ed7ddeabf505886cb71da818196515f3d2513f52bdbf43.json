@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "inkling-small",
+  "promptHash": "e2e151abeecefac039ed7ddeabf505886cb71da818196515f3d2513f52bdbf43",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\n\n\n  \"findings\": [\n    {\n      \"finding\": \"Level 1 misaligns its question with its measurement, so the What-if cannot teach what the level claims.\",\n      \"kind\": \"unsupported\",\n      \"level\": 1,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Change the measured compartment from recovered (R) peak to acutely infected (I) or quitters (Cq) peak (or to a final-size / R0-related summary), so that 'everyone adheres' actually shows whether spread stops; or retitle the level to 'Adherence increases recovery' to match the recovered-peak outcome.\",\n      \"term\": \"dr/dt of R does not contain theta; the effect on R peak is emergent and does not show R0<1\"\n    },\n    {\n      \"finding\": \"Level 4 misdescribes its control: the slider is eta (proportion of acute cases that recover), not a recovery speed.\",\n      \"kind\": \"unsupported\",\n      \"level\": 4,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Relabel the control as 'Proportion of acute cases that recover directly' (model id eta, term +i*eta*r2 in dr/dt), and change the What-if to 'What if a larger share of acute cases recovered directly?' so the words match the equation; keep the recovered-peak measurement if desired.\",\n      \"term\": \"eta in dr/dt = + i * eta * r2\"\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 13758,
+      "completionTokens": 6598,
+      "totalTokens": 20356
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:55:19.945Z"
+}

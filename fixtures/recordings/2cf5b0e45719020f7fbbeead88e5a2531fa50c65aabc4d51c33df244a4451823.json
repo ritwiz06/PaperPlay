@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "gemma4-31b-it",
+  "promptHash": "2cf5b0e45719020f7fbbeead88e5a2531fa50c65aabc4d51c33df244a4451823",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"findings\": [{\"finding\": \"blocking\", \"kind\": \"unsupported\", \"level\": 2, \"severity\": \"blocking\", \"suggestion\": \"Rewrite the statement to: 'When quitters pass the virus on twice as easily, the number of acutely infected people peaks higher by more than 0.006.'\", \"term\": \"The level claims that increasing the transmission rate of quitters (beta3) increases the peak of the quitters compartment (cq). However, beta3 only appears in the equations for ds/dt and di/dt (via λ)\"}, {\"finding\": \"advice\", \"kind\": \"unsupported\", \"level\": 4, \"severity\": \"advice\", \"suggestion\": \"Rewrite the statement to: 'When the rate of leaving the acute stage doubles, the recovered group peaks higher by more than 0.005.'\", \"term\": \"The level labels the control 'Acute recovery rate' and refers to 'acutely infected people recovering', but the control is r2 (Rate of leaving the acute stage). According to the paper, r2 is the rate a\"}]}",
+    "usage": {
+      "promptTokens": 13820,
+      "completionTokens": 241,
+      "totalTokens": 14061
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:53:03.145Z"
+}

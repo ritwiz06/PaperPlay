@@ -14,7 +14,7 @@
     "second-planner": "glm-5-3",
     "explainer": "kimi-k2-7-code",
     "reviewer": "glm-5-3",
-    "second-reviewer": null
+    "second-reviewer": "kimi-k2-7-code"
   },
   "excluded": {
     "asOf": "2026-10-16",

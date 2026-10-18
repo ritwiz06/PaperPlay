@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "llama4-maverick-17b",
+  "promptHash": "a225e9f29ba59863f550a107af67d46f95703f65e1ecbb5c5abbabba86785911",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"findings\":[{\"finding\":\"Level 2's statement is not supported by the paper.\",\"kind\":\"unsupported\",\"level\":2,\"severity\":\"blocking\",\"suggestion\":\"Change the statement to one the paper supports, such as: 'The paper shows that increasing the treatment rate lowers the number of infectious individuals.'\",\"term\":\"treatment rate\"},{\"finding\":\"Level 3 is definitional.\",\"kind\":\"definitional\",\"level\":3,\"severity\":\"blocking\",\"suggestion\":\"Change the What-if to one that tests a finding the paper reports, such as: 'what if the progression rate were zero?'\",\"term\":\"gamma\"},{\"finding\":\"Level 4's check fails.\",\"kind\":\"other\",\"level\":4,\"severity\":\"advice\",\"suggestion\":\"Check the level's statement and What-if to ensure they are consistent with the paper's findings and the level's effect.\",\"term\":\"\"},{\"finding\":\"The statement in Level 2 is labelled as the paper's but is actually a teaching choice.\",\"kind\":\"other\",\"level\":2,\"severity\":\"advice\",\"suggestion\":\"Rephrase the statement to reflect the paper's actual findings or remove the label.\",\"term\":\"\"}]}",
+    "usage": {
+      "promptTokens": 21038,
+      "completionTokens": 239,
+      "totalTokens": 21277
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:52:59.295Z"
+}

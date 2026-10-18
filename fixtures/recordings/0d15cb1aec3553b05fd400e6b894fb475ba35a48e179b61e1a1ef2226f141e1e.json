@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "granite41-30b",
+  "promptHash": "0d15cb1aec3553b05fd400e6b894fb475ba35a48e179b61e1a1ef2226f141e1e",
+  "response": {
+    "model": "granite41-30b",
+    "text": "{\n  \"findings\": [\n    {\n      \"finding\": \"unsupported\",\n      \"kind\": \"unsupported\",\n      \"level\": 2,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Rewrite the statement: 'Doubling the contact rate makes the vaccinated peak more than 3 million lower.' The contact rate (beta) does not appear in the equation for the vaccinated compartment (dv/dt), so the model does not support a direct effect of beta on the vaccinated population. A more accurate description would be: 'Doubling the contact rate increases the rate at which vaccinated individuals,\"\n    ,\n      \"term\": null\n    },\n    {\n      \"finding\": \"definitional\",\n      \"kind\": \"definitional\",\n      \"level\": 4,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace the What-if with a test of a paper finding. The statement 'Doubling the vaccination rate makes the exposed peak more than 5 million lower' follows from the model definition: increasing pi directly increases the inflow to V (dv/dt = pi × s − (theta + mu) × v), which reduces the susceptible pool (S) available for exposure (de/dt = beta × s × i − (gamma + mu) × e). A more appropriate What-if,\",\n      \"term\": \"pi × s\"\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 23019,
+      "completionTokens": 291,
+      "totalTokens": 23310
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:52:49.647Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "granite41-30b",
+  "promptHash": "da59c8992a28dea4b117527259acdad2046641b0263e3359974ed2077292655c",
+  "response": {
+    "model": "granite41-30b",
+    "text": "{\n  \"findings\": [\n    {\n      \"finding\": \"unsupported\",\n      \"kind\": \"unsupported\",\n      \"level\": 1,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Rewrite the statement 'When everyone adheres, the recovered group peaks higher by more than 0.004.' to accurately reflect the model's behavior. The treatment adherence proportion (θ) does not appear directly in the equation for the recovered compartment (dr/dt), so changes in θ do not have a direct, guaranteed effect on the peak of the recovered group. The model may show an increase in recoveries,\"\n\n      , \"term\": null\n    },\n    {\n      \"finding\": \"unsupported\",\n      \"kind\": \"unsupported\",\n      \"level\": 2,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Rewrite the statement 'When quitters pass the virus on twice as easily, the quitters peak is higher by more than 0.006.' The transmission rate from those who quit treatment (β3) does not appear directly in the equation for the quitters compartment (dcq/dt), so doubling β3 does not deterministically cause the quitters peak to rise by a specific amount. The model may show an increased peak due to\"\n\n      , \"term\": null\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 13845,
+      "completionTokens": 279,
+      "totalTokens": 14124
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:52:55.329Z"
+}

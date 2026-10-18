@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "qwen36-27b",
+  "promptHash": "20558e803aebaed34829f1b032305665f2c78cf119c0117249934ba8fbe64658",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"findings\": [{\"finding\": \"The title asks “Can adherence stop the virus?”, but the level measures the recovered group’s peak. A higher recovered peak does not indicate whether transmission stops (which depends on R0 or infection peaks). The What-if cannot teach what the level’s title is about.\", \"kind\": \"unsupported\", \"level\": 1, \"severity\": \"advice\", \"suggestion\": \"Change the measured variable to the basic reproduction number (R0) or peak infections to directly address whether the virus stops, or change the title to “How adherence affects recovery” to match the current measurement.\", \"term\": null}, {\"finding\": \"The title claims “The quitters spread it most”, but the level only shows that doubling beta3 raises the quitters’ peak. It does not compare beta3 to other transmission rates or measure overall spread, so the claim is worded more strongly than the measurement supports.\", \"kind\": \"unsupported\", \"level\": 2, \"severity\": \"advice\", \"suggestion\": \"Change the title to “How quitter transmission affects quitter numbers” to accurately reflect the measurement, or measure R0 instead to evaluate relative transmission impact.\", \"term\": null}, {\"finding\": \"The control is labelled “Acute recovery rate”, but it corresponds to eta, which the paper defines as a proportion (0.3), not a rate. The What-if “twice as fast” also misdescribes a proportion.\", \"kind\": \"unsupported\", \"level\": 4, \"severity\": \"advice\", \"suggestion\": \"Rename the control to “Proportion recovering from acute infection” and adjust the What-if to “What if twice as many acutely infected people recovered?” to match the model’s definition.\", \"term\": null}]}",
+    "usage": {
+      "promptTokens": 14037,
+      "completionTokens": 7458,
+      "totalTokens": 21495
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:56:28.456Z"
+}

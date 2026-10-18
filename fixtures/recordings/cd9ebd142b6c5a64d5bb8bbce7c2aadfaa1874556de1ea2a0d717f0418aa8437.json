@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "llama4-maverick-17b",
+  "promptHash": "cd9ebd142b6c5a64d5bb8bbce7c2aadfaa1874556de1ea2a0d717f0418aa8437",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"findings\": [\n{\n\"finding\": \"Level 1's statement misdescribes the model: it says doubling the progression rate makes the infectious peak more than 4 million higher, but the paper does not support a specific peak increase.\",\n\"kind\": \"unsupported\",\n\"level\": 1,\n\"severity\": \"blocking\",\n\"suggestion\": \"Change the statement to a finding the paper supports, such as 'Doubling the progression rate increases the infectious peak.'\"\n  ,\n\"term\": \"\"\n},\n{\n\"finding\": \"Level 2's What-if cannot teach what its level is about: it tests the effect of doubling the contact rate on the vaccinated peak, but the level is about the contact rate driving spread.\",\n\"kind\": \"definitional\",\n\"level\": 2,\n\"severity\": \"blocking\",\n\"suggestion\": \"Change the What-if to test the effect of doubling the contact rate on a relevant outcome, such as 'What if people contacted others twice as often? It states: Doubling the contact rate increases the number of exposed individuals.'\",\n\"term\": \"beta*s*i\"\n},\n{\n\"finding\": \"Level 4's What-if cannot teach what its level is about: it tests the effect of doubling the vaccination rate on the exposed peak, but the level is about vaccination protecting the town.\",\n\"kind\": \"definitional\",\n\"level\": 4,\n\"severity\": \"blocking\",\n\"suggestion\": \"Change the What-if to test the effect of doubling the vaccination rate on a relevant outcome, such as 'What if vaccination coverage were doubled? It states: Doubling the vaccination rate decreases the number of susceptible individuals.'\",\n\"term\": \"pi*s\"\n}\n]\n}",
+    "usage": {
+      "promptTokens": 20885,
+      "completionTokens": 349,
+      "totalTokens": 21234
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:52:59.860Z"
+}

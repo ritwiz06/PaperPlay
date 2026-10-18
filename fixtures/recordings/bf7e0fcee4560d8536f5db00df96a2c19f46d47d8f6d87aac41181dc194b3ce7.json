@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "qwen36-27b",
+  "promptHash": "bf7e0fcee4560d8536f5db00df96a2c19f46d47d8f6d87aac41181dc194b3ce7",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"findings\": [{\"finding\": \"Level 2 is blocking, of kind unsupported. The statement 'The paper shows that vaccinating every newborn would eliminate tuberculosis within ten years' misdescribes the model and contradicts the paper. The level manipulates the treatment rate (delta), not vaccination, and the paper explicitly states that BCG vaccination has variable efficacy and 'will not be enough to stop the disease's epidemic.'\", \"kind\": \"unsupported\", \"level\": 2, \"severity\": \"blocking\", \"suggestion\": \"Change the statement to 'Increasing the treatment rate reduces the number of infectious individuals over time, aligning with the paper's sensitivity analysis.'\", \"term\": null}, {\"finding\": \"Level 3 is blocking, of kind unsupported. The statement 'the epidemic doubles in size and the disease can never be controlled' misdescribes the model's direct effect and overclaims. Increasing the progression rate (gamma) directly decreases the exposed compartment (e) because individuals leave it faster to become infectious. The paper does not claim the disease can never be controlled; it shows γa\", \"kind\": \"unsupported\", \"level\": 3, \"severity\": \"blocking\", \"suggestion\": \"Change the statement to 'the exposed population decreases because individuals progress to the infectious stage more quickly.'\", \"term\": null}, {\"finding\": \"Level 4 fails the check on 11 of 20 runs. The effect of doubling the recovery rate on the recovered compartment at year 30 is not robust across parameter variations.\", \"kind\": \"unsupported\", \"level\": 4, \"severity\": \"advice\", \"suggestion\": \"Adjust the What-if condition to a more moderate increase (e.g., 1.5x) or measure at an earlier timepoint to ensure the statement holds consistently.\", \"term\": null}, {\"finding\": \"Level 5 is blocking, of kind definitional. Setting the treatment rate to zero removes the inflow to the treated compartment, so it stays empty (or decays), which follows directly from the equation and teaches nothing from the paper.\", \"kind\": \"definitional\", \"level\": 5, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to 'what if the treatment rate were doubled?' and update the statement to 'the infectious population decreases, reflecting the paper's finding that higher treatment rates lower the reproduction number.'\", \"term\": \"delta*i\"}]}",
+    "usage": {
+      "promptTokens": 23798,
+      "completionTokens": 6149,
+      "totalTokens": 29947
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:56:04.688Z"
+}

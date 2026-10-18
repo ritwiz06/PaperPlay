@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "gemma4-31b-it",
+  "promptHash": "9e120576bebb13d62f1a84e260728ff05dec885401346f97333cacbaf355d8cf",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"findings\": [{\"finding\": \"blocking\", \"kind\": \"unsupported\", \"level\": 2, \"severity\": \"blocking\", \"suggestion\": \"Remove the quote and rewrite the statement to: 'Increasing the treatment rate reduces the number of infectious individuals.'\", \"term\": \"The paper shows that vaccinating every newborn would eliminate tuberculosis within ten years.\"}, {\"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 3, \"severity\": \"blocking\", \"suggestion\": \"Change the measured compartment to the infectious population (i) to test the paper's finding that higher progression rates increase the spread of the disease.\", \"term\": \"-gamma * e\"}, {\"finding\": \"blocking\", \"kind\": \"unsupported\", \"level\": 3, \"severity\": \"blocking\", \"suggestion\": \"Rewrite the statement to: 'Faster progression from exposed to infectious increases the number of infectious individuals.'\", \"term\": \"the epidemic doubles in size and the disease can never be controlled\"}, {\"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 5, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test the effect of treatment on the infectious population (i), as the paper focuses on treatment's role in reducing the disease burden.\", \"term\": \"delta * i\"}]}",
+    "usage": {
+      "promptTokens": 22652,
+      "completionTokens": 285,
+      "totalTokens": 22937
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-17T18:53:05.627Z"
+}
