@@ -93,7 +93,12 @@ export async function completeStructured<T>(
   client: ModelClient,
   request: Omit<ChatRequest, "jsonSchema">,
   schema: z.ZodType<T>,
-  options: { readonly name: string; readonly structuredOutput: boolean },
+  /**
+   * `moreRoom`: a plain-JSON reply that ran out of room before it wrote anything is asked again
+   * with twice the room, rather than sent back to be corrected. The explainer asks for it, whose
+   * replies are the longest (ADR-0044's consequences); calls recorded without it replay as they were.
+   */
+  options: { readonly name: string; readonly structuredOutput: boolean; readonly moreRoom?: boolean },
 ): Promise<StructuredResult<T>> {
   const format = jsonSchemaOf(options.name, schema);
   const plainly = (): ChatMessage[] => [
@@ -105,9 +110,10 @@ export async function completeStructured<T>(
   ];
   let structured = options.structuredOutput;
   let messages: ChatMessage[] = structured ? [...request.messages] : plainly();
+  let room = request.maxTokens;
   for (let attempt = 1; attempt <= 2; attempt++) {
     // Each call gets its own copy, so a retry's messages never rewrite what an earlier call was sent.
-    const response = await client.complete({ ...request, messages: [...messages], ...(structured ? { jsonSchema: format } : {}) });
+    const response = await client.complete({ ...request, ...(room === undefined ? {} : { maxTokens: room }), messages: [...messages], ...(structured ? { jsonSchema: format } : {}) });
     let problem: string;
     try {
       const parsed = schema.safeParse(extractJson(response.text));
@@ -120,6 +126,10 @@ export async function completeStructured<T>(
     if (structured && (response.finishReason === "length" || response.text.trim() === "")) {
       structured = false;
       messages = plainly();
+    } else if (options.moreRoom === true && response.finishReason === "length" && response.text.trim() === "" && room !== undefined) {
+      // A reply that ran out of room before it wrote anything has nothing to correct: the same
+      // question again, with twice the room, as a reasoning model thinking at length needs.
+      room *= 2;
     } else messages.push({ role: "assistant", content: response.text }, { role: "user", content: `That reply cannot be used. ${problem}\nReply again with one corrected JSON object only.` });
   }
   throw new ModelError("invalid-response", "unreachable");

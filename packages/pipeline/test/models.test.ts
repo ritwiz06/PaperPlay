@@ -134,6 +134,19 @@ describe("structured replies", () => {
     }
   });
 
+  it("asks a plain-JSON model the same again, with twice the room, when its reply ran out of room before it wrote anything", async () => {
+    const calls: ChatRequest[] = [];
+    const client: ModelClient = {
+      complete(next) {
+        calls.push(next);
+        return Promise.resolve(calls.length === 1 ? { ...reply("", 10), finishReason: "length" } : reply('{"groups":["S"]}', 10));
+      },
+    };
+    expect(await completeStructured(client, { ...request(), maxTokens: 16_000 }, Groups, { name: "groups", structuredOutput: false, moreRoom: true })).toEqual({ value: { groups: ["S"] }, attempts: 2 });
+    expect(calls.map((call) => call.maxTokens)).toEqual([16_000, 32_000]);
+    expect(calls[1]?.messages).toEqual(calls[0]?.messages);
+  });
+
   it("fails after a second invalid reply, saying why", async () => {
     await expect(completeStructured(scripted(["no JSON", "still none"]), request(), Groups, { name: "groups", structuredOutput: false })).rejects.toMatchObject({
       kind: "invalid-response",

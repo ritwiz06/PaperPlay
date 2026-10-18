@@ -84,7 +84,7 @@ export async function explain(client: ModelClient, model: string, input: Paramet
   // One level a call: a small reply has less room to loop or nest wrongly, and a failure costs one level's words.
   const levels: ExplainedLevel[] = [];
   for (let level = 0; level < input.plan.levels.length; level++) {
-    const words = await completeStructured(client, { stage: "explainer", model, messages: explainerMessages(input, level), temperature: 0, maxTokens: 16_000 }, ExplainedLevel, { name: "level_words", structuredOutput: options.structuredOutput });
+    const words = await completeStructured(client, { stage: "explainer", model, messages: explainerMessages(input, level), temperature: 0, maxTokens: 16_000 }, ExplainedLevel, { name: "level_words", structuredOutput: options.structuredOutput, moreRoom: true });
     levels.push(words.value);
   }
   return { value: Explanation.parse({ levels }) };
@@ -104,7 +104,7 @@ export async function reword(client: ModelClient, model: string, input: Paramete
       content: `The reviewers found that level ${level + 1}'s words misdescribe the model: ${problem}\nWrite this level's words again, with its goal and its effect sentence, saying only what the model's equations do. Its claim stays as it is: the effect sentence states the same measured difference as this one, in words the equations support: "${planned?.effect ?? ""}"`,
     },
   ];
-  const words = await completeStructured(client, { stage: "explainer", model, messages, temperature: 0, maxTokens: 16_000 }, RewordedLevel, { name: "reworded_level", structuredOutput: options.structuredOutput });
+  const words = await completeStructured(client, { stage: "explainer", model, messages, temperature: 0, maxTokens: 16_000 }, RewordedLevel, { name: "reworded_level", structuredOutput: options.structuredOutput, moreRoom: true });
   return { value: words.value };
 }
 
