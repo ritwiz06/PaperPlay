@@ -106,7 +106,7 @@ export async function reword(client: ModelClient, model: string, input: Paramete
     ...explainerMessages(input, level),
     {
       role: "user",
-      content: `The reviewers found that level ${level + 1}'s words misdescribe the model: ${problem}\nWrite this level's words again, with its goal, one sentence of at most 30 words, and its effect, at most 50 words, saying only what the model's equations do. Its claim stays as it is: the effect sentence states the same measured difference as this one, in words the equations support: "${planned?.effect ?? ""}"`,
+      content: `A reviewer found that level ${level + 1}'s words misdescribe the model: ${problem}\nWrite this level's words again, with its goal, one sentence of at most 30 words, and its effect, at most 50 words, saying only what the model's equations do. Its claim stays as it is: the effect sentence states the same measured difference as this one, in words the equations support: "${planned?.effect ?? ""}"`,
     },
   ];
   const words = await completeStructured(client, { stage: "explainer", model, messages, temperature: 0, maxTokens: 16_000 }, RewordedLevel, { name: "reworded_level", structuredOutput: options.structuredOutput, moreRoom: true });

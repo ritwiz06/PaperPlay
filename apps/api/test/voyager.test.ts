@@ -167,4 +167,21 @@ describe("[R09] the live client", () => {
       rmSync(folder, { recursive: true, force: true });
     }
   });
+
+  it("refuses a reviewer that is the model that planned or wrote what it reviews, and has none today", () => {
+    const config = loadModelConfig();
+    const authors = [config.stages.planner, config.stages["second-planner"], config.stages.explainer];
+    expect(authors).not.toContain(config.stages.reviewer);
+    expect(authors).not.toContain(config.stages["second-reviewer"]);
+    const folder = mkdtempSync(join(tmpdir(), "paperplay-config-"));
+    try {
+      const file = join(folder, "models.json");
+      writeFileSync(file, JSON.stringify({ ...config, stages: { ...config.stages, "second-reviewer": config.stages.explainer } }));
+      expect(() => loadModelConfig(file)).toThrow(/the second-reviewer, .*, is also the .*explainer: a reviewer may never be the model that planned or wrote what it reviews/);
+      writeFileSync(file, JSON.stringify({ ...config, stages: { ...config.stages, reviewer: config.stages["second-planner"] } }));
+      expect(() => loadModelConfig(file)).toThrow(/the reviewer, .*, is also the second-planner/);
+    } finally {
+      rmSync(folder, { recursive: true, force: true });
+    }
+  });
 });

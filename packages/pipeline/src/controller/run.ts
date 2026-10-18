@@ -15,7 +15,8 @@ import { runOwnNumbers } from "../reproduce/index.ts";
 import { fetchArxiv, fetchPmc, fromOwnerPdf, registerAndText, type Fetch } from "../ingest/index.ts";
 import { completeStructured, type ModelClient, type Stage } from "../models/index.ts";
 import { sweepLevels, type LevelResult } from "../rule/sweep.ts";
-import { decideReviews, describeDirectEffect, directEffectOf, type ReviewRecord } from "../rule/direct.ts";
+import { decideReviews, definitionalProblem, describeDirectEffect, directEffectOf, type ReviewRecord } from "../rule/direct.ts";
+import { hookSpreadProblem } from "../rule/spread.ts";
 import { checkFindings } from "../rule/findings.ts";
 import { visibilityOf } from "../rule/visibility.ts";
 import { explain, reword, type Explanation } from "../stages/explainer.ts";
@@ -230,6 +231,18 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
      * builder, the level rule, the visibility rule and the findings check. A level that does not
      * build is judged by that alone, and the rest are built without it.
      */
+    /**
+     * The rules a plan's words do not touch, level by level (ADR-0044, corrected 2026-10-18): a
+     * definitional level, and a hook that does not measure the spread its headline speaks of.
+     */
+    const ruleProblems = (candidate: Plan): readonly (readonly string[])[] => {
+      const named = namedInModel(candidate, model);
+      return named.levels.map((level, index) => {
+        const tag = directEffectOf(model, level.control.parameter, level.difference.compartment, level.difference);
+        const spread = index === 0 ? hookSpreadProblem(model, reading.value.result, level.difference.compartment) : null;
+        return [...(tag.definitional ? [definitionalProblem(tag)] : []), ...(spread ? [spread] : [])];
+      });
+    };
     const assess = (candidate: Plan): { readonly problems: readonly (readonly string[])[]; readonly holds: readonly number[] } => {
       const assembled = (levels: readonly number[]) => buildWorld(assembleWorld({ source: text, register, reading: reading.value, model, plan: { ...candidate, levels: levels.flatMap((index) => (candidate.levels[index] ? [candidate.levels[index]] : [])) }, explanation: { levels: [] }, routingReason: routed.value.reason, ownNumbers }).spec, registry);
       const all = candidate.levels.map((_, index) => index);
@@ -250,12 +263,13 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       const swept = sweepLevels(built);
       const seen = visibilityOf(built);
       const found = checkFindings(candidate, reading.value, text);
+      const rules = ruleProblems(candidate);
       const problems = all.map((index) => {
         const at = rest.indexOf(index);
         if (at < 0) return broken.get(index) ?? [];
         const level = swept[at];
         const visible = seen[at];
-        return [...(level && !level.meets ? [`its claim holds on ${level.holds} of 20 starts`] : []), ...(visible && !visible.visible ? ["its difference is too small to see"] : []), ...(found.levels[index] ?? [])];
+        return [...(level && !level.meets ? [`its claim holds on ${level.holds} of 20 starts`] : []), ...(visible && !visible.visible ? ["its difference is too small to see"] : []), ...(found.levels[index] ?? []), ...(rules[index] ?? [])];
       });
       return { problems, holds: all.map((index) => swept[rest.indexOf(index)]?.holds ?? 0) };
     };
@@ -421,6 +435,9 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
         // And the findings check: the hook on the headline result, three levels on anchored findings.
         const found = checkFindings(plan, reading.value, text, hookFinding);
         sink.artifact("findings", found);
+        // And the rules the words do not touch: definitional levels, and a hook off the headline's spread.
+        const rules = ruleProblems(plan);
+        sink.artifact("definitional", rules);
         const problemsOf = (index: number): string[] => {
           const level = swept[index];
           const visible = seen[index];
@@ -428,6 +445,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
             ...(level && !level.meets ? [`its claim holds on ${level.holds} of 20 starts, fewer than 16${measuredAt(level)}`] : []),
             ...(visible && !visible.visible ? [`its difference is too small to see: ${visible.why ?? ""}`] : []),
             ...(found.levels[index] ?? []),
+            ...(rules[index] ?? []),
           ];
         };
         const failing = plan.levels.map((_, index) => index).filter((index) => problemsOf(index).length > 0);
@@ -453,9 +471,9 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       sink.artifact("provenance", provenance);
       if (provenance.length > 0) throw new Stop("failed", `provenance fails: ${provenance.slice(0, 3).map((problem) => `${problem.path}: ${problem.message}`).join("; ")}`);
       // Two reviewers of different vendors (ADR-0044), each given the equations and every level's
-      // direct-effect tag. A block stands only where both make it; a definitional block must name a
-      // term of the measured compartment's own equation holding the control, and is never one on an
-      // emergent summary. Every decision is kept, with its reason.
+      // direct-effect tag. One reviewer's unsupported block sends a level's words back, unless the
+      // model refutes what it claims; any other block stands only where both make it, and a
+      // definitional one only on a level the code finds definitional. Every decision is kept.
       const reviewerModel = modelFor("reviewer");
       const secondReviewerModel = input.config.stages["second-reviewer"] ?? null;
       say("review", secondReviewerModel === null ? "the reviewer reads the world and the checks' results" : `two reviewers, ${reviewerModel} and ${secondReviewerModel}, read the world and the checks' results`);
@@ -501,7 +519,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
           move("repairing", "review", `dropping ${again.length} level(s) whose words still misdescribe the model, keeping ${keep}`);
           continue;
         }
-        move("repairing", "review", `writing again the words of ${first.map((index) => `level ${index + 1} ("${plan.levels[index]?.title ?? ""}")`).join(", ")}, which ${secondReviewed ? "both reviewers find" : "the reviewer finds"} misdescribe the model`);
+        move("repairing", "review", `writing again the words of ${first.map((index) => `level ${index + 1} ("${plan.levels[index]?.title ?? ""}")`).join(", ")}, which a reviewer finds misdescribe the model`);
         for (const index of first) {
           const problem = `${blocksOn(index, "unsupported")}\nThe model's equations, in its ids:\n${equationsOf(model)}`;
           const words = (await reword(input.client, explainerModel, { title, plan, passages, model: modelWords }, index, problem, { structuredOutput: structured(explainerModel) })).value;

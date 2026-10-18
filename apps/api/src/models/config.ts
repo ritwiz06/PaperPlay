@@ -10,6 +10,10 @@ import { z } from "zod";
 
 const ModelId = z.string().min(1).max(200);
 
+/** The stages that review a world, and the stages whose work they review: its plans and its words. */
+export const REVIEWERS = ["reviewer", "second-reviewer"] as const satisfies readonly Stage[];
+export const AUTHORS = ["planner", "second-planner", "explainer"] as const satisfies readonly Stage[];
+
 /** Models the Voyager portal marks "Testing in progress", which its API does not show: as the owner last saw them. */
 export const Excluded = z.strictObject({
   asOf: z.iso.date(),
@@ -37,6 +41,14 @@ export const ModelConfig = z
   .refine((config) => Object.values(config.stages).every((model) => model === null || !config.excluded.models.includes(model)), {
     message: 'a stage uses a model the Voyager portal marks "Testing in progress"; see excluded',
     path: ["stages"],
+  })
+  // A reviewer is never the model that planned or wrote what it reviews (the owner, 2026-10-18).
+  .superRefine((config, ctx) => {
+    for (const reviewer of REVIEWERS) {
+      const model = config.stages[reviewer];
+      const wrote = AUTHORS.filter((author) => model !== null && config.stages[author] === model);
+      if (wrote.length > 0) ctx.addIssue({ code: "custom", message: `the ${reviewer}, ${model ?? ""}, is also the ${wrote.join(" and the ")}: a reviewer may never be the model that planned or wrote what it reviews`, path: ["stages", reviewer] });
+    }
   });
 export type ModelConfig = z.infer<typeof ModelConfig>;
 

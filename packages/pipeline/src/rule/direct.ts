@@ -7,8 +7,11 @@
  * - **A named term:** a reviewer that calls a level definitional must name the term of that
  *   equation the effect follows from, in the model's ids; the term must be one the equation holds
  *   and must hold the control, as the tag says. A block naming no such term is ignored, and recorded.
- * - **Emergent summaries:** a direct effect measured on a peak, a lowest value, a time to a level or a
- *   final size is not definitional: how high or how soon depends on the whole model's motion.
+ * - **What is definitional** (the owner's correction, 2026-10-18): a level whose control appears
+ *   directly in the measured compartment's own equation, and which measures that compartment's own
+ *   level or peak. An effect that travels through other compartments is not, nor one measured on a
+ *   system-wide summary: a final size, a total over time, a threshold crossing, a time to a level.
+ *   The code decides it from the tag, before any reviewer reads the world.
  */
 import type { Expr, ModelSpec } from "@paperplay/contracts";
 import { expand, formatPolynomial, type Polynomial, type Term } from "@paperplay/primitives/compartments";
@@ -23,14 +26,19 @@ export interface DirectEffect {
   readonly signs: readonly ("+" | "−")[];
   /** Those terms, written out: "delta × c". */
   readonly terms: readonly string[];
-  /** Whether the level measures an emergent summary of the compartment, not its level at a moment or its total. */
-  readonly emergent: boolean;
+  /** Whether the level measures a system-wide summary, not the compartment's own level or peak. */
+  readonly systemWide: boolean;
+  /** Direct, and measured on the compartment's own level or peak: the effect follows from the model's definition. */
+  readonly definitional: boolean;
 }
 
-/** Summaries a learner cannot read off one term: when and how high, not merely how much. */
-export function isEmergent(summary: { readonly summary: string; readonly at: number | null; readonly time: number }): boolean {
-  if (summary.summary === "peak" || summary.summary === "lowest" || summary.summary === "first-reach") return true;
-  // A value at the end of the level's run is the final size.
+/**
+ * Summaries of the whole run rather than of the compartment's level: a threshold crossing or a time
+ * to a level, a total over time, and a value at the run's end, its final size. A level at a moment,
+ * a peak, a lowest value and a mean are the compartment's own level.
+ */
+export function isSystemWide(summary: { readonly summary: string; readonly at: number | null; readonly time: number }): boolean {
+  if (summary.summary === "first-reach" || summary.summary === "total") return true;
   return summary.summary === "at" && summary.at !== null && summary.at >= summary.time;
 }
 
@@ -59,11 +67,14 @@ function rateOf(model: ModelSpec, compartment: string): { readonly expr: Expr; r
 /** The direct-effect tag of a parameter on a measured compartment, with the level's summary. */
 export function directEffectOf(model: ModelSpec, parameter: string, compartment: string, summary: { readonly summary: string; readonly at: number | null; readonly time: number }): DirectEffect {
   const rate = rateOf(model, compartment);
-  const emergent = isEmergent(summary);
-  if (!rate) return { parameter, compartment, direct: false, signs: [], terms: [], emergent };
-  if (!rate.polynomial) return { parameter, compartment, direct: mentions(rate.expr, parameter), signs: [], terms: [], emergent };
+  const systemWide = isSystemWide(summary);
+  if (!rate) return { parameter, compartment, direct: false, signs: [], terms: [], systemWide, definitional: false };
+  if (!rate.polynomial) {
+    const direct = mentions(rate.expr, parameter);
+    return { parameter, compartment, direct, signs: [], terms: [], systemWide, definitional: direct && !systemWide };
+  }
   const terms = rate.polynomial.terms.filter((term) => holds(term, parameter));
-  return { parameter, compartment, direct: terms.length > 0, signs: signsOf(model, terms, parameter), terms: terms.map((term) => formatPolynomial({ terms: [term] })), emergent };
+  return { parameter, compartment, direct: terms.length > 0, signs: signsOf(model, terms, parameter), terms: terms.map((term) => formatPolynomial({ terms: [term] })), systemWide, definitional: terms.length > 0 && !systemWide };
 }
 
 /**
@@ -91,9 +102,41 @@ function signsOf(model: ModelSpec, terms: readonly Term[], parameter: string): (
 
 /** The tag in words, for a reviewer: "control delta appears in dcQ/dt, adding (+ delta × c), measured on its peak, which is emergent". */
 export function describeDirectEffect(tag: DirectEffect): string {
-  if (!tag.direct) return `its control ${tag.parameter} does not appear in d${tag.compartment}/dt, the measured compartment's own equation`;
+  if (!tag.direct) return `its control ${tag.parameter} does not appear in d${tag.compartment}/dt, the measured compartment's own equation: its effect travels through other compartments, so it is not definitional`;
   const way = tag.signs.length === 1 ? (tag.signs[0] === "+" ? "adding to it" : "taking from it") : tag.signs.length === 0 ? "with a sign the expansion cannot read" : "both adding and taking";
-  return `its control ${tag.parameter} appears directly in d${tag.compartment}/dt, the measured compartment's own equation, ${way} (${tag.terms.join("; ")}); the level measures ${tag.emergent ? "an emergent summary of it, which is never definitional" : "its level or total"}`;
+  const appears = `its control ${tag.parameter} appears directly in d${tag.compartment}/dt, the measured compartment's own equation, ${way} (${tag.terms.join("; ")})`;
+  return tag.definitional ? `${appears}, and the level measures that compartment's own level or peak, so it is definitional: its effect follows from the model's definition` : `${appears}, but the level measures a system-wide summary, so it is not definitional`;
+}
+
+/** A definitional level's problem, in words for the planner, who changes it. */
+export function definitionalProblem(tag: DirectEffect): string {
+  return `it is definitional: its control ${tag.parameter} appears directly in d${tag.compartment}/dt (${tag.terms.join("; ")}) and it measures ${tag.compartment}'s own level or peak, so its effect follows from the model's definition; measure a compartment the effect must travel through others to reach, or a system-wide summary such as a time to a level or a final size`;
+}
+
+/** What an unsupported finding says the model has, so the code can check it: a parameter's kind, or whether it appears in a compartment's equation. */
+export interface ModelClaim {
+  readonly parameter: string | null;
+  readonly compartment: string | null;
+  readonly says: "share" | "rate" | "absent" | "present";
+}
+
+/**
+ * Whether the model bears a reviewer's claim out: a share is a parameter with no unit of time in it,
+ * a rate one per unit of time; absent and present, whether the parameter appears in the
+ * compartment's own equation. Null when the claim names nothing the model has.
+ */
+export function checkClaim(model: ModelSpec, claim: ModelClaim): { readonly holds: boolean; readonly reason: string } | null {
+  const parameter = model.parameters.find((entry) => entry.id === claim.parameter);
+  if (!parameter) return null;
+  if (claim.says === "share" || claim.says === "rate") {
+    const perTime = (parameter.unit.time ?? 0) < 0;
+    const share = Object.keys(parameter.unit).length === 0;
+    const holds = claim.says === "rate" ? perTime : share;
+    return { holds, reason: `${parameter.id} is ${perTime ? "a rate, per unit of time" : share ? "a share, with no unit" : "neither a share nor a rate"}` };
+  }
+  if (!model.compartments.some((entry) => entry.id === claim.compartment) || claim.compartment === null) return null;
+  const tag = directEffectOf(model, parameter.id, claim.compartment, { summary: "peak", at: null, time: 1 });
+  return { holds: claim.says === "present" ? tag.direct : !tag.direct, reason: `${parameter.id} ${tag.direct ? "appears" : "does not appear"} in d${claim.compartment}/dt` };
 }
 
 /**
@@ -128,9 +171,13 @@ export interface ReviewRecord {
   readonly kind: "definitional" | "unsupported" | "overstated" | "other";
   readonly blocking: boolean;
   readonly term: string | null;
-  /** A block the rules accept: a definitional one naming a valid term on a summary that is not emergent; any other block as given. */
+  /**
+   * A block the rules accept: a definitional one only where the code finds the level definitional,
+   * naming a valid term; an unsupported one unless the code refutes what it says of the model; any
+   * other as given.
+   */
   readonly valid: boolean;
-  /** A valid block every reviewer made, of the same kind on the same level. */
+  /** A valid unsupported block, from one reviewer; any other valid block, only where every reviewer made it. */
   readonly stands: boolean;
   readonly reason: string;
 }
@@ -140,6 +187,7 @@ interface ReviewedFinding {
   readonly severity: "blocking" | "advice";
   readonly kind: ReviewRecord["kind"];
   readonly term: string | null;
+  readonly claim?: ModelClaim | null;
 }
 
 /** A level as the rules read it: its control and its measured summary, in the model's ids. */
@@ -149,10 +197,12 @@ interface ReviewedLevel {
 }
 
 /**
- * Which reviewers' blocks stand. Each block is first held to the rules: a definitional block must
- * name a term of the measured compartment's equation holding the control, on a level whose summary
- * is not emergent. Then, with two reviewers, a block stands only where both make a valid block of
- * the same kind on the same level; a lone reviewer, where no second is chosen, stands alone.
+ * Which reviewers' blocks stand (ADR-0044, corrected 2026-10-18). Each block is first held to the
+ * rules: a definitional block only where the code finds the level definitional, with a term of the
+ * measured compartment's equation holding the control; an unsupported block unless what it claims
+ * of the model, a share or a rate, a term present or absent, is refuted by the model itself. An
+ * unsupported block then stands from one reviewer, since it only sends words to be written again;
+ * any other, only where every reviewer made a valid block of the same kind on the same level.
  */
 export function decideReviews(model: ModelSpec, plan: { readonly levels: readonly ReviewedLevel[] }, tags: readonly DirectEffect[], reviews: readonly { readonly model: string; readonly review: { readonly findings: readonly ReviewedFinding[] } }[]): { readonly records: readonly ReviewRecord[]; readonly standing: (kind: ReviewRecord["kind"]) => readonly number[] } {
   const judged = reviews.map(({ model: reviewer, review }) =>
@@ -161,9 +211,14 @@ export function decideReviews(model: ModelSpec, plan: { readonly levels: readonl
       if (!base.blocking) return { ...base, valid: false, why: "advice" };
       const level = finding.level === null ? undefined : plan.levels[finding.level - 1];
       if (!level || finding.level === null) return { ...base, valid: false, why: "it names no level of the world" };
+      if (finding.kind === "unsupported") {
+        const checked = finding.claim ? checkClaim(model, finding.claim) : null;
+        if (checked && !checked.holds) return { ...base, valid: false, why: `the model refutes what it says: ${checked.reason}` };
+        return { ...base, valid: true, why: checked ? `the model bears it out: ${checked.reason}` : "" };
+      }
       if (finding.kind !== "definitional") return { ...base, valid: true, why: "" };
       const tag = tags[finding.level - 1];
-      if (tag?.emergent) return { ...base, valid: false, why: `the level measures the ${level.difference.summary === "at" ? "final size" : level.difference.summary} of ${level.difference.compartment}, an emergent summary, which is never definitional` };
+      if (tag && !tag.definitional) return { ...base, valid: false, why: `the code finds the level is not definitional: ${describeDirectEffect(tag)}` };
       const term = termHolds(model, level.difference.compartment, level.control.parameter, finding.term);
       return { ...base, valid: term.valid, why: term.valid ? term.reason : `${term.reason}; a definitional block must name a term of d${level.difference.compartment}/dt holding the control` };
     }),
@@ -173,6 +228,7 @@ export function decideReviews(model: ModelSpec, plan: { readonly levels: readonl
     entries.map(({ why, ...entry }): ReviewRecord => {
       if (!entry.valid) return { ...entry, stands: false, reason: why };
       const others = judged.map((_, other) => other).filter((other) => other !== index);
+      if (entry.kind === "unsupported") return { ...entry, stands: true, reason: `${why ? `${why}; ` : ""}one reviewer's block is enough to send words back` };
       const agreed = others.every((other) => madeBy(other, entry.level, entry.kind));
       const reason = others.length === 0 ? `${why ? `${why}; ` : ""}one reviewer only` : agreed ? `${why ? `${why}; ` : ""}${others.map((other) => reviews[other]?.model).join(", ")} agrees` : `${why ? `${why}; ` : ""}${others.map((other) => reviews[other]?.model).join(", ")} makes no such block`;
       return { ...entry, stands: agreed, reason };

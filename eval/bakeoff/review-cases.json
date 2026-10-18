@@ -1,6 +1,6 @@
 {
   "schemaVersion": "review-cases/1",
-  "note": "The worlds the reviewers are scored on (ADR-0035, ADR-0044). Each level is a fault a reviewer should block, a clean level a block on which is wrong, or unscored; each says where it came from. Every reviewer mistake a live run reveals is added here and kept.",
+  "note": "The worlds the reviewers are scored on (ADR-0035, ADR-0044). Each level is a fault a reviewer should block, a clean level a block on which is wrong, or unscored; each says where it came from. A definitional fault is one the code finds definitional by the owner's corrected rule (2026-10-18). Every reviewer mistake a live run reveals is added here and kept.",
   "worlds": [
     {
       "id": "tuberculosis-planted",
@@ -76,9 +76,9 @@
           "summary": "peak",
           "at": null,
           "time": 30,
-          "expect": "clean",
-          "kind": null,
-          "origin": "planted, 2026-10-15: it tests what the paper found"
+          "expect": "fault",
+          "kind": "definitional",
+          "origin": "planted, 2026-10-15: it tests what the paper found; definitional by the owner's corrected rule (2026-10-18): its control appears directly in the measured compartment's own equation, and it measures that compartment's level or peak"
         },
         {
           "title": "Contact and the exposed",
@@ -88,9 +88,9 @@
           "summary": "peak",
           "at": null,
           "time": 30,
-          "expect": "clean",
-          "kind": null,
-          "origin": "planted, 2026-10-15: it tests what the paper found"
+          "expect": "fault",
+          "kind": "definitional",
+          "origin": "planted, 2026-10-15: it tests what the paper found; definitional by the owner's corrected rule (2026-10-18): its control appears directly in the measured compartment's own equation, and it measures that compartment's level or peak"
         }
       ]
     },
@@ -108,9 +108,9 @@
           "summary": "peak",
           "at": null,
           "time": 38,
-          "expect": "clean",
-          "kind": null,
-          "origin": "the 2026-10-17 tuberculosis job: gemma4-31b-it blocked it as definitional, though it tests one of the paper's findings (ADR-0044)"
+          "expect": "fault",
+          "kind": "definitional",
+          "origin": "the 2026-10-17 tuberculosis job: gemma4-31b-it blocked it as definitional, though it tests one of the paper's findings (ADR-0044); definitional by the owner's corrected rule (2026-10-18): its control appears directly in the measured compartment's own equation, and it measures that compartment's level or peak"
         },
         {
           "title": "Contact rate drives spread",
@@ -120,9 +120,9 @@
           "summary": "peak",
           "at": null,
           "time": 38,
-          "expect": "unscored",
-          "kind": null,
-          "origin": "the 2026-10-17 tuberculosis world: glm-5-3 found its words imply a mechanism the model lacks; whether they do is not settled"
+          "expect": "fault",
+          "kind": "unsupported",
+          "origin": "the 2026-10-17 tuberculosis world: its words say more contact makes people leave the vaccinated group, which no term of dv/dt does; both reviewers blocked it in the regenerated job, and the owner scores it a fault (2026-10-18)"
         },
         {
           "title": "Treatment shrinks the outbreak",
@@ -132,9 +132,9 @@
           "summary": "peak",
           "at": null,
           "time": 38,
-          "expect": "clean",
-          "kind": null,
-          "origin": "the 2026-10-17 tuberculosis job: gemma4-31b-it blocked it as definitional, though it tests one of the paper's findings (ADR-0044)"
+          "expect": "fault",
+          "kind": "definitional",
+          "origin": "the 2026-10-17 tuberculosis job: gemma4-31b-it blocked it as definitional, though it tests one of the paper's findings (ADR-0044); definitional by the owner's corrected rule (2026-10-18): its control appears directly in the measured compartment's own equation, and it measures that compartment's level or peak"
         },
         {
           "title": "Vaccination protects the town",
@@ -188,9 +188,9 @@
           "summary": "peak",
           "at": null,
           "time": 200,
-          "expect": "unscored",
+          "expect": "clean",
           "kind": null,
-          "origin": "the 2026-10-17 hepatitis C world: gemma4-31b-it blocked it as definitional; not yet ruled on"
+          "origin": "the 2026-10-17 hepatitis C world: gemma4-31b-it blocked it as definitional; not yet ruled on; clean by the owner's corrected rule (2026-10-18): beta3 does not appear in dcq/dt, so its effect travels through other compartments, and a definitional block on it, as gemma4-31b-it made on 2026-10-17, is wrong"
         },
         {
           "title": "Faster chronic recovery",
@@ -200,9 +200,9 @@
           "summary": "peak",
           "at": null,
           "time": 200,
-          "expect": "unscored",
-          "kind": null,
-          "origin": "the 2026-10-17 hepatitis C world: gemma4-31b-it blocked it as definitional; not yet ruled on"
+          "expect": "fault",
+          "kind": "definitional",
+          "origin": "the 2026-10-17 hepatitis C world: gemma4-31b-it blocked it as definitional; not yet ruled on; definitional by the owner's corrected rule (2026-10-18): its control appears directly in the measured compartment's own equation, and it measures that compartment's level or peak"
         },
         {
           "title": "Acute recovery helps",
@@ -212,9 +212,9 @@
           "summary": "peak",
           "at": null,
           "time": 200,
-          "expect": "unscored",
-          "kind": null,
-          "origin": "the 2026-10-17 hepatitis C world: gemma4-31b-it blocked it as definitional; not yet ruled on"
+          "expect": "fault",
+          "kind": "definitional",
+          "origin": "the 2026-10-17 hepatitis C world: gemma4-31b-it blocked it as definitional; not yet ruled on; definitional by the owner's corrected rule (2026-10-18): its control appears directly in the measured compartment's own equation, and it measures that compartment's level or peak"
         },
         {
           "title": "When people quit treatment",
@@ -244,9 +244,9 @@
           "summary": "peak",
           "at": null,
           "time": 60,
-          "expect": "unscored",
-          "kind": null,
-          "origin": "the 2026-10-18 hepatitis C world: no reviewer blocked it"
+          "expect": "fault",
+          "kind": "definitional",
+          "origin": "the 2026-10-18 hepatitis C world: no reviewer blocked it; definitional by the owner's corrected rule (2026-10-18): its control appears directly in the measured compartment's own equation, and it measures that compartment's level or peak"
         },
         {
           "title": "Quitters spread the virus most",
@@ -256,9 +256,9 @@
           "summary": "peak",
           "at": null,
           "time": 100,
-          "expect": "unscored",
+          "expect": "clean",
           "kind": null,
-          "origin": "the 2026-10-18 hepatitis C world: no reviewer blocked it"
+          "origin": "the 2026-10-18 hepatitis C world: no reviewer blocked it; clean by the owner's corrected rule (2026-10-18): beta3 does not appear in dcq/dt, so its effect travels through other compartments, and a definitional block on it, as gemma4-31b-it made on 2026-10-17, is wrong"
         },
         {
           "title": "Two levers work together",
@@ -280,9 +280,9 @@
           "summary": "peak",
           "at": null,
           "time": 80,
-          "expect": "unscored",
-          "kind": null,
-          "origin": "the 2026-10-18 hepatitis C world: no reviewer blocked it"
+          "expect": "fault",
+          "kind": "definitional",
+          "origin": "the 2026-10-18 hepatitis C world: no reviewer blocked it; definitional by the owner's corrected rule (2026-10-18): its control appears directly in the measured compartment's own equation, and it measures that compartment's level or peak"
         },
         {
           "title": "Fewer quitters, smaller outbreak",

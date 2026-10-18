@@ -2,8 +2,8 @@
   "schemaVersion": "job-record/1",
   "sourceId": "pmc-PMC12334037",
   "recordedOn": "2026-10-18",
-  "note": "The hepatitis C world under the review rules (ADR-0044): two planners, glm-5-3's plan kept for every slot, its level 1 repaired by kimi-k2-7-code to meet the level rule; then two reviewers given the equations and each level's direct-effect tag. kimi-k2-7-code blocked level 3 as unsupported, its words calling the share η a rate; glm-5-3 made it advice, so the block did not stand and the world is ready. Both misses are now cases in the reviewers' bake-off.",
-  "replays": true,
+  "note": "The hepatitis C world under the review rules (ADR-0044): two planners, glm-5-3's plan kept for every slot, its level 1 repaired by kimi-k2-7-code to meet the level rule; then two reviewers given the equations and each level's direct-effect tag. kimi-k2-7-code blocked level 3 as unsupported, its words calling the share η a rate; glm-5-3 made it advice, so the block did not stand and the world is ready. Both misses are now cases in the reviewers' bake-off. Kept as a record, not replayed: under the owner's corrected rule (2026-10-18) its levels 1, 3, 4 and 5 are definitional, its hook did not measure the spread its headline speaks of, and the reviewer's prompt changed; it is regenerated (ADR-0044).",
+  "replays": false,
   "stages": {
     "reader": "qwen36-27b",
     "transcriber": "qwen3-235b-a22b-thinking-2507",

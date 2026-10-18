@@ -13,8 +13,8 @@
     "planner": "kimi-k2-7-code",
     "second-planner": "glm-5-3",
     "explainer": "kimi-k2-7-code",
-    "reviewer": "glm-5-3",
-    "second-reviewer": "kimi-k2-7-code"
+    "reviewer": "gemma4-31b-it",
+    "second-reviewer": "qwen36-27b"
   },
   "excluded": {
     "asOf": "2026-10-16",

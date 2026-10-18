@@ -2,8 +2,8 @@
   "schemaVersion": "job-record/1",
   "sourceId": "arxiv-2506.19869v1",
   "recordedOn": "2026-10-18",
-  "note": "The tuberculosis world under the review rules (ADR-0044): two planners, kimi-k2-7-code's plan kept on a tie, its level 5 repaired; then two reviewers given the equations and each level's direct-effect tag. Both blocked level 2 as unsupported, its words saying more contact makes people leave the vaccinated group, which no term of dv/dt does; the explainer wrote that level's words again, and on the second reading nothing blocked. Two earlier runs are not kept: in the first the explainer's reply ran out of room before it wrote anything, now asked again with twice the room; in the second the rewritten goal stopped mid-word at a character limit, now a bound in words.",
-  "replays": true,
+  "note": "The tuberculosis world under the review rules (ADR-0044): two planners, kimi-k2-7-code's plan kept on a tie, its level 5 repaired; then two reviewers given the equations and each level's direct-effect tag. Both blocked level 2 as unsupported, its words saying more contact makes people leave the vaccinated group, which no term of dv/dt does; the explainer wrote that level's words again, and on the second reading nothing blocked. Two earlier runs are not kept: in the first the explainer's reply ran out of room before it wrote anything, now asked again with twice the room; in the second the rewritten goal stopped mid-word at a character limit, now a bound in words. Kept as a record, not replayed: under the owner's corrected rule (2026-10-18) its levels 1 and 3, the control on the infectious compartment's own peak, are definitional, which the controller now finds before any reviewer reads the world, and the reviewer's prompt changed (ADR-0044).",
+  "replays": false,
   "stages": {
     "reader": "qwen36-27b",
     "transcriber": "qwen3-235b-a22b-thinking-2507",

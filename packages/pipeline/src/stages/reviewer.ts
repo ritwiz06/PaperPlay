@@ -27,6 +27,14 @@ export const Finding = z.strictObject({
    * follows from, in the model's ids and formula grammar, such as delta*(1-theta)*c (ADR-0044); else null.
    */
   term: z.string().max(200).nullable(),
+  /**
+   * For an unsupported finding about the model itself, what the finding says it has, so the code can
+   * check it (the owner, 2026-10-18): a parameter is a share or a rate, or it is absent from or
+   * present in a compartment's equation, in the model's ids; else null.
+   */
+  claim: z
+    .strictObject({ parameter: z.string().max(40).nullable(), compartment: z.string().max(40).nullable(), says: z.enum(["share", "rate", "absent", "present"]) })
+    .nullable(),
 });
 export type Finding = z.infer<typeof Finding>;
 
@@ -39,9 +47,8 @@ export const REVIEWER_INSTRUCTIONS = [
   "You read each level's statements and the checks' results, and find what a careful teacher would: a statement the paper does not support, a statement labelled the paper's that is really a teaching choice, a claim worded more strongly than its measurement, a What-if that cannot teach what its level is about, a confusing word.",
   "Rules:",
   "- You cannot change a check's result. A failed check stays failed whatever you say; never call one acceptable.",
-  "- A level whose effect follows from the model's definitions alone teaches nothing the paper found: setting a rate to zero empties the compartment it fills, a compartment fed by nothing stays empty, a larger inflow gives more. Mark it blocking, of kind definitional, name in 'term' the term of the measured compartment's own equation the effect follows from, written in the model's ids as the equations below write it (such as delta*(1-theta)*c), and suggest a What-if that tests one of the paper's findings instead. A definitional finding with no such term is ignored.",
-  "- Each level comes with its direct-effect tag, computed from the equations: whether its control appears directly in the measured compartment's own equation, and with which sign. A level whose control does not appear there is not definitional. A direct effect measured on an emergent summary (a peak, a lowest value, a time to a level, a final size) is not definitional either: how high or how soon depends on the whole model. A finding the paper itself reports is never definitional.",
-  "- A level whose words misdescribe the model, saying it does something its equations do not, is blocking, of kind unsupported; its words are rewritten, so say exactly which words are wrong and why.",
+  "- A level is definitional when its control appears directly in the measured compartment's own equation and the level measures that compartment's own level or peak: its effect follows from the model's definition, as setting a rate to zero empties the compartment it fills. An effect that travels through other compartments is not definitional, nor one measured on a system-wide summary: a final size, a total over time, a threshold crossing, a time to a level. Each level's direct-effect tag, computed from the equations, says which it is. Mark a definitional level blocking, of kind definitional, name in 'term' the term of the measured compartment's own equation the effect follows from, written in the model's ids as the equations below write it (such as delta*(1-theta)*c), and suggest a What-if that tests one of the paper's findings instead. A definitional block on a level the tag does not call definitional, or with no such term, is ignored.",
+  "- A level whose words misdescribe the model, saying it does something its equations do not, is blocking, of kind unsupported; its words are written again, so say exactly which words are wrong and why. When what is wrong is about the model itself, fill 'claim': a parameter is a 'share' (it has no unit) or a 'rate' (per unit of time), or a parameter is 'absent' from or 'present' in a compartment's own equation, in the model's ids; the code checks it against the model, and a claim the model refutes is ignored. Otherwise 'claim' is null.",
   "- Mark a finding blocking only when the world would teach something false or misleading, or a level is definitional; otherwise advice.",
   "- Each suggestion is a scoped repair to one level: what to change there, and nothing else.",
   "- If nothing is wrong, return no findings. Never invent a problem.",

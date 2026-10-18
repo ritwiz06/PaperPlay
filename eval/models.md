@@ -138,8 +138,8 @@ a valid term, then the fewest definitional blocks naming no valid term.
 | planner | kimi-k2-7-code | the most levels meeting both rules, then worlds on the paper's findings |
 | second-planner | glm-5-3 | the best planner from another vendor |
 | explainer | kimi-k2-7-code | the planner's model, which knows the plan; its words are held by the schema and their quotes by provenance, not ranked |
-| reviewer | glm-5-3 | the most faults blocked less clean levels blocked, no failed check called acceptable |
-| second-reviewer | kimi-k2-7-code | the best reviewer from another vendor |
+| reviewer | gemma4-31b-it | the most faults blocked less clean levels blocked, no failed check called acceptable, and not the planner, second planner or explainer |
+| second-reviewer | qwen36-27b | the best such reviewer from another vendor |
 
 ## Failed calls
 

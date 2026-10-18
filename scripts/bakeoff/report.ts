@@ -98,6 +98,19 @@ const pick = (ranked: readonly Ranked[], excluded: Exclusion): Ranked | undefine
 /** The best of another vendor than `first`'s, for a stage asked twice (ADR-0043, ADR-0044). */
 const pickOther = (ranked: readonly Ranked[], excluded: Exclusion, first: Ranked | undefined): Ranked | undefined => (first ? ranked.find((row) => !excluded.models.includes(row.model) && row.vendor !== first.vendor) : undefined);
 
+/**
+ * The two reviewers: the best and the best from another vendor, neither the model that planned or
+ * wrote what they review, the planner, the second planner or the explainer (the owner, 2026-10-18).
+ */
+export function reviewerPair(results: BakeoffResults, design: DesignResults, excluded: Exclusion): { readonly first: Ranked | undefined; readonly second: Ranked | undefined } {
+  const planner = pick(rankPlanners(results, design), excluded);
+  const authors = [planner?.model, pickOther(rankPlanners(results, design), excluded, planner)?.model].filter((model): model is string => model !== undefined);
+  const independent: Exclusion = { ...excluded, models: [...excluded.models, ...authors] };
+  const ranked = rankReviewers(results, design);
+  const first = pick(ranked, independent);
+  return { first, second: pickOther(ranked, independent, first) };
+}
+
 /** The best transcriber, and the best of another vendor for the second transcription, neither excluded. */
 export function transcriberPair(results: BakeoffResults, excluded: Exclusion = NONE): { readonly first: Candidate | null; readonly second: Candidate | null } {
   const ranked = rankTranscribers(results).filter((row) => !excluded.models.includes(row.model));
@@ -219,14 +232,14 @@ export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { 
           "## Reviewing",
           "",
           "Each model reviewed the worlds of `eval/bakeoff/review-cases.json`, as a job's reviewers do: in words, with the",
-          "model's equations and each level's direct-effect tag (ADR-0044). A tuberculosis world with faults planted (a claim given",
-          "as the paper's that it does not make, an effect far beyond its measurement, a level failing the level rule, a level",
-          "following from a definition); the tuberculosis world of 2026-10-17, whose levels on the paper's findings a reviewer",
-          "blocked as definitional; the hepatitis C world of 2026-10-17, whose level 5 the owner rules a definitional fault. Every",
-          "reviewer mistake a live run reveals is added there. A definitional fault counts as blocked only with a term of the",
-          "measured compartment's equation holding the control, as the controller requires. Ranked by never calling the failed",
-          "check acceptable, then the faults it blocks less its blocks on clean levels, then the definitional faults it names with",
-          "a valid term, then the fewest definitional blocks naming no valid term.",
+          "model's equations and each level's direct-effect tag (ADR-0044). A tuberculosis world with faults planted; the",
+          "tuberculosis world of 2026-10-17, whose level 2 words misdescribe the model; the hepatitis C worlds of 2026-10-17 and",
+          "2026-10-18. A definitional fault is one the code finds definitional by the owner's corrected rule (2026-10-18): the",
+          "control appears directly in the measured compartment's own equation, and the level measures that compartment's level",
+          "or peak; it counts as blocked only with a term of that equation holding the control. Every reviewer mistake a live run",
+          "reveals is added there. Ranked by never calling the failed check acceptable, then the faults it blocks less its blocks",
+          "on clean levels, then the definitional faults it names with a valid term, then the fewest definitional blocks naming",
+          "no valid term. The reviewers picked are never the planner, the second planner or the explainer.",
           "",
           ...table(["Faults blocked", "Definitional, with a valid term", "Clean levels blocked", "Terms not valid", "Called a failed check acceptable", "Failed calls"], rankReviewers(results, design), excluded),
           "",
@@ -245,8 +258,8 @@ export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { 
           `| planner | ${pick(rankPlanners(results, design), excluded)?.model ?? "none"} | the most levels meeting both rules, then worlds on the paper's findings |`,
           `| second-planner | ${pickOther(rankPlanners(results, design), excluded, pick(rankPlanners(results, design), excluded))?.model ?? "none"} | the best planner from another vendor |`,
           `| explainer | ${pick(rankPlanners(results, design), excluded)?.model ?? "none"} | the planner's model, which knows the plan; its words are held by the schema and their quotes by provenance, not ranked |`,
-          `| reviewer | ${pick(rankReviewers(results, design), excluded)?.model ?? "none"} | the most faults blocked less clean levels blocked, no failed check called acceptable |`,
-          `| second-reviewer | ${pickOther(rankReviewers(results, design), excluded, pick(rankReviewers(results, design), excluded))?.model ?? "none"} | the best reviewer from another vendor |`,
+          `| reviewer | ${reviewerPair(results, design, excluded).first?.model ?? "none"} | the most faults blocked less clean levels blocked, no failed check called acceptable, and not the planner, second planner or explainer |`,
+          `| second-reviewer | ${reviewerPair(results, design, excluded).second?.model ?? "none"} | the best such reviewer from another vendor |`,
         ]
       : ["| planner, explainer, reviewer | not yet | their bake-off runs after this one |"]),
     "",
