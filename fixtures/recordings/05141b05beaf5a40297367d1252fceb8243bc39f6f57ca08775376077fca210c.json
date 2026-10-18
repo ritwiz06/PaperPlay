@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "gemma4-31b-it",
+  "promptHash": "05141b05beaf5a40297367d1252fceb8243bc39f6f57ca08775376077fca210c",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"findings\": [{\"claim\": null, \"finding\": \"blocking\", \"kind\": \"unsupported\", \"level\": 2, \"severity\": \"blocking\", \"suggestion\": \"Remove the statement 'The paper shows that vaccinating every newborn would eliminate tuberculosis within ten years.' as it is not supported by the paper's text or results.\", \"term\": null}, {\"claim\": null, \"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 2, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test a finding from the paper, such as: 'What if the treatment rate were increased by 20%? It states: the infectious population decreases.'\", \"term\": \"-delta * i\"}, {\"claim\": null, \"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 3, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test a finding from the paper, such as: 'What if the progression rate gamma increases? It states: the number of infected individuals increases.'\", \"term\": \"-gamma * e\"}, {\"claim\": null, \"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 5, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test a finding from the paper, such as: 'What if the treatment rate delta increases? It states: the infectious population decreases.'\", \"term\": \"delta * i\"}, {\"claim\": null, \"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 6, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test a finding from the paper, such as: 'What if the treatment rate delta increases? It states: the infectious population decreases.'\", \"term\": \"-delta * i\"}, {\"claim\": null, \"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 7, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test a finding from the paper, such as: 'What if the contact rate beta increases? It states: the exposed population increases.'\", \"term\": \"beta * s * i\"}]}",
+    "usage": {
+      "promptTokens": 22827,
+      "completionTokens": 502,
+      "totalTokens": 23329
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T23:19:48.949Z"
+}

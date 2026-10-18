@@ -104,28 +104,28 @@ only: in a job, the controller shows the planner each failing level's measuremen
 ## Reviewing
 
 Each model reviewed the worlds of `eval/bakeoff/review-cases.json`, as a job's reviewers do: in words, with the
-model's equations and each level's direct-effect tag (ADR-0044). A tuberculosis world with faults planted (a claim given
-as the paper's that it does not make, an effect far beyond its measurement, a level failing the level rule, a level
-following from a definition); the tuberculosis world of 2026-10-17, whose levels on the paper's findings a reviewer
-blocked as definitional; the hepatitis C world of 2026-10-17, whose level 5 the owner rules a definitional fault. Every
-reviewer mistake a live run reveals is added there. A definitional fault counts as blocked only with a term of the
-measured compartment's equation holding the control, as the controller requires. Ranked by never calling the failed
-check acceptable, then the faults it blocks less its blocks on clean levels, then the definitional faults it names with
-a valid term, then the fewest definitional blocks naming no valid term.
+model's equations and each level's direct-effect tag (ADR-0044). A tuberculosis world with faults planted; the
+tuberculosis world of 2026-10-17, whose level 2 words misdescribe the model; the hepatitis C worlds of 2026-10-17 and
+2026-10-18. A definitional fault is one the code finds definitional by the owner's corrected rule (2026-10-18): the
+control appears directly in the measured compartment's own equation, and the level measures that compartment's level
+or peak; it counts as blocked only with a term of that equation holding the control. Every reviewer mistake a live run
+reveals is added there. Ranked by never calling the failed check acceptable, then the faults it blocks less its blocks
+on clean levels, then the definitional faults it names with a valid term, then the fewest definitional blocks naming
+no valid term. The reviewers picked are never the planner, the second planner or the explainer.
 
 | Rank | Model | Vendor | Faults blocked | Definitional, with a valid term | Clean levels blocked | Terms not valid | Called a failed check acceptable | Failed calls |
 |---|---|---|---|---|---|---|---|---|
-| 1 | glm-5-3 | Z.ai | 4/6 | 1/3 | 0/8 | 0 | no | 0 |
-| 2 | kimi-k2-7-code | Moonshot AI | 4/6 | 1/3 | 0/8 | 0 | no | 0 |
-| 3 | gemma4-31b-it | Google | 4/6 | 1/3 | 0/8 | 0 | no | 0 |
-| 4 | qwen36-27b | Qwen | 4/6 | 1/3 | 0/8 | 0 | no | 0 |
-| 5 | muse-glimmer-30b | Muse | 4/6 | 1/3 | 0/8 | 0 | no | 0 |
-| 6 | qwen38-27b | Qwen | 3/6 | 1/3 | 0/8 | 0 | no | 0 |
-| 7 | inkling-small | Thinking Machines | 3/6 | 0/3 | 1/8 | 1 | no | 0 |
-| 8 | granite41-30b | IBM | 3/6 | 1/3 | 2/8 | 2 | no | 0 |
-| 9 | qwen3-235b-a22b-thinking-2507 | Qwen | 0/6 | 0/3 | 0/8 | 0 | no | 1 |
-| 10 | llama4-maverick-17b | Meta | 2/6 | 0/3 | 3/8 | 3 | no | 0 |
-| 11 | gpt-oss-120b | OpenAI | 2/6 | 0/3 | 5/8 | 2 | no | 0 |
+| 1 | kimi-k2-7-code | Moonshot AI | 15/15 | 11/11 | 0/6 | 0 | no | 0 |
+| 2 | inkling-small | Thinking Machines | 15/15 | 11/11 | 0/6 | 0 | no | 0 |
+| 3 | qwen38-27b | Qwen | 15/15 | 11/11 | 0/6 | 0 | no | 0 |
+| 4 | qwen36-27b | Qwen | 15/15 | 11/11 | 0/6 | 0 | no | 0 |
+| 5 | muse-glimmer-30b | Muse | 15/15 | 11/11 | 0/6 | 0 | no | 0 |
+| 6 | gemma4-31b-it | Google | 14/15 | 11/11 | 0/6 | 0 | no | 0 |
+| 7 | qwen3-235b-a22b-thinking-2507 | Qwen | 13/15 | 9/11 | 0/6 | 2 | no | 0 |
+| 8 | granite41-30b | IBM | 13/15 | 10/11 | 1/6 | 1 | no | 0 |
+| 9 | glm-5-3 | Z.ai | 12/15 | 9/11 | 1/6 | 1 | no | 0 |
+| 10 | gpt-oss-120b | OpenAI | 13/15 | 9/11 | 5/6 | 2 | no | 0 |
+| 11 | llama4-maverick-17b | Meta | 4/15 | 2/11 | 0/6 | 3 | no | 0 |
 
 ## Proposed per stage
 
@@ -138,8 +138,8 @@ a valid term, then the fewest definitional blocks naming no valid term.
 | planner | kimi-k2-7-code | the most levels meeting both rules, then worlds on the paper's findings |
 | second-planner | glm-5-3 | the best planner from another vendor |
 | explainer | kimi-k2-7-code | the planner's model, which knows the plan; its words are held by the schema and their quotes by provenance, not ranked |
-| reviewer | gemma4-31b-it | the most faults blocked less clean levels blocked, no failed check called acceptable, and not the planner, second planner or explainer |
-| second-reviewer | qwen36-27b | the best such reviewer from another vendor |
+| reviewer | inkling-small | the most faults blocked less clean levels blocked, no failed check called acceptable, and not the planner, second planner or explainer |
+| second-reviewer | qwen38-27b | the best such reviewer from another vendor |
 
 ## Failed calls
 
@@ -148,4 +148,3 @@ None.
 ### Planning and reviewing
 
 - glm-5-3, planning arxiv-2203.01434v2: glm-5-3's planner reply was invalid twice. It is not valid JSON: the reply holds no JSON object
-- qwen3-235b-a22b-thinking-2507, reviewing: qwen3-235b-a22b-thinking-2507's reviewer reply was invalid twice. It is not valid JSON: the reply holds no JSON object

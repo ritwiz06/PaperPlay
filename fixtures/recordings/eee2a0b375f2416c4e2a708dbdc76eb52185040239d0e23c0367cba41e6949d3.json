@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "llama4-maverick-17b",
+  "promptHash": "eee2a0b375f2416c4e2a708dbdc76eb52185040239d0e23c0367cba41e6949d3",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"findings\":[{\"claim\":null,\"finding\":\"The level is definitional.\",\"kind\":\"definitional\",\"level\":3,\"severity\":\"blocking\",\"suggestion\":\"Try testing one of the paper's findings, such as the effect of treatment adherence on the reproduction number.\",\"term\":\"-cq*alpha*rho\"},\n{\"claim\":null,\"finding\":\"The level is definitional.\",\"kind\":\"definitional\",\"level\":4,\"severity\":\"blocking\",\"suggestion\":\"Try testing one of the paper's findings, such as the effect of acute recovery rate on the number of recovered individuals.\",\"term\":\"i*eta*r2\"},\n{\"claim\":null,\"finding\":\"The level is definitional.\",\"kind\":\"definitional\",\"level\":5,\"severity\":\"blocking\",\"suggestion\":\"Try testing one of the paper's findings, such as the effect of treatment quitting rate on the number of chronically infected individuals who quit treatment.\",\"term\":\"c*delta;-c*delta*theta\"}]}",
+    "usage": {
+      "promptTokens": 13448,
+      "completionTokens": 200,
+      "totalTokens": 13648
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T23:19:39.156Z"
+}

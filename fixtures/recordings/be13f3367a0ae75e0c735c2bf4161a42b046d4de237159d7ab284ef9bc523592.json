@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "gemma4-31b-it",
+  "promptHash": "be13f3367a0ae75e0c735c2bf4161a42b046d4de237159d7ab284ef9bc523592",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"findings\": [{\"claim\": null, \"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 3, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test a finding from the paper, such as: 'What if the recovery rate for chronic infections increased to 0.19?' and measure the effect on the reproduction number R0.\", \"term\": \"-cq * alpha * rho\"}, {\"claim\": null, \"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 4, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test a finding from the paper, such as: 'What if the recovery rate of acutely infected individuals (r) was increased?' and measure the effect on the reproduction number R0.\", \"term\": \"i * eta * r2\"}, {\"claim\": null, \"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 5, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test a finding from the paper, such as: 'What if the treatment adherence proportion (theta) increased to 52%?' and measure the effect on the reproduction number R0.\", \"term\": \"c * delta * (1 - theta)\"}]}",
+    "usage": {
+      "promptTokens": 13965,
+      "completionTokens": 290,
+      "totalTokens": 14255
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T23:19:44.569Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "llama4-maverick-17b",
+  "promptHash": "c86d35db048ab4b08ba81c3dbc87f8307e481083e8be1f8955a52fe6eee152ab",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"findings\":[{\"claim\":null,\"finding\":\"unsupported\",\"kind\":\"unsupported\",\"level\":2,\"severity\":\"blocking\",\"suggestion\":\"Change the statement to one the paper supports.\",\"term\":null},{\"claim\":null,\"finding\":\"teaching-choice\",\"kind\":\"unsupported\",\"level\":2,\"severity\":\"advice\",\"suggestion\":\"Change the statement to one the paper supports.\",\"term\":null},{\"claim\":null,\"finding\":\"definitional\",\"kind\":\"definitional\",\"level\":3,\"severity\":\"blocking\",\"suggestion\":\"Change the What-if to test one of the paper's findings.\",\"term\":\"gamma\"},{\"claim\":null,\"finding\":\"stronger-than-measure\",\"kind\":\"overstated\",\"level\":4,\"severity\":\"advice\",\"suggestion\":\"Weaken the claim.\",\"term\":null},{\"claim\":null,\"finding\":\"whatif-fails\",\"kind\":\"unsupported\",\"level\":4,\"severity\":\"advice\",\"suggestion\":\"Change the What-if to test one of the paper's findings.\",\"term\":null},{\"claim\":null,\"finding\":\"confus\",\"kind\":\"other\",\"level\":6,\"severity\":\"advice\",\"suggestion\":\"Clarify the statement.\",\"term\":null},{\"claim\":null,\"finding\":\"definitional\",\"kind\":\"definitional\",\"level\":7,\"severity\":\"blocking\",\"suggestion\":\"Change the What-if to test one of the paper's findings.\",\"term\":\"beta\"}]}",
+    "usage": {
+      "promptTokens": 21192,
+      "completionTokens": 297,
+      "totalTokens": 21489
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T23:19:38.247Z"
+}

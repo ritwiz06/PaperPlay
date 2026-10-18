@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "muse-glimmer-30b",
+  "promptHash": "c88d85e70121ca87be853b372cd09b9d541d7be1e326e945155158552822be0a",
+  "response": {
+    "model": "muse-glimmer-30b",
+    "text": "{\"findings\":[{\"level\":1,\"severity\":\"blocking\",\"kind\":\"definitional\",\"finding\":\"Level 1 changes progression to active TB gamma and measures the infectious peak. Gamma appears directly in di/dt as gamma * e adding to infectious, so the rise in the infectious peak follows directly from the definition of the infectious equation and is definitional, not a paper finding.\",\"suggestion\":\"Keep the control but replace the What-if with a non-definitional test of a paper finding, e.g., what if vaccination rate pi were doubled and see the effect on the exposed peak or infectious cases at a fixed year, as the paper finds higher vaccination lowers TB burden.\",\"term\":\"gamma * e\",\"claim\":null},{\"level\":3,\"severity\":\"blocking\",\"kind\":\"definitional\",\"finding\":\"Level 3 changes treatment rate delta and measures the infectious peak. Delta appears directly in di/dt as delta * i removing from infectious, so the fall in the infectious peak follows directly from the definition of the infectious equation and is definitional.\",\"suggestion\":\"Replace the What-if with a non-definitional test of a paper finding, e.g., what if recruitment rate lambda were doubled and see infectious cases at year 38, or what if loss of vaccine protection theta were increased and see exposed/infectious change, as sensitivity analysis highlights.\",\"term\":\"delta * i\",\"claim\":null},{\"level\":2,\"severity\":\"blocking\",\"kind\":\"unsupported\",\"finding\":\"The level description says Raise the contact rate and see how fast people leave the protected vaccinated group. Contact rate beta does not affect the vaccinated compartment's own equation dv/dt = pi * s - (theta + mu) * v, so beta cannot change the rate people leave vaccinated. The words misdescribe the model.\",\"suggestion\":\"Change the description and What-if to a model-consistent effect of contact rate, e.g., raise contact rate and see exposed or infectious grow, and state the What-if in terms of exposed/infectious peak as the paper finds higher contact increases spread.\",\"term\":null,\"claim\":{\"parameter\":\"beta\",\"compartment\":\"v\",\"says\":\"absent\"}}]}",
+    "usage": {
+      "promptTokens": 21334,
+      "completionTokens": 3658,
+      "totalTokens": 24992
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T23:20:32.033Z"
+}

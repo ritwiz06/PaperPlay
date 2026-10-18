@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "qwen36-27b",
+  "promptHash": "9cdda965697997deea26e79291c7b6dd2b6652cb2ada35a0ce8d264f5b5c7327",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"findings\": [{\"claim\": null, \"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 1, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test a paper finding instead of a definitional peak effect, e.g., 'What if the progression rate increased by 50%? How would that affect the basic reproduction number?' or measure a non-definitional outcome like the time to peak or final size.\", \"term\": \"gamma * e\"}, {\"claim\": null, \"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 3, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test a paper finding instead of a definitional peak effect, e.g., 'What if the treatment rate increased by 50%? How would that affect the basic reproduction number?' or measure a non-definitional outcome like the endemic equilibrium level or time to elimination.\", \"term\": \"delta * i\"}, {\"claim\": null, \"finding\": \"blocking\", \"kind\": \"unsupported\", \"level\": 2, \"severity\": \"blocking\", \"suggestion\": \"Rewrite the level to focus on how contact rate affects the susceptible or exposed compartments, which it directly influences, or change the control to the loss of vaccine protection rate (theta) if the goal is to show people leaving the vaccinated group.\", \"term\": null}]}",
+    "usage": {
+      "promptTokens": 23755,
+      "completionTokens": 5625,
+      "totalTokens": 29380
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T23:22:02.127Z"
+}

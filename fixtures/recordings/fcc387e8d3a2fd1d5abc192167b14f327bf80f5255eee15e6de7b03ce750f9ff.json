@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "inkling-small",
+  "promptHash": "fcc387e8d3a2fd1d5abc192167b14f327bf80f5255eee15e6de7b03ce750f9ff",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\n\n\n\"findings\": [\n  {\n    \"claim\": null,\n    \"finding\": \"definitional\",\n    \"kind\": \"definitional\",\n    \"level\": 1,\n    \"severity\": \"blocking\",\n    \"suggestion\": \"Replace the What-if with a test of the paper’s R0 threshold: e.g. 'What if adherence rose to 0.52, the level the paper says pushes R0 below 1?' and change the statement to say that at 52% adherence R0 falls below 1, curtailing spread (the paper’s finding), rather than only describing the definitional emptying of the Cq inflow.\",\n    \"term\": \"delta*(1-theta)*c\"\n  },\n  {\n    \"claim\": null,\n    \"finding\": \"definitional\",\n    \"kind\": \"definitional\",\n    \"level\": 3,\n    \"severity\": \"blocking\",\n    \"suggestion\": \"Replace the What-if with a test of the paper’s synergy finding: e.g. 'What if eta rose to 0.6 and theta rose to 0.52 together, testing the paper’s finding that simultaneous faster acute recovery and adherence synergistically cut R0?' and adjust the statement to reference R0 or the combined effect, not just the direct flow into R.\",\n    \"term\": \"eta*r2*i\"\n  },\n  {\n    \"claim\": null,\n    \"finding\": \"unsupported / What-if mismatch\",\n    \"kind\": \"unsupported\",\n    \"level\": 4,\n    \"severity\": \"blocking\",\n    \"suggestion\": \"The title says 'Find the chronic recovery rate the paper says pushes the reproduction number below 1', but the level watches the quitters’ peak (cq), not R0, so the What-if (rho=0.19) cannot show the R0<1 threshold. Change the watched metric to R0 (a system-wide summary) and the statement to 'At rho=0.19 the paper finds R0 falls below 1'; this also removes the definitional dependence on rho in dcq\",\n    \"term\": \"alpha*rho*cq\"\n  },\n  {\n    \"claim\": null,\n    \"finding\": \"definitional\",\n    \"kind\": \"definitional\",\n    \"level\": 4,\n    \"severity\": \"blocking\",\n    \"suggestion\": \"Because rho appears directly in dcq/dt as -(alpha*rho)*cq, the effect on the quitters’ peak is definitional. Repair by measuring R0 instead of cq peak, and use the What-if 'What if rho rose to 0.19, the paper’s threshold for R0<1?' with a statement about R0 dropping below 1.\",\n    \"term\": \"alpha*rho*cq\"\n  },\n  {\n    \"claim\": null,\n    \"finding\": \"definitional\",\n    \"kind\": \"definitional\",\n    \"level\": 5,\n    \"severity\": \"blocking\",\n    \"suggestion\": \"Replace the What-if with a test of a paper finding rather than a direct-flow change: e.g. 'What if delta fell to 0.3 while adherence held at 0.52, testing whether lower quitting plus high adherence drives R0 below 1?' and change the statement to reference the reproduction-number threshold, not just the direct reduction of the Cq inflow.\",\n    \"term\": \"delta*(1-theta)*c\"\n  }\n]\n\n}",
+    "usage": {
+      "promptTokens": 14106,
+      "completionTokens": 8513,
+      "totalTokens": 22619
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T23:23:31.571Z"
+}

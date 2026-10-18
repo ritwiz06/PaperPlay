@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "inkling-small",
+  "promptHash": "02770cc3eda26b08214cd11eaddcc050421035814d90487f38672b33046ae3bd",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\n\n\n  \"findings\": [\n    {\n      \"claim\": null,\n      \"finding\": \"definitional\",\n      \"kind\": \"definitional\",\n      \"level\": 3,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace the What-if with 'What if chronic recovery doubled and treatment adherence also rose—does R0 fall below 1?' so the level tests the paper's synergy finding instead of a direct removal effect.\",\n      \"term\": \"alpha*rho*cq\"\n    },\n    {\n      \"claim\": null,\n      \"finding\": \"definitional\",\n      \"kind\": \"definitional\",\n      \"level\": 4,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace the What-if with 'What if acute recovery proportion and adherence both increased—how does R0 change?' to test a non-definitional paper finding.\",\n      \"term\": \"eta*r2*i\"\n    },\n    {\n      \"claim\": null,\n      \"finding\": \"definitional\",\n      \"kind\": \"definitional\",\n      \"level\": 5,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace the What-if with 'What if adherence exceeded 52% while quitting stayed high—does R0 drop below 1?' to test the adherence-threshold finding instead of a direct inflow effect.\",\n      \"term\": \"delta*(1-theta)*c\"\n    },\n    {\n      \"claim\": {\n        \"compartment\": \"r\",\n        \"parameter\": \"eta\",\n        \"says\": \"rate\"\n      },\n      \"finding\": \"unsupported\",\n      \"kind\": \"unsupported\",\n      \"level\": 4,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Change the control label from 'Acute recovery rate' to 'Acute recovery proportion' (eta is a share with no unit, appearing in dr/dt as eta*r2*i) and adjust the What-if accordingly.\",\n      \"term\": null\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 13888,
+      "completionTokens": 6859,
+      "totalTokens": 20747
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T23:22:34.249Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "llama4-maverick-17b",
+  "promptHash": "d24e90cc170a8ad3bd6aeaf9dd3d0033c324b6384709031801e8e2603206dcf2",
+  "response": {
+    "model": "llama4-maverick-17b",
+    "text": "{\"findings\":[{\"claim\":null,\"finding\":\"blocking\",\"kind\":\"definitional\",\"level\":1,\"severity\":\"advice\",\"suggestion\":\"Change the What-if to: What if the transmission rate from quitters rose to the paper's 0.05?\" ,\"term\":\"-delta*(1-theta)*c\"},{\"claim\":null,\"finding\":\"blocking\",\"kind\":\"definitional\",\"level\":3,\"severity\":\"advice\",\"suggestion\":\"Change the What-if to: What if the recovery rate on treatment rose to the paper's 0.053?\" ,\"term\":\"eta*r2*i\"},{\"claim\":null,\"finding\":\"blocking\",\"kind\":\"definitional\",\"level\":4,\"severity\":\"advice\",\"suggestion\":\"Change the What-if to: What if the treatment quitting rate fell to the paper's 0.6?\" ,\"term\":\"-cq*alpha*rho\"},{\"claim\":null,\"finding\":\"blocking\",\"kind\":\"definitional\",\"level\":5,\"severity\":\"advice\",\"suggestion\":\"Change the What-if to: What if the disease transmission rate from the chronically infected on treatment rose to the paper's 0.016?\" ,\"term\":\"c*delta*(1-theta)\"},{\"claim\":null,\"finding\":\"advice\",\"kind\":\"unsupported\",\"level\":2,\"severity\":\"advice\",\"suggestion\":\"Change the control to a parameter the paper supports, such as the recovery rate on treatment.\" ,\"term\":null}]}",
+    "usage": {
+      "promptTokens": 13667,
+      "completionTokens": 302,
+      "totalTokens": 13969
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T23:19:41.362Z"
+}

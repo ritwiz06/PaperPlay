@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "qwen36-27b",
+  "promptHash": "cfc1b99b387851d2134bc063acda9d4163d3b194d38d9e418de45e6b4578a1ef",
+  "response": {
+    "model": "qwen36-27b-fp8",
+    "text": "{\"findings\": [{\"claim\": null, \"finding\": \"Level 3 is definitional: increasing the chronic recovery rate directly drains the quitters compartment, guaranteeing a lower peak regardless of system dynamics.\", \"kind\": \"definitional\", \"level\": 3, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to 'What if chronic recovery rate increased to 0.19?' to test the paper's finding that R0 falls below 1 when ρ approaches 0.19, rather than relying on the definitional drain from the quitters compartment.\", \"term\": \"-cq × alpha × rho\"}, {\"claim\": null, \"finding\": \"Level 4 is definitional: increasing the acute recovery proportion directly adds to the recovered compartment, guaranteeing a higher peak regardless of system dynamics.\", \"kind\": \"definitional\", \"level\": 4, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to 'What if acute recovery proportion increased to 0.4?' to test the paper's sensitivity analysis finding on the upper bound of η and its impact on R0, instead of the definitional inflow to the recovered compartment.\", \"term\": \"i × eta × r2\"}, {\"claim\": null, \"finding\": \"Level 5 is definitional: increasing the treatment quitting rate directly feeds the quitters compartment, guaranteeing a higher peak regardless of system dynamics.\", \"kind\": \"definitional\", \"level\": 5, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to 'What if treatment quitting rate decreased to 0.4?' to test the paper's finding on how reducing δ lowers R0 and supports the >52% adherence threshold, rather than the definitional inflow to the quitters compartment.\", \"term\": \"c × delta × (1 − theta)\"}]}",
+    "usage": {
+      "promptTokens": 14166,
+      "completionTokens": 5259,
+      "totalTokens": 19425
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T23:22:35.184Z"
+}

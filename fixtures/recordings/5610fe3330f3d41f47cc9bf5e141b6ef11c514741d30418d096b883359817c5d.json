@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "granite41-30b",
+  "promptHash": "5610fe3330f3d41f47cc9bf5e141b6ef11c514741d30418d096b883359817c5d",
+  "response": {
+    "model": "granite41-30b",
+    "text": "{\n  \"findings\": [\n    {\n      \"claim\": null,\n      \"finding\": \"blocking\",\n      \"kind\": \"definitional\",\n      \"level\": 1,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace the What‑if with a test of the paper's finding that increasing the progression rate (γ) raises the peak of infectious individuals. For example: 'What if the progression rate from exposed to infectious were increased by 20 %? The model predicts the infectious peak rises by X.'\",\n      \"term\": \"gamma × e\"\n    },\n    {\n      \"claim\": null,\n      \"finding\": \"blocking\",\n      \"kind\": \"definitional\",\n      \"level\": 3,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Replace the What‑if with a test of the paper's finding that increasing the treatment rate (δ) lowers the infectious peak. For example: 'What if the treatment rate of infectious individuals were doubled? The model predicts the infectious peak falls by Y.'\",\n      \"term\": \"-delta × i\"\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 23152,
+      "completionTokens": 236,
+      "totalTokens": 23388
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T23:19:18.931Z"
+}

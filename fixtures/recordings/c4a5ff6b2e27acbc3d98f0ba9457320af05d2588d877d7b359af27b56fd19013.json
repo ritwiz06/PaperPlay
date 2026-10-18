@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "gemma4-31b-it",
+  "promptHash": "c4a5ff6b2e27acbc3d98f0ba9457320af05d2588d877d7b359af27b56fd19013",
+  "response": {
+    "model": "gemma4-31b-it",
+    "text": "{\"findings\": [{\"claim\": null, \"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 1, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test the paper's finding that adherence above 52% brings the reproduction number below 1, and change the measured compartment to a system-wide summary like the total number of infected individuals over time.\", \"term\": \"-c * delta * theta\"}, {\"claim\": null, \"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 3, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test the synergistic impact of enhancing both the recovery rate of acutely infected individuals and treatment adherence on reducing the reproduction number, and change the measured compartment to a system-wide summary like the total number of infected individuals over time.\", \"term\": \"i * eta * r2\"}, {\"claim\": null, \"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 4, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test the paper's finding that a chronic recovery rate of 0.19 pushes the reproduction number below 1, and change the measured compartment to a system-wide summary like the total number of infected individuals over time.\", \"term\": \"-cq * alpha * rho\"}, {\"claim\": null, \"finding\": \"blocking\", \"kind\": \"definitional\", \"level\": 5, \"severity\": \"blocking\", \"suggestion\": \"Change the What-if to test the impact of the treatment quitting rate on the reproduction number, and change the measured compartment to a system-wide summary like the total number of infected individuals over time.\", \"term\": \"c * delta * (1 - theta)\"}]}",
+    "usage": {
+      "promptTokens": 14186,
+      "completionTokens": 391,
+      "totalTokens": 14577
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-18T23:19:52.420Z"
+}
