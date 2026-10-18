@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 
 const workflow = readFileSync(join(import.meta.dirname, "..", "..", ".github", "workflows", "check-gate.yml"), "utf8");
 /** A job's block, from its key to the next job's. */
-const job = (key: string): string => workflow.split(`\n  ${key}:\n`)[1]?.split(/\n  [a-z-]+:\n/)[0] ?? "";
+const job = (key: string): string => workflow.split(`\n  ${key}:\n`)[1]?.split(/\n {2}[a-z-]+:\n/)[0] ?? "";
 
 describe("[R03] CI's workflow", () => {
   it("asks, on a push to main only, whether the commit already passed on a branch, reading the Actions API", () => {
