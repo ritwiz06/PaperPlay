@@ -16,7 +16,7 @@ calendar promises.
 | Gate | Tag | Planned effort | Requirements enforced | State |
 |---|---|---|---|---|
 | G1 Playable baseline | v0.1.0 | 21–28 h | R01–R04 | Passed and tagged v0.1.0 on 2026-10-01 |
-| G2 Verified authored world | v0.2.0 | 21–28 h | R01–R08, R12 | Its interface is done; it waits for the Reynolds PDF and the source map |
+| G2 Verified authored world | v0.2.0 | 21–28 h | R01–R08, R12 | The flocking world reviewed against its source map on 2026-10-17 (ADR-0045); tagged when the owner says |
 | G3a Generalize, compartments, the pipeline on them | Chosen when it passes | 52–72 h | R01–R12 | Every item built; closed out 2026-10-17, two worlds made under every rule; what counts as definitional waits on the owner |
 | G3b Routing, the explainer tier, learning toys | Chosen when it passes | 49–71 h (design/g3b.md) | R01–R12 | Planned, waiting on the owner's decisions |
 | G4 Evaluation and feature freeze | v0.4.0 | 20–28 h | R01–R12, plus evaluation checks | Not started |
@@ -79,8 +79,11 @@ Done early:
 Next:
 - [x] First: add `@axe-core/playwright` (approved 2026-10-01) and the axe scan in `test:e2e`
   (R12) (2026-10-09, commit 3639dfb).
-- [ ] Source register, source map, reading notes and learning questions. The section files
-  moved to G3 (see Plan changes, 2026-10-09).
+- [x] Source register and source map (2026-10-17, `0a24c13`, ADR-0045): Reynolds's paper from
+  his own site, registered as ACM's copyright and the author's copy, its text not kept; 13 claims
+  located by `npm run sources:map` and checked against a fresh fetch by `npm run sources:check`.
+- [ ] Reading notes and learning questions. The section files moved to G3 (see Plan changes,
+  2026-10-09).
 - [x] Decide the group measure before any level teaches with it (owner, 2026-10-01). At the
   default density, 17% of random scatters counted as one group (ADR-0003). Done 2026-10-09:
   flock 3.0.0 and `npm run sweep:groups`, with 0 of 10,000 scatters reading as one group
@@ -93,8 +96,8 @@ Next:
 - [x] The level rule (ADR-0018): every level's stated effect measured on 20 skies and recorded
   in `eval/sweeps/levels.md`, re-run by a test; levels 2, 4 and 5 reworked to it (2026-10-09,
   `3647ec5`).
-- [ ] `flocking-reference.json` reviewed: real anchors from the source map. Until then G2
-  cannot pass (`e09ecd9`).
+- [x] `flocking-reference.json` reviewed: real anchors from the source map, four statements
+  reworded to say only what the paper says (2026-10-17, `0a24c13`, ADR-0045).
 - [x] The deterministic builder, with binding fixtures (2026-10-09, `4d942fd`, ADR-0016).
 - [x] `/world/hook` driven by the WorldSpec through all six levels: the level map, journal
   pages unlocking, a readout per level, and depth variants by element id (2026-10-09,
@@ -351,4 +354,5 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-10 | The levels sweep runs every authored world, over its family's variation, and holds a compartment world's every run to the accuracy check | ADR-0024's level rule for models with no chance in them (ADR-0029) |
 | 2026-10-14 | The model provider is ASU Research Computing's Voyager gateway, not the Anthropic SDK; tests and CI replay recorded calls; generation runs only locally | Owner decision (ADR-0030) |
 | 2026-10-17 | G3a closed out: every item built, two worlds made under every rule. G3b planned in design/g3b.md at 49–71 h, a smaller G3b at 29–43 h, its decisions the owner's | Owner request, 2026-10-16 |
+| 2026-10-17 | G2's source is Reynolds's own copy on red3d.com, not the owner's PDF; Threshold Town's waits on a browser download, the Royal Society refusing this machine's requests | Owner instruction (ADR-0045) |
 | 2026-10-16 | Models in testing excluded; several value sets picked by rule; a visibility rule beside the level rule, levels on the paper's findings with the hook on its headline, shares as their own unit; then PDF ingest, the last of G3a.3 | Owner decisions (ADR-0035's amendments, ADR-0036, ADR-0037, ADR-0038) |

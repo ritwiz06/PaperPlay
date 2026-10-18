@@ -779,6 +779,18 @@ ignores it, and the run comes out the same.
   it apart from the events means a prediction can never change what the run measured.
 - **Learn more:** [Martin Fowler: Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html)
 
+### Content digests as proof of place (a source map)
+
+A quote is checked against a source the repository may not keep by storing, beside the quote, a
+cryptographic digest of the bytes and of the extracted text, and the quote's character offsets. A
+fresh fetch that hashes the same proves the text is the one the offsets point into, without the text
+being kept.
+
+- **Used in:** `scripts/source-map.ts`, `packages/contracts/src/sourcemap.ts`, `fixtures/papers/flocking/source-map.json`
+- **Why here:** Reynolds's paper is ACM's copyright: the flocking world may keep anchors and short
+  quotes, not the text, and still show each quote is where it says (ADR-0045).
+- **Learn more:** [SHA-2 (Wikipedia)](https://en.wikipedia.org/wiki/SHA-2)
+
 ## Graphics
 
 ### Scene graph (Three.js)
