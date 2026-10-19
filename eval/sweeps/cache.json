@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "sweep-cache/1",
+  "entries": {
+    "bakeoff-design": {
+      "inputs": "7bd9dd9655e4678b2bdcaed2003dd636304675c333b2c3d7945b0ce08bc3b742",
+      "output": "f6c69942d7accef1481d631cf887f36fba53c32e5829338112a281625f9e678f"
+    },
+    "bakeoff-models": {
+      "inputs": "7bd9dd9655e4678b2bdcaed2003dd636304675c333b2c3d7945b0ce08bc3b742",
+      "output": "23701fcd5c7e8335b40786fac0314fc24c507be8571ddaa9ce3fa174f2f1e52d"
+    },
+    "levels-flocking": {
+      "inputs": "e97e8086a0572ceacac2e18a0ea7dcba883772e4fa3e84b8a08e2db85afb0457",
+      "output": "e5a8099017dc147c0c85d2692f6152a2d7216ed787dc2d9d117e895553536a24"
+    },
+    "levels-kermack-mckendrick-1927": {
+      "inputs": "e97e8086a0572ceacac2e18a0ea7dcba883772e4fa3e84b8a08e2db85afb0457",
+      "output": "21b933966392b973829864f50e5803177be0aab68f15404a126027a1c1ffb5b9"
+    }
+  }
+}

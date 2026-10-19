@@ -3,10 +3,14 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { RULE_HOLDS, RULE_SEEDS } from "@paperplay/contracts";
 import { describe, expect, it } from "vitest";
+import { CODE, sweep } from "../cache/sweeps.ts";
 
 // The level rule (ADR-0018), re-run: every level's stated effect against skies 1 to 20. The
 // sweep runs in its own Node process, where the primitive runs at full speed; under Vitest's
-// module transform it runs about 2.4 times slower. It exits non-zero if any level fails.
+// module transform it runs about 2.4 times slower. It exits non-zero if any level fails. Each
+// sweep is cached by the hash of its inputs, checked before its committed record is trusted
+// (ADR-0051); the nightly run and `PAPERPLAY_SWEEP_CACHE=off` run it from scratch.
+const SWEEP_INPUTS = [...CODE, "scripts/levels.ts", "scripts/sweep", "fixtures/worldspecs"];
 const root = join(import.meta.dirname, "..", "..");
 const record = readFileSync(join(root, "eval", "sweeps", "levels.md"), "utf8");
 const results = (): string[][] =>
@@ -16,9 +20,9 @@ const results = (): string[][] =>
     .map((line) => line.split(" | "));
 
 describe("[R06] the levels sweep (ADR-0018)", () => {
-  it("re-runs on skies 1 to 20, finds every level meeting the rule, and matches eval/sweeps/levels.md byte for byte", () => {
-    const fresh = execFileSync(process.execPath, [join(root, "scripts", "levels.ts"), "--print"], { cwd: root, encoding: "utf8", maxBuffer: 16 * 1024 * 1024 });
-    expect(fresh).toBe(record);
+  it("re-runs on skies 1 to 20, finds every level meeting the rule, and matches eval/sweeps/levels.md byte for byte", async () => {
+    const { output } = await sweep("levels-flocking", SWEEP_INPUTS, record, () => execFileSync(process.execPath, [join(root, "scripts", "levels.ts"), "--print"], { cwd: root, encoding: "utf8", maxBuffer: 16 * 1024 * 1024 }));
+    expect(output).toBe(record);
   }, 240_000);
 
   it("records six levels, each meeting the rule", () => {
@@ -47,9 +51,9 @@ const townRows = (heading: string): string[][] =>
     .map((line) => line.split(" | "));
 
 describe("[R06] Threshold Town's levels sweep (ADR-0024)", () => {
-  it("re-runs on its 20 starts and matches eval/sweeps/levels-kermack-mckendrick-1927.md byte for byte", () => {
-    const fresh = execFileSync(process.execPath, [join(root, "scripts", "levels.ts"), "--print", "kermack-mckendrick-1927.json"], { cwd: root, encoding: "utf8" });
-    expect(fresh).toBe(town);
+  it("re-runs on its 20 starts and matches eval/sweeps/levels-kermack-mckendrick-1927.md byte for byte", async () => {
+    const { output } = await sweep("levels-kermack-mckendrick-1927", SWEEP_INPUTS, town, () => execFileSync(process.execPath, [join(root, "scripts", "levels.ts"), "--print", "kermack-mckendrick-1927.json"], { cwd: root, encoding: "utf8" }));
+    expect(output).toBe(town);
   }, 120_000);
 
   it("records five levels, each meeting the rule, and level 4's count of none exactly", () => {

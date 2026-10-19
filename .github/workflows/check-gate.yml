@@ -4,11 +4,18 @@
 # The capture job films the demo on the canonical capture runtime, a pinned ubuntu-24.04 image:
 # published videos come from it, since a capture's bytes hold per runtime (ADR-0010). It is not
 # part of the gate and runs on demand only, from the Actions tab (ADR-0048).
+# Pushes of tags run nothing: a tag names a commit main already passed. node_modules and the
+# Playwright browsers are cached by the lockfile. Each night, if main moved in the day before,
+# the sweeps the gate takes from its cache run from scratch and must give the committed results
+# (ADR-0051).
 name: check-gate
 
 on:
   push:
+    branches: ["**"]
   pull_request:
+  schedule:
+    - cron: "17 9 * * *"
   workflow_dispatch:
     inputs:
       frames:
@@ -47,7 +54,7 @@ jobs:
     name: check:gate (ubuntu-latest, Node from .node-version)
     needs: passed
     # Every other push and pull request runs it; main runs it unless its branch run already passed.
-    if: always() && needs.passed.outputs.passed != 'true'
+    if: always() && github.event_name != 'schedule' && needs.passed.outputs.passed != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -59,8 +66,24 @@ jobs:
         with:
           node-version-file: .node-version
           cache: npm
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - id: modules
+        uses: actions/cache@v6
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: modules-${{ runner.os }}-${{ hashFiles('.node-version') }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.modules.outputs.cache-hit != 'true'
+        run: npm ci
+      - id: browsers
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: browsers-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.browsers.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+      - if: steps.browsers.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
       - run: npm run check:gate
       - name: Keep the test reports
         if: always()
@@ -72,6 +95,36 @@ jobs:
             test-results/
           if-no-files-found: ignore
           retention-days: 14
+
+  # Each night: the cached sweeps from scratch, failing if any differs from its committed result.
+  sweeps:
+    name: cached sweeps, from scratch
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - id: moved
+        run: echo "moved=$([ $(( $(date +%s) - $(git log -1 --format=%ct) )) -lt 90000 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+      - if: steps.moved.outputs.moved == 'true'
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - if: steps.moved.outputs.moved == 'true'
+        id: modules
+        uses: actions/cache@v6
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: modules-${{ runner.os }}-${{ hashFiles('.node-version') }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.moved.outputs.moved == 'true' && steps.modules.outputs.cache-hit != 'true'
+        run: npm ci
+      - if: steps.moved.outputs.moved == 'true'
+        run: npx vitest run scripts/test/levels.test.ts scripts/test/bakeoff.test.ts
+        env:
+          PAPERPLAY_SWEEP_CACHE: "off"
 
   capture:
     name: capture:demo on the canonical runtime (ubuntu-24.04)

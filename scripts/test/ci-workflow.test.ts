@@ -21,8 +21,24 @@ describe("[R03] CI's workflow", () => {
   it("runs the gate on every branch push and pull request, and on main unless the branch run passed", () => {
     const gate = job("gate");
     expect(gate).toMatch(/needs: passed/);
-    expect(gate).toMatch(/if: always\(\) && needs\.passed\.outputs\.passed != 'true'/);
+    expect(gate).toMatch(/if: always\(\) && github\.event_name != 'schedule' && needs\.passed\.outputs\.passed != 'true'/);
     expect(gate).toMatch(/run: npm run check:gate/);
+  });
+
+  it("runs nothing for a pushed tag, and restores node_modules and the browsers from the cache by the lockfile (ADR-0051)", () => {
+    expect(workflow).toMatch(/\non:\n {2}push:\n {4}branches: \["\*\*"\]\n/);
+    const gate = job("gate");
+    expect(gate).toMatch(/key: modules-\$\{\{ runner\.os \}\}-\$\{\{ hashFiles\('\.node-version'\) \}\}-\$\{\{ hashFiles\('package-lock\.json'\) \}\}/);
+    expect(gate).toMatch(/- if: steps\.modules\.outputs\.cache-hit != 'true'\n {8}run: npm ci/);
+    expect(gate).toMatch(/path: ~\/\.cache\/ms-playwright/);
+  });
+
+  it("each night, if main moved, runs the cached sweeps from scratch, and never the gate", () => {
+    expect(workflow).toMatch(/schedule:\n {4}- cron: "17 9 \* \* \*"/);
+    const sweeps = job("sweeps");
+    expect(sweeps).toMatch(/if: github\.event_name == 'schedule'/);
+    expect(sweeps).toMatch(/run: npx vitest run scripts\/test\/levels\.test\.ts scripts\/test\/bakeoff\.test\.ts\n {8}env:\n {10}PAPERPLAY_SWEEP_CACHE: "off"/);
+    expect(job("gate")).toMatch(/github\.event_name != 'schedule'/);
   });
 
   it("runs the capture job on demand only, never on a push", () => {
