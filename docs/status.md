@@ -42,9 +42,15 @@ Updated 2026-10-18: decisions, fixes, a library page and a UI atlas
 - **One origin a sentence, every number in the chart's unit** (ADR-0042), landed at `938475a`.
 - **Plans from two planners** (ADR-0043), landed at `8df84c3`: kimi-k2-7-code and glm-5-3, the
   better level kept for each slot.
-- **Branches:** `g3/review-corrections`, being landed; `g3/library` and then `g3/atlas` after it;
+- **The review corrections landed** at `46a2c12` (ADR-0044's amendment): definitional corrected and
+  found by code, a spread headline's hook on an infected compartment, one reviewer's unsupported block
+  enough, reviewers never the planners or the explainer (inkling-small and qwen38-27b), and hepatitis C
+  regenerated under them, three levels, its hook on the quitters.
+- **The library** (ADR-0049), on `g3/library`: `/library`, every world with its paper, kind, status,
+  levels and picture, linked from every world's title card, in the public build too.
+- **Branches:** `g3/library`, being landed; `g3/atlas` after it;
   `worktree-agent-ab8301aef54d2fcc8`, the compartment agent's own, whose three commits are on `main`.
-- **Working commit:** `b37c7dc` on `main`, tagged `v0.2.0`.
+- **Working commit:** `46a2c12` on `main`; `v0.2.0` is `b37c7dc`.
 - **CI and billing:** about 2,111 Actions minutes from 1 to 18 October, by the jobs' own durations
   rounded up per job, against GitHub Free's 2,000 for a private repository; GitHub refused a run on
   `main` on 2026-10-18. Since `g2/release`, a push to `main` runs the gate only when its branch run did
@@ -69,24 +75,25 @@ Updated 2026-10-18: decisions, fixes, a library page and a UI atlas
   `/world/epidemic`, Momentum Valley's five on `/world/momentum`, the first generated world's five on `/world/generated/pmc-PMC12334037`, hepatitis C's three under the corrected rules on `/world/generated/pmc-PMC12334037-2026-10-18-2`, its hook on the quitters, and
   the two worlds of 2026-10-17 above, now with its fork's chart fitted to what it measures and its
   town seen through a lens, each with its control, readout, guide, journal, prediction and fork. On
-  this machine only, `/create` makes a world from an arXiv id, a PMCID or a PDF.
+  this machine only, `/create` makes a world from an arXiv id, a PMCID or a PDF. `/library` lists
+  every world.
 
-## Latest check:gate (G2), 2026-10-18, on `g3/review-corrections` at d2e0b6c
+## Latest check:gate (G2), 2026-10-18, on `g3/library` at 0330679
 
 G2's own run, which `v0.2.0` names, was on `g2/release` at `b37c7dc`: 954 tests, CI green
-(https://github.com/ritwiz06/PaperPlay/actions/runs/39175501504). This one is the review corrections'.
+(https://github.com/ritwiz06/PaperPlay/actions/runs/39175501504). This one is the library's.
 
 ```
 check:gate G2 · Verified authored world · tag v0.2.0
   runtime    node 24.21.0 (pinned 24.21.0)  ok
-  typecheck  ok      17.2 s
-  lint       ok      13.0 s
-  check:docs ok      0.3 s
-  test       ok      78.3 s
-  build      ok      0.6 s
-  test:e2e   ok      112.0 s
+  typecheck  ok      23.6 s
+  lint       ok      17.4 s
+  check:docs ok      0.4 s
+  test       ok      110.4 s
+  build      ok      0.8 s
+  test:e2e   ok      170.3 s
   world      ok      fixtures/worldspecs/flocking-reference.json
-  evidence   959 tests (vitest 868, playwright 91), 0 skipped
+  evidence   968 tests (vitest 872, playwright 96), 0 skipped
     R01  Deterministic, oracle-checked primitives      160 passing
     R02  Model/render separation                       14 passing
     R03  Strict, versioned contracts                   162 passing
@@ -95,12 +102,12 @@ check:gate G2 · Verified authored world · tag v0.2.0
     R06  Level structure and learning tools            77 passing
     R07  Replay and stale evidence                     40 passing
     R08  Spec, not code                                86 passing
-    R12  Accessibility and motion floor                24 passing
+    R12  Accessibility and motion floor                26 passing
 
 G2 passed: every required check ran and every requirement has passing evidence.
 ```
 
-Ahead of their gate, from the same suites' reports: R09 47, R10 36, R11 30. Land runs the gate again
+Ahead of their gate, from the same suites' reports: R09 48, R10 36, R11 31. Land runs the gate again
 before it pushes.
 
 ## Blockers
@@ -119,7 +126,7 @@ before it pushes.
 4. **The deploy:** the owner connects Vercel (ADR-0017).
 
 The owner settled what counts as definitional, unsupported wording, reviewers' independence and G2
-on 2026-10-18; G2 and `v0.2.0` landed, the review corrections land this session.
+on 2026-10-18; all of it has landed.
 
 ## Next three actions
 
