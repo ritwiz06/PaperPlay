@@ -1,5 +1,5 @@
 /**
- * npm run atlas [-- --jobs <folder> ...] [-- --only <world-id>] [-- --workers <n>] [-- --date <name>] [-- --clips-only]
+ * npm run atlas [-- --jobs <folder> ...] [-- --only <world-id>] [-- --workers <n>] [-- --date <name>] [-- --redo clips|storyboards]
  *
  * The owner's UI atlas (ADR-0050). Serves the app on a development server of its own and visits,
  * at 1440 × 900 and 390 × 844, every page that is not a world, every world the library lists and
@@ -15,12 +15,13 @@
  *
  * A job's events come from the API's data folders, apps/api/data/jobs by default or each --jobs
  * given, which only the machine that ran the jobs has; a world whose job is not there plays back
- * its job record's states. With --clips-only, the clips of an atlas already taken are filmed again.
+ * its job record's states. With --redo clips or --redo storyboards, that part of an atlas already
+ * taken is taken again.
  */
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { once } from "node:events";
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
@@ -380,38 +381,39 @@ interface JobEventLine {
   readonly at: string;
 }
 
-/** The events of the job that made a world: its own job if this machine ran it, else the newest ready job of the same title and source. */
+/**
+ * The events of the job that made a world: its own job, if this machine ran it and kept the world as
+ * the job made it; else the states its job record kept. Never another job's events: worlds of one
+ * paper share a title, so a title names no job.
+ */
 function eventsOf(world: LibraryEntry): { events: JobEventLine[]; source: string; how: string; job: string } {
   const spec = readFileSync(join(root, "fixtures", "worldspecs", "generated", `${world.id}.json`), "utf8");
-  const parsed = JSON.parse(spec) as { title: string };
-  const same: { id: string; events: JobEventLine[]; exact: boolean; time: number }[] = [];
+  const same: { id: string; events: JobEventLine[]; exact: boolean }[] = [];
   for (const folder of JOBS.filter((path) => existsSync(path))) {
     for (const id of readdirSync(folder)) {
       const made = join(folder, id, "world.json");
       const log = join(folder, id, "events.jsonl");
       if (!existsSync(made) || !existsSync(log)) continue;
       const text = readFileSync(made, "utf8");
-      let candidate: { title?: string };
+      let candidate: unknown;
       try {
-        candidate = JSON.parse(text) as { title?: string };
+        candidate = JSON.parse(text);
       } catch {
         continue;
       }
       const exact = JSON.stringify(candidate) === JSON.stringify(JSON.parse(spec));
-      if (!exact && candidate.title !== parsed.title) continue;
+      if (!exact) continue;
       const events = readFileSync(log, "utf8")
         .split("\n")
         .filter(Boolean)
         .map((line) => JSON.parse(line) as JobEventLine);
       if (events.at(-1)?.state !== "ready") continue;
-      same.push({ id, events, exact, time: statSync(log).mtimeMs });
+      same.push({ id, events, exact });
     }
   }
   const sourceOf = (events: readonly JobEventLine[]): string => /received (\S+)/.exec(events[0]?.message ?? "")?.[1] ?? world.id;
   const exact = same.find((entry) => entry.exact);
   if (exact) return { events: exact.events, source: sourceOf(exact.events), how: `job ${exact.id}, the job that made this world`, job: exact.id };
-  const newest = same.sort((a, b) => b.time - a.time)[0];
-  if (newest) return { events: newest.events, source: sourceOf(newest.events), how: `job ${newest.id}, the newest ready job of the same title; the world was reshaped after it was saved`, job: newest.id };
   // No job on this machine: the recorded states, from the job record that names the world.
   const records = join(root, "fixtures", "jobs");
   for (const name of readdirSync(records)) {
@@ -530,10 +532,12 @@ function earlierSets(): EarlierSet[] {
 }
 
 // ── The run ────────────────────────────────────────────────────────────────────────────────────
-// With --clips-only, the clips of an atlas already taken are filmed again and its gallery rewritten.
-const CLIPS_ONLY = process.argv.includes("--clips-only");
-if (CLIPS_ONLY && !existsSync(join(out, "manifest.json"))) throw new Error(`--clips-only films an atlas already taken, and ${out} has none`);
-for (const folder of CLIPS_ONLY ? ["clips"] : ["shots", "strips", "clips"]) {
+// With --redo clips or --redo storyboards, that part of an atlas already taken is taken again and its
+// gallery rewritten; the rest is kept as it was.
+const REDO = argument("--redo");
+if (REDO !== null && REDO !== "clips" && REDO !== "storyboards") throw new Error(`--redo takes clips or storyboards, not ${REDO}`);
+if (REDO && !existsSync(join(out, "manifest.json"))) throw new Error(`--redo takes again part of an atlas already taken, and ${out} has none`);
+for (const folder of REDO === "clips" ? ["clips"] : REDO ? [] : ["shots", "strips", "clips"]) {
   rmSync(join(out, folder), { recursive: true, force: true });
   mkdirSync(join(out, folder), { recursive: true });
 }
@@ -549,7 +553,11 @@ try {
   // The shots: one task per world and size, a few at a time, as a fork runs to its horizon.
   const tasks: (() => Promise<void>)[] = [];
   for (const size of ["desktop", "phone"] as const) {
-    if (CLIPS_ONLY) break;
+    if (REDO === "clips") break;
+    if (REDO === "storyboards") {
+      for (const world of library.filter((entry) => entry.madeBy === "pipeline")) tasks.push(() => shootStoryboard(world, size).then((board) => void (board && taken.push(board)), failed(`${world.id}'s storyboard at ${size}`)));
+      continue;
+    }
     if (!ONLY) for (const entry of PAGES) tasks.push(() => shootPage(entry, size).then((shot) => void taken.push(shot), failed(`${entry.route} at ${size}`)));
     for (const world of library) {
       tasks.push(async () => {
@@ -566,19 +574,26 @@ try {
     }),
   );
   // Then the clips, one world at a time, so each has the GPU to itself.
-  filmer = await chromium.launch({ args: GPU });
-  for (const size of ["desktop", "phone"] as const) {
-    for (const world of library) await filmWorld(world, size).then((made) => void clips.push(...made), failed(`${world.id}'s clips at ${size}`));
+  if (REDO !== "storyboards") {
+    filmer = await chromium.launch({ args: GPU });
+    for (const size of ["desktop", "phone"] as const) {
+      for (const world of library) await filmWorld(world, size).then((made) => void clips.push(...made), failed(`${world.id}'s clips at ${size}`));
+    }
+    await filmer.close();
   }
-  await filmer.close();
   // In the order the gallery reads them, whatever order the workers finished in.
   taken.sort((a, b) => a.shot.key.localeCompare(b.shot.key));
   clips.sort((a, b) => a.world.localeCompare(b.world) || a.level - b.level || a.size.localeCompare(b.size));
 
   let atlas: Atlas;
-  if (CLIPS_ONLY) {
+  if (REDO) {
     const kept = JSON.parse(readFileSync(join(out, "manifest.json"), "utf8")) as Atlas;
-    atlas = { ...kept, clips, earlier: earlierSets() };
+    const retaken = new Map(taken.map(({ shot }) => [shot.key, shot]));
+    const shots = kept.shots.map((shot) => {
+      const again = retaken.get(shot.key);
+      return again ? { ...again, change: shot.change, strip: shot.strip } : shot;
+    });
+    atlas = { ...kept, shots, clips: REDO === "clips" ? clips : kept.clips, earlier: earlierSets() };
   } else {
     // Compare with the last atlas, and join each level's shots at each size into a strip.
     const tool = await browser.newPage();

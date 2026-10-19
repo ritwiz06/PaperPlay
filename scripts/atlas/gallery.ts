@@ -268,7 +268,7 @@ cite { font-family: var(--font-text); font-style: italic; }
 .index { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0; padding: 0; list-style: none; font-size: 0.92rem; }
 .index a { color: var(--text); text-underline-offset: 3px; }
 .world { margin-top: 40px; padding-top: 20px; border-top: 2px solid var(--text); }
-.world, .level { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 72px); }
+.world, .level { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 140px); }
 .world-meta, .level-meta { margin: 4px 0 0; color: var(--muted); font-size: 0.92rem; }
 .status { display: inline-block; padding: 0 9px; border: 1.5px solid var(--text); border-radius: 999px; color: var(--ink); font-weight: 600; font-size: 0.85rem; }
 .status-verified { background: var(--lime); }
