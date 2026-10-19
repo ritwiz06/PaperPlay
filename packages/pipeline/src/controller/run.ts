@@ -13,7 +13,7 @@ import { buildWorld, type BuiltWorld } from "../builder/build.ts";
 import { checkProvenance } from "../checks/provenance.ts";
 import { runOwnNumbers } from "../reproduce/index.ts";
 import { fetchArxiv, fetchPmc, fromOwnerPdf, registerAndText, type Fetch } from "../ingest/index.ts";
-import { completeStructured, type ModelClient, type Stage } from "../models/index.ts";
+import { completeStructured, ModelError, type ModelClient, type Stage } from "../models/index.ts";
 import { sweepLevels, type LevelResult } from "../rule/sweep.ts";
 import { decideReviews, definitionalProblem, describeDirectEffect, directEffectOf, type ReviewRecord } from "../rule/direct.ts";
 import { hookSpreadProblem } from "../rule/spread.ts";
@@ -321,17 +321,29 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     const explainerModel = modelFor("explainer");
     let explanation: Explanation = (await explain(input.client, explainerModel, { title, plan, passages, model: modelWords }, { structuredOutput: structured(explainerModel) })).value;
 
-    /** Asks the planner to change only the named levels, keeping the rest. */
+    /**
+     * Asks the planner to change only the named levels, keeping the rest. A repair that runs out of
+     * room before it writes anything is asked again with twice the room; one that still cannot be
+     * read changes nothing, and the plan stays as it was: the repair is spent, and the rules then
+     * drop the levels it was to mend, as after any repair that fails (CLAUDE.md, boundary 5).
+     */
     const replan = async (problems: readonly string[]): Promise<void> => {
       repairs++;
       move("repairing", "planning", `asking the planner to change only the levels with problems: ${problems.slice(0, 4).join("; ")}`);
       const messages = plannerMessages({ title, reading: reading.value, model, example: input.example, behaviour, response, ownNumbers: forPlanner });
-      const replanned = await completeStructured(
-        input.client,
-        { stage: "planner", model: plannerModel, messages: [...messages, { role: "assistant", content: JSON.stringify(plan) }, { role: "user", content: `These problems were found:\n${problems.map((line) => `- ${line}`).join("\n")}\nChange only the levels named, as little as fixes them, and give the whole plan again.` }], temperature: 0, maxTokens: PLANNER_MAX_TOKENS },
-        Plan,
-        { name: "plan", structuredOutput: false },
-      );
+      let replanned: { readonly value: Plan };
+      try {
+        replanned = await completeStructured(
+          input.client,
+          { stage: "planner", model: plannerModel, messages: [...messages, { role: "assistant", content: JSON.stringify(plan) }, { role: "user", content: `These problems were found:\n${problems.map((line) => `- ${line}`).join("\n")}\nChange only the levels named, as little as fixes them, and give the whole plan again.` }], temperature: 0, maxTokens: PLANNER_MAX_TOKENS },
+          Plan,
+          { name: "plan", structuredOutput: false, moreRoom: true },
+        );
+      } catch (error) {
+        if (!(error instanceof ModelError) || error.kind !== "invalid-response") throw error;
+        say("planning", `the planner's repair could not be read, so the plan stays as it was: ${error.message.replace(/\s+/g, " ").slice(0, 400)}`);
+        return;
+      }
       // A level the repair changed is the repairing planner's now.
       sources = replanned.value.levels.map((level, index) => (JSON.stringify(level) === JSON.stringify(plan.levels[index]) ? (sources[index] ?? plannerModel) : `${plannerModel}, in repair`));
       plan = replanned.value;

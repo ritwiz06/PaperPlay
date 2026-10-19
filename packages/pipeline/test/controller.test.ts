@@ -3,6 +3,7 @@ import { canMove, JOB_TRANSITIONS, JobState, SourceText, type JobState as State,
 import { describe, expect, it } from "vitest";
 import { runJob, type JobConfig, type JobSink } from "../src/controller/run.ts";
 import type { ChatRequest, ModelClient } from "../src/models/index.ts";
+import { PLANNER_MAX_TOKENS } from "../src/stages/planner.ts";
 
 // The controller (R10, R11): real states only, along the allowed transitions; at most two scoped
 // repairs; `ready` only when the builder, the family's checks, the level rule and provenance have
@@ -133,6 +134,9 @@ const words = () => ({
   afterwards: { text: "The paper says it ends early.", quote: "The epidemic ends before everyone has been infected.", question: "Why does it end?" },
 });
 
+/** A reply that thought until its limit and wrote nothing, as a reasoning model's can. */
+const OUT_OF_ROOM = Symbol("out of room");
+
 /** A client that answers each stage from a script: each stage's replies in turn, the last repeated. */
 function scripted(replies: Partial<Record<string, readonly unknown[]>>): ModelClient & { readonly calls: ChatRequest[] } {
   const calls: ChatRequest[] = [];
@@ -146,6 +150,7 @@ function scripted(replies: Partial<Record<string, readonly unknown[]>>): ModelCl
       used.set(request.stage, at + 1);
       const reply = list[Math.min(at, list.length - 1)];
       if (reply === undefined) return Promise.reject(new Error(`no scripted reply for ${request.stage}`));
+      if (reply === OUT_OF_ROOM) return Promise.resolve({ model: request.model, text: "", usage: { promptTokens: 1, completionTokens: request.maxTokens ?? 1, totalTokens: 2 }, finishReason: "length" });
       return Promise.resolve({ model: request.model, text: JSON.stringify(reply), usage: { promptTokens: 1, completionTokens: 1, totalTokens: 2 }, finishReason: "stop" });
     },
   };
@@ -250,6 +255,20 @@ describe("[R10] [R11] the controller", () => {
     const replan = client.calls.filter((call) => call.stage === "planner")[1];
     expect(replan?.messages.map((message) => message.content).join("\n")).toMatch(/level 4 \("A level that fails"\): its claim holds on .*; how its control moves the model, each halved and doubled: beta halved .*gamma halved \(0\.1 to 0\.05\)/);
     expect((artifacts.get("world") as { levels: unknown[] }).levels).toHaveLength(3);
+  }, 60_000);
+
+  it("asks a repair that ran out of room again with twice the room, and keeps the plan as it was when the repair still cannot be read", async () => {
+    const failing = planLevel(1, { title: "A level that fails", difference: { compartment: "s", summary: "at", at: 150, time: 150, relation: "higher", by: 20 } });
+    const plan = { ...good(), levels: [...good().levels, failing] };
+    const client = scripted(replies({ planner: [plan, OUT_OF_ROOM, { not: "a plan" }, plan] }));
+    const { outcome, artifacts, events } = await run(client);
+    const planner = client.calls.filter((call) => call.stage === "planner");
+    expect(planner[1]?.maxTokens).toBe(PLANNER_MAX_TOKENS);
+    expect(planner[2]?.maxTokens).toBe(2 * PLANNER_MAX_TOKENS);
+    expect(events.find((event) => event.message.startsWith("the planner's repair could not be read"))?.message).toMatch(/^the planner's repair could not be read, so the plan stays as it was: m-planner's planner reply was invalid twice\. It does not match the schema: - /);
+    // The repair spent, the next one is asked; the level that still fails is dropped, and the world is ready.
+    expect(outcome.state).toBe("ready");
+    expect(artifacts.get("dropped")).toEqual([{ level: 4, title: "A level that fails", reasons: [expect.stringMatching(/^its claim holds on \d+ of 20 starts, fewer than 16/)] }]);
   }, 60_000);
 
   it("falls back to the first anchored finding the model shows when the hook fails and the paper's own numbers confirm its headline does not appear (ADR-0040)", async () => {
