@@ -395,7 +395,7 @@ describe("[R10] [R11] the controller", () => {
   }, 60_000);
 
   it("lets one reviewer's unsupported block send words back, unless the model refutes what it claims", async () => {
-    const reworded = { ...words(), goal: "Change how fast people recover, and watch the infected.", effect: "Twice as easily, 100 people are infected at once more than 5 days sooner." };
+    const reworded = { ...words(), goal: "Change how fast people recover, and watch the infected.", whatIf: "What if the illness passed twice as easily?", prediction: "Would 100 people be infected at once sooner?", effect: "Twice as easily, 100 people are infected at once more than 5 days sooner." };
     // The first reviewer blocks; the second, of another vendor, does not: one is enough.
     const client = scripted(replies({ explainer: [words(), words(), words(), reworded], reviewer: [block("unsupported", null, { parameter: "gamma", compartment: null, says: "rate" }), { findings: [] }], "second-reviewer": [{ findings: [] }] }));
     const once = await run(client, twoReviewers);
@@ -410,7 +410,7 @@ describe("[R10] [R11] the controller", () => {
   }, 60_000);
 
   it("sends words that misdescribe the model back to the explainer once, and drops the level if they still do", async () => {
-    const reworded = { ...words(), goal: "Change how fast people recover, and watch the infected.", effect: "Twice as easily, 100 people are infected at once more than 5 days sooner." };
+    const reworded = { ...words(), goal: "Change how fast people recover, and watch the infected.", whatIf: "What if the illness passed twice as easily?", prediction: "Would 100 people be infected at once sooner?", effect: "Twice as easily, 100 people are infected at once more than 5 days sooner." };
     const fixed = scripted(replies({ explainer: [words(), words(), words(), reworded], reviewer: [block("unsupported"), { findings: [] }] }));
     const once = await run(fixed);
     expect(once.outcome.state).toBe("ready");
@@ -418,7 +418,11 @@ describe("[R10] [R11] the controller", () => {
     const asked = fixed.calls.filter((call) => call.stage === "explainer")[3]?.messages.map((message) => message.content).join("\n") ?? "";
     expect(asked).toMatch(/A reviewer found that level 2's words misdescribe the model: Its goal says recovery spreads the illness/);
     expect(fixed.calls.filter((call) => call.stage === "planner")).toHaveLength(1);
-    expect((once.artifacts.get("world") as { levels: { goal: string }[] }).levels[1]?.goal).toBe("Change how fast people recover, and watch the infected.");
+    // Every sentence the learner reads is written again: the goal, the What-if's question, the prediction's.
+    const world = once.artifacts.get("world") as { levels: { goal: string; counterfactual: { prompt: string }; guidedExploration?: { predictPrompt: string } }[] };
+    expect(world.levels[1]?.goal).toBe("Change how fast people recover, and watch the infected.");
+    expect(world.levels[1]?.counterfactual.prompt).toBe("What if the illness passed twice as easily?");
+    expect(asked).toMatch(/its What-if's question and its prediction's question, each one question of at most 30 words, both about the same change as now, beta at/);
 
     // Still misdescribed after its words were written again: dropped, which leaves too few levels here.
     const stuck = await run(scripted(replies({ explainer: [words(), words(), words(), reworded], reviewer: [block("unsupported")] })));

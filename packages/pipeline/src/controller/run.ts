@@ -535,9 +535,9 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
         for (const index of first) {
           const problem = `${blocksOn(index, "unsupported")}\nThe model's equations, in its ids:\n${equationsOf(model)}`;
           const words = (await reword(input.client, explainerModel, { title, plan, passages, model: modelWords }, index, problem, { structuredOutput: structured(explainerModel) })).value;
-          const { goal, effect, ...level } = words;
+          const { goal, whatIf, prediction, effect, ...level } = words;
           reworded.add(plan.levels[index]?.title ?? "");
-          plan = { ...plan, levels: plan.levels.map((entry, at) => (at === index ? { ...entry, goal, effect } : entry)) };
+          plan = { ...plan, levels: plan.levels.map((entry, at) => (at === index ? { ...entry, goal, effect, whatIf: { ...entry.whatIf, prompt: whatIf }, prediction: { ...entry.prediction, prompt: prediction } } : entry)) };
           explanation = { levels: explanation.levels.map((entry, at) => (at === index ? level : entry)) };
         }
         continue;
