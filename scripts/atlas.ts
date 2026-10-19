@@ -1,5 +1,5 @@
 /**
- * npm run atlas [-- --jobs <folder> ...] [-- --only <world-id>] [-- --workers <n>] [-- --date <name>]
+ * npm run atlas [-- --jobs <folder> ...] [-- --only <world-id>] [-- --workers <n>] [-- --date <name>] [-- --clips-only]
  *
  * The owner's UI atlas (ADR-0050). Serves the app on a development server of its own and visits,
  * at 1440 × 900 and 390 × 844, every page that is not a world, every world the library lists and
@@ -7,13 +7,15 @@
  * What if's prediction asked, with the fork running and finished, with the journal open, and with
  * the depth switched; and, for each generated world, the storyboard of the job that made it, its
  * own events played back to /create. Shots open still, with reduced motion, so that they compare
- * from one atlas to the next; each level also gets a 6-second clip, played. Everything goes into
+ * from one atlas to the next, drawn in software as the tests draw them; each level also gets a
+ * 6-second clip, played and filmed with the machine's GPU, one world at a time. Everything goes into
  * captures/atlas/<date>/, which git ignores, with one gallery page, index.html, grouped by world
  * and then by level, every shot captioned with its route, its level's title, its control, its
  * readout and any known issue, and marked where it changed since the previous atlas.
  *
  * A job's events come from the API's data folders, apps/api/data/jobs by default or each --jobs
- * given, which only the machine that ran the jobs has; a world whose job is not there plays back its job record's states.
+ * given, which only the machine that ran the jobs has; a world whose job is not there plays back
+ * its job record's states. With --clips-only, the clips of an atlas already taken are filmed again.
  */
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -188,6 +190,12 @@ interface Taken {
 }
 
 let browser: Browser | null = null;
+/**
+ * The clips' browser, with the machine's GPU where it has one: a clip is watched, not compared, and
+ * software WebGL draws a town at 1440 x 900 three or four times a second, a slideshow.
+ */
+let filmer: Browser | null = null;
+const GPU = process.platform === "darwin" ? ["--use-angle=metal"] : [];
 
 async function shoot(page: Page, found: () => Promise<string[]>, base: Omit<Shot, "change" | "strip" | "sha256" | "issues" | "file" | "width" | "height" | "control" | "readout">, extra: { issues?: readonly string[]; fullPage?: boolean; level?: boolean } = {}): Promise<Taken> {
   const bytes = await page.screenshot({ type: "jpeg", quality: 82, fullPage: extra.fullPage ?? false });
@@ -221,10 +229,10 @@ function imageSize(bytes: Buffer): { width: number; height: number } {
   throw new Error("not a JPEG the atlas can read");
 }
 
-async function newPage(size: Size, reduced: boolean): Promise<Page> {
+async function newPage(size: Size, reduced: boolean, on: Browser | null = browser): Promise<Page> {
   // A context of its own, as axe asks, closed with its page.
-  if (!browser) throw new Error("the atlas's browser is not open");
-  const context = await browser.newContext({ viewport: SIZES[size], deviceScaleFactor: 1 });
+  if (!on) throw new Error("the atlas's browser is not open");
+  const context = await on.newContext({ viewport: SIZES[size], deviceScaleFactor: 1 });
   const page = await context.newPage();
   await page.emulateMedia({ reducedMotion: reduced ? "reduce" : "no-preference" });
   return page;
@@ -319,7 +327,7 @@ async function shootWorld(world: LibraryEntry, size: Size): Promise<Taken[]> {
 
 /** A 6-second clip of each level: the world playing, its control moved to the top of its range and back. */
 async function filmWorld(world: LibraryEntry, size: Size): Promise<Clip[]> {
-  const page = await newPage(size, false);
+  const page = await newPage(size, false, filmer);
   const clips: Clip[] = [];
   try {
     await page.goto(`${origin}${world.route}`);
@@ -522,7 +530,10 @@ function earlierSets(): EarlierSet[] {
 }
 
 // ── The run ────────────────────────────────────────────────────────────────────────────────────
-for (const folder of ["shots", "strips", "clips"]) {
+// With --clips-only, the clips of an atlas already taken are filmed again and its gallery rewritten.
+const CLIPS_ONLY = process.argv.includes("--clips-only");
+if (CLIPS_ONLY && !existsSync(join(out, "manifest.json"))) throw new Error(`--clips-only films an atlas already taken, and ${out} has none`);
+for (const folder of CLIPS_ONLY ? ["clips"] : ["shots", "strips", "clips"]) {
   rmSync(join(out, folder), { recursive: true, force: true });
   mkdirSync(join(out, folder), { recursive: true });
 }
@@ -535,16 +546,16 @@ try {
   const clips: Clip[] = [];
   const failures: string[] = [];
   const failed = (what: string) => (error: unknown) => void failures.push(`${what}: ${error instanceof Error ? (error.message.split("\n")[0] ?? "") : String(error)}`);
-  // One task per world and size, run a few at a time: a fork runs to its horizon, so a level takes minutes.
+  // The shots: one task per world and size, a few at a time, as a fork runs to its horizon.
   const tasks: (() => Promise<void>)[] = [];
   for (const size of ["desktop", "phone"] as const) {
+    if (CLIPS_ONLY) break;
     if (!ONLY) for (const entry of PAGES) tasks.push(() => shootPage(entry, size).then((shot) => void taken.push(shot), failed(`${entry.route} at ${size}`)));
     for (const world of library) {
       tasks.push(async () => {
         console.log(`${world.id} at ${size}`);
         await shootWorld(world, size).then((shots) => void taken.push(...shots), failed(`${world.id} at ${size}`));
         if (world.madeBy === "pipeline") await shootStoryboard(world, size).then((board) => void (board && taken.push(board)), failed(`${world.id}'s storyboard at ${size}`));
-        await filmWorld(world, size).then((made) => void clips.push(...made), failed(`${world.id}'s clips at ${size}`));
       });
     }
   }
@@ -554,66 +565,78 @@ try {
       while (next < tasks.length) await tasks[next++]?.();
     }),
   );
+  // Then the clips, one world at a time, so each has the GPU to itself.
+  filmer = await chromium.launch({ args: GPU });
+  for (const size of ["desktop", "phone"] as const) {
+    for (const world of library) await filmWorld(world, size).then((made) => void clips.push(...made), failed(`${world.id}'s clips at ${size}`));
+  }
+  await filmer.close();
   // In the order the gallery reads them, whatever order the workers finished in.
   taken.sort((a, b) => a.shot.key.localeCompare(b.shot.key));
   clips.sort((a, b) => a.world.localeCompare(b.world) || a.level - b.level || a.size.localeCompare(b.size));
 
-  // Compare with the last atlas, and join each level's shots at each size into a strip.
-  const tool = await browser.newPage();
-  const before = new Map((previous?.atlas.shots ?? []).map((shot) => [shot.key, shot]));
-  const shots: Shot[] = [];
-  for (const { bytes, shot } of taken) {
-    const old = before.get(shot.key);
-    let change: Change;
-    if (!previous) change = { kind: "first" };
-    else if (shot.state === "fork-running") change = { kind: "not-compared", why: "taken mid-run, so it differs with timing" };
-    else if (!old) change = { kind: "new" };
-    else if (old.sha256 === shot.sha256) change = { kind: "same" };
-    else {
-      const path = join(ATLASES, previous.name, old.file);
-      const fraction = existsSync(path) ? await difference(tool, bytes, readFileSync(path)) : 1;
-      change = fraction > 0.002 ? { kind: "changed", fraction } : { kind: "same" };
+  let atlas: Atlas;
+  if (CLIPS_ONLY) {
+    const kept = JSON.parse(readFileSync(join(out, "manifest.json"), "utf8")) as Atlas;
+    atlas = { ...kept, clips, earlier: earlierSets() };
+  } else {
+    // Compare with the last atlas, and join each level's shots at each size into a strip.
+    const tool = await browser.newPage();
+    const before = new Map((previous?.atlas.shots ?? []).map((shot) => [shot.key, shot]));
+    const shots: Shot[] = [];
+    for (const { bytes, shot } of taken) {
+      const old = before.get(shot.key);
+      let change: Change;
+      if (!previous) change = { kind: "first" };
+      else if (shot.state === "fork-running") change = { kind: "not-compared", why: "taken mid-run, so it differs with timing" };
+      else if (!old) change = { kind: "new" };
+      else if (old.sha256 === shot.sha256) change = { kind: "same" };
+      else {
+        const path = join(ATLASES, previous.name, old.file);
+        const fraction = existsSync(path) ? await difference(tool, bytes, readFileSync(path)) : 1;
+        change = fraction > 0.002 ? { kind: "changed", fraction } : { kind: "same" };
+      }
+      shots.push({ ...shot, change, strip: null });
     }
-    shots.push({ ...shot, change, strip: null });
-  }
-  const pictures = new Map(taken.map(({ bytes, shot }) => [shot.key, bytes]));
-  for (const world of library) {
-    for (const level of world.levels) {
-      for (const size of ["desktop", "phone"] as const) {
-        const keys = LEVEL_STATES.map((state) => `${world.id}/${level.order}/${state}/${size}`).filter((key) => pictures.has(key));
-        if (keys.length === 0) continue;
-        const file = `strips/${world.id}--${level.order}--${size}.jpg`;
-        writeFileSync(join(out, file), await joinStrip(tool, keys.map((key) => pictures.get(key) as Buffer)));
-        keys.forEach((key, index) => {
-          const at = shots.findIndex((shot) => shot.key === key);
-          const shot = shots[at];
-          if (shot) shots[at] = { ...shot, strip: { file, index, count: keys.length } };
-        });
+    const pictures = new Map(taken.map(({ bytes, shot }) => [shot.key, bytes]));
+    for (const world of library) {
+      for (const level of world.levels) {
+        for (const size of ["desktop", "phone"] as const) {
+          const keys = LEVEL_STATES.map((state) => `${world.id}/${level.order}/${state}/${size}`).filter((key) => pictures.has(key));
+          if (keys.length === 0) continue;
+          const file = `strips/${world.id}--${level.order}--${size}.jpg`;
+          writeFileSync(join(out, file), await joinStrip(tool, keys.map((key) => pictures.get(key) as Buffer)));
+          keys.forEach((key, index) => {
+            const at = shots.findIndex((shot) => shot.key === key);
+            const shot = shots[at];
+            if (shot) shots[at] = { ...shot, strip: { file, index, count: keys.length } };
+          });
+        }
       }
     }
+    await tool.close();
+    const worlds: AtlasWorld[] = library.map((world) => ({
+      id: world.id,
+      title: world.title,
+      route: world.route,
+      status: world.status,
+      family: world.family,
+      paper: world.paper.title,
+      levels: world.levels,
+      issues: KNOWN_ISSUES.filter((entry) => entry.world === world.id && entry.level === null).map((entry) => entry.issue),
+    }));
+    atlas = { schemaVersion: "atlas/1", date: DATE, commit, previous: previous?.name ?? null, worlds, shots, clips, earlier: earlierSets() };
   }
-  await tool.close();
-
-  const worlds: AtlasWorld[] = library.map((world) => ({
-    id: world.id,
-    title: world.title,
-    route: world.route,
-    status: world.status,
-    family: world.family,
-    paper: world.paper.title,
-    levels: world.levels,
-    issues: KNOWN_ISSUES.filter((entry) => entry.world === world.id && entry.level === null).map((entry) => entry.issue),
-  }));
-  const atlas: Atlas = { schemaVersion: "atlas/1", date: DATE, commit, previous: previous?.name ?? null, worlds, shots, clips, earlier: earlierSets() };
   writeFileSync(join(out, "manifest.json"), `${JSON.stringify(atlas, null, 2)}\n`);
   writeFileSync(join(out, "index.html"), galleryPage(atlas));
   writeFileSync(join(out, "artifact.html"), galleryContent(atlas, { published: true }));
-  console.log(`atlas: ${shots.length} shots and ${clips.length} clips in ${out}; open index.html`);
+  console.log(`atlas: ${atlas.shots.length} shots and ${atlas.clips.length} clips in ${out}; open index.html`);
   if (failures.length > 0) {
     console.error(`atlas: ${failures.length} ${failures.length === 1 ? "part" : "parts"} failed:\n${failures.map((failure) => `  ${failure}`).join("\n")}`);
     process.exitCode = 1;
   }
 } finally {
   await browser?.close();
+  await filmer?.close();
   server.kill();
 }
