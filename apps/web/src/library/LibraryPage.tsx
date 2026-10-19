@@ -14,16 +14,17 @@ const ThisMachine = import.meta.env.DEV ? lazy(() => import("./ThisMachine.tsx")
 
 interface LibraryWorld {
   readonly id: string;
-  readonly route: string;
+  readonly route: string | null;
   readonly title: string;
   readonly madeBy: "hand" | "pipeline";
-  readonly status: "verified" | "draft" | "generated";
+  readonly status: "verified" | "draft" | "generated" | "retired";
   readonly family: string;
   readonly paper: { readonly title: string; readonly authors: readonly string[]; readonly year: number; readonly venue: string | null };
   readonly levels: readonly { readonly order: number; readonly title: string; readonly bonus: boolean }[];
   readonly thumbnail: string;
   readonly recordedOn: string | null;
   readonly definitional: readonly number[];
+  readonly retired: { readonly on: string; readonly reason: string; readonly replacedBy: string | null } | null;
 }
 
 const WORLDS = (index as { readonly worlds: readonly LibraryWorld[] }).worlds;
@@ -32,6 +33,7 @@ const STATUS: Readonly<Record<LibraryWorld["status"], { readonly label: string; 
   verified: { label: "Verified", meaning: "made by hand, every passage it quotes checked against the paper" },
   draft: { label: "Draft", meaning: "made by hand, its passages not yet checked against the paper" },
   generated: { label: "Generated", meaning: "made by the pipeline from the paper, checked by its rules" },
+  retired: { label: "Retired", meaning: "no longer played, kept as a record, with why" },
 };
 
 /** Authors as a citation writes them: "Reynolds", "Kermack and McKendrick", "Sutskever et al." */
@@ -57,15 +59,21 @@ function byPaper(worlds: readonly LibraryWorld[]): { readonly paper: LibraryWorl
 
 function WorldRow({ world }: { readonly world: LibraryWorld }) {
   const status = STATUS[world.status];
+  const picture = <img src={world.thumbnail} alt="" width={320} height={200} loading="lazy" />;
+  const replacement = world.retired?.replacedBy ? WORLDS.find((entry) => entry.id === world.retired?.replacedBy) : undefined;
   return (
-    <li className="library-world" data-world={world.id}>
-      <a className="library-thumb" href={world.route} tabIndex={-1} aria-hidden="true">
-        <img src={world.thumbnail} alt="" width={320} height={200} loading="lazy" />
-      </a>
+    <li className={`library-world${world.route ? "" : " library-world-retired"}`} data-world={world.id}>
+      {world.route ? (
+        <a className="library-thumb" href={world.route} tabIndex={-1} aria-hidden="true">
+          {picture}
+        </a>
+      ) : (
+        <span className="library-thumb" aria-hidden="true">
+          {picture}
+        </span>
+      )}
       <div className="library-text">
-        <h3>
-          <a href={world.route}>{world.title}</a>
-        </h3>
+        <h3>{world.route ? <a href={world.route}>{world.title}</a> : world.title}</h3>
         <p className="library-meta">
           <span className={`library-status library-status-${world.status}`} title={status.meaning}>
             {status.label}
@@ -74,8 +82,19 @@ function WorldRow({ world }: { readonly world: LibraryWorld }) {
           <span aria-hidden="true"> · </span>
           <span>{world.family}</span>
           <span aria-hidden="true"> · </span>
-          <code className="library-route">{world.route}</code>
+          <code className="library-route">{world.route ?? world.id}</code>
         </p>
+        {world.retired ? (
+          <p className="library-note library-retired">
+            Retired on {world.retired.on}: {world.retired.reason}
+            {replacement?.route ? (
+              <>
+                {" "}
+                Replaced by <a href={replacement.route}>{replacement.title}</a>, {replacement.recordedOn ?? ""}.
+              </>
+            ) : null}
+          </p>
+        ) : null}
         <ol className="library-levels" aria-label={`${world.title}'s levels`}>
           {world.levels.map((level) => (
             <li key={level.order}>{level.bonus ? `${level.title} (bonus)` : level.title}</li>

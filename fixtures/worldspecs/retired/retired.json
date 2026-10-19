@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "retired/1",
+  "note": "Worlds taken off the shell's routes and kept as records: their files here, their jobs' records in fixtures/jobs/, each listed in the library as retired, with why (ADR-0051).",
+  "worlds": {
+    "pmc-PMC12334037": {
+      "retiredOn": "2026-10-19",
+      "reason": "Its forks of levels 1 and 4 freeze when the control is at the top of its range: the solver refuses a step to Infinity, and the fork never finishes (the atlas of 2026-10-18).",
+      "replacedBy": "pmc-PMC12334037-2026-10-18-2"
+    },
+    "pmc-PMC12334037-2026-10-17": {
+      "retiredOn": "2026-10-19",
+      "reason": "Its fork of level 1 freezes when the control is at the top of its range: the solver refuses a step to Infinity, and the fork never finishes (the atlas of 2026-10-18).",
+      "replacedBy": "pmc-PMC12334037-2026-10-18-2"
+    },
+    "pmc-PMC12334037-2026-10-18": {
+      "retiredOn": "2026-10-19",
+      "reason": "Its fork of level 1 freezes when the control is at the top of its range: the solver refuses a step to NaN, and the fork never finishes (the atlas of 2026-10-18).",
+      "replacedBy": "pmc-PMC12334037-2026-10-18-2"
+    }
+  }
+}

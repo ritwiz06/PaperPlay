@@ -50,7 +50,8 @@
       ],
       "thumbnail": "/library/murmuration-valley.jpg",
       "recordedOn": null,
-      "definitional": []
+      "definitional": [],
+      "retired": null
     },
     {
       "id": "threshold-town",
@@ -97,7 +98,8 @@
       ],
       "thumbnail": "/library/threshold-town.jpg",
       "recordedOn": null,
-      "definitional": []
+      "definitional": [],
+      "retired": null
     },
     {
       "id": "momentum-valley",
@@ -146,7 +148,8 @@
       ],
       "thumbnail": "/library/momentum-valley.jpg",
       "recordedOn": null,
-      "definitional": []
+      "definitional": [],
+      "retired": null
     },
     {
       "id": "pmc-PMC12334037-2026-10-18-2",
@@ -188,172 +191,8 @@
       ],
       "thumbnail": "/library/pmc-PMC12334037-2026-10-18-2.jpg",
       "recordedOn": "2026-10-18",
-      "definitional": []
-    },
-    {
-      "id": "pmc-PMC12334037-2026-10-18",
-      "route": "/world/generated/pmc-PMC12334037-2026-10-18",
-      "title": "Hepatitis C treatment town",
-      "madeBy": "pipeline",
-      "status": "generated",
-      "family": "Compartment models, solved as equations",
-      "paper": {
-        "title": "Modeling the effects of treatment adherence challenges on the transmission dynamics of hepatitis C virus",
-        "authors": [
-          "Tinashe Victor Mupedza",
-          "Laurette Mhlanga",
-          "Dennis Mamutse",
-          "Mlyashimbi Helikumi",
-          "Paride Oresto Lolika",
-          "Shingirai Tangakugara Murambiwa",
-          "Adquate Mhlanga"
-        ],
-        "year": 2025,
-        "venue": "PLOS One"
-      },
-      "levels": [
-        {
-          "order": 1,
-          "title": "Sticking to treatment slows the spread",
-          "bonus": false
-        },
-        {
-          "order": 2,
-          "title": "Quitters spread the virus most",
-          "bonus": false
-        },
-        {
-          "order": 3,
-          "title": "Two levers work together",
-          "bonus": false
-        },
-        {
-          "order": 4,
-          "title": "A faster chronic recovery rate",
-          "bonus": false
-        },
-        {
-          "order": 5,
-          "title": "Fewer quitters, smaller outbreak",
-          "bonus": false
-        }
-      ],
-      "thumbnail": "/library/pmc-PMC12334037-2026-10-18.jpg",
-      "recordedOn": "2026-10-18",
-      "definitional": [
-        1,
-        3,
-        4,
-        5
-      ]
-    },
-    {
-      "id": "pmc-PMC12334037-2026-10-17",
-      "route": "/world/generated/pmc-PMC12334037-2026-10-17",
-      "title": "Hepatitis C treatment town",
-      "madeBy": "pipeline",
-      "status": "generated",
-      "family": "Compartment models, solved as equations",
-      "paper": {
-        "title": "Modeling the effects of treatment adherence challenges on the transmission dynamics of hepatitis C virus",
-        "authors": [
-          "Tinashe Victor Mupedza",
-          "Laurette Mhlanga",
-          "Dennis Mamutse",
-          "Mlyashimbi Helikumi",
-          "Paride Oresto Lolika",
-          "Shingirai Tangakugara Murambiwa",
-          "Adquate Mhlanga"
-        ],
-        "year": 2025,
-        "venue": "PLOS One"
-      },
-      "levels": [
-        {
-          "order": 1,
-          "title": "Can adherence stop the virus?",
-          "bonus": false
-        },
-        {
-          "order": 2,
-          "title": "The quitters spread it most",
-          "bonus": false
-        },
-        {
-          "order": 3,
-          "title": "Faster chronic recovery",
-          "bonus": false
-        },
-        {
-          "order": 4,
-          "title": "Acute recovery helps",
-          "bonus": false
-        },
-        {
-          "order": 5,
-          "title": "When people quit treatment",
-          "bonus": false
-        }
-      ],
-      "thumbnail": "/library/pmc-PMC12334037-2026-10-17.jpg",
-      "recordedOn": "2026-10-17",
-      "definitional": [
-        3,
-        4,
-        5
-      ]
-    },
-    {
-      "id": "pmc-PMC12334037",
-      "route": "/world/generated/pmc-PMC12334037",
-      "title": "HCV adherence in Zimbabwe",
-      "madeBy": "pipeline",
-      "status": "generated",
-      "family": "Compartment models, solved as equations",
-      "paper": {
-        "title": "Modeling the effects of treatment adherence challenges on the transmission dynamics of hepatitis C virus",
-        "authors": [
-          "Tinashe Victor Mupedza",
-          "Laurette Mhlanga",
-          "Dennis Mamutse",
-          "Mlyashimbi Helikumi",
-          "Paride Oresto Lolika",
-          "Shingirai Tangakugara Murambiwa",
-          "Adquate Mhlanga"
-        ],
-        "year": 2025,
-        "venue": "PLOS One"
-      },
-      "levels": [
-        {
-          "order": 1,
-          "title": "Who quits treatment?",
-          "bonus": false
-        },
-        {
-          "order": 2,
-          "title": "Quitters spread more",
-          "bonus": false
-        },
-        {
-          "order": 3,
-          "title": "No quitting at all",
-          "bonus": false
-        },
-        {
-          "order": 4,
-          "title": "Adherence above the threshold",
-          "bonus": false
-        },
-        {
-          "order": 5,
-          "title": "Re-susceptibility barely matters",
-          "bonus": false
-        }
-      ],
-      "thumbnail": "/library/pmc-PMC12334037.jpg",
-      "recordedOn": "2026-10-16",
-      "definitional": []
+      "definitional": [],
+      "retired": null
     },
     {
       "id": "arxiv-2506.19869v1-2026-10-18",
@@ -404,7 +243,8 @@
       "definitional": [
         1,
         3
-      ]
+      ],
+      "retired": null
     },
     {
       "id": "arxiv-2506.19869v1",
@@ -455,7 +295,179 @@
       "definitional": [
         1,
         3
-      ]
+      ],
+      "retired": null
+    },
+    {
+      "id": "pmc-PMC12334037-2026-10-18",
+      "route": null,
+      "title": "Hepatitis C treatment town",
+      "madeBy": "pipeline",
+      "status": "retired",
+      "family": "Compartment models, solved as equations",
+      "paper": {
+        "title": "Modeling the effects of treatment adherence challenges on the transmission dynamics of hepatitis C virus",
+        "authors": [
+          "Tinashe Victor Mupedza",
+          "Laurette Mhlanga",
+          "Dennis Mamutse",
+          "Mlyashimbi Helikumi",
+          "Paride Oresto Lolika",
+          "Shingirai Tangakugara Murambiwa",
+          "Adquate Mhlanga"
+        ],
+        "year": 2025,
+        "venue": "PLOS One"
+      },
+      "levels": [
+        {
+          "order": 1,
+          "title": "Sticking to treatment slows the spread",
+          "bonus": false
+        },
+        {
+          "order": 2,
+          "title": "Quitters spread the virus most",
+          "bonus": false
+        },
+        {
+          "order": 3,
+          "title": "Two levers work together",
+          "bonus": false
+        },
+        {
+          "order": 4,
+          "title": "A faster chronic recovery rate",
+          "bonus": false
+        },
+        {
+          "order": 5,
+          "title": "Fewer quitters, smaller outbreak",
+          "bonus": false
+        }
+      ],
+      "thumbnail": "/library/pmc-PMC12334037-2026-10-18.jpg",
+      "recordedOn": "2026-10-18",
+      "definitional": [],
+      "retired": {
+        "on": "2026-10-19",
+        "reason": "Its fork of level 1 freezes when the control is at the top of its range: the solver refuses a step to NaN, and the fork never finishes (the atlas of 2026-10-18).",
+        "replacedBy": "pmc-PMC12334037-2026-10-18-2"
+      }
+    },
+    {
+      "id": "pmc-PMC12334037-2026-10-17",
+      "route": null,
+      "title": "Hepatitis C treatment town",
+      "madeBy": "pipeline",
+      "status": "retired",
+      "family": "Compartment models, solved as equations",
+      "paper": {
+        "title": "Modeling the effects of treatment adherence challenges on the transmission dynamics of hepatitis C virus",
+        "authors": [
+          "Tinashe Victor Mupedza",
+          "Laurette Mhlanga",
+          "Dennis Mamutse",
+          "Mlyashimbi Helikumi",
+          "Paride Oresto Lolika",
+          "Shingirai Tangakugara Murambiwa",
+          "Adquate Mhlanga"
+        ],
+        "year": 2025,
+        "venue": "PLOS One"
+      },
+      "levels": [
+        {
+          "order": 1,
+          "title": "Can adherence stop the virus?",
+          "bonus": false
+        },
+        {
+          "order": 2,
+          "title": "The quitters spread it most",
+          "bonus": false
+        },
+        {
+          "order": 3,
+          "title": "Faster chronic recovery",
+          "bonus": false
+        },
+        {
+          "order": 4,
+          "title": "Acute recovery helps",
+          "bonus": false
+        },
+        {
+          "order": 5,
+          "title": "When people quit treatment",
+          "bonus": false
+        }
+      ],
+      "thumbnail": "/library/pmc-PMC12334037-2026-10-17.jpg",
+      "recordedOn": "2026-10-17",
+      "definitional": [],
+      "retired": {
+        "on": "2026-10-19",
+        "reason": "Its fork of level 1 freezes when the control is at the top of its range: the solver refuses a step to Infinity, and the fork never finishes (the atlas of 2026-10-18).",
+        "replacedBy": "pmc-PMC12334037-2026-10-18-2"
+      }
+    },
+    {
+      "id": "pmc-PMC12334037",
+      "route": null,
+      "title": "HCV adherence in Zimbabwe",
+      "madeBy": "pipeline",
+      "status": "retired",
+      "family": "Compartment models, solved as equations",
+      "paper": {
+        "title": "Modeling the effects of treatment adherence challenges on the transmission dynamics of hepatitis C virus",
+        "authors": [
+          "Tinashe Victor Mupedza",
+          "Laurette Mhlanga",
+          "Dennis Mamutse",
+          "Mlyashimbi Helikumi",
+          "Paride Oresto Lolika",
+          "Shingirai Tangakugara Murambiwa",
+          "Adquate Mhlanga"
+        ],
+        "year": 2025,
+        "venue": "PLOS One"
+      },
+      "levels": [
+        {
+          "order": 1,
+          "title": "Who quits treatment?",
+          "bonus": false
+        },
+        {
+          "order": 2,
+          "title": "Quitters spread more",
+          "bonus": false
+        },
+        {
+          "order": 3,
+          "title": "No quitting at all",
+          "bonus": false
+        },
+        {
+          "order": 4,
+          "title": "Adherence above the threshold",
+          "bonus": false
+        },
+        {
+          "order": 5,
+          "title": "Re-susceptibility barely matters",
+          "bonus": false
+        }
+      ],
+      "thumbnail": "/library/pmc-PMC12334037.jpg",
+      "recordedOn": "2026-10-16",
+      "definitional": [],
+      "retired": {
+        "on": "2026-10-19",
+        "reason": "Its forks of levels 1 and 4 freeze when the control is at the top of its range: the solver refuses a step to Infinity, and the fork never finishes (the atlas of 2026-10-18).",
+        "replacedBy": "pmc-PMC12334037-2026-10-18-2"
+      }
     }
   ]
 }

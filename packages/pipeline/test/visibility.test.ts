@@ -49,7 +49,7 @@ describe("[R06] the visibility rule", () => {
   });
 
   it("keeps the first generated world as it was made: every level meets the level rule, three need a lens, and level 5 shows nothing", () => {
-    const world = built("fixtures/worldspecs/generated/pmc-PMC12334037.json");
+    const world = built("fixtures/worldspecs/retired/pmc-PMC12334037.json");
     expect(sweepLevels(world).map((level) => level.meets)).toEqual([true, true, true, true, true]);
     expect(sharesOf(world.levels[0]?.primitive as unknown as CompartmentModel, world.levels[0]?.params ?? {})).toBe(false);
     const seen = visibilityOf(world);

@@ -28,7 +28,7 @@ const SPECS = readdirSync(join(root, "tests", "e2e")).filter((name) => name.ends
 const ROUTES: readonly { readonly paths: RegExp; readonly specs: readonly string[] }[] = [
   { paths: /^apps\/web\/src\/library\/|^apps\/web\/public\/library\/|^scripts\/library/, specs: ["library.spec.ts"] },
   { paths: /^apps\/web\/src\/create\/|^apps\/api\//, specs: ["create.spec.ts"] },
-  { paths: /^apps\/web\/src\/worlds\/(GeneratedWorld|town-world)|^fixtures\/worldspecs\/generated\//, specs: ["create.spec.ts", "own-numbers.spec.ts", "library.spec.ts"] },
+  { paths: /^apps\/web\/src\/worlds\/(GeneratedWorld|town-world)|^fixtures\/worldspecs\/(generated|retired)\//, specs: ["create.spec.ts", "own-numbers.spec.ts", "library.spec.ts"] },
   { paths: /momentum|landscape|^packages\/primitives\/src\/learning\/|sutskever/, specs: ["momentum.spec.ts", "library.spec.ts"] },
   { paths: /epidemic|kits\/town\/|^apps\/web\/src\/world\/town|^packages\/primitives\/src\/compartments\/|kermack/, specs: ["town.spec.ts", "create.spec.ts", "own-numbers.spec.ts"] },
   { paths: /^apps\/web\/src\/world\/(LocalWorld|local-world|session)|LabBench/, specs: ["world.spec.ts", "smoke.spec.ts", "stage.spec.ts", "accessibility.spec.ts"] },

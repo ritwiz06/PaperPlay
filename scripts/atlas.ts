@@ -62,7 +62,8 @@ interface LibraryEntry {
   readonly levels: readonly { readonly order: number; readonly title: string; readonly bonus: boolean }[];
   readonly definitional: readonly number[];
 }
-const library = (JSON.parse(readFileSync(join(root, "apps", "web", "src", "library", "worlds.json"), "utf8")) as { worlds: LibraryEntry[] }).worlds.filter((world) => !ONLY || world.id === ONLY);
+// A retired world has no route, so the atlas has nothing of it to visit.
+const library = (JSON.parse(readFileSync(join(root, "apps", "web", "src", "library", "worlds.json"), "utf8")) as { worlds: (LibraryEntry & { readonly route: string | null })[] }).worlds.filter((world): world is LibraryEntry => world.route !== null && (!ONLY || world.id === ONLY));
 
 const today = (): string => {
   const now = new Date();

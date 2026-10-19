@@ -12,7 +12,7 @@ const WCAG = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa"]
 const OBSERVATION = "At the values the paper lists in Table 1, R0 stays between 0.65 and 0.78 for every adherence from 0 to 1, so the 52% threshold doesn't appear here; the paper's figure may use values it doesn't list.";
 
 function worldWithOwnNumbers(): unknown {
-  const world = JSON.parse(readFileSync(join(import.meta.dirname, "..", "..", "fixtures", "worldspecs", "generated", "pmc-PMC12334037.json"), "utf8")) as { levels: Record<string, unknown>[]; digest: { hookResult: { anchors: unknown[] } } };
+  const world = JSON.parse(readFileSync(join(import.meta.dirname, "..", "..", "fixtures", "worldspecs", "retired", "pmc-PMC12334037.json"), "utf8")) as { levels: Record<string, unknown>[]; digest: { hookResult: { anchors: unknown[] } } };
   const [first, ...rest] = world.levels;
   return {
     ...world,

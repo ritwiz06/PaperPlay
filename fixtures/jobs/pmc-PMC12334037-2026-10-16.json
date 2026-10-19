@@ -1,7 +1,7 @@
 {
   "schemaVersion": "job-record/1",
   "sourceId": "pmc-PMC12334037",
-  "world": "fixtures/worldspecs/generated/pmc-PMC12334037.json",
+  "world": "fixtures/worldspecs/retired/pmc-PMC12334037.json",
   "recordedOn": "2026-10-16",
   "note": "The first generated world's live job (ADR-0035), before the owner excluded the models the portal marks Testing in progress; kept so it replays as it was made.",
   "stages": {

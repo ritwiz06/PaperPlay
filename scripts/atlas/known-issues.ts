@@ -33,9 +33,4 @@ export const KNOWN_ISSUES: readonly KnownIssue[] = [
     level: 2,
     issue: "The fork's closing line quotes the paper with its LaTeX as written: “contact rate ($\\beta$)”.",
   },
-  {
-    world: "pmc-PMC12334037-2026-10-18",
-    level: 3,
-    issue: "Unsupported: its words call η a rate, “recovering twice as fast”, where the model's η is a share.",
-  },
 ];

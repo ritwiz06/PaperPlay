@@ -106,18 +106,25 @@ test("[R09] the production build plays a world generated beforehand, with no API
     called = true;
     return route.abort();
   });
-  await page.goto("http://127.0.0.1:4318/world/generated/pmc-PMC12334037");
-  await expect(page.getByRole("heading", { name: "HCV adherence in Zimbabwe", level: 1 })).toBeVisible({ timeout: 30_000 });
+  await page.goto("http://127.0.0.1:4318/world/generated/pmc-PMC12334037-2026-10-18-2");
+  await expect(page.getByRole("heading", { name: "Hepatitis C treatment town", level: 1 })).toBeVisible({ timeout: 30_000 });
   await expect(page.getByText(/A PaperPlay world about “Modeling the effects of treatment adherence/)).toBeVisible();
-  await expect(page.getByRole("slider", { name: /Treatment adherence/ })).toBeVisible();
+  await expect(page.getByRole("slider", { name: /Treatment quitting rate/ })).toBeVisible();
   expect(called).toBe(false);
 });
 
+test("[R09] the production build has no route for a retired world, which the library lists as retired (ADR-0051)", async ({ page }) => {
+  for (const id of ["pmc-PMC12334037", "pmc-PMC12334037-2026-10-17", "pmc-PMC12334037-2026-10-18"]) {
+    await page.goto(`http://127.0.0.1:4318/world/generated/${id}`);
+    await expect(page.getByText(`there is no generated world ${id}`)).toBeVisible({ timeout: 30_000 });
+  }
+});
+
 for (const world of [
-  { id: "pmc-PMC12334037-2026-10-17", title: "Hepatitis C treatment town", observation: "the 52% threshold doesn't appear here" },
+  { id: "pmc-PMC12334037-2026-10-18-2", title: "Hepatitis C treatment town", observation: "this level tests another of its findings" },
   { id: "arxiv-2506.19869v1", title: "TB Town: Above the Threshold", observation: null },
 ] as const) {
-  test(`[R05] the production build plays ${world.title}, generated under the rules of 2026-10-16, with the paper's own numbers in its journal`, async ({ page }) => {
+  test(`[R05] the production build plays ${world.title} (${world.id}), with the paper's own numbers in its journal`, async ({ page }) => {
     let called = false;
     await page.route("**/api/**", (route) => {
       called = true;
