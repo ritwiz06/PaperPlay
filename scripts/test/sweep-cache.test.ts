@@ -1,6 +1,7 @@
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterAll, afterEach, describe, expect, it } from "vitest";
 import { CODE, inputHash, sweep } from "../cache/sweeps.ts";
 
 // The sweeps' cache (ADR-0051): a hit is checked, not skipped. The cache vouches for a sweep only
@@ -11,8 +12,15 @@ const record = readFileSync(join(root, "eval", "sweeps", "levels-kermack-mckendr
 const INPUTS = [...CODE, "scripts/levels.ts", "scripts/sweep", "fixtures/worldspecs"];
 
 describe("the sweeps' cache", () => {
+  // A cache file of the test's own, so the test holds the rules whatever the committed cache holds.
+  const folder = mkdtempSync(join(tmpdir(), "paperplay-sweeps-"));
+  process.env["PAPERPLAY_SWEEP_CACHE_FILE"] = join(folder, "cache.json");
   afterEach(() => {
     delete process.env["PAPERPLAY_SWEEP_CACHE"];
+  });
+  afterAll(() => {
+    delete process.env["PAPERPLAY_SWEEP_CACHE_FILE"];
+    rmSync(folder, { recursive: true, force: true });
   });
 
   it("hashes every file under its inputs, by path and bytes, whatever order they are named in", () => {
@@ -26,6 +34,11 @@ describe("the sweeps' cache", () => {
       runs++;
       return record;
     };
+    // Recorded, as npm run sweeps:cache records it, then vouched for without a run.
+    process.env["PAPERPLAY_SWEEP_CACHE"] = "write";
+    await sweep("levels-kermack-mckendrick-1927", INPUTS, record, run);
+    delete process.env["PAPERPLAY_SWEEP_CACHE"];
+    runs = 0;
     expect(await sweep("levels-kermack-mckendrick-1927", INPUTS, record, run)).toEqual({ output: record, cached: true });
     expect(runs).toBe(0);
     // A committed output that is not the one recorded is never vouched for.

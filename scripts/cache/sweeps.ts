@@ -15,7 +15,8 @@ import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "
 import { join, relative } from "node:path";
 
 const root = join(import.meta.dirname, "..", "..");
-export const CACHE_PATH = join(root, "eval", "sweeps", "cache.json");
+/** The cache's file: eval/sweeps/cache.json, or PAPERPLAY_SWEEP_CACHE_FILE, as the cache's own test sets. */
+const cachePath = (): string => process.env["PAPERPLAY_SWEEP_CACHE_FILE"] ?? join(root, "eval", "sweeps", "cache.json");
 const SKIP = new Set(["node_modules", "dist", ".vite", "reports", "test-results"]);
 
 interface Cache {
@@ -41,7 +42,7 @@ export function inputHash(paths: readonly string[]): string {
   return hash.digest("hex");
 }
 
-const readCache = (): Cache => (existsSync(CACHE_PATH) ? (JSON.parse(readFileSync(CACHE_PATH, "utf8")) as Cache) : { schemaVersion: "sweep-cache/1", entries: {} });
+const readCache = (): Cache => (existsSync(cachePath()) ? (JSON.parse(readFileSync(cachePath(), "utf8")) as Cache) : { schemaVersion: "sweep-cache/1", entries: {} });
 
 export type SweepMode = "use" | "off" | "write";
 export const sweepMode = (): SweepMode => {
@@ -62,7 +63,7 @@ export async function sweep(name: string, inputs: readonly string[], expected: s
     const cache = readCache();
     const entries = { ...cache.entries, [name]: { inputs: inputHash(inputs), output: sha256(output) } };
     const sorted = Object.fromEntries(Object.entries(entries).sort(([a], [b]) => a.localeCompare(b)));
-    writeFileSync(CACHE_PATH, `${JSON.stringify({ schemaVersion: "sweep-cache/1", entries: sorted }, null, 2)}\n`);
+    writeFileSync(cachePath(), `${JSON.stringify({ schemaVersion: "sweep-cache/1", entries: sorted }, null, 2)}\n`);
   }
   return { output, cached: false };
 }
