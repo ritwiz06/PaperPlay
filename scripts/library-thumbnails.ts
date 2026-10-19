@@ -4,10 +4,11 @@
  * Makes the library's pictures (ADR-0049): serves the app on a port of its own, opens every world
  * the library's index lists, plays it for three seconds with its HUD hidden, and saves its stage as
  * a small JPEG in apps/web/public/library/, which the public build serves. Run it after
- * `npm run library` when a world is added or changes how it looks; the pictures are committed.
+ * `npm run library` when a world is added: it makes the pictures that are missing, and with --all,
+ * when worlds change how they look, every picture again. The pictures are committed.
  */
 import { spawn } from "node:child_process";
-import { mkdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { chromium } from "@playwright/test";
 
@@ -34,7 +35,8 @@ try {
   await waitFor(origin, 60);
   mkdirSync(out, { recursive: true });
   const browser = await chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
-  for (const world of index.worlds) {
+  const all = process.argv.includes("--all");
+  for (const world of index.worlds.filter((entry) => all || !existsSync(join(out, `${entry.id}.jpg`)))) {
     const page = await browser.newPage({ viewport: { width: 960, height: 600 } });
     await page.goto(`${origin}${world.route}`);
     const stage = page.getByRole("application", { name: "World stage" });
