@@ -28,6 +28,8 @@
     "sweep:levels": "node scripts/levels.ts",
     "fixture:threshold-town": "node scripts/threshold-town.ts",
     "fixture:momentum": "node scripts/momentum.ts",
+    "library": "node scripts/library.ts",
+    "library:thumbnails": "node scripts/library-thumbnails.ts",
     "sources:map": "node scripts/source-map.ts map",
     "sources:check": "node scripts/source-map.ts check",
     "pipeline:live": "node scripts/pipeline-live.ts",

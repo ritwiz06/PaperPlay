@@ -25,6 +25,25 @@ export function buildServer(options: ServerOptions = {}): FastifyInstance {
   const app = Fastify({ logger: false, bodyLimit: BODY_LIMIT });
   const store = options.runner ? new JobStore(options.runner, options.dataFolder === undefined ? undefined : options.dataFolder) : null;
   app.get("/health", () => ({ status: "ok" }));
+  // The API has no pages: its root says so, and where the app is, rather than "Route GET:/ not found".
+  app.get("/", () => ({
+    service: "PaperPlay API",
+    message: "This is the API behind the PaperPlay web app, and it has no pages. Run `npm run dev` and open the app, at http://127.0.0.1:5173 by default: /library lists every world, and /create makes one, reaching this API through /api.",
+    routes: ["GET /health", "GET /jobs", "POST /jobs", "POST /jobs/pdf", "GET /jobs/:id", "DELETE /jobs/:id", "GET /jobs/:id/events", "GET /jobs/:id/artifacts/:name", "GET /jobs/:id/world"],
+  }));
+
+  // This server's jobs, for the library on a development server: each world made here, by job.
+  app.get("/jobs", () => ({
+    jobs: (store?.list() ?? []).map((job) => {
+      const world = job.state === "ready" ? (job.artifacts.get("world") as { title?: unknown; levels?: { order?: unknown; title?: unknown; bonus?: unknown }[] } | undefined) : undefined;
+      return {
+        jobId: job.id,
+        source: job.source,
+        state: job.state,
+        world: world ? { title: typeof world.title === "string" ? world.title : "", levels: (world.levels ?? []).map((level) => ({ order: Number(level.order), title: typeof level.title === "string" ? level.title : "", bonus: level.bonus === true })) } : null,
+      };
+    }),
+  }));
 
   app.post("/jobs", async (request, reply) => {
     if (!store) return reply.code(503).send({ error: "this server runs no jobs" });

@@ -6,6 +6,7 @@ import { THRESHOLD_TOWN_PLAY } from "./worlds/epidemic.tsx";
 import { FLOCKING_PLAY } from "./worlds/flocking.tsx";
 import { MOMENTUM_PLAY } from "./worlds/momentum.tsx";
 import { GeneratedWorld } from "./worlds/GeneratedWorld.tsx";
+import { LibraryPage } from "./library/LibraryPage.tsx";
 
 /** /create, on a development server only: a production build holds none of it (ADR-0030). */
 const CreatePage = import.meta.env.DEV ? lazy(() => import("./create/CreatePage.tsx").then((module) => ({ default: module.CreatePage }))) : null;
@@ -26,6 +27,7 @@ export function App() {
   if (path === "/world/hook") return <HookWorld play={FLOCKING_PLAY} />;
   if (path === "/world/epidemic") return <HookWorld play={THRESHOLD_TOWN_PLAY} />;
   if (path === "/world/momentum") return <HookWorld play={MOMENTUM_PLAY} />;
+  if (path === "/library") return <LibraryPage />;
   const generated = /^\/world\/generated\/([A-Za-z0-9._-]+)$/.exec(path)?.[1];
   if (generated) return <Generated id={generated} />;
   if (import.meta.env.DEV) {

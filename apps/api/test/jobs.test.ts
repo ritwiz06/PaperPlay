@@ -91,6 +91,25 @@ describe("[R11] the API's jobs", () => {
     }
   });
 
+  it("lists its jobs for the library, with a world's title and levels only once its job is ready", async () => {
+    const app = buildServer({ runner: walk(["parsing", "planning", "building", "running", "checking", "ready"]), dataFolder: null });
+    try {
+      expect((await app.inject({ method: "GET", url: "/jobs" })).json()).toEqual({ jobs: [] });
+      const { jobId } = (await app.inject({ method: "POST", url: "/jobs", payload: { source: "pmc:PMC12334037" } })).json<{ jobId: string }>();
+      await settle();
+      expect((await app.inject({ method: "GET", url: "/jobs" })).json()).toEqual({ jobs: [{ jobId, source: "pmc:PMC12334037", state: "ready", world: { title: "A world", levels: [] } }] });
+    } finally {
+      await app.close();
+    }
+    const running = buildServer({ runner: walk(["parsing", "planning"], 200), dataFolder: null });
+    try {
+      await running.inject({ method: "POST", url: "/jobs", payload: { source: "arxiv:2506.19869v1" } });
+      expect((await running.inject({ method: "GET", url: "/jobs" })).json<{ jobs: { world: unknown }[] }>().jobs).toMatchObject([{ world: null }]);
+    } finally {
+      await running.close();
+    }
+  });
+
   it("refuses the world of a job that is not ready, and cancels a running job", async () => {
     const app = buildServer({ runner: walk(["parsing", "planning", "building", "running"], 30), dataFolder: null });
     try {

@@ -161,6 +161,11 @@
   font-size: 1.25rem;
   line-height: 1.1;
 }
+.world-library {
+  color: var(--ink);
+  font-weight: 600;
+  text-underline-offset: 2px;
+}
 .world-card p {
   margin: 2px 0 0;
   color: var(--sub);
@@ -1020,8 +1025,13 @@
   .hud-top:has(.hud-buttons > :nth-child(4)) .world-card h1 {
     white-space: normal;
   }
-  .world-card p {
+  /* On a phone the card keeps its title and its way to the library, and drops what the world is about. */
+  .world-card .world-about {
     display: none;
+  }
+  .world-card p {
+    margin: 0;
+    font-size: 0.75rem;
   }
   .hud-bottom {
     justify-items: stretch;

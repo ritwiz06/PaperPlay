@@ -483,12 +483,18 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
             <div>
               <h1>{WORLD.title}</h1>
               <p>
-                A PaperPlay world about {play.about}
-                {WORLD.family.label ? (
-                  <span className="world-family" data-family-label>
-                    {WORLD.family.label}
-                  </span>
-                ) : null}
+                <a className="world-library" href="/library">
+                  Library
+                </a>
+                <span className="world-about">
+                  <span aria-hidden="true"> · </span>
+                  A PaperPlay world about {play.about}
+                  {WORLD.family.label ? (
+                    <span className="world-family" data-family-label>
+                      {WORLD.family.label}
+                    </span>
+                  ) : null}
+                </span>
               </p>
             </div>
           </div>

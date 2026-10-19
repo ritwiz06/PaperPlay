@@ -1,0 +1,404 @@
+{
+  "schemaVersion": "library/1",
+  "worlds": [
+    {
+      "id": "murmuration-valley",
+      "route": "/world/hook",
+      "title": "Murmuration Valley",
+      "madeBy": "hand",
+      "status": "verified",
+      "family": "Agents that each follow local rules",
+      "paper": {
+        "title": "Flocks, Herds, and Schools: A Distributed Behavioral Model",
+        "authors": [
+          "Craig W. Reynolds"
+        ],
+        "year": 1987,
+        "venue": "Computer Graphics 21(4), SIGGRAPH '87 Conference Proceedings, 25–34"
+      },
+      "levels": [
+        {
+          "order": 1,
+          "title": "A flock with no leader",
+          "bonus": false
+        },
+        {
+          "order": 2,
+          "title": "Each bird sees only a little",
+          "bonus": false
+        },
+        {
+          "order": 3,
+          "title": "Three urges, and the first: keep your distance",
+          "bonus": false
+        },
+        {
+          "order": 4,
+          "title": "Stay with the flock",
+          "bonus": false
+        },
+        {
+          "order": 5,
+          "title": "Does it behave like a flock?",
+          "bonus": false
+        },
+        {
+          "order": 6,
+          "title": "Order from the bottom up",
+          "bonus": true
+        }
+      ],
+      "thumbnail": "/library/murmuration-valley.jpg",
+      "recordedOn": null,
+      "definitional": []
+    },
+    {
+      "id": "threshold-town",
+      "route": "/world/epidemic",
+      "title": "Threshold Town",
+      "madeBy": "hand",
+      "status": "draft",
+      "family": "Compartment models, solved as equations",
+      "paper": {
+        "title": "A contribution to the mathematical theory of epidemics",
+        "authors": [
+          "William Ogilvy Kermack",
+          "Anderson Gray McKendrick"
+        ],
+        "year": 1927,
+        "venue": "Proceedings of the Royal Society of London, Series A 115(772), 700–721"
+      },
+      "levels": [
+        {
+          "order": 1,
+          "title": "An epidemic that ends by itself",
+          "bonus": false
+        },
+        {
+          "order": 2,
+          "title": "Still well, ill, removed",
+          "bonus": false
+        },
+        {
+          "order": 3,
+          "title": "A threshold for the town",
+          "bonus": false
+        },
+        {
+          "order": 4,
+          "title": "Where it starts hardly matters",
+          "bonus": false
+        },
+        {
+          "order": 5,
+          "title": "A bigger town, a bigger epidemic",
+          "bonus": false
+        }
+      ],
+      "thumbnail": "/library/threshold-town.jpg",
+      "recordedOn": null,
+      "definitional": []
+    },
+    {
+      "id": "momentum-valley",
+      "route": "/world/momentum",
+      "title": "Momentum Valley",
+      "madeBy": "hand",
+      "status": "verified",
+      "family": "Learning toys",
+      "paper": {
+        "title": "On the importance of initialization and momentum in deep learning",
+        "authors": [
+          "Ilya Sutskever",
+          "James Martens",
+          "George Dahl",
+          "Geoffrey Hinton"
+        ],
+        "year": 2013,
+        "venue": "Proceedings of the 30th International Conference on Machine Learning, PMLR 28(3), 1139–1147"
+      },
+      "levels": [
+        {
+          "order": 1,
+          "title": "Momentum crosses the valley",
+          "bonus": false
+        },
+        {
+          "order": 2,
+          "title": "Speed builds up",
+          "bonus": false
+        },
+        {
+          "order": 3,
+          "title": "Ringing on the steep walls",
+          "bonus": false
+        },
+        {
+          "order": 4,
+          "title": "Too much momentum",
+          "bonus": false
+        },
+        {
+          "order": 5,
+          "title": "Momentum must be tuned",
+          "bonus": false
+        }
+      ],
+      "thumbnail": "/library/momentum-valley.jpg",
+      "recordedOn": null,
+      "definitional": []
+    },
+    {
+      "id": "pmc-PMC12334037-2026-10-18",
+      "route": "/world/generated/pmc-PMC12334037-2026-10-18",
+      "title": "Hepatitis C treatment town",
+      "madeBy": "pipeline",
+      "status": "generated",
+      "family": "Compartment models, solved as equations",
+      "paper": {
+        "title": "Modeling the effects of treatment adherence challenges on the transmission dynamics of hepatitis C virus",
+        "authors": [
+          "Tinashe Victor Mupedza",
+          "Laurette Mhlanga",
+          "Dennis Mamutse",
+          "Mlyashimbi Helikumi",
+          "Paride Oresto Lolika",
+          "Shingirai Tangakugara Murambiwa",
+          "Adquate Mhlanga"
+        ],
+        "year": 2025,
+        "venue": "PLOS One"
+      },
+      "levels": [
+        {
+          "order": 1,
+          "title": "Sticking to treatment slows the spread",
+          "bonus": false
+        },
+        {
+          "order": 2,
+          "title": "Quitters spread the virus most",
+          "bonus": false
+        },
+        {
+          "order": 3,
+          "title": "Two levers work together",
+          "bonus": false
+        },
+        {
+          "order": 4,
+          "title": "A faster chronic recovery rate",
+          "bonus": false
+        },
+        {
+          "order": 5,
+          "title": "Fewer quitters, smaller outbreak",
+          "bonus": false
+        }
+      ],
+      "thumbnail": "/library/pmc-PMC12334037-2026-10-18.jpg",
+      "recordedOn": "2026-10-18",
+      "definitional": []
+    },
+    {
+      "id": "pmc-PMC12334037-2026-10-17",
+      "route": "/world/generated/pmc-PMC12334037-2026-10-17",
+      "title": "Hepatitis C treatment town",
+      "madeBy": "pipeline",
+      "status": "generated",
+      "family": "Compartment models, solved as equations",
+      "paper": {
+        "title": "Modeling the effects of treatment adherence challenges on the transmission dynamics of hepatitis C virus",
+        "authors": [
+          "Tinashe Victor Mupedza",
+          "Laurette Mhlanga",
+          "Dennis Mamutse",
+          "Mlyashimbi Helikumi",
+          "Paride Oresto Lolika",
+          "Shingirai Tangakugara Murambiwa",
+          "Adquate Mhlanga"
+        ],
+        "year": 2025,
+        "venue": "PLOS One"
+      },
+      "levels": [
+        {
+          "order": 1,
+          "title": "Can adherence stop the virus?",
+          "bonus": false
+        },
+        {
+          "order": 2,
+          "title": "The quitters spread it most",
+          "bonus": false
+        },
+        {
+          "order": 3,
+          "title": "Faster chronic recovery",
+          "bonus": false
+        },
+        {
+          "order": 4,
+          "title": "Acute recovery helps",
+          "bonus": false
+        },
+        {
+          "order": 5,
+          "title": "When people quit treatment",
+          "bonus": false
+        }
+      ],
+      "thumbnail": "/library/pmc-PMC12334037-2026-10-17.jpg",
+      "recordedOn": "2026-10-17",
+      "definitional": []
+    },
+    {
+      "id": "pmc-PMC12334037",
+      "route": "/world/generated/pmc-PMC12334037",
+      "title": "HCV adherence in Zimbabwe",
+      "madeBy": "pipeline",
+      "status": "generated",
+      "family": "Compartment models, solved as equations",
+      "paper": {
+        "title": "Modeling the effects of treatment adherence challenges on the transmission dynamics of hepatitis C virus",
+        "authors": [
+          "Tinashe Victor Mupedza",
+          "Laurette Mhlanga",
+          "Dennis Mamutse",
+          "Mlyashimbi Helikumi",
+          "Paride Oresto Lolika",
+          "Shingirai Tangakugara Murambiwa",
+          "Adquate Mhlanga"
+        ],
+        "year": 2025,
+        "venue": "PLOS One"
+      },
+      "levels": [
+        {
+          "order": 1,
+          "title": "Who quits treatment?",
+          "bonus": false
+        },
+        {
+          "order": 2,
+          "title": "Quitters spread more",
+          "bonus": false
+        },
+        {
+          "order": 3,
+          "title": "No quitting at all",
+          "bonus": false
+        },
+        {
+          "order": 4,
+          "title": "Adherence above the threshold",
+          "bonus": false
+        },
+        {
+          "order": 5,
+          "title": "Re-susceptibility barely matters",
+          "bonus": false
+        }
+      ],
+      "thumbnail": "/library/pmc-PMC12334037.jpg",
+      "recordedOn": "2026-10-16",
+      "definitional": []
+    },
+    {
+      "id": "arxiv-2506.19869v1-2026-10-18",
+      "route": "/world/generated/arxiv-2506.19869v1-2026-10-18",
+      "title": "TB Town: Above the Threshold",
+      "madeBy": "pipeline",
+      "status": "generated",
+      "family": "Compartment models, solved as equations",
+      "paper": {
+        "title": "Modeling Transmission Dynamics of Tuberculosis: Parameter Estimation and Sensitivity Analysis Using Real-World Data",
+        "authors": [
+          "Moksina Seyid",
+          "Abdu Mohammed Seid",
+          "Yassin Tesfaw Abebe"
+        ],
+        "year": 2025,
+        "venue": "arXiv:2506.19869v1 [q-bio.PE]"
+      },
+      "levels": [
+        {
+          "order": 1,
+          "title": "Above the elimination threshold",
+          "bonus": false
+        },
+        {
+          "order": 2,
+          "title": "Contact rate drives spread",
+          "bonus": false
+        },
+        {
+          "order": 3,
+          "title": "Treatment shrinks the outbreak",
+          "bonus": false
+        },
+        {
+          "order": 4,
+          "title": "Vaccination protects the town",
+          "bonus": false
+        },
+        {
+          "order": 5,
+          "title": "The disease is already multiplying",
+          "bonus": false
+        }
+      ],
+      "thumbnail": "/library/arxiv-2506.19869v1-2026-10-18.jpg",
+      "recordedOn": "2026-10-18",
+      "definitional": []
+    },
+    {
+      "id": "arxiv-2506.19869v1",
+      "route": "/world/generated/arxiv-2506.19869v1",
+      "title": "TB Town: Above the Threshold",
+      "madeBy": "pipeline",
+      "status": "generated",
+      "family": "Compartment models, solved as equations",
+      "paper": {
+        "title": "Modeling Transmission Dynamics of Tuberculosis: Parameter Estimation and Sensitivity Analysis Using Real-World Data",
+        "authors": [
+          "Moksina Seyid",
+          "Abdu Mohammed Seid",
+          "Yassin Tesfaw Abebe"
+        ],
+        "year": 2025,
+        "venue": "arXiv:2506.19869v1 [q-bio.PE]"
+      },
+      "levels": [
+        {
+          "order": 1,
+          "title": "Above the elimination threshold",
+          "bonus": false
+        },
+        {
+          "order": 2,
+          "title": "Contact rate drives spread",
+          "bonus": false
+        },
+        {
+          "order": 3,
+          "title": "Treatment shrinks the outbreak",
+          "bonus": false
+        },
+        {
+          "order": 4,
+          "title": "Vaccination protects the town",
+          "bonus": false
+        },
+        {
+          "order": 5,
+          "title": "The disease is already multiplying",
+          "bonus": false
+        }
+      ],
+      "thumbnail": "/library/arxiv-2506.19869v1.jpg",
+      "recordedOn": "2026-10-17",
+      "definitional": []
+    }
+  ]
+}
