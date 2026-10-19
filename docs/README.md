@@ -18,7 +18,7 @@ repeating each other. A fresh session reads `status.md`, the newest session log 
 | [progress.md](progress.md) | Append-only ledger of finished slices, newest first | A slice finishes |
 | [decisions/](decisions/) | One ADR per decision | Every decision |
 | [sessions/](sessions/) | The detailed log of each working session | Every session |
-| [design/](design/) | Content and design drafts for the owner's review, such as the flocking world's level script, the plan for every paper, `every-paper.md`, and G3b's plan, `g3b.md`; `screens/`, screenshots for the owner | A draft is written or revised |
+| [design/](design/) | Content and design drafts for the owner's review, such as the flocking world's level script, the plan for every paper, `every-paper.md`, and G3b's plan, `g3b.md`; `ui-inventory.md`, every screen and HUD element and where it is built; `owner-review.md`, the owner's notes on the UI, read at the start of every session; `screens/`, screenshots for the owner | A draft is written or revised; the owner writes a note |
 | [BUILD_PROMPT.md](BUILD_PROMPT.md) | The owner's original build brief | Never; ADRs record what superseded it |
 | [`../CLAUDE.md`](../CLAUDE.md) | Standing instructions, including the session protocol | The way of working changes |
 

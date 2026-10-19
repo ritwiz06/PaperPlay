@@ -48,9 +48,16 @@ Updated 2026-10-18: decisions, fixes, a library page and a UI atlas
   regenerated under them, three levels, its hook on the quitters.
 - **The library** (ADR-0049), on `g3/library`: `/library`, every world with its paper, kind, status,
   levels and picture, linked from every world's title card, in the public build too.
-- **Branches:** `g3/library`, being landed; `g3/atlas` after it;
+- **The library landed** at `419f0e9`.
+- **The UI atlas** (ADR-0050), on `g3/atlas`: `npm run atlas`, every route, world, level and state at
+  1440 × 900 and 390 × 844, with a clip per level, into `captures/atlas/<date>/`; the first, of
+  2026-10-18, is published for the owner as a private artifact,
+  https://claude.ai/artifact/ExYNaZyJRoA7az7UpBkdU1, its files in the git-ignored
+  `captures/atlas/2026-10-18/` of the main worktree. `docs/design/ui-inventory.md` names
+  every screen and HUD element; `docs/design/owner-review.md` takes the owner's notes.
+- **Branches:** `g3/atlas`, being landed;
   `worktree-agent-ab8301aef54d2fcc8`, the compartment agent's own, whose three commits are on `main`.
-- **Working commit:** `46a2c12` on `main`; `v0.2.0` is `b37c7dc`.
+- **Working commit:** `419f0e9` on `main`; `v0.2.0` is `b37c7dc`.
 - **CI and billing:** about 2,111 Actions minutes from 1 to 18 October, by the jobs' own durations
   rounded up per job, against GitHub Free's 2,000 for a private repository; GitHub refused a run on
   `main` on 2026-10-18. Since `g2/release`, a push to `main` runs the gate only when its branch run did
@@ -120,10 +127,14 @@ before it pushes.
 1. **The Actions minutes:** about 2,111 used from 1 to 18 October against GitHub Free's 2,000 for a
    private repository; the owner checks the plan or the spending limit (ADR-0048). The exact figure
    needs the token's `user` scope: `gh auth refresh -h github.com -s user`.
-2. **The tuberculosis world of 2026-10-18:** its levels 1 and 3 are definitional by the corrected
+2. **The fork that stops in the older hepatitis C worlds:** the atlas found level 1 of
+   `pmc-PMC12334037`, `-2026-10-17` and `-2026-10-18` stopping mid-fork when the control is at the top
+   of its range, the solver refusing a step to Infinity or NaN; mend the worlds, or retire them for
+   the regenerated one.
+3. **The tuberculosis world of 2026-10-18:** its levels 1 and 3 are definitional by the corrected
    rule; regenerate it, or keep it as made, as the library now shows it.
-3. **Paid branch protection on GitHub** (ADR-0009's amendment).
-4. **The deploy:** the owner connects Vercel (ADR-0017).
+4. **Paid branch protection on GitHub** (ADR-0009's amendment).
+5. **The deploy:** the owner connects Vercel (ADR-0017).
 
 The owner settled what counts as definitional, unsupported wording, reviewers' independence and G2
 on 2026-10-18; all of it has landed.

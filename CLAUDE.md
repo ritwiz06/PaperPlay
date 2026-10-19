@@ -5,7 +5,7 @@ PaperPlay turns a research paper into a playable, explorable world: the paper is
 Start every session with the session protocol below. The documentation index is `docs/README.md`; the full build brief is `docs/BUILD_PROMPT.md`.
 
 ## Session protocol
-At the start, read `docs/status.md`, the latest session log and `docs/architecture.md`, then only what the task touches: relevant ADRs, requirement rows, the roadmap's gate section, concept entries. Don't reread everything. Record what you read in the session log.
+At the start, read `docs/status.md`, the latest session log and `docs/architecture.md`, then `docs/design/owner-review.md`, the owner's notes on the UI: turn each new note into a task in the session log's goal and `status.md`'s next actions, and say in the log which notes you took up. Then read only what the task touches: relevant ADRs, requirement rows, the roadmap's gate section, concept entries. Don't reread everything. Record what you read in the session log.
 
 Before stopping, update:
 - the session log, `docs/sessions/YYYY-MM-DD.md` (template in `docs/README.md`; add `-2`, `-3` for further sessions that day);
@@ -27,6 +27,7 @@ Commit docs separately as "docs: …". `npm run check:docs`, which `check:gate` 
 - `npm run land` — lands the current branch on `main`: gate, push, CI green, fast-forward (ADR-0009). The only way `main` moves
 - `npm run sweep:defaults` — reproduces the flock defaults sweep (ADR-0003) · `npm run choose:hook-seed` — re-applies the hook-seed rule (ADR-0003)
 - `npm run replay -- <run.json>` — replays a run record and reports tolerance results (arrives at G2)
+- `npm run atlas` — the owner's UI atlas: every route, world, level and state at two sizes, with clips, into `captures/atlas/<date>/` and its gallery (ADR-0050); `npm run library` and `npm run library:thumbnails` — the library's index and pictures (ADR-0049)
 
 ## Repository shape
 ```
