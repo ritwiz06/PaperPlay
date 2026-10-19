@@ -81,6 +81,8 @@ export interface AtlasWorld {
   readonly levels: readonly { readonly order: number; readonly title: string; readonly bonus: boolean }[];
   /** Issues of the whole world. */
   readonly issues: readonly string[];
+  /** The hash of everything its pages are made from; an atlas reuses an earlier one's shots of it when equal. */
+  readonly inputs?: string;
 }
 
 export interface EarlierSet {

@@ -1,5 +1,8 @@
 /**
- * npm run atlas [-- --jobs <folder> ...] [-- --only <world-id>] [-- --workers <n>] [-- --date <name>] [-- --redo clips|storyboards]
+ * npm run atlas [-- --all] [-- --jobs <folder> ...] [-- --only <world-id>] [-- --workers <n>] [-- --date <name>] [-- --redo clips|storyboards]
+ *
+ * Runs only when the owner asks for it (ADR-0051), and by default only for the worlds whose code or
+ * spec changed since the last atlas: the others keep that atlas's shots and clips, copied over.
  *
  * The owner's UI atlas (ADR-0050). Serves the app on a development server of its own and visits,
  * at 1440 × 900 and 390 × 844, every page that is not a world, every world the library lists and
@@ -21,7 +24,7 @@
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { once } from "node:events";
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
@@ -29,6 +32,8 @@ import { AxeBuilder } from "@axe-core/playwright";
 import { chromium, type Browser, type Page } from "@playwright/test";
 import { playwrightFfmpegPath } from "./capture/ffmpeg.ts";
 import { KNOWN_ISSUES } from "./atlas/known-issues.ts";
+import { inputHash } from "./cache/sweeps.ts";
+import { HAND_MADE } from "./library.ts";
 import { galleryContent, galleryPage, LEVEL_STATES, SIZES, type Atlas, type AtlasWorld, type Change, type Clip, type EarlierSet, type LevelState, type Shot, type Size } from "./atlas/gallery.ts";
 
 const root = join(import.meta.dirname, "..");
@@ -48,6 +53,8 @@ const argument = (name: string): string | null => {
 const JOBS = process.argv.flatMap((value, at) => (process.argv[at - 1] === "--jobs" ? [value] : []));
 if (JOBS.length === 0) JOBS.push(join(root, "apps", "api", "data", "jobs"));
 const ONLY = argument("--only");
+/** Every world shot afresh, rather than only those whose inputs changed since the last atlas. */
+const ALL = process.argv.includes("--all");
 /** How many worlds are shot at once. */
 const WORKERS = Number(argument("--workers") ?? 3);
 
@@ -79,6 +86,21 @@ const commit = await new Promise<string>((resolve) => {
   git.stdout.on("data", (chunk: Buffer) => void (text += chunk.toString()));
   git.on("close", () => resolve(text.trim()));
 });
+
+/** Each family's scene kit, whose code a world's pages run. */
+const KIT: Readonly<Record<string, string>> = { agents: "valley", compartments: "town", learning: "landscape" };
+/** The code every world's pages run: the shell, the stage and the solvers, but not the library or /create. */
+const SHARED = ["apps/web/src", "apps/web/index.html", "packages/ui/src", "packages/primitives/src", "packages/contracts/src", "packages/pipeline/src", "package-lock.json"];
+const NOT_A_WORLD_PAGE = /^apps\/web\/src\/(library|create|capture)\/|\/kits\/(valley|town|landscape)(\/|$)/;
+
+/** The hash of everything a world's pages are made from: its fixture, its kit, and the code every world runs (ADR-0051). */
+function worldInputs(id: string): string {
+  const fixture = HAND_MADE.find((entry) => entry.id === id)?.file ?? `generated/${id}.json`;
+  const path = `fixtures/worldspecs/${fixture}`;
+  const family = (JSON.parse(readFileSync(join(root, path), "utf8")) as { routing: { family: string } }).routing.family;
+  const kit = KIT[family] ?? "valley";
+  return inputHash([path, ...SHARED, ...["react", "stage-core", "three-adapter"].map((layer) => `packages/ui/src/${layer}/kits/${kit}`)], NOT_A_WORLD_PAGE);
+}
 
 /** The atlas before this one: the newest folder of another date with a manifest. */
 function previousAtlas(): { name: string; atlas: Atlas } | null {
@@ -551,6 +573,20 @@ try {
   const clips: Clip[] = [];
   const failures: string[] = [];
   const failed = (what: string) => (error: unknown) => void failures.push(`${what}: ${error instanceof Error ? (error.message.split("\n")[0] ?? "") : String(error)}`);
+  // Incremental (ADR-0051): a world whose inputs are those of the last atlas keeps that atlas's
+  // shots, strips and clips, copied here; only the others are shot and filmed. --all shoots every one.
+  const inputsOf = new Map(library.map((world) => [world.id, worldInputs(world.id)]));
+  const reused = new Set(
+    ALL || REDO || !previous ? [] : library.filter((world) => previous.atlas.worlds.some((before) => before.id === world.id && before.inputs === inputsOf.get(world.id))).map((world) => world.id),
+  );
+  if (previous && reused.size > 0) {
+    for (const folder of ["shots", "strips", "clips"]) {
+      const from = join(ATLASES, previous.name, folder);
+      if (!existsSync(from)) continue;
+      for (const name of readdirSync(from).filter((file) => [...reused].some((id) => file.startsWith(`${id}--`)))) copyFileSync(join(from, name), join(out, folder, name));
+    }
+    console.log(`atlas: ${reused.size} ${reused.size === 1 ? "world" : "worlds"} unchanged since ${previous.name}, kept as shot then: ${[...reused].join(", ")}`);
+  }
   // The shots: one task per world and size, a few at a time, as a fork runs to its horizon.
   const tasks: (() => Promise<void>)[] = [];
   for (const size of ["desktop", "phone"] as const) {
@@ -560,7 +596,7 @@ try {
       continue;
     }
     if (!ONLY) for (const entry of PAGES) tasks.push(() => shootPage(entry, size).then((shot) => void taken.push(shot), failed(`${entry.route} at ${size}`)));
-    for (const world of library) {
+    for (const world of library.filter((entry) => !reused.has(entry.id))) {
       tasks.push(async () => {
         console.log(`${world.id} at ${size}`);
         await shootWorld(world, size).then((shots) => void taken.push(...shots), failed(`${world.id} at ${size}`));
@@ -578,7 +614,7 @@ try {
   if (REDO !== "storyboards") {
     filmer = await chromium.launch({ args: GPU });
     for (const size of ["desktop", "phone"] as const) {
-      for (const world of library) await filmWorld(world, size).then((made) => void clips.push(...made), failed(`${world.id}'s clips at ${size}`));
+      for (const world of library.filter((entry) => !reused.has(entry.id))) await filmWorld(world, size).then((made) => void clips.push(...made), failed(`${world.id}'s clips at ${size}`));
     }
     await filmer.close();
   }
@@ -631,6 +667,11 @@ try {
       }
     }
     await tool.close();
+    // The unchanged worlds' shots and clips, as the last atlas took them.
+    if (previous) {
+      shots.push(...previous.atlas.shots.filter((shot) => reused.has(shot.world)).map((shot) => ({ ...shot, change: { kind: "same" } as const })));
+      clips.push(...previous.atlas.clips.filter((clip) => reused.has(clip.world)));
+    }
     const worlds: AtlasWorld[] = library.map((world) => ({
       id: world.id,
       title: world.title,
@@ -640,6 +681,7 @@ try {
       paper: world.paper.title,
       levels: world.levels,
       issues: KNOWN_ISSUES.filter((entry) => entry.world === world.id && entry.level === null).map((entry) => entry.issue),
+      inputs: inputsOf.get(world.id) ?? "",
     }));
     atlas = { schemaVersion: "atlas/1", date: DATE, commit, previous: previous?.name ?? null, worlds, shots, clips, earlier: earlierSets() };
   }

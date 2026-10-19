@@ -19,7 +19,7 @@ const root = join(import.meta.dirname, "..");
 const FIXTURES = join(root, "fixtures", "worldspecs");
 
 /** The hand-made worlds and the routes the shell plays them on. */
-const HAND_MADE = [
+export const HAND_MADE = [
   { file: "flocking-reference.json", id: "murmuration-valley", route: "/world/hook" },
   { file: "kermack-mckendrick-1927.json", id: "threshold-town", route: "/world/epidemic" },
   { file: "sutskever-2013-momentum.json", id: "momentum-valley", route: "/world/momentum" },

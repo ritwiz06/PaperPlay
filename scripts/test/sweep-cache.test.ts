@@ -26,6 +26,9 @@ describe("the sweeps' cache", () => {
   it("hashes every file under its inputs, by path and bytes, whatever order they are named in", () => {
     expect(inputHash(["scripts/levels.ts", "scripts/sweep"])).toBe(inputHash(["scripts/sweep", "scripts/levels.ts"]));
     expect(inputHash(["scripts/levels.ts"])).not.toBe(inputHash(["scripts/sweep"]));
+    // What a hash is told to skip changes nothing it covers, as the atlas leaves out pages that are not worlds.
+    expect(inputHash(["scripts/sweep"], /group-measure/)).not.toBe(inputHash(["scripts/sweep"]));
+    expect(inputHash(["scripts/sweep"], /no-such-file/)).toBe(inputHash(["scripts/sweep"]));
   });
 
   it("trusts the committed output only when its hash and the inputs' are the ones recorded", async () => {

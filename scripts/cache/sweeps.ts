@@ -26,19 +26,21 @@ interface Cache {
 
 const sha256 = (data: string | Buffer): string => createHash("sha256").update(data).digest("hex");
 
-function files(path: string): string[] {
+function files(path: string, skip: RegExp | null): string[] {
   const full = join(root, path);
   if (!existsSync(full)) throw new Error(`a sweep's input ${path} does not exist`);
   if (statSync(full).isFile()) return [path];
   return readdirSync(full)
     .filter((name) => !SKIP.has(name) && !name.endsWith(".tsbuildinfo"))
-    .flatMap((name) => files(relative(root, join(full, name))));
+    .map((name) => relative(root, join(full, name)))
+    .filter((inner) => !skip?.test(inner))
+    .flatMap((inner) => files(inner, skip));
 }
 
-/** The hash of every file under the given repository paths: each one's path and bytes, in path order. */
-export function inputHash(paths: readonly string[]): string {
+/** The hash of every file under the given repository paths, but those `skip` matches: each one's path and bytes, in path order. */
+export function inputHash(paths: readonly string[], skip: RegExp | null = null): string {
   const hash = createHash("sha256");
-  for (const file of [...new Set(paths.flatMap(files))].sort()) hash.update(`${file}\0`).update(readFileSync(join(root, file))).update("\0");
+  for (const file of [...new Set(paths.flatMap((path) => files(path, skip)))].sort()) hash.update(`${file}\0`).update(readFileSync(join(root, file))).update("\0");
   return hash.digest("hex");
 }
 
