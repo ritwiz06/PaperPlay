@@ -10,6 +10,8 @@ import { dirname, join } from "node:path";
 export interface LandRecord {
   sha: string;
   branch: string;
+  /** Every branch the land took to main, oldest first; the tip is `branch`. */
+  stack?: string[];
   /** `npm run check:gate` exited 0 on this commit, with a clean tree. */
   gate: { status: "passed"; at: string };
   /** CI's run on this exact commit concluded success. Absent until it has. */

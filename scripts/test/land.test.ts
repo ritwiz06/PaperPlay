@@ -137,6 +137,14 @@ describe("npm run land refuses", () => {
     nothingMoved();
   });
 
+  it("a stack holding a branch not named <gate>/<topic>", async () => {
+    git(box.work, "branch", "spike/look");
+    git(box.work, "switch", "--quiet", "-c", "g2/next");
+    writeFileSync(join(box.work, "notes.txt"), "one\ntwo\nthree\n");
+    git(box.work, "commit", "--quiet", "-am", "the next change");
+    expect((await land(box.options())).reason).toMatch(/the stack holds spike\/look, not a <gate>\/<topic> branch/);
+  });
+
   it("a branch that is not on top of origin's main", async () => {
     git(box.work, "switch", "--quiet", "main");
     writeFileSync(join(box.work, "other.txt"), "elsewhere\n");
@@ -217,14 +225,60 @@ describe("npm run land", () => {
     expect(box.ghCalls()).toContain("run watch 7 --exit-status --compact --interval 30");
   });
 
+  it("fast-forwards main where another worktree has it checked out, and leaves this one at the tip", async () => {
+    const sha = git(box.work, "rev-parse", "HEAD");
+    const elsewhere = join(dirname(box.work), "elsewhere");
+    git(box.work, "worktree", "add", "--quiet", elsewhere, "main");
+    expect(await land(box.options())).toEqual({ landed: true, sha, runUrl: "https://ci.test/runs/7" });
+    expect(git(elsewhere, "rev-parse", "HEAD")).toBe(sha);
+    expect(git(box.work, "rev-parse", "HEAD")).toBe(sha);
+    expect(tryGit(box.work, "rev-parse", "--verify", "--quiet", "g2/topic").status).not.toBe(0);
+  });
+
   it("still reports the land when tidying up locally fails, once origin's main has moved", async () => {
     const sha = git(box.work, "rev-parse", "HEAD");
-    // main is checked out in another worktree, so this one cannot switch to it.
-    git(box.work, "worktree", "add", "--quiet", join(dirname(box.work), "elsewhere"), "main");
+    // main is checked out in another worktree with a commit of its own, so it cannot fast-forward.
+    const elsewhere = join(dirname(box.work), "elsewhere");
+    git(box.work, "worktree", "add", "--quiet", elsewhere, "main");
+    writeFileSync(join(elsewhere, "local.txt"), "mine\n");
+    git(elsewhere, "add", "local.txt");
+    git(elsewhere, "commit", "--quiet", "-m", "a local commit");
     const result = await land(box.options());
     expect(result).toMatchObject({ landed: true, sha });
-    expect(result.warnings?.[0]).toMatch(/^switching to main failed/);
+    expect(result.warnings?.[0]).toMatch(/^fast-forwarding main in .*elsewhere failed/);
     expect(remoteHas(box, "main")).toBe(sha);
+  });
+
+  it("lands a stack: one gate and one CI run for its tip, every branch of it deleted, only the tip pushed (ADR-0051)", async () => {
+    git(box.work, "switch", "--quiet", "-c", "g2/next");
+    writeFileSync(join(box.work, "notes.txt"), "one\ntwo\nthree\n");
+    git(box.work, "commit", "--quiet", "-am", "the next change");
+    box.ci({ started: true, conclusion: "success" });
+    const tip = git(box.work, "rev-parse", "HEAD");
+    const lines: string[] = [];
+    expect(await land(box.options({ log: (line) => void lines.push(line) }))).toEqual({ landed: true, sha: tip, runUrl: "https://ci.test/runs/7" });
+    expect(lines[0]).toMatch(/^land: the stack g2\/topic < g2\/next, tip [0-9a-f]{7}, on top of origin\/main$/);
+    expect(remoteHas(box, "main")).toBe(tip);
+    for (const name of ["g2/topic", "g2/next"]) expect(tryGit(box.work, "rev-parse", "--verify", "--quiet", name).status).not.toBe(0);
+    expect(remoteHas(box, "g2/topic")).toBeUndefined();
+    expect(box.ghCalls().filter((call) => call.startsWith("run list"))).toEqual(box.ghCalls().filter((call) => call.startsWith(`run list --commit ${tip} --branch g2/next`)));
+    expect(readRecord(box.gitDir, tip)).toMatchObject({ sha: tip, branch: "g2/next", stack: ["g2/topic", "g2/next"] });
+  });
+
+  it("runs the gate in a checkout of its own at the tip, made when missing and kept for the next land", async () => {
+    // A gate that passes only in the checkout: it never ran where land was started.
+    git(box.work, "switch", "--quiet", "main");
+    git(box.work, "switch", "--quiet", "-C", "g2/topic");
+    writeFileSync(join(box.work, "gate.mjs"), "process.exit(process.cwd().endsWith('gate-checkout') ? 0 : 1);\n");
+    git(box.work, "commit", "--quiet", "-am", "a gate that passes only in its checkout");
+    box.ci({ started: true, conclusion: "success" });
+    const sha = git(box.work, "rev-parse", "HEAD");
+    const checkout = join(dirname(box.work), "gate-checkout");
+    const landed = await land(box.options({ checkout }));
+    expect(landed.reason).toBeUndefined();
+    expect(landed).toMatchObject({ landed: true, sha });
+    expect(git(checkout, "rev-parse", "HEAD")).toBe(sha);
+    expect(existsSync(join(checkout, "gate.mjs"))).toBe(true);
   });
 
   it("sets git to run the repository's hooks when they are not set", async () => {
