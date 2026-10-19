@@ -31,6 +31,8 @@ export const ModelConfig = z
     minIntervalMs: z.int().nonnegative().max(60_000),
     /** A job's token budget: once spent, its next call is refused. */
     jobTokenBudget: z.int().positive(),
+    /** Each stage's ceiling on a call's tokens, thinking and reply together (ADR-0051). */
+    maxTokens: z.strictObject(Object.fromEntries(STAGES.map((stage) => [stage, z.int().positive().max(200_000)])) as Record<Stage, z.ZodInt>),
     /** Each stage's model, or null until the bake-off chooses one. */
     stages: z.strictObject(Object.fromEntries(STAGES.map((stage) => [stage, ModelId.nullable()])) as Record<Stage, z.ZodNullable<typeof ModelId>>),
     /** The probe's findings: whether each model holds its reply to a JSON Schema on this gateway. */

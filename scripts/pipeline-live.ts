@@ -17,14 +17,24 @@
  *   report   rewrites eval/models.md from the saved results, calling nothing
  *   serve    the API on 127.0.0.1 with live model calls, recorded (or replayed when recorded
  *            already), for /create on this machine
+ *   job      `job <source>`: one job, with no server, as /create would start it (an arXiv id
+ *            with its version or a PMCID), its events and artifacts kept in apps/api/data/jobs/
+ *
+ * With --background, any command runs detached from the terminal (ADR-0051): its output goes to
+ * apps/api/data/live/<time>-<command>.log, and <time>-<command>.json says what ran, when it began,
+ * when it ended and how. A build session never starts one unless the owner asked for it in that
+ * session's prompt; the next session reviews what it wrote: its recordings, jobs and results.
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { spawn } from "node:child_process";
+import { existsSync, mkdirSync, openSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { directoryStore, recordingClient, replayClient, resumingClient } from "@paperplay/pipeline/models";
+import { TERMINAL_STATES } from "@paperplay/contracts";
+import { cappedClient, directoryStore, recordingClient, replayClient, resumingClient } from "@paperplay/pipeline/models";
 import { outboundFetch } from "../apps/api/src/contact.ts";
 import { CONFIG_FILE, loadModelConfig } from "../apps/api/src/models/config.ts";
 import { liveClient } from "../apps/api/src/models/live.ts";
 import { pipelineRunner } from "../apps/api/src/runner.ts";
+import { JobStore, parseSource } from "../apps/api/src/jobs.ts";
 import { buildServer } from "../apps/api/src/server.ts";
 import { runDesignBakeoff, type DesignResults } from "./bakeoff/design.ts";
 import { rankReaders, toModelsMarkdown, transcriberPair } from "./bakeoff/report.ts";
@@ -108,7 +118,7 @@ async function bakeoff(): Promise<void> {
   const config = loadModelConfig();
   // The slow reasoning models can take minutes on a long paper; one retry only, so a timeout is not paid for twice over.
   // Calls already recorded are replayed, so a run cut short resumes where it stopped.
-  const client = resumingClient(liveClient({ ...config, timeoutMs: 1_800_000, retries: 1 }), directoryStore(RECORDINGS));
+  const client = cappedClient(resumingClient(liveClient({ ...config, timeoutMs: 1_800_000, retries: 1 }), directoryStore(RECORDINGS)), config.maxTokens);
   const results = await runBakeoff(client, config.structuredOutput);
   const folder = join(import.meta.dirname, "..", "eval", "bakeoff");
   mkdirSync(folder, { recursive: true });
@@ -123,7 +133,7 @@ async function bakeoff(): Promise<void> {
 async function design(): Promise<void> {
   const config = loadModelConfig();
   // Calls already recorded are replayed, so a run cut short resumes where it stopped.
-  const client = resumingClient(liveClient({ ...config, timeoutMs: 1_800_000, retries: 1 }), directoryStore(RECORDINGS));
+  const client = cappedClient(resumingClient(liveClient({ ...config, timeoutMs: 1_800_000, retries: 1 }), directoryStore(RECORDINGS)), config.maxTokens);
   const folder = join(import.meta.dirname, "..", "eval", "bakeoff");
   const results = JSON.parse(readFileSync(join(folder, "results.json"), "utf8")) as BakeoffResults;
   // Each paper's reading from the best reader, as the controller would have it.
@@ -183,11 +193,58 @@ async function serve(): Promise<void> {
   console.log(`PaperPlay API listening on http://127.0.0.1:${port}, with live model calls, recorded`);
 }
 
-const commands: Readonly<Record<string, () => Promise<void>>> = { models, probe, bakeoff, design, rescore, report, serve };
+async function job(): Promise<void> {
+  const raw = process.argv.slice(3).find((value) => !value.startsWith("--")) ?? "";
+  const source = parseSource(raw);
+  if (!source) throw new Error(`job takes an arXiv id with its version or a PMCID, such as pmc:PMC12334037, not "${raw}"`);
+  const config = loadModelConfig();
+  const client = resumingClient(liveClient(config), directoryStore(RECORDINGS));
+  const store = new JobStore(pipelineRunner(client, config, outboundFetch()));
+  const started = store.start(raw, source);
+  console.log(`job ${started.id}: ${raw}, its events in apps/api/data/jobs/${started.id}/events.jsonl`);
+  await new Promise<void>((resolve) => {
+    const check = (): void => {
+      const now = store.get(started.id);
+      if (now && TERMINAL_STATES.includes(now.state)) resolve();
+      else setTimeout(check, 1000);
+    };
+    check();
+  });
+  const ended = store.get(started.id);
+  console.log(`job ${started.id} ended ${ended?.state ?? "?"}: ${ended?.events.at(-1)?.message ?? ""}`);
+}
+
+const commands: Readonly<Record<string, () => Promise<void>>> = { models, probe, bakeoff, design, rescore, report, serve, job };
 const run = command === undefined ? undefined : commands[command];
 if (!run) {
   console.error(`usage: npm run pipeline:live -- <${Object.keys(commands).join("|")}>`);
   process.exit(2);
+}
+// --background: run this same command detached, its output in a log, and say where (ADR-0051).
+const LIVE = join(import.meta.dirname, "..", "apps", "api", "data", "live");
+if (process.argv.includes("--background")) {
+  mkdirSync(LIVE, { recursive: true });
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const name = `${stamp}-${command ?? "command"}`;
+  const log = join(LIVE, `${name}.log`);
+  const output = openSync(log, "a");
+  const child = spawn(process.execPath, [process.argv[1] ?? "", ...process.argv.slice(2).filter((value) => value !== "--background")], {
+    detached: true,
+    stdio: ["ignore", output, output],
+    env: { ...process.env, PAPERPLAY_LIVE_RECORD: join(LIVE, `${name}.json`) },
+  });
+  writeFileSync(join(LIVE, `${name}.json`), `${JSON.stringify({ command: process.argv.slice(2).filter((value) => value !== "--background"), pid: child.pid, startedAt: new Date().toISOString(), log }, null, 2)}\n`);
+  child.unref();
+  console.log(`pipeline:live ${command ?? ""} runs in the background, pid ${String(child.pid)}; its output goes to ${log}`);
+  process.exit(0);
+}
+// A command run in the background records how it ended beside its log.
+const liveRecord = process.env["PAPERPLAY_LIVE_RECORD"];
+if (liveRecord && existsSync(liveRecord)) {
+  process.on("exit", (code) => {
+    const begun = JSON.parse(readFileSync(liveRecord, "utf8")) as Record<string, unknown>;
+    writeFileSync(liveRecord, `${JSON.stringify({ ...begun, endedAt: new Date().toISOString(), exitCode: code }, null, 2)}\n`);
+  });
 }
 // Live jobs and gates never share the machine (ADR-0039): a command that calls the gateway holds
 // a live lock while it runs, and does not start while a gate runs. rescore and report call nothing.

@@ -131,13 +131,19 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     }
     say("routing", `compartments, tier A: ${routed.value.reason}`);
     cancelled();
+    // The reading and the two transcriptions need nothing from each other, so they are asked at once
+    // (ADR-0051); the gateway's client still spaces their starts.
     say("reading", "reading what the paper asks and shows");
-    const reading = await read(input.client, modelFor("reader"), text, title, { structuredOutput: structured(modelFor("reader")) });
-    sink.artifact("reading", reading.value);
     say("transcription", "the first transcription of the model");
-    let first = (await transcribe(input.client, modelFor("transcriber"), text, title, { structuredOutput: structured(modelFor("transcriber")) })).value;
     say("transcription", "the second transcription, by another vendor's model, which never sees the first");
-    const second = (await transcribe(input.client, modelFor("second-transcriber"), text, title, { structuredOutput: structured(modelFor("second-transcriber")), stage: "second-transcriber" })).value;
+    const [reading, firstTranscription, secondTranscription] = await Promise.all([
+      read(input.client, modelFor("reader"), text, title, { structuredOutput: structured(modelFor("reader")) }),
+      transcribe(input.client, modelFor("transcriber"), text, title, { structuredOutput: structured(modelFor("transcriber")) }),
+      transcribe(input.client, modelFor("second-transcriber"), text, title, { structuredOutput: structured(modelFor("second-transcriber")), stage: "second-transcriber" }),
+    ]);
+    sink.artifact("reading", reading.value);
+    let first = firstTranscription.value;
+    const second = secondTranscription.value;
     sink.artifact("transcription-first", first);
     sink.artifact("transcription-second", second);
     // The first transcription's quotes become the world's anchors, so every one must be found; the

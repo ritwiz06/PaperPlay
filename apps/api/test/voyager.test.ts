@@ -2,6 +2,7 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { PLANNER_MAX_TOKENS, REVIEWER_MAX_TOKENS, TRANSCRIBER_MAX_TOKENS } from "@paperplay/pipeline/stages";
 import { loadModelConfig } from "../src/models/config.ts";
 import { liveClient, liveRefusal, readKey } from "../src/models/live.ts";
 import { voyagerClient, type VoyagerOptions } from "../src/models/voyager.ts";
@@ -45,6 +46,19 @@ function client(answers: readonly (Response | Error)[], options: Partial<Voyager
 }
 
 const request = { stage: "reader" as const, model: "model-a", messages: [{ role: "user" as const, content: "Name the groups." }], temperature: 0 };
+
+describe("each stage's ceiling on a call's tokens (ADR-0051)", () => {
+  it("is at or above the room each stage asks for, twice it where a reply that runs out is asked again, so every recording replays", () => {
+    const { maxTokens } = loadModelConfig();
+    expect(maxTokens.planner).toBeGreaterThanOrEqual(2 * PLANNER_MAX_TOKENS);
+    expect(maxTokens.explainer).toBeGreaterThanOrEqual(2 * 16_000);
+    expect(maxTokens["second-planner"]).toBeGreaterThanOrEqual(PLANNER_MAX_TOKENS);
+    for (const stage of ["reviewer", "second-reviewer"] as const) expect(maxTokens[stage]).toBeGreaterThanOrEqual(REVIEWER_MAX_TOKENS);
+    for (const stage of ["transcriber", "second-transcriber"] as const) expect(maxTokens[stage]).toBeGreaterThanOrEqual(TRANSCRIBER_MAX_TOKENS);
+    expect(maxTokens.reader).toBeGreaterThanOrEqual(16_000);
+    expect(maxTokens.router).toBeGreaterThanOrEqual(4000);
+  });
+});
 
 describe("[R09] the Voyager gateway's client", () => {
   it("sends an OpenAI-style completion with the key only in its Authorization header, and reads the reply and its usage", async () => {

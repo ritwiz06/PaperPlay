@@ -5,6 +5,17 @@
   "backoffMs": 2000,
   "minIntervalMs": 1000,
   "jobTokenBudget": 1200000,
+  "maxTokens": {
+    "reader": 16000,
+    "transcriber": 16000,
+    "second-transcriber": 16000,
+    "router": 4000,
+    "planner": 64000,
+    "second-planner": 32000,
+    "explainer": 32000,
+    "reviewer": 32000,
+    "second-reviewer": 32000
+  },
   "stages": {
     "reader": "qwen36-27b",
     "transcriber": "qwen3-235b-a22b-thinking-2507",

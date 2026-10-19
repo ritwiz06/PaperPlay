@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import {
+  cappedClient,
   budgetedClient,
   completeStructured,
   extractJson,
@@ -163,5 +164,14 @@ describe("structured replies", () => {
       kind: "invalid-response",
       message: expect.stringMatching(/invalid twice\. It is not valid JSON/) as unknown,
     });
+  });
+});
+
+describe("each stage's ceiling on a call's tokens (ADR-0051)", () => {
+  it("gives a call that asks for more room than its stage allows its stage's ceiling, and leaves every other call as it is", async () => {
+    const seen: (number | undefined)[] = [];
+    const client = cappedClient({ complete: (request) => (seen.push(request.maxTokens), Promise.resolve({ model: request.model, text: "{}", usage: { promptTokens: 1, completionTokens: 1, totalTokens: 2 }, finishReason: "stop" })) }, { planner: 64_000 });
+    for (const [stage, maxTokens] of [["planner", 128_000], ["planner", 32_000], ["reader", 999_999]] as const) await client.complete({ stage, model: "m", messages: [], maxTokens });
+    expect(seen).toEqual([64_000, 32_000, 999_999]);
   });
 });

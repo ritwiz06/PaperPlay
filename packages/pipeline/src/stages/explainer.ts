@@ -81,12 +81,11 @@ export function explainerMessages(input: { readonly title: string; readonly plan
  * again as plain JSON. The explainer is not ranked by the bake-off; it takes the planner's model.
  */
 export async function explain(client: ModelClient, model: string, input: Parameters<typeof explainerMessages>[0], options: { readonly structuredOutput: boolean }): Promise<{ readonly value: Explanation }> {
-  // One level a call: a small reply has less room to loop or nest wrongly, and a failure costs one level's words.
-  const levels: ExplainedLevel[] = [];
-  for (let level = 0; level < input.plan.levels.length; level++) {
-    const words = await completeStructured(client, { stage: "explainer", model, messages: explainerMessages(input, level), temperature: 0, maxTokens: 16_000 }, ExplainedLevel, { name: "level_words", structuredOutput: options.structuredOutput, moreRoom: true });
-    levels.push(words.value);
-  }
+  // One level a call: a small reply has less room to loop or nest wrongly, and a failure costs one
+  // level's words. The levels' calls need nothing from each other, so they are asked at once (ADR-0051).
+  const levels = await Promise.all(
+    input.plan.levels.map(async (_, level) => (await completeStructured(client, { stage: "explainer", model, messages: explainerMessages(input, level), temperature: 0, maxTokens: 16_000 }, ExplainedLevel, { name: "level_words", structuredOutput: options.structuredOutput, moreRoom: true })).value),
+  );
   return { value: Explanation.parse({ levels }) };
 }
 

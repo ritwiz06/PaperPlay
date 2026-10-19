@@ -8,3 +8,4 @@ export { budgetedClient, newTrace, tokensSpent, type JobTrace, type TraceEntry }
 export { directoryStore, memoryStore, promptHash, Recording, recordingClient, replayClient, resumingClient, type RecordingStore } from "./recording.ts";
 export { completeStructured, extractJson, jsonSchemaOf, type StructuredResult } from "./structured.ts";
 export { ModelError, STAGES, type CallStage, type ChatMessage, type ChatRequest, type ChatResponse, type JsonSchemaFormat, type ModelClient, type ModelErrorKind, type Stage, type Usage } from "./types.ts";
+export { cappedClient } from "./caps.ts";

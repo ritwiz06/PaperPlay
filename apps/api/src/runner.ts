@@ -8,7 +8,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { runJob, type JobSink, type JobSource } from "@paperplay/pipeline/controller";
 import type { Fetch } from "@paperplay/pipeline/ingest";
-import { budgetedClient, newTrace, type ModelClient } from "@paperplay/pipeline/models";
+import { budgetedClient, cappedClient, newTrace, type ModelClient } from "@paperplay/pipeline/models";
 import type { ModelConfig } from "./models/config.ts";
 import type { JobRunner } from "./jobs.ts";
 
@@ -36,7 +36,7 @@ export function pipelineRunner(client: ModelClient, config: ModelConfig, fetch: 
   return async (source: JobSource, sink: JobSink, signal: AbortSignal) => {
     const trace = newTrace(config.jobTokenBudget);
     try {
-      return await runJob({ source, client: budgetedClient(client, trace), config: { stages: config.stages, structuredOutput: config.structuredOutput }, fetch, example, signal }, sink);
+      return await runJob({ source, client: budgetedClient(cappedClient(client, config.maxTokens), trace), config: { stages: config.stages, structuredOutput: config.structuredOutput }, fetch, example, signal }, sink);
     } finally {
       sink.artifact("trace", trace);
     }

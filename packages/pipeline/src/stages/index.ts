@@ -5,7 +5,7 @@
 export { read, READER_INSTRUCTIONS, Reading, readerMessages } from "./reader.ts";
 export { RELEASED_FAMILIES, route, RouteDecision, routerInstructions, routerMessages } from "./router.ts";
 export { DATA_RULE, promptSource, type PromptSource } from "./source.ts";
-export { transcribe, TRANSCRIBER_INSTRUCTIONS, transcriberMessages } from "./transcriber.ts";
+export { transcribe, TRANSCRIBER_INSTRUCTIONS, TRANSCRIBER_MAX_TOKENS, transcriberMessages } from "./transcriber.ts";
 export { explain, ExplainedLevel, Explanation, EXPLAINER_INSTRUCTIONS, explainerMessages, reword, RewordedLevel } from "./explainer.ts";
-export { Plan, plan, PlanLevel, PLANNER_INSTRUCTIONS, plannerMessages } from "./planner.ts";
-export { equationsOf, Finding, Review, review, REVIEWER_INSTRUCTIONS, reviewerMessages } from "./reviewer.ts";
+export { Plan, plan, PlanLevel, PLANNER_INSTRUCTIONS, PLANNER_MAX_TOKENS, plannerMessages } from "./planner.ts";
+export { equationsOf, Finding, Review, review, REVIEWER_INSTRUCTIONS, REVIEWER_MAX_TOKENS, reviewerMessages } from "./reviewer.ts";
