@@ -42,21 +42,23 @@ Updated 2026-10-18: decisions, fixes, a library page and a UI atlas
 - **One origin a sentence, every number in the chart's unit** (ADR-0042), landed at `938475a`.
 - **Plans from two planners** (ADR-0043), landed at `8df84c3`: kimi-k2-7-code and glm-5-3, the
   better level kept for each slot.
-- **Branches:** `g2/ci-minutes`, being landed; `worktree-agent-ab8301aef54d2fcc8`, the compartment
-  agent's own, whose three commits are on `main`.
-- **Working commit:** `c946b97` on `main`.
-- **CI and billing:** about 2,082 Actions minutes from 1 to 18 October against GitHub Free's 2,000
-  for a private repository; GitHub refused a run on `main` on 2026-10-18. From `g2/ci-minutes`, a
-  push to `main` runs the gate only when its branch run did not already pass, and the capture runs
-  on demand only (ADR-0048).
+- **Branches:** `g3/review-corrections`, being landed; `g3/library` and then `g3/atlas` after it;
+  `worktree-agent-ab8301aef54d2fcc8`, the compartment agent's own, whose three commits are on `main`.
+- **Working commit:** `b37c7dc` on `main`, tagged `v0.2.0`.
+- **CI and billing:** about 2,111 Actions minutes from 1 to 18 October, by the jobs' own durations
+  rounded up per job, against GitHub Free's 2,000 for a private repository; GitHub refused a run on
+  `main` on 2026-10-18. Since `g2/release`, a push to `main` runs the gate only when its branch run did
+  not already pass (main's run of `b37c7dc` took 4 seconds), and the capture runs on demand only
+  (ADR-0048).
 - **Model provider:** Voyager, `https://openai.rc.asu.edu/v1`, its key `VOYAGER_API_KEY` in
   `apps/api/.env` only (ADR-0030); called only by `npm run pipeline:live`. Replies stream; a call
   may take up to 30 minutes.
 - **Models per stage** (`apps/api/models.json`, from the bake-off, its planners run again with the
   model's response in front of them): reader qwen36-27b; first transcriber
   qwen3-235b-a22b-thinking-2507; second transcriber inkling-small; router glm-5-3; planner and
-  explainer kimi-k2-7-code; second planner glm-5-3; reviewer glm-5-3 and second reviewer
-  kimi-k2-7-code, from the reviewers' bake-off on the case worlds (ADR-0044). A job may spend 1,200,000 tokens. Twelve models the portal marks "Testing in
+  explainer kimi-k2-7-code; second planner glm-5-3; reviewer inkling-small and second reviewer
+  qwen38-27b, from the reviewers' bake-off on the case worlds, neither the planner, the second planner
+  nor the explainer (ADR-0044's amendment). A job may spend 1,200,000 tokens. Twelve models the portal marks "Testing in
   progress" are excluded, as of the owner's snapshot of 2026-10-16.
 - **Primitives:** `flock.planar.weighted@3.1.0` (ADR-0025); `compartments.ode@1.0.0` (ADR-0028);
   `learning.landscape@1.0.0` (ADR-0047).
@@ -64,32 +66,42 @@ Updated 2026-10-18: decisions, fixes, a library page and a UI atlas
   (ADR-0023).
 - **Runtime:** Node 24.21.0, pinned in `.node-version`.
 - **What a learner can do:** the six flocking levels on `/world/hook`, Threshold Town's five on
-  `/world/epidemic`, Momentum Valley's five on `/world/momentum`, the first generated world's five on `/world/generated/pmc-PMC12334037`, and
+  `/world/epidemic`, Momentum Valley's five on `/world/momentum`, the first generated world's five on `/world/generated/pmc-PMC12334037`, hepatitis C's three under the corrected rules on `/world/generated/pmc-PMC12334037-2026-10-18-2`, its hook on the quitters, and
   the two worlds of 2026-10-17 above, now with its fork's chart fitted to what it measures and its
   town seen through a lens, each with its control, readout, guide, journal, prediction and fork. On
   this machine only, `/create` makes a world from an arXiv id, a PMCID or a PDF.
 
-## Latest check:gate (G1), 2026-10-17, on `g3/learning-family` at 9e46daa
+## Latest check:gate (G2), 2026-10-18, on `g3/review-corrections` at d2e0b6c
+
+G2's own run, which `v0.2.0` names, was on `g2/release` at `b37c7dc`: 954 tests, CI green
+(https://github.com/ritwiz06/PaperPlay/actions/runs/39175501504). This one is the review corrections'.
 
 ```
-check:gate G1 · Playable baseline · tag v0.1.0
+check:gate G2 · Verified authored world · tag v0.2.0
   runtime    node 24.21.0 (pinned 24.21.0)  ok
-  typecheck  ok      23.2 s
-  lint       ok      17.4 s
-  check:docs ok      0.4 s
-  test       ok      108.5 s
-  build      ok      0.7 s
-  test:e2e   ok      134.8 s
-  evidence   951 tests (vitest 860, playwright 91), 0 skipped
+  typecheck  ok      17.2 s
+  lint       ok      13.0 s
+  check:docs ok      0.3 s
+  test       ok      78.3 s
+  build      ok      0.6 s
+  test:e2e   ok      112.0 s
+  world      ok      fixtures/worldspecs/flocking-reference.json
+  evidence   959 tests (vitest 868, playwright 91), 0 skipped
     R01  Deterministic, oracle-checked primitives      160 passing
     R02  Model/render separation                       14 passing
-    R03  Strict, versioned contracts                   159 passing
+    R03  Strict, versioned contracts                   162 passing
     R04  Playable local world                          20 passing
+    R05  Origin labels and two-way provenance          18 passing
+    R06  Level structure and learning tools            77 passing
+    R07  Replay and stale evidence                     40 passing
+    R08  Spec, not code                                86 passing
+    R12  Accessibility and motion floor                24 passing
 
-G1 passed: every required check ran and every requirement has passing evidence.
+G2 passed: every required check ran and every requirement has passing evidence.
 ```
 
-Ahead of their gate, from the same suites' reports: R01 160, R02 14, R03 159, R04 20, R05 18, R06 77, R07 40, R08 86, R09 46, R10 32, R11 30, R12 24. Land runs the gate again before it pushes.
+Ahead of their gate, from the same suites' reports: R09 47, R10 36, R11 30. Land runs the gate again
+before it pushes.
 
 ## Blockers
 
@@ -98,17 +110,20 @@ Ahead of their gate, from the same suites' reports: R01 160, R02 14, R03 159, R0
 
 ## Decisions waiting on the owner
 
-1. **The Actions minutes:** about 2,082 used from 1 to 18 October against GitHub Free's 2,000 for a
-   private repository; the owner checks the plan or the spending limit (ADR-0048).
-2. **Paid branch protection on GitHub** (ADR-0009's amendment).
-3. **The deploy:** the owner connects Vercel (ADR-0017).
+1. **The Actions minutes:** about 2,111 used from 1 to 18 October against GitHub Free's 2,000 for a
+   private repository; the owner checks the plan or the spending limit (ADR-0048). The exact figure
+   needs the token's `user` scope: `gh auth refresh -h github.com -s user`.
+2. **The tuberculosis world of 2026-10-18:** its levels 1 and 3 are definitional by the corrected
+   rule; regenerate it, or keep it as made, as the library now shows it.
+3. **Paid branch protection on GitHub** (ADR-0009's amendment).
+4. **The deploy:** the owner connects Vercel (ADR-0017).
 
 The owner settled what counts as definitional, unsupported wording, reviewers' independence and G2
-on 2026-10-18; they land this session.
+on 2026-10-18; G2 and `v0.2.0` landed, the review corrections land this session.
 
 ## Next three actions
 
-1. The owner's answers on hepatitis C's level 5 and on unsupported blocks.
+1. The owner reviews the UI atlas and writes notes in `docs/design/owner-review.md`.
 2. G3b.2d: the pipeline on learning, so Adam can be generated, G3b's gate.
 3. Kermack and McKendrick's PDF from the owner, for Threshold Town's source map.
 

@@ -17,7 +17,7 @@ calendar promises.
 |---|---|---|---|---|
 | G1 Playable baseline | v0.1.0 | 21–28 h | R01–R04 | Passed and tagged v0.1.0 on 2026-10-01 |
 | G2 Verified authored world | v0.2.0 | 21–28 h | R01–R08, R12 | Passed and tagged v0.2.0 on 2026-10-18, G2 current from then; release notes in `docs/releases/v0.2.0.md` |
-| G3a Generalize, compartments, the pipeline on them | Chosen when it passes | 52–72 h | R01–R12 | Every item built; closed out 2026-10-17, two worlds made under every rule; what counts as definitional held by code from 2026-10-17, both worlds regenerated under it (ADR-0044) |
+| G3a Generalize, compartments, the pipeline on them | Chosen when it passes | 52–72 h | R01–R12 | Every item built; closed out 2026-10-17, two worlds made under every rule; what counts as definitional held by code from 2026-10-17, corrected by the owner on 2026-10-18 and hepatitis C regenerated under it, three levels with its hook on the quitters (ADR-0044's amendment) |
 | G3b Routing, the explainer tier, learning toys | Chosen when it passes | 29–43 h and Momentum Valley (ADR-0046) | R01–R12 | The owner's decisions taken; the learning family, the landscape kit and Momentum Valley done (ADR-0047) |
 | G4 Evaluation and feature freeze | v0.4.0 | 20–28 h | R01–R12, plus evaluation checks | Not started |
 | G5 Delivery | v1.0.0 | 9–12 h | R01–R12 | Not started |
@@ -235,11 +235,11 @@ when it cannot make one.
   share the machine.
 
 **What does not hold, or not yet:**
-- **No world yet under every rule of 2026-10-16.** The hepatitis C and tuberculosis jobs, on five
-  levels with the paper's own numbers, make worlds whose every level meets the level rule, the
-  visibility rule and the findings check; the reviewer then finds levels definitional, among them
-  findings the papers themselves report, and both jobs go to the owner. What counts as
-  definitional is the owner's to settle (ADR-0041's consequences).
+- **Under the corrected rule, a world keeps fewer levels.** Hepatitis C's regeneration of 2026-10-18
+  kept three of five: the code found three of the planners' levels definitional, the adherence hook
+  stayed so after both repairs, and one level's words still misdescribed the model after they were
+  written again. The tuberculosis world of 2026-10-18 has two definitional levels by the rule and
+  waits on the owner (ADR-0044's amendment).
 - **The model stages are the least steady part.** The planner's pick changed three times in two
   days as its prompt changed, and the reviewer that blocks the bake-off's planted faults exactly
   blocks most levels of a planner's world as definitional.
@@ -363,6 +363,7 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-14 | The model provider is ASU Research Computing's Voyager gateway, not the Anthropic SDK; tests and CI replay recorded calls; generation runs only locally | Owner decision (ADR-0030) |
 | 2026-10-17 | G3a closed out: every item built, two worlds made under every rule. G3b planned in design/g3b.md at 49–71 h, a smaller G3b at 29–43 h, its decisions the owner's | Owner request, 2026-10-16 |
 | 2026-10-18 | G2 made current and tagged v0.2.0; CI's gate skipped on main when its branch passed, the capture on demand only | Owner decisions (ADR-0048) |
+| 2026-10-18 | Definitional corrected: the control in the measured compartment's own equation, measured on its level or peak; found by code before review; a spread headline's hook on an infected compartment; one reviewer's unsupported block enough, checked by code where the model can; reviewers never the planners or the explainer, inkling-small and qwen38-27b picked | Owner decisions (ADR-0044's amendment) |
 | 2026-10-17 | G3b's decisions: update rules as data, attention after G4, G3b's gate Adam alone, tier C now and minimal; a hand-authored momentum world as the learning family's reference | Owner decisions (ADR-0046) |
 | 2026-10-17 | What counts as definitional held by code: the direct-effect tag, a named term, emergent summaries exempt, two reviewers who must agree, unsupported words written again; the reviewers' bake-off reads its cases from data and keeps every live mistake | Owner decision (ADR-0044) |
 | 2026-10-17 | G2's source is Reynolds's own copy on red3d.com, not the owner's PDF; Threshold Town's waits on a browser download, the Royal Society refusing this machine's requests | Owner instruction (ADR-0045) |

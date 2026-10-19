@@ -1,6 +1,9 @@
 # ADR-0044: What counts as definitional, held by code
 
-- Status: accepted. The owner's rules (2026-10-17): a deterministic direct-effect tag given to
+- Status: accepted, amended 2026-10-18 by the owner (below): definitional corrected, the earlier
+  exemption of a peak withdrawn; an unsupported block standing from one reviewer, checked by code
+  where the model can check it; a reviewer never the model that planned or wrote what it reviews.
+  Accepted at first, the owner's rules of 2026-10-17: a deterministic direct-effect tag given to
   reviewers as evidence; a definitional block naming the equation term it follows from, checked by
   code, ignored and recorded when it names none; a block standing only when a second reviewer from
   another vendor agrees; a direct effect on an emergent summary never definitional; hepatitis C's
@@ -8,7 +11,7 @@
   bake-off, with every reviewer mistake a live run reveals kept there; a reviewer's "unsupported"
   sent back to the explainer as a scoped wording repair, the level dropped if it survives. The
   mechanisms are mine.
-- Date: 2026-10-17; the regenerations 2026-10-18
+- Date: 2026-10-17; the regenerations and the amendment 2026-10-18
 - Decided by: the owner, the rules; me, how they are held.
 
 ## Context
@@ -99,3 +102,114 @@ unscored in the cases; if the owner agrees it is a fault, it becomes one.
   right block is lost when the other errs, as hepatitis C's level 3 shows. Whether an unsupported
   block, which only rewrites words, should need one reviewer is the owner's.
 - kimi-k2-7-code is the planner, the explainer and the second reviewer: it reviews words it wrote.
+
+## Amendment, 2026-10-18: definitional corrected, one reviewer's unsupported block, independent reviewers
+
+The owner's corrections, of 2026-10-18; the mechanisms are mine.
+
+1. **Definitional, corrected.** A level is definitional when its control appears directly in the
+   measured compartment's own equation and the level measures that same compartment's level or
+   peak. It is not definitional when the effect travels through other compartments, or when the
+   level measures a system-wide summary: a final size, a total ever infected, a threshold crossing,
+   a time to a level. Rule 3's exemption of a peak, the owner's earlier ruling, was wrong and is
+   withdrawn. In code (`rule/direct.ts`): `isSystemWide` holds for a first reach, a total, and a
+   value at the end of the run; a peak, a lowest value, a mean and a value before the end are the
+   compartment's own level; `definitional` is direct and not system-wide.
+2. **Found by code, before any reviewer.** The controller asks of every level whether the rule
+   makes it definitional (`definitionalProblem`), and a definitional level is a problem the planner
+   is asked to repair, as a level failing the level rule is, before the world reaches a reviewer.
+   A reviewer's definitional block counts only where the code finds the level definitional and the
+   block's term is valid; any other is ignored, and recorded with the reason.
+3. **The hook measures the spread a spread headline speaks of** (`rule/spread.ts`). Where the
+   paper's headline is about spread, transmission, incidence, curtailing or eliminating, level 1
+   must measure an infected compartment, as the next-generation matrix names them. A model whose
+   next-generation matrix cannot be found, such as one with frequency-dependent incidence, is not
+   held to it. The hepatitis C paper's headline is about adherence slowing spread, so its hook now
+   measures infections.
+4. **An unsupported block stands from one reviewer.** No agreement is needed: one reviewer's block
+   sends the level's words to the explainer, once, and the level is dropped if a block stands
+   again. Where the block says something the model can check, the reviewer gives it as a `claim`
+   (a parameter is a share or a rate, a parameter does or does not appear in a compartment's
+   equation), and code checks it against the ModelSpec (`checkClaim`): a block whose claim the
+   model refutes does not stand, its reason recorded ("theta is a share, with no unit"). Overstated
+   and other blocks stay advice.
+5. **A reviewer is never the model that planned or wrote what it reviews.** `models.json` fails
+   validation when the reviewer or the second reviewer is the planner, the second planner or the
+   explainer (`apps/api/src/models/config.ts`, tested in `apps/api/test/voyager.test.ts`), and the
+   bake-off's report picks reviewers under the same rule (`reviewerPair` in
+   `scripts/bakeoff/report.ts`). A transcriber may review: a transcription is held by its match with
+   the other, and the reviewer takes the model as given.
+6. **The cases, under the corrected rule.** `eval/bakeoff/review-cases.json`'s definitional
+   expectations are recomputed by code: 11 definitional faults, 3 unsupported, 1 overstated, 6
+   clean levels and 1 unscored. The tuberculosis world of 2026-10-17's level 2 is a fault, unsupported,
+   by the owner's ruling; hepatitis C's level 5 of 2026-10-17, measuring the quitters' peak with
+   their own rate δ, stays a definitional fault.
+
+### The reviewers, picked again
+
+The bake-off ran again on the corrected rule and the new prompt (`eval/models.md`). Five models block
+all 15 faults and no clean level, with every term valid and no failed check called acceptable:
+kimi-k2-7-code, inkling-small, qwen38-27b, qwen36-27b and muse-glimmer-30b. kimi-k2-7-code is the
+planner and the explainer, so it cannot review. The reviewer is **inkling-small** (Thinking
+Machines) and the second reviewer, the best from another vendor, **qwen38-27b** (Qwen).
+inkling-small is also the second transcriber, which rule 5 allows.
+
+### Both generated worlds of 2026-10-18, re-checked
+
+- **Tuberculosis** (`arxiv-2506.19869v1-2026-10-18`): levels 1 (γ, the infected peak) and 3 (δ, the
+  infected peak) are definitional; levels 2, 4 and 5 are not. Not regenerated: the owner asked for
+  hepatitis C. The library notes the two levels under the world.
+- **Hepatitis C** (`pmc-PMC12334037-2026-10-18`): levels 1 (θ, the quitters' peak), 3 (η, the
+  recovered peak), 4 (ρ, the quitters' peak) and 5 (δ, the quitters' peak) are definitional; level 2
+  (β3) is not. Regenerated, below.
+- Both jobs are kept as records, with `replays: false`: the reviewer's prompt changed.
+
+### The hepatitis C world regenerated
+
+`fixtures/worldspecs/generated/pmc-PMC12334037-2026-10-18-2.json`, its job recorded as
+`fixtures/jobs/pmc-PMC12334037-2026-10-18-2.json`, which replays to the same world. Three runs were
+needed; the two fixes below came from the first two.
+
+- **The plans:** glm-5-3's plan was kept for every slot, kimi-k2-7-code's having no level meeting the
+  rules. The code found levels 3 (η, the recovered peak), 4 (ρ, the quitters' peak) and 5 (δ, the
+  quitters' peak) definitional and level 1 short of the level rule (θ on the infected peak, 14 of
+  20), and sent them to the planner before any reviewer read the world.
+- **The adherence hook, dropped.** The first repair moved level 1 onto the recovered peak, which the
+  spread rule refuses; the second onto the quitters' peak, which θ, in dcQ/dt, makes definitional.
+  With no repair left the level was dropped and, as the paper's own numbers confirm that its 52%
+  threshold does not appear at Table 1's values (ADR-0040), level 1 now tests finding 1.
+- **The new hook, "Fewer quitters, smaller outbreak":** its control is δ, the rate at which people
+  quit treatment; it measures when the untreated chronically infected, the quitters, first reach 1%
+  of the town, a threshold crossing, so it is not definitional, and an infected compartment, so it
+  measures spread. "What if only half as many people quit treatment, with delta at 0.3? … the other
+  world first reaches 1% quitters more than 4 years later." It holds on 20 of 20 starts.
+- **One reviewer's blocks, three times.** inkling-small blocked "Two levers work together" for calling
+  η a rate; written again, it still did, and the level was dropped. It blocked "A faster chronic
+  recovery rate", whose goal asked for the rate that brings the reproduction number below 1 while
+  the level measures when the quitters reach 1%; written again, it stood. It blocked the hook's
+  words; written again, they stood.
+- **Three levels,** each holding on 20 of 20 starts: the hook, "Quitters spread the virus most" (β3,
+  the quitters' peak, β3 not in dcQ/dt) and "A faster chronic recovery rate" (ρ, when the quitters
+  reach 1%). The world of 2026-10-18 before it is kept as made.
+
+### Two fixes the regeneration needed
+
+- **A planner's repair given room, and one that cannot be read changing nothing.** The first run's
+  repair thought until its 32,000 tokens and wrote nothing; asked to correct that, it wrote two goals
+  over 160 characters, and the job failed. A repair that runs out of room before it writes anything is
+  now asked again with twice the room, as the explainer's is; one that still cannot be read leaves
+  the plan as it was, the repair spent, and the rules drop what it was to mend, as CLAUDE.md's
+  boundary 5 says. The bake-off makes no repairs, so its recordings replay as before.
+- **The reword mends every sentence a learner reads.** The second run's reviewer blocked level 3's
+  What-if question twice, "the paper's 0.19" for a threshold the paper derives; the reword could
+  change only the goal and the effect, so the block could not be met. It now writes the goal, the
+  What-if's question, the prediction's question and the effect; the What-if's value, what the level
+  measures and its claim stay the planner's.
+
+### Consequences of the amendment
+
+- The two conflicts in the consequences above are settled: a peak is the compartment's own level,
+  and an unsupported block needs one reviewer. So is the third: the planner can no longer review.
+- The controller's rule problems come before review, so a job's level loop repairs definitional
+  levels and the spread hook as it repairs the level rule's.
+
