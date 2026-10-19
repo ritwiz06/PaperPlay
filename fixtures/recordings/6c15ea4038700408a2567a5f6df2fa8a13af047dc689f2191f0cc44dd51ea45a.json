@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "6c15ea4038700408a2567a5f6df2fa8a13af047dc689f2191f0cc44dd51ea45a",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"advanced\": {\n    \"equation\": \"dC/dt = (1 − η) r I − δ(1 − θ)C − (ρ + μ + v)C\"\n  ,\n  \"quote\": \"Our model unraveled the synergistic impact of simultaneously enhancing the recovery rate of acutely infected individuals and treatment adherence on reducing $ℛ_{0}$.\"\n  ,\n  \"text\": \"Faster recovery from acute infection leaves fewer people to become chronic cases, so fewer ever enter treatment and quit.\"\n  }\n,\n  \"afterwards\": {\n    \"question\": \"Why does raising eta lower the peak of chronically infected people who quit treatment?\"\n  ,\n  \"quote\": \"Our model unraveled the synergistic impact of simultaneously enhancing the recovery rate of acutely infected individuals and treatment adherence on reducing $ℛ_{0}$.\"\n  ,\n  \"text\": \"The model shows that faster acute recovery shrinks the pool of people who become chronically infected and later quit treatment.\"\n  }\n,\n  \"beginner\": {\n    \"analogy\": \"Think of acute infection as water flowing into a bathtub. A faster drain means less water spills over into the chronic-infection tub.\"\n  ,\n  \"text\": \"Speed up recovery in newly infected people and fewer of them become long-term carriers who quit treatment.\"\n  }\n,\n  \"effect\": \"Recovering acutely infected people twice as fast clears infections before they become chronic, so the other world's peak of quitters is lower by more than 0.003.\"\n,\n  \"goal\": \"See how faster recovery of acutely infected people lowers the peak of people who quit treatment.\"\n,\n  \"guide\": {\n    \"falling\": \"the quitters' peak falls\"\n  ,\n    \"idle\": \"Move the recovery rate in acute cases and watch the peak of chronically infected people who quit treatment.\"\n  ,\n    \"lowered\": \"You lower eta to slow recovery, so more acutely infected people become chronic and the quitters' peak rises.\"\n  ,\n    \"raised\": \"You raise eta to speed recovery, so fewer acutely infected people become chronic and the quitters' peak falls.\"\n  ,\n    \"readings\": [\n      {\n        \"atLeast\": 0.02,\n        \"words\": \"the quitters' peak is very high\"\n      },\n      {\n        \"atLeast\": 0.015,\n        \"words\": \"the quitters' peak is high\"\n      },\n      {\n        \"atLeast\": 0.01,\n        \"words\": \"the quitters' peak is moderate\"\n      },\n      {\n        \"atLeast\": 0.005,\n        \"words\": \"the quitters' peak is low\"\n      },\n      {\n        \"atLeast\": 0,\n        \"words\": \"the quitters' peak is very low\"\n      }\n    ],\n    \"rising\": \"the quitters' peak rises\"\n  }\n,\n  \"intermediate\": {\n    \"text\": \"Move eta, the recovery rate in acute cases, and watch the peak of cQ, the chronically infected after quitting treatment.\"\n  }\n,\n  \"prediction\": \"With twice as fast acute recovery, will the peak of quitters be higher, lower, or about the same?\"\n,\n  \"whatIf\": \"What if acutely infected people recovered twice as fast, eta at 0.6?\"\n}",
+    "usage": {
+      "promptTokens": 15060,
+      "completionTokens": 5964,
+      "totalTokens": 21024
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-19T01:56:58.261Z"
+}

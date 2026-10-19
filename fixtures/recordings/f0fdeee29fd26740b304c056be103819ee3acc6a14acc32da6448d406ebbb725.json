@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "f0fdeee29fd26740b304c056be103819ee3acc6a14acc32da6448d406ebbb725",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"advanced\": {\n    \"equation\": \"dC_q/dt = δ(1 − θ)C − (αρ + μ + ν)C_q\",\n    \"quote\": \"dC_q/dt = δ(1 − θ)C − (αρ + μ + ν)C_q\",\n    \"text\": \"The model tracks five groups. The equation for people who quit treatment and remain chronically infected is shown below. In that equation, theta is treatment adherence proportion, delta is the quitting rate, C is people under treatment, and the last term is recovery and death. When theta equals one, the inflow term δ(1 − θ)C becomes zero, so cQ has no new arrivals from C. The paper states that an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\"\n  },\n  \"afterwards\": {\n    \"question\": \"Why does full adherence push the quitters close to zero?\",\n    \"quote\": \"an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\",\n    \"text\": \"With full adherence, the cQ peak is lower by more than fifty people. The paper says:\"\n  },\n  \"beginner\": {\n    \"analogy\": \"Imagine a town with a leaky bucket. Treatment adherence is like plugging the holes. When more people stick to their treatment, fewer people quit and stay chronically infected. The watched group is the\",\n    \"text\": \"Imagine a town with a leaky bucket. Treatment adherence is like plugging the holes. When more people stick to their treatment, fewer people quit and stay chronically infected. The watched group is people who quit treatment and remain chronically infected. If everyone sticks, that group shrinks. Plugging the leaks slows the outbreak.\"\n  },\n  \"guide\": {\n    \"falling\": \"cQ is dropping\",\n    \"idle\": \"Drag the treatment adherence slider and watch the quitters curve.\",\n    \"lowered\": \"You lower treatment adherence {to} zero, so everyone under treatment quits and the cQ curve rises.\",\n    \"raised\": \"You raise treatment adherence {to} one, so no one quits treatment and the cQ curve falls.\",\n    \"readings\": [\n      {\n        \"atLeast\": 130,\n        \"words\": \"above 130 people\"\n      },\n      {\n        \"atLeast\": 100,\n        \"words\": \"above 100 people\"\n      },\n      {\n        \"atLeast\": 50,\n        \"words\": \"above 50 people\"\n      },\n      {\n        \"atLeast\": 0,\n        \"words\": \"0 people or more\"\n      }\n    ],\n    \"rising\": \"cQ is climbing\"\n  },\n  \"intermediate\": {\n    \"text\": \"The control is treatment adherence proportion, called theta. It ranges from zero, meaning no one sticks, to one, meaning everyone sticks. The watched value is chronically infected after quitting, called cQ. These are people who started treatment but stopped. When theta rises, fewer people move into cQ, so its peak falls. The model starts with no one in cQ. By year twenty, about 136 people are in cQ. By year forty, about 139 people are in cQ. Full adherence can drive that peak down.\"\n  }\n}",
+    "usage": {
+      "promptTokens": 14682,
+      "completionTokens": 9903,
+      "totalTokens": 24585
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-19T01:08:18.120Z"
+}

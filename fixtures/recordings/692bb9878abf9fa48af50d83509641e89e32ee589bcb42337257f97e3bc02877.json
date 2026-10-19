@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "692bb9878abf9fa48af50d83509641e89e32ee589bcb42337257f97e3bc02877",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"advanced\": {\n    \"equation\": \"ℛ_0 = ℛ_I + ℛ_C + ℛ_{C_q} = b β_1/(μ m_1) + b r β_2 (1 − η)/(μ m_1 m_2) + r b δ β_3 (1 − η)(1 − θ)/(μ m_1 m_2 m_3),\",\n    \"quote\": \"ℛ_0 = ℛ_I + ℛ_C + ℛ_{C_q} = b β_1/(μ m_1) + b r β_2 (1 − η)/(μ m_1 m_2) + r b δ β_3 (1 − η)(1 − θ)/(μ m_1 m_2 m_3),\",\n    \"text\": \"The model's basic reproduction number sums contributions from acutely infected, treated chronic, and quit chronic groups. Treatment adherence theta appears in the last term. The paper gives the equation above. When theta rises, the quitters' contribution shrinks, so ℛ_0 falls. At full adherence, theta equals one and that term vanishes, pushing recovery upward and raising the recovered peak by more than 35 people.\"\n  },\n  \"afterwards\": {\n    \"question\": \"What could help more people stick to treatment in a real town?\",\n    \"quote\": \"an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\",\n    \"text\": \"Full adherence raises the recovered peak. The paper says an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\"\n  },\n  \"beginner\": {\n    \"analogy\": \"It is like making sure everyone waters a sick plant until it is healthy.\",\n    \"text\": \"Imagine a town where some people finish their medicine and others stop too soon. When more people stick to treatment, more chronic infections clear up and the recovered group grows. Full adherence helps the whole town recover faster.\"\n  },\n  \"guide\": {\n    \"falling\": \"recovered people drop\",\n    \"idle\": \"Move the treatment adherence proportion and watch the recovered group.\",\n    \"lowered\": \"You lower treatment adherence to {to}, so more people quit treatment and recovered people fall.\",\n    \"raised\": \"You raise treatment adherence to {to}, so more chronic infections complete treatment and recovered people rise.\",\n    \"readings\": [\n      {\n        \"atLeast\": 300,\n        \"words\": \"more than 300 recovered people\"\n      },\n      {\n        \"atLeast\": 200,\n        \"words\": \"more than 200 recovered people\"\n      },\n      {\n        \"atLeast\": 100,\n        \"words\": \"more than 100 recovered people\"\n      },\n      {\n        \"atLeast\": 0,\n        \"words\": \"at least 0 recovered people\"\n      }\n    ],\n    \"rising\": \"recovered people climb\"\n  },\n  \"intermediate\": {\n    \"text\": \"Move the treatment adherence proportion, theta, from no one sticks to everyone sticks. The model tracks recovered people, r. High theta means more chronic infections complete treatment, so the recovered group grows faster and its peak is higher. Low theta means more people quit treatment and remain infectious, so recovery slows and the recovered peak is lower. In the what-if, theta is set to one. The other world's peak of recovered people is higher by more than 35 people at year eighty.\"\n  }\n}",
+    "usage": {
+      "promptTokens": 14672,
+      "completionTokens": 6378,
+      "totalTokens": 21050
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-19T00:40:57.559Z"
+}

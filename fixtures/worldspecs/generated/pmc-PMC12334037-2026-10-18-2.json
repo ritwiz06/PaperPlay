@@ -1,0 +1,3825 @@
+{
+  "schemaVersion": "worldspec/3",
+  "status": "draft",
+  "title": "Hepatitis C treatment town",
+  "source": {
+    "schemaVersion": "sourcemanifest/1",
+    "sourceId": "pmc-PMC12334037",
+    "title": "Modeling the effects of treatment adherence challenges on the transmission dynamics of hepatitis C virus",
+    "authors": [
+      "Tinashe Victor Mupedza",
+      "Laurette Mhlanga",
+      "Dennis Mamutse",
+      "Mlyashimbi Helikumi",
+      "Paride Oresto Lolika",
+      "Shingirai Tangakugara Murambiwa",
+      "Adquate Mhlanga"
+    ],
+    "year": 2025,
+    "venue": "PLOS One",
+    "sha256": "44c9937004f0a638b6b2096e33889e8b144051afe8ee877cde3190f309b6c52d",
+    "accessedAt": "2026-10-19T01:53:57.930Z",
+    "localCopyPermitted": true,
+    "sections": [
+      {
+        "id": "front",
+        "title": "Title"
+      },
+      {
+        "id": "s2-abstract",
+        "title": "Abstract"
+      },
+      {
+        "id": "s3-1-introduction",
+        "title": "1 Introduction"
+      },
+      {
+        "id": "s4-2-model-description",
+        "title": "2 Model description"
+      },
+      {
+        "id": "s5-invariant-region",
+        "title": "Invariant region"
+      },
+      {
+        "id": "s6-3-reproduction-number",
+        "title": "3 Reproduction number"
+      },
+      {
+        "id": "s7-3-1-endemic-equilibrium-point",
+        "title": "3.1 Endemic equilibrium point"
+      },
+      {
+        "id": "s8-3-2-backward-bifurcation-analysis",
+        "title": "3.2 Backward bifurcation analysis"
+      },
+      {
+        "id": "s9-4-numerical-simulations",
+        "title": "4 Numerical simulations"
+      },
+      {
+        "id": "s10-5-discussion",
+        "title": "5 Discussion"
+      },
+      {
+        "id": "s11-6-conclusion",
+        "title": "6 Conclusion"
+      },
+      {
+        "id": "s12-supporting-information",
+        "title": "Supporting information"
+      }
+    ]
+  },
+  "digest": {
+    "question": "The paper asks how poor treatment adherence affects the spread of hepatitis C virus (HCV) in Zimbabwe, and what level of adherence is needed to stop the epidemic.",
+    "hookResult": {
+      "text": "The model shows that if more than 52% of patients stick to their treatment, the virus will stop spreading in the population.",
+      "anchors": [
+        {
+          "sourceId": "pmc-PMC12334037",
+          "sectionId": "s2-abstract",
+          "charStart": 804,
+          "charEnd": 911,
+          "quote": "an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread."
+        }
+      ]
+    },
+    "causalChain": [
+      {
+        "id": "c1",
+        "claim": "The model shows that if more than 52% of patients stick to their treatment, the virus will stop spreading in the population.",
+        "dependsOn": [],
+        "anchors": [
+          {
+            "sourceId": "pmc-PMC12334037",
+            "sectionId": "s2-abstract",
+            "charStart": 804,
+            "charEnd": 911,
+            "quote": "an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread."
+          }
+        ],
+        "origin": "paper-derived"
+      },
+      {
+        "id": "c2",
+        "claim": "Re-infection of recovered individuals has almost no effect on the overall spread of the disease.",
+        "dependsOn": [],
+        "anchors": [
+          {
+            "sourceId": "pmc-PMC12334037",
+            "sectionId": "s2-abstract",
+            "charStart": 941,
+            "charEnd": 1073,
+            "quote": "variations in re-susceptibility minimally impact outcomes, suggesting that re-susceptibility can often be excluded in such analyses."
+          }
+        ],
+        "origin": "paper-derived"
+      },
+      {
+        "id": "c3",
+        "claim": "Improving both treatment adherence and the recovery rate of acutely infected patients works together to lower transmission.",
+        "dependsOn": [],
+        "anchors": [
+          {
+            "sourceId": "pmc-PMC12334037",
+            "sectionId": "s2-abstract",
+            "charStart": 1074,
+            "charEnd": 1239,
+            "quote": "Our model unraveled the synergistic impact of simultaneously enhancing the recovery rate of acutely infected individuals and treatment adherence on reducing $ℛ_{0}$."
+          }
+        ],
+        "origin": "paper-derived"
+      },
+      {
+        "id": "c4",
+        "claim": "Patients who quit treatment pose the greatest transmission risk compared to other infected groups.",
+        "dependsOn": [],
+        "anchors": [
+          {
+            "sourceId": "pmc-PMC12334037",
+            "sectionId": "s9-4-numerical-simulations",
+            "charStart": 27747,
+            "charEnd": 27813,
+            "quote": "$β_{3}$ exerts the strongest influence on the reproduction number."
+          }
+        ],
+        "origin": "paper-derived"
+      },
+      {
+        "id": "c5",
+        "claim": "The model exhibits backward bifurcation, meaning that even if the reproduction number falls below 1, the disease can still persist if initial infection levels are high.",
+        "dependsOn": [],
+        "anchors": [
+          {
+            "sourceId": "pmc-PMC12334037",
+            "sectionId": "s8-3-2-backward-bifurcation-analysis",
+            "charStart": 19471,
+            "charEnd": 19569,
+            "quote": "even if $ℛ_{0} < 1$, the disease may persist due to the coexistence of multiple stable equilibria."
+          }
+        ],
+        "origin": "paper-derived"
+      },
+      {
+        "id": "c6",
+        "claim": "Increasing the chronic recovery rate to about 0.19 also pushes the reproduction number below the epidemic threshold.",
+        "dependsOn": [],
+        "anchors": [
+          {
+            "sourceId": "pmc-PMC12334037",
+            "sectionId": "s9-4-numerical-simulations",
+            "charStart": 28830,
+            "charEnd": 28917,
+            "quote": "When ρ approaches a value of approximately 0.19, we observe that $ℛ_{0}$ falls below 1."
+          }
+        ],
+        "origin": "paper-derived"
+      }
+    ]
+  },
+  "routing": {
+    "tier": "A",
+    "family": "compartments",
+    "reason": ": The paper's mechanism is a well-mixed compartment model solved as equations: five coupled ODE compartments, a mass-action force of infection, and reproduction-number/stability analysis. No network structure or agent-level rules appear, so the released compartments family covers it as stated.",
+    "primitive": {
+      "status": "released"
+    }
+  },
+  "design": {
+    "world": "town",
+    "palette": "cream-teal",
+    "density": "comfortable",
+    "sections": [
+      {
+        "levelId": "hook",
+        "chartType": "line",
+        "motion": "none"
+      },
+      {
+        "levelId": "level-2",
+        "chartType": "line",
+        "motion": "none"
+      },
+      {
+        "levelId": "level-3",
+        "chartType": "line",
+        "motion": "none"
+      }
+    ]
+  },
+  "timeUnit": "year",
+  "openingSeed": 0,
+  "levels": [
+    {
+      "id": "hook",
+      "order": 1,
+      "kind": "hook",
+      "title": "Fewer quitters, smaller outbreak",
+      "goal": "See how lowering the treatment quitting rate in the equations slows the flow into the untreated quitters pool and delays when quitters first reach one percent.",
+      "bonus": false,
+      "binding": {
+        "type": "equations",
+        "solver": {
+          "id": "compartments.ode",
+          "version": "1.0.0"
+        },
+        "model": {
+          "timeUnit": "year",
+          "compartments": [
+            {
+              "id": "s",
+              "name": "Susceptible",
+              "unit": {},
+              "initial": {
+                "p": "s0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 4874,
+                  "charEnd": 4902,
+                  "quote": "susceptible to infection (S)"
+                }
+              ]
+            },
+            {
+              "id": "i",
+              "name": "Acutely infected",
+              "unit": {},
+              "initial": {
+                "p": "i0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 4904,
+                  "charEnd": 4924,
+                  "quote": "acutely infected (I)"
+                }
+              ]
+            },
+            {
+              "id": "c",
+              "name": "Chronically infected under treatment",
+              "unit": {},
+              "initial": {
+                "p": "c0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 4926,
+                  "charEnd": 4966,
+                  "quote": "chronically infected under treatment (C)"
+                }
+              ]
+            },
+            {
+              "id": "cQ",
+              "name": "Chronically infected after quitting treatment",
+              "unit": {},
+              "initial": {
+                "p": "cQ0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 4968,
+                  "charEnd": 5030,
+                  "quote": "chronically infected after quitting treatment prematurely (Cq)"
+                }
+              ]
+            },
+            {
+              "id": "r",
+              "name": "Recovered",
+              "unit": {},
+              "initial": {
+                "p": "r0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 5036,
+                  "charEnd": 5061,
+                  "quote": "recovered individuals (R)"
+                }
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "id": "b",
+              "symbol": "b",
+              "name": "Recruitment rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.04
+              ],
+              "defaultValue": 0.01,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18176,
+                  "charEnd": 18242,
+                  "quote": "Recruitment rate | b | 0.01 (0.009-0.06) | [[citation],[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "mu",
+              "symbol": "μ",
+              "name": "Natural mortality rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.08
+              ],
+              "defaultValue": 0.02,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18243,
+                  "charEnd": 18316,
+                  "quote": "Natural mortality rate | $μ$ | 0.02 (0.01-0.03) | [[citation],[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "v",
+              "symbol": "v",
+              "name": "Disease induced death rate (on treatment)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.024
+              ],
+              "defaultValue": 0.006,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18317,
+                  "charEnd": 18399,
+                  "quote": "Disease induced death rate (on treatment) | v | 0.006 (0.001-0.008) | [[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "nu",
+              "symbol": "ν",
+              "name": "Disease induced death rate (not on treatment)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.22
+              ],
+              "defaultValue": 0.055,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18400,
+                  "charEnd": 18481,
+                  "quote": "Disease induced death rate (not on treatment) | $ν$ | 0.055 (0.01-0.065) | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "beta1",
+              "symbol": "β_{1}",
+              "name": "Disease transmission rate (I)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.856
+              ],
+              "defaultValue": 0.214,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18482,
+                  "charEnd": 18550,
+                  "quote": "Disease transmission rate (I) | $β_{1}$ | 0.214 (0-3) | [[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "beta2",
+              "symbol": "β_{2}",
+              "name": "Disease transmission rate (C)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.064
+              ],
+              "defaultValue": 0.016,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18551,
+                  "charEnd": 18619,
+                  "quote": "Disease transmission rate (C) | $β_{2}$ | 0.016 (0.01-0.02) | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "beta3",
+              "symbol": "β_{3}",
+              "name": "Disease transmission rate (Cq)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.2
+              ],
+              "defaultValue": 0.05,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18620,
+                  "charEnd": 18687,
+                  "quote": "Disease transmission rate (Cq) | $β_{3}$ | 0.05 (0.01-0.1) | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "phi",
+              "symbol": "ϕ",
+              "name": "Re-susceptibility rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.004
+              ],
+              "defaultValue": 0.001,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18688,
+                  "charEnd": 18755,
+                  "quote": "Re-susceptibility rate | $ϕ$ | 0.001 (0.0008-0.0012) | [[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "r2",
+              "symbol": "r",
+              "name": "Acute to recovered rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.652
+              ],
+              "defaultValue": 0.163,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18756,
+                  "charEnd": 18811,
+                  "quote": "Acute to recovered rate | r | 0.163 (0.1-0.18) | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "eta",
+              "symbol": "η",
+              "name": "Recovery rate in acutely infected cases",
+              "unit": {},
+              "range": [
+                0,
+                1.2
+              ],
+              "defaultValue": 0.3,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18812,
+                  "charEnd": 18888,
+                  "quote": "Recovery rate in acutely infected cases | $η$ | 0.3 (0.1-0.4) | [[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "delta",
+              "symbol": "δ",
+              "name": "Treatment quitting rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2.4
+              ],
+              "defaultValue": 0.6,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18889,
+                  "charEnd": 18949,
+                  "quote": "Treatment quitting rate | $δ$ | 0.6 (0.4-0.7) | [[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "theta",
+              "symbol": "θ",
+              "name": "Treatment adherence proportion",
+              "unit": {},
+              "range": [
+                0,
+                2
+              ],
+              "defaultValue": 0.5,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18950,
+                  "charEnd": 19008,
+                  "quote": "Treatment adherence proportion | $θ$ | 0.5 (0-1) | Assumed"
+                }
+              ]
+            },
+            {
+              "id": "rho",
+              "symbol": "ρ",
+              "name": "Recovery rate for those with chronic infections",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.212
+              ],
+              "defaultValue": 0.053,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 19009,
+                  "charEnd": 19091,
+                  "quote": "Recovery rate for those with chronic infections | ρ | 0.053 (0.009-0.0011 | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "alpha",
+              "symbol": "α",
+              "name": "Slow recovery modification parameter",
+              "unit": {},
+              "range": [
+                0,
+                0.004
+              ],
+              "defaultValue": 0.001,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 19092,
+                  "charEnd": 19167,
+                  "quote": "Slow recovery modification parameter | $α$ | 0.001 (0.0009-0.0011) | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "s0",
+              "symbol": "S(0)",
+              "name": "Susceptible at the start",
+              "unit": {},
+              "range": [
+                0,
+                3.2
+              ],
+              "defaultValue": 0.8,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s9-4-numerical-simulations",
+                  "charStart": 21953,
+                  "charEnd": 21959,
+                  "quote": "S0=0.8"
+                }
+              ]
+            },
+            {
+              "id": "i0",
+              "symbol": "I(0)",
+              "name": "Acutely infected at the start",
+              "unit": {},
+              "range": [
+                0,
+                0.04
+              ],
+              "defaultValue": 0.01,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s9-4-numerical-simulations",
+                  "charStart": 21961,
+                  "charEnd": 21968,
+                  "quote": "I0=0.01"
+                }
+              ]
+            },
+            {
+              "id": "c0",
+              "symbol": "C(0)",
+              "name": "Chronically infected under treatment at the start",
+              "unit": {},
+              "range": [
+                0,
+                0.06
+              ],
+              "defaultValue": 0.015,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s9-4-numerical-simulations",
+                  "charStart": 21970,
+                  "charEnd": 21978,
+                  "quote": "C0=0.015"
+                }
+              ]
+            },
+            {
+              "id": "cQ0",
+              "symbol": "C_{q}(0)",
+              "name": "Chronically infected after quitting treatment at the start",
+              "unit": {},
+              "range": [
+                0,
+                1
+              ],
+              "defaultValue": 0,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s9-4-numerical-simulations",
+                  "charStart": 21980,
+                  "charEnd": 21985,
+                  "quote": "Cq0=0"
+                }
+              ]
+            },
+            {
+              "id": "r0",
+              "symbol": "R(0)",
+              "name": "Recovered at the start",
+              "unit": {},
+              "range": [
+                0,
+                1
+              ],
+              "defaultValue": 0,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s9-4-numerical-simulations",
+                  "charStart": 21987,
+                  "charEnd": 21991,
+                  "quote": "R0=0"
+                }
+              ]
+            }
+          ],
+          "equations": [
+            {
+              "of": "s",
+              "rate": {
+                "op": "add",
+                "args": [
+                  {
+                    "op": "sub",
+                    "a": {
+                      "p": "b"
+                    },
+                    "b": {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "op": "add",
+                          "args": [
+                            {
+                              "p": "mu"
+                            },
+                            {
+                              "op": "mul",
+                              "args": [
+                                {
+                                  "p": "beta1"
+                                },
+                                {
+                                  "c": "i"
+                                }
+                              ]
+                            },
+                            {
+                              "op": "mul",
+                              "args": [
+                                {
+                                  "p": "beta2"
+                                },
+                                {
+                                  "c": "c"
+                                }
+                              ]
+                            },
+                            {
+                              "op": "mul",
+                              "args": [
+                                {
+                                  "p": "beta3"
+                                },
+                                {
+                                  "c": "cQ"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "c": "s"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "op": "mul",
+                    "args": [
+                      {
+                        "p": "phi"
+                      },
+                      {
+                        "c": "r"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 7536,
+                  "charEnd": 7575,
+                  "quote": "\\frac{d S}{d t} = b − ( μ + λ ) S + ϕ R"
+                }
+              ]
+            },
+            {
+              "of": "i",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "p": "beta1"
+                            },
+                            {
+                              "c": "i"
+                            }
+                          ]
+                        },
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "p": "beta2"
+                            },
+                            {
+                              "c": "c"
+                            }
+                          ]
+                        },
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "p": "beta3"
+                            },
+                            {
+                              "c": "cQ"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "c": "s"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "mu"
+                        },
+                        {
+                          "p": "r2"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 7578,
+                  "charEnd": 7613,
+                  "quote": "\\frac{d I}{d t} = λ S − ( μ + r ) I"
+                }
+              ]
+            },
+            {
+              "of": "c",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "sub",
+                  "a": {
+                    "op": "mul",
+                    "args": [
+                      {
+                        "op": "sub",
+                        "a": {
+                          "n": 1
+                        },
+                        "b": {
+                          "p": "eta"
+                        }
+                      },
+                      {
+                        "p": "r2"
+                      },
+                      {
+                        "c": "i"
+                      }
+                    ]
+                  },
+                  "b": {
+                    "op": "mul",
+                    "args": [
+                      {
+                        "p": "delta"
+                      },
+                      {
+                        "op": "sub",
+                        "a": {
+                          "n": 1
+                        },
+                        "b": {
+                          "p": "theta"
+                        }
+                      },
+                      {
+                        "c": "c"
+                      }
+                    ]
+                  }
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "rho"
+                        },
+                        {
+                          "p": "mu"
+                        },
+                        {
+                          "p": "v"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "c"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 7616,
+                  "charEnd": 7681,
+                  "quote": "\\frac{d C}{d t} = ( 1 − η ) r I − δ ( 1 − θ ) C − ( ρ + μ + v ) C"
+                }
+              ]
+            },
+            {
+              "of": "cQ",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "delta"
+                    },
+                    {
+                      "op": "sub",
+                      "a": {
+                        "n": 1
+                      },
+                      "b": {
+                        "p": "theta"
+                      }
+                    },
+                    {
+                      "c": "c"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "p": "alpha"
+                            },
+                            {
+                              "p": "rho"
+                            }
+                          ]
+                        },
+                        {
+                          "p": "mu"
+                        },
+                        {
+                          "p": "nu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "cQ"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 7684,
+                  "charEnd": 7743,
+                  "quote": "\\frac{d C_{q}}{d t} = δ ( 1 − θ ) C − ( α ρ + μ + ν ) C_{q}"
+                }
+              ]
+            },
+            {
+              "of": "r",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "add",
+                  "args": [
+                    {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "op": "add",
+                          "args": [
+                            {
+                              "c": "c"
+                            },
+                            {
+                              "op": "mul",
+                              "args": [
+                                {
+                                  "p": "alpha"
+                                },
+                                {
+                                  "c": "cQ"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "p": "rho"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "p": "eta"
+                        },
+                        {
+                          "p": "r2"
+                        },
+                        {
+                          "c": "i"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "mu"
+                        },
+                        {
+                          "p": "phi"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "r"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 7746,
+                  "charEnd": 7803,
+                  "quote": "\\frac{d R}{d t} = ( C + α C_{q} ) ρ + η r I − ( μ + ϕ ) R"
+                }
+              ]
+            }
+          ],
+          "invariants": [],
+          "steadyStates": [],
+          "observables": [
+            {
+              "id": "levelS",
+              "label": "Susceptible",
+              "expr": {
+                "c": "s"
+              },
+              "unit": {}
+            },
+            {
+              "id": "levelI",
+              "label": "Acutely infected",
+              "expr": {
+                "c": "i"
+              },
+              "unit": {}
+            },
+            {
+              "id": "levelC",
+              "label": "Chronically infected under treatment",
+              "expr": {
+                "c": "c"
+              },
+              "unit": {}
+            },
+            {
+              "id": "levelCQ",
+              "label": "Chronically infected after quitting treatment",
+              "expr": {
+                "c": "cQ"
+              },
+              "unit": {}
+            },
+            {
+              "id": "levelR",
+              "label": "Recovered",
+              "expr": {
+                "c": "r"
+              },
+              "unit": {}
+            }
+          ],
+          "solver": {
+            "dt": 0.2,
+            "tolerance": 0.000001
+          }
+        },
+        "params": {},
+        "perWatchSecond": 2.5
+      },
+      "manipulable": {
+        "actionId": "delta",
+        "label": "Treatment quitting rate",
+        "targetVariable": "delta",
+        "range": [
+          0.15,
+          2.4
+        ],
+        "unit": "per year",
+        "defaultValue": 0.6,
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "pmc-PMC12334037",
+            "sectionId": "s8-3-2-backward-bifurcation-analysis",
+            "charStart": 18889,
+            "charEnd": 18949,
+            "quote": "Treatment quitting rate | $δ$ | 0.6 (0.4-0.7) | [[citation]]"
+          }
+        ]
+      },
+      "slider": {
+        "step": 0.015,
+        "ends": [
+          "0.3: few quit",
+          "1.2: many quit"
+        ]
+      },
+      "observable": {
+        "metricId": "levelCQ",
+        "label": "Chronically infected after quitting treatment",
+        "shortLabel": "Chronically infected after quitting treatment",
+        "unit": "dimensionless",
+        "decimals": 3,
+        "origin": "computed-observation"
+      },
+      "counterfactual": {
+        "prompt": "What if only half as many people quit treatment, with delta at 0.3?",
+        "altParams": {
+          "delta": 0.3
+        },
+        "expectedQualitativeEffect": "With only half as many people quitting treatment, the untreated pool fills more slowly: the other world first reaches 1% quitters more than 4 years later.",
+        "origin": "teaching-choice",
+        "isSpeculative": false,
+        "anchors": [],
+        "difference": {
+          "metricId": "levelCQ",
+          "label": "Years until chronically infected after quitting treatment first reaches 0.01",
+          "unit": "years",
+          "summary": {
+            "kind": "first-reach",
+            "threshold": 0.01
+          },
+          "time": 80,
+          "claim": {
+            "kind": "each",
+            "relation": "higher",
+            "by": 4
+          }
+        }
+      },
+      "setup": [],
+      "explanation": {
+        "beginner": {
+          "text": "Fewer people quitting treatment means the pool of untreated patients fills more slowly. The model shows it takes more than four extra years to reach one percent.",
+          "show": [
+            "range-words",
+            "analogy"
+          ],
+          "hide": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "analogy": "Think of the untreated pool like a bucket that fills from a tap. Turning the tap down by half means the bucket takes much longer to reach the one-percent mark.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "intermediate": {
+          "text": "Move the treatment quitting rate δ and watch when chronically infected after quitting (Cq) first reaches 1%.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number"
+          ],
+          "hide": [
+            "range-words",
+            "equation",
+            "analogy"
+          ],
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "advanced": {
+          "text": "The quitting term δ(1 − θ)C feeds the untreated pool Cq. Halving δ lowers this inflow, so Cq grows more slowly.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "hide": [
+            "range-words",
+            "analogy"
+          ],
+          "equation": "dC_{q}/dt = δ(1 − θ)C − (αρ + μ + ν)C_{q}",
+          "origin": "teaching-choice",
+          "anchors": []
+        }
+      },
+      "caption": {
+        "text": "Adherence and the reproduction number",
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "pmc-PMC12334037",
+            "sectionId": "s2-abstract",
+            "charStart": 804,
+            "charEnd": 911,
+            "quote": "an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread."
+          }
+        ]
+      },
+      "guide": {
+        "idle": "Move the treatment quitting rate and watch when the untreated quitters first reach one percent.",
+        "raised": "You raise the quitting rate to {to}, so more people flow from treated chronic infection into the untreated pool.",
+        "lowered": "You lower the quitting rate to {to}, so fewer people flow from treated chronic infection into the untreated pool.",
+        "readings": [
+          {
+            "atLeast": 200,
+            "words": "the untreated pool has already passed one percent"
+          },
+          {
+            "atLeast": 100,
+            "words": "the untreated pool is approaching one percent"
+          },
+          {
+            "atLeast": 1,
+            "words": "the untreated pool is below one percent"
+          }
+        ],
+        "trend": {
+          "rising": {
+            "beginner": "the untreated pool is filling faster",
+            "measured": "rising"
+          },
+          "falling": {
+            "beginner": "the untreated pool is filling more slowly",
+            "measured": "falling"
+          },
+          "steady": "holding",
+          "within": 0.004
+        }
+      },
+      "guidedExploration": {
+        "predictPrompt": "With half the quitting rate, will the time to first reach 1% quitters be earlier, later, or about the same?",
+        "choices": [
+          "Later by more than 4 years",
+          "Earlier, or changed by less than 4 years"
+        ],
+        "interveneActionId": "delta",
+        "observeMetricId": "levelCQ",
+        "explainPrompt": "Why does a lower quitting rate delay the moment the untreated pool first reaches one percent?",
+        "explanation": {
+          "text": "The model's quitting term δ(1 − θ)C moves people from treated chronic infection C into the untreated quitters pool Cq. With a lower δ, that inflow shrinks, so Cq crosses the 1% threshold later. The paper notes that high adherence can push the reproduction number below one.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "paperSays": {
+          "text": "“an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.”",
+          "origin": "paper-derived",
+          "anchors": [
+            {
+              "sourceId": "pmc-PMC12334037",
+              "sectionId": "s2-abstract",
+              "charStart": 804,
+              "charEnd": 911,
+              "quote": "an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread."
+            }
+          ]
+        }
+      },
+      "furtherReading": [],
+      "carryForward": "Halving quitting, like raising adherence, keeps the untreated pool small and the outbreak weaker.",
+      "observation": {
+        "text": "The paper's headline does not appear in this world at the values it lists, and its direction does not show here either, so this level tests another of its findings: The model shows that if more than 52% of patients stick to their treatment, the virus will stop spreading in the population.",
+        "origin": "computed-observation",
+        "anchors": []
+      }
+    },
+    {
+      "id": "level-2",
+      "order": 2,
+      "kind": "background",
+      "title": "Quitters spread the virus most",
+      "goal": "Explore how much the chronically infected who quit treatment drive the epidemic. Move their transmission rate and watch the quitters' peak.",
+      "bonus": false,
+      "binding": {
+        "type": "equations",
+        "solver": {
+          "id": "compartments.ode",
+          "version": "1.0.0"
+        },
+        "model": {
+          "timeUnit": "year",
+          "compartments": [
+            {
+              "id": "s",
+              "name": "Susceptible",
+              "unit": {},
+              "initial": {
+                "p": "s0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 4874,
+                  "charEnd": 4902,
+                  "quote": "susceptible to infection (S)"
+                }
+              ]
+            },
+            {
+              "id": "i",
+              "name": "Acutely infected",
+              "unit": {},
+              "initial": {
+                "p": "i0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 4904,
+                  "charEnd": 4924,
+                  "quote": "acutely infected (I)"
+                }
+              ]
+            },
+            {
+              "id": "c",
+              "name": "Chronically infected under treatment",
+              "unit": {},
+              "initial": {
+                "p": "c0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 4926,
+                  "charEnd": 4966,
+                  "quote": "chronically infected under treatment (C)"
+                }
+              ]
+            },
+            {
+              "id": "cQ",
+              "name": "Chronically infected after quitting treatment",
+              "unit": {},
+              "initial": {
+                "p": "cQ0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 4968,
+                  "charEnd": 5030,
+                  "quote": "chronically infected after quitting treatment prematurely (Cq)"
+                }
+              ]
+            },
+            {
+              "id": "r",
+              "name": "Recovered",
+              "unit": {},
+              "initial": {
+                "p": "r0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 5036,
+                  "charEnd": 5061,
+                  "quote": "recovered individuals (R)"
+                }
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "id": "b",
+              "symbol": "b",
+              "name": "Recruitment rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.04
+              ],
+              "defaultValue": 0.01,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18176,
+                  "charEnd": 18242,
+                  "quote": "Recruitment rate | b | 0.01 (0.009-0.06) | [[citation],[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "mu",
+              "symbol": "μ",
+              "name": "Natural mortality rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.08
+              ],
+              "defaultValue": 0.02,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18243,
+                  "charEnd": 18316,
+                  "quote": "Natural mortality rate | $μ$ | 0.02 (0.01-0.03) | [[citation],[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "v",
+              "symbol": "v",
+              "name": "Disease induced death rate (on treatment)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.024
+              ],
+              "defaultValue": 0.006,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18317,
+                  "charEnd": 18399,
+                  "quote": "Disease induced death rate (on treatment) | v | 0.006 (0.001-0.008) | [[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "nu",
+              "symbol": "ν",
+              "name": "Disease induced death rate (not on treatment)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.22
+              ],
+              "defaultValue": 0.055,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18400,
+                  "charEnd": 18481,
+                  "quote": "Disease induced death rate (not on treatment) | $ν$ | 0.055 (0.01-0.065) | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "beta1",
+              "symbol": "β_{1}",
+              "name": "Disease transmission rate (I)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.856
+              ],
+              "defaultValue": 0.214,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18482,
+                  "charEnd": 18550,
+                  "quote": "Disease transmission rate (I) | $β_{1}$ | 0.214 (0-3) | [[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "beta2",
+              "symbol": "β_{2}",
+              "name": "Disease transmission rate (C)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.064
+              ],
+              "defaultValue": 0.016,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18551,
+                  "charEnd": 18619,
+                  "quote": "Disease transmission rate (C) | $β_{2}$ | 0.016 (0.01-0.02) | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "beta3",
+              "symbol": "β_{3}",
+              "name": "Disease transmission rate (Cq)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.2
+              ],
+              "defaultValue": 0.05,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18620,
+                  "charEnd": 18687,
+                  "quote": "Disease transmission rate (Cq) | $β_{3}$ | 0.05 (0.01-0.1) | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "phi",
+              "symbol": "ϕ",
+              "name": "Re-susceptibility rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.004
+              ],
+              "defaultValue": 0.001,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18688,
+                  "charEnd": 18755,
+                  "quote": "Re-susceptibility rate | $ϕ$ | 0.001 (0.0008-0.0012) | [[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "r2",
+              "symbol": "r",
+              "name": "Acute to recovered rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.652
+              ],
+              "defaultValue": 0.163,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18756,
+                  "charEnd": 18811,
+                  "quote": "Acute to recovered rate | r | 0.163 (0.1-0.18) | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "eta",
+              "symbol": "η",
+              "name": "Recovery rate in acutely infected cases",
+              "unit": {},
+              "range": [
+                0,
+                1.2
+              ],
+              "defaultValue": 0.3,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18812,
+                  "charEnd": 18888,
+                  "quote": "Recovery rate in acutely infected cases | $η$ | 0.3 (0.1-0.4) | [[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "delta",
+              "symbol": "δ",
+              "name": "Treatment quitting rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2.4
+              ],
+              "defaultValue": 0.6,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18889,
+                  "charEnd": 18949,
+                  "quote": "Treatment quitting rate | $δ$ | 0.6 (0.4-0.7) | [[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "theta",
+              "symbol": "θ",
+              "name": "Treatment adherence proportion",
+              "unit": {},
+              "range": [
+                0,
+                2
+              ],
+              "defaultValue": 0.5,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18950,
+                  "charEnd": 19008,
+                  "quote": "Treatment adherence proportion | $θ$ | 0.5 (0-1) | Assumed"
+                }
+              ]
+            },
+            {
+              "id": "rho",
+              "symbol": "ρ",
+              "name": "Recovery rate for those with chronic infections",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.212
+              ],
+              "defaultValue": 0.053,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 19009,
+                  "charEnd": 19091,
+                  "quote": "Recovery rate for those with chronic infections | ρ | 0.053 (0.009-0.0011 | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "alpha",
+              "symbol": "α",
+              "name": "Slow recovery modification parameter",
+              "unit": {},
+              "range": [
+                0,
+                0.004
+              ],
+              "defaultValue": 0.001,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 19092,
+                  "charEnd": 19167,
+                  "quote": "Slow recovery modification parameter | $α$ | 0.001 (0.0009-0.0011) | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "s0",
+              "symbol": "S(0)",
+              "name": "Susceptible at the start",
+              "unit": {},
+              "range": [
+                0,
+                3.2
+              ],
+              "defaultValue": 0.8,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s9-4-numerical-simulations",
+                  "charStart": 21953,
+                  "charEnd": 21959,
+                  "quote": "S0=0.8"
+                }
+              ]
+            },
+            {
+              "id": "i0",
+              "symbol": "I(0)",
+              "name": "Acutely infected at the start",
+              "unit": {},
+              "range": [
+                0,
+                0.04
+              ],
+              "defaultValue": 0.01,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s9-4-numerical-simulations",
+                  "charStart": 21961,
+                  "charEnd": 21968,
+                  "quote": "I0=0.01"
+                }
+              ]
+            },
+            {
+              "id": "c0",
+              "symbol": "C(0)",
+              "name": "Chronically infected under treatment at the start",
+              "unit": {},
+              "range": [
+                0,
+                0.06
+              ],
+              "defaultValue": 0.015,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s9-4-numerical-simulations",
+                  "charStart": 21970,
+                  "charEnd": 21978,
+                  "quote": "C0=0.015"
+                }
+              ]
+            },
+            {
+              "id": "cQ0",
+              "symbol": "C_{q}(0)",
+              "name": "Chronically infected after quitting treatment at the start",
+              "unit": {},
+              "range": [
+                0,
+                1
+              ],
+              "defaultValue": 0,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s9-4-numerical-simulations",
+                  "charStart": 21980,
+                  "charEnd": 21985,
+                  "quote": "Cq0=0"
+                }
+              ]
+            },
+            {
+              "id": "r0",
+              "symbol": "R(0)",
+              "name": "Recovered at the start",
+              "unit": {},
+              "range": [
+                0,
+                1
+              ],
+              "defaultValue": 0,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s9-4-numerical-simulations",
+                  "charStart": 21987,
+                  "charEnd": 21991,
+                  "quote": "R0=0"
+                }
+              ]
+            }
+          ],
+          "equations": [
+            {
+              "of": "s",
+              "rate": {
+                "op": "add",
+                "args": [
+                  {
+                    "op": "sub",
+                    "a": {
+                      "p": "b"
+                    },
+                    "b": {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "op": "add",
+                          "args": [
+                            {
+                              "p": "mu"
+                            },
+                            {
+                              "op": "mul",
+                              "args": [
+                                {
+                                  "p": "beta1"
+                                },
+                                {
+                                  "c": "i"
+                                }
+                              ]
+                            },
+                            {
+                              "op": "mul",
+                              "args": [
+                                {
+                                  "p": "beta2"
+                                },
+                                {
+                                  "c": "c"
+                                }
+                              ]
+                            },
+                            {
+                              "op": "mul",
+                              "args": [
+                                {
+                                  "p": "beta3"
+                                },
+                                {
+                                  "c": "cQ"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "c": "s"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "op": "mul",
+                    "args": [
+                      {
+                        "p": "phi"
+                      },
+                      {
+                        "c": "r"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 7536,
+                  "charEnd": 7575,
+                  "quote": "\\frac{d S}{d t} = b − ( μ + λ ) S + ϕ R"
+                }
+              ]
+            },
+            {
+              "of": "i",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "p": "beta1"
+                            },
+                            {
+                              "c": "i"
+                            }
+                          ]
+                        },
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "p": "beta2"
+                            },
+                            {
+                              "c": "c"
+                            }
+                          ]
+                        },
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "p": "beta3"
+                            },
+                            {
+                              "c": "cQ"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "c": "s"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "mu"
+                        },
+                        {
+                          "p": "r2"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 7578,
+                  "charEnd": 7613,
+                  "quote": "\\frac{d I}{d t} = λ S − ( μ + r ) I"
+                }
+              ]
+            },
+            {
+              "of": "c",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "sub",
+                  "a": {
+                    "op": "mul",
+                    "args": [
+                      {
+                        "op": "sub",
+                        "a": {
+                          "n": 1
+                        },
+                        "b": {
+                          "p": "eta"
+                        }
+                      },
+                      {
+                        "p": "r2"
+                      },
+                      {
+                        "c": "i"
+                      }
+                    ]
+                  },
+                  "b": {
+                    "op": "mul",
+                    "args": [
+                      {
+                        "p": "delta"
+                      },
+                      {
+                        "op": "sub",
+                        "a": {
+                          "n": 1
+                        },
+                        "b": {
+                          "p": "theta"
+                        }
+                      },
+                      {
+                        "c": "c"
+                      }
+                    ]
+                  }
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "rho"
+                        },
+                        {
+                          "p": "mu"
+                        },
+                        {
+                          "p": "v"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "c"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 7616,
+                  "charEnd": 7681,
+                  "quote": "\\frac{d C}{d t} = ( 1 − η ) r I − δ ( 1 − θ ) C − ( ρ + μ + v ) C"
+                }
+              ]
+            },
+            {
+              "of": "cQ",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "delta"
+                    },
+                    {
+                      "op": "sub",
+                      "a": {
+                        "n": 1
+                      },
+                      "b": {
+                        "p": "theta"
+                      }
+                    },
+                    {
+                      "c": "c"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "p": "alpha"
+                            },
+                            {
+                              "p": "rho"
+                            }
+                          ]
+                        },
+                        {
+                          "p": "mu"
+                        },
+                        {
+                          "p": "nu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "cQ"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 7684,
+                  "charEnd": 7743,
+                  "quote": "\\frac{d C_{q}}{d t} = δ ( 1 − θ ) C − ( α ρ + μ + ν ) C_{q}"
+                }
+              ]
+            },
+            {
+              "of": "r",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "add",
+                  "args": [
+                    {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "op": "add",
+                          "args": [
+                            {
+                              "c": "c"
+                            },
+                            {
+                              "op": "mul",
+                              "args": [
+                                {
+                                  "p": "alpha"
+                                },
+                                {
+                                  "c": "cQ"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "p": "rho"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "p": "eta"
+                        },
+                        {
+                          "p": "r2"
+                        },
+                        {
+                          "c": "i"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "mu"
+                        },
+                        {
+                          "p": "phi"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "r"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 7746,
+                  "charEnd": 7803,
+                  "quote": "\\frac{d R}{d t} = ( C + α C_{q} ) ρ + η r I − ( μ + ϕ ) R"
+                }
+              ]
+            }
+          ],
+          "invariants": [],
+          "steadyStates": [],
+          "observables": [
+            {
+              "id": "levelS",
+              "label": "Susceptible",
+              "expr": {
+                "c": "s"
+              },
+              "unit": {}
+            },
+            {
+              "id": "levelI",
+              "label": "Acutely infected",
+              "expr": {
+                "c": "i"
+              },
+              "unit": {}
+            },
+            {
+              "id": "levelC",
+              "label": "Chronically infected under treatment",
+              "expr": {
+                "c": "c"
+              },
+              "unit": {}
+            },
+            {
+              "id": "levelCQ",
+              "label": "Chronically infected after quitting treatment",
+              "expr": {
+                "c": "cQ"
+              },
+              "unit": {}
+            },
+            {
+              "id": "levelR",
+              "label": "Recovered",
+              "expr": {
+                "c": "r"
+              },
+              "unit": {}
+            }
+          ],
+          "solver": {
+            "dt": 0.2,
+            "tolerance": 0.000001
+          }
+        },
+        "params": {},
+        "perWatchSecond": 2.5
+      },
+      "manipulable": {
+        "actionId": "beta3",
+        "label": "Transmission rate from quitters",
+        "targetVariable": "beta3",
+        "range": [
+          0.0125,
+          0.2
+        ],
+        "unit": "per year",
+        "defaultValue": 0.05,
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "pmc-PMC12334037",
+            "sectionId": "s8-3-2-backward-bifurcation-analysis",
+            "charStart": 18620,
+            "charEnd": 18687,
+            "quote": "Disease transmission rate (Cq) | $β_{3}$ | 0.05 (0.01-0.1) | Fitted"
+          }
+        ]
+      },
+      "slider": {
+        "step": 0.0013,
+        "ends": [
+          "0.025: passes on rarely",
+          "0.1: passes on easily"
+        ]
+      },
+      "observable": {
+        "metricId": "levelCQ",
+        "label": "Chronically infected after quitting treatment",
+        "shortLabel": "Chronically infected after quitting treatment",
+        "unit": "dimensionless",
+        "decimals": 3,
+        "origin": "computed-observation"
+      },
+      "counterfactual": {
+        "prompt": "What if quitters passed on the virus twice as easily, beta3 at 0.1?",
+        "altParams": {
+          "beta3": 0.1
+        },
+        "expectedQualitativeEffect": "When quitters pass on the virus twice as easily, they drive a bigger outbreak: the other world's peak of quitters is higher by more than 0.005.",
+        "origin": "teaching-choice",
+        "isSpeculative": false,
+        "anchors": [],
+        "difference": {
+          "metricId": "levelCQ",
+          "label": "Highest chronically infected after quitting treatment within 100 years",
+          "unit": "dimensionless",
+          "summary": {
+            "kind": "peak"
+          },
+          "time": 100,
+          "claim": {
+            "kind": "each",
+            "relation": "higher",
+            "by": 0.005
+          }
+        }
+      },
+      "setup": [],
+      "explanation": {
+        "beginner": {
+          "text": "Some people start hepatitis c treatment but stop early. Those quitters have more virus and pass it on more easily. In this level you turn up how easily quitters spread the virus. When quitters spread the virus more, the group of untreated chronically infected people grows biggest. Watch that group grow.",
+          "show": [
+            "range-words",
+            "analogy"
+          ],
+          "hide": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "analogy": "It is like turning up the volume on a speaker. A louder speaker reaches more people.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "intermediate": {
+          "text": "The control is the transmission rate from quitters, called beta three. The watched value is the number of chronically infected people after quitting treatment, called c q. At the start the town has eight thousand susceptible people, one hundred acutely infected, one hundred fifty under treatment, zero quitters, and zero recovered. You will raise beta three to zero point one, meaning quitters pass the virus twice as easily as the baseline. The model then shows the peak of c q rising by more than zero point zero zero five. That means more than fifty extra people in the quitters group at the worst point. Because quitters spread the virus most strongly, their transmission rate drives the outbreak.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number"
+          ],
+          "hide": [
+            "range-words",
+            "equation",
+            "analogy"
+          ],
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "advanced": {
+          "text": "The control is beta three, the transmission rate from people who quit treatment. The watched value is c q, the peak of chronically infected people after quitting. Raising beta three to 0.1 makes quitters pass the virus more easily, so the c q peak rises by more than 0.005. The paper breaks the basic reproduction number into three parts. The part driven by quitters is the last term. The equation is shown above. Because beta three appears in that term, the paper says it exerts the strongest influence on the reproduction number.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "hide": [
+            "range-words",
+            "analogy"
+          ],
+          "equation": "ℛ₀ = ℛ_I + ℛ_C + ℛ_Cq = b β₁/(μ m₁) + b r β₂ (1 − η)/(μ m₁ m₂) + r b δ β₃ (1 − η)(1 − θ)/(μ m₁ m₂ m₃)",
+          "origin": "paper-derived",
+          "anchors": [
+            {
+              "sourceId": "pmc-PMC12334037",
+              "sectionId": "s9-4-numerical-simulations",
+              "charStart": 27747,
+              "charEnd": 27813,
+              "quote": "$β_{3}$ exerts the strongest influence on the reproduction number."
+            }
+          ]
+        }
+      },
+      "caption": {
+        "text": "The strongest influence",
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "pmc-PMC12334037",
+            "sectionId": "s9-4-numerical-simulations",
+            "charStart": 27747,
+            "charEnd": 27813,
+            "quote": "$β_{3}$ exerts the strongest influence on the reproduction number."
+          }
+        ]
+      },
+      "guide": {
+        "idle": "Move the quitters' transmission rate and watch the peak of chronically infected people after quitting treatment.",
+        "raised": "You raise beta three{to}, so quitters pass the virus more easily and the c q peak climbs.",
+        "lowered": "You lower beta three{to}, so quitters spread it rarely and the c q peak drops.",
+        "readings": [
+          {
+            "atLeast": 200,
+            "words": "above 200 people"
+          },
+          {
+            "atLeast": 150,
+            "words": "above 150 people"
+          },
+          {
+            "atLeast": 100,
+            "words": "above 100 people"
+          },
+          {
+            "atLeast": 0,
+            "words": "above 0 people"
+          }
+        ],
+        "trend": {
+          "rising": {
+            "beginner": "the quitters' peak is rising",
+            "measured": "rising"
+          },
+          "falling": {
+            "beginner": "the quitters' peak is falling",
+            "measured": "falling"
+          },
+          "steady": "holding",
+          "within": 0.004
+        }
+      },
+      "guidedExploration": {
+        "predictPrompt": "If quitters transmit twice as easily, will the quitters' peak be higher, lower, or about the same?",
+        "choices": [
+          "Higher by more than 0.005",
+          "Lower, or changed by less than 0.005"
+        ],
+        "interveneActionId": "beta3",
+        "observeMetricId": "levelCQ",
+        "explainPrompt": "Why does raising the quitters' transmission rate push their own peak higher?",
+        "explanation": {
+          "text": "The result is in. When quitters pass the virus more easily, the peak of chronically infected people after quitting treatment rises by more than 0.005.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "paperSays": {
+          "text": "“$β_{3}$ exerts the strongest influence on the reproduction number.”",
+          "origin": "paper-derived",
+          "anchors": [
+            {
+              "sourceId": "pmc-PMC12334037",
+              "sectionId": "s9-4-numerical-simulations",
+              "charStart": 27747,
+              "charEnd": 27813,
+              "quote": "$β_{3}$ exerts the strongest influence on the reproduction number."
+            }
+          ]
+        }
+      },
+      "furtherReading": [],
+      "carryForward": "Quitters transmit most, so keeping people in treatment matters; next see what faster acute recovery adds."
+    },
+    {
+      "id": "level-3",
+      "order": 3,
+      "kind": "method",
+      "title": "A faster chronic recovery rate",
+      "goal": "See how raising the chronic recovery rate clears treated infections faster and delays the quitters pool from reaching one percent.",
+      "bonus": false,
+      "binding": {
+        "type": "equations",
+        "solver": {
+          "id": "compartments.ode",
+          "version": "1.0.0"
+        },
+        "model": {
+          "timeUnit": "year",
+          "compartments": [
+            {
+              "id": "s",
+              "name": "Susceptible",
+              "unit": {},
+              "initial": {
+                "p": "s0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 4874,
+                  "charEnd": 4902,
+                  "quote": "susceptible to infection (S)"
+                }
+              ]
+            },
+            {
+              "id": "i",
+              "name": "Acutely infected",
+              "unit": {},
+              "initial": {
+                "p": "i0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 4904,
+                  "charEnd": 4924,
+                  "quote": "acutely infected (I)"
+                }
+              ]
+            },
+            {
+              "id": "c",
+              "name": "Chronically infected under treatment",
+              "unit": {},
+              "initial": {
+                "p": "c0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 4926,
+                  "charEnd": 4966,
+                  "quote": "chronically infected under treatment (C)"
+                }
+              ]
+            },
+            {
+              "id": "cQ",
+              "name": "Chronically infected after quitting treatment",
+              "unit": {},
+              "initial": {
+                "p": "cQ0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 4968,
+                  "charEnd": 5030,
+                  "quote": "chronically infected after quitting treatment prematurely (Cq)"
+                }
+              ]
+            },
+            {
+              "id": "r",
+              "name": "Recovered",
+              "unit": {},
+              "initial": {
+                "p": "r0"
+              },
+              "nonNegative": true,
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 5036,
+                  "charEnd": 5061,
+                  "quote": "recovered individuals (R)"
+                }
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "id": "b",
+              "symbol": "b",
+              "name": "Recruitment rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.04
+              ],
+              "defaultValue": 0.01,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18176,
+                  "charEnd": 18242,
+                  "quote": "Recruitment rate | b | 0.01 (0.009-0.06) | [[citation],[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "mu",
+              "symbol": "μ",
+              "name": "Natural mortality rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.08
+              ],
+              "defaultValue": 0.02,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18243,
+                  "charEnd": 18316,
+                  "quote": "Natural mortality rate | $μ$ | 0.02 (0.01-0.03) | [[citation],[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "v",
+              "symbol": "v",
+              "name": "Disease induced death rate (on treatment)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.024
+              ],
+              "defaultValue": 0.006,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18317,
+                  "charEnd": 18399,
+                  "quote": "Disease induced death rate (on treatment) | v | 0.006 (0.001-0.008) | [[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "nu",
+              "symbol": "ν",
+              "name": "Disease induced death rate (not on treatment)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.22
+              ],
+              "defaultValue": 0.055,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18400,
+                  "charEnd": 18481,
+                  "quote": "Disease induced death rate (not on treatment) | $ν$ | 0.055 (0.01-0.065) | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "beta1",
+              "symbol": "β_{1}",
+              "name": "Disease transmission rate (I)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.856
+              ],
+              "defaultValue": 0.214,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18482,
+                  "charEnd": 18550,
+                  "quote": "Disease transmission rate (I) | $β_{1}$ | 0.214 (0-3) | [[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "beta2",
+              "symbol": "β_{2}",
+              "name": "Disease transmission rate (C)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.064
+              ],
+              "defaultValue": 0.016,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18551,
+                  "charEnd": 18619,
+                  "quote": "Disease transmission rate (C) | $β_{2}$ | 0.016 (0.01-0.02) | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "beta3",
+              "symbol": "β_{3}",
+              "name": "Disease transmission rate (Cq)",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.2
+              ],
+              "defaultValue": 0.05,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18620,
+                  "charEnd": 18687,
+                  "quote": "Disease transmission rate (Cq) | $β_{3}$ | 0.05 (0.01-0.1) | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "phi",
+              "symbol": "ϕ",
+              "name": "Re-susceptibility rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.004
+              ],
+              "defaultValue": 0.001,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18688,
+                  "charEnd": 18755,
+                  "quote": "Re-susceptibility rate | $ϕ$ | 0.001 (0.0008-0.0012) | [[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "r2",
+              "symbol": "r",
+              "name": "Acute to recovered rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.652
+              ],
+              "defaultValue": 0.163,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18756,
+                  "charEnd": 18811,
+                  "quote": "Acute to recovered rate | r | 0.163 (0.1-0.18) | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "eta",
+              "symbol": "η",
+              "name": "Recovery rate in acutely infected cases",
+              "unit": {},
+              "range": [
+                0,
+                1.2
+              ],
+              "defaultValue": 0.3,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18812,
+                  "charEnd": 18888,
+                  "quote": "Recovery rate in acutely infected cases | $η$ | 0.3 (0.1-0.4) | [[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "delta",
+              "symbol": "δ",
+              "name": "Treatment quitting rate",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                2.4
+              ],
+              "defaultValue": 0.6,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18889,
+                  "charEnd": 18949,
+                  "quote": "Treatment quitting rate | $δ$ | 0.6 (0.4-0.7) | [[citation]]"
+                }
+              ]
+            },
+            {
+              "id": "theta",
+              "symbol": "θ",
+              "name": "Treatment adherence proportion",
+              "unit": {},
+              "range": [
+                0,
+                2
+              ],
+              "defaultValue": 0.5,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 18950,
+                  "charEnd": 19008,
+                  "quote": "Treatment adherence proportion | $θ$ | 0.5 (0-1) | Assumed"
+                }
+              ]
+            },
+            {
+              "id": "rho",
+              "symbol": "ρ",
+              "name": "Recovery rate for those with chronic infections",
+              "unit": {
+                "time": -1
+              },
+              "range": [
+                0,
+                0.212
+              ],
+              "defaultValue": 0.053,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 19009,
+                  "charEnd": 19091,
+                  "quote": "Recovery rate for those with chronic infections | ρ | 0.053 (0.009-0.0011 | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "alpha",
+              "symbol": "α",
+              "name": "Slow recovery modification parameter",
+              "unit": {},
+              "range": [
+                0,
+                0.004
+              ],
+              "defaultValue": 0.001,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s8-3-2-backward-bifurcation-analysis",
+                  "charStart": 19092,
+                  "charEnd": 19167,
+                  "quote": "Slow recovery modification parameter | $α$ | 0.001 (0.0009-0.0011) | Fitted"
+                }
+              ]
+            },
+            {
+              "id": "s0",
+              "symbol": "S(0)",
+              "name": "Susceptible at the start",
+              "unit": {},
+              "range": [
+                0,
+                3.2
+              ],
+              "defaultValue": 0.8,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s9-4-numerical-simulations",
+                  "charStart": 21953,
+                  "charEnd": 21959,
+                  "quote": "S0=0.8"
+                }
+              ]
+            },
+            {
+              "id": "i0",
+              "symbol": "I(0)",
+              "name": "Acutely infected at the start",
+              "unit": {},
+              "range": [
+                0,
+                0.04
+              ],
+              "defaultValue": 0.01,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s9-4-numerical-simulations",
+                  "charStart": 21961,
+                  "charEnd": 21968,
+                  "quote": "I0=0.01"
+                }
+              ]
+            },
+            {
+              "id": "c0",
+              "symbol": "C(0)",
+              "name": "Chronically infected under treatment at the start",
+              "unit": {},
+              "range": [
+                0,
+                0.06
+              ],
+              "defaultValue": 0.015,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s9-4-numerical-simulations",
+                  "charStart": 21970,
+                  "charEnd": 21978,
+                  "quote": "C0=0.015"
+                }
+              ]
+            },
+            {
+              "id": "cQ0",
+              "symbol": "C_{q}(0)",
+              "name": "Chronically infected after quitting treatment at the start",
+              "unit": {},
+              "range": [
+                0,
+                1
+              ],
+              "defaultValue": 0,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s9-4-numerical-simulations",
+                  "charStart": 21980,
+                  "charEnd": 21985,
+                  "quote": "Cq0=0"
+                }
+              ]
+            },
+            {
+              "id": "r0",
+              "symbol": "R(0)",
+              "name": "Recovered at the start",
+              "unit": {},
+              "range": [
+                0,
+                1
+              ],
+              "defaultValue": 0,
+              "origin": "paper-derived",
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s9-4-numerical-simulations",
+                  "charStart": 21987,
+                  "charEnd": 21991,
+                  "quote": "R0=0"
+                }
+              ]
+            }
+          ],
+          "equations": [
+            {
+              "of": "s",
+              "rate": {
+                "op": "add",
+                "args": [
+                  {
+                    "op": "sub",
+                    "a": {
+                      "p": "b"
+                    },
+                    "b": {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "op": "add",
+                          "args": [
+                            {
+                              "p": "mu"
+                            },
+                            {
+                              "op": "mul",
+                              "args": [
+                                {
+                                  "p": "beta1"
+                                },
+                                {
+                                  "c": "i"
+                                }
+                              ]
+                            },
+                            {
+                              "op": "mul",
+                              "args": [
+                                {
+                                  "p": "beta2"
+                                },
+                                {
+                                  "c": "c"
+                                }
+                              ]
+                            },
+                            {
+                              "op": "mul",
+                              "args": [
+                                {
+                                  "p": "beta3"
+                                },
+                                {
+                                  "c": "cQ"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "c": "s"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "op": "mul",
+                    "args": [
+                      {
+                        "p": "phi"
+                      },
+                      {
+                        "c": "r"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 7536,
+                  "charEnd": 7575,
+                  "quote": "\\frac{d S}{d t} = b − ( μ + λ ) S + ϕ R"
+                }
+              ]
+            },
+            {
+              "of": "i",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "p": "beta1"
+                            },
+                            {
+                              "c": "i"
+                            }
+                          ]
+                        },
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "p": "beta2"
+                            },
+                            {
+                              "c": "c"
+                            }
+                          ]
+                        },
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "p": "beta3"
+                            },
+                            {
+                              "c": "cQ"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "c": "s"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "mu"
+                        },
+                        {
+                          "p": "r2"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "i"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 7578,
+                  "charEnd": 7613,
+                  "quote": "\\frac{d I}{d t} = λ S − ( μ + r ) I"
+                }
+              ]
+            },
+            {
+              "of": "c",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "sub",
+                  "a": {
+                    "op": "mul",
+                    "args": [
+                      {
+                        "op": "sub",
+                        "a": {
+                          "n": 1
+                        },
+                        "b": {
+                          "p": "eta"
+                        }
+                      },
+                      {
+                        "p": "r2"
+                      },
+                      {
+                        "c": "i"
+                      }
+                    ]
+                  },
+                  "b": {
+                    "op": "mul",
+                    "args": [
+                      {
+                        "p": "delta"
+                      },
+                      {
+                        "op": "sub",
+                        "a": {
+                          "n": 1
+                        },
+                        "b": {
+                          "p": "theta"
+                        }
+                      },
+                      {
+                        "c": "c"
+                      }
+                    ]
+                  }
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "rho"
+                        },
+                        {
+                          "p": "mu"
+                        },
+                        {
+                          "p": "v"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "c"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 7616,
+                  "charEnd": 7681,
+                  "quote": "\\frac{d C}{d t} = ( 1 − η ) r I − δ ( 1 − θ ) C − ( ρ + μ + v ) C"
+                }
+              ]
+            },
+            {
+              "of": "cQ",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "p": "delta"
+                    },
+                    {
+                      "op": "sub",
+                      "a": {
+                        "n": 1
+                      },
+                      "b": {
+                        "p": "theta"
+                      }
+                    },
+                    {
+                      "c": "c"
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "p": "alpha"
+                            },
+                            {
+                              "p": "rho"
+                            }
+                          ]
+                        },
+                        {
+                          "p": "mu"
+                        },
+                        {
+                          "p": "nu"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "cQ"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 7684,
+                  "charEnd": 7743,
+                  "quote": "\\frac{d C_{q}}{d t} = δ ( 1 − θ ) C − ( α ρ + μ + ν ) C_{q}"
+                }
+              ]
+            },
+            {
+              "of": "r",
+              "rate": {
+                "op": "sub",
+                "a": {
+                  "op": "add",
+                  "args": [
+                    {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "op": "add",
+                          "args": [
+                            {
+                              "c": "c"
+                            },
+                            {
+                              "op": "mul",
+                              "args": [
+                                {
+                                  "p": "alpha"
+                                },
+                                {
+                                  "c": "cQ"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "p": "rho"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "p": "eta"
+                        },
+                        {
+                          "p": "r2"
+                        },
+                        {
+                          "c": "i"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "b": {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "op": "add",
+                      "args": [
+                        {
+                          "p": "mu"
+                        },
+                        {
+                          "p": "phi"
+                        }
+                      ]
+                    },
+                    {
+                      "c": "r"
+                    }
+                  ]
+                }
+              },
+              "anchors": [
+                {
+                  "sourceId": "pmc-PMC12334037",
+                  "sectionId": "s4-2-model-description",
+                  "charStart": 7746,
+                  "charEnd": 7803,
+                  "quote": "\\frac{d R}{d t} = ( C + α C_{q} ) ρ + η r I − ( μ + ϕ ) R"
+                }
+              ]
+            }
+          ],
+          "invariants": [],
+          "steadyStates": [],
+          "observables": [
+            {
+              "id": "levelS",
+              "label": "Susceptible",
+              "expr": {
+                "c": "s"
+              },
+              "unit": {}
+            },
+            {
+              "id": "levelI",
+              "label": "Acutely infected",
+              "expr": {
+                "c": "i"
+              },
+              "unit": {}
+            },
+            {
+              "id": "levelC",
+              "label": "Chronically infected under treatment",
+              "expr": {
+                "c": "c"
+              },
+              "unit": {}
+            },
+            {
+              "id": "levelCQ",
+              "label": "Chronically infected after quitting treatment",
+              "expr": {
+                "c": "cQ"
+              },
+              "unit": {}
+            },
+            {
+              "id": "levelR",
+              "label": "Recovered",
+              "expr": {
+                "c": "r"
+              },
+              "unit": {}
+            }
+          ],
+          "solver": {
+            "dt": 0.2,
+            "tolerance": 0.000001
+          }
+        },
+        "params": {},
+        "perWatchSecond": 2.5
+      },
+      "manipulable": {
+        "actionId": "rho",
+        "label": "Chronic recovery rate",
+        "targetVariable": "rho",
+        "range": [
+          0.01325,
+          0.212
+        ],
+        "unit": "per year",
+        "defaultValue": 0.053,
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "pmc-PMC12334037",
+            "sectionId": "s8-3-2-backward-bifurcation-analysis",
+            "charStart": 19009,
+            "charEnd": 19091,
+            "quote": "Recovery rate for those with chronic infections | ρ | 0.053 (0.009-0.0011 | Fitted"
+          }
+        ]
+      },
+      "slider": {
+        "step": 0.0013,
+        "ends": [
+          "0.0265: slow recovery",
+          "0.2: fast recovery"
+        ]
+      },
+      "observable": {
+        "metricId": "levelCQ",
+        "label": "Chronically infected after quitting treatment",
+        "shortLabel": "Chronically infected after quitting treatment",
+        "unit": "dimensionless",
+        "decimals": 3,
+        "origin": "computed-observation"
+      },
+      "counterfactual": {
+        "prompt": "What if the chronic recovery rate rose to the paper's 0.19?",
+        "altParams": {
+          "rho": 0.19
+        },
+        "expectedQualitativeEffect": "At a chronic recovery rate of 0.19, chronic infections clear faster and the quitters pool grows more slowly: the other world first reaches 1% quitters more than 2 years later.",
+        "origin": "teaching-choice",
+        "isSpeculative": false,
+        "anchors": [],
+        "difference": {
+          "metricId": "levelCQ",
+          "label": "Years until chronically infected after quitting treatment first reaches 0.01",
+          "unit": "years",
+          "summary": {
+            "kind": "first-reach",
+            "threshold": 0.01
+          },
+          "time": 80,
+          "claim": {
+            "kind": "each",
+            "relation": "higher",
+            "by": 2
+          }
+        }
+      },
+      "setup": [],
+      "explanation": {
+        "beginner": {
+          "text": "Think of the chronic recovery rate as a drain at the bottom of a bucket. Turning the drain wider lets water leave faster. The bucket of people who quit treatment then fills more slowly. In this level you speed up recovery and watch the quitters pool. A faster recovery should delay the moment when the quitters pool reaches a noticeable size.",
+          "show": [
+            "range-words",
+            "analogy"
+          ],
+          "hide": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "analogy": "Think of the chronic recovery rate as a drain at the bottom of a bucket.",
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "intermediate": {
+          "text": "The control is the chronic recovery rate, rho. It governs how quickly people leave the treated chronic compartment C through recovery. The watched value is the share of chronically infected people who have quit treatment, cQ. The model equations move people from C into cQ at rate delta times one minus theta, and out of cQ at rate alpha rho plus mu plus nu. Raising rho pulls people out of C faster, so fewer remain to quit, and cQ fills more slowly. Your task is to move rho and see when cQ first reaches one percent. What if rho rises to the paper's value? Predict whether that moment comes earlier, later, or about the same.",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number"
+          ],
+          "hide": [
+            "range-words",
+            "equation",
+            "analogy"
+          ],
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "advanced": {
+          "text": "The chronic recovery rate ρ appears in the equations for C and Cq. A larger ρ removes people from the treated chronic compartment C more quickly, so fewer move into the quitters compartment Cq. Because the outflow from Cq depends on αρ, raising ρ also helps empty Cq. In this level you change ρ and watch cQ, the quitters' share, to see when it first reaches one percent. What happens if ρ is set to 0.19?",
+          "show": [
+            "control-value",
+            "range-numbers",
+            "readout-number",
+            "equation"
+          ],
+          "hide": [
+            "range-words",
+            "analogy"
+          ],
+          "equation": "dC/dt = (1 − η)rI − δ(1 − θ)C − (ρ + μ + v)C, dCq/dt = δ(1 − θ)C − (αρ + μ + ν)Cq",
+          "origin": "teaching-choice",
+          "anchors": []
+        }
+      },
+      "caption": {
+        "text": "A critical recovery rate",
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "pmc-PMC12334037",
+            "sectionId": "s9-4-numerical-simulations",
+            "charStart": 28830,
+            "charEnd": 28917,
+            "quote": "When ρ approaches a value of approximately 0.19, we observe that $ℛ_{0}$ falls below 1."
+          }
+        ]
+      },
+      "guide": {
+        "idle": "Move the chronic recovery rate and watch when the quitters pool first reaches one hundred people in a town of ten thousand.",
+        "raised": "You raise the chronic recovery rate to {to}, so treated chronic infections clear faster and fewer people flow into the quitters compartment.",
+        "lowered": "You lower the chronic recovery rate to {to}, so treated chronic infections clear slower and more people flow into the quitters compartment.",
+        "readings": [
+          {
+            "atLeast": 100,
+            "words": "one hundred people have quit treatment"
+          },
+          {
+            "atLeast": 50,
+            "words": "fifty people have quit treatment"
+          },
+          {
+            "atLeast": 0,
+            "words": "no one has quit treatment"
+          }
+        ],
+        "trend": {
+          "rising": {
+            "beginner": "the quitters pool is filling",
+            "measured": "rising"
+          },
+          "falling": {
+            "beginner": "the quitters pool is emptying",
+            "measured": "falling"
+          },
+          "steady": "holding",
+          "within": 0.004
+        }
+      },
+      "guidedExploration": {
+        "predictPrompt": "At a chronic recovery rate of 0.19, will the time to first reach 1% quitters be earlier, later, or about the same?",
+        "choices": [
+          "Later by more than 2 years",
+          "Earlier, or changed by less than 2 years"
+        ],
+        "interveneActionId": "rho",
+        "observeMetricId": "levelCQ",
+        "explainPrompt": "What other change would keep even more people from reaching the quitters compartment?",
+        "explanation": {
+          "text": "The model's equations show that a faster recovery rate drains the treated chronic compartment and slows the flow into cQ. 19, we observe that ℛ₀ falls below 1.' Here, that same faster recovery delayed the moment when one hundred people 1",
+          "origin": "teaching-choice",
+          "anchors": []
+        }
+      },
+      "furtherReading": [],
+      "carryForward": "Faster chronic recovery delays the quitters' rise; last, see what halving the quitting rate does."
+    }
+  ],
+  "primitivesUsed": [
+    {
+      "id": "compartments.ode",
+      "version": "1.0.0"
+    }
+  ],
+  "checks": {
+    "suiteIds": [
+      "worldspec-schema",
+      "builder-bindings",
+      "compartment-checks",
+      "level-rule",
+      "provenance"
+    ],
+    "suiteVersions": {
+      "worldspec-schema": "worldspec/3",
+      "builder-bindings": "1",
+      "compartment-checks": "1",
+      "level-rule": "1",
+      "provenance": "1"
+    }
+  },
+  "limits": [
+    {
+      "text": "A world generated from the paper by PaperPlay's pipeline, checked by its builder and its level rule; the levels, their words and their values are teaching choices, and the model is the paper's as transcribed.",
+      "origin": "teaching-choice",
+      "anchors": []
+    },
+    {
+      "text": "Treatment adherence is the proportion theta; more adherence means fewer people quit treatment.",
+      "origin": "teaching-choice",
+      "anchors": []
+    },
+    {
+      "text": "Quitters (cQ) are chronically infected people who left treatment and can still infect others.",
+      "origin": "teaching-choice",
+      "anchors": []
+    },
+    {
+      "text": "Population shares are fractions, so 0.02 in a compartment means 2% of the town.",
+      "origin": "teaching-choice",
+      "anchors": []
+    },
+    {
+      "text": "The reproduction number R0 is the average new infections one case causes; below 1 the outbreak shrinks.",
+      "origin": "teaching-choice",
+      "anchors": []
+    },
+    {
+      "text": "Acute recovery rate eta and chronic recovery rate rho move people into the recovered group.",
+      "origin": "teaching-choice",
+      "anchors": []
+    },
+    {
+      "text": "A draft until the owner reviews it.",
+      "origin": "teaching-choice",
+      "anchors": []
+    }
+  ],
+  "ownNumbers": {
+    "verdict": "mismatch",
+    "statements": [
+      {
+        "text": "The paper's headline: \"an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread.\"",
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "pmc-PMC12334037",
+            "sectionId": "s2-abstract",
+            "charStart": 804,
+            "charEnd": 911,
+            "quote": "an adherence level exceeding 52% causes the reproduction number to drop below 1, curtailing further spread."
+          }
+        ]
+      },
+      {
+        "text": "R0 by the paper's own formula, equation (7), at the values it lists: 0.762; the model's own equations give the same.",
+        "origin": "computed-observation",
+        "anchors": [
+          {
+            "sourceId": "pmc-PMC12334037",
+            "sectionId": "s6-3-reproduction-number",
+            "charStart": 9837,
+            "charEnd": 10004,
+            "quote": "ℛ_{0} = ℛ_{I} + ℛ_{C} + ℛ_{C_{q}} = \\frac{b β_{1}}{μ m_{1}} + \\frac{b r β_{2} ( 1 − η )}{μ m_{1} m_{2}} + \\frac{r b δ β_{3} ( 1 − η ) ( 1 − θ )}{μ m_{1} m_{2} m_{3}} ,"
+          }
+        ]
+      },
+      {
+        "text": "The reproduction number computed from the model's own equations, through its next-generation matrix (infected: i, c, cQ): 0.762.",
+        "origin": "computed-observation",
+        "anchors": []
+      },
+      {
+        "text": "Figure 7's caption says: \"In this analysis, ρ and θ were varied while all other parameters were held constant as displayed in Table 1.\"",
+        "origin": "paper-derived",
+        "anchors": [
+          {
+            "sourceId": "pmc-PMC12334037",
+            "sectionId": "s9-4-numerical-simulations",
+            "charStart": 25955,
+            "charEnd": 26063,
+            "quote": "In this analysis, ρ and θ were varied while all other parameters were held constant as displayed in Table 1."
+          }
+        ]
+      },
+      {
+        "text": "Across adherence from 0 to 1, R0 runs between 0.65 and 0.78, never crossing 1.",
+        "origin": "computed-observation",
+        "anchors": []
+      },
+      {
+        "text": "Every value checked against its passage: 19 as written, 0 converted into years, 0 percentages read as fractions; none per another time unit than the model's.",
+        "origin": "computed-observation",
+        "anchors": []
+      },
+      {
+        "text": "Looked for other values behind the headline in the passages that state the headline or its numbers (52%, 0.52); the figure they cite (Figure 7); every figure caption (12); the sections 4 Numerical simulations; Supporting information: none found.",
+        "origin": "computed-observation",
+        "anchors": []
+      },
+      {
+        "text": "At the values the paper lists in Table 1, R0 stays between 0.65 and 0.78 for every adherence from 0 to 1, so the 52% threshold doesn't appear here; the paper's figure may use values it doesn't list.",
+        "origin": "computed-observation",
+        "anchors": []
+      },
+      {
+        "text": "The paper's headline does not appear in this world at the values it lists, and its direction does not show here either, so this level tests another of its findings: The model shows that if more than 52% of patients stick to their treatment, the virus will stop spreading in the population.",
+        "origin": "computed-observation",
+        "anchors": []
+      }
+    ]
+  }
+}

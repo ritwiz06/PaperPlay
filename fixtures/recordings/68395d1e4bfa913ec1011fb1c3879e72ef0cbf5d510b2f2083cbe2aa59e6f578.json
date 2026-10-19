@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "inkling-small",
+  "promptHash": "68395d1e4bfa913ec1011fb1c3879e72ef0cbf5d510b2f2083cbe2aa59e6f578",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\n\n\n  \"findings\": [\n    {\n      \"claim\": null,\n      \"finding\": \"unsupported\",\n      \"kind\": \"unsupported\",\n      \"level\": 3,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"In Level 3, relabel the control from 'Recovery rate in acute cases' to 'Share of acute cases that recover (eta)' and rewrite the level text and What-if to describe a larger proportion (not faster speed) of acute individuals recovering: e.g., 'What if 60% of acute cases recovered, eta at 0.6?' and state that a larger share clears infections before they become chronic, lowering the quitters peak. Do\" \n    ,\n      \"term\": null\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 13882,
+      "completionTokens": 7807,
+      "totalTokens": 21689
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-19T01:38:43.244Z"
+}

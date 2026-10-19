@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "inkling-small",
+  "promptHash": "3e71a137def9106b4663d5e0cee43643d388d315eac780471f4bc5cbbb89b30a",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\n\n\n  \"findings\": [\n    {\n      \"claim\": null,\n      \"finding\": \"Level 1 misattributes the control to adherence and overclaims the outcome\",\n      \"kind\": \"unsupported\",\n      \"level\": 1,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"In Level 1, replace the phrase 'like better adherence' with 'lower quitting rate' because the control is delta (treatment quitting rate), whereas the paper defines adherence as theta (proportion adhering). Also change the title from 'Fewer quitters, smaller outbreak' to something matching the measured threshold-crossing, e.g., 'Fewer quitters, slower growth of untreated pool', since the level only\" \n    ,\n      \"term\": null\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 13731,
+      "completionTokens": 9196,
+      "totalTokens": 22927
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-19T02:12:02.087Z"
+}
