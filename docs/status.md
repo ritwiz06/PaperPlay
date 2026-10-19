@@ -1,7 +1,7 @@
 # Status
 
-Updated 2026-10-18: decisions, fixes, a library page and a UI atlas
-([log](sessions/2026-10-18.md)). This file is rewritten every session.
+Updated 2026-10-19: fast sessions ([log](sessions/2026-10-19.md)). This file is rewritten
+every session.
 
 ## Where we are
 
@@ -55,9 +55,15 @@ Updated 2026-10-18: decisions, fixes, a library page and a UI atlas
   https://claude.ai/artifact/ExYNaZyJRoA7az7UpBkdU1, its files in the git-ignored
   `captures/atlas/2026-10-18/` of the main worktree. `docs/design/ui-inventory.md` names
   every screen and HUD element; `docs/design/owner-review.md` takes the owner's notes.
-- **Branches:** `g3/atlas`, being landed;
-  `worktree-agent-ab8301aef54d2fcc8`, the compartment agent's own, whose three commits are on `main`.
-- **Working commit:** `419f0e9` on `main`; `v0.2.0` is `b37c7dc`.
+- **Fast sessions** (ADR-0051), landing as one stack: land takes a stack and gates its tip in the
+  land checkout; `npm run test:affected`; the sweeps cached and checked, a nightly CI run from
+  scratch; CI's installs cached; live runs in the background only when the owner asks; token caps
+  in `models.json`; the atlas incremental; the three older hepatitis C worlds retired.
+- **Branches:** the stack `g3/stack-land` < `g3/faster-checks` < `g3/live-background` <
+  `g3/retire-hcv` < `g3/atlas-incremental`, being landed.
+- **Worktrees:** the main one, and `PaperPlay-land`, land's own checkout for the gate, kept with its
+  dependencies (ADR-0051).
+- **Working commit:** `c2f0341` on `main`; `v0.2.0` is `b37c7dc`.
 - **CI and billing:** about 2,111 Actions minutes from 1 to 18 October, by the jobs' own durations
   rounded up per job, against GitHub Free's 2,000 for a private repository; GitHub refused a run on
   `main` on 2026-10-18. Since `g2/release`, a push to `main` runs the gate only when its branch run did
@@ -141,7 +147,8 @@ on 2026-10-18; all of it has landed.
 
 ## Next three actions
 
-1. The owner reviews the UI atlas and writes notes in `docs/design/owner-review.md`.
+1. The owner decides on a public repository, the Student Pack or a self-hosted runner, with the
+   pre-publication check of 2026-10-19; and reviews the atlas in `docs/design/owner-review.md`.
 2. G3b.2d: the pipeline on learning, so Adam can be generated, G3b's gate.
 3. Kermack and McKendrick's PDF from the owner, for Threshold Town's source map.
 

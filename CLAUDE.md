@@ -5,6 +5,8 @@ PaperPlay turns a research paper into a playable, explorable world: the paper is
 Start every session with the session protocol below. The documentation index is `docs/README.md`; the full build brief is `docs/BUILD_PROMPT.md`.
 
 ## Session protocol
+Every session aims for about two hours. If a task would clearly take longer, stop before starting it and propose how to split it (ADR-0051).
+
 At the start, read `docs/status.md`, the latest session log and `docs/architecture.md`, then `docs/design/owner-review.md`, the owner's notes on the UI: turn each new note into a task in the session log's goal and `status.md`'s next actions, and say in the log which notes you took up. Then read only what the task touches: relevant ADRs, requirement rows, the roadmap's gate section, concept entries. Don't reread everything. Record what you read in the session log.
 
 Before stopping, update:
@@ -17,14 +19,16 @@ Before stopping, update:
 - `docs/concepts.md` if a new concept appeared;
 - an ADR in `docs/decisions/` for any decision.
 
-Commit docs separately as "docs: …". `npm run check:docs`, which `check:gate` runs, fails when the docs drift from the repository.
+Commit docs separately as "docs: …". `npm run check:docs`, which `check:gate` runs, fails when the docs drift from the repository. Docs take about ten minutes a session: update only the parts of status, roadmap and requirements that changed, keep the session log short, and add a concept only when one is new.
 
 ## Commands (Windows PowerShell first; use `npm.cmd` if `npm.ps1` is blocked)
 - `npm run dev` — web app (Vite) · `npm run dev:api` — Fastify API
 - `npm run typecheck` · `npm run lint` · `npm run test` (Vitest) · `npm run test:e2e` (Playwright)
+- `npm run test:affected` — while developing: the Vitest tests related to what changed since main, and the Playwright specs for the routes it touches; the full gate runs only inside land (ADR-0051)
+- `npm run sweeps:cache` — records the sweeps' input and output hashes after a change to their inputs (ADR-0051)
 - `npm run check:gate` — runs every check the current gate requires, `check:docs` included; must actually run tests (no `--passWithNoTests`, no silent skips)
 - `npm run check:docs` — checks the docs against the repository (rules in `docs/README.md`)
-- `npm run land` — lands the current branch on `main`: gate, push, CI green, fast-forward (ADR-0009). The only way `main` moves
+- `npm run land` — lands the current branch and every branch stacked under it on `main`: one gate on the tip in the land checkout, the tip pushed, CI green, fast-forward (ADR-0009, ADR-0051). The only way `main` moves
 - `npm run sweep:defaults` — reproduces the flock defaults sweep (ADR-0003) · `npm run choose:hook-seed` — re-applies the hook-seed rule (ADR-0003)
 - `npm run replay -- <run.json>` — replays a run record and reports tolerance results (arrives at G2)
 - `npm run atlas` — the owner's UI atlas: every route, world, level and state at two sizes, with clips, into `captures/atlas/<date>/` and its gallery (ADR-0050); `npm run library` and `npm run library:thumbnails` — the library's index and pictures (ADR-0049)
@@ -57,8 +61,9 @@ docs/               README (index), project-brief, roadmap, status, requirements
 
 ## Branches (ADR-0009)
 - `main` is the line of record: every commit it points to passed `check:gate` locally and CI on that same commit, and gate tags are cut on it.
-- Work in short branches off the latest `main`, one coherent change each, named `<gate>/<topic>` (for example `g2/axe-scan`). Never start a branch on another unmerged branch.
-- **`main` moves only through `npm run land`**, run on the branch. It refuses a dirty tree, runs `check:gate` and reads its exit status directly, pushes the branch, waits for CI with `gh run watch`, and only on green fast-forwards `main`, pushes it and deletes the branch. Rebase onto `main` first if it has moved. Never `git merge` into `main` or push `main` by hand; the pre-push hook refuses it (ADR-0009's amendment).
+- Work in short branches, one coherent change each, named `<gate>/<topic>` (for example `g2/axe-scan`). A session's branches stack, each on the one before, the first off the latest `main`, and land together once at the end (ADR-0051).
+- **`main` moves only through `npm run land`**, run on the stack's tip. It refuses a dirty tree, runs `check:gate` on the tip in the land checkout (the sibling folder `<repository>-land`, which keeps its dependencies) and reads its exit status directly, pushes the tip, waits for CI with `gh run watch`, and only on green fast-forwards `main`, pushes it and deletes every branch of the stack. While the gate and CI run, keep working on the next branch; never run a local browser test while the gate runs. Rebase onto `main` first if it has moved. Never `git merge` into `main` or push `main` by hand; the pre-push hook refuses it (ADR-0009's amendment).
+- Worktrees are temporary: remove each when its branch lands (`git worktree remove`, then `git worktree prune`); `status.md` lists any that exist, with why. The land checkout is the one kept.
 - A branch whose result the owner must see first, such as a design spike, stays unmerged until the owner says so. Land refuses any branch not named `<gate>/<topic>`.
 - `origin` is the private `ritwiz06/PaperPlay`. CI runs `check:gate` on every push and pull request (ADR-0011). Never force-push `main`, move a tag or push with `--no-verify`.
 
@@ -69,6 +74,8 @@ docs/               README (index), project-brief, roadmap, status, requirements
 - Never claim a gate passed without running `npm run check:gate` and pasting the result.
 - Prefer deleting scope over weakening a check.
 - Ask before adding a dependency, a new agent role, or a new world. Record the decision as an ADR.
+- Live model runs (regenerations, bake-offs) never happen inside a build session unless the owner asks in that session's prompt; `npm run pipeline:live -- <command> --background` leaves its results and recordings for the next session to review (ADR-0051).
+- The atlas runs only when the owner asks, and by default only for the worlds whose code or spec changed (ADR-0050, ADR-0051).
 
 ## Design floor (details in the build brief)
 Accepted palette: cream `#f8faee`, ink `#172b2b`, dark `#132b2b`, aqua `#62cbc2`, lime `#d4f581`, line `#d2ddd3`, sub `#526a66`. Game-first layout (ADR-0008): the stage fills the screen at all times, with no permanent side columns; a level card (title, goal, the one control, "What if"), the guide and a compact level map sit over it; the paper journal slides over on demand, and every control's "From the paper" tap opens it at its passage. Origin chips name their origin in words; the legend lives in the journal. Sentence case everywhere. No all-caps eyebrow labels, no numbered `01/02/03` markers unless content is a sequence, no identical card grids, no arrows appended to buttons, no fade-up-on-scroll on every section. Respect `prefers-reduced-motion`. Keyboard focus visible.
