@@ -73,6 +73,8 @@ function WorldRow({ world }: { readonly world: LibraryWorld }) {
           <span>{world.madeBy === "hand" ? "Made by hand" : `Made by the pipeline${world.recordedOn ? ` on ${world.recordedOn}` : ""}`}</span>
           <span aria-hidden="true"> · </span>
           <span>{world.family}</span>
+          <span aria-hidden="true"> · </span>
+          <code className="library-route">{world.route}</code>
         </p>
         <ol className="library-levels" aria-label={`${world.title}'s levels`}>
           {world.levels.map((level) => (

@@ -79,6 +79,10 @@
   color: var(--sub);
   font-size: 0.875rem;
 }
+.library-route {
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
+}
 .library-status {
   padding: 0 0.5rem;
   border: 1.5px solid var(--ink);
