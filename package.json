@@ -30,6 +30,7 @@
     "sweep:levels": "node scripts/levels.ts",
     "fixture:threshold-town": "node scripts/threshold-town.ts",
     "fixture:momentum": "node scripts/momentum.ts",
+    "corpus": "node scripts/corpus.ts",
     "library": "node scripts/library.ts",
     "library:thumbnails": "node scripts/library-thumbnails.ts",
     "atlas": "node scripts/atlas.ts",

@@ -19,6 +19,9 @@
  *            already), for /create on this machine
  *   job      `job <source>`: one job, with no server, as /create would start it (an arXiv id
  *            with its version or a PMCID), its events and artifacts kept in apps/api/data/jobs/
+ *   corpus-route  ingests every paper of fixtures/papers/corpus.json as a job would and runs the
+ *            router on it, recorded; writes eval/routing/corpus-routes.json, the router's family,
+ *            tier and reason for each, and what ingest read, never the paper's text (ADR-0052)
  *
  * With --background, any command runs detached from the terminal (ADR-0051): its output goes to
  * apps/api/data/live/<time>-<command>.log, and <time>-<command>.json says what ran, when it began,
@@ -29,7 +32,9 @@ import { spawn } from "node:child_process";
 import { existsSync, mkdirSync, openSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { TERMINAL_STATES } from "@paperplay/contracts";
+import { fetchArxiv, registerAndText } from "@paperplay/pipeline/ingest";
 import { cappedClient, directoryStore, recordingClient, replayClient, resumingClient } from "@paperplay/pipeline/models";
+import { route } from "@paperplay/pipeline/stages";
 import { outboundFetch } from "../apps/api/src/contact.ts";
 import { CONFIG_FILE, loadModelConfig } from "../apps/api/src/models/config.ts";
 import { liveClient } from "../apps/api/src/models/live.ts";
@@ -218,7 +223,39 @@ async function job(): Promise<void> {
   console.log(`job ${started.id} ended ${ended?.state ?? "?"}: ${ended?.events.at(-1)?.message ?? ""}`);
 }
 
-const commands: Readonly<Record<string, () => Promise<void>>> = { models, probe, bakeoff, design, rescore, report, serve, job };
+/**
+ * The router on every paper of the corpus, as a job would read it: ingested from arXiv, then routed
+ * on its title, its abstract and its first display equations, recorded. Each result is written as it
+ * comes, so a run stopped part way keeps what it routed; a paper ingest refuses is kept with why.
+ */
+async function corpusRoute(): Promise<void> {
+  const config = loadModelConfig();
+  const router = config.stages.router;
+  if (!router) throw new Error("apps/api/models.json names no router");
+  const client = cappedClient(resumingClient(liveClient(config), directoryStore(RECORDINGS)), config.maxTokens);
+  const fetch = outboundFetch();
+  const corpus = JSON.parse(readFileSync(join(import.meta.dirname, "..", "fixtures", "papers", "corpus.json"), "utf8")) as { papers: { id: string; version: string; group: string }[] };
+  const out = join(import.meta.dirname, "..", "eval", "routing", "corpus-routes.json");
+  const routes: unknown[] = [];
+  for (const paper of corpus.papers) {
+    try {
+      const fetched = await fetchArxiv(fetch, paper.version);
+      const { text } = registerAndText(fetched, new Date().toISOString());
+      const front = text.sections.find((section) => section.title === "Abstract");
+      const abstract = front ? text.text.slice(front.start, front.end) : text.text.slice(0, 2000);
+      const decision = await route(client, router, { title: fetched.title, abstract, equations: text.equations.slice(0, 6).map((equation) => equation.latex.slice(0, 300)) }, { structuredOutput: config.structuredOutput[router] ?? false });
+      routes.push({ id: paper.id, version: paper.version, group: paper.group, ingest: { route: fetched.route, sections: text.sections.length, equations: text.equations.length }, router, decision: decision.value });
+      console.log(`${paper.id}: ${decision.value.family}, tier ${decision.value.tier}`);
+    } catch (error) {
+      routes.push({ id: paper.id, version: paper.version, group: paper.group, error: error instanceof Error ? error.message.split("\n")[0] : String(error) });
+      console.log(`${paper.id}: refused, ${error instanceof Error ? error.message.split("\n")[0] : String(error)}`);
+    }
+    writeFileSync(out, `${JSON.stringify({ schemaVersion: "corpus-routes/1", routedOn: new Date().toISOString().slice(0, 10), routes }, null, 2)}\n`);
+    await new Promise((resolve) => setTimeout(resolve, 3000)); // arXiv asks for a pause between requests.
+  }
+}
+
+const commands: Readonly<Record<string, () => Promise<void>>> = { models, probe, bakeoff, design, rescore, report, serve, job, "corpus-route": corpusRoute };
 const run = command === undefined ? undefined : commands[command];
 if (!run) {
   console.error(`usage: npm run pipeline:live -- <${Object.keys(commands).join("|")}>`);

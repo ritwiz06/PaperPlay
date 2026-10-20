@@ -1,0 +1,686 @@
+{
+  "schemaVersion": "corpus/1",
+  "registeredOn": "2026-10-20",
+  "papers": [
+    {
+      "id": "1706.03762",
+      "version": "1706.03762v7",
+      "group": "Transformers and their analysis",
+      "title": "Attention Is All You Need",
+      "authors": [
+        "Ashish Vaswani",
+        "Noam Shazeer",
+        "Niki Parmar",
+        "Jakob Uszkoreit",
+        "Llion Jones",
+        "Aidan N. Gomez",
+        "Lukasz Kaiser",
+        "Illia Polosukhin"
+      ],
+      "year": 2017,
+      "categories": "cs.CL cs.LG",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "1810.04805",
+      "version": "1810.04805v2",
+      "group": "Transformers and their analysis",
+      "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+      "authors": [
+        "Jacob Devlin",
+        "Ming-Wei Chang",
+        "Kenton Lee",
+        "Kristina Toutanova"
+      ],
+      "year": 2018,
+      "categories": "cs.CL",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "1906.04341",
+      "version": "1906.04341v1",
+      "group": "Transformers and their analysis",
+      "title": "What Does BERT Look At? An Analysis of BERT's Attention",
+      "authors": [
+        "Kevin Clark",
+        "Urvashi Khandelwal",
+        "Omer Levy",
+        "Christopher D. Manning"
+      ],
+      "year": 2019,
+      "categories": "cs.CL",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "1905.10650",
+      "version": "1905.10650v3",
+      "group": "Transformers and their analysis",
+      "title": "Are Sixteen Heads Really Better than One?",
+      "authors": [
+        "Paul Michel",
+        "Omer Levy",
+        "Graham Neubig"
+      ],
+      "year": 2019,
+      "categories": "cs.CL",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "2003.10555",
+      "version": "2003.10555v1",
+      "group": "BERT's successors",
+      "title": "ELECTRA: Pre-training Text Encoders as Discriminators Rather Than Generators",
+      "authors": [
+        "Kevin Clark",
+        "Minh-Thang Luong",
+        "Quoc V. Le",
+        "Christopher D. Manning"
+      ],
+      "year": 2020,
+      "categories": "cs.CL",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "1907.11692",
+      "version": "1907.11692v1",
+      "group": "BERT's successors",
+      "title": "RoBERTa: A Robustly Optimized BERT Pretraining Approach",
+      "authors": [
+        "Yinhan Liu",
+        "Myle Ott",
+        "Naman Goyal",
+        "Jingfei Du",
+        "Mandar Joshi",
+        "Danqi Chen",
+        "Omer Levy",
+        "Mike Lewis",
+        "Luke Zettlemoyer",
+        "Veselin Stoyanov"
+      ],
+      "year": 2019,
+      "categories": "cs.CL",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "1910.10683",
+      "version": "1910.10683v4",
+      "group": "BERT's successors",
+      "title": "Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer",
+      "authors": [
+        "Colin Raffel",
+        "Noam Shazeer",
+        "Adam Roberts",
+        "Katherine Lee",
+        "Sharan Narang",
+        "Michael Matena",
+        "Yanqi Zhou",
+        "Wei Li",
+        "Peter J. Liu"
+      ],
+      "year": 2019,
+      "categories": "cs.LG cs.CL stat.ML",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "1909.11942",
+      "version": "1909.11942v6",
+      "group": "BERT's successors",
+      "title": "ALBERT: A Lite BERT for Self-supervised Learning of Language Representations",
+      "authors": [
+        "Zhenzhong Lan",
+        "Mingda Chen",
+        "Sebastian Goodman",
+        "Kevin Gimpel",
+        "Piyush Sharma",
+        "Radu Soricut"
+      ],
+      "year": 2019,
+      "categories": "cs.CL cs.AI",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "2001.08361",
+      "version": "2001.08361v1",
+      "group": "Scale and systems",
+      "title": "Scaling Laws for Neural Language Models",
+      "authors": [
+        "Jared Kaplan",
+        "Sam McCandlish",
+        "Tom Henighan",
+        "Tom B. Brown",
+        "Benjamin Chess",
+        "Rewon Child",
+        "Scott Gray",
+        "Alec Radford",
+        "Jeffrey Wu",
+        "Dario Amodei"
+      ],
+      "year": 2020,
+      "categories": "cs.LG stat.ML",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "1909.08053",
+      "version": "1909.08053v4",
+      "group": "Scale and systems",
+      "title": "Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism",
+      "authors": [
+        "Mohammad Shoeybi",
+        "Mostofa Patwary",
+        "Raul Puri",
+        "Patrick LeGresley",
+        "Jared Casper",
+        "Bryan Catanzaro"
+      ],
+      "year": 2019,
+      "categories": "cs.CL",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "1910.02054",
+      "version": "1910.02054v3",
+      "group": "Scale and systems",
+      "title": "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models",
+      "authors": [
+        "Samyam Rajbhandari",
+        "Jeff Rasley",
+        "Olatunji Ruwase",
+        "Yuxiong He"
+      ],
+      "year": 2019,
+      "categories": "cs.LG cs.DC stat.ML",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "1811.06965",
+      "version": "1811.06965v5",
+      "group": "Scale and systems",
+      "title": "GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism",
+      "authors": [
+        "Yanping Huang",
+        "Youlong Cheng",
+        "Ankur Bapna",
+        "Orhan Firat",
+        "Mia Xu Chen",
+        "Dehao Chen",
+        "HyoukJoong Lee",
+        "Jiquan Ngiam",
+        "Quoc V. Le",
+        "Yonghui Wu",
+        "Zhifeng Chen"
+      ],
+      "year": 2018,
+      "categories": "cs.CV",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "1503.03585",
+      "version": "1503.03585v8",
+      "group": "Diffusion and its roots",
+      "title": "Deep Unsupervised Learning using Nonequilibrium Thermodynamics",
+      "authors": [
+        "Jascha Sohl-Dickstein",
+        "Eric A. Weiss",
+        "Niru Maheswaranathan",
+        "Surya Ganguli"
+      ],
+      "year": 2015,
+      "categories": "cs.LG cond-mat.dis-nn q-bio.NC stat.ML",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "1907.05600",
+      "version": "1907.05600v3",
+      "group": "Diffusion and its roots",
+      "title": "Generative Modeling by Estimating Gradients of the Data Distribution",
+      "authors": [
+        "Yang Song",
+        "Stefano Ermon"
+      ],
+      "year": 2019,
+      "categories": "cs.LG stat.ML",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "1305.6663",
+      "version": "1305.6663v4",
+      "group": "Diffusion and its roots",
+      "title": "Generalized Denoising Auto-Encoders as Generative Models",
+      "authors": [
+        "Yoshua Bengio",
+        "Li Yao",
+        "Guillaume Alain",
+        "Pascal Vincent"
+      ],
+      "year": 2013,
+      "categories": "cs.LG",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "1306.1091",
+      "version": "1306.1091v5",
+      "group": "Diffusion and its roots",
+      "title": "Deep Generative Stochastic Networks Trainable by Backprop",
+      "authors": [
+        "Yoshua Bengio",
+        "Éric Thibodeau-Laufer",
+        "Guillaume Alain",
+        "Jason Yosinski"
+      ],
+      "year": 2013,
+      "categories": "cs.LG",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "1703.06975",
+      "version": "1703.06975v1",
+      "group": "Diffusion and its roots",
+      "title": "Learning to Generate Samples from Noise through Infusion Training",
+      "authors": [
+        "Florian Bordes",
+        "Sina Honari",
+        "Pascal Vincent"
+      ],
+      "year": 2017,
+      "categories": "stat.ML cs.LG",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "2006.11239",
+      "version": "2006.11239v2",
+      "group": "Diffusion and its roots",
+      "title": "Denoising Diffusion Probabilistic Models",
+      "authors": [
+        "Jonathan Ho",
+        "Ajay Jain",
+        "Pieter Abbeel"
+      ],
+      "year": 2020,
+      "categories": "cs.LG stat.ML",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "2010.02502",
+      "version": "2010.02502v4",
+      "group": "Diffusion and its roots",
+      "title": "Denoising Diffusion Implicit Models",
+      "authors": [
+        "Jiaming Song",
+        "Chenlin Meng",
+        "Stefano Ermon"
+      ],
+      "year": 2020,
+      "categories": "cs.LG cs.CV",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "2102.09672",
+      "version": "2102.09672v1",
+      "group": "Diffusion and its roots",
+      "title": "Improved Denoising Diffusion Probabilistic Models",
+      "authors": [
+        "Alex Nichol",
+        "Prafulla Dhariwal"
+      ],
+      "year": 2021,
+      "categories": "cs.LG cs.AI stat.ML",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "2207.12598",
+      "version": "2207.12598v1",
+      "group": "Diffusion and its roots",
+      "title": "Classifier-Free Diffusion Guidance",
+      "authors": [
+        "Jonathan Ho",
+        "Tim Salimans"
+      ],
+      "year": 2022,
+      "categories": "cs.LG cs.AI",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "2112.10752",
+      "version": "2112.10752v2",
+      "group": "Diffusion and its roots",
+      "title": "High-Resolution Image Synthesis with Latent Diffusion Models",
+      "authors": [
+        "Robin Rombach",
+        "Andreas Blattmann",
+        "Dominik Lorenz",
+        "Patrick Esser",
+        "Björn Ommer"
+      ],
+      "year": 2021,
+      "categories": "cs.CV",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "2201.11903",
+      "version": "2201.11903v6",
+      "group": "Reasoning and agents",
+      "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+      "authors": [
+        "Jason Wei",
+        "Xuezhi Wang",
+        "Dale Schuurmans",
+        "Maarten Bosma",
+        "Brian Ichter",
+        "Fei Xia",
+        "Ed Chi",
+        "Quoc Le",
+        "Denny Zhou"
+      ],
+      "year": 2022,
+      "categories": "cs.CL cs.AI",
+      "licenceUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "licence": "CC BY 4.0",
+      "openLicence": true,
+      "latexSource": true
+    },
+    {
+      "id": "2210.03629",
+      "version": "2210.03629v3",
+      "group": "Reasoning and agents",
+      "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+      "authors": [
+        "Shunyu Yao",
+        "Jeffrey Zhao",
+        "Dian Yu",
+        "Nan Du",
+        "Izhak Shafran",
+        "Karthik Narasimhan",
+        "Yuan Cao"
+      ],
+      "year": 2022,
+      "categories": "cs.CL cs.AI cs.LG",
+      "licenceUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "licence": "CC BY 4.0",
+      "openLicence": true,
+      "latexSource": true
+    },
+    {
+      "id": "2303.11366",
+      "version": "2303.11366v4",
+      "group": "Reasoning and agents",
+      "title": "Reflexion: Language Agents with Verbal Reinforcement Learning",
+      "authors": [
+        "Noah Shinn",
+        "Federico Cassano",
+        "Edward Berman",
+        "Ashwin Gopinath",
+        "Karthik Narasimhan",
+        "Shunyu Yao"
+      ],
+      "year": 2023,
+      "categories": "cs.AI cs.CL cs.LG",
+      "licenceUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "licence": "CC BY 4.0",
+      "openLicence": true,
+      "latexSource": true
+    },
+    {
+      "id": "2302.04761",
+      "version": "2302.04761v1",
+      "group": "Reasoning and agents",
+      "title": "Toolformer: Language Models Can Teach Themselves to Use Tools",
+      "authors": [
+        "Timo Schick",
+        "Jane Dwivedi-Yu",
+        "Roberto Dessì",
+        "Roberta Raileanu",
+        "Maria Lomeli",
+        "Luke Zettlemoyer",
+        "Nicola Cancedda",
+        "Thomas Scialom"
+      ],
+      "year": 2023,
+      "categories": "cs.CL",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "2305.14325",
+      "version": "2305.14325v1",
+      "group": "Reasoning and agents",
+      "title": "Improving Factuality and Reasoning in Language Models through Multiagent Debate",
+      "authors": [
+        "Yilun Du",
+        "Shuang Li",
+        "Antonio Torralba",
+        "Joshua B. Tenenbaum",
+        "Igor Mordatch"
+      ],
+      "year": 2023,
+      "categories": "cs.CL cs.AI cs.CV cs.LG",
+      "licenceUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "licence": "CC BY 4.0",
+      "openLicence": true,
+      "latexSource": true
+    },
+    {
+      "id": "2305.10601",
+      "version": "2305.10601v2",
+      "group": "Reasoning and agents",
+      "title": "Tree of Thoughts: Deliberate Problem Solving with Large Language Models",
+      "authors": [
+        "Shunyu Yao",
+        "Dian Yu",
+        "Jeffrey Zhao",
+        "Izhak Shafran",
+        "Thomas L. Griffiths",
+        "Yuan Cao",
+        "Karthik Narasimhan"
+      ],
+      "year": 2023,
+      "categories": "cs.CL cs.AI cs.LG",
+      "licenceUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "licence": "CC BY 4.0",
+      "openLicence": true,
+      "latexSource": true
+    },
+    {
+      "id": "2308.08155",
+      "version": "2308.08155v2",
+      "group": "Reasoning and agents",
+      "title": "AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation",
+      "authors": [
+        "Qingyun Wu",
+        "Gagan Bansal",
+        "Jieyu Zhang",
+        "Yiran Wu",
+        "Beibin Li",
+        "Erkang Zhu",
+        "Li Jiang",
+        "Xiaoyun Zhang",
+        "Shaokun Zhang",
+        "Jiale Liu",
+        "Ahmed Hassan Awadallah",
+        "Ryen W White",
+        "Doug Burger",
+        "Chi Wang"
+      ],
+      "year": 2023,
+      "categories": "cs.AI cs.CL",
+      "licenceUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "licence": "CC BY 4.0",
+      "openLicence": true,
+      "latexSource": true
+    },
+    {
+      "id": "2304.03442",
+      "version": "2304.03442v2",
+      "group": "Reasoning and agents",
+      "title": "Generative Agents: Interactive Simulacra of Human Behavior",
+      "authors": [
+        "Joon Sung Park",
+        "Joseph C. O'Brien",
+        "Carrie J. Cai",
+        "Meredith Ringel Morris",
+        "Percy Liang",
+        "Michael S. Bernstein"
+      ],
+      "year": 2023,
+      "categories": "cs.HC cs.AI cs.LG",
+      "licenceUrl": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "licence": "arXiv's non-exclusive licence",
+      "openLicence": false,
+      "latexSource": true
+    },
+    {
+      "id": "2405.15793",
+      "version": "2405.15793v3",
+      "group": "Reasoning and agents",
+      "title": "SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering",
+      "authors": [
+        "John Yang",
+        "Carlos E. Jimenez",
+        "Alexander Wettig",
+        "Kilian Lieret",
+        "Shunyu Yao",
+        "Karthik Narasimhan",
+        "Ofir Press"
+      ],
+      "year": 2024,
+      "categories": "cs.SE cs.AI cs.CL cs.HC cs.LG",
+      "licenceUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "licence": "CC BY 4.0",
+      "openLicence": true,
+      "latexSource": true
+    },
+    {
+      "id": "2407.01489",
+      "version": "2407.01489v2",
+      "group": "Reasoning and agents",
+      "title": "Agentless: Demystifying LLM-based Software Engineering Agents",
+      "authors": [
+        "Chunqiu Steven Xia",
+        "Yinlin Deng",
+        "Soren Dunn",
+        "Lingming Zhang"
+      ],
+      "year": 2024,
+      "categories": "cs.SE cs.AI cs.CL cs.LG",
+      "licenceUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "licence": "CC BY 4.0",
+      "openLicence": true,
+      "latexSource": true
+    },
+    {
+      "id": "2310.01798",
+      "version": "2310.01798v2",
+      "group": "Reasoning and agents",
+      "title": "Large Language Models Cannot Self-Correct Reasoning Yet",
+      "authors": [
+        "Jie Huang",
+        "Xinyun Chen",
+        "Swaroop Mishra",
+        "Huaixiu Steven Zheng",
+        "Adams Wei Yu",
+        "Xinying Song",
+        "Denny Zhou"
+      ],
+      "year": 2023,
+      "categories": "cs.CL cs.AI",
+      "licenceUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "licence": "CC BY 4.0",
+      "openLicence": true,
+      "latexSource": true
+    },
+    {
+      "id": "2503.13657",
+      "version": "2503.13657v3",
+      "group": "Reasoning and agents",
+      "title": "Why Do Multi-Agent LLM Systems Fail?",
+      "authors": [
+        "Mert Cemri",
+        "Melissa Z. Pan",
+        "Shuyi Yang",
+        "Lakshya A. Agrawal",
+        "Bhavya Chopra",
+        "Rishabh Tiwari",
+        "Kurt Keutzer",
+        "Aditya Parameswaran",
+        "Dan Klein",
+        "Kannan Ramchandran",
+        "Matei Zaharia",
+        "Joseph E. Gonzalez",
+        "Ion Stoica"
+      ],
+      "year": 2025,
+      "categories": "cs.AI",
+      "licenceUrl": "http://creativecommons.org/licenses/by-nc-nd/4.0/",
+      "licence": "CC BY-NC-ND 4.0",
+      "openLicence": false,
+      "latexSource": true
+    }
+  ]
+}
