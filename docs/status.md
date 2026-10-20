@@ -9,8 +9,10 @@ A snapshot, rewritten every session and kept under 80 lines; history is in
 - **Gate:** G2 Verified authored world is current, tagged `v0.2.0` at `b37c7dc`; G1 is `v0.1.0`.
   Next: G3, whose gate is now the attention family's first generated world, BERT (ADR-0052).
 - **Working commit:** `341fb5e` on `main`.
-- **Purpose:** teaching the AI and ML papers of `docs/papers/corpus.md`; biomedical papers later, the
-  compartment family kept (ADR-0052). The plan is `docs/design/ai-papers.md`.
+- **Purpose:** teaching the 34 AI and ML papers of `docs/papers/corpus.md`; biomedical papers later,
+  the compartment family kept (ADR-0052). The plan is `docs/design/ai-papers.md`.
+- **Definitional** is judged by compartment since 2026-10-20 (ADR-0044's second amendment); no
+  recorded job replays until one runs again under it.
 - **Worktrees:** the main one, and `PaperPlay-land`, land's checkout for the gate (ADR-0051).
 - **Model provider:** an OpenAI-compatible gateway, its address and key in `apps/api/.env` only;
   called only by `npm run pipeline:live`, live runs in the background between sessions (ADR-0051).

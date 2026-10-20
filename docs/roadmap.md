@@ -276,7 +276,7 @@ out. PubMed Central ingest, once here, landed in G3a.3.
   `9e46daa`, ADR-0047). It takes the place of authoring Adam by hand (G3b.2c).
 - [ ] G3b.2d: the pipeline on learning: the transcriber's grammar for algorithms, the planner's and
   explainer's worked example, the bake-off's learning scenario, the own-numbers check (8–12 h).
-- [ ] G3b.2e: Adam through the pipeline, recorded and replayed: G3b's gate (3–5 h).
+- [ ] G3b.2e: Adam through the pipeline, recorded and replayed: paused 2026-10-20; G3's gate is now BERT in the attention family (ADR-0052).
 - [ ] After G3b's gate: `learning.network@1` and Dropout through the pipeline (10–14 h).
 
 Later:
@@ -362,6 +362,7 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-10 | The levels sweep runs every authored world, over its family's variation, and holds a compartment world's every run to the accuracy check | ADR-0024's level rule for models with no chance in them (ADR-0029) |
 | 2026-10-14 | The model provider is ASU Research Computing's Voyager gateway, not the Anthropic SDK; tests and CI replay recorded calls; generation runs only locally | Owner decision (ADR-0030) |
 | 2026-10-17 | G3a closed out: every item built, two worlds made under every rule. G3b planned in design/g3b.md at 49–71 h, a smaller G3b at 29–43 h, its decisions the owner's | Owner request, 2026-10-16 |
+| 2026-10-20 | PaperPlay teaches the corpus of 34 AI and ML papers first; G3's gate becomes BERT, the attention family's first generated world; G3b's Adam slices paused; the plan is docs/design/ai-papers.md | Owner decision (ADR-0052) |
 | 2026-10-18 | G2 made current and tagged v0.2.0; CI's gate skipped on main when its branch passed, the capture on demand only | Owner decisions (ADR-0048) |
 | 2026-10-18 | Definitional corrected: the control in the measured compartment's own equation, measured on its level or peak; found by code before review; a spread headline's hook on an infected compartment; one reviewer's unsupported block enough, checked by code where the model can; reviewers never the planners or the explainer, inkling-small and qwen38-27b picked | Owner decisions (ADR-0044's amendment) |
 | 2026-10-17 | G3b's decisions: update rules as data, attention after G4, G3b's gate Adam alone, tier C now and minimal; a hand-authored momentum world as the learning family's reference | Owner decisions (ADR-0046) |
