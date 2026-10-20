@@ -52,9 +52,9 @@
           "summary": "at",
           "at": 30,
           "time": 30,
-          "expect": "unscored",
-          "kind": null,
-          "origin": "planted, 2026-10-14: it fails the level rule; a reviewer must not call that acceptable"
+          "expect": "fault",
+          "kind": "definitional",
+          "origin": "planted, 2026-10-14: it fails the level rule; a reviewer must not call that acceptable; definitional by the owner's rule of 2026-10-20: alpha feeds r directly, whatever the level measures of r"
         },
         {
           "title": "No treatment",
@@ -92,7 +92,8 @@
           "kind": "definitional",
           "origin": "planted, 2026-10-15: it tests what the paper found; definitional by the owner's corrected rule (2026-10-18): its control appears directly in the measured compartment's own equation, and it measures that compartment's level or peak"
         }
-      ]
+      ],
+      "awaitsRun": "2026-10-20"
     },
     {
       "id": "tuberculosis-ready",
@@ -297,6 +298,51 @@
           "origin": "the 2026-10-18 hepatitis C world: the 2026-10-17 world's level 5 turned round, fewer quitters giving fewer quitters, which the owner ruled a fault; the tag calls its peak emergent, and no reviewer blocked it (ADR-0044's conflict)"
         }
       ]
+    },
+    {
+      "id": "hepatitis-c-2026-10-18-2",
+      "paper": "pmc-PMC12334037",
+      "checks": "The builder: passed, the family's checks included.\nThe level rule: level 1 holds on 20 of 20; level 2 holds on 20 of 20; level 3 holds on 20 of 20.\nThe visibility rule: every level's difference shows on its chart and in the scene.\nProvenance: every anchor quotes the source exactly.",
+      "failedCheck": null,
+      "levels": [
+        {
+          "title": "Fewer quitters, smaller outbreak",
+          "words": "See how lowering the treatment quitting rate in the equations slows the flow into the untreated quitters pool and delays when quitters first reach one percent. Control: Treatment quitting rate. What if: What if only half as many people quit treatment, with delta at 0.3? It states: With only half as many people quitting treatment, the untreated pool fills more slowly: the other world first reaches 1% quitters more than 4 years later.",
+          "control": "delta",
+          "compartment": "cq",
+          "summary": "first-reach",
+          "at": 0.01,
+          "time": 80,
+          "expect": "fault",
+          "kind": "definitional",
+          "origin": "the regenerated hepatitis C world of 2026-10-18 (pmc-PMC12334037-2026-10-18-2): definitional by the owner's rule of 2026-10-20: delta feeds cq directly; its hook, the owner's case; no reviewer blocked it on the run that made it"
+        },
+        {
+          "title": "Quitters spread the virus most",
+          "words": "Explore how much the chronically infected who quit treatment drive the epidemic. Move their transmission rate and watch the quitters' peak. Control: Transmission rate from quitters. What if: What if quitters passed on the virus twice as easily, beta3 at 0.1? It states: When quitters pass on the virus twice as easily, they drive a bigger outbreak: the other world's peak of quitters is higher by more than 0.005.",
+          "control": "beta3",
+          "compartment": "cq",
+          "summary": "peak",
+          "at": null,
+          "time": 100,
+          "expect": "clean",
+          "kind": null,
+          "origin": "the regenerated hepatitis C world of 2026-10-18 (pmc-PMC12334037-2026-10-18-2): clean: beta3 reaches cq only through other compartments; no reviewer blocked it on the run that made it"
+        },
+        {
+          "title": "A faster chronic recovery rate",
+          "words": "See how raising the chronic recovery rate clears treated infections faster and delays the quitters pool from reaching one percent. Control: Chronic recovery rate. What if: What if the chronic recovery rate rose to the paper's 0.19? It states: At a chronic recovery rate of 0.19, chronic infections clear faster and the quitters pool grows more slowly: the other world first reaches 1% quitters more than 2 years later.",
+          "control": "rho",
+          "compartment": "cq",
+          "summary": "first-reach",
+          "at": 0.01,
+          "time": 80,
+          "expect": "fault",
+          "kind": "definitional",
+          "origin": "the regenerated hepatitis C world of 2026-10-18 (pmc-PMC12334037-2026-10-18-2): definitional by the owner's rule of 2026-10-20: rho feeds cq directly; no reviewer blocked it on the run that made it"
+        }
+      ],
+      "awaitsRun": "2026-10-20"
     }
   ]
 }

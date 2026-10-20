@@ -7,11 +7,13 @@
  * - **A named term:** a reviewer that calls a level definitional must name the term of that
  *   equation the effect follows from, in the model's ids; the term must be one the equation holds
  *   and must hold the control, as the tag says. A block naming no such term is ignored, and recorded.
- * - **What is definitional** (the owner's correction, 2026-10-18): a level whose control appears
- *   directly in the measured compartment's own equation, and which measures that compartment's own
- *   level or peak. An effect that travels through other compartments is not, nor one measured on a
- *   system-wide summary: a final size, a total over time, a threshold crossing, a time to a level.
- *   The code decides it from the tag, before any reviewer reads the world.
+ * - **What is definitional** (the owner's rule of 2026-10-20, closing the loophole of 2026-10-18):
+ *   judged by compartment, not by summary. A level whose control appears directly in the measured
+ *   compartment's own equation is definitional whatever it measures of that compartment: its level,
+ *   peak, time to a level, total over time or value at the end. An effect that travels through other
+ *   compartments is not, nor a system-wide measure, one across compartments (a total ever infected) or
+ *   of a derived quantity (a threshold crossing such as R0 = 1). A level of a generated world
+ *   measures one compartment, so the tag alone decides it, before any reviewer reads the world.
  */
 import type { Expr, ModelSpec } from "@paperplay/contracts";
 import { expand, formatPolynomial, type Polynomial, type Term } from "@paperplay/primitives/compartments";
@@ -26,21 +28,25 @@ export interface DirectEffect {
   readonly signs: readonly ("+" | "−")[];
   /** Those terms, written out: "delta × c". */
   readonly terms: readonly string[];
-  /** Whether the level measures a system-wide summary, not the compartment's own level or peak. */
+  /** Whether the level measures across compartments or a derived quantity; one compartment never is. */
   readonly systemWide: boolean;
-  /** Direct, and measured on the compartment's own level or peak: the effect follows from the model's definition. */
+  /** Direct, and measured on that compartment, whatever its summary: the effect follows from the model's definition. */
   readonly definitional: boolean;
+  /** The summary the level takes of the compartment, for the words. */
+  readonly summary: string;
+  /** Whether that summary is the compartment's level at a moment or its peak, as the words of 2026-10-18 said. */
+  readonly levelOrPeak: boolean;
 }
 
 /**
- * Summaries of the whole run rather than of the compartment's level: a threshold crossing or a time
- * to a level, a total over time, and a value at the run's end, its final size. A level at a moment,
- * a peak, a lowest value and a mean are the compartment's own level.
+ * Whether what a level measures is system-wide: across several compartments, or a quantity derived
+ * from them, such as a threshold crossing of R0. One compartment never is, whatever its summary.
  */
-export function isSystemWide(summary: { readonly summary: string; readonly at: number | null; readonly time: number }): boolean {
-  if (summary.summary === "first-reach" || summary.summary === "total") return true;
-  return summary.summary === "at" && summary.at !== null && summary.at >= summary.time;
-}
+export const isSystemWide = (measured: { readonly compartments: readonly string[] }): boolean => measured.compartments.length !== 1;
+
+/** A summary that is the compartment's level at a moment before the end, its peak, its lowest value or its mean. */
+const isLevelOrPeak = (summary: { readonly summary: string; readonly at: number | null; readonly time: number }): boolean =>
+  !(summary.summary === "first-reach" || summary.summary === "total" || (summary.summary === "at" && summary.at !== null && summary.at >= summary.time));
 
 const keyOf = (term: Term): string =>
   term.factors
@@ -67,14 +73,15 @@ function rateOf(model: ModelSpec, compartment: string): { readonly expr: Expr; r
 /** The direct-effect tag of a parameter on a measured compartment, with the level's summary. */
 export function directEffectOf(model: ModelSpec, parameter: string, compartment: string, summary: { readonly summary: string; readonly at: number | null; readonly time: number }): DirectEffect {
   const rate = rateOf(model, compartment);
-  const systemWide = isSystemWide(summary);
-  if (!rate) return { parameter, compartment, direct: false, signs: [], terms: [], systemWide, definitional: false };
+  const systemWide = isSystemWide({ compartments: [compartment] });
+  const words = { summary: summary.summary, levelOrPeak: isLevelOrPeak(summary) };
+  if (!rate) return { parameter, compartment, direct: false, signs: [], terms: [], systemWide, definitional: false, ...words };
   if (!rate.polynomial) {
     const direct = mentions(rate.expr, parameter);
-    return { parameter, compartment, direct, signs: [], terms: [], systemWide, definitional: direct && !systemWide };
+    return { parameter, compartment, direct, signs: [], terms: [], systemWide, definitional: direct && !systemWide, ...words };
   }
   const terms = rate.polynomial.terms.filter((term) => holds(term, parameter));
-  return { parameter, compartment, direct: terms.length > 0, signs: signsOf(model, terms, parameter), terms: terms.map((term) => formatPolynomial({ terms: [term] })), systemWide, definitional: terms.length > 0 && !systemWide };
+  return { parameter, compartment, direct: terms.length > 0, signs: signsOf(model, terms, parameter), terms: terms.map((term) => formatPolynomial({ terms: [term] })), systemWide, definitional: terms.length > 0 && !systemWide, ...words };
 }
 
 /**
@@ -105,12 +112,19 @@ export function describeDirectEffect(tag: DirectEffect): string {
   if (!tag.direct) return `its control ${tag.parameter} does not appear in d${tag.compartment}/dt, the measured compartment's own equation: its effect travels through other compartments, so it is not definitional`;
   const way = tag.signs.length === 1 ? (tag.signs[0] === "+" ? "adding to it" : "taking from it") : tag.signs.length === 0 ? "with a sign the expansion cannot read" : "both adding and taking";
   const appears = `its control ${tag.parameter} appears directly in d${tag.compartment}/dt, the measured compartment's own equation, ${way} (${tag.terms.join("; ")})`;
-  return tag.definitional ? `${appears}, and the level measures that compartment's own level or peak, so it is definitional: its effect follows from the model's definition` : `${appears}, but the level measures a system-wide summary, so it is not definitional`;
+  if (!tag.definitional) return `${appears}, but the level measures a system-wide summary, so it is not definitional`;
+  // A level or a peak keeps the words reviewers have read since 2026-10-18, so their recorded reviews replay.
+  if (tag.levelOrPeak) return `${appears}, and the level measures that compartment's own level or peak, so it is definitional: its effect follows from the model's definition`;
+  return `${appears}, and the level measures that compartment, by its ${SUMMARY_WORDS[tag.summary] ?? tag.summary}, so it is definitional: whatever its summary, the effect follows from the model's definition`;
 }
+
+/** A summary in words. */
+const SUMMARY_WORDS: Readonly<Record<string, string>> = { "first-reach": "time to a level", total: "total over time", at: "value at the run's end", peak: "peak", lowest: "lowest value", mean: "mean" };
 
 /** A definitional level's problem, in words for the planner, who changes it. */
 export function definitionalProblem(tag: DirectEffect): string {
-  return `it is definitional: its control ${tag.parameter} appears directly in d${tag.compartment}/dt (${tag.terms.join("; ")}) and it measures ${tag.compartment}'s own level or peak, so its effect follows from the model's definition; measure a compartment the effect must travel through others to reach, or a system-wide summary such as a time to a level or a final size`;
+  const measured = tag.levelOrPeak ? `${tag.compartment}'s own level or peak` : `${tag.compartment}'s ${SUMMARY_WORDS[tag.summary] ?? tag.summary}`;
+  return `it is definitional: its control ${tag.parameter} appears directly in d${tag.compartment}/dt (${tag.terms.join("; ")}) and it measures ${measured}, so its effect follows from the model's definition, whatever the summary; measure a compartment the effect must travel through others to reach`;
 }
 
 /** What an unsupported finding says the model has, so the code can check it: a parameter's kind, or whether it appears in a compartment's equation. */

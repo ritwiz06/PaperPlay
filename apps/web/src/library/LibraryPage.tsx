@@ -102,7 +102,7 @@ function WorldRow({ world }: { readonly world: LibraryWorld }) {
         </ol>
         {world.definitional.length > 0 ? (
           <p className="library-note">
-            Made before the rule of 2026-10-18: {listed(world.definitional)} {world.definitional.length === 1 ? "is" : "are"} definitional by it. Kept as made.
+            By the rule of 2026-10-20, {listed(world.definitional)} {world.definitional.length === 1 ? "is" : "are"} definitional: {world.definitional.length === 1 ? "its control feeds" : "each one's control feeds"} the compartment it measures directly. Kept as made until it is regenerated.
           </p>
         ) : null}
       </div>

@@ -191,7 +191,10 @@
       ],
       "thumbnail": "/library/pmc-PMC12334037-2026-10-18-2.jpg",
       "recordedOn": "2026-10-18",
-      "definitional": [],
+      "definitional": [
+        1,
+        3
+      ],
       "retired": null
     },
     {

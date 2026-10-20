@@ -115,17 +115,17 @@ no valid term. The reviewers picked are never the planner, the second planner or
 
 | Rank | Model | Vendor | Faults blocked | Definitional, with a valid term | Clean levels blocked | Terms not valid | Called a failed check acceptable | Failed calls |
 |---|---|---|---|---|---|---|---|---|
-| 1 | kimi-k2-7-code | Moonshot AI | 15/15 | 11/11 | 0/6 | 0 | no | 0 |
-| 2 | inkling-small | Thinking Machines | 15/15 | 11/11 | 0/6 | 0 | no | 0 |
-| 3 | qwen38-27b | Qwen | 15/15 | 11/11 | 0/6 | 0 | no | 0 |
-| 4 | qwen36-27b | Qwen | 15/15 | 11/11 | 0/6 | 0 | no | 0 |
-| 5 | muse-glimmer-30b | Muse | 15/15 | 11/11 | 0/6 | 0 | no | 0 |
-| 6 | gemma4-31b-it | Google | 14/15 | 11/11 | 0/6 | 0 | no | 0 |
-| 7 | qwen3-235b-a22b-thinking-2507 | Qwen | 13/15 | 9/11 | 0/6 | 2 | no | 0 |
-| 8 | granite41-30b | IBM | 13/15 | 10/11 | 1/6 | 1 | no | 0 |
-| 9 | glm-5-3 | Z.ai | 12/15 | 9/11 | 1/6 | 1 | no | 0 |
-| 10 | gpt-oss-120b | OpenAI | 13/15 | 9/11 | 5/6 | 2 | no | 0 |
-| 11 | llama4-maverick-17b | Meta | 4/15 | 2/11 | 0/6 | 3 | no | 0 |
+| 1 | kimi-k2-7-code | Moonshot AI | 10/10 | 8/8 | 0/5 | 0 | no | 0 |
+| 2 | inkling-small | Thinking Machines | 10/10 | 8/8 | 0/5 | 0 | no | 0 |
+| 3 | qwen38-27b | Qwen | 10/10 | 8/8 | 0/5 | 0 | no | 0 |
+| 4 | qwen36-27b | Qwen | 10/10 | 8/8 | 0/5 | 0 | no | 0 |
+| 5 | muse-glimmer-30b | Muse | 10/10 | 8/8 | 0/5 | 0 | no | 0 |
+| 6 | gemma4-31b-it | Google | 9/10 | 8/8 | 0/5 | 0 | no | 0 |
+| 7 | granite41-30b | IBM | 8/10 | 7/8 | 0/5 | 1 | no | 0 |
+| 8 | qwen3-235b-a22b-thinking-2507 | Qwen | 8/10 | 6/8 | 0/5 | 2 | no | 0 |
+| 9 | glm-5-3 | Z.ai | 7/10 | 6/8 | 1/5 | 1 | no | 0 |
+| 10 | gpt-oss-120b | OpenAI | 8/10 | 6/8 | 4/5 | 2 | no | 0 |
+| 11 | llama4-maverick-17b | Meta | 2/10 | 2/8 | 0/5 | 1 | no | 0 |
 
 ## Proposed per stage
 

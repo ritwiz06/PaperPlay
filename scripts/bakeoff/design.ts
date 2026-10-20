@@ -125,11 +125,29 @@ export interface ReviewCaseLevel {
 export interface ReviewCases {
   readonly schemaVersion: "review-cases/1";
   readonly note: string;
-  readonly worlds: readonly { readonly id: string; readonly paper: string; readonly checks: string; readonly failedCheck: number | null; readonly levels: readonly ReviewCaseLevel[] }[];
+  readonly worlds: readonly {
+    readonly id: string;
+    readonly paper: string;
+    readonly checks: string;
+    readonly failedCheck: number | null;
+    readonly levels: readonly ReviewCaseLevel[];
+    /**
+     * Set when a world was added or changed since the reviewers last read it: the date it was. Such a
+     * world has no recorded reviews to replay, so replays and rescoring leave it out until the next
+     * live run, which reads it and clears this (ADR-0044's second amendment).
+     */
+    readonly awaitsRun?: string;
+  }[];
 }
 
-/** The worlds the reviewers are scored on, `eval/bakeoff/review-cases.json`: planted faults, and every reviewer mistake a live run revealed. */
-export const loadReviewCases = (): ReviewCases => JSON.parse(readFileSync(join(root, "eval", "bakeoff", "review-cases.json"), "utf8")) as ReviewCases;
+/**
+ * The worlds the reviewers are scored on, `eval/bakeoff/review-cases.json`: planted faults, and every
+ * reviewer mistake a live run revealed; those awaiting a live run only when it is one.
+ */
+export const loadReviewCases = (options: { readonly awaiting?: boolean } = {}): ReviewCases => {
+  const cases = JSON.parse(readFileSync(join(root, "eval", "bakeoff", "review-cases.json"), "utf8")) as ReviewCases;
+  return options.awaiting ? cases : { ...cases, worlds: cases.worlds.filter((world) => world.awaitsRun === undefined) };
+};
 
 /**
  * One reviewer's score over every case world. A fault counts as found when the reviewer blocks it,
@@ -187,7 +205,7 @@ export function reviewInputOf(world: ReviewCases["worlds"][number], paper: Retur
 /** An error in one line: its message's lines joined, so a Zod issue list is not cut to its "[". */
 const oneLine = (error: unknown): string => (error instanceof Error ? error.message : String(error)).replace(/\s+/g, " ").trim().slice(0, 400);
 
-export async function runDesignBakeoff(client: ModelClient, structuredOutput: Readonly<Record<string, boolean>>, candidates: readonly Candidate[], readings: Readonly<Record<string, Reading>>): Promise<DesignResults> {
+export async function runDesignBakeoff(client: ModelClient, structuredOutput: Readonly<Record<string, boolean>>, candidates: readonly Candidate[], readings: Readonly<Record<string, Reading>>, options: { readonly awaiting?: boolean } = {}): Promise<DesignResults> {
   const papers = loadGoldPapers();
   const example = "Threshold Town: Level 1, An epidemic that ends by itself: control the infection rate, watch those still well; what if the ill stayed infectious twice as long; measured: people still well at day 200, the other world lower by more than 100.";
   const perModel = await Promise.all(
@@ -208,7 +226,7 @@ export async function runDesignBakeoff(client: ModelClient, structuredOutput: Re
       }
       let reviewed: ReviewScore;
       try {
-        const cases = loadReviewCases();
+        const cases = loadReviewCases(options);
         const models = Object.fromEntries(papers.map((paper) => [paper.id, modelOf(paper).model]));
         const reviews = Object.fromEntries(
           await Promise.all(
@@ -223,7 +241,7 @@ export async function runDesignBakeoff(client: ModelClient, structuredOutput: Re
         );
         reviewed = { model: name, ok: true, error: null, ...scoreReview(cases, reviews, models) };
       } catch (error) {
-        reviewed = { model: name, ok: false, error: oneLine(error), ...scoreReview(loadReviewCases(), {}, {}) };
+        reviewed = { model: name, ok: false, error: oneLine(error), ...scoreReview(loadReviewCases(options), {}, {}) };
       }
       return { plans, reviewed };
     }),

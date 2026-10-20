@@ -84,8 +84,8 @@ const LEVELS: readonly Record<string, unknown>[] = [
       kind: "hook",
       finding: 0,
       title: "An epidemic that ends by itself",
-      goal: "Change how easily it spreads, and watch who stays well.",
-      control: { parameter: "beta", label: "How easily it spreads", lowEnd: "Hardly", highEnd: "Easily" },
+      goal: "Change how fast people recover, and watch who stays well.",
+      control: { parameter: "gamma", label: "How fast people recover", lowEnd: "Slowly", highEnd: "Quickly" },
       watch: "s",
       whatIf: { prompt: "What if the infected stayed infectious twice as long?", parameter: "gamma", value: 0.05 },
       difference: { compartment: "s", summary: "at", at: 150, time: 150, relation: "lower", by: 20 },
@@ -98,12 +98,12 @@ const LEVELS: readonly Record<string, unknown>[] = [
       kind: "background",
       finding: 1,
       title: "Faster spread",
-      goal: "Change how fast people recover, and watch the infected.",
-      control: { parameter: "gamma", label: "How fast people recover", lowEnd: "Slowly", highEnd: "Quickly" },
-      watch: "i",
+      goal: "Change how easily it spreads, and watch who has recovered.",
+      control: { parameter: "beta", label: "How easily it spreads", lowEnd: "Hardly", highEnd: "Easily" },
+      watch: "r",
       whatIf: { prompt: "What if it spread twice as easily?", parameter: "beta", value: 0.0006 },
-      difference: { compartment: "i", summary: "first-reach", at: 100, time: 60, relation: "lower", by: 5 },
-      effect: "Twice as easily, 100 people are infected at once more than 5 days sooner.",
+      difference: { compartment: "r", summary: "first-reach", at: 100, time: 60, relation: "lower", by: 5 },
+      effect: "Twice as easily, 100 people have recovered more than 5 days sooner.",
       prediction: { prompt: "Sooner?", claimed: "Sooner", other: "About as soon" },
       passage: null,
       carryForward: "The infection rate sets the pace.",
@@ -112,12 +112,12 @@ const LEVELS: readonly Record<string, unknown>[] = [
       kind: "idea",
       finding: 2,
       title: "A threshold",
-      goal: "Change how fast people recover, and find where it no longer spreads.",
-      control: { parameter: "gamma", label: "How fast people recover", lowEnd: "Slowly", highEnd: "Quickly" },
-      watch: "i",
+      goal: "Change how easily it spreads, and find where it no longer spreads.",
+      control: { parameter: "beta", label: "How easily it spreads", lowEnd: "Hardly", highEnd: "Easily" },
+      watch: "r",
       whatIf: { prompt: "What if the town had 300 susceptible people?", parameter: "s0", value: 300 },
-      difference: { compartment: "i", summary: "first-reach", at: 25, time: 120, relation: "higher", by: 30 },
-      effect: "With 300 people the illness fades: 25 are never infected at once within 120 days.",
+      difference: { compartment: "r", summary: "first-reach", at: 25, time: 120, relation: "higher", by: 30 },
+      effect: "With 300 people the illness fades: 25 recover more than 30 days later, if within 120 days at all.",
       prediction: { prompt: "Would it still spread?", claimed: "No", other: "Yes" },
       passage: null,
       carryForward: "Below a threshold, it fades.",
@@ -245,7 +245,7 @@ describe("[R10] [R11] the controller", () => {
   }, 60_000);
 
   it("drops a level other than the hook that still fails after its repairs, keeping why, and shows each repair its control's response", async () => {
-    const failing = planLevel(1, { title: "A level that fails", difference: { compartment: "s", summary: "at", at: 150, time: 150, relation: "higher", by: 20 } });
+    const failing = planLevel(1, { title: "A level that fails", control: { parameter: "gamma", label: "How fast people recover", lowEnd: "Slowly", highEnd: "Quickly" }, difference: { compartment: "s", summary: "at", at: 150, time: 150, relation: "higher", by: 20 } });
     const plan = { ...good(), levels: [...good().levels, failing] };
     const client = scripted(replies({ planner: [plan, plan, plan] }));
     const { outcome, artifacts, events } = await run(client);
@@ -258,7 +258,7 @@ describe("[R10] [R11] the controller", () => {
   }, 60_000);
 
   it("asks a repair that ran out of room again with twice the room, and keeps the plan as it was when the repair still cannot be read", async () => {
-    const failing = planLevel(1, { title: "A level that fails", difference: { compartment: "s", summary: "at", at: 150, time: 150, relation: "higher", by: 20 } });
+    const failing = planLevel(1, { title: "A level that fails", control: { parameter: "gamma", label: "How fast people recover", lowEnd: "Slowly", highEnd: "Quickly" }, difference: { compartment: "s", summary: "at", at: 150, time: 150, relation: "higher", by: 20 } });
     const plan = { ...good(), levels: [...good().levels, failing] };
     const client = scripted(replies({ planner: [plan, OUT_OF_ROOM, { not: "a plan" }, plan] }));
     const { outcome, artifacts, events } = await run(client);
@@ -272,7 +272,8 @@ describe("[R10] [R11] the controller", () => {
   }, 60_000);
 
   it("falls back to the first anchored finding the model shows when the hook fails and the paper's own numbers confirm its headline does not appear (ADR-0040)", async () => {
-    const headline = { text: "Recovering faster than half stops the spread.", quote: "A recovery rate above 50% brings the reproduction number below 1." };
+    // Not about spread: in this model every parameter feeds the infected directly, so no hook on them is allowed.
+    const headline = { text: "Recovering faster than half ends the epidemic.", quote: "A recovery rate above 50% brings the reproduction number below 1." };
     const reader = [{ question: "Why does an epidemic end?", mechanism: "Infection and recovery.", modelEquations: [], result: headline, findings: FINDINGS }];
     const hookFails = planLevel(0, { difference: { compartment: "s", summary: "at", at: 150, time: 150, relation: "higher", by: 20 } });
     const plan = { ...good(), levels: [hookFails, planLevel(1), planLevel(2), planLevel(1, { title: "Faster spread, again", kind: "idea" })] };
@@ -288,8 +289,7 @@ describe("[R10] [R11] the controller", () => {
     expect(world.levels.map((level) => [level.title, level.kind])).toEqual([["Faster spread", "hook"], ["A threshold", "idea"], ["Faster spread, again", "idea"]]);
     expect(world.levels[0]?.observation).toEqual({ text: "The paper's headline does not appear in this world at the values it lists, and its direction does not show here either, so this level tests another of its findings: Faster recovery means fewer infected.", origin: "computed-observation", anchors: [] });
     expect(world.ownNumbers.statements.at(-1)?.text).toBe(world.levels[0]?.observation?.text);
-    // Its headline is about spread, so the hook, measuring those still well, also fails the spread rule.
-    expect(artifacts.get("dropped")).toEqual([{ level: 1, title: "An epidemic that ends by itself", reasons: [expect.stringMatching(/^its claim holds on/), "level 1, the hook, must measure the spread the headline speaks of: an infected compartment (i), not s"] }]);
+    expect(artifacts.get("dropped")).toEqual([{ level: 1, title: "An epidemic that ends by itself", reasons: [expect.stringMatching(/^its claim holds on/)] }]);
   }, 60_000);
 
   it("asks two planners from different vendors and keeps the better level for each slot, recording each level's planner (ADR-0043)", async () => {
@@ -345,12 +345,12 @@ describe("[R10] [R11] the controller", () => {
     expect(undecided.states).not.toContain("building");
   }, 60_000);
 
-  it("reads a plan that names things as the paper writes them, β and S, as the model's ids", async () => {
-    const asPaper = { ...good(), levels: [planLevel(0, { control: { parameter: "β", label: "How easily it spreads", lowEnd: "Hardly", highEnd: "Easily" }, watch: "S", difference: { compartment: "S", summary: "at", at: 150, time: 150, relation: "lower", by: 20 } }), planLevel(1), planLevel(2)] };
+  it("reads a plan that names things as the paper writes them, γ and S, as the model's ids", async () => {
+    const asPaper = { ...good(), levels: [planLevel(0, { control: { parameter: "γ", label: "How fast people recover", lowEnd: "Slowly", highEnd: "Quickly" }, watch: "S", difference: { compartment: "S", summary: "at", at: 150, time: 150, relation: "lower", by: 20 } }), planLevel(1), planLevel(2)] };
     const { outcome, artifacts } = await run(scripted(replies({ planner: [asPaper] })));
     expect(outcome.state).toBe("ready");
     const world = artifacts.get("world") as { levels: { manipulable: { targetVariable: string } }[] };
-    expect(world.levels[0]?.manipulable.targetVariable).toBe("beta");
+    expect(world.levels[0]?.manipulable.targetVariable).toBe("gamma");
   }, 60_000);
 
   it("repairs a world whose hook does not test the paper's headline result (ADR-0037)", async () => {
@@ -374,23 +374,23 @@ describe("[R10] [R11] the controller", () => {
     expect(outcome.state).toBe("ready");
     expect(states).toEqual(["received", "parsing", "planning", "building", "running", "repairing", "building", "running", "checking", "ready"]);
     const replan = client.calls.filter((call) => call.stage === "planner")[1]?.messages.map((message) => message.content).join("\n") ?? "";
-    expect(replan).toMatch(/level 2 \("Faster spread"\): it is definitional: its control gamma appears directly in di\/dt \(.+\) and it measures i's own level or peak/);
+    expect(replan).toMatch(/level 2 \("Faster spread"\): it is definitional: its control beta appears directly in di\/dt \(.+\) and it measures i's own level or peak/);
     expect(client.calls.filter((call) => call.stage === "reviewer")).toHaveLength(1);
     expect(artifacts.get("definitional")).toEqual([[], [], []]);
     // The reviewer was given the equations and each level's direct-effect tag.
     const asked = client.calls.find((call) => call.stage === "reviewer")?.messages.map((message) => message.content).join("\n") ?? "";
     expect(asked).toMatch(/di\/dt = /);
-    expect(asked).toMatch(/Level 2: its control gamma appears directly in di\/dt, the measured compartment's own equation, taking from it \(.+\), but the level measures a system-wide summary, so it is not definitional\./);
+    expect(asked).toMatch(/Level 2: its control beta does not appear in dr\/dt, the measured compartment's own equation: its effect travels through other compartments, so it is not definitional\./);
   }, 60_000);
 
   it("ignores, and records, a reviewer's definitional block on a level the code does not find definitional", async () => {
-    // The plan's own level 2 measures when 100 are first infected at once: a system-wide summary.
+    // The plan's own level 2 measures the recovered with the infection rate, which reaches them through the infected.
     const { outcome, states, artifacts, events } = await run(scripted(replies({ reviewer: [block("definitional", "gamma*i")], "second-reviewer": [block("definitional", "gamma*i")] })), twoReviewers);
     expect(outcome.state).toBe("ready");
     expect(states).not.toContain("repairing");
     const decided = artifacts.get("review-decisions") as { level: number; valid: boolean; stands: boolean; reason: string }[];
     expect(decided[0]).toMatchObject({ level: 2, valid: false, stands: false });
-    expect(decided[0]?.reason).toMatch(/^the code finds the level is not definitional: .*system-wide summary/);
+    expect(decided[0]?.reason).toMatch(/^the code finds the level is not definitional: .*its effect travels through other compartments/);
     expect(events.some((event) => /^level 2: m-reviewer's definitional block does not stand: the code finds the level is not definitional/.test(event.message))).toBe(true);
   }, 60_000);
 

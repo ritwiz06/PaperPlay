@@ -139,7 +139,11 @@ async function design(): Promise<void> {
   // Each paper's reading from the best reader, as the controller would have it.
   const best = rankReaders(results).find((row) => !config.excluded.models.includes(row.model))?.model;
   const readings = Object.fromEntries(results.readings.filter((entry) => entry.model === best && entry.outcome.ok).map((entry) => [entry.paper, (entry.outcome as { value: unknown }).value])) as Record<string, never>;
-  const designed: DesignResults = await runDesignBakeoff(client, config.structuredOutput, CANDIDATES, readings);
+  // A live run reads the case worlds awaiting one too, and then they await it no longer.
+  const designed: DesignResults = await runDesignBakeoff(client, config.structuredOutput, CANDIDATES, readings, { awaiting: true });
+  const casesFile = join(import.meta.dirname, "..", "eval", "bakeoff", "review-cases.json");
+  const cases = JSON.parse(readFileSync(casesFile, "utf8")) as { worlds: Record<string, unknown>[] };
+  writeFileSync(casesFile, `${JSON.stringify({ ...cases, worlds: cases.worlds.map(({ awaitsRun: _, ...world }) => world) }, null, 2)}\n`);
   writeFileSync(join(folder, "design.json"), `${JSON.stringify(designed, null, 2)}\n`);
   const pair = transcriberPair(results, config.excluded);
   const agreed = pair.first && pair.second ? agreement(results, pair.first.model, pair.second.model) : [];

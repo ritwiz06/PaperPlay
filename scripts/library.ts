@@ -66,7 +66,7 @@ function recordedOn(): ReadonlyMap<string, string> {
   return found;
 }
 
-/** The levels a world's own models make definitional (ADR-0044, corrected 2026-10-18). */
+/** The levels a world's own models make definitional (ADR-0044, judged by compartment since 2026-10-20). */
 function definitionalLevels(spec: WorldSpec): number[] {
   return spec.levels.flatMap((level) => {
     if (level.binding.type !== "equations") return [];

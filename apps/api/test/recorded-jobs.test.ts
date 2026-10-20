@@ -21,16 +21,22 @@ interface JobRecord extends JobConfig {
   readonly states?: readonly JobState[];
   readonly world?: string;
   readonly message?: string;
+  readonly recordedOn?: string;
+  readonly note?: string;
 }
 
-const records = readdirSync(join(root, "fixtures", "jobs"))
+const all = readdirSync(join(root, "fixtures", "jobs"))
   .filter((file) => file.endsWith(".json"))
-  .map((file) => ({ file, record: read(`fixtures/jobs/${file}`) as JobRecord }))
-  .filter(({ record }) => record.replays === true);
+  .map((file) => ({ file, record: read(`fixtures/jobs/${file}`) as JobRecord }));
+const records = all.filter(({ record }) => record.replays === true);
 
 describe("[R10] [R11] the recorded live jobs", () => {
-  it("are kept, and at least one replays", () => {
-    expect(records.length).toBeGreaterThan(0);
+  // A rule that changes what a job does ends the replay of every job recorded before it, until a
+  // job is run again under it (ADR-0044's second amendment): no record stops replaying silently.
+  it("are kept, each one replaying or saying in its note why it no longer does, and when none replays, one names the rule that ended it", () => {
+    expect(all.length).toBeGreaterThan(0);
+    for (const { file, record } of all.filter(({ record }) => record.replays !== true)) expect(record.note?.length ?? 0, file).toBeGreaterThan(0);
+    if (records.length === 0) expect(all.some(({ record }) => /Kept as a record since \d{4}-\d{2}-\d{2}: .*rule/.test(record.note ?? ""))).toBe(true);
   });
 
   for (const { file, record } of records) {

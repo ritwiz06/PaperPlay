@@ -35,35 +35,32 @@ const model = {
 const total = { summary: "total", at: null, time: 50 } as const;
 const peak = { summary: "peak", at: null, time: 50 } as const;
 
-describe("[R10] the direct-effect tag, and what is definitional (corrected 2026-10-18)", () => {
+describe("[R10] the direct-effect tag, and what is definitional (judged by compartment, 2026-10-20)", () => {
   it("says whether a control appears in the measured compartment's own equation, and with which sign", () => {
-    expect(directEffectOf(model, "delta", "cq", total)).toMatchObject({ direct: true, signs: ["+"], systemWide: true, definitional: false });
+    expect(directEffectOf(model, "delta", "cq", total)).toMatchObject({ direct: true, signs: ["+"], systemWide: false, definitional: true });
     expect(directEffectOf(model, "rho", "cq", total)).toMatchObject({ direct: true, signs: ["−"] });
     // theta takes from what delta brings: in the expansion it appears with the opposite sign.
     expect(directEffectOf(model, "theta", "cq", total)).toMatchObject({ direct: true, signs: ["−"] });
     expect(directEffectOf(model, "beta3", "cq", peak)).toMatchObject({ direct: false, signs: [], terms: [], definitional: false });
   });
 
-  it("calls a level definitional when its control is direct and it measures that compartment's own level or peak, and no other", () => {
-    expect(directEffectOf(model, "delta", "cq", peak).definitional).toBe(true);
-    expect(directEffectOf(model, "delta", "cq", { summary: "at", at: 20, time: 50 }).definitional).toBe(true);
-    expect(directEffectOf(model, "delta", "cq", { summary: "mean", at: null, time: 50 }).definitional).toBe(true);
-    // Through other compartments, or on a system-wide summary: not definitional.
+  it("calls a level definitional when its control feeds the measured compartment directly, whatever it measures of it", () => {
+    for (const summary of [peak, total, { summary: "at", at: 20, time: 50 }, { summary: "at", at: 50, time: 50 }, { summary: "first-reach", at: 0.01, time: 50 }, { summary: "mean", at: null, time: 50 }, { summary: "lowest", at: 10, time: 50 }] as const) {
+      expect(directEffectOf(model, "delta", "cq", summary).definitional, summary.summary).toBe(true);
+    }
+    // Through other compartments: not definitional.
     expect(directEffectOf(model, "beta3", "cq", peak).definitional).toBe(false);
-    expect(directEffectOf(model, "delta", "cq", total).definitional).toBe(false);
     expect(describeDirectEffect(directEffectOf(model, "beta3", "cq", total))).toBe("its control beta3 does not appear in dcq/dt, the measured compartment's own equation: its effect travels through other compartments, so it is not definitional");
+    // A level or a peak keeps the words reviewers have read since 2026-10-18; another summary is named.
     expect(describeDirectEffect(directEffectOf(model, "delta", "cq", peak))).toMatch(/^its control delta appears directly in dcq\/dt, the measured compartment's own equation, adding to it \(.+\), and the level measures that compartment's own level or peak, so it is definitional: its effect follows from the model's definition$/);
-    expect(definitionalProblem(directEffectOf(model, "delta", "cq", peak))).toMatch(/^it is definitional: its control delta appears directly in dcq\/dt .+ and it measures cq's own level or peak/);
+    expect(describeDirectEffect(directEffectOf(model, "delta", "cq", { summary: "first-reach", at: 0.01, time: 50 }))).toMatch(/, and the level measures that compartment, by its time to a level, so it is definitional: whatever its summary, the effect follows from the model's definition$/);
+    expect(definitionalProblem(directEffectOf(model, "delta", "cq", total))).toMatch(/^it is definitional: its control delta appears directly in dcq\/dt .+ and it measures cq's total over time, so its effect follows from the model's definition, whatever the summary; measure a compartment the effect must travel through others to reach$/);
   });
 
-  it("calls a time to a level, a total and a final size system-wide, and a level at a moment, a peak, a lowest value or a mean not", () => {
-    expect(isSystemWide({ summary: "first-reach", at: 0.1, time: 50 })).toBe(true);
-    expect(isSystemWide({ summary: "total", at: null, time: 50 })).toBe(true);
-    expect(isSystemWide({ summary: "at", at: 50, time: 50 })).toBe(true);
-    expect(isSystemWide({ summary: "at", at: 20, time: 50 })).toBe(false);
-    expect(isSystemWide({ summary: "peak", at: null, time: 50 })).toBe(false);
-    expect(isSystemWide({ summary: "lowest", at: 10, time: 50 })).toBe(false);
-    expect(isSystemWide({ summary: "mean", at: null, time: 50 })).toBe(false);
+  it("calls only a measure across compartments, or of a quantity derived from them, system-wide; one compartment never is", () => {
+    expect(isSystemWide({ compartments: ["cq"] })).toBe(false);
+    expect(isSystemWide({ compartments: ["i", "c", "cq"] })).toBe(true);
+    expect(isSystemWide({ compartments: [] })).toBe(true);
   });
 });
 
@@ -84,7 +81,7 @@ describe("[R10] a named term", () => {
 
 describe("[R10] which reviewers' blocks stand", () => {
   // Level 1 measures cq's total, system-wide; level 2 its peak, definitional.
-  const plan = { levels: [{ control: { parameter: "delta" }, difference: { compartment: "cq", summary: "total", at: null, time: 50 } }, { control: { parameter: "delta" }, difference: { compartment: "cq", summary: "peak", at: null, time: 50 } }] };
+  const plan = { levels: [{ control: { parameter: "beta3" }, difference: { compartment: "cq", summary: "total", at: null, time: 50 } }, { control: { parameter: "delta" }, difference: { compartment: "cq", summary: "peak", at: null, time: 50 } }] };
   const tags = plan.levels.map((level) => directEffectOf(model, level.control.parameter, level.difference.compartment, level.difference));
   const block = (level: number, kind: "definitional" | "unsupported", term: string | null = null, claim: ModelClaim | null = null) => ({ level, severity: "blocking" as const, kind, term, claim });
 
@@ -104,7 +101,7 @@ describe("[R10] which reviewers' blocks stand", () => {
     expect(decided.standing("definitional")).toEqual([]);
     expect(decided.records[0]).toMatchObject({ level: 2, valid: false, reason: "it names no term; a definitional block must name a term of dcq/dt holding the control" });
     expect(decided.records[1]).toMatchObject({ level: 1, valid: false });
-    expect(decided.records[1]?.reason).toMatch(/^the code finds the level is not definitional: .*but the level measures a system-wide summary/);
+    expect(decided.records[1]?.reason).toMatch(/^the code finds the level is not definitional: its control beta3 does not appear in dcq\/dt.*travels through other compartments/);
   });
 
   it("lets one reviewer's unsupported block stand, unless the model refutes what it claims", () => {

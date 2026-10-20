@@ -213,3 +213,30 @@ needed; the two fixes below came from the first two.
 - The controller's rule problems come before review, so a job's level loop repairs definitional
   levels and the spread hook as it repairs the level rule's.
 
+## Second amendment, 2026-10-20: judged by compartment
+
+The owner closed the loophole of the first amendment: a level is definitional by the compartment it
+measures, not by its summary.
+
+1. **The rule.** A level whose control appears directly in the measured compartment's own equation
+   is definitional whatever it measures of that compartment: its level, peak, time to a level, total
+   over time, or value at the end. Only a system-wide measure escapes, one across compartments (a
+   final size or a total ever infected over several compartments) or of a quantity derived from them
+   (a threshold crossing such as R0 = 1). A level of a generated world measures one compartment, so
+   the tag alone decides; one compartment's value at the run's end is that compartment's level, not
+   a final size, which is my reading for the owner to correct.
+2. **The words.** A level or a peak keeps the words reviewers have read since 2026-10-18, so their
+   recorded reviews replay; any other summary is named ("by its time to a level"). The planner is
+   told to measure a compartment the effect must travel through others to reach.
+3. **The cases.** The planted tuberculosis world's level 4 (α on the recovered at the run's end) is
+   now a definitional fault, and hepatitis C's regenerated world joins, its hook (δ, time until the
+   quitters reach 1%) and level 3 (ρ, the same) definitional faults, level 2 (β3) clean. Both worlds'
+   prompts are new, so each `awaitsRun`: replays and rescoring leave them out until the next live
+   `design` run reads them and clears it. Rescored without them, the reviewers rank as before:
+   inkling-small and qwen38-27b stay.
+4. **The worlds.** Hepatitis C's regenerated world has levels 1 and 3 definitional, the tuberculosis
+   worlds levels 1 and 3, as the library now says; none is regenerated in this session, two jobs run
+   in the background after the land. The job that made the hepatitis C world no longer replays, and
+   no recorded job does until one is run again under this rule; the recorded jobs' test now holds
+   that each record replays or says why, and that one names the rule that ended the replays.
+
