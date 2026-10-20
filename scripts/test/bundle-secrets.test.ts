@@ -12,19 +12,21 @@ const root = join(import.meta.dirname, "..", "..");
 const PLANTED = `sk_${"Zq7".repeat(9)}x`;
 
 describe("[R09] the bundle secret check", () => {
-  it("finds a key in the gateway's format, another vendor's key, a key variable's name and the gateway's host", () => {
+  it("finds a key in the gateway's format, another vendor's key, a key variable's name, and the gateway's host from apps/api/.env", () => {
     const files = [
       { name: "assets/a.js", text: `const k="${PLANTED}";` },
       { name: "assets/b.js", text: `fetch("x",{headers:{a:"sk-ant-${"q".repeat(30)}"}})` },
       { name: "assets/c.js", text: "process.env.VOYAGER_API_KEY" },
-      { name: "assets/d.js", text: 'fetch("https://openai.rc.asu.edu/v1/chat/completions")' },
     ];
     expect(findSecrets(files).map((finding) => [finding.file, RULES.findIndex((rule) => rule.rule === finding.rule)])).toEqual([
       ["assets/a.js", 0],
       ["assets/b.js", 1],
       ["assets/c.js", 2],
-      ["assets/d.js", 3],
     ]);
+    // The address lives in apps/api/.env only; its host is what the check looks for.
+    const values = secretValues("VOYAGER_BASE_URL=https://gateway.example/v1\n");
+    expect(values).toEqual([{ name: "VOYAGER_BASE_URL", value: "gateway.example" }]);
+    expect(findSecrets([{ name: "assets/d.js", text: 'fetch("https://gateway.example/v1/chat/completions")' }], values)).toEqual([{ file: "assets/d.js", rule: "the value of VOYAGER_BASE_URL from apps/api/.env" }]);
   });
 
   it("finds a value from apps/api/.env however it is written, and names the variable, never the value", () => {

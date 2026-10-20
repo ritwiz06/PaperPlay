@@ -11,6 +11,8 @@ import { voyagerClient, type VoyagerClient } from "./voyager.ts";
 
 export const ENV_FILE = join(import.meta.dirname, "..", "..", ".env");
 export const KEY_NAME = "VOYAGER_API_KEY";
+/** The gateway's address, an OpenAI-compatible endpoint: kept beside the key, out of tracked files. */
+export const BASE_URL_NAME = "VOYAGER_BASE_URL";
 export const LIVE_SCRIPT = "pipeline:live";
 
 /** Why a live call may not be made here, or null when it may. */
@@ -38,12 +40,20 @@ export function readKey(file: string = ENV_FILE): string {
   return value;
 }
 
-/** The gateway's client with the key and the configuration, for the live command alone. */
+/** The gateway's address, from apps/api/.env; a missing or malformed one is named, as the key is. */
+export function readBaseUrl(file: string = ENV_FILE): string {
+  const value = envValue(BASE_URL_NAME, file);
+  if (value.length === 0) throw new Error(`${file} does not set ${BASE_URL_NAME}, the gateway's address`);
+  if (!URL.canParse(value)) throw new Error(`${BASE_URL_NAME} in ${file} is not a URL`);
+  return value;
+}
+
+/** The gateway's client with its address, the key and the configuration, for the live command alone. */
 export function liveClient(config: ModelConfig = loadModelConfig()): VoyagerClient {
   const refusal = liveRefusal();
   if (refusal !== null) throw new Error(refusal);
   return voyagerClient({
-    baseUrl: config.baseUrl,
+    baseUrl: readBaseUrl(),
     apiKey: readKey(),
     timeoutMs: config.timeoutMs,
     retries: config.retries,

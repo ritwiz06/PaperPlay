@@ -15,7 +15,7 @@ repository's root; the brief keeps secrets in `apps/api/.env` only.
 
 ## Decision
 
-1. **The provider is Voyager,** at `https://openai.rc.asu.edu/v1`, OpenAI-compatible. Its key is
+1. **The provider is Voyager,** an OpenAI-compatible gateway, its address in `apps/api/.env` as `VOYAGER_BASE_URL` since 2026-10-20 (ADR-0052). Its key is
    `VOYAGER_API_KEY`:
    - it lives only in `apps/api/.env`, mode 600, which `.gitignore` covers. On 2026-10-14 it moved
      there from the repository's root; `apps/api/.env.example` names it with no value;

@@ -23,7 +23,6 @@ export const Excluded = z.strictObject({
 
 export const ModelConfig = z
   .strictObject({
-    baseUrl: z.url(),
     /** Each call's ceiling: a reasoning model streaming a long plan can take many minutes. */
     timeoutMs: z.int().positive().max(1_800_000),
     retries: z.int().min(0).max(6),

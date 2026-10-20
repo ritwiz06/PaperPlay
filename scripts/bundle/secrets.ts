@@ -23,17 +23,17 @@ interface Rule {
   readonly pattern: RegExp;
 }
 
-/** Key formats, key variables and the gateway, as patterns. */
+/** Key formats and key variables, as patterns; the gateway's host comes from apps/api/.env, never from tracked files. */
 export const RULES: readonly Rule[] = Object.freeze([
   { rule: "a key in the Voyager gateway's format (sk_ followed by 20 or more characters)", pattern: /sk_[A-Za-z0-9_-]{20,}/ },
   { rule: "a key in another vendor's format (sk- followed by 20 or more characters)", pattern: /sk-[A-Za-z0-9_-]{20,}/ },
   { rule: "the name of a key variable (VOYAGER_API_KEY, ANTHROPIC_API_KEY or OPENAI_API_KEY)", pattern: /\b(VOYAGER|ANTHROPIC|OPENAI)_API_KEY\b/ },
-  { rule: "the model gateway's host (openai.rc.asu.edu), which only apps/api may call", pattern: /openai\.rc\.asu\.edu/ },
 ]);
 
 /**
  * Values in an env file worth guarding: those of variables named as keys, secrets or tokens, long
- * enough to be one, and the owner's contact address, whatever its length (ADR-0039).
+ * enough to be one, the owner's contact address, whatever its length (ADR-0039), and the host of a
+ * base URL, the gateway's (ADR-0052).
  */
 export function secretValues(env: string): { readonly name: string; readonly value: string }[] {
   return env.split(/\r?\n/).flatMap((line) => {
@@ -41,6 +41,8 @@ export function secretValues(env: string): { readonly name: string; readonly val
     if (!match) return [];
     const [, name = "", raw = ""] = match;
     const value = raw.trim().replace(/^(["'])(.*)\1$/, "$2");
+    // The gateway's address is guarded by its host, which only apps/api may call.
+    if (/BASE_URL$/.test(name) && URL.canParse(value)) return [{ name, value: new URL(value).host }];
     return (/(KEY|SECRET|TOKEN|PASSWORD)/.test(name) && value.length >= 12) || (/(EMAIL|CONTACT)/.test(name) && value.length > 0) ? [{ name, value }] : [];
   });
 }

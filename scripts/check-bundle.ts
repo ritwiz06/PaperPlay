@@ -35,4 +35,4 @@ if (findings.length > 0) {
   for (const finding of findings) console.error(`  ${finding.file}: ${finding.rule}`);
   process.exit(1);
 }
-console.log(`check-bundle: ${files.length} files clean of keys, key variables and the model gateway${values.length > 0 ? `, and of ${values.length} value${values.length === 1 ? "" : "s"} from apps/api/.env` : ""}.`);
+console.log(`check-bundle: ${files.length} files clean of keys and key variables${values.length > 0 ? `, and of ${values.length} value${values.length === 1 ? "" : "s"} from apps/api/.env` : ""}.`);

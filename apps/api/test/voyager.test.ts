@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { PLANNER_MAX_TOKENS, REVIEWER_MAX_TOKENS, TRANSCRIBER_MAX_TOKENS } from "@paperplay/pipeline/stages";
 import { loadModelConfig } from "../src/models/config.ts";
-import { liveClient, liveRefusal, readKey } from "../src/models/live.ts";
+import { liveClient, liveRefusal, readBaseUrl, readKey } from "../src/models/live.ts";
 import { voyagerClient, type VoyagerOptions } from "../src/models/voyager.ts";
 
 // The Voyager gateway's client (ADR-0030), against a fake network: it never reaches the real one.
@@ -161,9 +161,21 @@ describe("[R09] the live client", () => {
     }
   });
 
-  it("is configured from apps/api/models.json: the gateway, the limits, a budget and a model per stage", () => {
+  it("is configured from apps/api/models.json: the limits, a budget and a model per stage, and the gateway's address from apps/api/.env alone", () => {
     const config = loadModelConfig();
-    expect(config.baseUrl).toBe("https://openai.rc.asu.edu/v1");
+    expect("baseUrl" in config).toBe(false);
+    const folder = mkdtempSync(join(tmpdir(), "paperplay-env-"));
+    try {
+      const env = join(folder, ".env");
+      writeFileSync(env, "VOYAGER_BASE_URL=https://gateway.example/v1\n");
+      expect(readBaseUrl(env)).toBe("https://gateway.example/v1");
+      writeFileSync(env, "VOYAGER_API_KEY=x\n");
+      expect(() => readBaseUrl(env)).toThrow(`${env} does not set VOYAGER_BASE_URL, the gateway's address`);
+      writeFileSync(env, "VOYAGER_BASE_URL=not a url\n");
+      expect(() => readBaseUrl(env)).toThrow(/is not a URL/);
+    } finally {
+      rmSync(folder, { recursive: true, force: true });
+    }
     expect(Object.keys(config.stages).sort()).toEqual(["explainer", "planner", "reader", "reviewer", "router", "second-planner", "second-reviewer", "second-transcriber", "transcriber"]);
     expect(config.jobTokenBudget).toBeGreaterThan(0);
   });

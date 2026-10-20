@@ -1,5 +1,4 @@
 {
-  "baseUrl": "https://openai.rc.asu.edu/v1",
   "timeoutMs": 1800000,
   "retries": 3,
   "backoffMs": 2000,
