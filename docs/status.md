@@ -8,7 +8,7 @@ A snapshot, rewritten every session and kept under 80 lines; history is in
 
 - **Gate:** G2 Verified authored world is current, tagged `v0.2.0` at `b37c7dc`; G1 is `v0.1.0`.
   Next: G3, whose gate is now the attention family's first generated world, BERT (ADR-0052).
-- **Working commit:** `341fb5e` on `main`.
+- **Working commit:** `063463a`, the stack's last code commit, landed on `main` with this status.
 - **Purpose:** teaching the 34 AI and ML papers of `docs/papers/corpus.md`; biomedical papers later,
   the compartment family kept (ADR-0052). The plan is `docs/design/ai-papers.md`.
 - **Definitional** is judged by compartment since 2026-10-20 (ADR-0044's second amendment); no
@@ -51,7 +51,7 @@ passed; CI green on the same commit. `npm run land` runs it again before it push
 
 ## Next three actions
 
-1. Review the background runs: the two regenerations, and the router on the 35 papers against the
+1. Review the background runs: the two regenerations, and the router on the 34 papers against the
    plan's families.
 2. The attention family: Attention Is All You Need, hand-authored, as its reference world.
 3. BERT as the family's first generated world, G3's gate.
