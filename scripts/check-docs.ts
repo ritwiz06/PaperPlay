@@ -20,6 +20,16 @@ const repo: RepoView = {
   list: (dir) => (existsSync(at(dir)) ? readdirSync(at(dir)) : []),
   isDirectory: (path) => existsSync(at(path)) && statSync(at(path)).isDirectory(),
   commitExists: (sha) => spawnSync("git", ["cat-file", "-e", `${sha}^{commit}`], { cwd: root, stdio: "ignore" }).status === 0,
+  isCurrent: (sha) => {
+    const git = (args: string[]) => spawnSync("git", args, { cwd: root, encoding: "utf8" });
+    const full = git(["rev-parse", "--verify", "--quiet", `${sha}^{commit}`]).stdout.trim();
+    // Main's tip, as origin knows it, or the local main where there is no origin (a fresh clone in CI has it).
+    const main = (git(["rev-parse", "--verify", "--quiet", "origin/main"]).stdout || git(["rev-parse", "--verify", "--quiet", "main"]).stdout).trim();
+    if (!full || !main) return false;
+    if (full === main) return true;
+    // On the current branch: reachable from HEAD, and not already in main.
+    return git(["merge-base", "--is-ancestor", full, "HEAD"]).status === 0 && git(["merge-base", "--is-ancestor", full, main]).status !== 0;
+  },
 };
 
 const problems = checkDocs(repo);

@@ -11,7 +11,12 @@ export interface RepoView {
   list(dir: string): string[];
   isDirectory(path: string): boolean;
   commitExists(sha: string): boolean;
+  /** Whether a commit is main's tip, or a commit on the current branch beyond it. */
+  isCurrent(sha: string): boolean;
 }
+
+/** status.md is a snapshot that fits on a screen; history belongs in progress.md and the session logs. */
+export const STATUS_MAX_LINES = 80;
 
 /** Every document the system requires, with the second-level headings each must carry. */
 export const REQUIRED_DOCS: Readonly<Record<string, readonly string[]>> = {
@@ -137,6 +142,9 @@ export function checkDocs(repo: RepoView): string[] {
     const working = /\*\*Working commit:\*\*\s*`([0-9a-f]{7,40})`/.exec(status)?.[1];
     if (!working) problems.push("docs/status.md has no line naming the working commit (- **Working commit:** `<sha>`)");
     else if (!repo.commitExists(working)) problems.push(`docs/status.md names working commit ${working}, which does not exist in git`);
+    else if (!repo.isCurrent(working)) problems.push(`docs/status.md names working commit ${working}, which is neither main's tip nor on the current branch: rewrite status.md for this session`);
+    const lines = status.trimEnd().split("\n").length;
+    if (lines > STATUS_MAX_LINES) problems.push(`docs/status.md is ${lines} lines; a snapshot fits in ${STATUS_MAX_LINES}, and history belongs in progress.md and the session logs`);
   }
 
   const architecture = repo.read("docs/architecture.md");

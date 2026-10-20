@@ -41,7 +41,7 @@ function validFiles(): Map<string, string> {
   ]);
 }
 
-function repoOf(files: Map<string, string>, commits: ReadonlySet<string> = COMMITS): RepoView {
+function repoOf(files: Map<string, string>, commits: ReadonlySet<string> = COMMITS, current: ReadonlySet<string> = new Set(["abc1234"])): RepoView {
   const directories = new Set<string>();
   for (const path of files.keys()) {
     const parts = path.split("/");
@@ -60,6 +60,7 @@ function repoOf(files: Map<string, string>, commits: ReadonlySet<string> = COMMI
     },
     isDirectory: (path) => directories.has(path),
     commitExists: (sha) => commits.has(sha),
+    isCurrent: (sha) => current.has(sha),
   };
 }
 
@@ -108,6 +109,18 @@ describe("documentation checker", () => {
   it("fails when status.md names a working commit that git does not have", () => {
     expect(plant((files) => replaceIn(files, "docs/status.md", "`abc1234`", "`fff9999`"))).toEqual([
       "docs/status.md names working commit fff9999, which does not exist in git",
+    ]);
+  });
+
+  it("fails when status.md names a working commit that is neither main's tip nor on the current branch", () => {
+    expect(plant((files) => replaceIn(files, "docs/status.md", "`abc1234`", "`def5678`"))).toEqual([
+      "docs/status.md names working commit def5678, which is neither main's tip nor on the current branch: rewrite status.md for this session",
+    ]);
+  });
+
+  it("fails when status.md runs past 80 lines, a snapshot no longer", () => {
+    expect(plant((files) => replaceIn(files, "docs/status.md", "## Recommendations\n", `## Recommendations\n${"- a line of history\n".repeat(80)}`))).toEqual([
+      expect.stringMatching(/^docs\/status\.md is \d+ lines; a snapshot fits in 80, and history belongs in progress\.md and the session logs$/),
     ]);
   });
 
