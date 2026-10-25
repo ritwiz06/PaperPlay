@@ -59,7 +59,7 @@ export function horizonOf(model: ModelSpec): number {
 }
 
 /** Each compartment's highest value and its value at the end of `time`, at `params`. */
-function summaryOf(model: ModelSpec, params: Readonly<Record<string, number>>, time: number): Map<string, { readonly peak: number; readonly end: number }> {
+export function summaryOf(model: ModelSpec, params: Readonly<Record<string, number>>, time: number): Map<string, { readonly peak: number; readonly end: number }> {
   const primitive = compartmentModel(model);
   const dt = model.solver.dt;
   const steps = Math.round(time / dt);

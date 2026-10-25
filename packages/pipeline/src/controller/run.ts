@@ -19,10 +19,12 @@ import { decideReviews, definitionalProblem, describeDirectEffect, directEffectO
 import { hookSpreadProblem } from "../rule/spread.ts";
 import { checkFindings } from "../rule/findings.ts";
 import { visibilityOf } from "../rule/visibility.ts";
-import { explainLevel, reword, type ExplainedLevel, type Explanation } from "../stages/explainer.ts";
+import { explainLevel, reword, writeLevel, writeWorld, type ExplainedLevel, type Explanation, type WrittenLevel } from "../stages/explainer.ts";
+import { CANDIDATE_GENERATORS, CandidatePicks, judgeInParallel, pickerMessages, pickLevels, planFromPicks, shortList, validatePicks, type LevelCandidate } from "../candidates/index.ts";
+import { PICKER_MAX_TOKENS } from "../candidates/picker.ts";
 import { plan as planWorld, Plan, PLANNER_MAX_TOKENS, plannerMessages, type PlanLevel } from "../stages/planner.ts";
 import { read } from "../stages/reader.ts";
-import { equationsOf, review } from "../stages/reviewer.ts";
+import { equationsOf, review, type Review } from "../stages/reviewer.ts";
 import { route } from "../stages/router.ts";
 import { promptSource } from "../stages/source.ts";
 import { TRANSCRIBER_MAX_TOKENS, transcribe, transcriberMessages } from "../stages/transcriber.ts";
@@ -56,6 +58,12 @@ export interface JobConfig {
   /** A model per stage; the second planner and second reviewer may be absent, as in a job recorded before them (ADR-0043, ADR-0044). */
   readonly stages: Readonly<Partial<Record<Stage, string | null>>>;
   readonly structuredOutput: Readonly<Record<string, boolean>>;
+  /**
+   * "candidates": the family's candidate levels made and judged in code, a compact planner choosing
+   * among them, and the explainer writing every word, each level reviewed as soon as it is written
+   * (ADR-0055). Left out, the planner writes the whole plan, as before 2026-10-25.
+   */
+  readonly planning?: "candidates";
 }
 
 export interface JobSink {
@@ -89,6 +97,22 @@ export interface JobOutcome {
   /** The world, when the job is ready. */
   readonly world: Record<string, unknown> | null;
 }
+
+/** A planner's picks the rules refuse (ADR-0055): who chose them, and why. */
+class PicksRefused extends Error {
+  readonly who: string;
+  readonly picks: CandidatePicks;
+  readonly problems: readonly string[];
+  constructor(who: string, picks: CandidatePicks, problems: readonly string[]) {
+    super(`${who}'s picks: ${problems.slice(0, 3).join("; ")}`);
+    this.who = who;
+    this.picks = picks;
+    this.problems = problems;
+  }
+}
+
+/** A level's facts, without its words: what code chose, so a repair's unchanged levels keep their words (ADR-0055). */
+const factsOf = (level: PlanLevel): string => JSON.stringify([level.control.parameter, level.watch, level.whatIf.parameter, level.whatIf.value, level.difference, level.finding]);
 
 /** How a job ends early, and why. */
 class Stop extends Error {
@@ -127,9 +151,9 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
   const began = clock();
   const left = (): number => (input.deadline ? input.deadline.jobMs - (clock() - began) : Number.POSITIVE_INFINITY);
   const took = new Map<Stage, number>();
-  const timed = async <T>(stage: Stage, call: (client: ModelClient) => Promise<T>): Promise<T> => {
+  const timed = async <T>(stage: Stage, call: (client: ModelClient) => Promise<T>, cancel?: AbortSignal): Promise<T> => {
     const limit = Math.min(input.deadline?.stageMs[stage] ?? Number.POSITIVE_INFINITY, left());
-    if (!Number.isFinite(limit)) return call(input.client);
+    if (!Number.isFinite(limit) && !cancel) return call(input.client);
     if (limit <= 0) throw new ModelError("timeout", `the job's time ran out before the ${stage} call`);
     const controller = new AbortController();
     const client: ModelClient = { complete: (request) => input.client.complete({ ...request, signal: controller.signal }) };
@@ -139,10 +163,20 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       const result = await Promise.race([
         call(client),
         new Promise<never>((_, reject) => {
-          timer = setTimeout(() => {
-            controller.abort();
-            reject(new ModelError("timeout", `the ${stage} call ran past its ${Math.round(limit / 1000)} s`));
-          }, limit);
+          if (Number.isFinite(limit))
+            timer = setTimeout(() => {
+              controller.abort();
+              reject(new ModelError("timeout", `the ${stage} call ran past its ${Math.round(limit / 1000)} s`));
+            }, limit);
+          // A call no longer needed, such as the slower planner's once the other's picks are used, is ended.
+          cancel?.addEventListener(
+            "abort",
+            () => {
+              controller.abort();
+              reject(new ModelError("timeout", `the ${stage} call was no longer needed`));
+            },
+            { once: true },
+          );
         }),
       ]);
       took.set(stage, Math.max(took.get(stage) ?? 0, clock() - started));
@@ -350,10 +384,66 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       return { problems, holds: all.map((index) => swept[rest.indexOf(index)]?.holds ?? 0) };
     };
 
+    const secondPlannerModel = input.config.stages["second-planner"] ?? null;
+    const generator = input.config.planning === "candidates" ? CANDIDATE_GENERATORS[routed.value.family] : undefined;
+    const candidateMode = generator !== undefined;
+    let plan: Plan;
+    /** Which planner each level came from, in step with the plan (ADR-0043). */
+    let sources: string[];
+    /** The candidates the planner chose among (ADR-0055). */
+    let shown: LevelCandidate[] = [];
+    /** The finding the hook tests when the planner used the headline's confirmed mismatch (ADR-0040). */
+    let pickedHookFinding = 0;
+    const pickInput = () => ({ title, reading: reading.value, candidates: shown, ownNumbers: forPlanner });
+    const pickChecks = { reading: reading.value, model, source: text, horizon, ownNumbers: forPlanner };
+    if (generator) {
+      // Planning in code (ADR-0055): every candidate level the family can make, judged by the rules
+      // in parallel before any planner call; the planners only choose among those that pass.
+      say("candidates", "generating the family's candidate levels in code, and judging each by the rules");
+      const generated = generator(model, horizon);
+      const judged = await judgeInParallel({ source: text, register, reading: reading.value, model, routingReason: routed.value.reason, ownNumbers, horizon }, generated);
+      shown = shortList(judged.passing);
+      sink.artifact("candidates", { generated: generated.length, passing: judged.passing.map((candidate) => ({ id: candidate.id, brief: candidate.brief, holds: candidate.holds ?? 0 })), refused: judged.refused, shown: shown.map((candidate) => candidate.id) });
+      say("candidates", `${generated.length} candidate levels made in code; ${judged.passing.length} pass every rule; the planners choose among ${shown.length}`);
+      if (judged.passing.length < 3) throw new Stop("failed", `only ${judged.passing.length} of ${generated.length} candidate levels pass the rules, and a world needs three: ${judged.refused.slice(0, 4).map((entry) => `${entry.id}, ${entry.why}`).join("; ")}`);
+      // Both planners at once; the first whose picks the rules accept is used, and the other is ended.
+      const done = new AbortController();
+      const attempt = async (who: string, stage: "planner" | "second-planner") => {
+        const picked = await timed(stage, (client) => pickLevels(client, who, pickInput(), { stage, structuredOutput: structured(who) }), done.signal);
+        const checked = validatePicks(picked.value, shown, pickChecks);
+        if (checked.problems.length > 0) throw new PicksRefused(who, picked.value, checked.problems);
+        return { who, picks: picked.value, hookFinding: checked.hookFinding };
+      };
+      let chosen: { readonly who: string; readonly picks: CandidatePicks; readonly hookFinding: number };
+      try {
+        chosen = await Promise.any([attempt(plannerModel, "planner"), ...(secondPlannerModel === null ? [] : [attempt(secondPlannerModel, "second-planner")])]);
+      } catch (error) {
+        const errors: unknown[] = error instanceof AggregateError ? error.errors : [error];
+        const words = errors.map((entry) => (entry instanceof Error ? entry.message.split("\n")[0] ?? "" : String(entry)));
+        const refused = errors.find((entry): entry is PicksRefused => entry instanceof PicksRefused && entry.who === plannerModel) ?? errors.find((entry): entry is PicksRefused => entry instanceof PicksRefused);
+        if (!refused || repairs >= MAX_REPAIRS || left() < expected(["planner"])) throw new Stop("failed", `no planner chose levels the rules accept: ${words.join("; ")}`);
+        // One scoped repair: the planner whose picks came back asked again, with what was wrong.
+        repairs++;
+        move("repairing", "planning", `no planner chose levels the rules accept (${words.join("; ")}); asking ${refused.who} to choose again`);
+        const again = await timed("planner", (client) =>
+          completeStructured(client, { stage: "planner", model: refused.who, messages: [...pickerMessages(pickInput()), { role: "assistant", content: JSON.stringify(refused.picks) }, { role: "user", content: `These problems were found:\n${refused.problems.map((line) => `- ${line}`).join("\n")}\nChoose again.` }], temperature: 0, maxTokens: PICKER_MAX_TOKENS }, CandidatePicks, { name: "picks", structuredOutput: structured(refused.who), moreRoom: true }),
+        );
+        const checked = validatePicks(again.value, shown, pickChecks);
+        if (checked.problems.length > 0) throw new Stop("failed", `the planner's picks still break the rules after a repair: ${checked.problems.slice(0, 4).join("; ")}`);
+        move("planning", "planning", "the planner's new picks meet the rules");
+        chosen = { who: refused.who, picks: again.value, hookFinding: checked.hookFinding };
+      } finally {
+        done.abort();
+      }
+      plan = planFromPicks(chosen.picks, shown, reading.value, horizon);
+      sources = plan.levels.map(() => chosen.who);
+      pickedHookFinding = chosen.hookFinding;
+      sink.artifact("plan-choice", { planner: chosen.who, picks: chosen.picks.levels });
+      say("planning", `${chosen.who} chose ${chosen.picks.levels.map((pick, index) => `level ${index + 1} ${pick.candidate} on finding ${pick.finding}`).join(", ")}`);
+    } else {
     // Two planners from different vendors (ADR-0043): each plans the world; the deterministic rules
     // judge every level of both, and each slot keeps the better level, the first planner's on a tie.
     // Each planner within its stage's time (R13): a plan in hand never waits on the other longer.
-    const secondPlannerModel = input.config.stages["second-planner"] ?? null;
     const [firstSettled, secondSettled] = await Promise.all([
       settle(timed("planner", (client) => planWorld(client, plannerModel, plannerInput))),
       secondPlannerModel === null ? Promise.resolve(null) : settle(timed("second-planner", (client) => planWorld(client, secondPlannerModel, plannerInput, { stage: "second-planner" }))),
@@ -366,9 +456,8 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       if (secondPlan === null) throw firstSettled.error instanceof Error ? firstSettled.error : new Error("the planner's call failed");
       say("planning", `the first planner, ${plannerModel}, gave no plan ${why(firstSettled.error)}; the second planner's plan is used alone`);
     }
-    let plan: Plan = (firstPlan ?? secondPlan)?.value ?? ({} as Plan);
-    /** Which planner each level came from, in step with the plan (ADR-0043). */
-    let sources: string[] = plan.levels.map(() => (firstPlan ? plannerModel : (secondPlannerModel ?? plannerModel)));
+    plan = (firstPlan ?? secondPlan)?.value ?? ({} as Plan);
+    sources = plan.levels.map(() => (firstPlan ? plannerModel : (secondPlannerModel ?? plannerModel)));
     if (firstPlan && secondPlan && secondPlannerModel !== null) {
       const a = firstPlan.value;
       const b = secondPlan.value;
@@ -396,23 +485,77 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       const passingOf = (judged: typeof ja, candidate: Plan) => `${judged.problems.filter((problems, index) => problems.length === 0 && candidate.levels[index]).length} of ${candidate.levels.length}`;
       say("planning", `two planners planned: ${plannerModel}, ${passingOf(ja, a)} levels meeting the rules; ${secondPlannerModel}, ${passingOf(jb, b)}; kept ${sources.map((source, index) => `level ${index + 1} from ${source}`).join(", ")}`);
     }
+    }
     // Read once (R13): the explainer and the reviewers are given the sections the reader named.
     const passages = promptSource(text, { maxCharacters: 60_000, sections: reading.value.sections }).block;
     const modelWords = `${describeBehaviour(model, horizon).split("\n").slice(0, 3).join("\n")}`;
     const explainerModel = modelFor("explainer");
     let explanation: Explanation = { levels: [] };
+    const reviewerModel = modelFor("reviewer");
+    const secondReviewerModel = input.config.stages["second-reviewer"] ?? null;
+
+    /** A level's review by each reviewer, and the number the level had when they read it. */
+    interface LevelReview {
+      readonly first: Review | null;
+      readonly second: Review | null;
+    }
+    /** Each level's review, by its words and facts, so a level read once is not read again (ADR-0055). */
+    const reviews = new Map<string, Promise<LevelReview>>();
+    /**
+     * One level read by both reviewers, started as soon as its words are written rather than after
+     * every level's (ADR-0055). Each reviewer within its stage's time; one that does not answer, or
+     * answers unreadably, leaves the other's review.
+     */
+    const reviewLevel = (level: PlanLevel, words: ExplainedLevel, index: number): Promise<LevelReview> => {
+      const key = JSON.stringify([level, words]);
+      const known = reviews.get(key);
+      if (known) return known;
+      const [named] = namedInModel({ ...plan, levels: [level] }, model).levels;
+      const tag = directEffectOf(model, named?.control.parameter ?? level.control.parameter, named?.difference.compartment ?? level.difference.compartment, level.difference);
+      const holds = shown.find((candidate) => factsOf(candidate.level) === factsOf({ ...level, finding: null }))?.holds;
+      const one = { title, world: `Level ${index + 1}, ${level.title}: ${level.goal} Control: ${level.control.label}. What if: ${level.whatIf.prompt} It states: ${level.effect}`, checks: ["The builder: passed, the family's checks included.", `The level rule: level ${index + 1} holds on ${holds ?? "at least 16"} of 20.`, "The visibility rule: its difference shows on its chart and in the scene.", "Provenance: its passage quotes the paper; every anchor is checked again before the world is ready."].join("\n"), passages, equations: equationsOf(model), evidence: `Level ${index + 1}: ${describeDirectEffect(tag)}.` };
+      const ask = (who: string, stage: "reviewer" | "second-reviewer") =>
+        settle(timed(stage, (client) => review(client, who, one, { structuredOutput: structured(who), ...(stage === "second-reviewer" ? { stage } : {}) }).then((result) => result.value))).then((settled) => {
+          if (settled.error !== null) say("review", `${who} gave no review of level ${index + 1} ${outOfTime(settled.error) ? "within its time" : `the schema reads: ${(settled.error instanceof Error ? settled.error.message : "").replace(/\s+/g, " ").slice(0, 200)}`}`);
+          return settled.value;
+        });
+      const started = Promise.all([ask(reviewerModel, "reviewer"), secondReviewerModel === null ? Promise.resolve(null) : ask(secondReviewerModel, "second-reviewer")]).then(([first, second]) => ({ first, second }));
+      reviews.set(key, started);
+      return started;
+    };
+
+    /** A level's words, and the level with its own sentences when the explainer wrote them (ADR-0055). */
+    interface Written {
+      readonly explained: ExplainedLevel;
+      readonly level: PlanLevel;
+    }
+    const findingsList = [reading.value.result, ...reading.value.findings];
+    const briefOf = (level: PlanLevel): string => shown.find((candidate) => factsOf(candidate.level) === factsOf({ ...level, finding: null }))?.brief ?? `control ${level.control.parameter}; What-if: ${level.whatIf.parameter} set to ${level.whatIf.value}; measures ${level.difference.compartment} by its ${level.difference.summary}; the What-if ${level.difference.relation} by more than ${level.difference.by}`;
+    /** The explainer's sentences put into the level; its facts stay as code chose them. */
+    const withWords = (level: PlanLevel, written: WrittenLevel): Written => {
+      const { title: levelTitle, goal, control, whatIf, effect, prediction, passageTitle, carryForward, ...explained } = written;
+      return { explained, level: { ...level, title: levelTitle, goal, control: { ...level.control, ...control }, whatIf: { ...level.whatIf, prompt: whatIf }, effect, prediction, passage: level.passage ? { ...level.passage, title: passageTitle } : null, carryForward } };
+    };
 
     /**
      * The named levels' words, asked at once, each within the explainer's time. A level whose words
      * do not come, or come unreadable, is left out of the world (never the hook), so one slow or
-     * broken reply no longer ends the job (R13).
+     * broken reply no longer ends the job (R13). With candidates, the explainer writes every word of
+     * the level, and its review starts as soon as they are written (ADR-0055).
      */
-    const wordsFor = async (target: Plan, indices: readonly number[]): Promise<Map<number, ExplainedLevel>> => {
-      const words = new Map<number, ExplainedLevel>();
+    const wordsFor = async (target: Plan, indices: readonly number[]): Promise<Map<number, Written>> => {
+      const words = new Map<number, Written>();
       await Promise.all(
         indices.map(async (index) => {
+          const level = target.levels[index];
+          if (!level) return;
           try {
-            words.set(index, (await timed("explainer", (client) => explainLevel(client, explainerModel, { title, plan: target, passages, model: modelWords }, index, { structuredOutput: structured(explainerModel) }))).value);
+            if (candidateMode) {
+              const finding = level.finding === null ? undefined : findingsList[level.finding];
+              const written = withWords(level, (await timed("explainer", (client) => writeLevel(client, explainerModel, { title, plan: target, passages, model: modelWords, facts: briefOf(level), finding: finding ? `${finding.text} (the paper: "${finding.quote}")` : "none" }, index, { structuredOutput: structured(explainerModel) }))).value);
+              words.set(index, written);
+              void reviewLevel(written.level, written.explained, index);
+            } else words.set(index, { explained: (await timed("explainer", (client) => explainLevel(client, explainerModel, { title, plan: target, passages, model: modelWords }, index, { structuredOutput: structured(explainerModel) }))).value, level });
           } catch (error) {
             if (!(error instanceof ModelError)) throw error;
             say("explaining", `level ${index + 1}'s words ${outOfTime(error) ? "did not come within the explainer's time" : `could not be read: ${error.message.replace(/\s+/g, " ").slice(0, 200)}`}`);
@@ -428,9 +571,42 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
      * read changes nothing, and the plan stays as it was: the repair is spent, and the rules then
      * drop the levels it was to mend, as after any repair that fails (CLAUDE.md, boundary 5).
      */
+    const sameLevel = (a: PlanLevel, b: PlanLevel): boolean => (candidateMode ? factsOf(a) === factsOf(b) : JSON.stringify(a) === JSON.stringify(b));
     const replan = async (problems: readonly string[]): Promise<void> => {
       repairs++;
       move("repairing", "planning", `asking the planner to change only the levels with problems: ${problems.slice(0, 4).join("; ")}`);
+      if (candidateMode) {
+        // Choosing again among the candidates, keeping the levels without problems (ADR-0055).
+        const current: CandidatePicks = { levels: plan.levels.map((level) => ({ candidate: shown.find((candidate) => factsOf(candidate.level) === factsOf({ ...level, finding: null }))?.id ?? "?", finding: level.finding ?? 0 })) };
+        let picked: { readonly value: CandidatePicks };
+        try {
+          picked = await timed("planner", (client) => completeStructured(client, { stage: "planner", model: plannerModel, messages: [...pickerMessages(pickInput()), { role: "assistant", content: JSON.stringify(current) }, { role: "user", content: `These problems were found:\n${problems.map((line) => `- ${line}`).join("\n")}\nChoose again: keep the levels without problems, and replace those with problems by other candidates.` }], temperature: 0, maxTokens: PICKER_MAX_TOKENS }, CandidatePicks, { name: "picks", structuredOutput: structured(plannerModel), moreRoom: true }));
+        } catch (error) {
+          if (!(error instanceof ModelError)) throw error;
+          say("planning", `the planner's new picks ${error.kind === "timeout" ? "did not come within its time" : "could not be read"}, so the plan stays as it was`);
+          return;
+        }
+        const checked = validatePicks(picked.value, shown, pickChecks);
+        if (checked.problems.length > 0) {
+          say("planning", `the planner's new picks break the rules, so the plan stays as it was: ${checked.problems.slice(0, 3).join("; ")}`);
+          return;
+        }
+        const before = { plan, explanation };
+        const next = planFromPicks(picked.value, shown, reading.value, horizon);
+        plan = { ...next, title: before.plan.title, limits: before.plan.limits };
+        sources = plan.levels.map((level) => (before.plan.levels.some((old) => sameLevel(old, level)) ? plannerModel : `${plannerModel}, in repair`));
+        const same = plan.levels.map((level) => before.plan.levels.findIndex((old) => sameLevel(old, level)));
+        const changed = plan.levels.map((_, index) => index).filter((index) => (same[index] ?? -1) < 0);
+        const words = await wordsFor(plan, changed);
+        say("planning", `the repair changed ${changed.length} of ${plan.levels.length} levels; only theirs are written again`);
+        placeWords(words, (index) => {
+          const at = same[index] ?? -1;
+          const explained = before.explanation.levels[at];
+          const level = before.plan.levels[at];
+          return explained && level ? { explained, level } : undefined;
+        });
+        return;
+      }
       const messages = plannerMessages({ title, reading: reading.value, model, example: input.example, behaviour, response, ownNumbers: forPlanner });
       let replanned: { readonly value: Plan };
       try {
@@ -452,11 +628,14 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       // Only the levels the repair changed are explained again; the rest keep their words (R13).
       const before = { plan, explanation };
       plan = replanned.value;
-      const same = plan.levels.map((level) => before.plan.levels.findIndex((old) => JSON.stringify(old) === JSON.stringify(level)));
+      const same = plan.levels.map((level) => before.plan.levels.findIndex((old) => sameLevel(old, level)));
       const changed = plan.levels.map((_, index) => index).filter((index) => (same[index] ?? -1) < 0);
       const words = await wordsFor(plan, changed);
       say("planning", `the repair changed ${changed.length} of ${plan.levels.length} levels; only theirs are explained again`);
-      placeWords(words, (index) => before.explanation.levels[same[index] ?? -1]);
+      placeWords(words, (index) => {
+        const explained = before.explanation.levels[same[index] ?? -1];
+        return explained ? { explained, level: plan.levels[index] as PlanLevel } : undefined;
+      });
     };
 
     /** How a level's control, and its What-if's value when another, move the model: its rows of the response table, for a repair (ADR-0040). */
@@ -473,6 +652,10 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     const findingsOf = [reading.value.result, ...reading.value.findings];
     let hookFinding = 0;
     let hookFallback: string | null = null;
+    if (pickedHookFinding !== 0) {
+      hookFinding = pickedHookFinding;
+      hookFallback = `The paper's headline does not appear in this world at the values it lists, and its direction does not show here either, so this level tests another of its findings: ${findingsOf[pickedHookFinding]?.text ?? ""}`;
+    }
     const dropped: { readonly level: number; readonly title: string; readonly reasons: readonly string[] }[] = [];
     /** The levels whose words were written again once already, by title (ADR-0044). */
     const reworded = new Set<string>();
@@ -507,13 +690,15 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       return order.length;
     };
     /** The plan's words, from this round or kept from before; a level with none is left out, and the job stops if that is the hook or leaves fewer than three. */
-    const placeWords = (words: ReadonlyMap<number, ExplainedLevel>, kept: (index: number) => ExplainedLevel | undefined): void => {
+    const placeWords = (words: ReadonlyMap<number, Written>, kept: (index: number) => Written | undefined): void => {
       const all = plan.levels.map((_, index) => index);
       const missing = all.filter((index) => !words.has(index) && kept(index) === undefined);
       const wordsOf = (index: number): ExplainedLevel[] => {
-        const level = words.get(index) ?? kept(index);
-        return level ? [level] : [];
+        const written = words.get(index) ?? kept(index);
+        return written ? [written.explained] : [];
       };
+      // The levels with the sentences their words came with.
+      plan = { ...plan, levels: plan.levels.map((level, index) => (words.get(index) ?? kept(index))?.level ?? level) };
       if (missing.length === 0) {
         explanation = { levels: all.flatMap(wordsOf) };
         return;
@@ -544,7 +729,13 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     // Building and running: assemble, build, sweep; the level rule, the visibility rule and the
     // findings check (ADR-0037); repair the levels that fail, or drop them. Then checking, where the
     // reviewer may send a definitional level back for repair.
-    placeWords(await wordsFor(plan, plan.levels.map((_, index) => index)), () => undefined);
+    if (candidateMode) {
+      // The world's own name and limits, written beside its levels' words (ADR-0055).
+      const briefs = plan.levels.map(briefOf);
+      const [words, world] = await Promise.all([wordsFor(plan, plan.levels.map((_, index) => index)), settle(timed("explainer", (client) => writeWorld(client, explainerModel, { title, mechanism: reading.value.mechanism, levels: briefs }, { structuredOutput: structured(explainerModel) })))]);
+      plan = { ...plan, title: world.value?.value.title ?? "The model's town", limits: world.value?.value.limits ?? ["It shows the paper's model as solved, not the world the paper describes."] };
+      placeWords(words, () => undefined);
+    } else placeWords(await wordsFor(plan, plan.levels.map((_, index) => index)), () => undefined);
 
     /**
      * Progressive delivery (R13, ADR-0053): once the hook and at least two more levels pass every
@@ -641,14 +832,23 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       // direct-effect tag. One reviewer's unsupported block sends a level's words back, unless the
       // model refutes what it claims; any other block stands only where both make it, and a
       // definitional one only on a level the code finds definitional. Every decision is kept.
-      const reviewerModel = modelFor("reviewer");
-      const secondReviewerModel = input.config.stages["second-reviewer"] ?? null;
       say("review", secondReviewerModel === null ? "the reviewer reads the world and the checks' results" : `two reviewers, ${reviewerModel} and ${secondReviewerModel}, read the world and the checks' results`);
       const checks = ["The builder: passed, the family's checks included.", `The level rule: ${swept.map((level) => `level ${level.order} holds on ${level.holds} of 20`).join("; ")}.`, "The visibility rule: every level's difference shows on its chart and in the scene.", "Provenance: every anchor quotes the source exactly."].join("\n");
       const worldWords = plan.levels.map((level: PlanLevel, index) => `Level ${index + 1}, ${level.title}: ${level.goal} Control: ${level.control.label}. What if: ${level.whatIf.prompt} It states: ${level.effect}`).join("\n");
       const named = namedInModel(plan, model);
       const tags = named.levels.map((level) => directEffectOf(model, level.control.parameter, level.difference.compartment, level.difference));
       const reviewInput = { title, world: worldWords, checks, passages, equations: equationsOf(model), evidence: tags.map((tag, index) => `Level ${index + 1}: ${describeDirectEffect(tag)}.`).join("\n") };
+      let reviewed: Review | null;
+      let secondReviewed: Review | null;
+      if (candidateMode) {
+        // Each level's review, most begun as soon as its words were written; each reviewer's findings
+        // gathered into one review, every finding on the level it read (ADR-0055).
+        const levelReviews = await Promise.all(plan.levels.map((level, index) => reviewLevel(level, explanation.levels[index] as ExplainedLevel, index)));
+        const gathered = (which: "first" | "second"): Review | null =>
+          levelReviews.every((entry) => entry[which] === null) ? null : { findings: levelReviews.flatMap((entry, index) => (entry[which]?.findings ?? []).map((finding) => ({ ...finding, level: finding.level === null ? null : index + 1 }))) };
+        reviewed = gathered("first");
+        secondReviewed = gathered("second");
+      } else {
       // Each reviewer within its stage's time (R13); one that does not answer, or answers unreadably, leaves the other's review.
       const [firstReview, secondReview] = await Promise.all([
         settle(timed("reviewer", (client) => review(client, reviewerModel, reviewInput, { structuredOutput: structured(reviewerModel) }).then((result) => result.value))),
@@ -659,8 +859,9 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
         if (!(settled.error instanceof ModelError)) throw settled.error instanceof Error ? settled.error : new Error("a reviewer's call failed");
         say("review", `${who ?? ""} gave no review ${outOfTime(settled.error) ? "within its time" : `the schema reads: ${settled.error.message.replace(/\s+/g, " ").slice(0, 200)}`}`);
       }
-      const reviewed = firstReview.value;
-      const secondReviewed = secondReview?.value ?? null;
+      reviewed = firstReview.value;
+      secondReviewed = secondReview?.value ?? null;
+      }
       if (reviewed === null && secondReviewed === null) {
         // No reviewer answered in time. A world never read by one ships checked and says it was not
         // reviewed; levels whose words were written again since the last review are left out, as no

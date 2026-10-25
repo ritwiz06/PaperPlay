@@ -70,6 +70,12 @@ describe("[R09] the restricted LaTeX reader", () => {
     { path: "model.tex", bytes: encode(MODEL) },
   ]);
 
+  it("names a section whose heading has no words by its place, adding nothing to the paper's text, as RoBERTa's and Agentless's need", () => {
+    const empty = extractLatex([{ path: "main.tex", bytes: encode("\\documentclass{article}\\title{A paper}\\begin{document}\\maketitle\\section{Model}Words here.\\section{}More words.\\end{document}") }]);
+    expect(empty.sections.map((section) => section.title)).toContain("Untitled section 3");
+    expect(empty.text).not.toContain("Untitled");
+  });
+
   it("reads the title, the authors, the sections, and \\input from inside the archive", () => {
     expect(paper.title).toBe("A small SIR model");
     expect(paper.authors).toEqual(["Ada Lovelace", "Alan Turing"]);

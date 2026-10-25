@@ -121,3 +121,57 @@ export async function reword(client: ModelClient, model: string, input: Paramete
   return { value: words.value };
 }
 
+
+/**
+ * Every word of a level whose facts code chose (ADR-0055): its own sentences, which a planner wrote
+ * before, and its words at three depths. The facts (its control, What-if, measurement, claim and
+ * the finding it tests, with the finding's quote as its passage) are given and never changed here.
+ */
+export const WrittenLevel = z.strictObject({
+  ...ExplainedLevel.shape,
+  title: Words(60),
+  goal: Sentences(30),
+  control: z.strictObject({ label: Words(50), lowEnd: Words(30), highEnd: Words(30) }),
+  whatIf: Sentences(30),
+  effect: Sentences(50),
+  prediction: z.strictObject({ prompt: Sentences(30), claimed: Words(60), other: Words(60) }),
+  passageTitle: Words(100),
+  carryForward: Words(200),
+});
+export type WrittenLevel = z.infer<typeof WrittenLevel>;
+
+const WRITER_RULES = [
+  "This level's facts were chosen by code and are given below; write only its words, never changing a fact. Also write its own sentences:",
+  "- title: a short title, at most 8 words.",
+  "- goal: one sentence, at most 30 words: what the learner does here.",
+  "- control: a label for the control, and words for its low end and its high end.",
+  "- whatIf: the What-if as one question, at most 30 words, about exactly the change it makes.",
+  "- effect: at most 50 words, saying exactly what the claim says, with its numbers: no more, no less.",
+  "- prediction: a question asked before the What-if runs, the claimed answer, and the other answer.",
+  "- passageTitle: a title for the paper's passage this level quotes; carryForward: what the learner takes to the next level.",
+].join("\n");
+
+export function writerMessages(input: Parameters<typeof explainerMessages>[0] & { readonly facts: string; readonly finding: string }, level: number): ChatMessage[] {
+  const [system, user] = explainerMessages(input, level);
+  return [
+    { role: "system", content: `${system?.content ?? ""}\n${WRITER_RULES}` },
+    { role: "user", content: `${user?.content ?? ""}\n\nLevel ${level + 1}'s facts: ${input.facts}\nThe finding it tests: ${input.finding}` },
+  ];
+}
+
+/** One level's words, all of them, held to its schema where the model honours one. */
+export function writeLevel(client: ModelClient, model: string, input: Parameters<typeof writerMessages>[0], level: number, options: { readonly structuredOutput: boolean }): Promise<{ readonly value: WrittenLevel }> {
+  return completeStructured(client, { stage: "explainer", model, messages: writerMessages(input, level), temperature: 0, maxTokens: 16_000 }, WrittenLevel, { name: "level_words", structuredOutput: options.structuredOutput, moreRoom: true });
+}
+
+/** A world's own words (ADR-0055): its name, a place, and what it cannot show. */
+export const WorldWords = z.strictObject({ title: Words(40), limits: z.array(Words(300)).min(1).max(4) });
+export type WorldWords = z.infer<typeof WorldWords>;
+
+export function writeWorld(client: ModelClient, model: string, input: { readonly title: string; readonly mechanism: string; readonly levels: readonly string[] }, options: { readonly structuredOutput: boolean }): Promise<{ readonly value: WorldWords }> {
+  const messages: ChatMessage[] = [
+    { role: "system", content: ["You name a small learning game made from a scientific paper's model, and say what it cannot show.", DATA_RULE, "title: the world's name, a place, at most 5 words, such as Threshold Town or Murmuration Valley. limits: 1 to 4 sentences, each something the world cannot show, such as what the model leaves out. Plain, short sentences in sentence case."].join("\n") },
+    { role: "user", content: `PAPER START\nTitle: ${input.title}\nMechanism: ${input.mechanism}\nPAPER END\n\nIts levels:\n${input.levels.join("\n")}\n\nName the world.` },
+  ];
+  return completeStructured(client, { stage: "explainer", model, messages, temperature: 0, maxTokens: 4_000 }, WorldWords, { name: "world_words", structuredOutput: options.structuredOutput, moreRoom: true });
+}

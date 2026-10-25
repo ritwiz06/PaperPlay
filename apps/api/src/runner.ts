@@ -46,7 +46,7 @@ export function pipelineRunner(client: ModelClient, config: ModelConfig, fetch: 
     const trace = newTrace(config.jobTokenBudget);
     try {
       // Each stage's thinking and its share of the job's deadline from models.json (R13, ADR-0053).
-      return await runJob({ source, client: jobClient(client, config, trace), config: { stages: config.stages, structuredOutput: config.structuredOutput }, fetch, example, signal, deadline: config.deadline }, sink);
+      return await runJob({ source, client: jobClient(client, config, trace), config: { stages: config.stages, structuredOutput: config.structuredOutput, planning: "candidates" }, fetch, example, signal, deadline: config.deadline }, sink);
     } finally {
       sink.artifact("trace", trace);
     }

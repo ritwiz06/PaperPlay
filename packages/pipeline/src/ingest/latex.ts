@@ -268,8 +268,10 @@ export function extractLatex(files: readonly ArchiveFile[]): ExtractedPaper {
     while (usedIds.has(id)) id += "x";
     usedIds.add(id);
     writer.newline(true);
-    sections.push({ id, title, start: writer.block() });
-    writer.word(title);
+    // A heading with no words once its commands are dropped, as RoBERTa's and Agentless's have, is
+    // named by its place in the list alone; nothing is added to the paper's text (2026-10-25).
+    sections.push({ id, title: title || `Untitled section ${sections.length + 1}`, start: writer.block() });
+    if (title) writer.word(title);
     writer.newline(true);
   };
   const currentSection = (): string => sections.at(-1)?.id ?? "front";

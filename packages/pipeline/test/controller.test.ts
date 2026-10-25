@@ -534,3 +534,92 @@ describe("[R13] a job against its deadline", () => {
     }
   }, 60_000);
 });
+
+/** Words for a level whose facts code chose: every sentence the planner once wrote, and its depth words (ADR-0055). */
+const written = () => ({ ...words(), title: "A level", goal: "Move the control and watch.", control: { label: "The rate", lowEnd: "Low", highEnd: "High" }, whatIf: "What if the rate changed?", effect: "The What-if differs by more than the claim.", prediction: { prompt: "Would it differ?", claimed: "Yes", other: "No" }, passageTitle: "The paper says", carryForward: "Rates set the course." });
+
+/**
+ * A client for planning in code: the planner answers with the first candidates it is shown, the
+ * hook on finding 0 and the rest on findings 1 and 2; the explainer writes a level's words or the
+ * world's name; each call is logged with when it was asked and answered.
+ */
+function candidateClient(options: { readonly picks?: (ids: readonly string[]) => unknown; readonly explainerDelay?: (level: number) => number } = {}) {
+  const log: { stage: string; asked: number; answered: number; level: number | null }[] = [];
+  const calls: ChatRequest[] = [];
+  const base = scripted(replies());
+  const client: ModelClient = {
+    async complete(request) {
+      calls.push(request);
+      const asked = performance.now();
+      const content = request.messages.map((message) => message.content).join("\n");
+      const level = Number(/Write the words of level (\d+)/.exec(content)?.[1] ?? Number.NaN);
+      let reply: unknown;
+      if (request.stage === "planner" || request.stage === "second-planner") {
+        const ids = [...content.matchAll(/^(c\d+): /gm)].map((match) => match[1] ?? "");
+        reply = options.picks ? options.picks(ids) : { levels: ids.slice(0, 3).map((candidate, index) => ({ candidate, finding: index })) };
+      } else if (request.stage === "explainer") {
+        if (content.includes("You name a small learning game")) reply = { title: "Recovery Town", limits: ["It leaves out who meets whom."] };
+        else {
+          await new Promise((resolve) => setTimeout(resolve, options.explainerDelay?.(level) ?? 0));
+          reply = written();
+        }
+      } else {
+        const answer = await base.complete(request);
+        log.push({ stage: request.stage, asked, answered: performance.now(), level: Number.isNaN(level) ? null : level });
+        return answer;
+      }
+      log.push({ stage: request.stage, asked, answered: performance.now(), level: Number.isNaN(level) ? null : level });
+      return { model: request.model, text: JSON.stringify(reply), usage: { promptTokens: 1, completionTokens: 1, totalTokens: 2 }, finishReason: "stop" };
+    },
+  };
+  return { client, log, calls };
+}
+
+describe("[R13] planning in code (ADR-0055)", () => {
+  it("makes and judges the candidate levels in code, has the planner choose among them, and the explainer write every word", async () => {
+    const { client, calls } = candidateClient();
+    const { outcome, events, artifacts } = await run(client, { planning: "candidates" });
+    expect(outcome.state).toBe("ready");
+    const candidates = artifacts.get("candidates") as { generated: number; passing: { id: string; brief: string }[] };
+    expect(candidates.passing.length).toBeGreaterThanOrEqual(3);
+    expect(events.some((event) => event.step === "candidates" && /^\d+ candidate levels made in code; \d+ pass every rule; the planners choose among \d+$/.test(event.message))).toBe(true);
+    // The planner reads the candidates and writes no words.
+    const planner = calls.find((call) => call.stage === "planner");
+    expect(planner?.messages.map((message) => message.content).join("\n")).toContain(candidates.passing[0]?.brief ?? "?");
+    const world = artifacts.get("world") as { title: string; levels: { title: string }[] };
+    expect(world.title).toBe("Recovery Town");
+    expect(world.levels.map((level) => level.title)).toEqual(["A level", "A level", "A level"]);
+    // Every level's words, and the world's name, from the explainer; one review a level.
+    expect(calls.filter((call) => call.stage === "explainer")).toHaveLength(4);
+    expect(calls.filter((call) => call.stage === "reviewer")).toHaveLength(3);
+  }, 60_000);
+
+  it("never offers a definitional candidate: each measures a compartment its control does not feed directly", async () => {
+    const { compartmentCandidates } = await import("../src/candidates/index.ts");
+    const { directEffectOf } = await import("../src/rule/direct.ts");
+    const { toModelSpec } = await import("../src/transcribe/convert.ts");
+    const model = toModelSpec(transcription(), source).model;
+    if (!model) throw new Error("the test's model does not convert");
+    const candidates = compartmentCandidates(model, 150);
+    expect(candidates.length).toBeGreaterThan(0);
+    for (const candidate of candidates) expect(directEffectOf(model, candidate.level.control.parameter, candidate.level.difference.compartment, candidate.level.difference).definitional, candidate.brief).toBe(false);
+  });
+
+  it("reviews a level as soon as its words are written, before the slowest level's words come", async () => {
+    const { client, log } = candidateClient({ explainerDelay: (level) => (level === 3 ? 400 : 0) });
+    const { outcome } = await run(client, { planning: "candidates" });
+    expect(outcome.state).toBe("ready");
+    const slowest = log.find((entry) => entry.stage === "explainer" && entry.level === 3);
+    const firstReview = log.filter((entry) => entry.stage === "reviewer").sort((a, b) => a.asked - b.asked)[0];
+    expect(firstReview && slowest && firstReview.asked < slowest.answered).toBe(true);
+  }, 60_000);
+
+  it("asks the planner once more when its picks break the rules, saying why", async () => {
+    let asked = 0;
+    const { client, calls } = candidateClient({ picks: (ids) => (asked++ === 0 ? { levels: [{ candidate: ids[0], finding: 1 }, { candidate: ids[1], finding: 0 }, { candidate: ids[2], finding: 2 }] } : { levels: ids.slice(0, 3).map((candidate, index) => ({ candidate, finding: index })) }) });
+    const { outcome, events } = await run(client, { planning: "candidates" });
+    expect(outcome.state).toBe("ready");
+    expect(events.some((event) => event.state === "repairing" && /level 1, the hook, must test the paper's headline result, finding 0/.test(event.message))).toBe(true);
+    expect(calls.filter((call) => call.stage === "planner")).toHaveLength(2);
+  }, 60_000);
+});
