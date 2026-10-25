@@ -385,7 +385,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     };
 
     const secondPlannerModel = input.config.stages["second-planner"] ?? null;
-    const generator = input.config.planning === "candidates" ? CANDIDATE_GENERATORS[routed.value.family] : undefined;
+    const generator = input.config.planning === "candidates" && routed.value.family === "compartments" ? CANDIDATE_GENERATORS.compartments : undefined;
     const candidateMode = generator !== undefined;
     let plan: Plan;
     /** Which planner each level came from, in step with the plan (ADR-0043). */

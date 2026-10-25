@@ -4,7 +4,7 @@ import { z } from "zod";
 // deterministic primitives with the checks and labels that come with them. This is the
 // catalogue, as data, so the builder, the router and the shell read one list.
 
-export const FamilyId = z.enum(["agents", "compartments", "learning", "study-design", "grids", "networks"]);
+export const FamilyId = z.enum(["agents", "compartments", "learning", "study-design", "grids", "networks", "attention"]);
 export type FamilyId = z.infer<typeof FamilyId>;
 
 /**
@@ -48,4 +48,6 @@ export const FAMILIES: Readonly<Record<FamilyId, Family>> = Object.freeze({
   "study-design": Object.freeze({ id: "study-design", name: "A study's design", label: "a model of how the study was designed, not its data", variation: "cohorts", forkFrom: "start" }),
   grids: Object.freeze({ id: "grids", name: "Fields on a grid", variation: "neighbourhood", forkFrom: "start" }),
   networks: Object.freeze({ id: "networks", name: "Networks", variation: "seeds", forkFrom: "start" }),
+  // One attention layer of a small transformer (ADR-0054): its weights vary with the seed until trained.
+  attention: Object.freeze({ id: "attention", name: "Attention in a small transformer", label: "miniature: the mechanism at toy scale, not the paper's model", variation: "seeds", forkFrom: "start" }),
 });

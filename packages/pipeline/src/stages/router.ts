@@ -8,18 +8,26 @@ import { z } from "zod";
 import { completeStructured, type ChatMessage, type ModelClient } from "../models/index.ts";
 import { DATA_RULE } from "./source.ts";
 
+/**
+ * The families the router may name: those its bake-off's recordings know. Attention has a primitive
+ * (ADR-0054) but no worlds yet, so a paper on it is tier C until it does; adding it here would also
+ * change the schema every recorded router call was asked with.
+ */
+export const RoutedFamily = FamilyId.exclude(["attention"]);
+export type RoutedFamily = z.infer<typeof RoutedFamily>;
+
 /** The families with a released primitive today (G3a): the flock's agents and the compartment solver. */
-export const RELEASED_FAMILIES: readonly FamilyId[] = Object.freeze(["agents", "compartments"]);
+export const RELEASED_FAMILIES: readonly RoutedFamily[] = Object.freeze(["agents", "compartments"]);
 
 /** The families whose worlds the pipeline makes from a paper today. */
-export const GENERATED_FAMILIES: readonly FamilyId[] = Object.freeze(["compartments"]);
+export const GENERATED_FAMILIES: readonly RoutedFamily[] = Object.freeze(["compartments"]);
 
 /**
  * What each family can play today, and what it cannot (ADR-0055): the router read only the
  * families' names, and sent 18 of the 34 AI papers to learning, which plays an optimiser on a loss
  * landscape and nothing more. A family's reach grows here when its primitives do.
  */
-export const FAMILY_CAPABILITIES: Readonly<Record<FamilyId, string>> = Object.freeze({
+export const FAMILY_CAPABILITIES: Readonly<Record<RoutedFamily, string>> = Object.freeze({
   agents: "a flock or crowd of agents, each following local rules such as separation, alignment and cohesion, on a two-dimensional space; worlds authored by hand, not made from papers yet.",
   compartments: "a well-mixed population in compartments whose sizes change by ordinary differential equations: epidemics (SIR, SEIR and their kin), treatment and adherence, cell populations; the pipeline makes these worlds from a paper.",
   learning: "an optimiser stepping on a two-dimensional loss landscape: gradient descent, momentum, Nesterov's method, adaptive steps such as Adam's; a small network trained with dropout is planned. It does not cover model architectures (attention, transformers, convolutional networks), pre-training or fine-tuning, language models, generative or diffusion models, scaling laws, parallel training, or agents built on language models.",
@@ -34,7 +42,7 @@ export const RouteDecision = z.strictObject({
   /** Its mechanism, in one plain sentence. */
   mechanism: z.string().min(1).max(300),
   /** The family that covers the mechanism, or none. */
-  family: z.union([FamilyId, z.literal("none")]),
+  family: z.union([RoutedFamily, z.literal("none")]),
   tier: z.enum(["A", "B", "C"]),
   /** Why, in one or two sentences. */
   reason: z.string().min(1).max(400),
@@ -48,7 +56,8 @@ export type RouteDecision = z.infer<typeof RouteDecision>;
  */
 export function routerInstructions(options: { readonly capabilities?: boolean } = {}): string {
   if (!options.capabilities) return recordedInstructions();
-  const catalogue = Object.values(FAMILIES)
+  const catalogue = RoutedFamily.options
+    .map((id) => ({ id, name: FAMILIES[id].name }))
     .map((family) => `- ${family.id}: ${family.name}. It plays ${FAMILY_CAPABILITIES[family.id]}${GENERATED_FAMILIES.includes(family.id) ? " Made from papers." : ""}`)
     .join("\n");
   return [
@@ -65,7 +74,8 @@ export function routerInstructions(options: { readonly capabilities?: boolean } 
 
 /** The instructions before 2026-10-25, which the router bake-off's recordings hold. */
 function recordedInstructions(): string {
-  const catalogue = Object.values(FAMILIES)
+  const catalogue = RoutedFamily.options
+    .map((id) => ({ id, name: FAMILIES[id].name }))
     .map((family) => `- ${family.id}: ${family.name}${RELEASED_FAMILIES.includes(family.id) ? " (released)" : " (not released yet)"}`)
     .join("\n");
   return [

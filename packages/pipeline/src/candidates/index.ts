@@ -8,8 +8,13 @@ export { judgeCandidates, judgeInParallel, type JudgeInput } from "./judge.ts";
 export { CandidatePicks, CANDIDATES_SHOWN, hookCandidates, pickerMessages, pickLevels, PICKER_INSTRUCTIONS, planFromPicks, shortList, validatePicks, type PickProblem } from "./picker.ts";
 export type { CandidateGenerator, LevelCandidate } from "./types.ts";
 
-import { compartmentCandidates } from "./compartments.ts";
-import type { CandidateGenerator } from "./types.ts";
+export { ATTENTION_HOLDS, ATTENTION_SEEDS, attentionCandidates, type AttentionLevel, type AttentionSetting } from "./attention.ts";
 
-/** Each family's generator, by the router's family name: a family without one is planned as before. */
-export const CANDIDATE_GENERATORS: Readonly<Record<string, CandidateGenerator>> = { compartments: compartmentCandidates };
+import { attentionCandidates } from "./attention.ts";
+import { compartmentCandidates } from "./compartments.ts";
+
+/**
+ * Each family's generator, by its family's name (ADR-0055): a family without one is planned as
+ * before. The compartment family's plans a job today; attention's waits for its worlds.
+ */
+export const CANDIDATE_GENERATORS = Object.freeze({ compartments: compartmentCandidates, attention: attentionCandidates });

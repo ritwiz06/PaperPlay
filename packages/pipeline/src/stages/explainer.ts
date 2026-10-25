@@ -170,7 +170,7 @@ export type WorldWords = z.infer<typeof WorldWords>;
 
 export function writeWorld(client: ModelClient, model: string, input: { readonly title: string; readonly mechanism: string; readonly levels: readonly string[] }, options: { readonly structuredOutput: boolean }): Promise<{ readonly value: WorldWords }> {
   const messages: ChatMessage[] = [
-    { role: "system", content: ["You name a small learning game made from a scientific paper's model, and say what it cannot show.", DATA_RULE, "title: the world's name, a place, at most 5 words, such as Threshold Town or Murmuration Valley. limits: 1 to 4 sentences, each something the world cannot show, such as what the model leaves out. Plain, short sentences in sentence case."].join("\n") },
+    { role: "system", content: ["You name a small learning game made from a scientific paper's model, and say what it cannot show.", DATA_RULE, "title: the world's name, at most 5 words, naming the paper's subject, its disease, place or idea, such as Tuberculosis in Ethiopia or Hepatitis C and adherence; never a generic place such as Compartment Crossing (ADR-0056). limits: 1 to 4 sentences, each something the world cannot show, such as what the model leaves out. Plain, short sentences in sentence case."].join("\n") },
     { role: "user", content: `PAPER START\nTitle: ${input.title}\nMechanism: ${input.mechanism}\nPAPER END\n\nIts levels:\n${input.levels.join("\n")}\n\nName the world.` },
   ];
   return completeStructured(client, { stage: "explainer", model, messages, temperature: 0, maxTokens: 4_000 }, WorldWords, { name: "world_words", structuredOutput: options.structuredOutput, moreRoom: true });

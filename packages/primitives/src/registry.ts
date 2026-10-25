@@ -1,6 +1,7 @@
 import { DescentSpec, ModelSpec, type PrimitiveRef } from "@paperplay/contracts";
 import type { z } from "zod";
 import { flockPlanarWeighted } from "./agents/flock/index.ts";
+import { attentionToy } from "./attention/index.ts";
 import { compartmentsOde } from "./compartments/index.ts";
 import { learningLandscape } from "./learning/index.ts";
 import type { ModelShowing } from "./compartments/primitive.ts";
@@ -68,7 +69,7 @@ function solverOf<M>(solver: { readonly id: string; readonly version: string; bi
 
 /** Adding a primitive or a solver here requires an ADR. */
 export const registry: PrimitiveRegistry = createRegistry(
-  [flockPlanarWeighted],
+  [flockPlanarWeighted, attentionToy],
   [
     solverOf(compartmentsOde, ModelSpec, "a compartment model"),
     solverOf(learningLandscape, DescentSpec, "an update rule on a surface"),
