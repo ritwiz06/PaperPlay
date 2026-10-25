@@ -76,7 +76,8 @@ export function GeneratedWorld({ from }: { readonly from: From }) {
   // While levels are still arriving, the job's events say when more have passed or the world is ready.
   const job = "job" in from ? from.job : null;
   useEffect(() => {
-    if (!partial || job === null) return;
+    // A development server's API only: a production build holds none of this (ADR-0030).
+    if (!import.meta.env.DEV || !partial || job === null) return;
     const events = new EventSource(`/api/jobs/${encodeURIComponent(job)}/events`);
     events.addEventListener("state", (message) => {
       const event = JSON.parse((message as MessageEvent<string>).data) as { step?: string; state?: string };
