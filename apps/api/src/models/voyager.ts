@@ -49,6 +49,8 @@ export function voyagerClient(options: VoyagerOptions): VoyagerClient {
   const base = options.baseUrl.replace(/\/+$/, "");
   let nextStart = 0;
   let queue: Promise<void> = Promise.resolve();
+  /** Models whose gateway refused the switch that asks them not to think: asked without it since (ADR-0053). */
+  const thinkingRefused = new Set<string>();
 
   /** Waits for the call's turn: one start every minIntervalMs, in order. */
   const turn = (): Promise<void> => {
@@ -62,9 +64,12 @@ export function voyagerClient(options: VoyagerOptions): VoyagerClient {
   };
 
   /** One HTTP call with a timeout; the gateway's own error text is kept, trimmed, and never holds the key. */
-  async function send(path: string, init: { readonly method: "GET" | "POST"; readonly body?: string; readonly raw?: boolean }): Promise<unknown> {
+  async function send(path: string, init: { readonly method: "GET" | "POST"; readonly body?: string; readonly raw?: boolean; readonly signal?: AbortSignal }): Promise<unknown> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), options.timeoutMs);
+    // The job's deadline for the call ends it as the adapter's own timeout does, but is never retried.
+    const ended = (): void => controller.abort();
+    init.signal?.addEventListener("abort", ended, { once: true });
     let response: Response;
     try {
       response = await options.fetch(`${base}${path}`, {
@@ -74,12 +79,14 @@ export function voyagerClient(options: VoyagerOptions): VoyagerClient {
         signal: controller.signal,
       });
     } catch (error) {
+      if (init.signal?.aborted) throw new ModelError("timeout", "the job's deadline for this call passed before the gateway answered");
       if (controller.signal.aborted) throw new ModelError("timeout", `the gateway did not answer within ${options.timeoutMs} ms`, { retryable: true });
       // The cause's code, such as ECONNRESET, says more than fetch's own "fetch failed".
       const code = (error as { cause?: { code?: unknown }; code?: unknown }).cause?.code ?? (error as { code?: unknown }).code;
       throw new ModelError("network", `the gateway could not be reached: ${error instanceof Error ? error.message : String(error)}${typeof code === "string" ? ` (${code})` : ""}`, { retryable: true });
     } finally {
       clearTimeout(timer);
+      init.signal?.removeEventListener("abort", ended);
     }
     if (!response.ok) {
       const text = (await response.text().catch(() => "")).replaceAll(options.apiKey, "[key]").slice(0, 400);
@@ -104,8 +111,9 @@ export function voyagerClient(options: VoyagerOptions): VoyagerClient {
     }
   }
 
-  return {
+  const client: VoyagerClient = {
     async complete(request: ChatRequest): Promise<ChatResponse> {
+      const quiet = request.thinking === false && !thinkingRefused.has(request.model);
       const body = JSON.stringify({
         model: request.model,
         messages: request.messages,
@@ -116,8 +124,18 @@ export function voyagerClient(options: VoyagerOptions): VoyagerClient {
         // reply that sends nothing for too long (a 524). The reply is read whole, then joined.
         stream: true,
         stream_options: { include_usage: true },
+        // Asked not to think, in the two names chat templates read: Qwen's and GLM's enable_thinking, Kimi's thinking.
+        ...(quiet ? { chat_template_kwargs: { enable_thinking: false, thinking: false } } : {}),
       });
-      const reply = await withRetries(async () => completionOf((await send("/chat/completions", { method: "POST", body, raw: true })) as string, request));
+      let reply: CompletionBody;
+      try {
+        reply = await withRetries(async () => completionOf((await send("/chat/completions", { method: "POST", body, raw: true, ...(request.signal ? { signal: request.signal } : {}) })) as string, request));
+      } catch (error) {
+        // A gateway that refuses the switch answers 400: that model is asked as before, thinking, from now on.
+        if (!(quiet && error instanceof ModelError && error.kind === "http" && error.status === 400)) throw error;
+        thinkingRefused.add(request.model);
+        return client.complete(request);
+      }
       const choice = reply.choices?.[0];
       // A choice with no content, as when a model thinks until its limit, is an empty reply for the caller to judge.
       const text = choice ? (choice.message?.content ?? "") : undefined;
@@ -137,6 +155,7 @@ export function voyagerClient(options: VoyagerOptions): VoyagerClient {
       return (reply.data ?? []).map(({ id, owned_by, ...details }) => ({ id: String(id), ownedBy: typeof owned_by === "string" ? owned_by : null, details }));
     },
   };
+  return client;
 }
 
 interface StreamChunk {

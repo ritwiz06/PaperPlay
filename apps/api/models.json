@@ -3,7 +3,7 @@
   "retries": 3,
   "backoffMs": 2000,
   "minIntervalMs": 1000,
-  "jobTokenBudget": 1200000,
+  "jobTokenBudget": 600000,
   "maxTokens": {
     "reader": 16000,
     "transcriber": 16000,
@@ -14,6 +14,31 @@
     "explainer": 32000,
     "reviewer": 32000,
     "second-reviewer": 32000
+  },
+  "thinking": {
+    "reader": false,
+    "transcriber": true,
+    "second-transcriber": true,
+    "router": false,
+    "planner": false,
+    "second-planner": false,
+    "explainer": false,
+    "reviewer": true,
+    "second-reviewer": true
+  },
+  "deadline": {
+    "jobMs": 720000,
+    "stageMs": {
+      "reader": 180000,
+      "transcriber": 300000,
+      "second-transcriber": 300000,
+      "router": 60000,
+      "planner": 240000,
+      "second-planner": 240000,
+      "explainer": 120000,
+      "reviewer": 240000,
+      "second-reviewer": 240000
+    }
   },
   "stages": {
     "reader": "qwen36-27b",

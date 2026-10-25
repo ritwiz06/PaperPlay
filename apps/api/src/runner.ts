@@ -1,14 +1,14 @@
 /**
  * A job's pipeline, wired: the controller with a model client wrapped, per job, in a token budget
  * whose trace is kept as the job's artifact (ADR-0030), and Threshold Town as the planner's worked
- * example. Which client depends on how the server was started: recordings under `npm run dev:api`,
+ * example, each stage's thinking and the job's deadline from models.json. Which client depends on how the server was started: recordings under `npm run dev:api`,
  * the live gateway only under `npm run pipeline:live -- serve`.
  */
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { runJob, type JobSink, type JobSource } from "@paperplay/pipeline/controller";
 import type { Fetch } from "@paperplay/pipeline/ingest";
-import { budgetedClient, cappedClient, newTrace, type ModelClient } from "@paperplay/pipeline/models";
+import { budgetedClient, cappedClient, newTrace, thinkingClient, type ModelClient } from "@paperplay/pipeline/models";
 import type { ModelConfig } from "./models/config.ts";
 import type { JobRunner } from "./jobs.ts";
 
@@ -36,7 +36,8 @@ export function pipelineRunner(client: ModelClient, config: ModelConfig, fetch: 
   return async (source: JobSource, sink: JobSink, signal: AbortSignal) => {
     const trace = newTrace(config.jobTokenBudget);
     try {
-      return await runJob({ source, client: budgetedClient(cappedClient(client, config.maxTokens), trace), config: { stages: config.stages, structuredOutput: config.structuredOutput }, fetch, example, signal }, sink);
+      // Each stage's thinking and its share of the job's deadline from models.json (R13, ADR-0053).
+      return await runJob({ source, client: budgetedClient(thinkingClient(cappedClient(client, config.maxTokens), config.thinking), trace), config: { stages: config.stages, structuredOutput: config.structuredOutput }, fetch, example, signal, deadline: config.deadline }, sink);
     } finally {
       sink.artifact("trace", trace);
     }

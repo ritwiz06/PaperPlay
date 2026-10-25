@@ -29,6 +29,10 @@ export interface ChatRequest {
   readonly jsonSchema?: JsonSchemaFormat;
   readonly temperature?: number;
   readonly maxTokens?: number;
+  /** false asks the model not to think before it answers (R13, ADR-0053); left out, it thinks as it does. */
+  readonly thinking?: false;
+  /** Ends the call when the job's deadline for it passes (ADR-0053); never part of the prompt. */
+  readonly signal?: AbortSignal;
 }
 
 export interface Usage {

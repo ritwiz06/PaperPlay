@@ -6,6 +6,19 @@
  */
 import type { ModelClient } from "./types.ts";
 
+/**
+ * Each stage's thinking (R13, ADR-0053): a stage set to false is asked not to think, the field
+ * then part of its prompt's hash, so a recording made while the model thought is never replayed
+ * for it. A stage left thinking sends nothing new, and its recordings replay as they were.
+ */
+export function thinkingClient(client: ModelClient, thinking: Readonly<Partial<Record<string, boolean>>>): ModelClient {
+  return {
+    complete(request) {
+      return client.complete(thinking[request.stage] === false ? { ...request, thinking: false } : request);
+    },
+  };
+}
+
 export function cappedClient(client: ModelClient, ceilings: Readonly<Partial<Record<string, number>>>): ModelClient {
   return {
     complete(request) {

@@ -23,9 +23,9 @@ function canonical(value: unknown): unknown {
   return value;
 }
 
-/** The SHA-256 of everything that shapes the reply: the model, the messages, the schema, the temperature and the limit. Not the stage, which is a label. */
+/** The SHA-256 of everything that shapes the reply: the model, the messages, the schema, the temperature, the limit and a thinking switch. Not the stage, which is a label, nor the call's deadline. */
 export function promptHash(request: ChatRequest): string {
-  const { stage: _stage, ...shaping } = request;
+  const { stage: _stage, signal: _signal, ...shaping } = request;
   return createHash("sha256").update(JSON.stringify(canonical(shaping))).digest("hex");
 }
 

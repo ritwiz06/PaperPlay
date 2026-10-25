@@ -211,3 +211,38 @@ describe("[R09] the live client", () => {
     }
   });
 });
+
+describe("[R13] thinking and deadlines (ADR-0053)", () => {
+  it("asks a call set not to think with the chat templates' switch, and asks a model as before once its gateway refuses it", async () => {
+    const { made, calls } = client([failure(400, "unknown field chat_template_kwargs"), ok(completion("{}")), ok(completion("{}"))]);
+    await made.complete({ ...request, thinking: false });
+    expect(JSON.parse(calls[0]?.body ?? "{}")).toMatchObject({ chat_template_kwargs: { enable_thinking: false, thinking: false } });
+    expect(JSON.parse(calls[1]?.body ?? "{}")).not.toHaveProperty("chat_template_kwargs");
+    await made.complete({ ...request, thinking: false });
+    expect(JSON.parse(calls[2]?.body ?? "{}")).not.toHaveProperty("chat_template_kwargs");
+    expect(calls).toHaveLength(3);
+  });
+
+  it("ends a call when its job's deadline passes, and never retries it", async () => {
+    const deadline = new AbortController();
+    let attempts = 0;
+    const { made } = client([], {
+      fetch: (_url: string | URL | Request, init?: RequestInit) => {
+        attempts++;
+        return new Promise<Response>((_, reject) => init?.signal?.addEventListener("abort", () => reject(new Error("aborted"))));
+      },
+    });
+    const call = made.complete({ ...request, signal: deadline.signal });
+    deadline.abort();
+    await expect(call).rejects.toMatchObject({ kind: "timeout", retryable: false });
+    expect(attempts).toBe(1);
+  });
+
+  it("keeps thinking for the transcriptions and the reviewers alone, and gives a job twelve minutes", () => {
+    const config = loadModelConfig();
+    expect(Object.entries(config.thinking).filter(([, thinks]) => thinks).map(([stage]) => stage).sort()).toEqual(["reviewer", "second-reviewer", "second-transcriber", "transcriber"]);
+    expect(config.deadline.jobMs).toBe(720_000);
+    for (const [stage, ms] of Object.entries(config.deadline.stageMs)) expect(ms, stage).toBeLessThanOrEqual(config.deadline.jobMs);
+    expect(config.jobTokenBudget).toBe(600_000);
+  });
+});

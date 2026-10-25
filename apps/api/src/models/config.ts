@@ -32,6 +32,13 @@ export const ModelConfig = z
     jobTokenBudget: z.int().positive(),
     /** Each stage's ceiling on a call's tokens, thinking and reply together (ADR-0051). */
     maxTokens: z.strictObject(Object.fromEntries(STAGES.map((stage) => [stage, z.int().positive().max(200_000)])) as Record<Stage, z.ZodInt>),
+    /** Each stage's thinking: false asks its model not to think before it answers (R13, ADR-0053). */
+    thinking: z.strictObject(Object.fromEntries(STAGES.map((stage) => [stage, z.boolean()])) as Record<Stage, z.ZodBoolean>),
+    /** A job's deadline, and each stage's longest call within it, in milliseconds (R13, ADR-0053). */
+    deadline: z.strictObject({
+      jobMs: z.int().positive().max(3_600_000),
+      stageMs: z.strictObject(Object.fromEntries(STAGES.map((stage) => [stage, z.int().positive().max(3_600_000)])) as Record<Stage, z.ZodInt>),
+    }),
     /** Each stage's model, or null until the bake-off chooses one. */
     stages: z.strictObject(Object.fromEntries(STAGES.map((stage) => [stage, ModelId.nullable()])) as Record<Stage, z.ZodNullable<typeof ModelId>>),
     /** The probe's findings: whether each model holds its reply to a JSON Schema on this gateway. */
