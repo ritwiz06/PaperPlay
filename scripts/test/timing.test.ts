@@ -65,4 +65,20 @@ describe("timing", () => {
     ]);
     expect(phasesOf(read?.calls ?? []).map((phase) => [new Date(phase.start).toISOString(), phase.binding])).toEqual([[at(2), "planner"]]);
   });
+
+  it("takes the recording this job made when another job recorded the same prompt elsewhere", () => {
+    const folder = mkdtempSync(join(tmpdir(), "timing-"));
+    folders.push(folder);
+    const job = join(folder, "jobs", "abc");
+    const [fresh, kept] = [join(folder, "fresh"), join(folder, "kept")];
+    for (const made of [job, fresh, kept]) mkdirSync(made, { recursive: true });
+    const at = (minute: number) => new Date(T0 + minute * 60_000).toISOString();
+    writeFileSync(join(job, "events.jsonl"), [{ at: at(0), state: "received", message: "received pmc:PMC1" }, { at: at(9), state: "failed", message: "" }].map((event) => JSON.stringify(event)).join("\n"));
+    const recording = (where: string, end: string) => writeFileSync(join(where, "same.json"), JSON.stringify({ recordedAt: end, response: { text: "x", finishReason: "stop", usage: { promptTokens: 10, completionTokens: 20 } } }));
+    recording(fresh, "2026-10-19T00:00:00.000Z");
+    recording(kept, at(2));
+    writeFileSync(join(job, "trace.json"), JSON.stringify({ budget: 1, entries: [{ stage: "reader", model: "m", promptHash: "same", outcome: "ok", tokens: 30, milliseconds: 60_000 }] }));
+    const read = readJob(job, [fresh, kept]);
+    expect(read?.calls.map((entry) => [entry.milliseconds, entry.end])).toEqual([[60_000, Date.parse(at(2))]]);
+  });
 });

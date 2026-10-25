@@ -127,9 +127,14 @@ export function readJob(directory: string, recordings: string | readonly string[
   const last = events.at(-1);
   if (!first || !last) return null;
   const trace = JSON.parse(readFileSync(traceFile, "utf8")) as { entries: { stage: string; model: string; promptHash: string; outcome: string; tokens: number; milliseconds: number }[] };
+  const start = Date.parse(first.at);
+  const end = Date.parse(last.at);
+  const within = (at: number): boolean => at >= start - 1000 && at <= end + 1000;
+  type Kept = { recordedAt: string; response: { text: string; finishReason?: string; usage: { promptTokens: number; completionTokens: number } } };
   const calls: Call[] = trace.entries.map((entry) => {
-    const file = folders.map((folder) => join(folder, `${entry.promptHash}.json`)).find((candidate) => existsSync(candidate)) ?? "";
-    const recording = entry.outcome === "ok" && file !== "" ? (JSON.parse(readFileSync(file, "utf8")) as { recordedAt: string; response: { text: string; finishReason?: string; usage: { promptTokens: number; completionTokens: number } } }) : null;
+    // One prompt can be recorded in more than one folder, by different jobs: the one this job made, if any.
+    const found = folders.map((folder) => join(folder, `${entry.promptHash}.json`)).filter((candidate) => existsSync(candidate)).map((file) => JSON.parse(readFileSync(file, "utf8")) as Kept);
+    const recording = entry.outcome === "ok" ? (found.find((kept) => within(Date.parse(kept.recordedAt))) ?? found[0] ?? null) : null;
     return {
       stage: entry.stage,
       model: entry.model,
@@ -144,9 +149,7 @@ export function readJob(directory: string, recordings: string | readonly string[
     };
   });
   // A recording made by another job ends outside this one: the call here was its replay.
-  const start = Date.parse(first.at);
-  const end = Date.parse(last.at);
-  const own = calls.map((call) => (call.end !== null && (call.end < start - 1000 || call.end > end + 1000) ? { ...call, milliseconds: 0 } : call));
+  const own = calls.map((call) => (call.end !== null && !within(call.end) ? { ...call, milliseconds: 0 } : call));
   if (!own.some(live)) return null;
   return { id: directory.split("/").at(-1) ?? directory, source: first.message.replace(/^received /, ""), start, end, outcome: last.state, repairs: events.filter((event) => event.state === "repairing").length, calls: own };
 }
