@@ -40,7 +40,7 @@ explained again, the changed or not, each call carrying 60,000 characters of the
    asked as before, for that model, from then on. The switch is part of a prompt's hash, so no
    recording made while a model thought is replayed for a call asked not to.
 3. **A deadline** (`models.json`'s `deadline`): the job 12 minutes, each stage's longest call
-   (router 1, reader 3, transcriptions 5, planners 4, explainer 2, reviewers 4 minutes), each call
+   (router 1, reader 3, transcriptions 7, planners 4, explainer 2, reviewers 4 minutes), each call
    ended when its stage's time or the job's runs out. A repair is asked for only when a planner's
    call, the changed levels' words and the review after them, as long as they took in this job,
    still fit; otherwise the levels that pass ship, at least three with the hook, or the job stops. A
@@ -85,3 +85,13 @@ explained again, the changed or not, each call carrying 60,000 characters of the
   say. If it is refused, the planners think as before, and the deadline alone holds the time.
 - A released world can change under a learner when a repair changes the passing set; the world page
   offers the newest levels rather than swapping them in.
+
+## Amendment, 2026-10-24: after the first speed run
+
+The first speed run, tuberculosis fresh (every call asked anew), stopped at its deadline after 5.1
+minutes: the first transcription, a model that only thinks, ran past the 5 minutes I had given the
+transcriptions, and no level had passed. The router answered in 6 s and the reader in 64 s, asked
+not to think: the reader's reply fell from 4,697 tokens to 707, so the gateway honours the switch.
+The transcriptions now have 7 minutes, the job still 12. A job's trace now hashes each call after
+its thinking switch is set, as its recording does, so `npm run timing` finds its tokens. The speed
+run for the comparison runs as the job of 2026-10-20 ran, its transcriptions replayed.

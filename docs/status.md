@@ -8,14 +8,15 @@ history is in [progress.md](progress.md) and the session logs.
 
 - **Gate:** G2 Verified authored world is current, tagged `v0.2.0` at `b37c7dc`; G1 is `v0.1.0`.
   Next: G3, whose gate is the attention family's first generated world, BERT (ADR-0052).
-- **Working commit:** `d13effa`, the stack's last code commit, landed on `main` with this status.
+- **Working commit:** `8150128`, the speed run's fixes, landed on `main` with this status.
 - **Purpose:** teaching the 34 AI and ML papers of `docs/papers/corpus.md`, the first set of 11
   chosen (ADR-0054); biomedical papers later, the compartment family kept. The plan is
   `docs/design/ai-papers.md`.
 - **R13, fast generation** (ADR-0053): a 12-minute deadline, thinking only for the transcriptions
   and the reviewers, words only for changed levels, levels released as they pass, read once, worlds
   kept by paper and version, `prebuild`. Before: p50 33.5 min, p90 84.9 min over 9 live jobs.
-  The live p90 after waits on the tuberculosis speed run, started after this land.
+  A fresh tuberculosis run stopped at 5.1 min on the transcriptions' budget, now 7 min; the
+  comparison run, as the job of 2026-10-20 ran, started after this land.
 - **Definitional** is judged by compartment (ADR-0044's second amendment, the owner's reading
   confirmed 2026-10-24); no recorded job replays until one runs again under it.
 - **Worktrees:** the main one, and `PaperPlay-land`, land's checkout for the gate (ADR-0051).
@@ -30,7 +31,7 @@ history is in [progress.md](progress.md) and the session logs.
 - `/world/generated/pmc-PMC12334037-2026-10-18-2`: hepatitis C, three levels, generated; levels 1
   and 3 definitional by the rule of 2026-10-20; its regeneration of 2026-10-20 failed.
 - `/world/generated/arxiv-2506.19869v1-2026-10-18` and `arxiv-2506.19869v1`: tuberculosis, five levels
-  each, generated; levels 1 and 3 flagged; a fresh speed run is running.
+  each, generated; levels 1 and 3 flagged; a speed run is running.
 - `/library`: every world, retired ones marked. On this machine, `/create` shows levels as they pass
   and a paper made before at once; `/world/job/<id>` plays released levels; `/world/local`.
 
