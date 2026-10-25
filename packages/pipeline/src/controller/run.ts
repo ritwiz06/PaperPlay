@@ -206,7 +206,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     say("transcription", "the first transcription of the model");
     say("transcription", "the second transcription, by another vendor's model, which never sees the first");
     const [reading, firstTranscription, secondTranscription] = await Promise.all([
-      timed("reader", (client) => read(client, modelFor("reader"), text, title, { structuredOutput: structured(modelFor("reader")) })),
+      timed("reader", (client) => read(client, modelFor("reader"), text, title, { structuredOutput: structured(modelFor("reader")), sections: true })),
       timed("transcriber", (client) => transcribe(client, modelFor("transcriber"), text, title, { structuredOutput: structured(modelFor("transcriber")) })),
       timed("second-transcriber", (client) => transcribe(client, modelFor("second-transcriber"), text, title, { structuredOutput: structured(modelFor("second-transcriber")), stage: "second-transcriber" })),
     ]);

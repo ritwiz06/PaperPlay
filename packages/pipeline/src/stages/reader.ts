@@ -6,7 +6,7 @@
  */
 import type { SourceText } from "@paperplay/contracts";
 import { z } from "zod";
-import { completeStructured, type ChatMessage, type ModelClient } from "../models/index.ts";
+import { completeStructured, type ChatMessage, type ModelClient, type StructuredResult } from "../models/index.ts";
 import { DATA_RULE, promptSource } from "./source.ts";
 
 const Quote = z.string().min(3).max(300);
@@ -31,10 +31,18 @@ export const Reading = z.strictObject({
       }),
     )
     .max(8),
-  /** The sections, by id, that state the model, its values and its findings: what the stages after the reader are given (R13, ADR-0053). A reading made before 2026-10-24 has none, and they are given the whole paper. */
-  sections: z.array(z.string().min(1)).max(10).default([]),
 });
-export type Reading = z.infer<typeof Reading>;
+export type Reading = z.infer<typeof Reading> & {
+  /** The sections, by id, a job's reader names (R13, ADR-0053); a reading without them gives the stages after it the whole paper. */
+  readonly sections?: readonly string[];
+};
+
+/**
+ * A job's reading (R13, ADR-0053): the same, and the sections that state the model, its values and
+ * its findings, which the stages after the reader are given in place of the whole paper. The
+ * bake-off keeps the reading without them, so its recordings replay as they were made.
+ */
+export const ReadingWithSections = Reading.extend({ sections: z.array(z.string().min(1)).max(10).default([]) });
 
 export const READER_INSTRUCTIONS = [
   "You read a scientific paper and say, in plain English, what it asks, what mechanism it proposes, and what its model shows.",
@@ -45,16 +53,24 @@ export const READER_INSTRUCTIONS = [
   "- findings are what the paper finds from its model, beyond the headline: a result its simulations show, a threshold it derives (such as a basic reproduction number above or below one), or a conclusion it draws, such as which intervention matters most. Not what follows from the model's definitions alone, not its assumptions, not its methods.",
   "- Every quote is copied character for character from the paper text, 3 to 200 characters, where the paper states that thing.",
   "- State only what the paper states. Never add a finding of your own.",
-  "- sections lists the ids, from the paper's list of sections, of the sections that state the model's equations, its parameter values and the findings you give: at most 10, and as few as hold them.",
 ].join("\n");
 
-export function readerMessages(source: SourceText, title: string): ChatMessage[] {
+const SECTIONS_RULE = "- sections lists the ids, from the paper's list of sections, of the sections that state the model's equations, its parameter values and the findings you give: at most 10, and as few as hold them.";
+
+export function readerMessages(source: SourceText, title: string, options: { readonly sections?: boolean } = {}): ChatMessage[] {
+  if (!options.sections)
+    return [
+      { role: "system", content: READER_INSTRUCTIONS },
+      { role: "user", content: `Paper: ${title}\n\n${promptSource(source).block}\n\nRead the paper.` },
+    ];
   return [
-    { role: "system", content: READER_INSTRUCTIONS },
+    { role: "system", content: `${READER_INSTRUCTIONS}\n${SECTIONS_RULE}` },
     { role: "user", content: `Paper: ${title}\n\nThe paper's sections, by id:\n${source.sections.map((section) => `${section.id}: ${section.title}`).join("\n")}\n\n${promptSource(source).block}\n\nRead the paper.` },
   ];
 }
 
-export function read(client: ModelClient, model: string, source: SourceText, title: string, options: { readonly structuredOutput: boolean }) {
-  return completeStructured(client, { stage: "reader", model, messages: readerMessages(source, title), temperature: 0, maxTokens: 16_000 }, Reading, { name: "reading", structuredOutput: options.structuredOutput });
+/** A reading; with sections, a job's, naming the sections the stages after it read (R13). */
+export async function read(client: ModelClient, model: string, source: SourceText, title: string, options: { readonly structuredOutput: boolean; readonly sections?: boolean }): Promise<StructuredResult<Reading>> {
+  if (!options.sections) return completeStructured(client, { stage: "reader", model, messages: readerMessages(source, title), temperature: 0, maxTokens: 16_000 }, Reading, { name: "reading", structuredOutput: options.structuredOutput });
+  return completeStructured(client, { stage: "reader", model, messages: readerMessages(source, title, { sections: true }), temperature: 0, maxTokens: 16_000 }, ReadingWithSections, { name: "reading", structuredOutput: options.structuredOutput });
 }
