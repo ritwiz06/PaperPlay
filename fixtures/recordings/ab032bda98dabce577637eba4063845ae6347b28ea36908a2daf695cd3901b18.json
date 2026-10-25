@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "ab032bda98dabce577637eba4063845ae6347b28ea36908a2daf695cd3901b18",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{ \"domain\": \"nlp\", \"family\": \"none\", \"mechanism\": \"Empirical analysis of attention patterns in a pre-trained neural network (BERT); the paper reports observed attention behaviors and probing-classifier accuracy, with no dynamical mechanism or model a learner could simulate\", \"reason\": \"This is a purely empirical/observational study: it inspects what an already-trained model attends to and reports correlations with linguistic structure. There are no equations or rules to play with — no agent rules, no compartment dynamics, no learnable toy, no field or network dynamics. The probing classifier is a measurement instrument, not a playable mechanism. So it falls in tier C with family\", \"tier\": \"C\" }",
+    "usage": {
+      "promptTokens": 1183,
+      "completionTokens": 187,
+      "totalTokens": 1370
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:05:13.365Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "f318d2f199f45b3aea61c1916fc60d84659bfc25ef53b4d9bcf6aa9f10791590",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"agents\", \"family\": \"agents\", \"mechanism\": \"An agent that interleaves internal reasoning traces with external actions — thinking, acting, observing the result, and updating its plan — while following a fixed prompting policy rather than trained weights. This is exactly the 'agent following local rules' pattern: the ReAct loop (reason → act → \", \"reason\": \"ReAct's mechanism is an agent policy, not a set of compartment equations, a network, or a grid field. The core dynamic is a single agent repeatedly applying a local rule (generate a reasoning trace, take an action, observe feedback from an environment or knowledge base, revise the plan), which a learner can play with directly as an agent-based toy — e.g. a simulated agent navigating a text world, \", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 1253,
+      "completionTokens": 414,
+      "totalTokens": 1667
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:10:30.961Z"
+}

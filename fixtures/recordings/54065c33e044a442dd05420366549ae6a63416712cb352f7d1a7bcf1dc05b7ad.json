@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "54065c33e044a442dd05420366549ae6a63416712cb352f7d1a7bcf1dc05b7ad",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"advanced\": {\n    \"equation\": \"ℛ₀ = Λβγ / (μ(δ + τ + μ)(γ + μ))\",\n    \"quote\": \"ℛ₀ = Λβγ / (μ(δ + τ + μ)(γ + μ))\",\n    \"text\": \"The model tracks six groups. The basic reproduction number is the threshold. The paper gives it as ℛ₀ = Λβγ / (μ(δ + τ + μ)(γ + μ)). When beta is cut to a hundredth, this number drops below one. The model then shows the peak of infectious people over the first ten years is lower by more than five million. The disease stops multiplying and the outbreak collapses.\"\n  },\n  \"afterwards\": {\n    \"question\": \"What else could push the reproduction number below one?\",\n    \"quote\": \"The results suggest that optimal conditions could lead to the elimination of TB.\",\n    \"text\": \"With contact cut to a hundredth, the reproduction number drops below one. The model shows the peak of infectious people is lower by more than five million. The paper says, 'The results suggest that optimal conditions could lead to the elimination of TB.' What else could push the reproduction number?\"\n  },\n  \"beginner\": {\n    \"analogy\": \"Think of tuberculosis like a campfire. The reproduction number is the wind. When the wind is strong, sparks fly and the fire keeps burning. When the wind drops below one, each spark dies before it can\",\n    \"text\": \"Think of tuberculosis like a campfire. The reproduction number is the wind. When the wind is strong, sparks fly and the fire keeps burning. When the wind drops below one, each spark dies before it can light a new twig. The fire goes out. In this level, you calm the wind by making contact rare and watch the outbreak end.\"\n  },\n  \"guide\": {\n    \"falling\": \"infectious people are falling\",\n    \"idle\": \"The model starts with the usual contact rate and shows infectious people over the first ten years.\",\n    \"lowered\": \"You reduce how easily TB passes on to {to}, so infectious people fall.\",\n    \"raised\": \"You increase how easily TB passes on to {to}, so infectious people rise.\",\n    \"readings\": [\n      {\n        \"atLeast\": 10000000,\n        \"words\": \"more than ten million infectious people\"\n      },\n      {\n        \"atLeast\": 5000000,\n        \"words\": \"more than five million infectious people\"\n      },\n      {\n        \"atLeast\": 1000000,\n        \"words\": \"more than one million infectious people\"\n      },\n      {\n        \"atLeast\": 100000,\n        \"words\": \"more than one hundred thousand infectious people\"\n      }\n    ],\n    \"rising\": \"infectious people are rising\"\n  },\n  \"intermediate\": {\n    \"text\": \"You control how easily TB passes on, called beta. Move it from rare contact to frequent contact. The model watches infectious people, the i compartment, over the first ten years. When contact is cut to a hundredth, the reproduction number falls below one. The peak of infectious people becomes lower by more than five million. This shows that pushing beta down can collapse the outbreak.\"\n  }\n}",
+    "usage": {
+      "promptTokens": 22858,
+      "completionTokens": 9338,
+      "totalTokens": 32196
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:25:01.607Z"
+}

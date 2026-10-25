@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "9327c1260a90d5ad10d6815c997c6dc5f05888fe569817e81e6bee4f56ccffac",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"machine learning\", \"family\": \"learning\", \"mechanism\": \"A denoising diffusion probabilistic model: a forward noising process (Gaussian perturbations of an image) paired with a learned reverse process whose mean and variance are predicted by a neural network, trained by minimizing a variational bound (KL divergences between the true and predicted reverse-\"\n, \"reason\": \"The paper's mechanism is a learned generative model: a neural network (epsilon_theta, mu_theta, Sigma_theta) is trained to reverse a fixed Gaussian noising process, with the loss being a variational lower bound. This is a learning toy — a trainable model with parameters adjusted by gradient descent — not a compartment model, agent system, grid field, or network. The learning family is not yet, so\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1683,
+      "completionTokens": 211,
+      "totalTokens": 1894
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:09:28.776Z"
+}

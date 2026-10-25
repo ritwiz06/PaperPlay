@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "07efd57e822f600e42cfc40ab49f40d0c3038b1eed47a04c5b4daca4d2abb862",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"trainable multi-head attention with per-head gates (xi_h) and gradient-based head-importance scores (I_h) used for greedy pruning\", \"reason\": \"The paper's mechanism is not a population, compartment, grid, or network process: it is the training and pruning dynamics of a learned model. The equations define multi-head attention as a weighted sum of heads, introduce a per-head coefficient xi_h, and measure each head's importance by the expected magnitude of the loss gradient with respect to that coefficient (or to the head's output). That is\" \t, \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1554,
+      "completionTokens": 824,
+      "totalTokens": 2378
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:05:45.924Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "59d93e15a79c2c2b58d8287a00d1fd540c9c02bf20e992a04e94f3ac25555cb6",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"machine learning / NLP architecture\", \"family\": \"learning\", \"mechanism\": \"The paper's mechanism is a trainable neural architecture: scaled dot-product attention, multi-head attention, feed-forward layers, and positional encodings, trained by gradient descent with a warmup learning-rate schedule. The equations define learned transformations (softmax attention over QK^T, FF\" , \"reason\": \"The Transformer is a learning model: its mechanism is attention-based representation learning trained by backpropagation, not local agent rules, compartments, grids, or networks of independent nodes. The learning family is not released yet, so this is Tier B.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1411,
+      "completionTokens": 164,
+      "totalTokens": 1575
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:04:46.400Z"
+}

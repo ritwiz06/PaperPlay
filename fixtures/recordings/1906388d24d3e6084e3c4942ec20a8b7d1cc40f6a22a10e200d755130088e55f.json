@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "1906388d24d3e6084e3c4942ec20a8b7d1cc40f6a22a10e200d755130088e55f",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"chain-of-thought prompting in large language models\", \"family\": \"none\", \"mechanism\": \"The paper reports an empirical prompting technique: providing a few worked reasoning exemplars in the prompt improves benchmark accuracy of large language models on arithmetic, commonsense, and symbolic reasoning tasks. There are no equations, no dynamical system, no local rules, and no network or (\" , \"reason\": \"This is a purely empirical result: a prompting method evaluated on benchmarks. It contains no mechanism with dynamics a learner could honestly play with — no compartments, agents, grids, or networks, and the 'learning' family covers learning toys with trainable dynamics, not benchmark evaluations of prompting strategies. Therefore tier C, family none.\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1292,
+      "completionTokens": 276,
+      "totalTokens": 1568
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:10:13.840Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "62f7b660a6cad9488c72fe499b25161c4a6d97c51b8ced08291a04d2fd3c2260",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"Diffusion model sampling with classifier-free guidance: jointly trained conditional and unconditional score estimates are combined as a weighted extrapolation to trade off sample fidelity against diversity, with the guided score approximating a sharpened posterior p(z|c) p(c|z)^w.\", \"reason\":\": The paper's mechanism is a learned generative-model procedure — training conditional/unconditional denoisers and steering the reverse diffusion with a guidance weight. That is a learning-toy mechanism, and the learning family is not released yet, so the tier is B.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1643,
+      "completionTokens": 224,
+      "totalTokens": 1867
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:09:41.350Z"
+}

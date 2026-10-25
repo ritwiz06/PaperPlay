@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "33bd765d1d3babbde0903d1df83a0dbdc614b0ef832c4fa42b8297127af1596a",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"Pre-training a deep bidirectional Transformer encoder on unlabeled text via masked-language-model and next-sentence-prediction objectives, then fine-tuning it for downstream tasks — a machine-learning training mechanism.\", \"reason\":\": The paper's mechanism is a neural-network learning procedure (self-supervised pre-training plus fine-tuning), which falls under the learning family. That family is not yet released, so the tier is B rather than A.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1298,
+      "completionTokens": 135,
+      "totalTokens": 1433
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:04:56.122Z"
+}

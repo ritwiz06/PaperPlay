@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "53f78c19c498cccf119f2944434f25b3609d77cdb266809a203dad6dd624dcd2",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"machine learning\", \"family\": \"none\", \"mechanism\": \"Empirical curve-fitting of power laws relating cross-entropy loss to model size, dataset size, and compute, plus a derivative-based optimization of compute allocation\", \"reason\": \"This is the Kaplan et al. scaling-laws paper. Its content is a set of empirically fitted power-law relationships (L(N,S), B(L), L(N,C)) and the calculus of optimizing a compute budget under them. There is no dynamical mechanism to play with: the equations are regression fits to experimental results, not a process a learner could simulate or interact with — plugging numbers into fitted power laws (\"\n    , \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1531,
+      "completionTokens": 383,
+      "totalTokens": 1914
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:06:36.652Z"
+}

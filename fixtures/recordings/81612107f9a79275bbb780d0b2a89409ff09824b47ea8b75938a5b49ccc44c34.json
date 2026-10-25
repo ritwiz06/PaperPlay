@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "81612107f9a79275bbb780d0b2a89409ff09824b47ea8b75938a5b49ccc44c34",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"A language model trained in a self-supervised way to decide when to call external APIs, what arguments to pass, and how to fold the results back into token prediction — the equations define a training/fine-tuning procedure (weighted log-likelihood losses, filtering by loss difference threshold τ_f),\", \"reason\": \"The paper's mechanism is a learning process: a model teaching itself a skill through a self-supervised objective and filtering criterion. That is squarely a learning-toy mechanism, but the learning family is not released yet, so this is tier B rather than A. It is not agents (no local-rule agents), not compartments (no dynamical system of states), and not grids or networks.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1460,
+      "completionTokens": 239,
+      "totalTokens": 1699
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:10:50.728Z"
+}

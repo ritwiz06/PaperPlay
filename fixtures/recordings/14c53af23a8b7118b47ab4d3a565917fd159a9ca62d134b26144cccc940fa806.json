@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "14c53af23a8b7118b47ab4d3a565917fd159a9ca62d134b26144cccc940fa806",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"Iterative denoising generative model: a non-Markovian diffusion process whose reverse is a learned, potentially deterministic sampler, trained by the same noise-prediction objective as DDPMs\", \"reason\":\": The paper's mechanism is a learned generative process — a neural network ε_θ trained with a denoising objective, then run in reverse to transform noise into samples. This is squarely a learning toy (a trainable model with a loss and iterative inference), not agents, compartments, grids, or networks. The learning family is not released yet, so the tier is B.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1689,
+      "completionTokens": 183,
+      "totalTokens": 1872
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:09:12.443Z"
+}

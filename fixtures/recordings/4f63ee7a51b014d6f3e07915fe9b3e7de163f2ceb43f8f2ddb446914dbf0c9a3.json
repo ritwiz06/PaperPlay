@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "4f63ee7a51b014d6f3e07915fe9b3e7de163f2ceb43f8f2ddb446914dbf0c9a3",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"nlp\", \"family\": \"learning\", \"mechanism\": \"A pre-training objective in which a small generator network samples plausible token replacements and a discriminator network learns to classify each token as original or replaced, with learning signal defined over every input token rather than a masked subset.\", \"reason\": \"The paper's mechanism is a training procedure — a generator/discriminator pair optimizing a replaced-token-detection objective. That is a learning mechanism, not local agent rules, compartment equations, grid fields, or network structure. The learning family is not yet released, so the best honest route is tier B.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1274,
+      "completionTokens": 200,
+      "totalTokens": 1474
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:05:56.811Z"
+}

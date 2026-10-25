@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "8b483349cc7c79baddc5bdcbcf3749c21ed3a6f97d0dc7fbfc9d6f705d4cb823",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"Score matching: a model learns the gradient field (score) of a noise-perturbed data distribution via a denoising regression objective, and samples are then drawn by annealed Langevin dynamics following the learned field.\", \"reason\": \"The paper's mechanism is a learning objective — a neural network trained with the denoising score-matching loss (the E[||s_θ(x̃,σ) + (x̃−x)/σ²||²] equation) — plus a sampling procedure built on the trained model. The heart of it is the learned score function, not a compartmental, agent-based, network, or grid-field system, so the only family that covers it is learning, which is not yet released.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1647,
+      "completionTokens": 322,
+      "totalTokens": 1969
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:08:01.123Z"
+}

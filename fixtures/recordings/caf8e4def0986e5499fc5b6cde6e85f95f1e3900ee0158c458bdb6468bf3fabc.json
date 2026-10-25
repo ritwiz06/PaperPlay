@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "caf8e4def0986e5499fc5b6cde6e85f95f1e3900ee0158c458bdb6468bf3fabc",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"computer-vision-generative-models\", \"family\": \"learning\", \"mechanism\": \"Iterative denoising diffusion: a neural denoiser is trained by noise-prediction loss (L_simple) in a compressed latent space, then run in reverse to synthesize images, with cross-attention conditioning steering the process\", \"reason\":\": The paper's mechanism is a learned denoiser: the display equations are training objectives (expectations over noise of a squared-error loss for a model ε_θ) plus the Gaussian noising kernels the model inverts. Playing with this honestly means training a small denoiser by gradient descent and stepping it backwards through the noise schedule — a learning toy, not a compartment system, agent rule,或\" \t, \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1589,
+      "completionTokens": 506,
+      "totalTokens": 2095
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:10:02.527Z"
+}

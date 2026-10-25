@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "a9391664e0d403f7ec118598b36f7cbd9753f2ed220c4b09b3edf9e66e3f0ab3",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"systems / machine-learning infrastructure\", \"family\": \"agents\", \"mechanism\": \"batch-splitting pipeline parallelism: a network expressed as a sequence of layers is partitioned into stages placed on separate accelerators, and each input batch is split into micro-batches that flow through the stages in a staggered schedule, so the stages work concurrently and the idle 'bubble'时间\", \"reason\": \"The paper's mechanism is not the neural networks being trained but the pipelining algorithm itself: stages that each follow simple local rules (take the next micro-batch, run forward or backward, hand it to the neighbor), with the global behavior — near-linear speedup and bubble overhead — emerging from that schedule. That is honestly playable as a new model of the agent kind (stage-agents in a流水线\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1227,
+      "completionTokens": 889,
+      "totalTokens": 2116
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:07:33.796Z"
+}

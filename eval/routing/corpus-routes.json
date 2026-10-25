@@ -1,0 +1,594 @@
+{
+  "schemaVersion": "corpus-routes/1",
+  "routedOn": "2026-10-20",
+  "routes": [
+    {
+      "id": "1706.03762",
+      "version": "1706.03762v7",
+      "group": "Transformers and their analysis",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 25,
+        "equations": 5
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "machine learning / NLP architecture",
+        "mechanism": "The paper's mechanism is a trainable neural architecture: scaled dot-product attention, multi-head attention, feed-forward layers, and positional encodings, trained by gradient descent with a warmup learning-rate schedule. The equations define learned transformations (softmax attention over QK^T, FF",
+        "family": "learning",
+        "tier": "B",
+        "reason": "The Transformer is a learning model: its mechanism is attention-based representation learning trained by backpropagation, not local agent rules, compartments, grids, or networks of independent nodes. The learning family is not released yet, so this is Tier B."
+      }
+    },
+    {
+      "id": "1810.04805",
+      "version": "1810.04805v2",
+      "group": "Transformers and their analysis",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 32,
+        "equations": 1
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "learning",
+        "mechanism": "Pre-training a deep bidirectional Transformer encoder on unlabeled text via masked-language-model and next-sentence-prediction objectives, then fine-tuning it for downstream tasks — a machine-learning training mechanism.",
+        "family": "learning",
+        "tier": "B",
+        "reason": ": The paper's mechanism is a neural-network learning procedure (self-supervised pre-training plus fine-tuning), which falls under the learning family. That family is not yet released, so the tier is B rather than A."
+      }
+    },
+    {
+      "id": "1906.04341",
+      "version": "1906.04341v1",
+      "group": "Transformers and their analysis",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 17,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "nlp",
+        "mechanism": "Empirical analysis of attention patterns in a pre-trained neural network (BERT); the paper reports observed attention behaviors and probing-classifier accuracy, with no dynamical mechanism or model a learner could simulate",
+        "family": "none",
+        "tier": "C",
+        "reason": "This is a purely empirical/observational study: it inspects what an already-trained model attends to and reports correlations with linguistic structure. There are no equations or rules to play with — no agent rules, no compartment dynamics, no learnable toy, no field or network dynamics. The probing classifier is a measurement instrument, not a playable mechanism. So it falls in tier C with family"
+      }
+    },
+    {
+      "id": "1905.10650",
+      "version": "1905.10650v3",
+      "group": "Transformers and their analysis",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 24,
+        "equations": 5
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "learning",
+        "mechanism": "trainable multi-head attention with per-head gates (xi_h) and gradient-based head-importance scores (I_h) used for greedy pruning",
+        "family": "learning",
+        "tier": "B",
+        "reason": "The paper's mechanism is not a population, compartment, grid, or network process: it is the training and pruning dynamics of a learned model. The equations define multi-head attention as a weighted sum of heads, introduce a per-head coefficient xi_h, and measure each head's importance by the expected magnitude of the loss gradient with respect to that coefficient (or to the head's output). That is"
+      }
+    },
+    {
+      "id": "2003.10555",
+      "version": "2003.10555v1",
+      "group": "BERT's successors",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 22,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "nlp",
+        "mechanism": "A pre-training objective in which a small generator network samples plausible token replacements and a discriminator network learns to classify each token as original or replaced, with learning signal defined over every input token rather than a masked subset.",
+        "family": "learning",
+        "tier": "B",
+        "reason": "The paper's mechanism is a training procedure — a generator/discriminator pair optimizing a replaced-token-detection objective. That is a learning mechanism, not local agent rules, compartment equations, grid fields, or network structure. The learning family is not yet released, so the best honest route is tier B."
+      }
+    },
+    {
+      "id": "1907.11692",
+      "version": "1907.11692v1",
+      "group": "BERT's successors",
+      "error": "["
+    },
+    {
+      "id": "1910.10683",
+      "version": "1910.10683v4",
+      "group": "BERT's successors",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 62,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "NLP / transfer learning",
+        "mechanism": "Pre-training a model on a data-rich task and fine-tuning it on downstream tasks, with all problems cast into a unified text-to-text format",
+        "family": "learning",
+        "tier": "B",
+        "reason": "The paper's mechanism is transfer learning itself: how a model's knowledge acquired during pre-training carries over to downstream tasks. That is squarely a learning-toy mechanism (train, then adapt, observe what transfers). The learning family is not released yet, so this is tier B rather than A. It is not compartments, agents, grids, or networks — there is no population, field, or interaction-拓扑"
+      }
+    },
+    {
+      "id": "1909.11942",
+      "version": "1909.11942v6",
+      "group": "BERT's successors",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 30,
+        "equations": 1
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "nlp",
+        "mechanism": "Self-supervised representation learning with parameter-reduction techniques (factorized embedding parameterization, cross-layer weight sharing) and a sentence-order prediction loss for inter-sentence coherence",
+        "family": "learning",
+        "tier": "B",
+        "reason": "The paper's mechanism is a learning method: it modifies how a neural language model is trained and parameterized (shared weights, factorized embeddings, self-supervised coherence loss). This falls squarely in the learning-toys family, which is not yet released, so the best available classification is Tier B rather than A. It is not a survey or purely empirical result — there is a genuine trainable"
+      }
+    },
+    {
+      "id": "2001.08361",
+      "version": "2001.08361v1",
+      "group": "Scale and systems",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 47,
+        "equations": 14
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "machine learning",
+        "mechanism": "Empirical curve-fitting of power laws relating cross-entropy loss to model size, dataset size, and compute, plus a derivative-based optimization of compute allocation",
+        "family": "none",
+        "tier": "C",
+        "reason": "This is the Kaplan et al. scaling-laws paper. Its content is a set of empirically fitted power-law relationships (L(N,S), B(L), L(N,C)) and the calculus of optimizing a compute budget under them. There is no dynamical mechanism to play with: the equations are regression fits to experimental results, not a process a learner could simulate or interact with — plugging numbers into fitted power laws ("
+      }
+    },
+    {
+      "id": "1909.08053",
+      "version": "1909.08053v4",
+      "group": "Scale and systems",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 28,
+        "equations": 4
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "systems",
+        "mechanism": "The paper's contribution is a distributed-training engineering technique: splitting transformer weight matrices (A = [A1; A2]) across GPUs and inserting communication operations to train multi-billion-parameter models. The equations shown are standard transformer components (GeLU activations, block-",
+        "family": "none",
+        "tier": "C",
+        "reason": "The paper's mechanism is a systems engineering technique for distributed training — splitting weight matrices across GPUs and inserting communication operations — not a dynamical, adaptive, or structural mechanism a learner could play with. The displayed equations are standard transformer forward-pass algebra (GeLU on partitioned matrix multiplications) and the perplexity definition, neither of"
+      }
+    },
+    {
+      "id": "1910.02054",
+      "version": "1910.02054v3",
+      "group": "Scale and systems",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 45,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "systems",
+        "mechanism": "ZeRO is a distributed-training systems optimization: it partitions optimizer states, gradients, and parameters across data-parallel devices to remove memory redundancy while keeping communication volume low. The paper's contribution is a memory/communication analysis plus an engineering evaluation (",
+        "family": "none",
+        "tier": "C",
+        "reason": "The mechanism here is memory layout and partitioning strategy across GPUs — a systems engineering design validated empirically (throughput, speedup, parameter counts). There are no display equations and no dynamical process a learner could simulate and interact with: nothing like agent rules, compartment flows, field evolution, network propagation, or a learning dynamic whose behavior one could探索."
+      }
+    },
+    {
+      "id": "1811.06965",
+      "version": "1811.06965v5",
+      "group": "Scale and systems",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 12,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "systems / machine-learning infrastructure",
+        "mechanism": "batch-splitting pipeline parallelism: a network expressed as a sequence of layers is partitioned into stages placed on separate accelerators, and each input batch is split into micro-batches that flow through the stages in a staggered schedule, so the stages work concurrently and the idle 'bubble'时间",
+        "family": "agents",
+        "tier": "B",
+        "reason": "The paper's mechanism is not the neural networks being trained but the pipelining algorithm itself: stages that each follow simple local rules (take the next micro-batch, run forward or backward, hand it to the neighbor), with the global behavior — near-linear speedup and bubble overhead — emerging from that schedule. That is honestly playable as a new model of the agent kind (stage-agents in a流水线"
+      }
+    },
+    {
+      "id": "1503.03585",
+      "version": "1503.03585v8",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 38,
+        "equations": 38
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "learning",
+        "mechanism": "A forward diffusion process that gradually destroys structure in a data distribution, paired with a learned reverse process that restores it — a trainable generative model whose dynamics are Markov transition kernels tuned by gradient descent on a variational bound.",
+        "family": "learning",
+        "tier": "B",
+        "reason": "The paper's core mechanism is learning: the reverse diffusion transitions q are fit to data by maximizing a lower bound on the log-likelihood, with thousands of trainable steps. This is squarely a learning-toy mechanism (trainable parameters updated from data), and the learning family is not yet released, so the tier is B rather than A. It is not compartments (no fixed epidemiological-style ODEs),"
+      }
+    },
+    {
+      "id": "1907.05600",
+      "version": "1907.05600v3",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 34,
+        "equations": 8
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "learning",
+        "mechanism": "Score matching: a model learns the gradient field (score) of a noise-perturbed data distribution via a denoising regression objective, and samples are then drawn by annealed Langevin dynamics following the learned field.",
+        "family": "learning",
+        "tier": "B",
+        "reason": "The paper's mechanism is a learning objective — a neural network trained with the denoising score-matching loss (the E[||s_θ(x̃,σ) + (x̃−x)/σ²||²] equation) — plus a sampling procedure built on the trained model. The heart of it is the learned score function, not a compartmental, agent-based, network, or grid-field system, so the only family that covers it is learning, which is not yet released."
+      }
+    },
+    {
+      "id": "1305.6663",
+      "version": "1305.6663v4",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 14,
+        "equations": 5
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "learning",
+        "mechanism": "Training a denoising auto-encoder by stochastic gradient descent on a reconstruction log-likelihood loss, then generating samples by running the induced Markov chain (encode/decode with corruption noise at each step) to convergence",
+        "family": "learning",
+        "tier": "B",
+        "reason": ": The paper's mechanism is a learning algorithm: a parametric model P_θ(X|X̃) is fit by minimizing an expected negative log-likelihood loss L(θ) = -E[log P_θ(X|X̃)] over corrupted data, with the corruption process C(X̃|X) defining the training distribution. Generation is then a Markov chain whose transition kernel T(X_t|X_{t-1}) = ∫ P_θ(X_t|X̃) C(X̃|X_{t-1}) dX̃ alternates reconstruction and re-no"
+      }
+    },
+    {
+      "id": "1306.1091",
+      "version": "1306.1091v5",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 14,
+        "equations": 8
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "learning",
+        "mechanism": "Learning the transition operator of a Markov chain whose stationary distribution estimates the data distribution — a training principle (alternative to maximum likelihood) where the conditional transition distribution is learned by backprop, generalizing denoising autoencoders",
+        "family": "learning",
+        "tier": "B",
+        "reason": ": The paper's core mechanism is a *learning* one: instead of fitting a joint distribution directly, it trains a parametrized Markov-chain transition operator P_θ(H|H_t,X_t), P_θ(X|H_{t+1}) with backprop, relying on the stationary distribution of the learned chain to estimate the data distribution. The theorems concern stationarity and consistency of the learned conditionals, and the experiments (M"
+      }
+    },
+    {
+      "id": "1703.06975",
+      "version": "1703.06975v1",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 26,
+        "equations": 4
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "learning",
+        "mechanism": "A training procedure that learns a Markov-chain transition operator which progressively denoises random noise into samples from a target distribution; the training chain infuses information from the target example, and learning proceeds by gradient ascent on log-likelihoods (with a variational lower",
+        "family": "learning",
+        "tier": "B",
+        "reason": "The paper's core mechanism is a learned generative transition operator trained by likelihood/ELBO-style objectives (the equations are maximum-likelihood and variational bound updates). This is a learning mechanism, not local agent rules, compartments, grids, or networks. The learning family is not yet released, so the best available family covers it but is unreleased."
+      }
+    },
+    {
+      "id": "2006.11239",
+      "version": "2006.11239v2",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 23,
+        "equations": 16
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "learning",
+        "mechanism": "A latent-variable generative model trained by optimizing a variational bound: a fixed forward noising Markov chain gradually corrupts data into Gaussian noise, and a neural network is trained (via denoising score matching / a KL-decomposed ELBO) to reverse each step, so sampling is an iterative deno",
+        "family": "learning",
+        "tier": "B",
+        "reason": ": "
+      }
+    },
+    {
+      "id": "2010.02502",
+      "version": "2010.02502v4",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 31,
+        "equations": 64
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "learning",
+        "mechanism": "Iterative denoising generative model: a non-Markovian diffusion process whose reverse is a learned, potentially deterministic sampler, trained by the same noise-prediction objective as DDPMs",
+        "family": "learning",
+        "tier": "B",
+        "reason": ": The paper's mechanism is a learned generative process — a neural network ε_θ trained with a denoising objective, then run in reverse to transform noise into samples. This is squarely a learning toy (a trainable model with a loss and iterative inference), not agents, compartments, grids, or networks. The learning family is not released yet, so the tier is B."
+      }
+    },
+    {
+      "id": "2102.09672",
+      "version": "2102.09672v1",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 24,
+        "equations": 12
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "machine learning",
+        "mechanism": "A denoising diffusion probabilistic model: a forward noising process (Gaussian perturbations of an image) paired with a learned reverse process whose mean and variance are predicted by a neural network, trained by minimizing a variational bound (KL divergences between the true and predicted reverse-",
+        "family": "learning",
+        "tier": "B",
+        "reason": "The paper's mechanism is a learned generative model: a neural network (epsilon_theta, mu_theta, Sigma_theta) is trained to reverse a fixed Gaussian noising process, with the loss being a variational lower bound. This is a learning toy — a trainable model with parameters adjusted by gradient descent — not a compartment model, agent system, grid field, or network. The learning family is not yet, so"
+      }
+    },
+    {
+      "id": "2207.12598",
+      "version": "2207.12598v1",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 16,
+        "equations": 8
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "learning",
+        "mechanism": "Diffusion model sampling with classifier-free guidance: jointly trained conditional and unconditional score estimates are combined as a weighted extrapolation to trade off sample fidelity against diversity, with the guided score approximating a sharpened posterior p(z|c) p(c|z)^w.",
+        "family": "learning",
+        "tier": "B",
+        "reason": ": The paper's mechanism is a learned generative-model procedure — training conditional/unconditional denoisers and steering the reverse diffusion with a guidance weight. That is a learning-toy mechanism, and the learning family is not released yet, so the tier is B."
+      }
+    },
+    {
+      "id": "2112.10752",
+      "version": "2112.10752v2",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 45,
+        "equations": 18
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "computer-vision-generative-models",
+        "mechanism": "Iterative denoising diffusion: a neural denoiser is trained by noise-prediction loss (L_simple) in a compressed latent space, then run in reverse to synthesize images, with cross-attention conditioning steering the process",
+        "family": "learning",
+        "tier": "B",
+        "reason": ": The paper's mechanism is a learned denoiser: the display equations are training objectives (expectations over noise of a squared-error loss for a model ε_θ) plus the Gaussian noising kernels the model inverts. Playing with this honestly means training a small denoiser by gradient descent and stepping it backwards through the noise schedule — a learning toy, not a compartment system, agent rule,或"
+      }
+    },
+    {
+      "id": "2201.11903",
+      "version": "2201.11903v6",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 41,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "chain-of-thought prompting in large language models",
+        "mechanism": "The paper reports an empirical prompting technique: providing a few worked reasoning exemplars in the prompt improves benchmark accuracy of large language models on arithmetic, commonsense, and symbolic reasoning tasks. There are no equations, no dynamical system, no local rules, and no network or (",
+        "family": "none",
+        "tier": "C",
+        "reason": "This is a purely empirical result: a prompting method evaluated on benchmarks. It contains no mechanism with dynamics a learner could honestly play with — no compartments, agents, grids, or networks, and the 'learning' family covers learning toys with trainable dynamics, not benchmark evaluations of prompting strategies. Therefore tier C, family none."
+      }
+    },
+    {
+      "id": "2210.03629",
+      "version": "2210.03629v3",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 36,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "agents",
+        "mechanism": "An agent that interleaves internal reasoning traces with external actions — thinking, acting, observing the result, and updating its plan — while following a fixed prompting policy rather than trained weights. This is exactly the 'agent following local rules' pattern: the ReAct loop (reason → act → ",
+        "family": "agents",
+        "tier": "A",
+        "reason": "ReAct's mechanism is an agent policy, not a set of compartment equations, a network, or a grid field. The core dynamic is a single agent repeatedly applying a local rule (generate a reasoning trace, take an action, observe feedback from an environment or knowledge base, revise the plan), which a learner can play with directly as an agent-based toy — e.g. a simulated agent navigating a text world, "
+      }
+    },
+    {
+      "id": "2303.11366",
+      "version": "2303.11366v4",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 30,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "agents",
+        "mechanism": "A language agent that acts in an environment, receives feedback, verbally reflects on it, stores the reflection in an episodic memory buffer, and uses that self-generated text to improve its decisions on subsequent trials — learning without any weight updates.",
+        "family": "agents",
+        "tier": "A",
+        "reason": "The paper's core mechanism is a set of local agent rules: act, observe feedback, generate a verbal reflection, write it to memory, and condition the next attempt on that memory. This is exactly the kind of step-by-step agent loop the released agents family models, so it is Tier A."
+      }
+    },
+    {
+      "id": "2302.04761",
+      "version": "2302.04761v1",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 30,
+        "equations": 6
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "learning",
+        "mechanism": "A language model trained in a self-supervised way to decide when to call external APIs, what arguments to pass, and how to fold the results back into token prediction — the equations define a training/fine-tuning procedure (weighted log-likelihood losses, filtering by loss difference threshold τ_f),",
+        "family": "learning",
+        "tier": "B",
+        "reason": "The paper's mechanism is a learning process: a model teaching itself a skill through a self-supervised objective and filtering criterion. That is squarely a learning-toy mechanism, but the learning family is not released yet, so this is tier B rather than A. It is not agents (no local-rule agents), not compartments (no dynamical system of states), and not grids or networks."
+      }
+    },
+    {
+      "id": "2305.14325",
+      "version": "2305.14325v1",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 16,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "agents",
+        "mechanism": "Multiple language-model instances act as agents, each proposing answers and critiquing others' reasoning over several rounds, with the final answer emerging from their interaction rather than from a single model",
+        "family": "agents",
+        "tier": "A",
+        "reason": "The paper's core mechanism is a society of interacting agents, each following the same local procedure (propose, critique, revise) over multiple debate rounds, whose collective dynamics produce the final answer. This is exactly the released agents family: local rules per agent, emergent group-level outcome. No equations or compartment dynamics are involved, and the mechanism is not a network, grid"
+      }
+    },
+    {
+      "id": "2305.10601",
+      "version": "2305.10601v2",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 19,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "learning",
+        "mechanism": "inference-time tree search over 'thoughts' — an LLM proposes intermediate reasoning steps, self-evaluates them with a value function, and performs lookahead/backtracking (BFS/DFS-style exploration) to make global decisions, rather than committing to a single left-to-right token path",
+        "family": "learning",
+        "tier": "B",
+        "reason": "The paper's mechanism is not a dynamical system, compartment flow, grid field, or network; it is a search-and-evaluation procedure built on top of a language model. A learner could honestly play with this — stepping through proposal, scoring, expansion, and backtracking on a search tree — but the natural home is a learning-style toy about LLM reasoning and prompting strategies (chain-of-thought vs"
+      }
+    },
+    {
+      "id": "2308.08155",
+      "version": "2308.08155v2",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 31,
+        "equations": 1
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "agents",
+        "mechanism": "Multiple conversable agents that follow customizable local interaction rules (conversation patterns, modes combining LLMs, humans, and tools) to accomplish tasks through multi-agent conversation",
+        "family": "agents",
+        "tier": "A",
+        "reason": "The paper's core mechanism is a set of autonomous agents, each with its own local rules and conversable behavior, interacting to solve tasks — this is exactly the released agents family. The framework is about programming agent interaction behaviors, not compartment equations, learning dynamics, grids, or networks. The stray display equation (a plane equation) is incidental and not the paper's机制."
+      }
+    },
+    {
+      "id": "2304.03442",
+      "version": "2304.03442v2",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 58,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "agents",
+        "mechanism": "Software agents that each follow local rules — observing, remembering, reflecting, and planning their own behavior — producing emergent social dynamics in a sandbox town",
+        "family": "agents",
+        "tier": "A",
+        "reason": "The paper's core mechanism is a population of autonomous agents, each driven by its own local architecture (memory stream, reflection, planning) built on an LLM. Believable individual and emergent social behaviors arise from these local rules interacting, which is exactly the agents family. No equations or compartment-level dynamics are involved."
+      }
+    },
+    {
+      "id": "2405.15793",
+      "version": "2405.15793v3",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 43,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "agents",
+        "mechanism": "An autonomous agent (an LM acting as a new kind of end user) interacts with a computer environment through a designed interface of discrete commands and feedback, following local rules for navigating repositories, editing files, and running tests; the interface design itself shapes the agent's step-",
+        "family": "agents",
+        "tier": "A",
+        "reason": "The paper's mechanism is an agent loop: observe state, choose an action from a constrained action space (the agent-computer interface), receive feedback, repeat. That is exactly the 'agents that each follow local rules' family, which is released, so the mechanism as stated is covered. The benchmark scores are evidence, not the mechanism itself."
+      }
+    },
+    {
+      "id": "2407.01489",
+      "version": "2407.01489v2",
+      "group": "Reasoning and agents",
+      "error": "["
+    },
+    {
+      "id": "2310.01798",
+      "version": "2310.01798v2",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 16,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "none",
+        "mechanism": "The paper is an empirical evaluation of LLM self-correction behavior — testing whether models improve their answers without external feedback. It reports benchmark results and performance changes, with no dynamical system, local rules, or playable mechanism described (no equations given).",
+        "family": "none",
+        "tier": "C",
+        "reason": "This is a purely empirical result about LLM behavior: it measures performance before and after self-correction attempts and draws conclusions from experiments. There is no mechanism a learner could honestly play with — no agent rules, no compartment dynamics, no network or field structure. Even the 'learning' family (unreleased) covers toy learning systems, not benchmark evaluations of commercial/"
+      }
+    },
+    {
+      "id": "2503.13657",
+      "version": "2503.13657v3",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 52,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "multi-agent LLM systems",
+        "mechanism": "The paper is an empirical annotation study: it collects execution traces from existing multi-agent LLM frameworks, has human experts and an LLM-as-a-Judge pipeline label failure modes, and derives a static taxonomy of failure categories with prevalence percentages. There are no equations, no dynamax",
+        "family": "none",
+        "tier": "C",
+        "reason": "This is a purely empirical result — a dataset, a taxonomy, and an annotation pipeline. It describes and classifies observed failures in existing systems; it does not propose or analyze a mechanism with dynamics a learner could play with. Although the subject is multi-agent systems, the paper offers no local rules, no state evolution, and no model to run — the taxonomy is descriptive statistics of "
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "a7e02809c942e4a29b2fa53f36e44e48a791c82e930bd99b1e1d0663c97380de",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"A training procedure that learns a Markov-chain transition operator which progressively denoises random noise into samples from a target distribution; the training chain infuses information from the target example, and learning proceeds by gradient ascent on log-likelihoods (with a variational lower\", \"reason\": \"The paper's core mechanism is a learned generative transition operator trained by likelihood/ELBO-style objectives (the equations are maximum-likelihood and variational bound updates). This is a learning mechanism, not local agent rules, compartments, grids, or networks. The learning family is not yet released, so the best available family covers it but is unreleased.\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1403,
+      "completionTokens": 198,
+      "totalTokens": 1601
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:08:50.238Z"
+}

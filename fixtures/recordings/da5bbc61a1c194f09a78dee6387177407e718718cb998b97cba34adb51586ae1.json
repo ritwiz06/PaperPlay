@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "da5bbc61a1c194f09a78dee6387177407e718718cb998b97cba34adb51586ae1",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\n  \"advanced\": {\n    \"equation\": \"dV/dt = πS − (θ + μ)V\",\n    \"quote\": \"dV/dt = πS − (θ + μ)V\",\n    \"text\": \"The model tracks vaccinated people in the V compartment. Their rate of change follows the paper's equation dV/dt = πS − (θ + μ)V. The contact rate beta does not appear in this equation, but raising beta increases infections elsewhere and pulls people out of the protected group. When beta is doubled to 0.00000155, the peak of vaccinated people within 38 years falls by more than 3,000,000. This agrees with the paper's sensitivity result that beta is one of the most important factors.\"\n  },\n  \"afterwards\": {\n    \"question\": \"Why does more contact leave fewer people in the protected vaccinated group?\",\n    \"quote\": \"contact rate ($beta$), recruitment rate ($Lambda$), the loss of protection for the vaccination rate ($theta$), and rate of progression from the exposed class to the infectious class ($gamma$) were the most important factors.\",\n    \"text\": \"Doubling contact made the vaccinated peak more than three million lower. The paper's sensitivity analysis lists contact rate among the most important factors.\"\n  },\n  \"beginner\": {\n    \"analogy\": \"Imagine a town where people mix more or less often. You choose how much contact happens. More contact lets tuberculosis spread faster, so the protected vaccinated group shrinks. Watch the vaccinated人们\",\n    \"text\": \"Imagine a town where people mix more or less often. You choose how much contact happens. More contact lets tuberculosis spread faster, so the protected vaccinated group shrinks. Watch the vaccinated people. If everyone meets others twice as often, fewer people stay protected.\"\n  },\n  \"guide\": {\n    \"falling\": \"vaccinated people are falling\",\n    \"idle\": \"Set the contact rate, then run the model to see what happens to vaccinated people.\",\n    \"lowered\": \"You lower the contact rate to {to}, so the vaccinated peak rises.\",\n    \"raised\": \"You raise the contact rate to {to}, so the vaccinated peak falls.\",\n    \"readings\": [\n      {\n        \"atLeast\": 5000000,\n        \"words\": \"more than 5,000,000 vaccinated people\"\n      },\n      {\n        \"atLeast\": 2000000,\n        \"words\": \"more than 2,000,000 vaccinated people\"\n      },\n      {\n        \"atLeast\": 1000000,\n        \"words\": \"more than 1,000,000 vaccinated people\"\n      },\n      {\n        \"atLeast\": 0,\n        \"words\": \"0 or more vaccinated people\"\n      }\n    ],\n    \"rising\": \"vaccinated people are rising\"\n  },\n  \"intermediate\": {\n    \"text\": \"The control is the contact rate, called beta. The watched value is vaccinated people, the V compartment. In this level you double beta to twice its estimated value. The model then shows that the peak of vaccinated people over 38 years is more than three million lower. Faster contact drains people out of the protected group as they lose immunity and become exposed. Try the slider and see the peak drop.\"\n  }\n}",
+    "usage": {
+      "promptTokens": 22856,
+      "completionTokens": 9170,
+      "totalTokens": 32026
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:24:56.000Z"
+}

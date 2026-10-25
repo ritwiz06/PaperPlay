@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "ce61325788b5ef4a2442c35c803aacb3f2fc9bb2fabaf177a252e7a28fcf9977",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"agents\", \"family\": \"agents\", \"mechanism\": \"A language agent that acts in an environment, receives feedback, verbally reflects on it, stores the reflection in an episodic memory buffer, and uses that self-generated text to improve its decisions on subsequent trials — learning without any weight updates.\", \"reason\": \"The paper's core mechanism is a set of local agent rules: act, observe feedback, generate a verbal reflection, write it to memory, and condition the next attempt on that memory. This is exactly the kind of step-by-step agent loop the released agents family models, so it is Tier A.\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 1234,
+      "completionTokens": 206,
+      "totalTokens": 1440
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:10:40.302Z"
+}

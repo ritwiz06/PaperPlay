@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "c82f3bf4b8b80e6c35d5873aee5babd1cf5993b115c01932e668ebee22fb1c40",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"Learning the transition operator of a Markov chain whose stationary distribution estimates the data distribution — a training principle (alternative to maximum likelihood) where the conditional transition distribution is learned by backprop, generalizing denoising autoencoders\", \"reason\":\": The paper's core mechanism is a *learning* one: instead of fitting a joint distribution directly, it trains a parametrized Markov-chain transition operator P_θ(H|H_t,X_t), P_θ(X|H_{t+1}) with backprop, relying on the stationary distribution of the learned chain to estimate the data distribution. The theorems concern stationarity and consistency of the learned conditionals, and the experiments (M\" , \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1965,
+      "completionTokens": 284,
+      "totalTokens": 2249
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:08:35.776Z"
+}

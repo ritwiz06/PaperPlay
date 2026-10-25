@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "4f52ab49d32e512424bd7027a6480e97117ae340ae23c9a6f9a13a498ed9de56",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"inference-time tree search over 'thoughts' — an LLM proposes intermediate reasoning steps, self-evaluates them with a value function, and performs lookahead/backtracking (BFS/DFS-style exploration) to make global decisions, rather than committing to a single left-to-right token path\", \"reason\": \"The paper's mechanism is not a dynamical system, compartment flow, grid field, or network; it is a search-and-evaluation procedure built on top of a language model. A learner could honestly play with this — stepping through proposal, scoring, expansion, and backtracking on a search tree — but the natural home is a learning-style toy about LLM reasoning and prompting strategies (chain-of-thought vs\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1237,
+      "completionTokens": 730,
+      "totalTokens": 1967
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:11:26.567Z"
+}

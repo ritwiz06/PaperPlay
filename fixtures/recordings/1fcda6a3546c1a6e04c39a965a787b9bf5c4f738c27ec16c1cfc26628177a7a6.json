@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "1fcda6a3546c1a6e04c39a965a787b9bf5c4f738c27ec16c1cfc26628177a7a6",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"systems\", \"family\": \"none\", \"mechanism\": \"The paper's contribution is a distributed-training engineering technique: splitting transformer weight matrices (A = [A1; A2]) across GPUs and inserting communication operations to train multi-billion-parameter models. The equations shown are standard transformer components (GeLU activations, block-\"\n, \"reason\": \"The paper's mechanism is a systems engineering technique for distributed training — splitting weight matrices across GPUs and inserting communication operations — not a dynamical, adaptive, or structural mechanism a learner could play with. The displayed equations are standard transformer forward-pass algebra (GeLU on partitioned matrix multiplications) and the perplexity definition, neither of\"\n, \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1437,
+      "completionTokens": 194,
+      "totalTokens": 1631
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:06:45.950Z"
+}

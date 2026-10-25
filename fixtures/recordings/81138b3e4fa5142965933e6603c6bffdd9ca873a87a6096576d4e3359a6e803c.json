@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "81138b3e4fa5142965933e6603c6bffdd9ca873a87a6096576d4e3359a6e803c",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"A latent-variable generative model trained by optimizing a variational bound: a fixed forward noising Markov chain gradually corrupts data into Gaussian noise, and a neural network is trained (via denoising score matching / a KL-decomposed ELBO) to reverse each step, so sampling is an iterative deno\"\n, \"reason\":\": \"  , \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1739,
+      "completionTokens": 185,
+      "totalTokens": 1924
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:09:02.301Z"
+}

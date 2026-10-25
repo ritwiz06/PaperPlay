@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "da87a02e6ff3dc0eb43efc256763c1f5edd301bdd002f91c8e8c395b311c4340",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"nlp\", \"family\": \"learning\", \"mechanism\": \"Self-supervised representation learning with parameter-reduction techniques (factorized embedding parameterization, cross-layer weight sharing) and a sentence-order prediction loss for inter-sentence coherence\", \"reason\": \"The paper's mechanism is a learning method: it modifies how a neural language model is trained and parameterized (shared weights, factorized embeddings, self-supervised coherence loss). This falls squarely in the learning-toys family, which is not yet released, so the best available classification is Tier B rather than A. It is not a survey or purely empirical result — there is a genuine trainable\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1167,
+      "completionTokens": 182,
+      "totalTokens": 1349
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:06:19.914Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "0b54d968f6da943e93ac10e3c1cc40ca58882839340a90005649169b5aa0bdbd",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"agents\", \"family\": \"agents\", \"mechanism\": \"An autonomous agent (an LM acting as a new kind of end user) interacts with a computer environment through a designed interface of discrete commands and feedback, following local rules for navigating repositories, editing files, and running tests; the interface design itself shapes the agent's step-\",\"reason\": \"The paper's mechanism is an agent loop: observe state, choose an action from a constrained action space (the agent-computer interface), receive feedback, repeat. That is exactly the 'agents that each follow local rules' family, which is released, so the mechanism as stated is covered. The benchmark scores are evidence, not the mechanism itself.\", \"tier\": \"A\"}",
+    "usage": {
+      "promptTokens": 1249,
+      "completionTokens": 540,
+      "totalTokens": 1789
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:12:09.498Z"
+}

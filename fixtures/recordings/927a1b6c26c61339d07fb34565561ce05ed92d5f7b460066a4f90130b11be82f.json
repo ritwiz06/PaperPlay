@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "927a1b6c26c61339d07fb34565561ce05ed92d5f7b460066a4f90130b11be82f",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"A forward diffusion process that gradually destroys structure in a data distribution, paired with a learned reverse process that restores it — a trainable generative model whose dynamics are Markov transition kernels tuned by gradient descent on a variational bound.\", \"reason\": \"The paper's core mechanism is learning: the reverse diffusion transitions q are fit to data by maximizing a lower bound on the log-likelihood, with thousands of trainable steps. This is squarely a learning-toy mechanism (trainable parameters updated from data), and the learning family is not yet released, so the tier is B rather than A. It is not compartments (no fixed epidemiological-style ODEs),\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1535,
+      "completionTokens": 248,
+      "totalTokens": 1783
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:07:44.927Z"
+}

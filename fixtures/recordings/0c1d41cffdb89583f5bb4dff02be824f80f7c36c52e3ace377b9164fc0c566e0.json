@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "0c1d41cffdb89583f5bb4dff02be824f80f7c36c52e3ace377b9164fc0c566e0",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"learning\", \"mechanism\": \"Training a denoising auto-encoder by stochastic gradient descent on a reconstruction log-likelihood loss, then generating samples by running the induced Markov chain (encode/decode with corruption noise at each step) to convergence\", \"reason\":\": The paper's mechanism is a learning algorithm: a parametric model P_θ(X|X̃) is fit by minimizing an expected negative log-likelihood loss L(θ) = -E[log P_θ(X|X̃)] over corrupted data, with the corruption process C(X̃|X) defining the training distribution. Generation is then a Markov chain whose transition kernel T(X_t|X_{t-1}) = ∫ P_θ(X_t|X̃) C(X̃|X_{t-1}) dX̃ alternates reconstruction and re-no\", \"tier\": \"B\"}",
+    "usage": {
+      "promptTokens": 1402,
+      "completionTokens": 320,
+      "totalTokens": 1722
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:08:20.279Z"
+}

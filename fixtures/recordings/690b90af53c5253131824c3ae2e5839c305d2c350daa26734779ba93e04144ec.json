@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "690b90af53c5253131824c3ae2e5839c305d2c350daa26734779ba93e04144ec",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{ \"domain\": \"agents\", \"family\": \"agents\", \"mechanism\": \"Software agents that each follow local rules — observing, remembering, reflecting, and planning their own behavior — producing emergent social dynamics in a sandbox town\", \"reason\": \"The paper's core mechanism is a population of autonomous agents, each driven by its own local architecture (memory stream, reflection, planning) built on an LLM. Believable individual and emergent social behaviors arise from these local rules interacting, which is exactly the agents family. No equations or compartment-level dynamics are involved.\", \"tier\": \"A\" }",
+    "usage": {
+      "promptTokens": 1500,
+      "completionTokens": 140,
+      "totalTokens": 1640
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-20T16:11:48.939Z"
+}
