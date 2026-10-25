@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "inkling-small",
+  "promptHash": "7ac6d7fab3d595ab98c538a654a77ea6e766347c9035640889a312ba86136ca0",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\n\n\n  \"findings\": []\n}",
+    "usage": {
+      "promptTokens": 15394,
+      "completionTokens": 3812,
+      "totalTokens": 19206
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T07:57:09.026Z"
+}

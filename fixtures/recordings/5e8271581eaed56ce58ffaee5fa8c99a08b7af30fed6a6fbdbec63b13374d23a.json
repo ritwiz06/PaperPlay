@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "5e8271581eaed56ce58ffaee5fa8c99a08b7af30fed6a6fbdbec63b13374d23a",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{ \"domain\": \"compartmental epidemiology\", \"family\": \"compartments\", \"mechanism\": \"SVEITRS compartmental ODE model of tuberculosis transmission with vaccination, treatment, and recovery compartments, parameter estimation, and sensitivity analysis\", \"reason\": \"The paper's core mechanism is a well-mixed compartmental model governed by ordinary differential equations (SVEITRS), exactly matching the compartments family which plays well-mixed populations whose compartment sizes change by ODEs, including epidemic models like SIR/SEIR and their extensions.\", \"tier\": \"A\" }",
+    "usage": {
+      "promptTokens": 1993,
+      "completionTokens": 123,
+      "totalTokens": 2116
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T07:53:34.939Z"
+}

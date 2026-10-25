@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "fd536939221c0f261e353dd1e03139be521054d248f216704462fcce3b69252d",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\"limits\": [\"it cannot show how individual people move between homes, jobs, or clinics.\", \"it cannot show drug resistance, coinfection with hiv, or different tuberculosis strains.\", \"it cannot show the quality of vaccines, treatments, or health-care access across regions.\", \"it cannot show how stigma, poverty, or migration change who gets tested or treated.\"] , \"title\": \"Compartment Crossing\"}",
+    "usage": {
+      "promptTokens": 591,
+      "completionTokens": 85,
+      "totalTokens": 676
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T07:53:54.476Z"
+}

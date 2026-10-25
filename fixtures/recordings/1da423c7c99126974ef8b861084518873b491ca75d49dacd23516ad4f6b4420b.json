@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "1da423c7c99126974ef8b861084518873b491ca75d49dacd23516ad4f6b4420b",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\"advanced\": {\"equation\": \"dR/dt = αT − (η + μ)R\", \"quote\": null, \"text\": \"The model's recovered compartment changes only through treated people becoming recovered and through natural death or loss of immunity. The treatment rate δ does not appear directly in dR/dt. Instead, δ moves infectious people into treated, and treated people then move into recovered. The pathway is δ → T → R.\"}, \"afterwards\": {\"question\": \"If faster treatment raises treated people, why does the recovered peak rise only after the treated pool grows?\", \"quote\": \"The result revealed that the infectious population decreases as the treatment rate of infected individuals increases; in the long run, this may lead to the eradication of the disease from the community.\", \"text\": \"The model shows that raising δ sends more infectious people into treatment, so more treated people can later become recovered. The paper says: 'The result revealed that the infectious population decreases as the treatment rate of infected individuals increases; in the long run, this may lead to the \"}, \"beginner\": {\"analogy\": \"Think of a hospital ward. Faster admission does not instantly create discharged patients. It first fills the ward, and then more patients finish care and go home.\", \"text\": \"This level lets you speed up the treatment rate and watch how many recovered people peak. Faster treatment first raises the number of treated people, and those treated people later become recovered.\"}, \"effect\": \"Doubling the treatment rate from 0.67 to 1.34 raises the recovered peak from 21,400,000 to 25,900,000, an increase of more than 2,200,000.\", \"goal\": \"Explore how faster treatment changes the recovered peak through the treated compartment.\", \"guide\": {\"falling\": \"the treated pool drains faster than it fills\", \"idle\": \"Move the treatment rate slider to set the model's treatment speed.\", \"lowered\": \"You lower the treatment rate to {to}, so fewer infectious people enter treatment and the recovered peak falls.\", \"raised\": \"You raise the treatment rate to {to}, so more infectious people enter treatment and the recovered peak rises.\", \"readings\": [{\"atLeast\": 25900000, \"words\": \"more than 25,900,000 recovered people\"}, {\"atLeast\": 21400000, \"words\": \"more than 21,400,000 recovered people\"}, {\"atLeast\": 0, \"words\": \"at least 0 recovered people\"}], \"rising\": \"more infectious people move into treatment and then recover\"}, \"intermediate\": {\"text\": \"Change the treatment rate δ and watch the recovered compartment R. The rate δ moves infectious people I into treated people T. Treated people then move into recovered R at rate α.\"}, \"prediction\": \"If the treatment rate doubles, will the recovered peak rise or fall?\", \"whatIf\": \"What happens to the recovered peak if the treatment rate doubles to 1.34?\"}",
+    "usage": {
+      "promptTokens": 16589,
+      "completionTokens": 625,
+      "totalTokens": 17214
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T07:59:22.446Z"
+}

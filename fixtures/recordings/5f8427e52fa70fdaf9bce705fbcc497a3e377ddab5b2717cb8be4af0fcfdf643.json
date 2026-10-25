@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "planner",
+  "model": "glm-5-3",
+  "promptHash": "5f8427e52fa70fdaf9bce705fbcc497a3e377ddab5b2717cb8be4af0fcfdf643",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"levels\":[{\"candidate\":\"c6\",\"finding\":0},{\"candidate\":\"c22\",\"finding\":4},{\"candidate\":\"c10\",\"finding\":5},{\"candidate\":\"c12\",\"finding\":5},{\"candidate\":\"c27\",\"finding\":5}]}",
+    "usage": {
+      "promptTokens": 2344,
+      "completionTokens": 50,
+      "totalTokens": 2394
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T07:53:41.020Z"
+}

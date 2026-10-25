@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "inkling-small",
+  "promptHash": "38eb45bd4512123b27ebbe3445203f224daf737b5e8cd77c130459f2f229a768",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\n\n\n  \"findings\": [\n    {\n      \"claim\": null,\n      \"finding\": \"teaching-choice-misattributed\",\n      \"kind\": \"unsupported\",\n      \"level\": 2,\n      \"severity\": \"blocking\",\n      \"suggestion\": \"Reword the level so it is clearly a model exploration, not a paper conclusion. Replace 'Faster treatment, more recovered' with something like 'Explore: faster treatment changes the recovered peak' and add a note that delta does not appear directly in dr/dt; its effect travels through T. In the What-if, keep the numeric result but describe the pathway (delta -> T -> R) and avoid implying the paper,\"\n\n      ,\n      \"term\": null\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 15394,
+      "completionTokens": 4337,
+      "totalTokens": 19731
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T07:57:22.686Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "reviewer",
+  "model": "inkling-small",
+  "promptHash": "706d04e6e3778b3170cb6a41b0e9b11cdd781df5b734332594da12b8e1f5d3bf",
+  "response": {
+    "model": "inkling-small",
+    "text": "{\n\n\n  \"findings\": [\n    {\n      \"claim\": null,\n      \"finding\": \"The What-if asks only about the recovered peak, so it does not require the learner to examine the treated compartment that the level says mediates the effect; it therefore cannot teach the level's stated topic of seeing the change through the treated compartment.\",\n      \"kind\": \"unsupported\",\n      \"level\": 2,\n      \"severity\": \"advice\",\n      \"suggestion\": \"Change the What-if to ask about both compartments, e.g. 'What happens to the treated peak and the recovered peak if the treatment rate doubles to 1.34?', and update the level's statement to compare the treated and recovered peaks so the pathway through T is explicit.\",\n      \"term\": null\n    }\n  ]\n}",
+    "usage": {
+      "promptTokens": 15397,
+      "completionTokens": 2495,
+      "totalTokens": 17892
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T08:01:23.001Z"
+}
