@@ -13,7 +13,8 @@
     "R09": "Untrusted paper text and server-only secrets",
     "R10": "Sovereign checks and bounded repair",
     "R11": "Honest job states",
-    "R12": "Accessibility and motion floor"
+    "R12": "Accessibility and motion floor",
+    "R13": "Fast generation"
   },
   "gates": {
     "G1": {
@@ -83,7 +84,8 @@
         "R09",
         "R10",
         "R11",
-        "R12"
+        "R12",
+        "R13"
       ]
     },
     "G4": {
@@ -109,7 +111,8 @@
         "R09",
         "R10",
         "R11",
-        "R12"
+        "R12",
+        "R13"
       ]
     },
     "G5": {
@@ -135,7 +138,8 @@
         "R09",
         "R10",
         "R11",
-        "R12"
+        "R12",
+        "R13"
       ]
     }
   }
