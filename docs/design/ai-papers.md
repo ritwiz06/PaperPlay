@@ -160,6 +160,22 @@ G3's gate is BERT (ADR-0052).
 task sets, which a request must not start. `/create` says so, and `pipeline:live -- prebuild` makes
 them (ADR-0053).
 
+## The attention family's slices, about two hours each
+
+1. **The primitive** (2026-10-25, done): `attention.toy@1.0.0`, its own exp and softmax, its oracles
+   written by hand, and its candidate-level generator: ten candidates from code on the paper's
+   switches, each holding on 20 of 20 seeds; one head against several shows nothing yet, as the
+   plan said, until the weights are trained.
+2. **The scene spike** (2026-10-25, for the owner's review, unmerged): words as towers, attention as
+   beams, one colour a head.
+3. **Training the miniature** offline in PyTorch on "previous digit plus mirrored digit":
+   deterministic, its weights committed as data, inference in the browser deterministic and checked
+   against Node's bits.
+4. **The scene kit**, built properly once the spike's look is approved.
+5. **The results explorer's smallest form** (tier C), alongside, as every family's fallback.
+6. **Attention Is All You Need**, hand-authored, the family's reference world.
+7. **BERT generated**, G3's gate, its extraction by selection from the start (ADR-0056).
+
 ## The miniature's toy task
 
 Two proposals; the one used is the one whose heads specialise visibly enough to pass the visibility

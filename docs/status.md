@@ -1,6 +1,6 @@
 # Status
 
-Updated 2026-10-25: planning in code, and R13 on tuberculosis ([log](sessions/2026-10-25.md)).
+Updated 2026-10-25: the transcriptions' decision, and the attention primitive ([log](sessions/2026-10-25-2.md)).
 A snapshot, rewritten every session and kept under 80 lines; history is in
 [progress.md](progress.md) and the session logs.
 
@@ -8,7 +8,7 @@ A snapshot, rewritten every session and kept under 80 lines; history is in
 
 - **Gate:** G2 Verified authored world is current, tagged `v0.2.0` at `b37c7dc`; G1 is `v0.1.0`.
   Next: G3, whose gate is the attention family's first generated world, BERT (ADR-0052).
-- **Working commit:** `70c20b8`, the branch's last code commit, landed on `main` with this status.
+- **Working commit:** `9cd1189`, the branch's last code commit, landed on `main` with this status.
 - **Purpose:** teaching the 34 AI and ML papers of `docs/papers/corpus.md`, the first set of 11
   chosen (ADR-0054); biomedical papers later, the compartment family kept.
 - **R13, fast generation** (ADR-0053, ADR-0055): a job has 15 minutes. Planning is in code: candidate
@@ -16,6 +16,10 @@ A snapshot, rewritten every session and kept under 80 lines; history is in
   7.9 min with its transcriptions replayed, first levels playable at 1.3 min; fresh, twice stopped at
   15 min in the transcriptions (6 to 7 min each, then a repair). Not yet met for an unseen paper.
 - **The router** knows each family's reach: all 34 AI papers are tier C until their families exist.
+- **The attention family** (ADR-0054): `attention.toy@1.0.0`, deterministic in pure TypeScript with
+  its own exp and softmax, its 13 oracles passing, its candidate generator finding ten levels from
+  code. A scene spike, towers and beams, waits on its own branch for the owner's review.
+- **Transcription by selection** (ADR-0056): decided, built before biomedical work.
 - **Worktrees:** the main one, and `PaperPlay-land`, land's checkout for the gate (ADR-0051).
 - **Model provider:** an OpenAI-compatible gateway, its address and key in `apps/api/.env` only;
   called only by `npm run pipeline:live`, in the background.
@@ -45,9 +49,7 @@ the same commit. `npm run land` runs it again before it pushes.
 
 ## Decisions waiting on the owner
 
-1. **An unseen paper's transcriptions under R13:** a longer budget for them, no repair when they
-   disagree (the owner decides, as when a repair fails now), or a faster first transcriber with
-   thinking kept (ADR-0055's results).
+1. **The attention scene spike**, branch `g3/attention-scene-spike`: its look, before the kit.
 2. **CI minutes:** a public repository, the Student Pack, or a self-hosted runner; before a public
    repository, the noreply address for future commits (the 2026-10-20 log).
 3. **The old gateway key**, replaced on 2026-10-24 and still valid: revoke it if it should not be.
@@ -55,13 +57,13 @@ the same commit. `npm run land` runs it again before it pushes.
 
 ## Next three actions
 
-1. The attention family: the primitive with its own `exp`, the towers kit, the miniature trained in
-   PyTorch, Attention Is All You Need by hand, the explorer's smallest form beside it.
-2. The transcriptions' place in R13, once decided.
-3. BERT as the family's first generated world, G3's gate.
+1. Training the miniature offline in PyTorch on "previous digit plus mirrored digit", its weights
+   committed, the browser's bits checked against Node's.
+2. The scene kit, once the spike's look is approved; the explorer's smallest form beside it.
+3. Attention Is All You Need by hand; then BERT, G3's gate, its extraction by selection (ADR-0056).
 
 ## Recommendations
 
-1. **Decide the transcriptions' budget before BERT,** whose transcription is a new kind (no ODEs).
+1. **Review the spike's look early,** so the kit is built once.
 2. **Download Kermack and McKendrick 1927 in a browser.** Risk: no world may claim a passage it cannot cite.
 3. **Decide CI's minutes before the attention family's sessions**, which land more often.

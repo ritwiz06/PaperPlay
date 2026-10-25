@@ -1065,6 +1065,30 @@ open models' chat templates take a switch that turns it off.
   explainer); see ADR-0053.
 - **Learn more:** [Qwen3's thinking switch](https://qwenlm.github.io/blog/qwen3/)
 
+### Softmax, and arithmetic every engine computes alike
+
+Softmax turns a row of scores into weights that are positive and add to one: each score's
+exponential over the sum of all of them. Attention uses it to decide how much each word looks at
+every other. ECMAScript lets `Math.exp` and its kin differ in their last bits between browsers, so
+attention.toy computes exp, ln, sin, cos and square roots itself, from addition, subtraction,
+multiplication, division and exact bit operations, which every engine does identically.
+
+- **Used in:** `packages/primitives/src/attention/math.ts`, `packages/primitives/src/attention/primitive.ts`
+- **Why here:** A world's measurements must be the same bits on every learner's browser and in the
+  level rule's Node run; a softmax on the engine's exp could rank two weights differently.
+- **Learn more:** [The softmax function](https://en.wikipedia.org/wiki/Softmax_function)
+
+### Permutation equivariance
+
+A function is permutation equivariant when shuffling its input shuffles its output the same way.
+Self-attention without positional encoding is: it sees a set of words, not a sequence, which is why
+the paper adds positions (§3.5).
+
+- **Used in:** `packages/primitives/src/attention/primitive.ts`, `packages/primitives/test/attention.oracles.test.ts`
+- **Why here:** It is one of the paper's points a learner can test, and an exact oracle: sums over
+  positions are added in an order of their own, so the shuffle is exact, not merely close.
+- **Learn more:** [Vaswani et al. 2017, §3.5](https://arxiv.org/abs/1706.03762)
+
 ### Generate and test
 
 Making every option a rule could accept, judging each one by the rule, and only then letting a
