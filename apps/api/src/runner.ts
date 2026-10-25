@@ -31,13 +31,22 @@ export function workedExample(): string {
   ].join("\n");
 }
 
+/**
+ * A job's client: each stage's thinking set before the budget sees a call, so the trace hashes each
+ * call as its recording does (R13, ADR-0053), then the budget and its trace, then each stage's
+ * ceiling on tokens.
+ */
+export function jobClient(client: ModelClient, config: Pick<ModelConfig, "maxTokens" | "thinking">, trace: ReturnType<typeof newTrace>): ModelClient {
+  return thinkingClient(budgetedClient(cappedClient(client, config.maxTokens), trace), config.thinking);
+}
+
 export function pipelineRunner(client: ModelClient, config: ModelConfig, fetch: Fetch): JobRunner {
   const example = workedExample();
   return async (source: JobSource, sink: JobSink, signal: AbortSignal) => {
     const trace = newTrace(config.jobTokenBudget);
     try {
       // Each stage's thinking and its share of the job's deadline from models.json (R13, ADR-0053).
-      return await runJob({ source, client: budgetedClient(thinkingClient(cappedClient(client, config.maxTokens), config.thinking), trace), config: { stages: config.stages, structuredOutput: config.structuredOutput }, fetch, example, signal, deadline: config.deadline }, sink);
+      return await runJob({ source, client: jobClient(client, config, trace), config: { stages: config.stages, structuredOutput: config.structuredOutput }, fetch, example, signal, deadline: config.deadline }, sink);
     } finally {
       sink.artifact("trace", trace);
     }

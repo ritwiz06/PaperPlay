@@ -6,6 +6,8 @@ import { PLANNER_MAX_TOKENS, REVIEWER_MAX_TOKENS, TRANSCRIBER_MAX_TOKENS } from 
 import { loadModelConfig } from "../src/models/config.ts";
 import { liveClient, liveRefusal, readBaseUrl, readKey } from "../src/models/live.ts";
 import { voyagerClient, type VoyagerOptions } from "../src/models/voyager.ts";
+import { newTrace, promptHash, type ChatRequest, type ModelClient } from "@paperplay/pipeline/models";
+import { jobClient } from "../src/runner.ts";
 
 // The Voyager gateway's client (ADR-0030), against a fake network: it never reaches the real one.
 // Every key here is made up.
@@ -244,5 +246,17 @@ describe("[R13] thinking and deadlines (ADR-0053)", () => {
     expect(config.deadline.jobMs).toBe(720_000);
     for (const [stage, ms] of Object.entries(config.deadline.stageMs)) expect(ms, stage).toBeLessThanOrEqual(config.deadline.jobMs);
     expect(config.jobTokenBudget).toBe(600_000);
+  });
+});
+
+describe("[R13] a job's client (ADR-0053)", () => {
+  it("traces each call by the hash its recording takes, the thinking switch included", async () => {
+    const seen: ChatRequest[] = [];
+    const inner: ModelClient = { complete: (asked) => (seen.push(asked), Promise.resolve({ model: asked.model, text: "{}", usage: { promptTokens: 1, completionTokens: 1, totalTokens: 2 }, finishReason: "stop" })) };
+    const trace = newTrace(1000);
+    const config = loadModelConfig();
+    await jobClient(inner, config, trace).complete({ ...request, stage: "explainer" });
+    expect(seen[0]?.thinking).toBe(false);
+    expect(trace.entries[0]?.promptHash).toBe(promptHash(seen[0] as ChatRequest));
   });
 });

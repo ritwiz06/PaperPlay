@@ -30,8 +30,8 @@
     "jobMs": 720000,
     "stageMs": {
       "reader": 180000,
-      "transcriber": 300000,
-      "second-transcriber": 300000,
+      "transcriber": 420000,
+      "second-transcriber": 420000,
       "router": 60000,
       "planner": 240000,
       "second-planner": 240000,
