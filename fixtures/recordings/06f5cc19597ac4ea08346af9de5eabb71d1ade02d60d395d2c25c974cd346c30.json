@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "06f5cc19597ac4ea08346af9de5eabb71d1ade02d60d395d2c25c974cd346c30",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"nlp\", \"family\": \"none\", \"mechanism\": \"Parameter-reduction techniques (factorized embedding parameterization, cross-layer weight sharing) for a transformer language model, plus a sentence-order-prediction self-supervised pretraining objective\", \"reason\": \"The paper's mechanism is a language-model architecture and pre-training method — factorized embeddings and shared layers in a BERT-style transformer, trained with self-supervised objectives. The learning family explicitly excludes model architectures, pre-training, and language models, and no other family covers it. So this is tier C: no existing family plays this mechanism.\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1470,
+      "completionTokens": 167,
+      "totalTokens": 1637
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:26:54.003Z"
+}

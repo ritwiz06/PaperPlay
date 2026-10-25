@@ -23,6 +23,10 @@
  *            also asks every call anew, recorded in apps/api/data/recordings/ (R13, ADR-0053)
  *   prebuild `prebuild <source>... | --corpus [--fresh]`: makes each paper's world in turn, so a
  *            request for it is served at once; agent-experiment worlds are made only so (ADR-0053)
+ *   planner-bakeoff  the timed planner bake-off (ADR-0055): first one call to each named planner
+ *            asked not to think, to learn whether it honours that; then each candidate model asked
+ *            the compact planner's prompt three times, each call timed and its picks validated;
+ *            writes eval/bakeoff/planner.json and prints the table. Never recorded: each call is asked
  *   corpus-route  ingests every paper of fixtures/papers/corpus.json as a job would and runs the
  *            router on it, recorded; writes eval/routing/corpus-routes.json, the router's family,
  *            tier and reason for each, and what ingest read, never the paper's text (ADR-0052)
@@ -37,7 +41,8 @@ import { existsSync, mkdirSync, openSync, readFileSync, writeFileSync } from "no
 import { join } from "node:path";
 import { TERMINAL_STATES } from "@paperplay/contracts";
 import { fetchArxiv, registerAndText } from "@paperplay/pipeline/ingest";
-import { cappedClient, directoryStore, recordingClient, replayClient, resumingClient } from "@paperplay/pipeline/models";
+import { cappedClient, directoryStore, recordingClient, replayClient, resumingClient, thinkingClient } from "@paperplay/pipeline/models";
+import { PLANNER_PAPERS, plannerCall, plannerCase, plannerTable, pickPlanners } from "./bakeoff/planner.ts";
 import { route } from "@paperplay/pipeline/stages";
 import { outboundFetch } from "../apps/api/src/contact.ts";
 import { CONFIG_FILE, loadModelConfig } from "../apps/api/src/models/config.ts";
@@ -293,7 +298,52 @@ async function corpusRoute(): Promise<void> {
   }
 }
 
-const commands: Readonly<Record<string, () => Promise<void>>> = { models, probe, bakeoff, design, rescore, report, serve, job, prebuild, "corpus-route": corpusRoute };
+/** The planner bake-off's models (the owner, 2026-10-25), and the two probed for the thinking switch first. */
+const PLANNER_CANDIDATES = ["kimi-k2-7-code", "glm-5-3", "glm-5-3-flash", "qwen36-35b-a3b", "muse-glimmer-30b", "qwen36-27b"] as const;
+const THINKING_PROBED = ["kimi-k2-7-code", "glm-5-3"] as const;
+
+async function plannerBakeoff(): Promise<void> {
+  const config = loadModelConfig();
+  const reviewers = [config.stages.reviewer, config.stages["second-reviewer"]];
+  const models = PLANNER_CANDIDATES.filter((model) => !reviewers.includes(model));
+  // Asked live every time, never replayed: three calls of one prompt must each be timed.
+  const live = thinkingClient(liveClient(config), { probe: false, planner: false });
+  const probes = await Promise.all(
+    THINKING_PROBED.map(async (model) => {
+      const started = performance.now();
+      try {
+        const answer = await live.complete({ stage: "probe", model, messages: [{ role: "user", content: 'Reply with the JSON {"ok": true} and nothing else.' }], temperature: 0, maxTokens: 4000 });
+        return { model, milliseconds: performance.now() - started, completionTokens: answer.usage.completionTokens, answerCharacters: answer.text.length, honours: answer.usage.completionTokens - answer.text.length / 4 <= 20, error: null };
+      } catch (error) {
+        return { model, milliseconds: performance.now() - started, completionTokens: null, answerCharacters: null, honours: false, error: error instanceof Error ? error.message.split("\n")[0] : String(error) };
+      }
+    }),
+  );
+  for (const probe of probes) console.log(`probe ${probe.model}: ${probe.error ?? `${probe.completionTokens} reply tokens for ${probe.answerCharacters} characters, ${Math.round(probe.milliseconds)} ms: ${probe.honours ? "honours" : "does not honour"} the switch`}`);
+  const cases = await Promise.all(PLANNER_PAPERS.map((entry) => plannerCase(entry.paper, entry.job)));
+  const order = [cases[0], cases[1], cases[0]].filter((entry): entry is (typeof cases)[number] => entry !== undefined);
+  for (const entry of cases) console.log(`${entry.paper}: ${entry.candidates.length} candidates shown`);
+  const calls = (
+    await Promise.all(
+      models.map(async (model) => {
+        const mine = [];
+        for (const entry of order) {
+          const call = await plannerCall(live, model, entry, config.structuredOutput[model] ?? false);
+          console.log(`${model} on ${entry.paper}: ${call.ok ? `${call.passing} of ${call.levels} levels pass${call.problems.length > 0 ? ` (${call.problems.slice(0, 2).join("; ")})` : ""}` : `failed: ${call.error ?? ""}`}, ${Math.round(call.milliseconds / 100) / 10} s, ${call.completionTokens ?? "?"} reply tokens`);
+          mine.push(call);
+        }
+        return mine;
+      }),
+    )
+  ).flat();
+  const rows = plannerTable(calls);
+  const [first, second] = pickPlanners(rows);
+  writeFileSync(join(import.meta.dirname, "..", "eval", "bakeoff", "planner.json"), `${JSON.stringify({ schemaVersion: "planner-bakeoff/1", ranOn: new Date().toISOString().slice(0, 10), probes, papers: cases.map((entry) => ({ paper: entry.paper, candidates: entry.candidates.length })), calls, rows, picked: { planner: first, secondPlanner: second } }, null, 2)}\n`);
+  console.log(rows.map((row) => `${row.model}: ${row.valid} of ${row.calls} valid, ${row.passingMean.toFixed(1)} levels passing, p50 ${(row.p50 / 1000).toFixed(1)} s, p90 ${(row.p90 / 1000).toFixed(1)} s, ${row.completionMean === null ? "?" : Math.round(row.completionMean)} reply tokens`).join("\n"));
+  console.log(`picked: ${first ?? "none"} and ${second ?? "none"}`);
+}
+
+const commands: Readonly<Record<string, () => Promise<void>>> = { models, probe, bakeoff, design, rescore, report, serve, job, prebuild, "planner-bakeoff": plannerBakeoff, "corpus-route": corpusRoute };
 const run = command === undefined ? undefined : commands[command];
 if (!run) {
   console.error(`usage: npm run pipeline:live -- <${Object.keys(commands).join("|")}>`);

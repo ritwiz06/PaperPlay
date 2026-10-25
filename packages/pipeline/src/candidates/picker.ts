@@ -25,7 +25,7 @@ export const PICKER_INSTRUCTIONS = [
   "Every candidate level below already passes the game's rules: its claim holds and its difference shows. Choose five that teach what the paper found, and say which of the paper's findings each one tests.",
   "Rules:",
   "- Five levels, each a different candidate; the first is the hook.",
-  "- The hook tests finding 0, the paper's headline result: choose the candidate whose change shows it most directly.",
+  "- The hook tests finding 0, the paper's headline result: choose the candidate whose change shows it most directly. When some candidates are marked [can be the hook], the hook must be one of them: only they measure what the headline speaks of.",
   "- Each level tests one finding, by its number; at least three levels test different findings.",
   "- Prefer different controls, so each level teaches something new.",
   'Answer with JSON alone, no words: {"levels":[{"candidate":"c3","finding":0},{"candidate":"c8","finding":2}, ...]}',
@@ -34,10 +34,13 @@ export const PICKER_INSTRUCTIONS = [
 /** At most this many candidates go to the planner: the most robust first, and no more than three on one control. */
 export const CANDIDATES_SHOWN = 30;
 
-/** The candidates the planner reads: those holding on the most starts first, a few on each control, in the generator's order. */
-export function shortList(candidates: readonly LevelCandidate[]): LevelCandidate[] {
+/**
+ * The candidates the planner reads: every one that can be the hook, then those holding on the most
+ * starts, a few on each control, in the generator's order.
+ */
+export function shortList(candidates: readonly LevelCandidate[], hooks: readonly string[] = []): LevelCandidate[] {
   const perControl = new Map<string, number>();
-  const ranked = [...candidates].sort((a, b) => (b.holds ?? 0) - (a.holds ?? 0));
+  const ranked = [...candidates].sort((a, b) => Number(hooks.includes(b.id)) - Number(hooks.includes(a.id)) || (b.holds ?? 0) - (a.holds ?? 0));
   const kept = ranked.filter((candidate) => {
     const control = candidate.level.control.parameter;
     const count = perControl.get(control) ?? 0;
@@ -48,7 +51,7 @@ export function shortList(candidates: readonly LevelCandidate[]): LevelCandidate
   return candidates.filter((candidate) => chosen.has(candidate.id));
 }
 
-export function pickerMessages(input: { readonly title: string; readonly reading: Reading; readonly candidates: readonly LevelCandidate[]; readonly ownNumbers?: OwnNumbersForPlanner }): ChatMessage[] {
+export function pickerMessages(input: { readonly title: string; readonly reading: Reading; readonly candidates: readonly LevelCandidate[]; readonly ownNumbers?: OwnNumbersForPlanner; readonly hooks?: readonly string[] }): ChatMessage[] {
   const mismatch = input.ownNumbers?.verdict === "mismatch";
   return [
     { role: "system", content: PICKER_INSTRUCTIONS },
@@ -58,7 +61,7 @@ export function pickerMessages(input: { readonly title: string; readonly reading
         `PAPER START\nTitle: ${input.title}\nQuestion: ${input.reading.question}\nMechanism: ${input.reading.mechanism}`,
         `Findings, by number:\n0 (the headline result): ${input.reading.result.text}\n${input.reading.findings.map((finding, index) => `${index + 1} (${finding.kind}): ${finding.text}`).join("\n")}\nPAPER END`,
         ...(mismatch ? ["Running the paper's own numbers found its headline does not appear at the values it lists: the hook may test another finding instead, by its number."] : []),
-        `Candidate levels:\n${input.candidates.map((candidate) => candidate.brief).join("\n")}`,
+        `Candidate levels:\n${input.candidates.map((candidate) => `${candidate.brief}${input.hooks?.includes(candidate.id) ? " [can be the hook]" : ""}`).join("\n")}`,
         "Choose the five levels.",
       ].join("\n\n"),
     },
@@ -71,6 +74,9 @@ export const PICKER_MAX_TOKENS = 16_000;
 export function pickLevels(client: ModelClient, model: string, input: Parameters<typeof pickerMessages>[0], options: { readonly stage?: "planner" | "second-planner"; readonly structuredOutput: boolean }): Promise<StructuredResult<CandidatePicks>> {
   return completeStructured(client, { stage: options.stage ?? "planner", model, messages: pickerMessages(input), temperature: 0, maxTokens: PICKER_MAX_TOKENS }, CandidatePicks, { name: "picks", structuredOutput: options.structuredOutput, moreRoom: true });
 }
+
+/** The candidates that can be the hook: on a compartment the headline speaks of, when it speaks of spread (ADR-0044's spread rule). */
+export const hookCandidates = (candidates: readonly LevelCandidate[], model: ModelSpec, headline: Reading["result"]): string[] => candidates.filter((candidate) => hookSpreadProblem(model, headline, candidate.level.difference.compartment) === null).map((candidate) => candidate.id);
 
 /** The plan the picks make, words still to write: each level its candidate's, testing its finding, the finding's quote its passage. */
 export function planFromPicks(picks: CandidatePicks, candidates: readonly LevelCandidate[], reading: Reading, horizon: number): Plan {

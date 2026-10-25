@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "af504c3813887be7c67c22a36d1c5aed5ee9e9ce76ee94f2d9d45bb3998ee699",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"none\", \"mechanism\": \"Empirical power-law scaling relationships for language-model cross-entropy loss as a function of model size, dataset size, and compute budget, plus the resulting optimal compute allocation.\", \"reason\": \"The paper's mechanism is scaling laws for neural language models. The learning family explicitly excludes scaling laws, and no other family covers power-law loss scaling or compute-budget optimisation. The equations are empirical fits and optimality conditions, not a playable dynamical system in any existing family.\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1834,
+      "completionTokens": 139,
+      "totalTokens": 1973
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:27:06.702Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "e79911d867bb98baadd0e369710ad0279f9133bc774b63bf8395624ebda21eff",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"machine-learning-systems\", \"family\": \"none\", \"mechanism\": \"Pipeline parallelism: a batch-splitting pipelining algorithm that partitions a neural network into layer subsequences across multiple accelerators, with micro-batches flowing through the pipeline stages to reduce idle bubble time and enable training of models too large for a single device's memory.\", \"reason\": \"The paper's mechanism is distributed training infrastructure — pipeline parallelism for scaling model training across accelerators. The learning family explicitly excludes parallel training, and no other family (agents, compartments, study-design, grids, networks) covers hardware-level parallelism or model-parallel training. There are no display equations and no dynamics a learner could play with;\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1530,
+      "completionTokens": 188,
+      "totalTokens": 1718
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:28:06.213Z"
+}

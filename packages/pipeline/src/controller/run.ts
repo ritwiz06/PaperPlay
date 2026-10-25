@@ -20,7 +20,7 @@ import { hookSpreadProblem } from "../rule/spread.ts";
 import { checkFindings } from "../rule/findings.ts";
 import { visibilityOf } from "../rule/visibility.ts";
 import { explainLevel, reword, writeLevel, writeWorld, type ExplainedLevel, type Explanation, type WrittenLevel } from "../stages/explainer.ts";
-import { CANDIDATE_GENERATORS, CandidatePicks, judgeInParallel, pickerMessages, pickLevels, planFromPicks, shortList, validatePicks, type LevelCandidate } from "../candidates/index.ts";
+import { CANDIDATE_GENERATORS, CandidatePicks, hookCandidates, judgeInParallel, pickerMessages, pickLevels, planFromPicks, shortList, validatePicks, type LevelCandidate } from "../candidates/index.ts";
 import { PICKER_MAX_TOKENS } from "../candidates/picker.ts";
 import { plan as planWorld, Plan, PLANNER_MAX_TOKENS, plannerMessages, type PlanLevel } from "../stages/planner.ts";
 import { read } from "../stages/reader.ts";
@@ -394,7 +394,9 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     let shown: LevelCandidate[] = [];
     /** The finding the hook tests when the planner used the headline's confirmed mismatch (ADR-0040). */
     let pickedHookFinding = 0;
-    const pickInput = () => ({ title, reading: reading.value, candidates: shown, ownNumbers: forPlanner });
+    /** The candidates that can be the hook (ADR-0055). */
+    let hookable: readonly string[] = [];
+    const pickInput = () => ({ title, reading: reading.value, candidates: shown, ownNumbers: forPlanner, hooks: hookable });
     const pickChecks = { reading: reading.value, model, source: text, horizon, ownNumbers: forPlanner };
     if (generator) {
       // Planning in code (ADR-0055): every candidate level the family can make, judged by the rules
@@ -402,7 +404,10 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       say("candidates", "generating the family's candidate levels in code, and judging each by the rules");
       const generated = generator(model, horizon);
       const judged = await judgeInParallel({ source: text, register, reading: reading.value, model, routingReason: routed.value.reason, ownNumbers, horizon }, generated);
-      shown = shortList(judged.passing);
+      // Those that can be the hook: on a compartment the headline speaks of, when it speaks of spread.
+      const hooks = hookCandidates(judged.passing, model, reading.value.result);
+      shown = shortList(judged.passing, hooks);
+      hookable = hooks;
       sink.artifact("candidates", { generated: generated.length, passing: judged.passing.map((candidate) => ({ id: candidate.id, brief: candidate.brief, holds: candidate.holds ?? 0 })), refused: judged.refused, shown: shown.map((candidate) => candidate.id) });
       say("candidates", `${generated.length} candidate levels made in code; ${judged.passing.length} pass every rule; the planners choose among ${shown.length}`);
       if (judged.passing.length < 3) throw new Stop("failed", `only ${judged.passing.length} of ${generated.length} candidate levels pass the rules, and a world needs three: ${judged.refused.slice(0, 4).map((entry) => `${entry.id}, ${entry.why}`).join("; ")}`);

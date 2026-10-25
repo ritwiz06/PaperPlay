@@ -5,7 +5,7 @@
  */
 export { compartmentCandidates } from "./compartments.ts";
 export { judgeCandidates, judgeInParallel, type JudgeInput } from "./judge.ts";
-export { CandidatePicks, CANDIDATES_SHOWN, pickerMessages, pickLevels, PICKER_INSTRUCTIONS, planFromPicks, shortList, validatePicks, type PickProblem } from "./picker.ts";
+export { CandidatePicks, CANDIDATES_SHOWN, hookCandidates, pickerMessages, pickLevels, PICKER_INSTRUCTIONS, planFromPicks, shortList, validatePicks, type PickProblem } from "./picker.ts";
 export type { CandidateGenerator, LevelCandidate } from "./types.ts";
 
 import { compartmentCandidates } from "./compartments.ts";

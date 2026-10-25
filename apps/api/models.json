@@ -27,7 +27,7 @@
     "second-reviewer": true
   },
   "deadline": {
-    "jobMs": 720000,
+    "jobMs": 900000,
     "stageMs": {
       "reader": 180000,
       "transcriber": 420000,
@@ -35,7 +35,7 @@
       "router": 60000,
       "planner": 240000,
       "second-planner": 240000,
-      "explainer": 120000,
+      "explainer": 180000,
       "reviewer": 240000,
       "second-reviewer": 240000
     }

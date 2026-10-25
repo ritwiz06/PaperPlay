@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "66e7d8918efdc723fa19b837ca30ea5d31c25f05166238395ee8ec10e0baf305",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"distributed deep learning systems\", \"family\": \"none\", \"mechanism\": \"ZeRO partitions optimizer state, gradients and parameters across data-parallel devices to eliminate memory redundancy, trading memory for communication while keeping training throughput high — a distributed/parallel training systems technique.\", \"reason\": \"The paper's mechanism is memory optimization for parallel training across many GPUs. The learning family explicitly does not cover parallel training, and no other family (agents, compartments, study-design, grids, networks) plays anything like distributed optimizer-state partitioning. No existing family covers this mechanism, so it is tier C.\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1569,
+      "completionTokens": 159,
+      "totalTokens": 1728
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:27:52.653Z"
+}

@@ -12,7 +12,8 @@
     "./stages": "./src/stages/index.ts",
     "./controller": "./src/controller/index.ts",
     "./assemble": "./src/assemble/index.ts",
-    "./reproduce": "./src/reproduce/index.ts"
+    "./reproduce": "./src/reproduce/index.ts",
+    "./candidates": "./src/candidates/index.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json && tsc -p test/tsconfig.json"

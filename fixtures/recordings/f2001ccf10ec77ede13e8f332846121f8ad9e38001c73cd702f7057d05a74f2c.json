@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "f2001ccf10ec77ede13e8f332846121f8ad9e38001c73cd702f7057d05a74f2c",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"none\", \"mechanism\": \"scaled dot-product attention and multi-head attention in the Transformer architecture\", \"reason\": \"The paper's mechanism is the attention mechanism itself — scaled dot-product attention, multi-head attention, and the Transformer architecture built from them. The learning family explicitly excludes model architectures such as attention and transformers, and no other family covers sequence transduction or neural network architectures. Per the routing rules, a mechanism of a family that does not (\"\n, \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1714,
+      "completionTokens": 131,
+      "totalTokens": 1845
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:24:37.873Z"
+}

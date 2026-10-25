@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "fd487e33018c075b4db435c0a763a5af29ca651b7b74277ba67ab5549305d273",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"none\", \"mechanism\": \"Pre-training a deep bidirectional Transformer encoder (attention-based language model) on unlabeled text, then fine-tuning it for downstream NLP tasks\", \"reason\": \"The paper's mechanism is a Transformer architecture with attention, pre-training and fine-tuning of a language model. The learning family explicitly does not cover model architectures (attention, transformers), pre-training or fine-tuning, or language models, and no other family plays anything like this. So no existing family covers the mechanism: tier C.\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1601,
+      "completionTokens": 146,
+      "totalTokens": 1747
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:25:00.435Z"
+}

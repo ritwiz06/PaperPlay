@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "0cd02cd30f05e400c28ea0e699d466cf066435c8a77043d03218221892b7073a",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"none\", \"mechanism\": \"A unified text-to-text transfer learning framework built on transformer architectures, comparing pre-training objectives, architectures, and fine-tuning approaches across NLP tasks\", \"reason\": \"The paper's mechanism is transfer learning with attention-based transformer models: pre-training on a large corpus and fine-tuning on downstream language tasks. The learning family explicitly excludes model architectures (attention, transformers), pre-training and fine-tuning, and language models, and no other family covers any of this. No equations or other dynamics are given that a learner could\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1499,
+      "completionTokens": 157,
+      "totalTokens": 1656
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:26:37.594Z"
+}

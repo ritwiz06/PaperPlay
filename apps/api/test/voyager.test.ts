@@ -240,10 +240,10 @@ describe("[R13] thinking and deadlines (ADR-0053)", () => {
     expect(attempts).toBe(1);
   });
 
-  it("keeps thinking for the transcriptions and the reviewers alone, and gives a job twelve minutes", () => {
+  it("keeps thinking for the transcriptions and the reviewers alone, and gives a job fifteen minutes, R13's p90", () => {
     const config = loadModelConfig();
     expect(Object.entries(config.thinking).filter(([, thinks]) => thinks).map(([stage]) => stage).sort()).toEqual(["reviewer", "second-reviewer", "second-transcriber", "transcriber"]);
-    expect(config.deadline.jobMs).toBe(720_000);
+    expect(config.deadline.jobMs).toBe(900_000);
     for (const [stage, ms] of Object.entries(config.deadline.stageMs)) expect(ms, stage).toBeLessThanOrEqual(config.deadline.jobMs);
     expect(config.jobTokenBudget).toBe(600_000);
   });

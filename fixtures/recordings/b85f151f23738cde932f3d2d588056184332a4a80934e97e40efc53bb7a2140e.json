@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "b85f151f23738cde932f3d2d588056184332a4a80934e97e40efc53bb7a2140e",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"none\", \"family\": \"none\", \"mechanism\": \"Language model pretraining and hyperparameter tuning for transformer architectures\", \"reason\": \"RoBERTa's mechanism is the pretraining of a transformer-based language model (BERT) with tuned hyperparameters and larger datasets. The learning family explicitly excludes model architectures like transformers, pre-training, and language models, and no other family covers this. Until a family for language model pretraining exists, this is tier C.\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1452,
+      "completionTokens": 139,
+      "totalTokens": 1591
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:25:56.960Z"
+}

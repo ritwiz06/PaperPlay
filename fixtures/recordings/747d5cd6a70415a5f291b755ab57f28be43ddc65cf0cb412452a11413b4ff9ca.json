@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "747d5cd6a70415a5f291b755ab57f28be43ddc65cf0cb412452a11413b4ff9ca",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"NLP pre-training\", \"family\": \"none\", \"mechanism\": \"Replaced token detection: a small generator network samples plausible token replacements to corrupt text, and a discriminative encoder is trained to predict, for every token, whether it was replaced — a more sample-efficient pre-training objective than masked language modeling.\", \"reason\": \"The paper's mechanism is language-model pre-training. The learning family explicitly excludes pre-training and language models, and no other family (agents, compartments, grids, networks, study-design) plays anything like a text encoder trained with a generator/discriminator objective. Until a family covering language-model pre-training exists, this is tier C.\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1577,
+      "completionTokens": 183,
+      "totalTokens": 1760
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:25:46.218Z"
+}

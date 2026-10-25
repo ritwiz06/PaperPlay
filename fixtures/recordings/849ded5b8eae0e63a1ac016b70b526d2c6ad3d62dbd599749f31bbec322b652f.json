@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "849ded5b8eae0e63a1ac016b70b526d2c6ad3d62dbd599749f31bbec322b652f",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"NLP model analysis\", \"family\": \"none\", \"mechanism\": \"Analysis of attention patterns in a pre-trained transformer (BERT), including attention-head behaviors and an attention-based probing classifier\", \"reason\":\": The paper's mechanism is the attention mechanism of a transformer architecture. The learning family explicitly does not cover model architectures such as attention and transformers, and no other family (agents, compartments, study-design, grids, networks) plays anything like attention in a pre-trained language model. Until a family for transformer architectures exists, this is tier C.\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1486,
+      "completionTokens": 145,
+      "totalTokens": 1631
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:25:16.067Z"
+}

@@ -598,7 +598,7 @@ describe("[R13] planning in code (ADR-0055)", () => {
     const { compartmentCandidates } = await import("../src/candidates/index.ts");
     const { directEffectOf } = await import("../src/rule/direct.ts");
     const { toModelSpec } = await import("../src/transcribe/convert.ts");
-    const model = toModelSpec(transcription(), source).model;
+    const model = toModelSpec(transcription() as Parameters<typeof toModelSpec>[0], source).model;
     if (!model) throw new Error("the test's model does not convert");
     const candidates = compartmentCandidates(model, 150);
     expect(candidates.length).toBeGreaterThan(0);

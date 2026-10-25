@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "ec285aec54841056483f8056f6e8bda79fad3fda1ae19591a5ca162d5e146bdd",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"none\", \"mechanism\": \"multi-head attention and head pruning in transformer models\", \"reason\": \"The paper's mechanism is multi-head attention in Transformer/BERT-style models, including a pruning procedure with head-importance scores (I_h) derived from gradient sensitivity. The learning family explicitly excludes model architectures such as attention and transformers, and no other family covers neural attention mechanisms. Until a family for attention/transformer architectures exists, this机制\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1857,
+      "completionTokens": 135,
+      "totalTokens": 1992
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:25:27.926Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "ac335acc6f5cc470e671e35ff374172ec64ab2ff5ad5e536c74598b497b96218",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"parallel-training-of-large-language-models\", \"family\": \"none\", \"mechanism\": \"Intra-layer tensor (model) parallelism: splitting transformer weight matrices across GPUs so that large language models can be trained within memory limits, with a few inserted communication operations, plus layer-normalization placement choices.\", \"reason\": \"The paper's mechanism is the parallel training of very large transformer language models — splitting weight matrices (e.g. A into A1, A2 across devices) and coordinating them with communication operations across 512 GPUs. The learning family explicitly excludes model architectures (transformers), language models, and parallel training, and no other family covers distributed training or model-optim\" , \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1740,
+      "completionTokens": 179,
+      "totalTokens": 1919
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:27:35.395Z"
+}
