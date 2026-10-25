@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "ee260c11881456253fcef201aae5f97152391edca452baf24b710d25cb3b49c3",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"machine learning\", \"family\": \"none\", \"mechanism\": \"A generalized denoising auto-encoder trained with arbitrary corruption processes and reconstruction losses, shown to implicitly estimate the data-generating distribution, with sampling performed by an MCMC chain that alternates reconstruction and corruption steps (a Markov chain transition kernel T,\",\"reason\": \"The paper's mechanism is a generative model: a denoising auto-encoder whose implicit density is sampled via a Langevin/Metropolis-Hastings-style Markov chain of reconstruction and corruption steps. The learning family explicitly excludes generative and diffusion models, and no other family (agents, compartments, study-design, grids, networks) plays anything like this. Until a family for generative\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1705,
+      "completionTokens": 209,
+      "totalTokens": 1914
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:32:57.305Z"
+}

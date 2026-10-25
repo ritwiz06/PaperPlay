@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "465870818e30ae582290f5d4ac56a005c7ac3e7592334722e39679d67e16e04d",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"machine learning\", \"family\": \"none\", \"mechanism\": \"Learning the transition operator of a Markov chain whose stationary distribution estimates the data distribution — a generative model trained by backprop\", \"reason\": \"The paper's mechanism is a generative model: a Generative Stochastic Network learns a Markov chain transition operator whose stationary distribution approximates the data distribution, trained via backprop as a denoising-autoencoder-style conditional. The learning family explicitly does not cover generative or diffusion models, and no other family (agents, compartments, study-design, grids, study,\" , \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 2268,
+      "completionTokens": 173,
+      "totalTokens": 2441
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:33:07.859Z"
+}

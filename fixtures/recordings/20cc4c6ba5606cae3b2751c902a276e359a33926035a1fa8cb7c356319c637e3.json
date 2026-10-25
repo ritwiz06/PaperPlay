@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "20cc4c6ba5606cae3b2751c902a276e359a33926035a1fa8cb7c356319c637e3",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"machine learning\", \"family\": \"none\", \"mechanism\": \"non-Markovian diffusion processes for accelerated sampling in generative diffusion models\", \"reason\": \"The paper's mechanism is a generative diffusion model: it generalizes DDPMs via non-Markovian diffusion processes to enable faster, deterministic sampling. The learning family explicitly excludes generative and diffusion models, and no other family (agents, compartments, study-design, grids, networks) plays anything like a denoising or generative sampling process. A family covering diffusion/gener\" , \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1992,
+      "completionTokens": 155,
+      "totalTokens": 2147
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:33:49.041Z"
+}

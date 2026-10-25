@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "c18ebba9c172783f0b213aff23425829a433a07d94a20a7d0515db50cf2f3174",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"generative modeling / diffusion models\", \"family\": \"none\", \"mechanism\": \"denoising diffusion probabilistic model with learned reverse-process variances and a variational lower-bound objective\", \"reason\": \"The paper's mechanism is a generative diffusion model: a forward noising process (Gaussian transitions q(x_t|x_{t-1}) and their marginals q(x_t|x_0)) paired with a learned reverse denoising process p_θ(x_{t-1}|x_t) trained via a variational lower bound (KL terms L_t). The learning family explicitly excludes generative and diffusion models, and no other family (agents, compartments, study-design, a\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1986,
+      "completionTokens": 171,
+      "totalTokens": 2157
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:34:06.511Z"
+}

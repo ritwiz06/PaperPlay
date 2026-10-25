@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "a81259b6e852249a09546a2a6c84ce7e77d7478d106711880282b9f9da81f1d9",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"none\", \"mechanism\": \"A forward diffusion process that gradually destroys structure in a data distribution, paired with a learned reverse diffusion process that restores it, trained as a deep generative model over thousands of diffusion steps.\", \"reason\": \"This is the foundational diffusion probabilistic model paper. Its mechanism is a generative diffusion model: a Markov forward process that noise-destroys data structure and a learned reverse process that generates data. The learning family explicitly excludes generative and diffusion models, and no other family (agents, compartments, networks, grids, study-design) plays generative modeling or none\" \t, \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1838,
+      "completionTokens": 178,
+      "totalTokens": 2016
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:32:35.304Z"
+}

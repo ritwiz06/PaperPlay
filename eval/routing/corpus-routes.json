@@ -217,6 +217,168 @@
         "tier": "C",
         "reason": "The paper's mechanism is distributed training infrastructure — pipeline parallelism for scaling model training across accelerators. The learning family explicitly excludes parallel training, and no other family (agents, compartments, study-design, grids, networks) covers hardware-level parallelism or model-parallel training. There are no display equations and no dynamics a learner could play with;"
       }
+    },
+    {
+      "id": "1503.03585",
+      "version": "1503.03585v8",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 38,
+        "equations": 38
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "learning",
+        "mechanism": "A forward diffusion process that gradually destroys structure in a data distribution, paired with a learned reverse diffusion process that restores it, trained as a deep generative model over thousands of diffusion steps.",
+        "family": "none",
+        "tier": "C",
+        "reason": "This is the foundational diffusion probabilistic model paper. Its mechanism is a generative diffusion model: a Markov forward process that noise-destroys data structure and a learned reverse process that generates data. The learning family explicitly excludes generative and diffusion models, and no other family (agents, compartments, networks, grids, study-design) plays generative modeling or none"
+      }
+    },
+    {
+      "id": "1907.05600",
+      "version": "1907.05600v3",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 34,
+        "equations": 8
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "generative-modeling",
+        "mechanism": "score matching with annealed Langevin dynamics for generative sampling",
+        "family": "none",
+        "tier": "C",
+        "reason": "This is the score-based generative modeling paper (Song & Ermon). Its mechanism is estimating the score (gradient of the log density) of noise-perturbed data and sampling via annealed Langevin dynamics — a generative model. The learning family explicitly excludes generative and diffusion models, and no other family (agents, compartments, study-design, grids, networks) plays anything like this. So,"
+      }
+    },
+    {
+      "id": "1305.6663",
+      "version": "1305.6663v4",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 14,
+        "equations": 5
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "machine learning",
+        "mechanism": "A generalized denoising auto-encoder trained with arbitrary corruption processes and reconstruction losses, shown to implicitly estimate the data-generating distribution, with sampling performed by an MCMC chain that alternates reconstruction and corruption steps (a Markov chain transition kernel T,",
+        "family": "none",
+        "tier": "C",
+        "reason": "The paper's mechanism is a generative model: a denoising auto-encoder whose implicit density is sampled via a Langevin/Metropolis-Hastings-style Markov chain of reconstruction and corruption steps. The learning family explicitly excludes generative and diffusion models, and no other family (agents, compartments, study-design, grids, networks) plays anything like this. Until a family for generative"
+      }
+    },
+    {
+      "id": "1306.1091",
+      "version": "1306.1091v5",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 14,
+        "equations": 8
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "machine learning",
+        "mechanism": "Learning the transition operator of a Markov chain whose stationary distribution estimates the data distribution — a generative model trained by backprop",
+        "family": "none",
+        "tier": "C",
+        "reason": "The paper's mechanism is a generative model: a Generative Stochastic Network learns a Markov chain transition operator whose stationary distribution approximates the data distribution, trained via backprop as a denoising-autoencoder-style conditional. The learning family explicitly does not cover generative or diffusion models, and no other family (agents, compartments, study-design, grids, study,"
+      }
+    },
+    {
+      "id": "1703.06975",
+      "version": "1703.06975v1",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 26,
+        "equations": 4
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "machine learning",
+        "mechanism": "A generative model trained as the transition operator of a Markov chain that progressively denoises noise into samples, via a training procedure (infusion training) that mixes target information into the training chain — an early diffusion-style generative model, with a variational lower bound onlog",
+        "family": "none",
+        "tier": "C",
+        "reason": ": The paper's mechanism is a generative/diffusion-style model: a learned Markov-chain transition operator that denoises noise into samples, trained by infusing target information into the chain and justified by a variational bound. The learning family explicitly excludes generative and diffusion models, and no other family (agents, compartments, study-design, grids, networks) plays generative Mark"
+      }
+    },
+    {
+      "id": "2006.11239",
+      "version": "2006.11239v2",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 23,
+        "equations": 16
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "none",
+        "mechanism": "Denoising diffusion probabilistic model: a latent variable model that gradually adds Gaussian noise to data via a fixed forward process and learns a reverse denoising process to generate images, trained with a variational bound connected to denoising score matching with Langevin dynamics.",
+        "family": "none",
+        "tier": "C",
+        "reason": "The paper's mechanism is a generative diffusion model. The learning family explicitly excludes generative and diffusion models, and no other family (agents, compartments, study-design, grids, networks) covers image-synthesis latent variable models. Per the routing rules, a diffusion model is tier C until a family for it exists."
+      }
+    },
+    {
+      "id": "2010.02502",
+      "version": "2010.02502v4",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 31,
+        "equations": 64
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "machine learning",
+        "mechanism": "non-Markovian diffusion processes for accelerated sampling in generative diffusion models",
+        "family": "none",
+        "tier": "C",
+        "reason": "The paper's mechanism is a generative diffusion model: it generalizes DDPMs via non-Markovian diffusion processes to enable faster, deterministic sampling. The learning family explicitly excludes generative and diffusion models, and no other family (agents, compartments, study-design, grids, networks) plays anything like a denoising or generative sampling process. A family covering diffusion/gener"
+      }
+    },
+    {
+      "id": "2102.09672",
+      "version": "2102.09672v1",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 24,
+        "equations": 12
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "generative modeling / diffusion models",
+        "mechanism": "denoising diffusion probabilistic model with learned reverse-process variances and a variational lower-bound objective",
+        "family": "none",
+        "tier": "C",
+        "reason": "The paper's mechanism is a generative diffusion model: a forward noising process (Gaussian transitions q(x_t|x_{t-1}) and their marginals q(x_t|x_0)) paired with a learned reverse denoising process p_θ(x_{t-1}|x_t) trained via a variational lower bound (KL terms L_t). The learning family explicitly excludes generative and diffusion models, and no other family (agents, compartments, study-design, a"
+      }
+    },
+    {
+      "id": "2207.12598",
+      "version": "2207.12598v1",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 16,
+        "equations": 8
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "learning",
+        "mechanism": "Classifier-free guidance for diffusion models: combining conditional and unconditional score estimates to steer sampling toward higher fidelity at the cost of diversity.",
+        "family": "none",
+        "tier": "C",
+        "reason": "The paper's mechanism is a sampling/guidance technique for generative diffusion models. The learning family explicitly excludes generative and diffusion models, and no other family (agents, compartments, study-design, grids, networks) plays anything like a diffusion model's denoising or guidance process. Until a diffusion-model family exists, this is tier C."
+      }
     }
   ]
 }

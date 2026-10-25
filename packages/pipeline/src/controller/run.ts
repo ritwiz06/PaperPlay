@@ -397,7 +397,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     /** The candidates that can be the hook (ADR-0055). */
     let hookable: readonly string[] = [];
     const pickInput = () => ({ title, reading: reading.value, candidates: shown, ownNumbers: forPlanner, hooks: hookable });
-    const pickChecks = { reading: reading.value, model, source: text, horizon, ownNumbers: forPlanner };
+    const pickChecks = { reading: reading.value, model, source: text, horizon, ownNumbers: forPlanner, get hooks() { return hookable; } };
     if (generator) {
       // Planning in code (ADR-0055): every candidate level the family can make, judged by the rules
       // in parallel before any planner call; the planners only choose among those that pass.

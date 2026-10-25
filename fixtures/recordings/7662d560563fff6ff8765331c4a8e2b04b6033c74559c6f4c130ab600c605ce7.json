@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "7662d560563fff6ff8765331c4a8e2b04b6033c74559c6f4c130ab600c605ce7",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"learning\", \"family\": \"none\", \"mechanism\": \"Classifier-free guidance for diffusion models: combining conditional and unconditional score estimates to steer sampling toward higher fidelity at the cost of diversity.\", \"reason\": \"The paper's mechanism is a sampling/guidance technique for generative diffusion models. The learning family explicitly excludes generative and diffusion models, and no other family (agents, compartments, study-design, grids, networks) plays anything like a diffusion model's denoising or guidance process. Until a diffusion-model family exists, this is tier C.\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1946,
+      "completionTokens": 148,
+      "totalTokens": 2094
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:34:14.122Z"
+}

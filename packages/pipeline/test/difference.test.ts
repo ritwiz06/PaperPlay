@@ -26,6 +26,12 @@ describe("[R08] the measured difference", () => {
     expect(summarise(difference({ kind: "at", seconds: 1 }), samples, DT)).toBe(0.85);
   });
 
+  it("reads a value at the run's end as its last sample when the end rounds one past it, and nothing further", () => {
+    // Samples 0.1 s apart, the last at 1.0 s: 1.05 s rounds to the 12th, one past the last.
+    expect(summarise(difference({ kind: "at", seconds: 1.05 }), samples, DT)).toBe(0.85);
+    expect(summarise(difference({ kind: "at", seconds: 1.2 }), samples, DT)).toBeNaN();
+  });
+
   it("reads when a threshold is first reached, and never as later than any time", () => {
     expect(summarise(difference({ kind: "first-reach", threshold: 0.9 }), samples, DT)).toBeCloseTo(0.3, 12);
     expect(summarise(difference({ kind: "first-reach", threshold: 0.99 }), samples, DT)).toBe(Number.POSITIVE_INFINITY);

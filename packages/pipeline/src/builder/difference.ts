@@ -27,9 +27,13 @@ export function summarise(difference: { readonly summary: DifferenceSummary | Di
   const interval = SAMPLE_STEPS * timestep;
   const { summary } = difference;
   switch (summary.kind) {
-    case "at":
+    case "at": {
       // worldspec/3 counts the time in the model's unit; worldspec/2 counted it in seconds.
-      return samples[Math.round(("time" in summary ? summary.time : summary.seconds) / interval)] ?? Number.NaN;
+      const index = Math.round(("time" in summary ? summary.time : summary.seconds) / interval);
+      // The run's last sample can fall up to an interval short of its end, so a value at the end
+      // rounds one past it: that is the last sample, not a missing one (2026-10-25).
+      return samples[index] ?? (index === samples.length ? samples.at(-1) : undefined) ?? Number.NaN;
+    }
     case "first-reach": {
       const index = samples.findIndex((value) => value >= summary.threshold);
       return index < 0 ? Number.POSITIVE_INFINITY : index * interval;

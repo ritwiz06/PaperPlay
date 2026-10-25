@@ -59,6 +59,8 @@ export interface PlannerCall {
   readonly problems: readonly string[];
   readonly completionTokens: number | null;
   readonly answerCharacters: number | null;
+  /** What it chose, so its score can be computed again without calling it. */
+  readonly picks: unknown;
 }
 
 /** One timed call: the compact planner's picks, validated as the controller validates them. */
@@ -75,15 +77,15 @@ export async function plannerCall(client: ModelClient, model: string, planner: P
   try {
     const picked = await pickLevels(watched, model, { title: planner.title, reading: planner.reading, candidates: planner.candidates, ownNumbers: planner.ownNumbers, hooks: planner.hooks }, { structuredOutput });
     const milliseconds = clock() - started;
-    const checked = validatePicks(picked.value, planner.candidates, { reading: planner.reading, model: planner.model, source: planner.source, horizon: planner.horizon, ownNumbers: planner.ownNumbers });
+    const checked = validatePicks(picked.value, planner.candidates, { reading: planner.reading, model: planner.model, source: planner.source, horizon: planner.horizon, ownNumbers: planner.ownNumbers, hooks: planner.hooks });
     const own = new Set(checked.problems.flatMap((problem) => /^level (\d+):/.exec(problem)?.[1] ?? []).map(Number));
     const worldWide = checked.problems.some((problem) => !/^level \d+:/.test(problem));
     const levels = picked.value.levels.length;
     const seen = usage as { completionTokens: number; text: string } | null;
-    return { model, paper: planner.paper, milliseconds, ok: true, error: null, levels, passing: worldWide && own.size === 0 ? 0 : levels - own.size, problems: checked.problems, completionTokens: seen?.completionTokens ?? null, answerCharacters: seen?.text.length ?? null };
+    return { model, paper: planner.paper, milliseconds, ok: true, error: null, levels, passing: worldWide && own.size === 0 ? 0 : levels - own.size, problems: checked.problems, completionTokens: seen?.completionTokens ?? null, answerCharacters: seen?.text.length ?? null, picks: picked.value };
   } catch (error) {
     const seen = usage as { completionTokens: number; text: string } | null;
-    return { model, paper: planner.paper, milliseconds: clock() - started, ok: false, error: error instanceof Error ? error.message.split("\n")[0] ?? "" : String(error), levels: 0, passing: 0, problems: [], completionTokens: seen?.completionTokens ?? null, answerCharacters: seen?.text.length ?? null };
+    return { model, paper: planner.paper, milliseconds: clock() - started, ok: false, error: error instanceof Error ? error.message.split("\n")[0] ?? "" : String(error), levels: 0, passing: 0, problems: [], completionTokens: seen?.completionTokens ?? null, answerCharacters: seen?.text.length ?? null, picks: null };
   }
 }
 

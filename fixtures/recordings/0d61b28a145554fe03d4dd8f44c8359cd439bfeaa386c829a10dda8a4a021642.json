@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "0d61b28a145554fe03d4dd8f44c8359cd439bfeaa386c829a10dda8a4a021642",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"generative-modeling\", \"family\": \"none\", \"mechanism\": \"score matching with annealed Langevin dynamics for generative sampling\", \"reason\": \"This is the score-based generative modeling paper (Song & Ermon). Its mechanism is estimating the score (gradient of the log density) of noise-perturbed data and sampling via annealed Langevin dynamics — a generative model. The learning family explicitly excludes generative and diffusion models, and no other family (agents, compartments, study-design, grids, networks) plays anything like this. So,\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1950,
+      "completionTokens": 152,
+      "totalTokens": 2102
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:32:45.232Z"
+}

@@ -60,7 +60,13 @@ export function pickerMessages(input: { readonly title: string; readonly reading
       content: [
         `PAPER START\nTitle: ${input.title}\nQuestion: ${input.reading.question}\nMechanism: ${input.reading.mechanism}`,
         `Findings, by number:\n0 (the headline result): ${input.reading.result.text}\n${input.reading.findings.map((finding, index) => `${index + 1} (${finding.kind}): ${finding.text}`).join("\n")}\nPAPER END`,
-        ...(mismatch ? ["Running the paper's own numbers found its headline does not appear at the values it lists: the hook may test another finding instead, by its number."] : []),
+        ...(mismatch
+          ? [
+              (input.hooks ?? []).length > 0 || !input.hooks
+                ? "Running the paper's own numbers found its headline's threshold does not appear at the values it lists: the hook still tests finding 0, by the direction its change shows, never the threshold itself."
+                : "Running the paper's own numbers found its headline does not appear at the values it lists, and no candidate measures what it speaks of: the hook tests another finding instead, by its number.",
+            ]
+          : []),
         `Candidate levels:\n${input.candidates.map((candidate) => `${candidate.brief}${input.hooks?.includes(candidate.id) ? " [can be the hook]" : ""}`).join("\n")}`,
         "Choose the five levels.",
       ].join("\n\n"),
@@ -97,7 +103,7 @@ export interface PickProblem {
 }
 
 /** Whether the picks make a world the rules accept: real, distinct candidates, a hook on the headline, three findings. */
-export function validatePicks(picks: CandidatePicks, candidates: readonly LevelCandidate[], input: { readonly reading: Reading; readonly model: ModelSpec; readonly source: SourceText; readonly horizon: number; readonly ownNumbers?: OwnNumbersForPlanner }): PickProblem {
+export function validatePicks(picks: CandidatePicks, candidates: readonly LevelCandidate[], input: { readonly reading: Reading; readonly model: ModelSpec; readonly source: SourceText; readonly horizon: number; readonly ownNumbers?: OwnNumbersForPlanner; readonly hooks?: readonly string[] }): PickProblem {
   const problems: string[] = [];
   const ids = picks.levels.map((pick) => pick.candidate);
   const unknown = ids.filter((id) => !candidates.some((candidate) => candidate.id === id));
@@ -107,11 +113,13 @@ export function validatePicks(picks: CandidatePicks, candidates: readonly LevelC
   const unread = picks.levels.filter((pick) => pick.finding >= findings.length).map((pick) => pick.finding);
   if (unread.length > 0) problems.push(`no finding ${unread.join(", ")}`);
   if (problems.length > 0) return { problems, hookFinding: 0 };
+  // The hook tests the headline (ADR-0040); it takes another finding only when the paper's own numbers
+  // confirmed the headline's mismatch and no candidate measures what the headline speaks of.
+  const fallback = input.ownNumbers?.verdict === "mismatch" && input.hooks !== undefined && input.hooks.length === 0;
+  const hookFinding = fallback ? (picks.levels[0]?.finding ?? 0) : 0;
   const hook = candidates.find((candidate) => candidate.id === ids[0]);
-  const spread = hook ? hookSpreadProblem(input.model, input.reading.result, hook.level.difference.compartment) : null;
+  const spread = hook && !fallback ? hookSpreadProblem(input.model, input.reading.result, hook.level.difference.compartment) : null;
   if (spread) problems.push(spread);
-  // The hook may take another finding only when the paper's own numbers confirmed the headline's mismatch (ADR-0040).
-  const hookFinding = input.ownNumbers?.verdict === "mismatch" ? (picks.levels[0]?.finding ?? 0) : 0;
   const found = checkFindings(planFromPicks(picks, candidates, input.reading, input.horizon), input.reading, input.source, hookFinding);
   problems.push(...found.levels.flatMap((level, index) => level.map((problem) => `level ${index + 1}: ${problem}`)), ...found.world);
   return { problems, hookFinding };

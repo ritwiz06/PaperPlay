@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "3ab5a501bf1c9784a67b0959119698609db0a4181ff2e001131ac15b1616af89",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"none\", \"family\": \"none\", \"mechanism\": \"Denoising diffusion probabilistic model: a latent variable model that gradually adds Gaussian noise to data via a fixed forward process and learns a reverse denoising process to generate images, trained with a variational bound connected to denoising score matching with Langevin dynamics.\", \"reason\": \"The paper's mechanism is a generative diffusion model. The learning family explicitly excludes generative and diffusion models, and no other family (agents, compartments, study-design, grids, networks) covers image-synthesis latent variable models. Per the routing rules, a diffusion model is tier C until a family for it exists.\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 2042,
+      "completionTokens": 170,
+      "totalTokens": 2212
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:33:36.376Z"
+}

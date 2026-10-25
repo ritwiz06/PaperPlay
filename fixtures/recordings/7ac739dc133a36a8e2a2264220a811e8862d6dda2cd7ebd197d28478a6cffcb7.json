@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "7ac739dc133a36a8e2a2264220a811e8862d6dda2cd7ebd197d28478a6cffcb7",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"machine learning\", \"family\": \"none\", \"mechanism\": \"A generative model trained as the transition operator of a Markov chain that progressively denoises noise into samples, via a training procedure (infusion training) that mixes target information into the training chain — an early diffusion-style generative model, with a variational lower bound onlog\", \"reason\":\": The paper's mechanism is a generative/diffusion-style model: a learned Markov-chain transition operator that denoises noise into samples, trained by infusing target information into the chain and justified by a variational bound. The learning family explicitly excludes generative and diffusion models, and no other family (agents, compartments, study-design, grids, networks) plays generative Mark\" , \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1706,
+      "completionTokens": 207,
+      "totalTokens": 1913
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:33:22.269Z"
+}
