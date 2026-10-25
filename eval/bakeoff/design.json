@@ -9,9 +9,9 @@
       "score": {
         "levels": 5,
         "built": 5,
-        "meetRule": 4,
+        "meetRule": 5,
         "onFindings": true,
-        "note": "level 1: holds on 0 of 20"
+        "note": ""
       }
     },
     {
@@ -87,9 +87,9 @@
       "score": {
         "levels": 5,
         "built": 5,
-        "meetRule": 1,
+        "meetRule": 4,
         "onFindings": true,
-        "note": "level 1: holds on 0 of 20"
+        "note": "level 4: holds on 0 of 20"
       }
     },
     {
@@ -126,9 +126,9 @@
       "score": {
         "levels": 5,
         "built": 5,
-        "meetRule": 4,
+        "meetRule": 5,
         "onFindings": true,
-        "note": "level 5: holds on 0 of 20"
+        "note": ""
       }
     },
     {
@@ -152,9 +152,9 @@
       "score": {
         "levels": 5,
         "built": 5,
-        "meetRule": 3,
+        "meetRule": 5,
         "onFindings": true,
-        "note": "level 2: holds on 0 of 20"
+        "note": ""
       }
     },
     {
@@ -165,7 +165,7 @@
       "score": {
         "levels": 5,
         "built": 5,
-        "meetRule": 2,
+        "meetRule": 4,
         "onFindings": true,
         "note": "level 1: holds on 0 of 20"
       }
@@ -243,9 +243,9 @@
       "score": {
         "levels": 5,
         "built": 5,
-        "meetRule": 2,
+        "meetRule": 3,
         "onFindings": true,
-        "note": "level 2: holds on 0 of 20"
+        "note": "level 2: holds on 14 of 20"
       }
     },
     {
@@ -282,9 +282,9 @@
       "score": {
         "levels": 5,
         "built": 5,
-        "meetRule": 4,
+        "meetRule": 5,
         "onFindings": true,
-        "note": "level 2: holds on 0 of 20"
+        "note": ""
       }
     },
     {
@@ -321,7 +321,7 @@
       "score": {
         "levels": 5,
         "built": 5,
-        "meetRule": 3,
+        "meetRule": 4,
         "onFindings": true,
         "note": "level 1: holds on 0 of 20"
       }
@@ -334,7 +334,7 @@
       "score": {
         "levels": 5,
         "built": 4,
-        "meetRule": 0,
+        "meetRule": 1,
         "onFindings": true,
         "note": "level 1: holds on 0 of 20"
       }
@@ -360,9 +360,9 @@
       "score": {
         "levels": 5,
         "built": 5,
-        "meetRule": 2,
+        "meetRule": 3,
         "onFindings": true,
-        "note": "level 2: holds on 0 of 20"
+        "note": "level 2: holds on 13 of 20"
       }
     },
     {
@@ -425,7 +425,7 @@
       "score": {
         "levels": 5,
         "built": 3,
-        "meetRule": 2,
+        "meetRule": 3,
         "onFindings": true,
         "note": "level 1: must be a camelCase parameter name"
       }

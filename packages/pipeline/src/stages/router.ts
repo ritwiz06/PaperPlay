@@ -41,7 +41,13 @@ export const RouteDecision = z.strictObject({
 });
 export type RouteDecision = z.infer<typeof RouteDecision>;
 
-export function routerInstructions(): string {
+/**
+ * The router's instructions. With capabilities, a job's (ADR-0055): each family's real reach, and a
+ * mechanism no existing family covers sent to tier C. Without, as the router bake-off recorded them,
+ * so its recordings replay.
+ */
+export function routerInstructions(options: { readonly capabilities?: boolean } = {}): string {
+  if (!options.capabilities) return recordedInstructions();
   const catalogue = Object.values(FAMILIES)
     .map((family) => `- ${family.id}: ${family.name}. It plays ${FAMILY_CAPABILITIES[family.id]}${GENERATED_FAMILIES.includes(family.id) ? " Made from papers." : ""}`)
     .join("\n");
@@ -57,14 +63,31 @@ export function routerInstructions(): string {
   ].join("\n");
 }
 
-export function routerMessages(paper: { readonly title: string; readonly abstract: string; readonly equations: readonly string[] }): ChatMessage[] {
+/** The instructions before 2026-10-25, which the router bake-off's recordings hold. */
+function recordedInstructions(): string {
+  const catalogue = Object.values(FAMILIES)
+    .map((family) => `- ${family.id}: ${family.name}${RELEASED_FAMILIES.includes(family.id) ? " (released)" : " (not released yet)"}`)
+    .join("\n");
+  return [
+    "You decide which family of playable models covers a scientific paper's mechanism, from its title, abstract and equations.",
+    DATA_RULE,
+    `The families:\n${catalogue}`,
+    "Tiers:",
+    "- A: a released family covers the mechanism as the paper states it.",
+    "- B: a family that is not released yet covers it, or the mechanism needs a new model of a known kind.",
+    "- C: the paper has no mechanism a learner could honestly play with, such as a survey, a theorem with no dynamics, or a purely empirical result. Its family is none.",
+    "Choose by mechanism, not by subject: an epidemic on a contact network is networks; a well-mixed epidemic is compartments.",
+  ].join("\n");
+}
+
+export function routerMessages(paper: { readonly title: string; readonly abstract: string; readonly equations: readonly string[] }, options: { readonly capabilities?: boolean } = {}): ChatMessage[] {
   const equations = paper.equations.slice(0, 12).join("\n") || "(none given)";
   return [
-    { role: "system", content: routerInstructions() },
+    { role: "system", content: routerInstructions(options) },
     { role: "user", content: `PAPER START\nTitle: ${paper.title}\n\nAbstract: ${paper.abstract}\n\nSome of its display equations:\n${equations}\nPAPER END\n\nRoute the paper.` },
   ];
 }
 
-export function route(client: ModelClient, model: string, paper: Parameters<typeof routerMessages>[0], options: { readonly structuredOutput: boolean }) {
-  return completeStructured(client, { stage: "router", model, messages: routerMessages(paper), temperature: 0, maxTokens: 4000 }, RouteDecision, { name: "route", structuredOutput: options.structuredOutput });
+export function route(client: ModelClient, model: string, paper: Parameters<typeof routerMessages>[0], options: { readonly structuredOutput: boolean; readonly capabilities?: boolean }) {
+  return completeStructured(client, { stage: "router", model, messages: routerMessages(paper, { capabilities: options.capabilities ?? false }), temperature: 0, maxTokens: 4000 }, RouteDecision, { name: "route", structuredOutput: options.structuredOutput });
 }

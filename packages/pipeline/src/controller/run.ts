@@ -227,7 +227,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     move("planning", "routing", "deciding which family covers the paper's mechanism");
     const title = register.title;
     const front = text.sections.find((section) => section.title === "Abstract");
-    const routed = await timed("router", (client) => route(client, modelFor("router"), { title, abstract: front ? text.text.slice(front.start, front.end) : text.text.slice(0, 2000), equations: text.equations.slice(0, 6).map((equation) => equation.latex.slice(0, 300)) }, { structuredOutput: structured(modelFor("router")) }));
+    const routed = await timed("router", (client) => route(client, modelFor("router"), { title, abstract: front ? text.text.slice(front.start, front.end) : text.text.slice(0, 2000), equations: text.equations.slice(0, 6).map((equation) => equation.latex.slice(0, 300)) }, { structuredOutput: structured(modelFor("router")), capabilities: true }));
     sink.artifact("route", routed.value);
     if (routed.value.family !== "compartments" || routed.value.tier !== "A") {
       throw new Stop("unsupported", `the router sends this paper to ${routed.value.family}, tier ${routed.value.tier}: ${routed.value.reason} PaperPlay generates compartment-model worlds only, so far.`);

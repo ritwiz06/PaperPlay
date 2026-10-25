@@ -45,8 +45,8 @@
     "transcriber": "qwen3-235b-a22b-thinking-2507",
     "second-transcriber": "inkling-small",
     "router": "glm-5-3",
-    "planner": "kimi-k2-7-code",
-    "second-planner": "glm-5-3",
+    "planner": "glm-5-3",
+    "second-planner": "muse-glimmer-30b",
     "explainer": "kimi-k2-7-code",
     "reviewer": "inkling-small",
     "second-reviewer": "qwen38-27b"

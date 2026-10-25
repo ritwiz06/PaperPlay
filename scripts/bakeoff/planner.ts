@@ -131,3 +131,33 @@ export function pickPlanners(rows: readonly PlannerRow[], vendorOf: (model: stri
   const second = usable.find((row) => first !== null && vendorOf(row.model) !== vendorOf(first))?.model ?? null;
   return [first, second];
 }
+
+/** The bake-off as eval/planner.json keeps it. */
+export interface PlannerBakeoff {
+  readonly ranOn: string;
+  readonly probes: readonly { readonly model: string; readonly milliseconds: number; readonly completionTokens: number | null; readonly answerCharacters: number | null; readonly honours: boolean; readonly error: string | null }[];
+  readonly papers: readonly { readonly paper: string; readonly candidates: number }[];
+  readonly calls: readonly PlannerCall[];
+  readonly rows: readonly PlannerRow[];
+  readonly picked: { readonly planner: string | null; readonly secondPlanner: string | null };
+}
+
+const seconds = (ms: number): string => (Number.isFinite(ms) ? (ms / 1000).toFixed(1) : "?");
+
+/** eval/models.md's section on the planners that choose among candidates (ADR-0055). */
+export function plannerMarkdown(bakeoff: PlannerBakeoff): string {
+  return [
+    `## Planners, choosing among candidate levels (${bakeoff.ranOn})`,
+    "",
+    `Written by \`npm run pipeline:live -- planner-bakeoff\` (scripts/bakeoff/planner.ts), from eval/bakeoff/planner.json. Jobs plan in code (ADR-0055): the candidate levels are made and judged by the rules first, and a planner, asked not to think, chooses five and the finding each tests. Each model was asked three times: ${bakeoff.papers.map((paper) => `${paper.paper} (${paper.candidates} candidates shown)`).join(", ")}, the first again. A call's levels pass when its picks pass every rule, as the controller checks them; wall clock is the call's, asked live, never replayed.`,
+    "",
+    "Asked not to think, first: " + bakeoff.probes.map((probe) => `${probe.model}, ${probe.error ?? `${probe.completionTokens ?? "?"} reply tokens for ${probe.answerCharacters ?? "?"} characters (${probe.honours ? "honours it" : "does not honour it"})`}`).join("; ") + ".",
+    "",
+    "| Rank | Model | Valid picks | Levels passing, mean | p50 s | p90 s | Reply tokens, mean |",
+    "|---|---|---|---|---|---|---|",
+    ...bakeoff.rows.map((row, index) => `| ${index + 1} | ${row.model} | ${row.valid}/${row.calls} | ${row.passingMean.toFixed(1)} | ${seconds(row.p50)} | ${seconds(row.p90)} | ${row.completionMean === null ? "?" : Math.round(row.completionMean)} |`),
+    "",
+    `Picked: ${bakeoff.picked.planner ?? "none"} as the planner and ${bakeoff.picked.secondPlanner ?? "none"} as the second, of another vendor; both are asked at once and the first whose picks pass is used. Before, the planner wrote the whole plan: kimi-k2-7-code's replies were 20.9k tokens on average, p50 11.2 min (9 live calls since 2026-10-18).`,
+    "",
+  ].join("\n");
+}

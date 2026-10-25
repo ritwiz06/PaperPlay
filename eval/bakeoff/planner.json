@@ -4,7 +4,7 @@
   "probes": [
     {
       "model": "kimi-k2-7-code",
-      "milliseconds": 2404.880708,
+      "milliseconds": 2632.4118750000002,
       "completionTokens": 45,
       "answerCharacters": 191,
       "honours": true,
@@ -12,7 +12,7 @@
     },
     {
       "model": "glm-5-3",
-      "milliseconds": 1884.353208,
+      "milliseconds": 1984.9549590000001,
       "completionTokens": 13,
       "answerCharacters": 37,
       "honours": true,
@@ -33,7 +33,7 @@
     {
       "model": "kimi-k2-7-code",
       "paper": "arxiv-2506.19869v1",
-      "milliseconds": 3909.396375000001,
+      "milliseconds": 3674.575500000001,
       "ok": true,
       "error": null,
       "levels": 5,
@@ -48,11 +48,7 @@
             "finding": 0
           },
           {
-            "candidate": "c17",
-            "finding": 4
-          },
-          {
-            "candidate": "c22",
+            "candidate": "c20",
             "finding": 2
           },
           {
@@ -60,8 +56,12 @@
             "finding": 3
           },
           {
-            "candidate": "c27",
+            "candidate": "c22",
             "finding": 4
+          },
+          {
+            "candidate": "c12",
+            "finding": 3
           }
         ]
       }
@@ -69,7 +69,7 @@
     {
       "model": "kimi-k2-7-code",
       "paper": "pmc-PMC12334037",
-      "milliseconds": 6716.313875000002,
+      "milliseconds": 6999.136041,
       "ok": true,
       "error": null,
       "levels": 5,
@@ -86,6 +86,10 @@
             "finding": 0
           },
           {
+            "candidate": "c18",
+            "finding": 2
+          },
+          {
             "candidate": "c26",
             "finding": 3
           },
@@ -94,12 +98,8 @@
             "finding": 4
           },
           {
-            "candidate": "c19",
+            "candidate": "c22",
             "finding": 5
-          },
-          {
-            "candidate": "c20",
-            "finding": 2
           }
         ]
       }
@@ -107,7 +107,7 @@
     {
       "model": "kimi-k2-7-code",
       "paper": "arxiv-2506.19869v1",
-      "milliseconds": 4444.130249999998,
+      "milliseconds": 3526.4630829999987,
       "ok": true,
       "error": null,
       "levels": 5,
@@ -122,15 +122,345 @@
             "finding": 0
           },
           {
-            "candidate": "c17",
+            "candidate": "c20",
+            "finding": 2
+          },
+          {
+            "candidate": "c9",
+            "finding": 3
+          },
+          {
+            "candidate": "c22",
             "finding": 4
+          },
+          {
+            "candidate": "c12",
+            "finding": 3
+          }
+        ]
+      }
+    },
+    {
+      "model": "glm-5-3",
+      "paper": "arxiv-2506.19869v1",
+      "milliseconds": 3557.5958339999997,
+      "ok": true,
+      "error": null,
+      "levels": 5,
+      "passing": 5,
+      "problems": [],
+      "completionTokens": 50,
+      "answerCharacters": 171,
+      "picks": {
+        "levels": [
+          {
+            "candidate": "c6",
+            "finding": 0
           },
           {
             "candidate": "c22",
             "finding": 2
           },
           {
-            "candidate": "c9",
+            "candidate": "c10",
+            "finding": 3
+          },
+          {
+            "candidate": "c17",
+            "finding": 4
+          },
+          {
+            "candidate": "c25",
+            "finding": 4
+          }
+        ]
+      }
+    },
+    {
+      "model": "glm-5-3",
+      "paper": "pmc-PMC12334037",
+      "milliseconds": 8714.862625000002,
+      "ok": true,
+      "error": null,
+      "levels": 5,
+      "passing": 5,
+      "problems": [],
+      "completionTokens": 50,
+      "answerCharacters": 171,
+      "picks": {
+        "levels": [
+          {
+            "candidate": "c3",
+            "finding": 0
+          },
+          {
+            "candidate": "c28",
+            "finding": 1
+          },
+          {
+            "candidate": "c18",
+            "finding": 2
+          },
+          {
+            "candidate": "c26",
+            "finding": 3
+          },
+          {
+            "candidate": "c15",
+            "finding": 4
+          }
+        ]
+      }
+    },
+    {
+      "model": "glm-5-3",
+      "paper": "arxiv-2506.19869v1",
+      "milliseconds": 2866.3029160000006,
+      "ok": true,
+      "error": null,
+      "levels": 5,
+      "passing": 5,
+      "problems": [],
+      "completionTokens": 50,
+      "answerCharacters": 171,
+      "picks": {
+        "levels": [
+          {
+            "candidate": "c6",
+            "finding": 0
+          },
+          {
+            "candidate": "c22",
+            "finding": 2
+          },
+          {
+            "candidate": "c10",
+            "finding": 3
+          },
+          {
+            "candidate": "c17",
+            "finding": 4
+          },
+          {
+            "candidate": "c25",
+            "finding": 4
+          }
+        ]
+      }
+    },
+    {
+      "model": "glm-5-3-flash",
+      "paper": "arxiv-2506.19869v1",
+      "milliseconds": 5506.641750000001,
+      "ok": true,
+      "error": null,
+      "levels": 5,
+      "passing": 5,
+      "problems": [],
+      "completionTokens": 50,
+      "answerCharacters": 170,
+      "picks": {
+        "levels": [
+          {
+            "candidate": "c6",
+            "finding": 0
+          },
+          {
+            "candidate": "c5",
+            "finding": 1
+          },
+          {
+            "candidate": "c22",
+            "finding": 2
+          },
+          {
+            "candidate": "c10",
+            "finding": 3
+          },
+          {
+            "candidate": "c17",
+            "finding": 4
+          }
+        ]
+      }
+    },
+    {
+      "model": "glm-5-3-flash",
+      "paper": "pmc-PMC12334037",
+      "milliseconds": 11027.139291,
+      "ok": true,
+      "error": null,
+      "levels": 5,
+      "passing": 0,
+      "problems": [
+        "level 1, the hook, must measure the spread the headline speaks of: an infected compartment (i, c, cQ), not r"
+      ],
+      "completionTokens": 50,
+      "answerCharacters": 173,
+      "picks": {
+        "levels": [
+          {
+            "candidate": "c28",
+            "finding": 0
+          },
+          {
+            "candidate": "c15",
+            "finding": 4
+          },
+          {
+            "candidate": "c26",
+            "finding": 3
+          },
+          {
+            "candidate": "c20",
+            "finding": 2
+          },
+          {
+            "candidate": "c22",
+            "finding": 5
+          }
+        ]
+      }
+    },
+    {
+      "model": "glm-5-3-flash",
+      "paper": "arxiv-2506.19869v1",
+      "milliseconds": 4071.9269999999997,
+      "ok": true,
+      "error": null,
+      "levels": 5,
+      "passing": 5,
+      "problems": [],
+      "completionTokens": 50,
+      "answerCharacters": 170,
+      "picks": {
+        "levels": [
+          {
+            "candidate": "c6",
+            "finding": 0
+          },
+          {
+            "candidate": "c5",
+            "finding": 1
+          },
+          {
+            "candidate": "c22",
+            "finding": 2
+          },
+          {
+            "candidate": "c10",
+            "finding": 3
+          },
+          {
+            "candidate": "c17",
+            "finding": 4
+          }
+        ]
+      }
+    },
+    {
+      "model": "qwen36-35b-a3b",
+      "paper": "arxiv-2506.19869v1",
+      "milliseconds": 27101.911125,
+      "ok": true,
+      "error": null,
+      "levels": 5,
+      "passing": 0,
+      "problems": [
+        "no candidate c1"
+      ],
+      "completionTokens": 104,
+      "answerCharacters": 204,
+      "picks": {
+        "levels": [
+          {
+            "candidate": "c2",
+            "finding": 0
+          },
+          {
+            "candidate": "c1",
+            "finding": 1
+          },
+          {
+            "candidate": "c22",
+            "finding": 2
+          },
+          {
+            "candidate": "c10",
+            "finding": 3
+          },
+          {
+            "candidate": "c26",
+            "finding": 4
+          }
+        ]
+      }
+    },
+    {
+      "model": "qwen36-35b-a3b",
+      "paper": "pmc-PMC12334037",
+      "milliseconds": 3385.8582499999975,
+      "ok": true,
+      "error": null,
+      "levels": 5,
+      "passing": 5,
+      "problems": [],
+      "completionTokens": 85,
+      "answerCharacters": 195,
+      "picks": {
+        "levels": [
+          {
+            "candidate": "c3",
+            "finding": 0
+          },
+          {
+            "candidate": "c28",
+            "finding": 1
+          },
+          {
+            "candidate": "c18",
+            "finding": 2
+          },
+          {
+            "candidate": "c26",
+            "finding": 3
+          },
+          {
+            "candidate": "c15",
+            "finding": 4
+          }
+        ]
+      }
+    },
+    {
+      "model": "qwen36-35b-a3b",
+      "paper": "arxiv-2506.19869v1",
+      "milliseconds": 3550.881666000001,
+      "ok": true,
+      "error": null,
+      "levels": 5,
+      "passing": 0,
+      "problems": [
+        "no candidate c1"
+      ],
+      "completionTokens": 104,
+      "answerCharacters": 204,
+      "picks": {
+        "levels": [
+          {
+            "candidate": "c2",
+            "finding": 0
+          },
+          {
+            "candidate": "c1",
+            "finding": 1
+          },
+          {
+            "candidate": "c22",
+            "finding": 2
+          },
+          {
+            "candidate": "c10",
             "finding": 3
           },
           {
@@ -141,349 +471,15 @@
       }
     },
     {
-      "model": "glm-5-3",
-      "paper": "arxiv-2506.19869v1",
-      "milliseconds": 3198.824625000001,
-      "ok": true,
-      "error": null,
-      "levels": 5,
-      "passing": 5,
-      "problems": [],
-      "completionTokens": 50,
-      "answerCharacters": 170,
-      "picks": {
-        "levels": [
-          {
-            "candidate": "c17",
-            "finding": 0
-          },
-          {
-            "candidate": "c6",
-            "finding": 1
-          },
-          {
-            "candidate": "c22",
-            "finding": 2
-          },
-          {
-            "candidate": "c9",
-            "finding": 3
-          },
-          {
-            "candidate": "c26",
-            "finding": 4
-          }
-        ]
-      }
-    },
-    {
-      "model": "glm-5-3",
-      "paper": "pmc-PMC12334037",
-      "milliseconds": 4820.086625,
-      "ok": true,
-      "error": null,
-      "levels": 5,
-      "passing": 0,
-      "problems": [
-        "level 1, the hook, must measure the spread the headline speaks of: an infected compartment (i, c, cQ), not r"
-      ],
-      "completionTokens": 50,
-      "answerCharacters": 172,
-      "picks": {
-        "levels": [
-          {
-            "candidate": "c28",
-            "finding": 0
-          },
-          {
-            "candidate": "c26",
-            "finding": 3
-          },
-          {
-            "candidate": "c19",
-            "finding": 4
-          },
-          {
-            "candidate": "c22",
-            "finding": 3
-          },
-          {
-            "candidate": "c10",
-            "finding": 6
-          }
-        ]
-      }
-    },
-    {
-      "model": "glm-5-3",
-      "paper": "arxiv-2506.19869v1",
-      "milliseconds": 3031.8707079999986,
-      "ok": true,
-      "error": null,
-      "levels": 5,
-      "passing": 5,
-      "problems": [],
-      "completionTokens": 50,
-      "answerCharacters": 170,
-      "picks": {
-        "levels": [
-          {
-            "candidate": "c6",
-            "finding": 0
-          },
-          {
-            "candidate": "c17",
-            "finding": 4
-          },
-          {
-            "candidate": "c19",
-            "finding": 2
-          },
-          {
-            "candidate": "c9",
-            "finding": 3
-          },
-          {
-            "candidate": "c25",
-            "finding": 4
-          }
-        ]
-      }
-    },
-    {
-      "model": "glm-5-3-flash",
-      "paper": "arxiv-2506.19869v1",
-      "milliseconds": 32139.672542,
-      "ok": true,
-      "error": null,
-      "levels": 5,
-      "passing": 5,
-      "problems": [],
-      "completionTokens": 50,
-      "answerCharacters": 170,
-      "picks": {
-        "levels": [
-          {
-            "candidate": "c6",
-            "finding": 0
-          },
-          {
-            "candidate": "c2",
-            "finding": 3
-          },
-          {
-            "candidate": "c17",
-            "finding": 4
-          },
-          {
-            "candidate": "c22",
-            "finding": 2
-          },
-          {
-            "candidate": "c13",
-            "finding": 3
-          }
-        ]
-      }
-    },
-    {
-      "model": "glm-5-3-flash",
-      "paper": "pmc-PMC12334037",
-      "milliseconds": 10791.106166999998,
-      "ok": true,
-      "error": null,
-      "levels": 5,
-      "passing": 0,
-      "problems": [
-        "level 1, the hook, must measure the spread the headline speaks of: an infected compartment (i, c, cQ), not r"
-      ],
-      "completionTokens": 78,
-      "answerCharacters": 206,
-      "picks": {
-        "levels": [
-          {
-            "candidate": "c28",
-            "finding": 0
-          },
-          {
-            "candidate": "c19",
-            "finding": 4
-          },
-          {
-            "candidate": "c26",
-            "finding": 3
-          },
-          {
-            "candidate": "c22",
-            "finding": 3
-          },
-          {
-            "candidate": "c18",
-            "finding": 2
-          }
-        ]
-      }
-    },
-    {
-      "model": "glm-5-3-flash",
-      "paper": "arxiv-2506.19869v1",
-      "milliseconds": 7840.396208000006,
-      "ok": true,
-      "error": null,
-      "levels": 5,
-      "passing": 5,
-      "problems": [],
-      "completionTokens": 50,
-      "answerCharacters": 170,
-      "picks": {
-        "levels": [
-          {
-            "candidate": "c6",
-            "finding": 0
-          },
-          {
-            "candidate": "c2",
-            "finding": 3
-          },
-          {
-            "candidate": "c22",
-            "finding": 2
-          },
-          {
-            "candidate": "c17",
-            "finding": 4
-          },
-          {
-            "candidate": "c26",
-            "finding": 4
-          }
-        ]
-      }
-    },
-    {
-      "model": "qwen36-35b-a3b",
-      "paper": "arxiv-2506.19869v1",
-      "milliseconds": 5940.075042,
-      "ok": true,
-      "error": null,
-      "levels": 5,
-      "passing": 0,
-      "problems": [
-        "no candidate c1"
-      ],
-      "completionTokens": 104,
-      "answerCharacters": 204,
-      "picks": {
-        "levels": [
-          {
-            "candidate": "c6",
-            "finding": 0
-          },
-          {
-            "candidate": "c1",
-            "finding": 1
-          },
-          {
-            "candidate": "c22",
-            "finding": 2
-          },
-          {
-            "candidate": "c10",
-            "finding": 3
-          },
-          {
-            "candidate": "c17",
-            "finding": 4
-          }
-        ]
-      }
-    },
-    {
-      "model": "qwen36-35b-a3b",
-      "paper": "pmc-PMC12334037",
-      "milliseconds": 19340.640375000003,
-      "ok": true,
-      "error": null,
-      "levels": 5,
-      "passing": 0,
-      "problems": [
-        "level 1, the hook, must measure the spread the headline speaks of: an infected compartment (i, c, cQ), not r"
-      ],
-      "completionTokens": 106,
-      "answerCharacters": 206,
-      "picks": {
-        "levels": [
-          {
-            "candidate": "c28",
-            "finding": 0
-          },
-          {
-            "candidate": "c15",
-            "finding": 4
-          },
-          {
-            "candidate": "c26",
-            "finding": 3
-          },
-          {
-            "candidate": "c18",
-            "finding": 2
-          },
-          {
-            "candidate": "c23",
-            "finding": 5
-          }
-        ]
-      }
-    },
-    {
-      "model": "qwen36-35b-a3b",
-      "paper": "arxiv-2506.19869v1",
-      "milliseconds": 2481.8031249999985,
-      "ok": true,
-      "error": null,
-      "levels": 5,
-      "passing": 0,
-      "problems": [
-        "no candidate c1"
-      ],
-      "completionTokens": 104,
-      "answerCharacters": 204,
-      "picks": {
-        "levels": [
-          {
-            "candidate": "c6",
-            "finding": 0
-          },
-          {
-            "candidate": "c1",
-            "finding": 1
-          },
-          {
-            "candidate": "c22",
-            "finding": 2
-          },
-          {
-            "candidate": "c10",
-            "finding": 3
-          },
-          {
-            "candidate": "c17",
-            "finding": 4
-          }
-        ]
-      }
-    },
-    {
       "model": "muse-glimmer-30b",
       "paper": "arxiv-2506.19869v1",
-      "milliseconds": 74962.543791,
+      "milliseconds": 122883.29183300001,
       "ok": true,
       "error": null,
       "levels": 5,
       "passing": 5,
       "problems": [],
-      "completionTokens": 3380,
+      "completionTokens": 5810,
       "answerCharacters": 171,
       "picks": {
         "levels": [
@@ -492,8 +488,8 @@
             "finding": 0
           },
           {
-            "candidate": "c6",
-            "finding": 3
+            "candidate": "c2",
+            "finding": 1
           },
           {
             "candidate": "c10",
@@ -504,7 +500,7 @@
             "finding": 2
           },
           {
-            "candidate": "c25",
+            "candidate": "c26",
             "finding": 4
           }
         ]
@@ -513,14 +509,14 @@
     {
       "model": "muse-glimmer-30b",
       "paper": "pmc-PMC12334037",
-      "milliseconds": 81901.84316700001,
+      "milliseconds": 106492.42616600002,
       "ok": true,
       "error": null,
       "levels": 5,
       "passing": 5,
       "problems": [],
-      "completionTokens": 3984,
-      "answerCharacters": 172,
+      "completionTokens": 4936,
+      "answerCharacters": 171,
       "picks": {
         "levels": [
           {
@@ -536,12 +532,12 @@
             "finding": 4
           },
           {
-            "candidate": "c26",
+            "candidate": "c22",
             "finding": 3
           },
           {
-            "candidate": "c18",
-            "finding": 2
+            "candidate": "c3",
+            "finding": 5
           }
         ]
       }
@@ -549,14 +545,14 @@
     {
       "model": "muse-glimmer-30b",
       "paper": "arxiv-2506.19869v1",
-      "milliseconds": 68662.63425,
+      "milliseconds": 56472.68629200003,
       "ok": true,
       "error": null,
       "levels": 5,
       "passing": 5,
       "problems": [],
-      "completionTokens": 3390,
-      "answerCharacters": 170,
+      "completionTokens": 2597,
+      "answerCharacters": 171,
       "picks": {
         "levels": [
           {
@@ -564,20 +560,20 @@
             "finding": 0
           },
           {
-            "candidate": "c6",
-            "finding": 1
-          },
-          {
-            "candidate": "c9",
-            "finding": 3
-          },
-          {
             "candidate": "c22",
             "finding": 2
           },
           {
+            "candidate": "c10",
+            "finding": 3
+          },
+          {
             "candidate": "c26",
             "finding": 4
+          },
+          {
+            "candidate": "c6",
+            "finding": 1
           }
         ]
       }
@@ -585,7 +581,7 @@
     {
       "model": "qwen36-27b",
       "paper": "arxiv-2506.19869v1",
-      "milliseconds": 10580.084541,
+      "milliseconds": 11158.726959,
       "ok": true,
       "error": null,
       "levels": 5,
@@ -621,7 +617,7 @@
     {
       "model": "qwen36-27b",
       "paper": "pmc-PMC12334037",
-      "milliseconds": 5035.136374999998,
+      "milliseconds": 12022.836874999997,
       "ok": true,
       "error": null,
       "levels": 5,
@@ -646,12 +642,12 @@
             "finding": 3
           },
           {
-            "candidate": "c11",
+            "candidate": "c20",
             "finding": 2
           },
           {
-            "candidate": "c23",
-            "finding": 3
+            "candidate": "c22",
+            "finding": 5
           }
         ]
       }
@@ -659,7 +655,7 @@
     {
       "model": "qwen36-27b",
       "paper": "arxiv-2506.19869v1",
-      "milliseconds": 4958.6312499999985,
+      "milliseconds": 5529.313333000002,
       "ok": true,
       "error": null,
       "levels": 5,
@@ -695,62 +691,62 @@
   ],
   "rows": [
     {
+      "model": "glm-5-3",
+      "calls": 3,
+      "valid": 3,
+      "passingMean": 5,
+      "p50": 3557.5958339999997,
+      "p90": 8714.862625000002,
+      "completionMean": 50
+    },
+    {
       "model": "muse-glimmer-30b",
       "calls": 3,
       "valid": 3,
       "passingMean": 5,
-      "p50": 74962.543791,
-      "p90": 81901.84316700001,
-      "completionMean": 3584.6666666666665
-    },
-    {
-      "model": "glm-5-3",
-      "calls": 3,
-      "valid": 2,
-      "passingMean": 3.3333333333333335,
-      "p50": 3198.824625000001,
-      "p90": 4820.086625,
-      "completionMean": 50
+      "p50": 106492.42616600002,
+      "p90": 122883.29183300001,
+      "completionMean": 4447.666666666667
     },
     {
       "model": "kimi-k2-7-code",
       "calls": 3,
       "valid": 2,
       "passingMean": 3.3333333333333335,
-      "p50": 4444.130249999998,
-      "p90": 6716.313875000002,
+      "p50": 3674.575500000001,
+      "p90": 6999.136041,
       "completionMean": 49
-    },
-    {
-      "model": "qwen36-27b",
-      "calls": 3,
-      "valid": 2,
-      "passingMean": 3.3333333333333335,
-      "p50": 5035.136374999998,
-      "p90": 10580.084541,
-      "completionMean": 75.33333333333333
     },
     {
       "model": "glm-5-3-flash",
       "calls": 3,
       "valid": 2,
       "passingMean": 3.3333333333333335,
-      "p50": 10791.106166999998,
-      "p90": 32139.672542,
-      "completionMean": 59.333333333333336
+      "p50": 5506.641750000001,
+      "p90": 11027.139291,
+      "completionMean": 50
+    },
+    {
+      "model": "qwen36-27b",
+      "calls": 3,
+      "valid": 2,
+      "passingMean": 3.3333333333333335,
+      "p50": 11158.726959,
+      "p90": 12022.836874999997,
+      "completionMean": 75.33333333333333
     },
     {
       "model": "qwen36-35b-a3b",
       "calls": 3,
-      "valid": 0,
-      "passingMean": 0,
-      "p50": 5940.075042,
-      "p90": 19340.640375000003,
-      "completionMean": 104.66666666666667
+      "valid": 1,
+      "passingMean": 1.6666666666666667,
+      "p50": 3550.881666000001,
+      "p90": 27101.911125,
+      "completionMean": 97.66666666666667
     }
   ],
   "picked": {
-    "planner": "muse-glimmer-30b",
-    "secondPlanner": "glm-5-3"
+    "planner": "glm-5-3",
+    "secondPlanner": "muse-glimmer-30b"
   }
 }

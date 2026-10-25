@@ -42,7 +42,7 @@ import { join } from "node:path";
 import { TERMINAL_STATES } from "@paperplay/contracts";
 import { fetchArxiv, registerAndText } from "@paperplay/pipeline/ingest";
 import { cappedClient, directoryStore, recordingClient, replayClient, resumingClient, thinkingClient } from "@paperplay/pipeline/models";
-import { PLANNER_PAPERS, plannerCall, plannerCase, plannerTable, pickPlanners } from "./bakeoff/planner.ts";
+import { PLANNER_PAPERS, plannerCall, plannerCase, plannerTable, pickPlanners, type PlannerBakeoff } from "./bakeoff/planner.ts";
 import { route } from "@paperplay/pipeline/stages";
 import { outboundFetch } from "../apps/api/src/contact.ts";
 import { CONFIG_FILE, loadModelConfig } from "../apps/api/src/models/config.ts";
@@ -162,7 +162,7 @@ async function design(): Promise<void> {
   writeFileSync(join(folder, "design.json"), `${JSON.stringify(designed, null, 2)}\n`);
   const pair = transcriberPair(results, config.excluded);
   const agreed = pair.first && pair.second ? agreement(results, pair.first.model, pair.second.model) : [];
-  writeFileSync(join(import.meta.dirname, "..", "eval", "models.md"), toModelsMarkdown(results, agreed, { date: new Date().toISOString().slice(0, 10) }, designed, config.excluded));
+  writeFileSync(join(import.meta.dirname, "..", "eval", "models.md"), toModelsMarkdown(results, agreed, { date: new Date().toISOString().slice(0, 10) }, designed, config.excluded, plannerResults()));
   console.log("wrote eval/bakeoff/design.json and eval/models.md");
 }
 
@@ -194,7 +194,7 @@ async function report(): Promise<void> {
   const date = /Run on (\d{4}-\d{2}-\d{2})/.exec(written)?.[1] ?? new Date().toISOString().slice(0, 10);
   const pair = transcriberPair(results, config.excluded);
   const agreed = pair.first && pair.second ? agreement(results, pair.first.model, pair.second.model) : [];
-  writeFileSync(join(import.meta.dirname, "..", "eval", "models.md"), toModelsMarkdown(results, agreed, { date }, designed, config.excluded));
+  writeFileSync(join(import.meta.dirname, "..", "eval", "models.md"), toModelsMarkdown(results, agreed, { date }, designed, config.excluded, plannerResults()));
   await Promise.resolve();
   console.log("wrote eval/models.md");
 }
@@ -286,7 +286,7 @@ async function corpusRoute(): Promise<void> {
       const { text } = registerAndText(fetched, new Date().toISOString());
       const front = text.sections.find((section) => section.title === "Abstract");
       const abstract = front ? text.text.slice(front.start, front.end) : text.text.slice(0, 2000);
-      const decision = await route(client, router, { title: fetched.title, abstract, equations: text.equations.slice(0, 6).map((equation) => equation.latex.slice(0, 300)) }, { structuredOutput: config.structuredOutput[router] ?? false });
+      const decision = await route(client, router, { title: fetched.title, abstract, equations: text.equations.slice(0, 6).map((equation) => equation.latex.slice(0, 300)) }, { structuredOutput: config.structuredOutput[router] ?? false, capabilities: true });
       routes.push({ id: paper.id, version: paper.version, group: paper.group, ingest: { route: fetched.route, sections: text.sections.length, equations: text.equations.length }, router, decision: decision.value });
       console.log(`${paper.id}: ${decision.value.family}, tier ${decision.value.tier}`);
     } catch (error) {
@@ -297,6 +297,12 @@ async function corpusRoute(): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, 3000)); // arXiv asks for a pause between requests.
   }
 }
+
+/** The planner bake-off's results, once it has run (ADR-0055). */
+const plannerResults = (): PlannerBakeoff | undefined => {
+  const file = join(import.meta.dirname, "..", "eval", "bakeoff", "planner.json");
+  return existsSync(file) ? (JSON.parse(readFileSync(file, "utf8")) as PlannerBakeoff) : undefined;
+};
 
 /** The planner bake-off's models (the owner, 2026-10-25), and the two probed for the thinking switch first. */
 const PLANNER_CANDIDATES = ["kimi-k2-7-code", "glm-5-3", "glm-5-3-flash", "qwen36-35b-a3b", "muse-glimmer-30b", "qwen36-27b"] as const;

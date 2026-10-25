@@ -3,6 +3,7 @@
  * so the table and the choices never drift from what was measured. Ties go to the model with fewer
  * failed calls across the whole bake-off, as the more dependable, then to the earlier candidate.
  */
+import { plannerMarkdown, type PlannerBakeoff } from "./planner.ts";
 import type { DesignResults } from "./design.ts";
 import type { BakeoffResults, Candidate } from "./run.ts";
 
@@ -165,7 +166,7 @@ export function rankReviewers(results: BakeoffResults, design: DesignResults): R
     .sort((a, b) => better(a.key, b.key));
 }
 
-export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { readonly paper: string; readonly structural: boolean; readonly values: boolean; readonly samePick?: boolean | null; readonly problems: readonly string[] }[], meta: { readonly date: string }, design?: DesignResults, excluded: Exclusion = NONE): string {
+export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { readonly paper: string; readonly structural: boolean; readonly values: boolean; readonly samePick?: boolean | null; readonly problems: readonly string[] }[], meta: { readonly date: string }, design?: DesignResults, excluded: Exclusion = NONE, planners?: PlannerBakeoff): string {
   const transcribers = rankTranscribers(results);
   const readers = rankReaders(results);
   const routers = rankRouters(results);
@@ -255,14 +256,22 @@ export function toModelsMarkdown(results: BakeoffResults, agreement: readonly { 
     `| router | ${pick(routers, excluded)?.model ?? "none"} | the best router |`,
     ...(design
       ? [
-          `| planner | ${pick(rankPlanners(results, design), excluded)?.model ?? "none"} | the most levels meeting both rules, then worlds on the paper's findings |`,
-          `| second-planner | ${pickOther(rankPlanners(results, design), excluded, pick(rankPlanners(results, design), excluded))?.model ?? "none"} | the best planner from another vendor |`,
+          ...(planners
+            ? [
+                `| planner | ${planners.picked.planner ?? "none"} | choosing among candidate levels: the most valid picks, then levels passing, then the fastest (ADR-0055) |`,
+                `| second-planner | ${planners.picked.secondPlanner ?? "none"} | the best such planner from another vendor |`,
+              ]
+            : [
+                `| planner | ${pick(rankPlanners(results, design), excluded)?.model ?? "none"} | the most levels meeting both rules, then worlds on the paper's findings |`,
+                `| second-planner | ${pickOther(rankPlanners(results, design), excluded, pick(rankPlanners(results, design), excluded))?.model ?? "none"} | the best planner from another vendor |`,
+              ]),
           `| explainer | ${pick(rankPlanners(results, design), excluded)?.model ?? "none"} | the planner's model, which knows the plan; its words are held by the schema and their quotes by provenance, not ranked |`,
           `| reviewer | ${reviewerPair(results, design, excluded).first?.model ?? "none"} | the most faults blocked less clean levels blocked, no failed check called acceptable, and not the planner, second planner or explainer |`,
           `| second-reviewer | ${reviewerPair(results, design, excluded).second?.model ?? "none"} | the best such reviewer from another vendor |`,
         ]
       : ["| planner, explainer, reviewer | not yet | their bake-off runs after this one |"]),
     "",
+    ...(planners ? [plannerMarkdown(planners)] : []),
     "## Failed calls",
     "",
     failures.length === 0 ? "None." : failures.map((entry) => `- ${entry.model}, ${entry.paper}: ${entry.outcome.ok ? "" : entry.outcome.error}`).join("\n"),

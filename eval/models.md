@@ -89,16 +89,16 @@ only: in a job, the controller shows the planner each failing level's measuremen
 
 | Rank | Model | Vendor | Levels meeting both rules | Worlds on the findings | Levels that build | Failed calls | First problem |
 |---|---|---|---|---|---|---|---|
-| 1 | kimi-k2-7-code | Moonshot AI | 9/15 | 3/3 | 13/15 | 0 | level 5: holds on 0 of 20 |
-| 2 | glm-5-3 | Z.ai | 7/10 | 2/3 | 9/10 | 1 | level 1: holds on 0 of 20 |
-| 3 | qwen3-235b-a22b-thinking-2507 | Qwen | 6/15 | 3/3 | 14/15 | 0 | level 1: holds on 0 of 20 |
-| 4 | muse-glimmer-30b | Muse | 6/15 | 3/3 | 13/15 | 0 | level 1: holds on 10 of 20 |
-| 5 | qwen36-27b | Qwen | 5/15 | 3/3 | 15/15 | 0 | level 2: holds on 0 of 20 |
-| 6 | qwen38-27b | Qwen | 5/14 | 2/3 | 14/14 | 0 | level 2: holds on 0 of 20 |
-| 7 | llama4-maverick-17b | Meta | 4/13 | 2/3 | 12/13 | 0 | level 1: holds on 0 of 20 |
-| 8 | gemma4-31b-it | Google | 3/15 | 3/3 | 15/15 | 0 | level 1: holds on 0 of 20 |
-| 9 | granite41-30b | IBM | 3/15 | 3/3 | 15/15 | 0 | level 1: holds on 0 of 20 |
-| 10 | inkling-small | Thinking Machines | 3/15 | 3/3 | 15/15 | 0 | level 2: holds on 0 of 20 |
+| 1 | kimi-k2-7-code | Moonshot AI | 12/15 | 3/3 | 13/15 | 0 | level 1: In the other world: At a step of 0.2 days the run broke down: Breast cancer cells (t) would become NaN at step 3, not a finite number, so the step is r |
+| 2 | qwen3-235b-a22b-thinking-2507 | Qwen | 8/15 | 3/3 | 14/15 | 0 | level 1: holds on 0 of 20 |
+| 3 | glm-5-3 | Z.ai | 8/10 | 2/3 | 9/10 | 1 | level 1: holds on 14 of 20 |
+| 4 | muse-glimmer-30b | Muse | 7/15 | 3/3 | 13/15 | 0 | level 1: holds on 10 of 20 |
+| 5 | llama4-maverick-17b | Meta | 7/13 | 2/3 | 12/13 | 0 | level 4: holds on 0 of 20 |
+| 6 | qwen36-27b | Qwen | 6/15 | 3/3 | 15/15 | 0 | level 2: holds on 13 of 20 |
+| 7 | qwen38-27b | Qwen | 6/14 | 2/3 | 14/14 | 0 | level 1: holds on 9 of 20 |
+| 8 | gemma4-31b-it | Google | 5/15 | 3/3 | 15/15 | 0 | level 1: holds on 0 of 20 |
+| 9 | inkling-small | Thinking Machines | 4/15 | 3/3 | 15/15 | 0 | level 2: holds on 14 of 20 |
+| 10 | granite41-30b | IBM | 3/15 | 3/3 | 15/15 | 0 | level 1: holds on 0 of 20 |
 | 11 | gpt-oss-120b | OpenAI | 1/15 | 3/3 | 10/15 | 0 | level 1: holds on 0 of 20 |
 
 ## Reviewing
@@ -135,11 +135,28 @@ no valid term. The reviewers picked are never the planner, the second planner or
 | transcriber | qwen3-235b-a22b-thinking-2507 | the best transcriber |
 | second-transcriber | inkling-small | the best transcriber from another vendor |
 | router | glm-5-3 | the best router |
-| planner | kimi-k2-7-code | the most levels meeting both rules, then worlds on the paper's findings |
-| second-planner | glm-5-3 | the best planner from another vendor |
+| planner | glm-5-3 | choosing among candidate levels: the most valid picks, then levels passing, then the fastest (ADR-0055) |
+| second-planner | muse-glimmer-30b | the best such planner from another vendor |
 | explainer | kimi-k2-7-code | the planner's model, which knows the plan; its words are held by the schema and their quotes by provenance, not ranked |
 | reviewer | inkling-small | the most faults blocked less clean levels blocked, no failed check called acceptable, and not the planner, second planner or explainer |
 | second-reviewer | qwen38-27b | the best such reviewer from another vendor |
+
+## Planners, choosing among candidate levels (2026-10-25)
+
+Written by `npm run pipeline:live -- planner-bakeoff` (scripts/bakeoff/planner.ts), from eval/bakeoff/planner.json. Jobs plan in code (ADR-0055): the candidate levels are made and judged by the rules first, and a planner, asked not to think, chooses five and the finding each tests. Each model was asked three times: arxiv-2506.19869v1 (15 candidates shown), pmc-PMC12334037 (18 candidates shown), the first again. A call's levels pass when its picks pass every rule, as the controller checks them; wall clock is the call's, asked live, never replayed.
+
+Asked not to think, first: kimi-k2-7-code, 45 reply tokens for 191 characters (honours it); glm-5-3, 13 reply tokens for 37 characters (honours it).
+
+| Rank | Model | Valid picks | Levels passing, mean | p50 s | p90 s | Reply tokens, mean |
+|---|---|---|---|---|---|---|
+| 1 | glm-5-3 | 3/3 | 5.0 | 3.6 | 8.7 | 50 |
+| 2 | muse-glimmer-30b | 3/3 | 5.0 | 106.5 | 122.9 | 4448 |
+| 3 | kimi-k2-7-code | 2/3 | 3.3 | 3.7 | 7.0 | 49 |
+| 4 | glm-5-3-flash | 2/3 | 3.3 | 5.5 | 11.0 | 50 |
+| 5 | qwen36-27b | 2/3 | 3.3 | 11.2 | 12.0 | 75 |
+| 6 | qwen36-35b-a3b | 1/3 | 1.7 | 3.6 | 27.1 | 98 |
+
+Picked: glm-5-3 as the planner and muse-glimmer-30b as the second, of another vendor; both are asked at once and the first whose picks pass is used. Before, the planner wrote the whole plan: kimi-k2-7-code's replies were 20.9k tokens on average, p50 11.2 min (9 live calls since 2026-10-18).
 
 ## Failed calls
 
