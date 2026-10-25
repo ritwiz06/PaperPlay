@@ -1065,6 +1065,19 @@ open models' chat templates take a switch that turns it off.
   explainer); see ADR-0053.
 - **Learn more:** [Qwen3's thinking switch](https://qwenlm.github.io/blog/qwen3/)
 
+### Generate and test
+
+Making every option a rule could accept, judging each one by the rule, and only then letting a
+person or a model choose among those that pass, instead of asking the chooser to invent an option
+and repairing it when the rule refuses.
+
+- **Used in:** `packages/pipeline/src/candidates/compartments.ts`,
+  `packages/pipeline/src/candidates/judge.ts`, `packages/pipeline/src/candidates/picker.ts`
+- **Why here:** The planner took 11 minutes a plan and still proposed levels the level rule
+  refused. The rules need no model, so code makes every candidate level and judges it in seconds;
+  the planner only chooses, in a reply of about 50 tokens (ADR-0055).
+- **Learn more:** [Generate and test](https://en.wikipedia.org/wiki/Trial_and_error#Methodology)
+
 ### Critical path
 
 The longest chain of steps that must happen one after another; a job can finish no sooner. Steps

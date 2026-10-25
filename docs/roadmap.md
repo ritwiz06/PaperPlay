@@ -282,6 +282,10 @@ out. PubMed Central ingest, once here, landed in G3a.3.
   the reviewers, words only for changed levels, levels released as they pass, read once, worlds kept
   by paper and version, `prebuild` and `npm run timing` (2026-10-24, ADR-0053). The live p90 waits on
   the tuberculosis speed run.
+- [x] Planning in code (ADR-0055): the compartment family's candidate levels made and judged before
+  any planner, a compact planner choosing among them (glm-5-3 and muse-glimmer-30b, from a timed
+  bake-off), the explainer writing every word, levels reviewed as written, the router told each
+  family's real reach (2026-10-25).
 - [ ] The attention family (ADR-0052, ADR-0054): the primitive with its own `exp`, the towers kit,
   the miniature trained offline in PyTorch, Attention Is All You Need by hand, and the results
   explorer's smallest form beside it; then BERT generated, G3's gate.
@@ -371,6 +375,7 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-17 | G3a closed out: every item built, two worlds made under every rule. G3b planned in design/g3b.md at 49–71 h, a smaller G3b at 29–43 h, its decisions the owner's | Owner request, 2026-10-16 |
 | 2026-10-20 | PaperPlay teaches the corpus of 34 AI and ML papers first; G3's gate becomes BERT, the attention family's first generated world; G3b's Adam slices paused; the plan is docs/design/ai-papers.md | Owner decision (ADR-0052) |
 | 2026-10-24 | R13, fast generation: a world from an unseen paper p90 under 15 minutes, a made one at once; the controller works to a 12-minute deadline (ADR-0053) | Owner decision (ADR-0053) |
+| 2026-10-25 | R13's job budget is 15 minutes; planning moves into code, the planner only chooses; the planners are glm-5-3 and muse-glimmer-30b; a paper no existing family covers routes to tier C until its family exists | Owner decision (ADR-0055) |
 | 2026-10-24 | The first set to build: attention (four papers), formulas (two), diffusion (three), agents pre-built (two); the explorer's smallest form alongside attention, formulas second; agent-experiment worlds pre-built only | Owner decision (ADR-0054) |
 | 2026-10-18 | G2 made current and tagged v0.2.0; CI's gate skipped on main when its branch passed, the capture on demand only | Owner decisions (ADR-0048) |
 | 2026-10-18 | Definitional corrected: the control in the measured compartment's own equation, measured on its level or peak; found by code before review; a spread headline's hook on an infected compartment; one reviewer's unsupported block enough, checked by code where the model can; reviewers never the planners or the explainer, inkling-small and qwen38-27b picked | Owner decisions (ADR-0044's amendment) |

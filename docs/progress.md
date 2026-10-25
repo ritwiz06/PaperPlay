@@ -7,6 +7,19 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-25 · Planning in code
+
+- Branch: `g3/candidates`, landed alone.
+- Commits: through `4ecbecf`, and the docs.
+- Shipped (ADR-0055): candidate levels made and judged in code before any planner, the candidate
+  generator a family's hook; a compact planner (glm-5-3, with muse-glimmer-30b) from a timed bake-off;
+  the explainer writing every word; levels reviewed as written; the router told each family's reach;
+  an empty LaTeX heading no longer refusing a paper; a value at the run's end read correctly; R13's
+  job budget 15 minutes.
+- Evidence: R13, 22 tests, ahead of its gate; tuberculosis ready in 7.9 minutes with its
+  transcriptions replayed, not yet fresh.
+- Gate: G2's `check:gate` inside `npm run land`, as its log shows.
+
 ## 2026-10-24 · R13, fast generation
 
 - Branches: `g3/live-outputs`, `g3/timing`, `g3/fast-jobs`, `g3/fast-docs`, landed together.
