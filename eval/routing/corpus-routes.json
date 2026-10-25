@@ -379,6 +379,240 @@
         "tier": "C",
         "reason": "The paper's mechanism is a sampling/guidance technique for generative diffusion models. The learning family explicitly excludes generative and diffusion models, and no other family (agents, compartments, study-design, grids, networks) plays anything like a diffusion model's denoising or guidance process. Until a diffusion-model family exists, this is tier C."
       }
+    },
+    {
+      "id": "2112.10752",
+      "version": "2112.10752v2",
+      "group": "Diffusion and its roots",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 45,
+        "equations": 18
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "none",
+        "mechanism": "Latent diffusion: a denoising diffusion model trained in the latent space of a pretrained autoencoder, with cross-attention conditioning on text or other inputs",
+        "family": "none",
+        "tier": "C",
+        "reason": "The paper's mechanism is a generative diffusion model with cross-attention conditioning. The learning family explicitly excludes diffusion models, generative models, and attention-based architectures, and no other family covers image synthesis. No existing family can honestly play this mechanism, so it is tier C."
+      }
+    },
+    {
+      "id": "2201.11903",
+      "version": "2201.11903v6",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 41,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "language-model-reasoning",
+        "mechanism": "Chain-of-thought prompting: providing intermediate reasoning steps as few-shot exemplars in prompts to elicit multi-step reasoning in large language models",
+        "family": "none",
+        "tier": "C",
+        "reason": ": The paper's mechanism is prompting large language models with chain-of-thought exemplars to elicit reasoning. The learning family explicitly does not cover language models, pre-training or fine-tuning, and no family exists for prompting or LLM-based reasoning. The paper is also purely empirical — benchmark accuracy comparisons with no equations or dynamics a learner could play with. Tier C."
+      }
+    },
+    {
+      "id": "2210.03629",
+      "version": "2210.03629v3",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 36,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "learning",
+        "mechanism": "Interleaved generation of reasoning traces and actions by a large language model, where reasoning guides actions and actions gather external information (Wikipedia API, interactive environments) — an agent built on a language model.",
+        "family": "none",
+        "tier": "C",
+        "reason": "The paper's mechanism is an LLM-based agent that alternates chain-of-thought reasoning with external actions. The learning family explicitly excludes agents built on language models, and no other family covers LLM prompting or interactive decision-making agents. No display equations are given, so there is no alternative dynamical mechanism (e.g. compartments or grids) to route on. This is tier C: "
+      }
+    },
+    {
+      "id": "2303.11366",
+      "version": "2303.11366v4",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 30,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "agents",
+        "mechanism": "Language agents that improve by storing verbal self-reflections in an episodic memory buffer and feeding that text back into an LLM on subsequent trials — learning without weight updates.",
+        "family": "none",
+        "tier": "C",
+        "reason": "The paper's mechanism is an agent built on a large language model, improving through linguistic feedback in memory. The learning family explicitly excludes agents built on language models, and the agents family only covers flocks or crowds following local rules in hand-authored worlds, which does not fit. No existing family covers this mechanism, so it is tier C."
+      }
+    },
+    {
+      "id": "2302.04761",
+      "version": "2302.04761v1",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 30,
+        "equations": 6
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "none",
+        "mechanism": "A language model trained in a self-supervised way to decide when to call external APIs (calculator, search, translation, etc.), what arguments to pass, and how to fold the results back into token prediction — i.e. tool use by a language model, with the equations describing API-call insertion, a loss",
+        "family": "none",
+        "tier": "C",
+        "reason": ": The mechanism is a language model teaching itself to invoke external tools via API calls. The learning family explicitly does not cover language models, model architectures, or agents built on language models, and no other family (agents, compartments, grids, networks, study-design) plays anything like LM token prediction or tool-augmented generation. Until a family for language-model mechanisms"
+      }
+    },
+    {
+      "id": "2305.14325",
+      "version": "2305.14325v1",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 16,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "none",
+        "mechanism": "Multiple language-model instances propose and debate answers over rounds to converge on a final answer — a multiagent protocol built entirely on language models.",
+        "family": "none",
+        "tier": "C",
+        "reason": "The paper's mechanism is agents built on language models: LLM instances that debate. The learning family explicitly excludes agents built on language models, and no other family (compartments, grids, networks, study-design, or the hand-authored flocking agents) plays anything like LLM debate. Until a family for language-model agents exists, this is tier C."
+      }
+    },
+    {
+      "id": "2305.10601",
+      "version": "2305.10601v2",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 19,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "llm-reasoning-search",
+        "mechanism": "Tree of Thoughts is an inference-time framework for large language models: it explores a tree of intermediate reasoning steps ('thoughts'), proposes and self-evaluates candidate branches, and uses lookahead and backtracking (a search procedure such as BFS/DFS with an LM as proposal and value model).",
+        "family": "none",
+        "tier": "C",
+        "reason": "The mechanism is search and deliberate decision-making built on a language model. No existing family covers it: the learning family explicitly excludes language models and agents built on them; the agents family plays flocks/crowds following local spatial rules, not LLM reasoning trees; compartments, networks, grids and study-design are unrelated. There are also no equations or population dynamics"
+      }
+    },
+    {
+      "id": "2308.08155",
+      "version": "2308.08155v2",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 31,
+        "equations": 1
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "agents-built-on-language-models",
+        "mechanism": "A framework for building LLM applications through multiple conversable agents (LLMs, humans, tools) that converse to accomplish tasks, with programmable conversation patterns.",
+        "family": "none",
+        "tier": "C",
+        "reason": "The paper's mechanism is multi-agent conversation built on large language models. The learning family explicitly excludes agents built on language models, and the agents family only covers flock/crowd agents following local spatial rules such as separation, alignment and cohesion — not conversational LLM agents. No existing family covers this mechanism, so it is tier C until such a family exists."
+      }
+    },
+    {
+      "id": "2304.03442",
+      "version": "2304.03442v2",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 58,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "agents",
+        "mechanism": "LLM-driven agents with memory, reflection, and planning in a sandbox town",
+        "family": "none",
+        "tier": "C",
+        "reason": "The paper's mechanism is agents built on a large language model: an architecture that stores natural-language memories, synthesizes reflections, retrieves them dynamically, and plans behavior. The learning family explicitly excludes agents built on language models, and the agents family only covers local-rule flocks/crowds in hand-authored worlds, not LLM-based simulacra. No existing family covers"
+      }
+    },
+    {
+      "id": "2405.15793",
+      "version": "2405.15793v3",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 43,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "software-engineering",
+        "mechanism": "A language-model agent that autonomously navigates repositories, edits code, and runs tests through a custom agent-computer interface (ACI); the paper studies how interface design affects agent performance, evaluated empirically on SWE-bench and HumanEvalFix.",
+        "family": "none",
+        "tier": "C",
+        "reason": "The mechanism is an agent built on a language model operating in a digital environment. The learning family explicitly excludes agents built on language models, and the agents family only covers flocks or crowds following local rules in 2D space, not LM agents in software environments. No other family (compartments, grids, networks, study-design) touches this. The paper also gives no equations or玩"
+      }
+    },
+    {
+      "id": "2407.01489",
+      "version": "2407.01489v2",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 34,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "software-engineering / LLM agents",
+        "mechanism": "A fixed three-phase pipeline (localization, repair, patch validation) driven by large language models for automated software issue resolution, contrasted with autonomous LLM-based agents that plan and use tools",
+        "family": "none",
+        "tier": "C",
+        "reason": "The paper's mechanism is an LLM-driven software engineering pipeline. The learning family explicitly excludes agents built on language models and model architectures/LLM pipelines; no other family (agents, compartments, grids, networks, study-design) covers LLM-based code repair. There are also no equations or dynamics a learner could play with — it is an empirical benchmark study of an LLM system"
+      }
+    },
+    {
+      "id": "2310.01798",
+      "version": "2310.01798v2",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 16,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "none",
+        "mechanism": "The paper is an empirical evaluation of intrinsic self-correction in large language models — whether an LLM can improve its own reasoning answers without external feedback — finding that it generally cannot and sometimes degrades. There is no dynamical mechanism here a learner could play with: no Oe",
+        "family": "none",
+        "tier": "C",
+        "reason": "This is a purely empirical result about language-model behaviour, with no equations and no playable dynamics. The learning family explicitly excludes language models, and no other family covers LLM reasoning or self-correction. Tier C."
+      }
+    },
+    {
+      "id": "2503.13657",
+      "version": "2503.13657v3",
+      "group": "Reasoning and agents",
+      "ingest": {
+        "route": "arxiv-source",
+        "sections": 52,
+        "equations": 0
+      },
+      "router": "glm-5-3",
+      "decision": {
+        "domain": "none",
+        "mechanism": "The paper is an empirical study and taxonomy: it introduces a dataset of 1600+ annotated failure traces from Multi-Agent LLM Systems, a Multi-Agent System Failure Taxonomy built by human annotation, and an LLM-as-a-Judge annotation pipeline. It has no equations and no dynamical mechanism a learner \f",
+        "family": "none",
+        "tier": "C",
+        "reason": "This is a purely empirical annotation/taxonomy study with no mechanism to simulate. The 'agents' family plays hand-authored flocking/crowd agents following local rules like separation, alignment and cohesion — not LLM-based multi-agent systems, which are agents built on language models and explicitly out of scope for every existing family. The 'learning' family covers optimisers on loss landscapes"
+      }
     }
   ]
 }

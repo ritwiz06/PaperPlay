@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "08b447340312668baec8cd67d562e31fd31d1810bda71ed47f0821182cf067fc",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"software-engineering\", \"family\": \"none\", \"mechanism\": \"A language-model agent that autonomously navigates repositories, edits code, and runs tests through a custom agent-computer interface (ACI); the paper studies how interface design affects agent performance, evaluated empirically on SWE-bench and HumanEvalFix.\", \"reason\": \"The mechanism is an agent built on a language model operating in a digital environment. The learning family explicitly excludes agents built on language models, and the agents family only covers flocks or crowds following local rules in 2D space, not LM agents in software environments. No other family (compartments, grids, networks, study-design) touches this. The paper also gives no equations or玩\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1552,
+      "completionTokens": 208,
+      "totalTokens": 1760
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:36:25.369Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "75f265842089083fd8e8090ee76ade3b651a003ddca50aff807b64b7ed87cbb6",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"agents-built-on-language-models\", \"family\": \"none\", \"mechanism\": \"A framework for building LLM applications through multiple conversable agents (LLMs, humans, tools) that converse to accomplish tasks, with programmable conversation patterns.\", \"reason\": \"The paper's mechanism is multi-agent conversation built on large language models. The learning family explicitly excludes agents built on language models, and the agents family only covers flock/crowd agents following local spatial rules such as separation, alignment and cohesion — not conversational LLM agents. No existing family covers this mechanism, so it is tier C until such a family exists.\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1434,
+      "completionTokens": 186,
+      "totalTokens": 1620
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:36:01.621Z"
+}

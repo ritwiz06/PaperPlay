@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "f4b77ea2dac363bd741e8ca349dc2d0f6bc9356e4d229aa21fba536de08de2bb",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"none\", \"family\": \"none\", \"mechanism\": \"Latent diffusion: a denoising diffusion model trained in the latent space of a pretrained autoencoder, with cross-attention conditioning on text or other inputs\", \"reason\": \"The paper's mechanism is a generative diffusion model with cross-attention conditioning. The learning family explicitly excludes diffusion models, generative models, and attention-based architectures, and no other family covers image synthesis. No existing family can honestly play this mechanism, so it is tier C.\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1892,
+      "completionTokens": 148,
+      "totalTokens": 2040
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:34:44.697Z"
+}

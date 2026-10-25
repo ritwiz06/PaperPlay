@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "3a35b50547ed68f223372fbee899e712d72fd2a2c3587d19e6e927304ad6f391",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"llm-reasoning-search\", \"family\": \"none\", \"mechanism\": \"Tree of Thoughts is an inference-time framework for large language models: it explores a tree of intermediate reasoning steps ('thoughts'), proposes and self-evaluates candidate branches, and uses lookahead and backtracking (a search procedure such as BFS/DFS with an LM as proposal and value model).\", \"reason\": \"The mechanism is search and deliberate decision-making built on a language model. No existing family covers it: the learning family explicitly excludes language models and agents built on them; the agents family plays flocks/crowds following local spatial rules, not LLM reasoning trees; compartments, networks, grids and study-design are unrelated. There are also no equations or population dynamics\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1540,
+      "completionTokens": 247,
+      "totalTokens": 1787
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:35:49.662Z"
+}

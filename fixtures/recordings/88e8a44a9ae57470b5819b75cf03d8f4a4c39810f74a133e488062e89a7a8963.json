@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "88e8a44a9ae57470b5819b75cf03d8f4a4c39810f74a133e488062e89a7a8963",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"language-model-reasoning\", \"family\": \"none\", \"mechanism\": \"Chain-of-thought prompting: providing intermediate reasoning steps as few-shot exemplars in prompts to elicit multi-step reasoning in large language models\", \"reason\":\": The paper's mechanism is prompting large language models with chain-of-thought exemplars to elicit reasoning. The learning family explicitly does not cover language models, pre-training or fine-tuning, and no family exists for prompting or LLM-based reasoning. The paper is also purely empirical — benchmark accuracy comparisons with no equations or dynamics a learner could play with. Tier C.\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1595,
+      "completionTokens": 176,
+      "totalTokens": 1771
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:34:52.721Z"
+}

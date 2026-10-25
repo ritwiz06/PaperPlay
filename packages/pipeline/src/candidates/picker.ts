@@ -25,7 +25,7 @@ export const PICKER_INSTRUCTIONS = [
   "Every candidate level below already passes the game's rules: its claim holds and its difference shows. Choose five that teach what the paper found, and say which of the paper's findings each one tests.",
   "Rules:",
   "- Five levels, each a different candidate; the first is the hook.",
-  "- The hook tests finding 0, the paper's headline result: choose the candidate whose change shows it most directly. When some candidates are marked [can be the hook], the hook must be one of them: only they measure what the headline speaks of.",
+  "- The hook tests finding 0, the paper's headline result: choose the candidate whose change shows it most directly. When the hook's candidates are listed apart, the hook must be one of those: only they measure what the headline speaks of.",
   "- Each level tests one finding, by its number; at least three levels test different findings.",
   "- Prefer different controls, so each level teaches something new.",
   'Answer with JSON alone, no words: {"levels":[{"candidate":"c3","finding":0},{"candidate":"c8","finding":2}, ...]}',
@@ -67,7 +67,12 @@ export function pickerMessages(input: { readonly title: string; readonly reading
                 : "Running the paper's own numbers found its headline does not appear at the values it lists, and no candidate measures what it speaks of: the hook tests another finding instead, by its number.",
             ]
           : []),
-        `Candidate levels:\n${input.candidates.map((candidate) => `${candidate.brief}${input.hooks?.includes(candidate.id) ? " [can be the hook]" : ""}`).join("\n")}`,
+        ...((input.hooks ?? []).length > 0
+          ? [
+              `Candidates for level 1, the hook, which must be one of these:\n${input.candidates.filter((candidate) => input.hooks?.includes(candidate.id)).map((candidate) => candidate.brief).join("\n")}`,
+              `Candidates for levels 2 to 5 (a hook's candidate above may also be one of them):\n${input.candidates.filter((candidate) => !input.hooks?.includes(candidate.id)).map((candidate) => candidate.brief).join("\n")}`,
+            ]
+          : [`Candidate levels:\n${input.candidates.map((candidate) => candidate.brief).join("\n")}`]),
         "Choose the five levels.",
       ].join("\n\n"),
     },

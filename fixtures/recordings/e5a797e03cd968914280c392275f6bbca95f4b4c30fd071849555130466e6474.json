@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "e5a797e03cd968914280c392275f6bbca95f4b4c30fd071849555130466e6474",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"none\", \"family\": \"none\", \"mechanism\": \"A language model trained in a self-supervised way to decide when to call external APIs (calculator, search, translation, etc.), what arguments to pass, and how to fold the results back into token prediction — i.e. tool use by a language model, with the equations describing API-call insertion, a loss\" , \"reason\":\": The mechanism is a language model teaching itself to invoke external tools via API calls. The learning family explicitly does not cover language models, model architectures, or agents built on language models, and no other family (agents, compartments, grids, networks, study-design) plays anything like LM token prediction or tool-augmented generation. Until a family for language-model mechanisms\", \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1763,
+      "completionTokens": 208,
+      "totalTokens": 1971
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T05:35:25.758Z"
+}
