@@ -93,5 +93,23 @@ minutes: the first transcription, a model that only thinks, ran past the 5 minut
 transcriptions, and no level had passed. The router answered in 6 s and the reader in 64 s, asked
 not to think: the reader's reply fell from 4,697 tokens to 707, so the gateway honours the switch.
 The transcriptions now have 7 minutes, the job still 12. A job's trace now hashes each call after
-its thinking switch is set, as its recording does, so `npm run timing` finds its tokens. The speed
-run for the comparison runs as the job of 2026-10-20 ran, its transcriptions replayed.
+its thinking switch is set, as its recording does, so `npm run timing` finds its tokens.
+
+The second speed run ran as the job of 2026-10-20 ran, its transcriptions replayed: router 3.8 s,
+reader 69 s, then neither planner, asked not to think, answered within its 4 minutes, and the job
+stopped at 5.2 minutes with no level. Both calls were ended before they replied, so whether
+kimi-k2-7-code and glm-5-3 honour the switch is not yet known. Before and after:
+
+| Stage | Before: p50 / p90, 9 jobs since 2026-10-18 | After: the speed runs of 2026-10-24 |
+|---|---|---|
+| Router | about 0.3 min (2026-10-16) | 5.7 s and 3.8 s; 127 tokens, none thinking |
+| Reader | replayed since 2026-10-16, its reply 4,697 tokens | 64 s and 69 s; 707 tokens, none thinking |
+| Transcriptions | 2.3 / 3.2 min (2026-10-16) | first transcription past 5 min, fresh; replayed in the second |
+| Planners | 11.2 / 21.5 min; second 15.5 / 20.1 | both past 4 min, asked not to think |
+| Explainer, each level | 4.7 / 6.5 min | not reached |
+| Reviewers | 2.8–3.4 / 5.1–5.5 min | not reached |
+| Whole job | 33.5 / 84.9 min; tuberculosis failed at 33.5 | stopped at 5.1 and 5.2 min, saying so |
+
+The deadline holds: neither run went on. R13 is not met: no world came within the budgets. Next,
+one call to each planner's model asked not to think, to learn whether the switch reaches them, and
+then the planners' budget or model.
