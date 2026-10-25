@@ -1051,5 +1051,38 @@ drawn scene is not.
 
 ## AI and agents
 
-No concepts yet. The agent pipeline (Reader, Planner, Explainer, checks, reviewer and
-controller) begins at G3 in `packages/pipeline`, and its concepts will be added then.
+### Thinking tokens (reasoning models)
+
+A reasoning model writes a long hidden chain of thought before its answer, and the gateway counts
+those tokens with the reply's. On this gateway they were about 90% of every planner's, explainer's
+and reviewer's reply, at 20 to 35 tokens a second, so thinking set most of a job's wall clock. Many
+open models' chat templates take a switch that turns it off.
+
+- **Used in:** `apps/api/models.json`, `packages/pipeline/src/models/caps.ts`,
+  `apps/api/src/models/voyager.ts`
+- **Why here:** Thinking pays where nothing else checks a model's answer (the two transcriptions,
+  the reviewers) and not where the deterministic rules judge it in full (the planners, the
+  explainer); see ADR-0053.
+- **Learn more:** [Qwen3's thinking switch](https://qwenlm.github.io/blog/qwen3/)
+
+### Critical path
+
+The longest chain of steps that must happen one after another; a job can finish no sooner. Steps
+that run at once count once, as long as the slowest of them.
+
+- **Used in:** `scripts/timing.ts`, `docs/decisions/ADR-0053-fast-generation.md`
+- **Why here:** Making a call faster helps only if it is on the critical path: the transcriptions
+  run beside the reader, so shortening the reader saves nothing, while the planners and every
+  repair sit on it.
+- **Learn more:** [Critical path method](https://en.wikipedia.org/wiki/Critical_path_method)
+
+### Progressive delivery
+
+Releasing parts of a result as each is ready instead of all at once at the end: here, a world's
+levels as soon as the hook and two more pass every check, while repairs and reviews go on.
+
+- **Used in:** `packages/pipeline/src/controller/run.ts`, `apps/api/src/server.ts`,
+  `apps/web/src/create/CreatePage.tsx`, `apps/web/src/worlds/GeneratedWorld.tsx`
+- **Why here:** A learner can play within minutes, and every released level has passed the same
+  checks as a finished world's; only the reviewers' reading is still to come, and the page says so.
+- **Learn more:** [Progressive delivery](https://launchdarkly.com/blog/what-is-progressive-delivery-all-about/)

@@ -4,7 +4,7 @@ PaperPlay's purpose from 2026-10-20 (ADR-0052): teaching the AI and ML papers of
 [`docs/papers/corpus.md`](../papers/corpus.md); biomedical papers later, the compartment family
 kept. This plan says, for each paper, what a learner can play, in which family and scene, at which
 tier, and what its level 1 tests; then each family's effort and what it cannot show honestly; then
-the order, and the decisions it needs from the owner. Tiers are every-paper.md's: A, a family covers
+the order, and what the owner decided (ADR-0054). Tiers are every-paper.md's: A, a family covers
 the mechanism; B, a new mechanism needs a primitive first; C, no playable mechanism, so an
 explainer or the results explorer, labelled as such. A tier below is the paper's once its family
 exists.
@@ -40,12 +40,12 @@ flowing between noise and data; a new kit.
 **d. Agent experiments (confirmed, corrected in three places).** Real runs of non-testing gateway
 models on small task sets, recorded and replayed, with a "running the paper's experiment on
 today's models" page beside each world showing the paper's numbers and ours. Corrections: the
-gateway offers no sampling seed, so "seeds" are repeated samples, each recorded, and the level rule
-reads the claim across tasks and samples (it holds on at least 16 of 20 task-and-sample draws);
+gateway offers no sampling seed, so a claim is tested by a paired comparison across tasks, each
+run recorded, with a confidence interval, not 20 full repeats (ADR-0054);
 tasks must carry a licence that allows keeping them (GSM8K and the Game of 24 are MIT); and the
 software-engineering agents (SWE-agent, Agentless) and AutoGen's code-running agents execute
 model-written code, which is outside month one's scope except in the widget sandbox, so those are
-recorded trajectories only, run outside PaperPlay, unless the owner allows a sandboxed runner.
+recorded runs only, run outside PaperPlay (ADR-0054). Agent-experiment worlds are pre-built only.
 Generative Agents plays in the town kit. The multi-agent failures paper uses PaperPlay's own
 recorded failures (its controller's repairs and stops) as examples. Scene: an experiment bench,
 tasks as cards and runs as rows; a new kit, the town kit for Generative Agents.
@@ -88,8 +88,8 @@ It is also every other family's honest page for what a world cannot show (BLEU, 
 | 2305.10601 Tree of Thoughts | input-output, chain of thought, or a tree search of breadth b, on the Game of 24 | agents, bench | A, recorded | the tree search solves far more puzzles; a checker decides each |
 | 2308.08155 AutoGen | conversation patterns between agents | explorer and recorded conversations | C | cannot as a measured effect: a framework, and its agents run code |
 | 2304.03442 Generative Agents | memory, reflection and planning switched on or off | agents, town | A, recorded | news spreads through the town by conversation alone (the paper's party and election) |
-| 2405.15793 SWE-agent | the agent-computer interface's tools | recorded trajectories | C unless a sandboxed runner | cannot without running model-written code |
-| 2407.01489 Agentless | localise, repair, validate | recorded trajectories | C unless a sandboxed runner | cannot without running model-written code |
+| 2405.15793 SWE-agent | the agent-computer interface's tools | recorded runs (ADR-0054) | C | cannot without running model-written code |
+| 2407.01489 Agentless | localise, repair, validate | recorded runs (ADR-0054) | C | cannot without running model-written code |
 | 2310.01798 LLMs Cannot Self-Correct Reasoning Yet | rounds of self-correction with no outside feedback | agents, bench | A, recorded | self-correction without feedback does not raise accuracy, and often lowers it |
 | 2503.13657 Why Do Multi-Agent LLM Systems Fail? | label recorded failures, PaperPlay's own, by the paper's taxonomy | explainer | C; CC BY-NC-ND, anchors only | cannot as an effect: a taxonomy |
 
@@ -142,23 +142,47 @@ About 30 to 40 sessions in all.
 
 ## The order
 
-The owner's order stands, attention first: Attention Is All You Need by hand as the family's
-reference, then BERT generated as G3's gate. Two proposals: build the results explorer's smallest
-form with the attention family, since every family's "what this cannot show" page needs it; and put
-formulas second, the cheapest family, before diffusion and the agents, which need live runs and the
-decisions below. G3b's Adam slices are paused: G3's gate is BERT (ADR-0052).
+Attention first: Attention Is All You Need by hand as the family's reference, then BERT generated
+as G3's gate, with the results explorer's smallest form alongside it as every family's fast
+fallback (R13); formulas second, then diffusion, then the agents. G3b's Adam slices are paused:
+G3's gate is BERT (ADR-0052).
 
-## Decisions it needs from the owner
+**The first set to build** (the owner, 2026-10-24); every other paper gets the explorer for now:
 
-1. **The miniature's training:** offline in Python with PyTorch, a toolchain outside the repository's
-   build, or in TypeScript within it, slower but with no new toolchain; and its toy task.
-2. **Recording real BERT-base's attention maps** once, offline, on PaperPlay's own sentences.
-3. **Agent task sets and a live budget:** which sets (GSM8K and the Game of 24 are MIT), and how many
-   tokens the background runs may spend between sessions.
-4. **Code-running agents:** SWE-agent, Agentless and AutoGen as recorded trajectories only, or a
-   sandboxed runner.
-5. **The results explorer:** a paper's numbers kept as data, each anchored to its table, never a
-   figure's image.
-6. **The order's two proposals**, above.
-7. **The thirty-fifth paper:** the brief's list holds 34.
-8. **The bonus level:** the GPT-from-scratch weights' format, size and licence.
+| Family | Papers | How |
+|---|---|---|
+| Attention | 1706.03762, 1810.04805, 1906.04341, 1905.10650 | Attention Is All You Need by hand, as the reference; the others generated |
+| Formulas | 2001.08361, 1910.02054 | Generated first, then corrected by hand |
+| Diffusion | 2006.11239, 2010.02502, 2207.12598 | Generated first, then corrected by hand |
+| Agent experiments | 2201.11903, 2210.03629 | Pre-built only |
+
+**Agent-experiment worlds are pre-built only**, never made on request: their runs call models on
+task sets, which a request must not start. `/create` says so, and `pipeline:live -- prebuild` makes
+them (ADR-0053).
+
+## The miniature's toy task
+
+Two proposals; the one used is the one whose heads specialise visibly enough to pass the visibility
+rule on level 4 (multi-head, §3.2.2), measured once the miniature is trained:
+
+1. **Reversal:** a sequence of eight digits, written backwards. Every head learns the same
+   anti-diagonal, so attention reads clearly, but one head does the whole task and the multi-head
+   level would show nothing.
+2. **Previous plus mirror:** at each position, the sum (mod 10) of the digit before it and the digit at
+   the mirrored position. Each output needs two places at once, so two heads specialise, one on the
+   diagonal below, one on the anti-diagonal, and a single head must average the two and gets it
+   wrong: the What-if's measure, the distinct positions the heads attend, differs by a margin the
+   rule can see. The pick, unless training shows otherwise.
+
+## Decided by the owner, 2026-10-24 (ADR-0054)
+
+1. **The miniature's training:** offline in Python with PyTorch, deterministic, the small weights
+   committed; inference in the browser deterministic, with the primitive's own `exp`. Its task, above.
+2. **Real BERT-base attention maps** (Apache 2.0), recorded once offline on PaperPlay's own sentences.
+3. **Agent tasks** only from sets whose licence lets PaperPlay keep them, on small token budgets; a
+   claim tested by a paired comparison across tasks with a confidence interval, not 20 full repeats.
+4. **Code-running agents:** recorded runs only.
+5. **The results explorer:** numbers as data anchored to tables, never figure images.
+6. **The order:** the explorer's smallest form alongside attention, the fast fallback; formulas second.
+7. **The corpus** holds 34 papers, not 35.
+8. **The owner's GPT weights:** later, optional; the bonus level waits for them.

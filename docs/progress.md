@@ -7,6 +7,19 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-24 · R13, fast generation
+
+- Branches: `g3/live-outputs`, `g3/timing`, `g3/fast-jobs`, `g3/fast-docs`, landed together.
+- Commits: `a9e8f48`, `63fe64e`, `25edac2`, `afd5e49`, `9d00f7e`, `2477c47`, `8c9da53`, `d13effa`.
+- Shipped (ADR-0053, ADR-0054): `npm run timing`; thinking per stage and a 12-minute deadline in
+  `models.json`; the controller's timed calls, repairs only when they fit, words only for changed
+  levels, a level without words left out, levels released as they pass, a world unreviewed in time
+  shipped saying so, read once; worlds kept by paper and version; `/create` and the world page
+  showing released and cached worlds; `pipeline:live` `--fresh` and `prebuild`; the owner's
+  decisions on the AI-papers plan and its first set.
+- Evidence: R13, 17 tests, ahead of its gate; the live p90 waits on the speed run.
+- Gate: G2's `check:gate` inside `npm run land`, as its log shows.
+
 ## 2026-10-17 · G3a.3, the pipeline on the compartment family, and G3a's close-out
 
 - Branches: the G3a.3 branches of 2026-10-14 to 2026-10-17, from `g3/secrets` to `g3/five-levels`,

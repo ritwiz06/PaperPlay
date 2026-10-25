@@ -1,36 +1,42 @@
 # Status
 
-Updated 2026-10-20: housekeeping, the AI-papers corpus and its plan ([log](sessions/2026-10-20.md)).
-A snapshot, rewritten every session and kept under 80 lines; history is in
-[progress.md](progress.md) and the session logs.
+Updated 2026-10-24: fast generation (R13) and the owner's decisions on the AI-papers plan
+([log](sessions/2026-10-24.md)). A snapshot, rewritten every session and kept under 80 lines;
+history is in [progress.md](progress.md) and the session logs.
 
 ## Where we are
 
 - **Gate:** G2 Verified authored world is current, tagged `v0.2.0` at `b37c7dc`; G1 is `v0.1.0`.
-  Next: G3, whose gate is now the attention family's first generated world, BERT (ADR-0052).
-- **Working commit:** `063463a`, the stack's last code commit, landed on `main` with this status.
-- **Purpose:** teaching the 34 AI and ML papers of `docs/papers/corpus.md`; biomedical papers later,
-  the compartment family kept (ADR-0052). The plan is `docs/design/ai-papers.md`.
-- **Definitional** is judged by compartment since 2026-10-20 (ADR-0044's second amendment); no
-  recorded job replays until one runs again under it.
+  Next: G3, whose gate is the attention family's first generated world, BERT (ADR-0052).
+- **Working commit:** `d13effa`, the stack's last code commit, landed on `main` with this status.
+- **Purpose:** teaching the 34 AI and ML papers of `docs/papers/corpus.md`, the first set of 11
+  chosen (ADR-0054); biomedical papers later, the compartment family kept. The plan is
+  `docs/design/ai-papers.md`.
+- **R13, fast generation** (ADR-0053): a 12-minute deadline, thinking only for the transcriptions
+  and the reviewers, words only for changed levels, levels released as they pass, read once, worlds
+  kept by paper and version, `prebuild`. Before: p50 33.5 min, p90 84.9 min over 9 live jobs.
+  The live p90 after waits on the tuberculosis speed run, started after this land.
+- **Definitional** is judged by compartment (ADR-0044's second amendment, the owner's reading
+  confirmed 2026-10-24); no recorded job replays until one runs again under it.
 - **Worktrees:** the main one, and `PaperPlay-land`, land's checkout for the gate (ADR-0051).
-- **Model provider:** an OpenAI-compatible gateway, its address and key in `apps/api/.env` only;
-  called only by `npm run pipeline:live`, live runs in the background between sessions (ADR-0051).
+- **Model provider:** an OpenAI-compatible gateway, its address and key in `apps/api/.env` only
+  (the root `.env` is gone); called only by `npm run pipeline:live`, in the background.
 
 ## What a learner can do
 
 - `/world/hook`: Murmuration Valley, Reynolds 1987, six levels, verified.
 - `/world/momentum`: Momentum Valley, Sutskever et al. 2013, five levels, verified.
 - `/world/epidemic`: Threshold Town, Kermack and McKendrick 1927, five levels, a draft until its source map.
-- `/world/generated/pmc-PMC12334037-2026-10-18-2`: hepatitis C, three levels, generated; its hook is
-  definitional by the rule of 2026-10-20, and a regeneration is running.
+- `/world/generated/pmc-PMC12334037-2026-10-18-2`: hepatitis C, three levels, generated; levels 1
+  and 3 definitional by the rule of 2026-10-20; its regeneration of 2026-10-20 failed.
 - `/world/generated/arxiv-2506.19869v1-2026-10-18` and `arxiv-2506.19869v1`: tuberculosis, five levels
-  each, generated; levels the rule flags are named in the library; a regeneration is running.
-- `/library`: every world, retired ones marked; `/create` and `/world/local` on this machine.
+  each, generated; levels 1 and 3 flagged; a fresh speed run is running.
+- `/library`: every world, retired ones marked. On this machine, `/create` shows levels as they pass
+  and a paper made before at once; `/world/job/<id>` plays released levels; `/world/local`.
 
 ## Latest check:gate
 
-G2 on the stack's tip `341fb5e`, 2026-10-19: 986 tests (vitest 889, playwright 97), 0 skipped,
+G2 on the stack's tip `8379ed8`, 2026-10-20: 989 tests (vitest 892, playwright 97), 0 skipped,
 passed; CI green on the same commit. `npm run land` runs it again before it pushes.
 
 ## Blockers
@@ -40,20 +46,19 @@ passed; CI green on the same commit. `npm run land` runs it again before it push
 
 ## Decisions waiting on the owner
 
-1. **The AI-papers plan** (`docs/design/ai-papers.md`): its families, their order, and the
-   decisions listed at its end.
-2. **CI minutes:** a public repository, the Student Pack, or a self-hosted runner. Before a public
+1. **CI minutes:** a public repository, the Student Pack, or a self-hosted runner. Before a public
    repository: set the noreply address for future commits (the command is in the 2026-10-20 log)
    and confirm the routing set's five arXiv abstracts may be kept (arXiv's metadata is CC0).
-3. **The root `.env`:** a second, valid gateway key; it belongs in `apps/api/.env`, and the old key,
-   still valid, revoked if it was replaced.
-4. **Paid branch protection** (ADR-0009) and **the deploy** (ADR-0017).
+2. **The old gateway key**, replaced in `apps/api/.env` on 2026-10-24 and still valid: revoke it in
+   the portal if it should not be.
+3. **Paid branch protection** (ADR-0009) and **the deploy** (ADR-0017).
 
 ## Next three actions
 
-1. Review the background runs: the two regenerations, and the router on the 34 papers against the
-   plan's families.
-2. The attention family: Attention Is All You Need, hand-authored, as its reference world.
+1. Compare the tuberculosis speed run with the job of 2026-10-20: `npm run timing`, its stages and
+   its levels under the same rules; whether the gateway honoured the thinking switch.
+2. The attention family: the primitive with its own `exp`, the towers kit, the miniature trained in
+   PyTorch, Attention Is All You Need by hand, the explorer's smallest form beside it.
 3. BERT as the family's first generated world, G3's gate.
 
 ## Recommendations

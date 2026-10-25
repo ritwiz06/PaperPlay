@@ -224,7 +224,8 @@ measures, not by its summary.
    final size or a total ever infected over several compartments) or of a quantity derived from them
    (a threshold crossing such as R0 = 1). A level of a generated world measures one compartment, so
    the tag alone decides; one compartment's value at the run's end is that compartment's level, not
-   a final size, which is my reading for the owner to correct.
+   a final size. The owner confirmed this reading on 2026-10-24: only a measure across
+   compartments counts as a final size.
 2. **The words.** A level or a peak keeps the words reviewers have read since 2026-10-18, so their
    recorded reviews replay; any other summary is named ("by its time to a level"). The planner is
    told to measure a compartment the effect must travel through others to reach.
