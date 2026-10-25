@@ -19,7 +19,7 @@ import { decideReviews, definitionalProblem, describeDirectEffect, directEffectO
 import { hookSpreadProblem } from "../rule/spread.ts";
 import { checkFindings } from "../rule/findings.ts";
 import { visibilityOf } from "../rule/visibility.ts";
-import { explain, reword, type Explanation } from "../stages/explainer.ts";
+import { explainLevel, reword, type ExplainedLevel, type Explanation } from "../stages/explainer.ts";
 import { plan as planWorld, Plan, PLANNER_MAX_TOKENS, plannerMessages, type PlanLevel } from "../stages/planner.ts";
 import { read } from "../stages/reader.ts";
 import { equationsOf, review } from "../stages/reviewer.ts";
@@ -33,6 +33,23 @@ import { matchModels } from "../transcribe/match.ts";
 import { TranscriptionWithSets } from "../transcribe/schema.ts";
 
 export const MAX_REPAIRS = 2;
+
+/**
+ * The day the rules a world is judged by last changed (ADR-0044's second amendment): a world kept
+ * from before it is never served as made under today's rules (R13, ADR-0053).
+ */
+export const RULES_VERSION = "2026-10-20";
+
+/**
+ * A job's deadline (R13, ADR-0053): the whole job's time, and each stage's longest call within it.
+ * A call that runs past either is ended; a repair is asked for only when what it is expected to
+ * take, from this job's own calls, still fits, and otherwise the levels that pass ship.
+ */
+export interface Deadline {
+  readonly jobMs: number;
+  readonly stageMs: Readonly<Partial<Record<Stage, number>>>;
+  readonly clock?: () => number;
+}
 
 export interface JobConfig {
   /** Each stage's model, from apps/api/models.json. */
@@ -62,6 +79,8 @@ export interface JobInput {
   readonly example: string;
   readonly now?: () => string;
   readonly signal?: AbortSignal;
+  /** Without one, a job takes as long as its calls do, as before 2026-10-24. */
+  readonly deadline?: Deadline;
 }
 
 export interface JobOutcome {
@@ -84,6 +103,8 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
   // Moved by the closures below, so declared wide.
   let state = "received" as JobState;
   let repairs = 0;
+  /** How many levels the latest release holds (R13): said if the job stops at its deadline. */
+  let released = 0;
   const move = (to: JobState, step: string, message: string): void => {
     if (!canMove(state, to)) throw new Error(`the controller cannot move from ${state} to ${to}`);
     state = to;
@@ -99,6 +120,54 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
   const cancelled = (): void => {
     if (input.signal?.aborted) throw new Stop("cancelled", "the job was cancelled");
   };
+
+  // The deadline (R13, ADR-0053): every call bounded by its stage's time and what is left of the
+  // job's, and how long each stage's calls took here, for what a repair would cost.
+  const clock = input.deadline?.clock ?? (() => Date.now());
+  const began = clock();
+  const left = (): number => (input.deadline ? input.deadline.jobMs - (clock() - began) : Number.POSITIVE_INFINITY);
+  const took = new Map<Stage, number>();
+  const timed = async <T>(stage: Stage, call: (client: ModelClient) => Promise<T>): Promise<T> => {
+    const limit = Math.min(input.deadline?.stageMs[stage] ?? Number.POSITIVE_INFINITY, left());
+    if (!Number.isFinite(limit)) return call(input.client);
+    if (limit <= 0) throw new ModelError("timeout", `the job's time ran out before the ${stage} call`);
+    const controller = new AbortController();
+    const client: ModelClient = { complete: (request) => input.client.complete({ ...request, signal: controller.signal }) };
+    const started = clock();
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      const result = await Promise.race([
+        call(client),
+        new Promise<never>((_, reject) => {
+          timer = setTimeout(() => {
+            controller.abort();
+            reject(new ModelError("timeout", `the ${stage} call ran past its ${Math.round(limit / 1000)} s`));
+          }, limit);
+        }),
+      ]);
+      took.set(stage, Math.max(took.get(stage) ?? 0, clock() - started));
+      return result;
+    } finally {
+      clearTimeout(timer);
+    }
+  };
+  const outOfTime = (error: unknown): boolean => error instanceof ModelError && error.kind === "timeout";
+  const settle = <T>(promise: Promise<T>): Promise<{ readonly value: T; readonly error: null } | { readonly value: null; readonly error: unknown }> =>
+    promise.then(
+      (value) => ({ value, error: null }),
+      (error: unknown) => ({ value: null, error }),
+    );
+  /** What the named stages are expected to take: as long as they took in this job, or their whole time if they have not run. */
+  const expected = (stages: readonly Stage[]): number => stages.reduce((sum, stage) => sum + (took.get(stage) ?? input.deadline?.stageMs[stage] ?? 0), 0);
+  const seconds = (ms: number): string => `${Math.round(ms / 1000)} s`;
+  /** Whether a repair, a planner's call and the changed levels' words, still fits with the review after it; said when it does not. */
+  const repairFits = (): boolean => {
+    const needs = expected(["planner", "explainer", "reviewer"]);
+    if (left() >= needs) return true;
+    say("deadline", `no time for a repair: ${seconds(left())} of the job's time is left, and a repair with the review after it is expected to take ${seconds(needs)}; the levels that pass ship`);
+    return false;
+  };
+  const timing = () => ({ jobMs: input.deadline?.jobMs ?? null, spentMs: clock() - began, stages: Object.fromEntries([...took].map(([stage, ms]) => [stage, ms])) });
 
   const asked = input.source.kind === "ingested" ? input.source.register.sourceId : input.source.kind === "pdf" ? `a PDF, ${input.source.name}` : `${input.source.kind}:${input.source.id}`;
   sink.emit("received", "the request", `received ${asked}`);
@@ -124,7 +193,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     move("planning", "routing", "deciding which family covers the paper's mechanism");
     const title = register.title;
     const front = text.sections.find((section) => section.title === "Abstract");
-    const routed = await route(input.client, modelFor("router"), { title, abstract: front ? text.text.slice(front.start, front.end) : text.text.slice(0, 2000), equations: text.equations.slice(0, 6).map((equation) => equation.latex.slice(0, 300)) }, { structuredOutput: structured(modelFor("router")) });
+    const routed = await timed("router", (client) => route(client, modelFor("router"), { title, abstract: front ? text.text.slice(front.start, front.end) : text.text.slice(0, 2000), equations: text.equations.slice(0, 6).map((equation) => equation.latex.slice(0, 300)) }, { structuredOutput: structured(modelFor("router")) }));
     sink.artifact("route", routed.value);
     if (routed.value.family !== "compartments" || routed.value.tier !== "A") {
       throw new Stop("unsupported", `the router sends this paper to ${routed.value.family}, tier ${routed.value.tier}: ${routed.value.reason} PaperPlay generates compartment-model worlds only, so far.`);
@@ -137,9 +206,9 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     say("transcription", "the first transcription of the model");
     say("transcription", "the second transcription, by another vendor's model, which never sees the first");
     const [reading, firstTranscription, secondTranscription] = await Promise.all([
-      read(input.client, modelFor("reader"), text, title, { structuredOutput: structured(modelFor("reader")) }),
-      transcribe(input.client, modelFor("transcriber"), text, title, { structuredOutput: structured(modelFor("transcriber")) }),
-      transcribe(input.client, modelFor("second-transcriber"), text, title, { structuredOutput: structured(modelFor("second-transcriber")), stage: "second-transcriber" }),
+      timed("reader", (client) => read(client, modelFor("reader"), text, title, { structuredOutput: structured(modelFor("reader")) })),
+      timed("transcriber", (client) => transcribe(client, modelFor("transcriber"), text, title, { structuredOutput: structured(modelFor("transcriber")) })),
+      timed("second-transcriber", (client) => transcribe(client, modelFor("second-transcriber"), text, title, { structuredOutput: structured(modelFor("second-transcriber")), stage: "second-transcriber" })),
     ]);
     sink.artifact("reading", reading.value);
     let first = firstTranscription.value;
@@ -181,12 +250,13 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     const agree = (): boolean => compared.match?.structural === true && compared.match.values && compared.a.problems.length === 0 && compared.setProblems.length === 0;
     if (!agree()) {
       if (repairs >= MAX_REPAIRS) throw new Stop("needs_information", "the two transcriptions disagree, and no repair is left");
+      if (left() < expected(["transcriber"])) throw new Stop("needs_information", `the two transcriptions disagree, and no time is left to ask again: ${seconds(left())} of the job's time is left`);
       repairs++;
       const why = [...compared.setProblems, ...compared.a.problems, ...(compared.b ? [] : ["the second transcription does not become a model"]), ...(compared.match?.problems ?? [])].slice(0, 8);
       move("repairing", "transcription", `the two transcriptions disagree (${why.join("; ") || "they could not be compared"}); asking the first transcriber to check against the paper`);
       const messages = transcriberMessages(text, title);
-      const retried = await completeStructured(
-        input.client,
+      const retried = await timed("transcriber", (client) => completeStructured(
+        client,
         {
           stage: "transcriber",
           model: modelFor("transcriber"),
@@ -196,7 +266,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
         },
         TranscriptionWithSets,
         { name: "transcription", structuredOutput: structured(modelFor("transcriber")) },
-      );
+      ));
       first = retried.value;
       sink.artifact("transcription-first-repaired", first);
       compared = compare();
@@ -282,20 +352,24 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
 
     // Two planners from different vendors (ADR-0043): each plans the world; the deterministic rules
     // judge every level of both, and each slot keeps the better level, the first planner's on a tie.
+    // Each planner within its stage's time (R13): a plan in hand never waits on the other longer.
     const secondPlannerModel = input.config.stages["second-planner"] ?? null;
-    const [firstPlan, secondPlan] = await Promise.all([
-      planWorld(input.client, plannerModel, plannerInput),
-      secondPlannerModel === null
-        ? Promise.resolve(null)
-        : planWorld(input.client, secondPlannerModel, plannerInput, { stage: "second-planner" }).catch((error: unknown) => {
-            say("planning", `the second planner, ${secondPlannerModel}, gave no plan the schema reads (${(error instanceof Error ? error.message : String(error)).split("\n")[0] ?? ""}); the first planner's plan is used alone`);
-            return null;
-          }),
+    const [firstSettled, secondSettled] = await Promise.all([
+      settle(timed("planner", (client) => planWorld(client, plannerModel, plannerInput))),
+      secondPlannerModel === null ? Promise.resolve(null) : settle(timed("second-planner", (client) => planWorld(client, secondPlannerModel, plannerInput, { stage: "second-planner" }))),
     ]);
-    let plan: Plan = firstPlan.value;
+    const why = (error: unknown): string => (outOfTime(error) ? "within its time" : `the schema reads (${(error instanceof Error ? error.message : String(error)).split("\n")[0] ?? ""})`);
+    const firstPlan = firstSettled.value;
+    const secondPlan = secondSettled?.value ?? null;
+    if (secondSettled && secondSettled.error !== null) say("planning", `the second planner, ${secondPlannerModel ?? ""}, gave no plan ${why(secondSettled.error)}; the first planner's plan is used alone`);
+    if (firstPlan === null) {
+      if (secondPlan === null) throw firstSettled.error instanceof Error ? firstSettled.error : new Error("the planner's call failed");
+      say("planning", `the first planner, ${plannerModel}, gave no plan ${why(firstSettled.error)}; the second planner's plan is used alone`);
+    }
+    let plan: Plan = (firstPlan ?? secondPlan)?.value ?? ({} as Plan);
     /** Which planner each level came from, in step with the plan (ADR-0043). */
-    let sources: string[] = plan.levels.map(() => plannerModel);
-    if (secondPlan && secondPlannerModel !== null) {
+    let sources: string[] = plan.levels.map(() => (firstPlan ? plannerModel : (secondPlannerModel ?? plannerModel)));
+    if (firstPlan && secondPlan && secondPlannerModel !== null) {
       const a = firstPlan.value;
       const b = secondPlan.value;
       const [ja, jb] = [assess(a), assess(b)];
@@ -322,10 +396,31 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       const passingOf = (judged: typeof ja, candidate: Plan) => `${judged.problems.filter((problems, index) => problems.length === 0 && candidate.levels[index]).length} of ${candidate.levels.length}`;
       say("planning", `two planners planned: ${plannerModel}, ${passingOf(ja, a)} levels meeting the rules; ${secondPlannerModel}, ${passingOf(jb, b)}; kept ${sources.map((source, index) => `level ${index + 1} from ${source}`).join(", ")}`);
     }
-    const passages = promptSource(text, { maxCharacters: 60_000 }).block;
+    // Read once (R13): the explainer and the reviewers are given the sections the reader named.
+    const passages = promptSource(text, { maxCharacters: 60_000, sections: reading.value.sections }).block;
     const modelWords = `${describeBehaviour(model, horizon).split("\n").slice(0, 3).join("\n")}`;
     const explainerModel = modelFor("explainer");
-    let explanation: Explanation = (await explain(input.client, explainerModel, { title, plan, passages, model: modelWords }, { structuredOutput: structured(explainerModel) })).value;
+    let explanation: Explanation = { levels: [] };
+
+    /**
+     * The named levels' words, asked at once, each within the explainer's time. A level whose words
+     * do not come, or come unreadable, is left out of the world (never the hook), so one slow or
+     * broken reply no longer ends the job (R13).
+     */
+    const wordsFor = async (target: Plan, indices: readonly number[]): Promise<Map<number, ExplainedLevel>> => {
+      const words = new Map<number, ExplainedLevel>();
+      await Promise.all(
+        indices.map(async (index) => {
+          try {
+            words.set(index, (await timed("explainer", (client) => explainLevel(client, explainerModel, { title, plan: target, passages, model: modelWords }, index, { structuredOutput: structured(explainerModel) }))).value);
+          } catch (error) {
+            if (!(error instanceof ModelError)) throw error;
+            say("explaining", `level ${index + 1}'s words ${outOfTime(error) ? "did not come within the explainer's time" : `could not be read: ${error.message.replace(/\s+/g, " ").slice(0, 200)}`}`);
+          }
+        }),
+      );
+      return words;
+    };
 
     /**
      * Asks the planner to change only the named levels, keeping the rest. A repair that runs out of
@@ -339,21 +434,29 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       const messages = plannerMessages({ title, reading: reading.value, model, example: input.example, behaviour, response, ownNumbers: forPlanner });
       let replanned: { readonly value: Plan };
       try {
-        replanned = await completeStructured(
-          input.client,
-          { stage: "planner", model: plannerModel, messages: [...messages, { role: "assistant", content: JSON.stringify(plan) }, { role: "user", content: `These problems were found:\n${problems.map((line) => `- ${line}`).join("\n")}\nChange only the levels named, as little as fixes them, and give the whole plan again.` }], temperature: 0, maxTokens: PLANNER_MAX_TOKENS },
-          Plan,
-          { name: "plan", structuredOutput: false, moreRoom: true },
+        replanned = await timed("planner", (client) =>
+          completeStructured(
+            client,
+            { stage: "planner", model: plannerModel, messages: [...messages, { role: "assistant", content: JSON.stringify(plan) }, { role: "user", content: `These problems were found:\n${problems.map((line) => `- ${line}`).join("\n")}\nChange only the levels named, as little as fixes them, and give the whole plan again.` }], temperature: 0, maxTokens: PLANNER_MAX_TOKENS },
+            Plan,
+            { name: "plan", structuredOutput: false, moreRoom: true },
+          ),
         );
       } catch (error) {
-        if (!(error instanceof ModelError) || error.kind !== "invalid-response") throw error;
-        say("planning", `the planner's repair could not be read, so the plan stays as it was: ${error.message.replace(/\s+/g, " ").slice(0, 400)}`);
+        if (!(error instanceof ModelError) || (error.kind !== "invalid-response" && error.kind !== "timeout")) throw error;
+        say("planning", `the planner's repair ${error.kind === "timeout" ? "did not come within its time" : "could not be read"}, so the plan stays as it was: ${error.message.replace(/\s+/g, " ").slice(0, 400)}`);
         return;
       }
       // A level the repair changed is the repairing planner's now.
       sources = replanned.value.levels.map((level, index) => (JSON.stringify(level) === JSON.stringify(plan.levels[index]) ? (sources[index] ?? plannerModel) : `${plannerModel}, in repair`));
+      // Only the levels the repair changed are explained again; the rest keep their words (R13).
+      const before = { plan, explanation };
       plan = replanned.value;
-      explanation = (await explain(input.client, explainerModel, { title, plan, passages, model: modelWords }, { structuredOutput: structured(explainerModel) })).value;
+      const same = plan.levels.map((level) => before.plan.levels.findIndex((old) => JSON.stringify(old) === JSON.stringify(level)));
+      const changed = plan.levels.map((_, index) => index).filter((index) => (same[index] ?? -1) < 0);
+      const words = await wordsFor(plan, changed);
+      say("planning", `the repair changed ${changed.length} of ${plan.levels.length} levels; only theirs are explained again`);
+      placeWords(words, (index) => before.explanation.levels[same[index] ?? -1]);
     };
 
     /** How a level's control, and its What-if's value when another, move the model: its rows of the response table, for a repair (ADR-0040). */
@@ -403,6 +506,28 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       sink.artifact("dropped", dropped);
       return order.length;
     };
+    /** The plan's words, from this round or kept from before; a level with none is left out, and the job stops if that is the hook or leaves fewer than three. */
+    const placeWords = (words: ReadonlyMap<number, ExplainedLevel>, kept: (index: number) => ExplainedLevel | undefined): void => {
+      const all = plan.levels.map((_, index) => index);
+      const missing = all.filter((index) => !words.has(index) && kept(index) === undefined);
+      const wordsOf = (index: number): ExplainedLevel[] => {
+        const level = words.get(index) ?? kept(index);
+        return level ? [level] : [];
+      };
+      if (missing.length === 0) {
+        explanation = { levels: all.flatMap(wordsOf) };
+        return;
+      }
+      if (missing.includes(0)) throw new Stop("failed", "level 1's words, the hook's, did not come, and the hook is never dropped");
+      const keep = all.filter((index) => !missing.includes(index));
+      if (keep.length < 3) throw new Stop("failed", `too few levels have their words: ${missing.length} of ${all.length} did not come`);
+      dropped.push(...missing.map((index) => ({ level: index + 1, title: plan.levels[index]?.title ?? "", reasons: ["its words did not come, or could not be read"] })));
+      sink.artifact("dropped", dropped);
+      explanation = { levels: keep.flatMap(wordsOf) };
+      sources = keep.map((index) => sources[index] ?? plannerModel);
+      plan = { ...plan, levels: keep.flatMap((index) => (plan.levels[index] ? [plan.levels[index]] : [])) };
+    };
+
     /** The check's findings for the world, with level 1's fallback said on its page and beside its goal. */
     const ownNumbersForWorld = () =>
       hookFallback === null ? ownNumbers : { ...ownNumbers, observation: hookFallback, statements: [...ownNumbers.statements, { text: hookFallback, origin: "computed-observation" as const, anchors: [] }] };
@@ -419,9 +544,32 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     // Building and running: assemble, build, sweep; the level rule, the visibility rule and the
     // findings check (ADR-0037); repair the levels that fail, or drop them. Then checking, where the
     // reviewer may send a definitional level back for repair.
+    placeWords(await wordsFor(plan, plan.levels.map((_, index) => index)), () => undefined);
+
+    /**
+     * Progressive delivery (R13, ADR-0053): once the hook and at least two more levels pass every
+     * check, provenance included, they are released as a world of their own, playable while the
+     * job goes on; each time the passing set changes, again. The reviewers have not read it yet,
+     * and it says so. A world holds at least three levels, so three is the first release.
+     */
+    let releasedAs: string | null = null;
+    const release = (passing: readonly number[]): void => {
+      if (!passing.includes(0) || passing.length < 3) return;
+      const titles = passing.map((index) => plan.levels[index]?.title ?? "");
+      if (titles.join("\n") === releasedAs) return;
+      const part = assembleWorld({ source: text, register, reading: reading.value, model, plan: { ...plan, levels: passing.flatMap((index) => (plan.levels[index] ? [plan.levels[index]] : [])) }, explanation: { levels: passing.flatMap((index) => (explanation.levels[index] ? [explanation.levels[index]] : [])) }, routingReason: routed.value.reason, ownNumbers: ownNumbersForWorld() });
+      if (!buildWorld(part.spec, registry).ok || checkProvenance(part.spec, text).length > 0) return;
+      releasedAs = titles.join("\n");
+      released = passing.length;
+      sink.artifact("released", { levels: passing.map((index, at) => ({ level: index + 1, title: titles[at] ?? "" })), of: plan.levels.length, reviewed: false, world: part.spec });
+      say("release", `${passing.length} of ${plan.levels.length} levels pass every check and are playable while the job goes on: ${titles.map((title) => `"${title}"`).join(", ")}`);
+    };
+
     let built: BuiltWorld | null = null;
     let swept: LevelResult[] = [];
     let spec: Record<string, unknown> = {};
+    /** Why the world ships without its review, when the reviewers did not answer in time. */
+    let unreviewed: string | null = null;
     for (;;) {
       for (;;) {
         move("building", "assembly", "assembling the world and building it against the solver");
@@ -432,7 +580,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
         if (!result.ok) {
           const byLevel = result.problems.map((problem) => `${/^levels\.(\d+)/.test(problem.path) ? `level ${Number(/^levels\.(\d+)/.exec(problem.path)?.[1]) + 1}` : problem.path}: ${problem.message}`);
           sink.artifact("build-problems", result.problems);
-          if (repairs < MAX_REPAIRS) {
+          if (repairs < MAX_REPAIRS && repairFits()) {
             await replan(byLevel);
             continue;
           }
@@ -467,12 +615,13 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
           ];
         };
         const failing = plan.levels.map((_, index) => index).filter((index) => problemsOf(index).length > 0);
+        release(plan.levels.map((_, index) => index).filter((index) => !failing.includes(index)));
         if (failing.length === 0 && found.world.length === 0) break;
         const words = [
           ...failing.map((index) => `level ${index + 1} ("${plan.levels[index]?.title ?? ""}"): ${problemsOf(index).join("; ")}`),
           ...found.world,
         ];
-        if (repairs < MAX_REPAIRS) {
+        if (repairs < MAX_REPAIRS && repairFits()) {
           await replan([...failing.map((index) => `level ${index + 1} ("${plan.levels[index]?.title ?? ""}"): ${problemsOf(index).join("; ")}${responseOf(index)}`), ...found.world]);
           continue;
         }
@@ -500,13 +649,38 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       const named = namedInModel(plan, model);
       const tags = named.levels.map((level) => directEffectOf(model, level.control.parameter, level.difference.compartment, level.difference));
       const reviewInput = { title, world: worldWords, checks, passages, equations: equationsOf(model), evidence: tags.map((tag, index) => `Level ${index + 1}: ${describeDirectEffect(tag)}.`).join("\n") };
-      const [reviewed, secondReviewed] = await Promise.all([
-        review(input.client, reviewerModel, reviewInput, { structuredOutput: structured(reviewerModel) }).then((result) => result.value),
-        secondReviewerModel === null ? Promise.resolve(null) : review(input.client, secondReviewerModel, reviewInput, { structuredOutput: structured(secondReviewerModel), stage: "second-reviewer" }).then((result) => result.value),
+      // Each reviewer within its stage's time (R13); one that does not answer, or answers unreadably, leaves the other's review.
+      const [firstReview, secondReview] = await Promise.all([
+        settle(timed("reviewer", (client) => review(client, reviewerModel, reviewInput, { structuredOutput: structured(reviewerModel) }).then((result) => result.value))),
+        secondReviewerModel === null ? Promise.resolve(null) : settle(timed("second-reviewer", (client) => review(client, secondReviewerModel, reviewInput, { structuredOutput: structured(secondReviewerModel), stage: "second-reviewer" }).then((result) => result.value))),
       ]);
-      sink.artifact("review", reviewed);
+      for (const [settled, who] of [[firstReview, reviewerModel], [secondReview, secondReviewerModel]] as const) {
+        if (settled === null || settled.error === null) continue;
+        if (!(settled.error instanceof ModelError)) throw settled.error instanceof Error ? settled.error : new Error("a reviewer's call failed");
+        say("review", `${who ?? ""} gave no review ${outOfTime(settled.error) ? "within its time" : `the schema reads: ${settled.error.message.replace(/\s+/g, " ").slice(0, 200)}`}`);
+      }
+      const reviewed = firstReview.value;
+      const secondReviewed = secondReview?.value ?? null;
+      if (reviewed === null && secondReviewed === null) {
+        // No reviewer answered in time. A world never read by one ships checked and says it was not
+        // reviewed; levels whose words were written again since the last review are left out, as no
+        // reviewer has read their new words.
+        const unread = plan.levels.map((_, index) => index).filter((index) => reworded.has(plan.levels[index]?.title ?? ""));
+        if (unread.length > 0) {
+          const keep = dropFailing(unread, () => ["its words were written again, and no reviewer read them in time"], "failed", unread.map((index) => `level ${index + 1}: its new words were not reviewed in time`));
+          say("review", `no reviewer answered in time: dropping ${unread.length} level(s) whose new words no reviewer read, keeping ${keep}`);
+        }
+        unreviewed = reviewPasses === 0 ? "no reviewer answered within its time, so no reviewer read this world; every check passed" : "the last review pass did not answer in time; every level kept was read by an earlier pass, and every check passed";
+        say("review", unreviewed);
+        if (unread.length > 0) {
+          spec = assembleWorld({ source: text, register, reading: reading.value, model, plan, explanation, routingReason: routed.value.reason, ownNumbers: ownNumbersForWorld() }).spec;
+          if (!buildWorld(spec, registry).ok || checkProvenance(spec, text).length > 0) throw new Stop("failed", "the world without its unreviewed levels does not pass its checks");
+        }
+        break;
+      }
+      if (reviewed) sink.artifact("review", reviewed);
       if (secondReviewed) sink.artifact("second-review", secondReviewed);
-      const decisions = decideReviews(model, named, tags, [{ model: reviewerModel, review: reviewed }, ...(secondReviewed && secondReviewerModel ? [{ model: secondReviewerModel, review: secondReviewed }] : [])]);
+      const decisions = decideReviews(model, named, tags, [...(reviewed ? [{ model: reviewerModel, review: reviewed }] : []), ...(secondReviewed && secondReviewerModel ? [{ model: secondReviewerModel, review: secondReviewed }] : [])]);
       reviewPasses++;
       reviewDecisions.push(...decisions.records.map((record) => ({ pass: reviewPasses, ...record })));
       sink.artifact("review-decisions", reviewDecisions);
@@ -516,7 +690,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       const blocksOn = (index: number, kind: string): string => [reviewed, secondReviewed].flatMap((entry) => entry?.findings.filter((finding) => finding.level === index + 1 && finding.kind === kind && finding.severity === "blocking") ?? []).map((finding) => `${finding.finding} ${finding.suggestion}`).join(" ");
       if (definitional.length > 0) {
         const words = definitional.map((index) => `level ${index + 1} ("${plan.levels[index]?.title ?? ""}"): ${secondReviewed ? "both reviewers find" : "the reviewer finds"} its effect follows from the model's definitions alone: ${blocksOn(index, "definitional")}; test one of the paper's findings instead`);
-        if (repairs < MAX_REPAIRS) {
+        if (repairs < MAX_REPAIRS && repairFits()) {
           await replan(definitional.map((index, at) => `${words[at] ?? ""}${responseOf(index)}`));
           continue;
         }
@@ -528,7 +702,10 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       }
       // Words that misdescribe the model go back to the explainer, once a level; if they survive it, the level is dropped.
       if (misworded.length > 0) {
-        const again = misworded.filter((index) => reworded.has(plan.levels[index]?.title ?? ""));
+        // Words written again need a review after them: without time for both, they are dropped as if written again already.
+        const time = left() >= expected(["explainer", "reviewer"]);
+        if (!time) say("deadline", `no time to write words again and review them: ${seconds(left())} of the job's time is left`);
+        const again = misworded.filter((index) => !time || reworded.has(plan.levels[index]?.title ?? ""));
         const first = misworded.filter((index) => !again.includes(index));
         if (again.length > 0) {
           const words = again.map((index) => `level ${index + 1} ("${plan.levels[index]?.title ?? ""}"): its words still misdescribe the model after they were written again: ${blocksOn(index, "unsupported")}`);
@@ -540,7 +717,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
         move("repairing", "review", `writing again the words of ${first.map((index) => `level ${index + 1} ("${plan.levels[index]?.title ?? ""}")`).join(", ")}, which a reviewer finds misdescribe the model`);
         for (const index of first) {
           const problem = `${blocksOn(index, "unsupported")}\nThe model's equations, in its ids:\n${equationsOf(model)}`;
-          const words = (await reword(input.client, explainerModel, { title, plan, passages, model: modelWords }, index, problem, { structuredOutput: structured(explainerModel) })).value;
+          const words = (await timed("explainer", (client) => reword(client, explainerModel, { title, plan, passages, model: modelWords }, index, problem, { structuredOutput: structured(explainerModel) }))).value;
           const { goal, whatIf, prediction, effect, ...level } = words;
           reworded.add(plan.levels[index]?.title ?? "");
           plan = { ...plan, levels: plan.levels.map((entry, at) => (at === index ? { ...entry, goal, effect, whatIf: { ...entry.whatIf, prompt: whatIf }, prediction: { ...entry.prediction, prompt: prediction } } : entry)) };
@@ -551,15 +728,19 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       const blocking = [reviewed, secondReviewed].flatMap((entry) => entry?.findings.filter((finding) => finding.severity === "blocking") ?? []);
       if (blocking.length > 0) {
         say("review", `the reviewers found ${blocking.length} blocking finding(s) that do not stand, advice only: the checks decide. ${blocking.map((finding) => finding.finding).join(" ")}`);
-      } else say("review", `the reviewer found nothing blocking (${reviewed.findings.length + (secondReviewed?.findings.length ?? 0)} piece(s) of advice)`);
+      } else say("review", `the reviewer found nothing blocking (${(reviewed?.findings.length ?? 0) + (secondReviewed?.findings.length ?? 0)} piece(s) of advice)`);
       break;
     }
     sink.artifact("plan-sources", plan.levels.map((level, index) => ({ level: index + 1, title: level.title, planner: sources[index] ?? plannerModel })));
     sink.artifact("world", spec);
-    move("ready", "ready", `the world is built and checked: ${plan.levels.length} levels, every one meeting the level rule, showing its difference and testing the paper's findings, every anchor in the source`);
+    sink.artifact("timing", timing());
+    move("ready", "ready", `the world is built and checked: ${plan.levels.length} levels, every one meeting the level rule, showing its difference and testing the paper's findings, every anchor in the source${unreviewed === null ? "" : `; not reviewed: ${unreviewed}`}`);
     return { state, message: "ready", world: spec };
   } catch (error) {
-    const stop = error instanceof Stop ? error : new Stop("failed", error instanceof Error ? error.message.split("\n")[0] ?? "" : String(error));
+    // A deadline passed: the job stops rather than run on, and says what is left to play (R13).
+    const deadlineWords = (error: unknown): string => `${error instanceof Error ? error.message : String(error)}: the job stops at its deadline of ${seconds(input.deadline?.jobMs ?? 0)} rather than run on; ${released > 0 ? `the ${released} levels released stay playable, checked but not reviewed` : "no level passed its checks in time, so this paper falls back to the explainer page, tier C"}`;
+    const stop = error instanceof Stop ? error : outOfTime(error) && input.deadline ? new Stop("failed", deadlineWords(error)) : new Stop("failed", error instanceof Error ? error.message.split("\n")[0] ?? "" : String(error));
+    sink.artifact("timing", timing());
     if (state !== stop.state && canMove(state, stop.state)) move(stop.state, "stopped", stop.message);
     else sink.emit(stop.state === "failed" || stop.state === "cancelled" ? stop.state : "failed", "stopped", stop.message);
     return { state: stop.state, message: stop.message, world: null };

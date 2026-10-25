@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { canMove, JOB_TRANSITIONS, JobState, SourceText, type JobState as State, type SourceRegisterEntry } from "@paperplay/contracts";
 import { describe, expect, it } from "vitest";
-import { runJob, type JobConfig, type JobSink } from "../src/controller/run.ts";
+import { runJob, type Deadline, type JobConfig, type JobSink } from "../src/controller/run.ts";
 import type { ChatRequest, ModelClient } from "../src/models/index.ts";
 import { PLANNER_MAX_TOKENS } from "../src/stages/planner.ts";
 
@@ -177,11 +177,11 @@ const config: JobConfig = {
   structuredOutput: {},
 };
 
-async function run(client: ModelClient, overrides: Partial<JobConfig> = {}) {
+async function run(client: ModelClient, overrides: Partial<JobConfig> = {}, deadline?: Deadline) {
   const events: { state: State; step: string; message: string }[] = [];
   const artifacts = new Map<string, unknown>();
   const sink: JobSink = { emit: (state, step, message) => void events.push({ state, step, message }), artifact: (name, value) => void artifacts.set(name, value) };
-  const outcome = await runJob({ source: { kind: "ingested", text: source, register }, client, config: { ...config, ...overrides }, fetch: () => Promise.reject(new Error("no network")), example: "" }, sink);
+  const outcome = await runJob({ source: { kind: "ingested", text: source, register }, client, config: { ...config, ...overrides }, fetch: () => Promise.reject(new Error("no network")), example: "", ...(deadline ? { deadline } : {}) }, sink);
   return { outcome, events, artifacts, states: events.map((event) => event.state).filter((state, index, all) => index === 0 || state !== all[index - 1]) };
 }
 
@@ -439,4 +439,98 @@ describe("[R10] [R11] the controller", () => {
     const { outcome } = await run(scripted(replies()), { stages: { ...config.stages, reader: null } });
     expect(outcome).toMatchObject({ state: "failed", message: "no model is chosen for the reader stage in apps/api/models.json" });
   });
+});
+
+/** A client whose calls for one stage answer only after a while, or never, as a slow model's do; a call's deadline ends the wait. */
+function slow(client: ModelClient, stage: string, ms: number): ModelClient {
+  return {
+    complete(request) {
+      if (request.stage !== stage) return client.complete(request);
+      return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => void client.complete(request).then(resolve, reject), ms);
+        request.signal?.addEventListener("abort", () => {
+          clearTimeout(timer);
+          reject(new Error("aborted"));
+        });
+      });
+    },
+  };
+}
+
+const fourth = planLevel(1, { title: "A fourth level", difference: { compartment: "r", summary: "first-reach", at: 100, time: 60, relation: "higher", by: 5 } });
+
+describe("[R13] a job against its deadline", () => {
+  it("releases the hook and two more levels as a world of their own once they pass every check, before any reviewer reads it", async () => {
+    const { outcome, events, artifacts } = await run(scripted(replies()));
+    expect(outcome.state).toBe("ready");
+    const released = artifacts.get("released") as { levels: { level: number; title: string }[]; of: number; reviewed: boolean; world: { levels: unknown[] } };
+    expect(released.levels.map((level) => level.level)).toEqual([1, 2, 3]);
+    expect(released).toMatchObject({ of: 3, reviewed: false });
+    expect(released.world.levels).toHaveLength(3);
+    const at = events.findIndex((event) => event.step === "release");
+    expect(at).toBeGreaterThan(0);
+    expect(events[at]?.message).toMatch(/^3 of 3 levels pass every check and are playable while the job goes on: "An epidemic that ends by itself"/);
+    expect(at).toBeLessThan(events.findIndex((event) => event.state === "checking"));
+  }, 60_000);
+
+  it("writes again only the words of the levels a repair changed", async () => {
+    const wrong = { ...good(), levels: [planLevel(0, { difference: { compartment: "s", summary: "at", at: 150, time: 150, relation: "higher", by: 20 } }), planLevel(1), planLevel(2)] };
+    const client = scripted(replies({ planner: [wrong, good()] }));
+    const { outcome, events } = await run(client);
+    expect(outcome.state).toBe("ready");
+    expect(client.calls.filter((call) => call.stage === "explainer")).toHaveLength(4);
+    expect(events.some((event) => event.message === "the repair changed 1 of 3 levels; only theirs are explained again")).toBe(true);
+  }, 60_000);
+
+  it("ends a planner's call that runs past its stage's time, and goes on with the plan in hand", async () => {
+    const client = slow(scripted(replies({ "second-planner": [good()] })), "second-planner", 5_000);
+    const { outcome, events } = await run(client, { stages: { ...config.stages, "second-planner": "m-second-planner" } }, { jobMs: 60_000, stageMs: { "second-planner": 100 } });
+    expect(outcome.state).toBe("ready");
+    expect(events.some((event) => event.message === "the second planner, m-second-planner, gave no plan within its time; the first planner's plan is used alone")).toBe(true);
+  }, 60_000);
+
+  it("asks for no repair it has no time for, and ships the levels that pass", async () => {
+    const client = scripted(replies({ planner: [{ ...good(), levels: [planLevel(0), planLevel(1), planLevel(2), fourth] }] }));
+    const { outcome, events, artifacts } = await run(client, {}, { jobMs: 300_000, stageMs: { reviewer: 600_000 } });
+    expect(outcome.state).toBe("ready");
+    expect(client.calls.filter((call) => call.stage === "planner")).toHaveLength(1);
+    expect(events.some((event) => event.step === "deadline" && /^no time for a repair: \d+ s of the job's time is left, and a repair with the review after it is expected to take \d+ s; the levels that pass ship$/.test(event.message))).toBe(true);
+    expect((artifacts.get("dropped") as { title: string }[]).map((entry) => entry.title)).toEqual(["A fourth level"]);
+    expect((artifacts.get("world") as { levels: unknown[] }).levels).toHaveLength(3);
+  }, 60_000);
+
+  it("ships a checked world no reviewer answered in time, and says it was not reviewed", async () => {
+    const client = slow(scripted(replies()), "reviewer", 5_000);
+    const { outcome, events, artifacts } = await run(client, {}, { jobMs: 60_000, stageMs: { reviewer: 100 } });
+    expect(outcome.state).toBe("ready");
+    expect(events.at(-1)?.message).toMatch(/; not reviewed: no reviewer answered within its time, so no reviewer read this world; every check passed$/);
+    expect(artifacts.has("review")).toBe(false);
+  }, 60_000);
+
+  it("stops at the job's deadline rather than run on, and says the paper falls back to the explainer page", async () => {
+    const client = slow(scripted(replies()), "planner", 10_000);
+    const { outcome, artifacts } = await run(client, {}, { jobMs: 1_500, stageMs: {} });
+    expect(outcome.state).toBe("failed");
+    expect(outcome.message).toMatch(/the planner call ran past its \d+ s: the job stops at its deadline of 2 s rather than run on; no level passed its checks in time, so this paper falls back to the explainer page, tier C$/);
+    expect(artifacts.get("timing")).toMatchObject({ jobMs: 1_500 });
+  }, 60_000);
+
+  it("leaves out a level whose words do not come, but never the hook", async () => {
+    const inner = scripted(replies({ planner: [{ ...good(), levels: [planLevel(0), planLevel(1), planLevel(2), planLevel(1, { title: "A fourth level" })] }] }));
+    const client: ModelClient = { complete: (request) => (request.stage === "explainer" && request.messages.some((message) => message.content.includes('level 4, "A fourth level"')) ? Promise.resolve({ model: request.model, text: "not words", usage: { promptTokens: 1, completionTokens: 1, totalTokens: 2 }, finishReason: "stop" }) : inner.complete(request)) };
+    const { outcome, artifacts } = await run(client);
+    expect(outcome.state).toBe("ready");
+    expect(artifacts.get("dropped")).toEqual([{ level: 4, title: "A fourth level", reasons: ["its words did not come, or could not be read"] }]);
+  }, 60_000);
+
+  it("gives the explainer and the reviewers only the sections the reader named, and the abstract", async () => {
+    const reading = { ...(replies().reader[0] as Record<string, unknown>), sections: ["s3-model"] };
+    const client = scripted(replies({ reader: [reading] }));
+    const { outcome } = await run(client);
+    expect(outcome.state).toBe("ready");
+    for (const stage of ["explainer", "reviewer"]) {
+      const prompt = client.calls.find((call) => call.stage === stage)?.messages.map((message) => message.content).join("\n") ?? "";
+      expect(prompt, stage).toContain("[Only the sections that state the model, its values and its findings are given here: Abstract; Model.]");
+    }
+  }, 60_000);
 });

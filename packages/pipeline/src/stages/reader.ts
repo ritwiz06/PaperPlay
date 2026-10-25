@@ -31,6 +31,8 @@ export const Reading = z.strictObject({
       }),
     )
     .max(8),
+  /** The sections, by id, that state the model, its values and its findings: what the stages after the reader are given (R13, ADR-0053). A reading made before 2026-10-24 has none, and they are given the whole paper. */
+  sections: z.array(z.string().min(1)).max(10).default([]),
 });
 export type Reading = z.infer<typeof Reading>;
 
@@ -43,12 +45,13 @@ export const READER_INSTRUCTIONS = [
   "- findings are what the paper finds from its model, beyond the headline: a result its simulations show, a threshold it derives (such as a basic reproduction number above or below one), or a conclusion it draws, such as which intervention matters most. Not what follows from the model's definitions alone, not its assumptions, not its methods.",
   "- Every quote is copied character for character from the paper text, 3 to 200 characters, where the paper states that thing.",
   "- State only what the paper states. Never add a finding of your own.",
+  "- sections lists the ids, from the paper's list of sections, of the sections that state the model's equations, its parameter values and the findings you give: at most 10, and as few as hold them.",
 ].join("\n");
 
 export function readerMessages(source: SourceText, title: string): ChatMessage[] {
   return [
     { role: "system", content: READER_INSTRUCTIONS },
-    { role: "user", content: `Paper: ${title}\n\n${promptSource(source).block}\n\nRead the paper.` },
+    { role: "user", content: `Paper: ${title}\n\nThe paper's sections, by id:\n${source.sections.map((section) => `${section.id}: ${section.title}`).join("\n")}\n\n${promptSource(source).block}\n\nRead the paper.` },
   ];
 }
 

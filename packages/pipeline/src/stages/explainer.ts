@@ -83,10 +83,13 @@ export function explainerMessages(input: { readonly title: string; readonly plan
 export async function explain(client: ModelClient, model: string, input: Parameters<typeof explainerMessages>[0], options: { readonly structuredOutput: boolean }): Promise<{ readonly value: Explanation }> {
   // One level a call: a small reply has less room to loop or nest wrongly, and a failure costs one
   // level's words. The levels' calls need nothing from each other, so they are asked at once (ADR-0051).
-  const levels = await Promise.all(
-    input.plan.levels.map(async (_, level) => (await completeStructured(client, { stage: "explainer", model, messages: explainerMessages(input, level), temperature: 0, maxTokens: 16_000 }, ExplainedLevel, { name: "level_words", structuredOutput: options.structuredOutput, moreRoom: true })).value),
-  );
+  const levels = await Promise.all(input.plan.levels.map(async (_, level) => (await explainLevel(client, model, input, level, options)).value));
   return { value: Explanation.parse({ levels }) };
+}
+
+/** One level's words, so the controller can time each and ask only for the levels a repair changed (R13, ADR-0053). */
+export function explainLevel(client: ModelClient, model: string, input: Parameters<typeof explainerMessages>[0], level: number, options: { readonly structuredOutput: boolean }): Promise<{ readonly value: ExplainedLevel }> {
+  return completeStructured(client, { stage: "explainer", model, messages: explainerMessages(input, level), temperature: 0, maxTokens: 16_000 }, ExplainedLevel, { name: "level_words", structuredOutput: options.structuredOutput, moreRoom: true });
 }
 
 /**

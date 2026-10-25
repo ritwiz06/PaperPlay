@@ -3,7 +3,7 @@
  *
  * Where a generation's wall clock goes (R13, ADR-0053), from the jobs this machine ran: each job's
  * events (apps/api/data/jobs/<id>/events.jsonl), its trace, which times every call the client made,
- * and the recordings, which keep each reply's tokens and when it ended. A call the trace times
+ * and the recordings, a fresh job's first, which keep each reply's tokens and when it ended. A call the trace times
  * under a second was replayed from a recording, not asked, so it costs no wall clock. Calls nothing.
  *
  * Thinking tokens are an estimate: the gateway reports a reply's tokens, thinking and answer
@@ -116,8 +116,9 @@ export function criticalPath(job: Job): string {
   return `${job.id} (${job.source}, ${job.outcome}, ${minutes(job.end - job.start)} min): ${parts.join(" → ")}; outside calls ${minutes(outsideCalls(job))}`;
 }
 
-/** A job as this machine kept it, or null when it made no live call. */
-export function readJob(directory: string, recordings: string): Job | null {
+/** A job as this machine kept it, or null when it made no live call; its recordings looked for in each folder in turn. */
+export function readJob(directory: string, recordings: string | readonly string[]): Job | null {
+  const folders = typeof recordings === "string" ? [recordings] : recordings;
   const eventsFile = join(directory, "events.jsonl");
   const traceFile = join(directory, "trace.json");
   if (!existsSync(eventsFile) || !existsSync(traceFile)) return null;
@@ -127,8 +128,8 @@ export function readJob(directory: string, recordings: string): Job | null {
   if (!first || !last) return null;
   const trace = JSON.parse(readFileSync(traceFile, "utf8")) as { entries: { stage: string; model: string; promptHash: string; outcome: string; tokens: number; milliseconds: number }[] };
   const calls: Call[] = trace.entries.map((entry) => {
-    const file = join(recordings, `${entry.promptHash}.json`);
-    const recording = entry.outcome === "ok" && existsSync(file) ? (JSON.parse(readFileSync(file, "utf8")) as { recordedAt: string; response: { text: string; finishReason?: string; usage: { promptTokens: number; completionTokens: number } } }) : null;
+    const file = folders.map((folder) => join(folder, `${entry.promptHash}.json`)).find((candidate) => existsSync(candidate)) ?? "";
+    const recording = entry.outcome === "ok" && file !== "" ? (JSON.parse(readFileSync(file, "utf8")) as { recordedAt: string; response: { text: string; finishReason?: string; usage: { promptTokens: number; completionTokens: number } } }) : null;
     return {
       stage: entry.stage,
       model: entry.model,
@@ -156,7 +157,8 @@ if (import.meta.main) {
   const since = Date.parse(process.argv.find((value) => value.startsWith("--since="))?.slice("--since=".length) ?? "1970-01-01");
   const jobs = (existsSync(directory) ? readdirSync(directory) : [])
     .filter((id) => asked.length === 0 || asked.includes(id))
-    .flatMap((id) => readJob(join(directory, id), join(root, "fixtures", "recordings")) ?? [])
+    // A fresh job's recordings are kept apart from the committed ones (ADR-0053).
+    .flatMap((id) => readJob(join(directory, id), [join(root, "apps", "api", "data", "recordings"), join(root, "fixtures", "recordings")]) ?? [])
     .filter((job) => job.start >= since)
     .sort((a, b) => a.start - b.start);
   const wall = jobs.map((job) => job.end - job.start);
