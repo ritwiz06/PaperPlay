@@ -180,6 +180,36 @@
   text-decoration: none;
   box-shadow: 3px 3px 0 var(--ink);
 }
+.story-levels,
+.story-cached {
+  margin-top: 0.75rem;
+  padding: 0.875rem 1rem;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--lime) 35%, var(--cream));
+}
+.story-levels h3 {
+  margin: 0 0 0.25rem;
+}
+.story-levels p,
+.story-cached p {
+  margin: 0 0 0.5rem;
+}
+.story-levels ul {
+  margin: 0 0 0.5rem;
+  padding-left: 1.1rem;
+}
+.story-again {
+  min-height: 44px;
+  margin-left: 0.5rem;
+  padding: 0 1rem;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: var(--cream);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+}
 @media (prefers-reduced-motion: reduce) {
   .story-now .story-mark {
     box-shadow: none;

@@ -33,6 +33,8 @@ export function App() {
   if (import.meta.env.DEV) {
     const job = /^\/world\/job\/([a-z0-9-]+)$/.exec(path)?.[1];
     if (job) return <FromJob id={job} />;
+    const cached = /^\/world\/cached\/([a-z]+-[A-Za-z0-9.]+)$/.exec(path)?.[1];
+    if (cached) return <FromCache keyed={cached} />;
     if (path === "/create" && CreatePage)
       return (
         <Suspense fallback={null}>
@@ -71,5 +73,11 @@ function Generated({ id }: { readonly id: string }) {
 
 function FromJob({ id }: { readonly id: string }) {
   const from = useMemo(() => ({ job: id }), [id]);
+  return <GeneratedWorld from={from} />;
+}
+
+/** A world the local API keeps by paper and version (R13, ADR-0053). */
+function FromCache({ keyed }: { readonly keyed: string }) {
+  const from = useMemo(() => ({ cached: keyed }), [keyed]);
   return <GeneratedWorld from={from} />;
 }

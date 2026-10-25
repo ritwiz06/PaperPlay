@@ -251,3 +251,42 @@ a {
     font-size: 0.8125rem;
   }
 }
+
+/* A job's world while its levels are still arriving (R13): above the stage, never covering the level card. */
+.arriving {
+  position: fixed;
+  z-index: 40;
+  top: calc(max(0.5rem, env(safe-area-inset-top)) + 4.5rem);
+  right: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  max-width: min(24rem, calc(100vw - 2rem));
+  padding: 0.5rem 0.875rem;
+  border: 2px solid var(--ink, #172b2b);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--lime, #d4f581) 55%, var(--cream, #f8faee));
+  color: var(--ink, #172b2b);
+  font-size: 0.875rem;
+  box-shadow: 3px 3px 0 var(--ink, #172b2b);
+}
+.arriving p {
+  margin: 0;
+}
+.arriving button {
+  min-height: 36px;
+  padding: 0 0.875rem;
+  border: 2px solid var(--ink, #172b2b);
+  border-radius: 12px;
+  background: var(--cream, #f8faee);
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+}
+@media (max-width: 30rem) {
+  .arriving {
+    top: calc(max(0.5rem, env(safe-area-inset-top)) + 7rem);
+    left: 1rem;
+  }
+}

@@ -9,6 +9,7 @@ import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { JobEvent, TERMINAL_STATES, type JobState } from "@paperplay/contracts";
 import type { JobOutcome, JobSink, JobSource } from "@paperplay/pipeline/controller";
+import type { WorldCache } from "./cache.ts";
 
 export type JobRunner = (source: JobSource, sink: JobSink, signal: AbortSignal) => Promise<JobOutcome>;
 
@@ -38,11 +39,14 @@ export class JobStore {
   private readonly runner: JobRunner;
   private readonly folder: string | null;
   private readonly now: () => string;
+  private readonly cache: WorldCache | null;
 
-  constructor(runner: JobRunner, folder: string | null = DATA_DIR, now: () => string = () => new Date().toISOString()) {
+  /** With a cache, a world a job makes ready is kept by its paper and version (R13, ADR-0053). */
+  constructor(runner: JobRunner, folder: string | null = DATA_DIR, now: () => string = () => new Date().toISOString(), cache: WorldCache | null = null) {
     this.runner = runner;
     this.folder = folder;
     this.now = now;
+    this.cache = cache;
   }
 
   get(id: string): Job | undefined {
@@ -66,6 +70,7 @@ export class JobStore {
         job.events.push(event);
         job.state = state;
         if (folder) appendFileSync(join(folder, "events.jsonl"), `${JSON.stringify(event)}\n`);
+        if (state === "ready" && job.artifacts.has("world")) this.cache?.put(raw, id, job.artifacts.get("world"), event.at);
         for (const listener of job.listeners) listener(event);
       },
       artifact: (name, value) => {

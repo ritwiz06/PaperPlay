@@ -1,4 +1,9 @@
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { RULES_VERSION } from "@paperplay/pipeline/controller";
 import { describe, expect, it } from "vitest";
+import { cacheKey, worldCache } from "../src/cache.ts";
 import type { JobRunner } from "../src/jobs.ts";
 import { parseSource } from "../src/jobs.ts";
 import { BODY_LIMIT, buildServer } from "../src/server.ts";
@@ -123,5 +128,63 @@ describe("[R11] the API's jobs", () => {
     } finally {
       await app.close();
     }
+  });
+});
+
+describe("[R13] worlds by paper and version, and the levels released before a job ends", () => {
+  /** A runner that reaches ready with a world, releasing three levels on the way, and counts its runs. */
+  const made = () => {
+    let runs = 0;
+    const runner: JobRunner = (_source, sink) => {
+      runs++;
+      for (const state of ["parsing", "planning", "building", "running"] as const) sink.emit(state, state, `now ${state}`);
+      sink.artifact("released", { levels: [{ level: 1, title: "A" }], of: 3, reviewed: false, world: { title: "Part of a world" } });
+      sink.emit("checking", "checking", "now checking");
+      sink.artifact("world", { title: "A world" });
+      sink.emit("ready", "ready", "now ready");
+      return Promise.resolve({ state: "ready" as const, message: "ready", world: null });
+    };
+    return { runner, runs: () => runs };
+  };
+
+  it("serves a paper made before at once, with no job, and makes it again only when asked for a fresh one", async () => {
+    const { runner, runs } = made();
+    const app = buildServer({ runner, dataFolder: null });
+    const first = await app.inject({ method: "POST", url: "/jobs", payload: { source: "arxiv:2506.19869v1" } });
+    expect(first.statusCode).toBe(202);
+    await settle();
+    const again = await app.inject({ method: "POST", url: "/jobs", payload: { source: "arxiv:2506.19869v1" } });
+    expect(again.statusCode).toBe(200);
+    expect(again.json()).toMatchObject({ cached: { world: "/worlds/arxiv-2506.19869v1", jobId: first.json<{ jobId: string }>().jobId, rules: RULES_VERSION } });
+    expect((await app.inject({ method: "GET", url: "/worlds/arxiv-2506.19869v1" })).json()).toEqual({ title: "A world" });
+    expect((await app.inject({ method: "GET", url: "/worlds/pmc-PMC1" })).statusCode).toBe(404);
+    expect(runs()).toBe(1);
+    const fresh = await app.inject({ method: "POST", url: "/jobs", payload: { source: "arxiv:2506.19869v1", fresh: true } });
+    expect(fresh.statusCode).toBe(202);
+    expect(runs()).toBe(2);
+  });
+
+  it("never serves a world kept under older rules, nor keeps one from a PDF", () => {
+    const folder = mkdtempSync(join(tmpdir(), "worlds-"));
+    try {
+      worldCache(folder, "2026-01-01").put("pmc:PMC12334037", "old-job", { title: "Old" }, "2026-01-02T00:00:00.000Z");
+      expect(worldCache(folder, "2026-01-01").get("pmc:pmc12334037")?.jobId).toBe("old-job");
+      expect(worldCache(folder).get("pmc:PMC12334037")).toBeNull();
+      expect(cacheKey("pdf:paper.pdf")).toBeNull();
+      expect(cacheKey("arxiv:2506.19869v1")).toBe("arxiv-2506.19869v1");
+    } finally {
+      rmSync(folder, { recursive: true, force: true });
+    }
+  });
+
+  it("gives the levels released so far before the job is ready, and refuses until there are some", async () => {
+    const app = buildServer({ runner: walk(["parsing", "planning"], 30), dataFolder: null });
+    const started = (await app.inject({ method: "POST", url: "/jobs", payload: { source: "pmc:PMC12334037" } })).json<{ jobId: string }>();
+    expect((await app.inject({ method: "GET", url: `/jobs/${started.jobId}/released` })).statusCode).toBe(409);
+    const { runner } = made();
+    const other = buildServer({ runner, dataFolder: null });
+    const job = (await other.inject({ method: "POST", url: "/jobs", payload: { source: "pmc:PMC12334037" } })).json<{ jobId: string }>();
+    await settle();
+    expect((await other.inject({ method: "GET", url: `/jobs/${job.jobId}/released` })).json()).toMatchObject({ of: 3, reviewed: false });
   });
 });

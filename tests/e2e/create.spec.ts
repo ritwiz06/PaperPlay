@@ -154,3 +154,31 @@ test("[R11] /create sends a PDF from your files as itself, by its content type, 
   await expect(page.getByText("from the PDF, 1 display equation(s) could not be read")).toBeVisible();
   expect(sent).toEqual({ type: "application/pdf", name: "paper.pdf", starts: "%PDF-" });
 });
+
+test("[R13] /create shows the levels that passed every check, and a way to play them before the job ends", async ({ page }) => {
+  await answer(page, [...READY.slice(0, 9), ["running", "release", "3 of 5 levels pass every check and are playable while the job goes on"], ["checking", "review", "two reviewers read the world"]]);
+  await page.route(`**/api/jobs/${JOB}/released`, (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ levels: [{ level: 1, title: "The hook" }, { level: 2, title: "Second" }, { level: 3, title: "Third" }], of: 5, reviewed: false, world: {} }) }),
+  );
+  await start(page);
+  const board = page.getByRole("region", { name: `Job ${JOB}` });
+  await expect(board.getByRole("heading", { name: "3 of 5 levels playable" })).toBeVisible();
+  await expect(board.getByText("the reviewers have not read them yet", { exact: false })).toBeVisible();
+  await expect(board.getByRole("link", { name: "Play the levels that passed" })).toHaveAttribute("href", `/world/job/${JOB}`);
+  await expect(board.getByRole("link", { name: "Play the world" })).toHaveCount(0);
+});
+
+test("[R13] /create serves a paper made before at once, and can make it again", async ({ page }) => {
+  let asked: unknown = null;
+  await page.route("**/api/jobs", (route) => {
+    asked = route.request().postDataJSON();
+    return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ cached: { world: "/worlds/arxiv-2506.19869v1", jobId: "job-made", madeAt: "2026-10-24T10:00:00.000Z", rules: "2026-10-20" } }) });
+  });
+  await start(page);
+  const made = page.getByRole("region", { name: "Made before" });
+  await expect(made).toContainText("made by job job-made at 2026-10-24 10:00, under today's rules");
+  await expect(made.getByRole("link", { name: "Play the world" })).toHaveAttribute("href", "/world/cached/arxiv-2506.19869v1");
+  await made.getByRole("button", { name: "Make it again" }).click();
+  await expect.poll(() => asked).toEqual({ source: "arxiv:2506.19869v1", fresh: true });
+  await expect(page.getByText("Agent-experiment worlds are made beforehand only, never on request.")).toBeVisible();
+});

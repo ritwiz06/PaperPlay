@@ -17,8 +17,12 @@
  *   report   rewrites eval/models.md from the saved results, calling nothing
  *   serve    the API on 127.0.0.1 with live model calls, recorded (or replayed when recorded
  *            already), for /create on this machine
- *   job      `job <source>`: one job, with no server, as /create would start it (an arXiv id
- *            with its version or a PMCID), its events and artifacts kept in apps/api/data/jobs/
+ *   job      `job <source> [--fresh]`: one job, with no server, as /create would start it (an arXiv id
+ *            with its version or a PMCID), its events and artifacts kept in apps/api/data/jobs/; a
+ *            paper made before under today's rules is served from the cache unless --fresh, which
+ *            also asks every call anew, recorded in apps/api/data/recordings/ (R13, ADR-0053)
+ *   prebuild `prebuild <source>... | --corpus [--fresh]`: makes each paper's world in turn, so a
+ *            request for it is served at once; agent-experiment worlds are made only so (ADR-0053)
  *   corpus-route  ingests every paper of fixtures/papers/corpus.json as a job would and runs the
  *            router on it, recorded; writes eval/routing/corpus-routes.json, the router's family,
  *            tier and reason for each, and what ingest read, never the paper's text (ADR-0052)
@@ -39,6 +43,7 @@ import { outboundFetch } from "../apps/api/src/contact.ts";
 import { CONFIG_FILE, loadModelConfig } from "../apps/api/src/models/config.ts";
 import { liveClient } from "../apps/api/src/models/live.ts";
 import { pipelineRunner } from "../apps/api/src/runner.ts";
+import { worldCache } from "../apps/api/src/cache.ts";
 import { JobStore, parseSource } from "../apps/api/src/jobs.ts";
 import { buildServer } from "../apps/api/src/server.ts";
 import { runDesignBakeoff, type DesignResults } from "./bakeoff/design.ts";
@@ -202,13 +207,23 @@ async function serve(): Promise<void> {
   console.log(`PaperPlay API listening on http://127.0.0.1:${port}, with live model calls, recorded`);
 }
 
-async function job(): Promise<void> {
-  const raw = process.argv.slice(3).find((value) => !value.startsWith("--")) ?? "";
+/** Recordings a fresh job makes, kept apart, so the committed ones the bake-offs replay are never overwritten. */
+const FRESH_RECORDINGS = join(import.meta.dirname, "..", "apps", "api", "data", "recordings");
+
+/** One paper's job to its end: served from the cache when made before under today's rules, unless fresh. */
+async function oneJob(raw: string, fresh: boolean): Promise<void> {
   const source = parseSource(raw);
-  if (!source) throw new Error(`job takes an arXiv id with its version or a PMCID, such as pmc:PMC12334037, not "${raw}"`);
+  if (!source) throw new Error(`a job takes an arXiv id with its version or a PMCID, such as pmc:PMC12334037, not "${raw}"`);
+  const cache = worldCache();
+  const kept = fresh ? null : cache.get(raw);
+  if (kept) {
+    console.log(`${raw}: served from the cache, made by job ${kept.jobId} at ${kept.madeAt} under the rules of ${kept.rules}`);
+    return;
+  }
   const config = loadModelConfig();
-  const client = resumingClient(liveClient(config), directoryStore(RECORDINGS));
-  const store = new JobStore(pipelineRunner(client, config, outboundFetch()));
+  // Fresh: every call asked of the gateway, as for a paper never seen, and recorded apart.
+  const client = fresh ? recordingClient(liveClient(config), directoryStore(FRESH_RECORDINGS)) : resumingClient(liveClient(config), directoryStore(RECORDINGS));
+  const store = new JobStore(pipelineRunner(client, config, outboundFetch()), undefined, undefined, cache);
   const started = store.start(raw, source);
   console.log(`job ${started.id}: ${raw}, its events in apps/api/data/jobs/${started.id}/events.jsonl`);
   await new Promise<void>((resolve) => {
@@ -221,6 +236,29 @@ async function job(): Promise<void> {
   });
   const ended = store.get(started.id);
   console.log(`job ${started.id} ended ${ended?.state ?? "?"}: ${ended?.events.at(-1)?.message ?? ""}`);
+}
+
+async function job(): Promise<void> {
+  await oneJob(process.argv.slice(3).find((value) => !value.startsWith("--")) ?? "", process.argv.includes("--fresh"));
+}
+
+/**
+ * Pre-builds a list of papers, one job at a time so the gateway is never asked for more at once
+ * than one job asks: the papers named, or with --corpus every paper of fixtures/papers/corpus.json.
+ * A paper that fails is said and the next begins.
+ */
+async function prebuild(): Promise<void> {
+  const named = process.argv.slice(3).filter((value) => !value.startsWith("--"));
+  const corpus = process.argv.includes("--corpus") ? (JSON.parse(readFileSync(join(import.meta.dirname, "..", "fixtures", "papers", "corpus.json"), "utf8")) as { papers: { version: string }[] }).papers.map((paper) => `arxiv:${paper.version}`) : [];
+  const sources = [...named, ...corpus];
+  if (sources.length === 0) throw new Error("prebuild takes the papers to make, as arxiv:<id>v<n> or pmc:PMC<n>, or --corpus");
+  for (const raw of sources) {
+    try {
+      await oneJob(raw, process.argv.includes("--fresh"));
+    } catch (error) {
+      console.log(`${raw}: ${error instanceof Error ? error.message.split("\n")[0] : String(error)}`);
+    }
+  }
 }
 
 /**
@@ -255,7 +293,7 @@ async function corpusRoute(): Promise<void> {
   }
 }
 
-const commands: Readonly<Record<string, () => Promise<void>>> = { models, probe, bakeoff, design, rescore, report, serve, job, "corpus-route": corpusRoute };
+const commands: Readonly<Record<string, () => Promise<void>>> = { models, probe, bakeoff, design, rescore, report, serve, job, prebuild, "corpus-route": corpusRoute };
 const run = command === undefined ? undefined : commands[command];
 if (!run) {
   console.error(`usage: npm run pipeline:live -- <${Object.keys(commands).join("|")}>`);

@@ -2,8 +2,10 @@
  * /create, on a local development server only (ADR-0030): paste an arXiv id or a PMCID, and watch
  * the job's real states arrive from the API over server-sent events, as a storyboard (R11). There is
  * no progress bar and no time estimate: a stage is done when the job has left it. A failure, an
- * unsupported paper or a question for the owner says exactly why, in the job's own words. The
- * production build holds none of this; the public site only plays worlds built beforehand.
+ * unsupported paper or a question for the owner says exactly why, in the job's own words. Levels
+ * that pass every check are playable before the job ends, and the storyboard shows the rest arriving;
+ * a paper made before is served at once (R13, ADR-0053). The production build holds none of this;
+ * the public site only plays worlds built beforehand.
  */
 import type { JobEvent, JobState } from "@paperplay/contracts";
 import { useEffect, useRef, useState, type FormEvent } from "react";
@@ -26,8 +28,23 @@ const ENDINGS: Readonly<Partial<Record<JobState, string>>> = {
   cancelled: "Cancelled",
 };
 
+/** The levels released so far: each passed every check; no reviewer has read them yet (R13). */
+interface Released {
+  readonly levels: readonly { readonly level: number; readonly title: string }[];
+  readonly of: number;
+}
+
+/** A paper made before, under today's rules: its world's address, and the job that made it. */
+interface Cached {
+  readonly world: string;
+  readonly jobId: string;
+  readonly madeAt: string;
+}
+
 export function CreatePage() {
   const [source, setSource] = useState("");
+  const [released, setReleased] = useState<Released | null>(null);
+  const [cached, setCached] = useState<Cached | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
   const [events, setEvents] = useState<JobEvent[]>([]);
@@ -36,30 +53,44 @@ export function CreatePage() {
 
   useEffect(() => () => stream.current?.close(), []);
 
-  const start = async (event: FormEvent) => {
-    event.preventDefault();
+  const start = async (event: FormEvent | null, fresh = false) => {
+    event?.preventDefault();
     setError(null);
     setEvents([]);
+    setReleased(null);
+    setCached(null);
+    setJobId(null);
     stream.current?.close();
     // A PDF from this machine goes as itself; an identifier as a line of JSON.
     const request = file
       ? fetch(`/api/jobs/pdf?name=${encodeURIComponent(file.name)}`, { method: "POST", headers: { "content-type": "application/pdf" }, body: file })
-      : fetch("/api/jobs", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ source: source.trim() }) });
+      : fetch("/api/jobs", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ source: source.trim(), ...(fresh ? { fresh: true } : {}) }) });
     const response = await request.catch(() => null);
     if (!response) {
       setError("The API is not running. Start it with npm run dev:api, or npm run pipeline:live -- serve for live model calls.");
       return;
     }
-    const body = (await response.json()) as { jobId?: string; error?: string };
+    const body = (await response.json()) as { jobId?: string; error?: string; cached?: Cached };
+    if (response.ok && body.cached) {
+      setCached(body.cached);
+      return;
+    }
     if (!response.ok || !body.jobId) {
       setError(body.error ?? `The API answered ${response.status}.`);
       return;
     }
     setJobId(body.jobId);
     const events = new EventSource(`/api/jobs/${body.jobId}/events`);
+    const id = body.jobId;
     events.addEventListener("state", (message) => {
       const parsed = JSON.parse((message as MessageEvent<string>).data) as JobEvent;
       setEvents((seen) => (seen.some((entry) => entry.seq === parsed.seq) ? seen : [...seen, parsed]));
+      // Levels that passed every check: which, of how many, as the job releases them.
+      if (parsed.step === "release")
+        void fetch(`/api/jobs/${id}/released`)
+          .then((answer) => (answer.ok ? (answer.json() as Promise<Released>) : null))
+          .then((value) => value && setReleased(value))
+          .catch(() => undefined);
     });
     events.onerror = () => events.close();
     stream.current = events;
@@ -85,6 +116,7 @@ export function CreatePage() {
         <p className="create-local">On this machine only: the public site never runs this page.</p>
         <h1>Make a world from a paper</h1>
         <p>Paste an arXiv id with its version or a PubMed Central id, or choose a PDF. PaperPlay makes worlds from compartment-model papers, so far.</p>
+        <p>A world takes up to twelve minutes; its first levels are playable as soon as they pass their checks. Agent-experiment worlds are made beforehand only, never on request.</p>
       </header>
       <form className="create-form" onSubmit={(event) => void start(event)}>
         <label htmlFor="create-source">Paper</label>
@@ -108,6 +140,20 @@ export function CreatePage() {
         <p className="create-error" role="alert">
           {error}
         </p>
+      ) : null}
+      {cached ? (
+        <section className="storyboard story-cached" aria-labelledby="cached-title">
+          <h2 id="cached-title">Made before</h2>
+          <p>
+            This paper's world was made by job {cached.jobId} at {cached.madeAt.slice(0, 16).replace("T", " ")}, under today's rules, and passed every check then. It is served as it was made.
+          </p>
+          <p className="story-play">
+            <a href={`/world/cached/${cached.world.replace(/^\/worlds\//, "")}`}>Play the world</a>{" "}
+            <button type="button" className="story-again" onClick={() => void start(null, true)}>
+              Make it again
+            </button>
+          </p>
+        </section>
       ) : null}
       {jobId ? (
         <section className="storyboard" aria-labelledby="storyboard-title" data-state={last?.state ?? "received"}>
@@ -143,6 +189,26 @@ export function CreatePage() {
             <div className={`story-ending story-${ending.state}`} role="status">
               <h3>{ENDINGS[ending.state]}</h3>
               <p>{ending.message}</p>
+            </div>
+          ) : null}
+          {released && last?.state !== "ready" ? (
+            <div className="story-levels" role="status">
+              <h3>
+                {released.levels.length} of {released.of} levels playable
+              </h3>
+              <p>Each passed every check; the reviewers have not read them yet. The rest arrive as they pass.</p>
+              <ul>
+                {released.levels.map((level) => (
+                  <li key={level.level}>
+                    Level {level.level}: {level.title}
+                  </li>
+                ))}
+              </ul>
+              {!ending || ending.state === "failed" ? (
+                <p className="story-play">
+                  <a href={`/world/job/${jobId}`}>Play the levels that passed</a>
+                </p>
+              ) : null}
             </div>
           ) : null}
           {last?.state === "ready" ? (

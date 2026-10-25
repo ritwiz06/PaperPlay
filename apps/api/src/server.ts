@@ -2,18 +2,22 @@ import { TERMINAL_STATES, type JobEvent } from "@paperplay/contracts";
 import Fastify, { type FastifyInstance } from "fastify";
 import { z } from "zod";
 import { PDF_LIMITS } from "@paperplay/pipeline/ingest";
+import { CACHE_DIR, cacheKey, worldCache } from "./cache.ts";
 import { JobStore, parseSource, type JobRunner } from "./jobs.ts";
 
 /** The largest request body the API reads: a job's request is a line of JSON. */
 export const BODY_LIMIT = 16 * 1024;
 
-const JobRequest = z.strictObject({ source: z.string().min(1).max(200) });
+/** A request for a world; fresh asks for it to be made again even when one is kept (R13). */
+const JobRequest = z.strictObject({ source: z.string().min(1).max(200), fresh: z.boolean().optional() });
 
 export interface ServerOptions {
   /** Runs a job's pipeline: with recordings under `npm run dev:api`, live only under `npm run pipeline:live -- serve`. */
   readonly runner?: JobRunner;
   /** Where jobs are kept, or null to keep them in memory only, as tests do. */
   readonly dataFolder?: string | null;
+  /** Where ready worlds are kept by paper and version; in memory when null, and by default beside the jobs, or in memory when they are. */
+  readonly cacheFolder?: string | null;
 }
 
 /**
@@ -23,13 +27,14 @@ export interface ServerOptions {
  */
 export function buildServer(options: ServerOptions = {}): FastifyInstance {
   const app = Fastify({ logger: false, bodyLimit: BODY_LIMIT });
-  const store = options.runner ? new JobStore(options.runner, options.dataFolder === undefined ? undefined : options.dataFolder) : null;
+  const cache = worldCache(options.cacheFolder !== undefined ? options.cacheFolder : options.dataFolder === null ? null : CACHE_DIR);
+  const store = options.runner ? new JobStore(options.runner, options.dataFolder === undefined ? undefined : options.dataFolder, undefined, cache) : null;
   app.get("/health", () => ({ status: "ok" }));
   // The API has no pages: its root says so, and where the app is, rather than "Route GET:/ not found".
   app.get("/", () => ({
     service: "PaperPlay API",
     message: "This is the API behind the PaperPlay web app, and it has no pages. Run `npm run dev` and open the app, at http://127.0.0.1:5173 by default: /library lists every world, and /create makes one, reaching this API through /api.",
-    routes: ["GET /health", "GET /jobs", "POST /jobs", "POST /jobs/pdf", "GET /jobs/:id", "DELETE /jobs/:id", "GET /jobs/:id/events", "GET /jobs/:id/artifacts/:name", "GET /jobs/:id/world"],
+    routes: ["GET /health", "GET /jobs", "POST /jobs", "POST /jobs/pdf", "GET /jobs/:id", "DELETE /jobs/:id", "GET /jobs/:id/events", "GET /jobs/:id/artifacts/:name", "GET /jobs/:id/world", "GET /jobs/:id/released", "GET /worlds/:key"],
   }));
 
   // This server's jobs, for the library on a development server: each world made here, by job.
@@ -51,6 +56,9 @@ export function buildServer(options: ServerOptions = {}): FastifyInstance {
     if (!parsed.success) return reply.code(400).send({ error: "send {\"source\": \"arxiv:<id>v<n>\"} or {\"source\": \"pmc:PMC<n>\"}" });
     const source = parseSource(parsed.data.source);
     if (!source) return reply.code(400).send({ error: `${parsed.data.source} is not an arXiv id with its version or a PMCID` });
+    // A paper made before, under today's rules, is served at once and no job runs (R13, ADR-0053).
+    const kept = parsed.data.fresh === true ? null : cache.get(parsed.data.source);
+    if (kept) return reply.code(200).send({ cached: { world: `/worlds/${cacheKey(parsed.data.source) ?? ""}`, jobId: kept.jobId, madeAt: kept.madeAt, rules: kept.rules } });
     const job = store.start(parsed.data.source, source);
     return reply.code(202).send({ jobId: job.id, state: job.state, events: `/jobs/${job.id}/events` });
   });
@@ -90,6 +98,21 @@ export function buildServer(options: ServerOptions = {}): FastifyInstance {
     if (!job) return reply.code(404).send({ error: "no such job" });
     if (job.state !== "ready") return reply.code(409).send({ error: `the job is ${job.state}, not ready` });
     return job.artifacts.get("world");
+  });
+
+  // The levels released so far (R13, ADR-0053): each passed every check, and no reviewer has read them yet.
+  app.get<{ Params: { id: string } }>("/jobs/:id/released", async (request, reply) => {
+    const job = store?.get(request.params.id);
+    if (!job) return reply.code(404).send({ error: "no such job" });
+    if (!job.artifacts.has("released")) return reply.code(409).send({ error: "no level of this job has passed its checks yet" });
+    return job.artifacts.get("released");
+  });
+
+  // A world kept by its paper and version, made by an earlier job under today's rules (R13).
+  app.get<{ Params: { key: string } }>("/worlds/:key", async (request, reply) => {
+    const kept = cache.getByKey(request.params.key);
+    if (!kept) return reply.code(404).send({ error: "no world is kept for that paper under today's rules" });
+    return kept.world;
   });
 
   app.get<{ Params: { id: string }; Querystring: { after?: string } }>("/jobs/:id/events", (request, reply) => {

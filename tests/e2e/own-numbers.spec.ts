@@ -60,3 +60,15 @@ for (const size of [
     expect(results.violations.map((violation) => `${violation.id}: ${violation.help}`)).toEqual([]);
   });
 }
+
+test("[R13] a job still running plays the levels it released, and says the reviewers have not read them", async ({ page }) => {
+  const world = JSON.parse(readFileSync(join(import.meta.dirname, "..", "..", "fixtures", "worldspecs", "generated", "pmc-PMC12334037-2026-10-18-2.json"), "utf8")) as { title: string; levels: unknown[] };
+  await page.route("**/api/jobs/still-running/world", (route) => route.fulfill({ status: 409, contentType: "application/json", body: JSON.stringify({ error: "the job is running, not ready" }) }));
+  await page.route("**/api/jobs/still-running/released", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ levels: world.levels.map((_, index) => ({ level: index + 1, title: "" })), of: 5, reviewed: false, world }) }));
+  await page.route("**/api/jobs/still-running/events", (route) => route.fulfill({ status: 200, contentType: "text/event-stream", body: "" }));
+  await page.goto("/world/job/still-running");
+  await expect(page.getByRole("heading", { name: world.title, level: 1 })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole("status").filter({ hasText: "Still being made" })).toContainText(`${world.levels.length} of 5 levels have passed every check and are playable; the reviewers have not read them yet.`);
+  const results = await new AxeBuilder({ page }).withTags(WCAG).analyze();
+  expect(results.violations.map((violation) => violation.id)).toEqual([]);
+});
