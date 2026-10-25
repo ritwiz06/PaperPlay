@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "074e48a5af06a7188e5efbde140a293aa2311bfbf2f6e4cbe58cee44f806ff47",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\n\n\n  \"domain\": \"epidemiology\",\n  \"family\": \"compartments\",\n  \"mechanism\": \"SVEITRS compartmental ODE model of tuberculosis transmission with mass-action incidence, vaccination, treatment, and recovery flows, plus R0 stability and sensitivity analysis\",\n  \"reason\": \"The paper's core mechanism is a well-mixed compartmental system of ODEs (S, V, E, I, T, R) with standard flow terms and no explicit contact-network structure; this is exactly the compartments family, which is released.\",\n  \"tier\": \"A\"\n}",
+    "usage": {
+      "promptTokens": 1690,
+      "completionTokens": 127,
+      "totalTokens": 1817
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-25T02:04:26.610Z"
+}
