@@ -30,7 +30,16 @@ export const WeightsManifest = z.object({
   bytes: z.int(),
   sha256: z.string().regex(/^[0-9a-f]{64}$/),
   tensors: z.array(z.object({ name: z.string(), shape: z.array(z.int()), offset: z.int(), count: z.int() })),
+  /** The table task's answers, 10 by 10. */
+  table: z.array(z.array(z.int())).optional(),
 });
+
+/** The attention.toy task a manifest's words name. */
+export function taskOf(manifest: WeightsManifest): "previous-plus-mirror" | "previous-minus-mirror" | "previous-mirror-table" {
+  if (manifest.task.startsWith("previous digit minus")) return "previous-minus-mirror";
+  if (manifest.task.startsWith("a fixed random table")) return "previous-mirror-table";
+  return "previous-plus-mirror";
+}
 export type WeightsManifest = z.infer<typeof WeightsManifest>;
 
 /** The weights in weights.bin, each float32 read exactly into a double; a wrong size or shape is refused. */

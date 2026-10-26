@@ -53,3 +53,21 @@ describe("the attention family's candidate levels on the trained miniature (ADR-
     expect(find("heads", "accuracy")).toBeUndefined();
   });
 });
+
+describe("the multi-head level, on the table miniature (ADR-0057's amendment)", () => {
+  const root = join(import.meta.dirname, "..", "..", "..");
+  const load = (name: string) => {
+    const folder = join(root, "fixtures", "weights", name);
+    const manifest = WeightsManifest.parse(JSON.parse(readFileSync(join(folder, "manifest.json"), "utf8")));
+    return { manifest, weights: readWeights(new Uint8Array(readFileSync(join(folder, "weights.bin"))), manifest), inputs: (JSON.parse(readFileSync(join(folder, "check.json"), "utf8")) as { inputs: number[][] }).inputs };
+  };
+  const two = load("miniature-table-16-2-heads");
+  const one = load("miniature-table-16-1-head");
+  const candidates = attentionCandidates({ tokens: two.inputs[0] ?? [], vocab: 10, dModel: 16, heads: 2, scaled: 1, positional: 1, causal: 0, recurrent: 0, weights: two.weights, task: "previous-mirror-table", ...(two.manifest.table ? { table: two.manifest.table } : {}) }, { inputs: two.inputs, oneHead: one.weights });
+
+  it("finds one head instead of two lowering accuracy, the paper's §3.2.2, on at least 16 of 20 held-out inputs", () => {
+    const level = candidates.find((candidate) => candidate.level.whatIf.setting === "heads" && candidate.level.measure === "accuracy");
+    expect(level?.level).toMatchObject({ relation: "lower", section: "§3.2.2" });
+    expect(level?.holds ?? 0).toBeGreaterThanOrEqual(16);
+  });
+});

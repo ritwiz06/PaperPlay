@@ -1,0 +1,266 @@
+{
+  "schemaVersion": "weights/1",
+  "task": "a fixed random table of the previous and the mirrored digit, over 16 digits",
+  "architecture": {
+    "vocab": 10,
+    "length": 16,
+    "dModel": 16,
+    "dFF": 64,
+    "positional": "sinusoidal",
+    "scaled": true,
+    "residual": true,
+    "heads": 1
+  },
+  "training": {
+    "command": "cd training && uv run python train.py --task table --length 16 --write",
+    "commit": "80ea61e",
+    "torch": "2.14.1",
+    "python": "3.12.13",
+    "platform": "Darwin arm64",
+    "steps": 8000,
+    "batch": 256,
+    "learningRate": 0.003,
+    "heldOut": 2000,
+    "seed": 19
+  },
+  "name": "miniature-table-16-1-head",
+  "table": [
+    [
+      5,
+      2,
+      1,
+      6,
+      3,
+      7,
+      7,
+      9,
+      8,
+      1
+    ],
+    [
+      8,
+      1,
+      8,
+      7,
+      2,
+      0,
+      6,
+      2,
+      3,
+      8
+    ],
+    [
+      6,
+      0,
+      5,
+      1,
+      8,
+      8,
+      3,
+      7,
+      0,
+      8
+    ],
+    [
+      1,
+      0,
+      6,
+      3,
+      5,
+      6,
+      6,
+      7,
+      5,
+      0
+    ],
+    [
+      9,
+      1,
+      4,
+      2,
+      2,
+      1,
+      4,
+      8,
+      2,
+      2
+    ],
+    [
+      9,
+      9,
+      7,
+      3,
+      0,
+      7,
+      0,
+      5,
+      2,
+      2
+    ],
+    [
+      0,
+      7,
+      3,
+      2,
+      0,
+      0,
+      3,
+      9,
+      2,
+      9
+    ],
+    [
+      1,
+      2,
+      1,
+      5,
+      7,
+      2,
+      5,
+      6,
+      3,
+      8
+    ],
+    [
+      1,
+      1,
+      1,
+      5,
+      1,
+      9,
+      9,
+      7,
+      6,
+      9
+    ],
+    [
+      9,
+      3,
+      8,
+      3,
+      7,
+      3,
+      1,
+      7,
+      3,
+      7
+    ]
+  ],
+  "selection": {
+    "rule": "of 20 seeds, the most accurate on the held-out set, the lowest seed on a tie",
+    "specialised": null
+  },
+  "metrics": {
+    "seed": 19,
+    "accuracy": 0.7431,
+    "heads": [
+      {
+        "previous": 0.5818,
+        "mirrored": 0.1488
+      }
+    ],
+    "specialised": false
+  },
+  "dtype": "float32",
+  "byteOrder": "little",
+  "bytes": 13928,
+  "sha256": "217813a8791a454703e19b0c31fc242e4f65f3e52ceee019ed600873608ac150",
+  "tensors": [
+    {
+      "name": "embedding",
+      "shape": [
+        10,
+        16
+      ],
+      "offset": 0,
+      "count": 160
+    },
+    {
+      "name": "head0.q",
+      "shape": [
+        16,
+        16
+      ],
+      "offset": 640,
+      "count": 256
+    },
+    {
+      "name": "head0.k",
+      "shape": [
+        16,
+        16
+      ],
+      "offset": 1664,
+      "count": 256
+    },
+    {
+      "name": "head0.v",
+      "shape": [
+        16,
+        16
+      ],
+      "offset": 2688,
+      "count": 256
+    },
+    {
+      "name": "out",
+      "shape": [
+        16,
+        16
+      ],
+      "offset": 3712,
+      "count": 256
+    },
+    {
+      "name": "ff1",
+      "shape": [
+        16,
+        64
+      ],
+      "offset": 4736,
+      "count": 1024
+    },
+    {
+      "name": "ff1.bias",
+      "shape": [
+        64
+      ],
+      "offset": 8832,
+      "count": 64
+    },
+    {
+      "name": "ff2",
+      "shape": [
+        64,
+        16
+      ],
+      "offset": 9088,
+      "count": 1024
+    },
+    {
+      "name": "ff2.bias",
+      "shape": [
+        16
+      ],
+      "offset": 13184,
+      "count": 16
+    },
+    {
+      "name": "readout",
+      "shape": [
+        16,
+        10
+      ],
+      "offset": 13248,
+      "count": 160
+    },
+    {
+      "name": "readout.bias",
+      "shape": [
+        10
+      ],
+      "offset": 13888,
+      "count": 10
+    }
+  ]
+}

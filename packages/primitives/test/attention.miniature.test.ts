@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { attentionToy, readWeights, WeightsManifest, type AttentionParams } from "../src/attention/index.ts";
+import { attentionToy, previousMinusMirror, previousMirrorTable, readWeights, taskOf, WeightsManifest, type AttentionParams } from "../src/attention/index.ts";
 
 // The miniature's trained weights (ADR-0057): the bytes training/train.py exported, run by
 // attention.toy's TypeScript, against PyTorch's own outputs on 20 held-out inputs (check.json).
@@ -21,12 +21,13 @@ const load = (name: string) => {
   const check = JSON.parse(readFileSync(join(folder, "check.json"), "utf8")) as Check;
   return { manifest, bytes, weights: readWeights(bytes, manifest), check };
 };
-const MODELS = ["miniature-2-heads", "miniature-1-head"] as const;
+/** Every shipped miniature: the first task's, and the multi-head level's (ADR-0057's amendment). */
+const MODELS = ["miniature-2-heads", "miniature-1-head", "miniature-table-16-2-heads", "miniature-table-16-1-head"] as const;
 
 /** The setting a trained miniature runs in: the task's eight digits, its weights, its width. */
 export const miniatureParams = (name: (typeof MODELS)[number], tokens: readonly number[]): AttentionParams => {
   const { manifest, weights } = load(name);
-  return { tokens: [...tokens], vocab: manifest.architecture.vocab, dModel: manifest.architecture.dModel, heads: manifest.architecture.heads, scaled: 1, positional: 1, causal: 0, recurrent: 0, weights, task: "previous-plus-mirror" };
+  return { tokens: [...tokens], vocab: manifest.architecture.vocab, dModel: manifest.architecture.dModel, heads: manifest.architecture.heads, scaled: 1, positional: 1, causal: 0, recurrent: 0, weights, task: taskOf(manifest), ...(manifest.table ? { table: manifest.table } : {}) };
 };
 
 /** Every number a forward pass gives, as the hex of its bits, hashed: the same string in Node and the browser. */
@@ -78,6 +79,15 @@ describe("[R01] the miniature's trained weights (ADR-0057)", () => {
     const { check } = load("miniature-2-heads");
     expect(check.inputs[0]).toEqual([5, 4, 8, 6, 1, 7, 7, 0]);
     expect(digestOf(attentionToy.init(miniatureParams("miniature-2-heads", check.inputs[0] ?? []), 1))).toBe("0793fcc704ad35c433e7b06e569b962bc2c0b52c33906170d4c77b8f12f91170");
+  });
+
+  it("defines the new tasks by hand: minus wraps below 0, and the table reads by previous digit then mirrored digit", () => {
+    // [5, 4, 8, 6, 1, 7, 7, 0]: place 1's previous digit is the last, 0, and its mirror 0, so 0; place 2's
+    // are 5 and 7, so 5 − 7 = −2, which wraps to 8; place 5's are 6 and 6, so 0.
+    expect(previousMinusMirror([5, 4, 8, 6, 1, 7, 7, 0])).toEqual([0, 8, 7, 7, 0, 3, 3, 2]);
+    // A table of 3 × previous + mirrored, mod 10: place 4's previous digit is 8 and its mirror 1, so 25, read as 5.
+    const table = Array.from({ length: 10 }, (_, previous) => Array.from({ length: 10 }, (_, mirrored) => (previous * 3 + mirrored) % 10));
+    expect(previousMirrorTable([5, 4, 8, 6, 1, 7, 7, 0], table)).toEqual([0, 2, 9, 5, 4, 1, 5, 6]);
   });
 
   it("scores each input's answers against the task", () => {

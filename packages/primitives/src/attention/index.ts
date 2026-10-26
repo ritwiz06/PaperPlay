@@ -5,4 +5,4 @@
  */
 export { attentionToy, AttentionParams, AttentionState, entropyOf, pathLengthOf, positionalEncoding, type AttentionObservables } from "./primitive.ts";
 export { cos, exp, ln, orderFreeSum, pow2, sin, softmax, sqrt } from "./math.ts";
-export { previousMinusMirror, previousMirrorTable, previousPlusMirror, readWeights, TrainedWeights, WeightsManifest } from "./weights.ts";
+export { previousMinusMirror, previousMirrorTable, previousPlusMirror, readWeights, taskOf, TrainedWeights, WeightsManifest } from "./weights.ts";
