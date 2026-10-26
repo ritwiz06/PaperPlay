@@ -29,3 +29,7 @@ reference/private/
 
 # Claude Code agent worktrees: full copies of the repository
 .claude/worktrees/
+
+# The miniature's Python environment (ADR-0057); its weights are committed, the environment is not.
+training/.venv/
+training/__pycache__/

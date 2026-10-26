@@ -168,9 +168,10 @@ them (ADR-0053).
    plan said, until the weights are trained.
 2. **The scene spike** (2026-10-25, for the owner's review, unmerged): words as towers, attention as
    beams, one colour a head.
-3. **Training the miniature** offline in PyTorch on "previous digit plus mirrored digit":
-   deterministic, its weights committed as data, inference in the browser deterministic and checked
-   against Node's bits.
+3. **Training the miniature** (2026-10-25, done, ADR-0057): offline in PyTorch on "previous digit
+   plus mirrored digit", 20 seeds, its weights committed, the TypeScript matching PyTorch and the
+   browser matching Node to the bit. No seed's heads specialised, and one head answers as well as
+   two, so the multi-head level waits on the owner's choice of task.
 4. **The scene kit**, built properly once the spike's look is approved.
 5. **The results explorer's smallest form** (tier C), alongside, as every family's fallback.
 6. **Attention Is All You Need**, hand-authored, the family's reference world.
@@ -185,10 +186,12 @@ rule on level 4 (multi-head, §3.2.2), measured once the miniature is trained:
    anti-diagonal, so attention reads clearly, but one head does the whole task and the multi-head
    level would show nothing.
 2. **Previous plus mirror:** at each position, the sum (mod 10) of the digit before it and the digit at
-   the mirrored position. Each output needs two places at once, so two heads specialise, one on the
-   diagonal below, one on the anti-diagonal, and a single head must average the two and gets it
-   wrong: the What-if's measure, the distinct positions the heads attend, differs by a margin the
-   rule can see. The pick, unless training shows otherwise.
+   the mirrored position. Each output needs two places at once, so I expected two heads to
+   specialise and a single head, averaging the two, to get it wrong. Training showed otherwise
+   (ADR-0057): the answer depends only on the two digits' sum, which an even average still carries;
+   no seed of 20 specialised, and one head reached 100%. An asymmetric task, (previous − mirrored)
+   mod 10, separates them better in a three-seed probe (two heads up to 99.4%, one head at most
+   70.6%), the owner's choice.
 
 ## Decided by the owner, 2026-10-24 (ADR-0054)
 

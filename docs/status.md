@@ -1,6 +1,6 @@
 # Status
 
-Updated 2026-10-25: the transcriptions' decision, and the attention primitive ([log](sessions/2026-10-25-2.md)).
+Updated 2026-10-25: the miniature trained ([log](sessions/2026-10-25-3.md)).
 A snapshot, rewritten every session and kept under 80 lines; history is in
 [progress.md](progress.md) and the session logs.
 
@@ -8,7 +8,7 @@ A snapshot, rewritten every session and kept under 80 lines; history is in
 
 - **Gate:** G2 Verified authored world is current, tagged `v0.2.0` at `b37c7dc`; G1 is `v0.1.0`.
   Next: G3, whose gate is the attention family's first generated world, BERT (ADR-0052).
-- **Working commit:** `9cd1189`, the branch's last code commit, landed on `main` with this status.
+- **Working commit:** `f57b0bd`, the branch's last code commit, landed on `main` with this status.
 - **Purpose:** teaching the 34 AI and ML papers of `docs/papers/corpus.md`, the first set of 11
   chosen (ADR-0054); biomedical papers later, the compartment family kept.
 - **R13, fast generation** (ADR-0053, ADR-0055): a job has 15 minutes. Planning is in code: candidate
@@ -16,9 +16,11 @@ A snapshot, rewritten every session and kept under 80 lines; history is in
   7.9 min with its transcriptions replayed, first levels playable at 1.3 min; fresh, twice stopped at
   15 min in the transcriptions (6 to 7 min each, then a repair). Not yet met for an unseen paper.
 - **The router** knows each family's reach: all 34 AI papers are tier C until their families exist.
-- **The attention family** (ADR-0054): `attention.toy@1.0.0`, deterministic in pure TypeScript with
-  its own exp and softmax, its 13 oracles passing, its candidate generator finding ten levels from
-  code. A scene spike, towers and beams, waits on its own branch for the owner's review.
+- **The attention family** (ADR-0054, ADR-0057): `attention.toy@1.1.0`, deterministic in pure
+  TypeScript, now running the trained miniature as PyTorch does and the browser to Node's bit. The
+  miniature, 20 seeds: no seed's heads specialised, and one head answers the task as well as two, so
+  the multi-head level waits on a task. The scene spike, re-shot with the trained weights, waits on
+  its own branch for review.
 - **Transcription by selection** (ADR-0056): decided, built before biomedical work.
 - **Worktrees:** the main one, and `PaperPlay-land`, land's checkout for the gate (ADR-0051).
 - **Model provider:** an OpenAI-compatible gateway, its address and key in `apps/api/.env` only;
@@ -50,15 +52,16 @@ the same commit. `npm run land` runs it again before it pushes.
 ## Decisions waiting on the owner
 
 1. **The attention scene spike**, branch `g3/attention-scene-spike`: its look, before the kit.
-2. **CI minutes:** a public repository, the Student Pack, or a self-hosted runner; before a public
+2. **The multi-head level's task** (ADR-0057): an asymmetric task, such as (previous − mirrored)
+   mod 10, or another lesson for §3.2.2.
+3. **CI minutes:** a public repository, the Student Pack, or a self-hosted runner; before a public
    repository, the noreply address for future commits (the 2026-10-20 log).
-3. **The old gateway key**, replaced on 2026-10-24 and still valid: revoke it if it should not be.
-4. **Paid branch protection** (ADR-0009) and **the deploy** (ADR-0017).
+4. **The old gateway key**, replaced on 2026-10-24 and still valid: revoke it if it should not be.
+5. **Paid branch protection** (ADR-0009) and **the deploy** (ADR-0017).
 
 ## Next three actions
 
-1. Training the miniature offline in PyTorch on "previous digit plus mirrored digit", its weights
-   committed, the browser's bits checked against Node's.
+1. The multi-head level's task, once chosen: train it as this one was.
 2. The scene kit, once the spike's look is approved; the explorer's smallest form beside it.
 3. Attention Is All You Need by hand; then BERT, G3's gate, its extraction by selection (ADR-0056).
 

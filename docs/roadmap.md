@@ -288,9 +288,12 @@ out. PubMed Central ingest, once here, landed in G3a.3.
   family's real reach (2026-10-25).
 - [x] The attention family, slice 1 (2026-10-25, ADR-0054): `attention.toy@1.0.0`, deterministic in
   pure TypeScript with its own exp and softmax, its oracles by hand, and its candidate generator.
-- [ ] The attention family, slices 2 to 7 (`docs/design/ai-papers.md`): the scene spike, for the
-  owner's review; the miniature trained offline in PyTorch; the scene kit; the explorer's smallest
-  form; Attention Is All You Need by hand; BERT generated, G3's gate.
+- [x] The attention family, slice 3 (2026-10-25, ADR-0057): the miniature trained offline in PyTorch
+  over 20 seeds, its weights committed, attention.toy@1.1.0 running them as PyTorch does, the
+  browser's bits Node's. Its heads did not specialise; the multi-head level waits on a task.
+- [ ] The attention family, slices 2 and 4 to 7 (`docs/design/ai-papers.md`): the scene spike, for the
+  owner's review; the scene kit; the explorer's smallest form; Attention Is All You Need by hand;
+  BERT generated, G3's gate.
 - [ ] Transcription by selection (ADR-0056), before biomedical work: code extracts the equations
   and values, the model selects; value sets by code; one reconciliation call; optimistic pipelining.
 
