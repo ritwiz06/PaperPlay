@@ -1078,6 +1078,22 @@ multiplication, division and exact bit operations, which every engine does ident
   level rule's Node run; a softmax on the engine's exp could rank two weights differently.
 - **Learn more:** [The softmax function](https://en.wikipedia.org/wiki/Softmax_function)
 
+### Why one attention head can be enough, and when it is not
+
+An attention head's output is a weighted average of the vectors of the words it looks at. If a
+task's answer depends only on what two inputs add up to, such as (previous + mirrored) mod 10, an
+average of their two vectors still carries that sum, so one head that looks at both positions at
+once can answer perfectly, and two heads have no reason to split the work. If the answer depends on
+which input is which, such as (previous − mirrored) mod 10, blending them loses exactly what is
+needed: one head's average cannot tell 3 − 5 from 5 − 3, while two heads, each keeping one digit
+apart, can. That is the claim of "Attention Is All You Need" §3.2.2, that a single head's averaging
+inhibits attending to different things at once.
+
+- **Used in:** `training/train.py`, `docs/decisions/ADR-0057-the-miniature.md`
+- **Why here:** The first miniature, trained on a symmetric task, solved it with one head as well as
+  with two; the multi-head level needs a task whose answer depends on order.
+- **Learn more:** [Vaswani et al. 2017, §3.2.2](https://arxiv.org/abs/1706.03762)
+
 ### Permutation equivariance
 
 A function is permutation equivariant when shuffling its input shuffles its output the same way.

@@ -59,8 +59,23 @@ export function readWeights(bytes: Uint8Array, manifest: WeightsManifest): Train
   };
 }
 
+/** Each position's two digits: the one before it (the last, before position 0) and its mirror. */
+const pairsOf = (tokens: readonly number[]): (readonly [number, number])[] => {
+  const n = tokens.length;
+  return tokens.map((_, i) => [tokens[(i - 1 + n) % n] ?? 0, tokens[n - 1 - i] ?? 0] as const);
+};
+
 /** "Previous digit plus mirrored digit": at position i, (x[i − 1] + x[n − 1 − i]) mod 10, the digit before 0 the last. */
 export function previousPlusMirror(tokens: readonly number[]): number[] {
-  const n = tokens.length;
-  return tokens.map((_, i) => ((tokens[(i - 1 + n) % n] ?? 0) + (tokens[n - 1 - i] ?? 0)) % 10);
+  return pairsOf(tokens).map(([previous, mirrored]) => (previous + mirrored) % 10);
+}
+
+/** "Previous digit minus mirrored digit" (ADR-0057's amendment): (x[i − 1] − x[n − 1 − i]) mod 10, from 0 to 9. */
+export function previousMinusMirror(tokens: readonly number[]): number[] {
+  return pairsOf(tokens).map(([previous, mirrored]) => (((previous - mirrored) % 10) + 10) % 10);
+}
+
+/** A fixed table of answers, one for each (previous, mirrored) pair, as the table task's manifest gives it. */
+export function previousMirrorTable(tokens: readonly number[], table: readonly (readonly number[])[]): number[] {
+  return pairsOf(tokens).map(([previous, mirrored]) => table[previous]?.[mirrored] ?? 0);
 }

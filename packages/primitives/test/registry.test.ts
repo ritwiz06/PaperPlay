@@ -4,13 +4,13 @@ import { flockPlanarWeighted } from "../src/agents/flock/index.ts";
 import { attentionToy } from "../src/attention/index.ts";
 
 describe("primitive registry", () => {
-  it("holds flock.planar.weighted at version 3.1.0, and attention.toy at 1.1.0 (ADR-0054, ADR-0057)", () => {
+  it("holds flock.planar.weighted at version 3.1.0, and attention.toy at 1.2.0 (ADR-0054, ADR-0057)", () => {
     const ref = { id: "flock.planar.weighted", version: "3.1.0" };
 
     expect(registry.has(ref)).toBe(true);
     expect(registry.get(ref)).toBe(flockPlanarWeighted);
-    expect(registry.get({ id: "attention.toy", version: "1.1.0" })).toBe(attentionToy);
-    expect(registry.list()).toEqual([ref, { id: "attention.toy", version: "1.1.0" }]);
+    expect(registry.get({ id: "attention.toy", version: "1.2.0" })).toBe(attentionToy);
+    expect(registry.list()).toEqual([ref, { id: "attention.toy", version: "1.2.0" }]);
   });
 
   it("matches ids and versions exactly", () => {

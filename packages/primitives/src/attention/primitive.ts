@@ -3,10 +3,10 @@ import { assertSeed, mulberry32 } from "../prng.ts";
 import type { Primitive, PrimitiveDescription } from "../types.ts";
 import { deepFreeze } from "../variables.ts";
 import { cos, exp, ln, orderFreeSum, sin, softmax, sqrt } from "./math.ts";
-import { previousPlusMirror, TrainedWeights } from "./weights.ts";
+import { previousMinusMirror, previousMirrorTable, previousPlusMirror, TrainedWeights } from "./weights.ts";
 
 /**
- * attention.toy@1.1.0 (ADR-0054, ADR-0057): one self-attention layer of a small transformer, deterministic in
+ * attention.toy@1.2.0 (ADR-0054, ADR-0057): one self-attention layer of a small transformer, deterministic in
  * pure TypeScript. Each token's embedding, with a sinusoidal positional encoding that can be turned
  * off, is projected per head into queries, keys and values; each query's scaled dot products with
  * the keys, divided by √dk unless that is switched off and with future positions masked when the
@@ -22,7 +22,7 @@ const bit = z.union([z.literal(0), z.literal(1)]);
 export const AttentionParams = z
   .strictObject({
     /** The input, as token ids below `vocab`, such as the digits of "previous plus mirror". */
-    tokens: z.array(z.int().min(0)).min(2).max(16),
+    tokens: z.array(z.int().min(0)).min(2).max(32),
     vocab: z.int().min(2).max(64),
     dModel: z.int().min(1).max(64),
     heads: z.int().min(1).max(8),
@@ -36,8 +36,10 @@ export const AttentionParams = z
     recurrent: bit,
     /** Trained weights (ADR-0057), in place of the seed's; with them, the miniature's whole block. */
     weights: TrainedWeights.optional(),
-    /** The task the answers are scored on, for the accuracy observable. */
-    task: z.literal("previous-plus-mirror").optional(),
+    /** The task the answers are scored on, for the accuracy observable (1.2.0 adds minus and a table). */
+    task: z.enum(["previous-plus-mirror", "previous-minus-mirror", "previous-mirror-table"]).optional(),
+    /** The table task's answers, 10 by 10, by previous digit then mirrored digit. */
+    table: z.array(z.array(z.int().min(0))).optional(),
   })
   .refine((params) => params.dModel % params.heads === 0, { error: "dModel must divide into the heads evenly" })
   .refine((params) => params.tokens.every((token) => token < params.vocab), { error: "every token must be below vocab" })
@@ -159,7 +161,8 @@ function init(params: AttentionParams, seed: number): AttentionState {
   const reversed = forward(parsed, weights, [...parsed.tokens].reverse());
   const n = parsed.tokens.length;
   const shuffleGap = Math.max(...pass.output.flatMap((row, i) => row.map((value, d) => Math.abs((reversed.output[n - 1 - i]?.[d] ?? 0) - value))));
-  const answers = parsed.task === "previous-plus-mirror" ? previousPlusMirror(parsed.tokens) : null;
+  const answers =
+    parsed.task === "previous-plus-mirror" ? previousPlusMirror(parsed.tokens) : parsed.task === "previous-minus-mirror" ? previousMinusMirror(parsed.tokens) : parsed.task === "previous-mirror-table" && parsed.table ? previousMirrorTable(parsed.tokens, parsed.table) : null;
   const accuracy = answers && pass.predictions.length > 0 ? pass.predictions.filter((answer, i) => answer === answers[i]).length / answers.length : null;
   return deepFreeze({ tokens: [...parsed.tokens], ...pass, accuracy, shuffleGap, recurrent: parsed.recurrent, causal: parsed.causal });
 }
@@ -220,7 +223,7 @@ const DEFAULTS: AttentionParams = { tokens: [3, 1, 4, 1, 5, 9, 2, 6], vocab: 10,
 
 export const attentionToy: Primitive<AttentionParams, AttentionState, AttentionObservables> & { readonly defaults: AttentionParams } = Object.freeze({
   id: "attention.toy",
-  version: "1.1.0",
+  version: "1.2.0",
   family: "attention" as const,
   chance: true,
   fixedTimestep: 1,

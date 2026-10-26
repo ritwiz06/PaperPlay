@@ -5,6 +5,7 @@ Run it from this folder:
 
     uv run python train.py              # train 20 seeds of each model, write results and weights
     uv run python train.py --seeds 3    # a quick look at three seeds, nothing written
+    uv run python train.py --task minus --write   # another task, its own results and weights
 
 The task: a sequence of 8 digits goes in; at each position i the answer is
 
@@ -52,6 +53,23 @@ from torch import nn
 LENGTH = 8  # digits in a sequence
 VOCAB = 10  # the digits 0 to 9
 
+# The task the answers come from (ADR-0057's amendment):
+#   plus   (previous + mirrored) mod 10, the first, whose answer depends only on the two digits' sum
+#   minus  (previous - mirrored) mod 10, whose answer depends on which digit is which
+#   table  a fixed random table of answers, one for every (previous, mirrored) pair: order matters,
+#          and there is no arithmetic shortcut
+TASK = "plus"
+TASKS = {
+    "plus": "previous digit plus mirrored digit, mod 10",
+    "minus": "previous digit minus mirrored digit, mod 10",
+    "table": "a fixed random table of the previous and the mirrored digit",
+}
+
+
+def lookup_table() -> torch.Tensor:
+    """The table task's answers, 10 by 10, the same for every seed, from their own generator."""
+    return torch.randint(0, VOCAB, (VOCAB, VOCAB), generator=torch.Generator().manual_seed(7))
+
 
 def previous_positions() -> list[int]:
     """For each position, the position before it: 0's is the last, 7."""
@@ -67,11 +85,15 @@ def answers(digits: torch.Tensor) -> torch.Tensor:
     """The right answer at every position, for a batch of sequences shaped (batch, LENGTH)."""
     previous = digits[:, previous_positions()]  # pick, for each position, the digit before it
     mirrored = digits[:, mirrored_positions()]  # and the digit at its mirror
+    if TASK == "minus":
+        return (previous - mirrored) % VOCAB  # torch's % keeps the result in 0 to 9, as Python's does
+    if TASK == "table":
+        return lookup_table()[previous, mirrored]
     return (previous + mirrored) % VOCAB
 
 
 def codes(digits: torch.Tensor) -> torch.Tensor:
-    """Each sequence as one number, 8 digits read in base 10, so sets of sequences compare fast."""
+    """Each sequence as one number, its digits read in base 10, so sets of sequences compare fast (up to 18 digits)."""
     weights = torch.tensor([10**p for p in range(LENGTH - 1, -1, -1)], dtype=torch.int64)
     return (digits * weights).sum(dim=1)
 
@@ -149,14 +171,18 @@ BATCH = 256
 LEARNING_RATE = 3e-3
 D_MODEL = 16
 D_FF = 64
-# A head "specializes" when more than this share of its attention lands on its position.
-MOSTLY = 0.5
+# Heads "split the work" (ADR-0057's amendment) when one head's attention on the previous position
+# is at least DOMINANT times its attention on the mirror, and another head's the reverse: what a
+# learner sees as two beams going different ways.
+DOMINANT = 2.0
+# Two heads "beat" one when their held-out accuracy is at least this much higher, on the same seed.
+BEATS = 0.10
 
 
-def configure(d_model: int, d_ff: int, steps: int) -> None:
-    """Sets the sizes a run uses, for trying others from the command line."""
-    global D_MODEL, D_FF, STEPS
-    D_MODEL, D_FF, STEPS = d_model, d_ff, steps
+def configure(d_model: int, d_ff: int, steps: int, task: str = "plus", length: int = 8) -> None:
+    """Sets the sizes and the task a run uses, for trying others from the command line."""
+    global D_MODEL, D_FF, STEPS, TASK, LENGTH
+    D_MODEL, D_FF, STEPS, TASK, LENGTH = d_model, d_ff, steps, task, length
 
 
 def held_out_set() -> torch.Tensor:
@@ -170,10 +196,13 @@ def train(seed: int, heads: int, held_out: torch.Tensor) -> Miniature:
     model = Miniature(D_MODEL, heads, D_FF)
     optimiser = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
     data = torch.Generator().manual_seed(10_000 + seed)  # the training sequences, from their own seed
-    excluded = codes(held_out)
+    # Sequences longer than 18 digits do not fit one number; among 10^19 or more, a training
+    # sequence meeting a held-out one is as good as impossible, so they are not excluded.
+    excluded = codes(held_out) if LENGTH <= 18 else None
     for _ in range(STEPS):
         digits = torch.randint(0, VOCAB, (BATCH, LENGTH), generator=data)
-        digits = digits[~torch.isin(codes(digits), excluded)]  # never a held-out sequence
+        if excluded is not None:
+            digits = digits[~torch.isin(codes(digits), excluded)]  # never a held-out sequence
         scores, _ = model(digits)
         # Cross-entropy at every position: how surprised the model is by each right answer.
         loss = nn.functional.cross_entropy(scores.reshape(-1, VOCAB), answers(digits).reshape(-1))
@@ -188,7 +217,7 @@ def measure(model: Miniature, held_out: torch.Tensor) -> dict:
     scores, weights = model(held_out)
     accuracy = (scores.argmax(dim=-1) == answers(held_out)).float().mean().item()
     # Attention mass on the previous and the mirrored position, per head, averaged over the
-    # positions where those two differ (at 0 and 4 they are the same position).
+    # positions where those two differ (in 8 digits, at 0 and 4 they are the same position).
     previous, mirrored = previous_positions(), mirrored_positions()
     rows = [i for i in range(LENGTH) if previous[i] != mirrored[i]]
     mass = []
@@ -196,9 +225,10 @@ def measure(model: Miniature, held_out: torch.Tensor) -> dict:
         on_previous = sum(weights[:, head, i, previous[i]].mean().item() for i in rows) / len(rows)
         on_mirrored = sum(weights[:, head, i, mirrored[i]].mean().item() for i in rows) / len(rows)
         mass.append({"previous": round(on_previous, 4), "mirrored": round(on_mirrored, 4)})
-    # Specialized: some head mostly on the previous position, and another head mostly on the mirror.
+    # Split: some head looks at the previous position at least twice as much as at the mirror,
+    # and another head the reverse.
     specialised = any(
-        a["previous"] > MOSTLY and b["mirrored"] > MOSTLY for i, a in enumerate(mass) for j, b in enumerate(mass) if i != j
+        a["previous"] >= DOMINANT * a["mirrored"] and b["mirrored"] >= DOMINANT * b["previous"] for i, a in enumerate(mass) for j, b in enumerate(mass) if i != j
     )
     return {"accuracy": round(accuracy, 4), "heads": mass, "specialised": specialised}
 
@@ -279,8 +309,11 @@ def main() -> None:
     parser.add_argument("--d-model", type=int, default=D_MODEL, help="each digit's vector width")
     parser.add_argument("--d-ff", type=int, default=D_FF, help="the feed-forward layer's width")
     parser.add_argument("--steps", type=int, default=STEPS, help="training steps")
+    parser.add_argument("--task", choices=sorted(TASKS), default="plus", help="the task the answers come from")
+    parser.add_argument("--length", type=int, default=8, help="digits in a sequence")
+    parser.add_argument("--write", action="store_true", help="write this task's results and weights (the plus task's are written by default)")
     args = parser.parse_args()
-    configure(args.d_model, args.d_ff, args.steps)
+    configure(args.d_model, args.d_ff, args.steps, args.task, args.length)
 
     torch.use_deterministic_algorithms(True)  # refuse any operation that is not reproducible
     torch.set_num_threads(1)  # one thread: sums always added in the same order
@@ -289,15 +322,17 @@ def main() -> None:
     seeds = list(range(1, args.seeds + 1))
     results = {}
     models = {}
-    for heads in (2, 1):
-        rows = []
-        for seed in seeds:
+    results = {2: [], 1: []}
+    # Seed by seed, two heads then one: each seed's gap between them is a paired comparison.
+    for seed in seeds:
+        for heads in (2, 1):
             model = train(seed, heads, held_out)
             row = {"seed": seed, **measure(model, held_out)}
-            print(f"{heads} head(s), seed {seed:2d}: accuracy {row['accuracy']:.4f}, " + "; ".join(f"head {h + 1} previous {m['previous']:.2f} mirrored {m['mirrored']:.2f}" for h, m in enumerate(row["heads"])) + (", specialised" if row["specialised"] else ""), flush=True)
-            rows.append(row)
+            print(f"{heads} head(s), seed {seed:2d}: accuracy {row['accuracy']:.4f}, " + "; ".join(f"head {h + 1} previous {m['previous']:.2f} mirrored {m['mirrored']:.2f}" for h, m in enumerate(row["heads"])) + (", split" if heads == 2 and row["specialised"] else ""), flush=True)
+            results[heads].append(row)
             models[(heads, seed)] = model
-        results[heads] = rows
+    beats = [two["seed"] for two, one in zip(results[2], results[1]) if two["accuracy"] - one["accuracy"] >= BEATS]
+    print(f"{TASK}, {LENGTH} digits: two heads beat one by {BEATS * 100:.0f} points or more on {len(beats)} of {len(seeds)} seeds; the heads split the work on {sum(row['specialised'] for row in results[2])} of {len(seeds)}", flush=True)
 
     # The rule (ADR-0057): of the two-head seeds whose heads specialised, the most accurate on the
     # held-out set, the lowest seed on a tie. The one-head model, the What-if's, is the most accurate.
@@ -305,18 +340,21 @@ def main() -> None:
     chosen_two = min(specialised or results[2], key=lambda row: (-row["accuracy"], row["seed"]))
     chosen_one = min(results[1], key=lambda row: (-row["accuracy"], row["seed"]))
     print(f"specialised: {len(specialised)} of {len(seeds)}; chosen: two heads, seed {chosen_two['seed']}; one head, seed {chosen_one['seed']}")
-    if args.seeds != 20 or (args.d_model, args.d_ff, args.steps) != (16, 64, 8000):
+    default = (args.task, args.length) == ("plus", 8)
+    # The plus task's weights are written with its settings alone; another task's when asked, at its own steps.
+    if args.seeds != 20 or (args.d_model, args.d_ff) != (16, 64) or not ((default and args.steps == 8000) or args.write):
         print("a quick look: nothing written")
         return
 
     here = Path(__file__).resolve().parent
-    (here / "results.json").write_text(json.dumps({"seeds": seeds, "mostly": MOSTLY, "twoHeads": results[2], "oneHead": results[1], "specialised": len(specialised), "chosen": {"twoHeads": chosen_two["seed"], "oneHead": chosen_one["seed"]}}, indent=2) + "\n")
+    suffix = "" if default else f"-{TASK}" + ("" if LENGTH == 8 else f"-{LENGTH}")
+    (here / f"results{suffix}.json").write_text(json.dumps({"task": TASK, "length": LENGTH, "seeds": seeds, "dominant": DOMINANT, "beats": BEATS, "twoHeads": results[2], "oneHead": results[1], "split": len(specialised), "twoBeatOne": beats, "chosen": {"twoHeads": chosen_two["seed"], "oneHead": chosen_one["seed"]}}, indent=2) + "\n")
     common = {
         "schemaVersion": "weights/1",
-        "task": "previous digit plus mirrored digit, mod 10, over 8 digits",
+        "task": f"{TASKS[TASK]}, over {LENGTH} digits",
         "architecture": {"vocab": VOCAB, "length": LENGTH, "dModel": D_MODEL, "dFF": D_FF, "positional": "sinusoidal", "scaled": True, "residual": True},
         "training": {
-            "command": "cd training && uv run python train.py",
+            "command": "cd training && uv run python train.py" + ("" if default else f" --task {TASK}" + ("" if LENGTH == 8 else f" --length {LENGTH}") + ("" if STEPS == 8000 else f" --steps {STEPS}") + " --write"),
             "commit": git_commit(),
             "torch": torch.__version__,
             "python": platform.python_version(),
@@ -329,14 +367,14 @@ def main() -> None:
     }
     weights_root = here.parent / "fixtures" / "weights"
     two_rule = (
-        f"of the {len(specialised)} seeds of {len(seeds)} whose heads specialised, the most accurate on the held-out set, the lowest seed on a tie"
+        f"of the {len(specialised)} seeds of {len(seeds)} whose heads split the work, the most accurate on the held-out set, the lowest seed on a tie"
         if specialised
-        else f"no seed of {len(seeds)} specialised, so the most accurate of them all on the held-out set, the lowest seed on a tie"
+        else f"no seed of {len(seeds)} split the work, so the most accurate of them all on the held-out set, the lowest seed on a tie"
     )
     for heads, chosen, rule in ((2, chosen_two, two_rule), (1, chosen_one, f"of {len(seeds)} seeds, the most accurate on the held-out set, the lowest seed on a tie")):
         model = models[(heads, chosen["seed"])]
-        name = f"miniature-{heads}-head{'s' if heads > 1 else ''}"
-        manifest = {**common, "name": name, "architecture": {**common["architecture"], "heads": heads}, "training": {**common["training"], "seed": chosen["seed"]}, "selection": {"rule": rule, "specialised": f"{len(specialised)} of {len(seeds)}" if heads == 2 else None}, "metrics": chosen}
+        name = f"miniature{suffix}-{heads}-head{'s' if heads > 1 else ''}"
+        manifest = {**common, "name": name, **({"table": lookup_table().tolist()} if TASK == "table" else {}), "architecture": {**common["architecture"], "heads": heads}, "training": {**common["training"], "seed": chosen["seed"]}, "selection": {"rule": rule, "specialised": f"{len(specialised)} of {len(seeds)}" if heads == 2 else None}, "metrics": chosen}
         export(model, weights_root / name, manifest)
         (weights_root / name / "check.json").write_text(json.dumps(cross_check(model, held_out, 20)) + "\n")
         print(f"wrote fixtures/weights/{name}/")
