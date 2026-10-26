@@ -267,7 +267,8 @@ def git_commit() -> str:
     """The commit the script ran at, with "+changes" when the tree was not clean."""
     root = Path(__file__).resolve().parent.parent
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=root, capture_output=True, text=True).stdout.strip()
-    dirty = subprocess.run(["git", "status", "--porcelain", "--", "training"], cwd=root, capture_output=True, text=True).stdout.strip()
+    # Only the run's inputs count: its own outputs, results.json and the weights, are written before this is read.
+    dirty = subprocess.run(["git", "status", "--porcelain", "--", "training/train.py", "training/pyproject.toml", "training/uv.lock"], cwd=root, capture_output=True, text=True).stdout.strip()
     return commit + ("+changes" if dirty else "")
 
 
