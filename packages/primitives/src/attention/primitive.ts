@@ -3,15 +3,18 @@ import { assertSeed, mulberry32 } from "../prng.ts";
 import type { Primitive, PrimitiveDescription } from "../types.ts";
 import { deepFreeze } from "../variables.ts";
 import { cos, exp, ln, orderFreeSum, sin, softmax, sqrt } from "./math.ts";
+import { previousPlusMirror, TrainedWeights } from "./weights.ts";
 
 /**
- * attention.toy@1.0.0 (ADR-0054): one self-attention layer of a small transformer, deterministic in
+ * attention.toy@1.1.0 (ADR-0054, ADR-0057): one self-attention layer of a small transformer, deterministic in
  * pure TypeScript. Each token's embedding, with a sinusoidal positional encoding that can be turned
  * off, is projected per head into queries, keys and values; each query's scaled dot products with
  * the keys, divided by √dk unless that is switched off and with future positions masked when the
  * causal mask is on, go through a softmax built on the primitive's own exp; the heads' weighted
- * values are joined and projected back. Its weights come from its seed until trained weights arrive
- * as data. It has no time: a step leaves the state as it was, and a level compares two settings.
+ * values are joined and projected back. Its weights come from its seed, or, given trained weights
+ * (1.1.0), from them, and then the layer is one block of the miniature: a residual, a feed-forward
+ * layer and a readout to the task's answers, whose accuracy it measures. It has no time: a step
+ * leaves the state as it was, and a level compares two settings.
  */
 
 const bit = z.union([z.literal(0), z.literal(1)]);
@@ -31,9 +34,14 @@ export const AttentionParams = z
     causal: bit,
     /** 1: path length is counted as a recurrent layer's, |i − j|, the paper's Table 1; attention itself is unchanged. */
     recurrent: bit,
+    /** Trained weights (ADR-0057), in place of the seed's; with them, the miniature's whole block. */
+    weights: TrainedWeights.optional(),
+    /** The task the answers are scored on, for the accuracy observable. */
+    task: z.literal("previous-plus-mirror").optional(),
   })
   .refine((params) => params.dModel % params.heads === 0, { error: "dModel must divide into the heads evenly" })
-  .refine((params) => params.tokens.every((token) => token < params.vocab), { error: "every token must be below vocab" });
+  .refine((params) => params.tokens.every((token) => token < params.vocab), { error: "every token must be below vocab" })
+  .refine((params) => !params.weights || (params.weights.heads.length === params.heads && params.weights.embedding.length === params.vocab && (params.weights.embedding[0]?.length ?? 0) === params.dModel), { error: "trained weights must have the setting's heads, vocab and dModel" });
 export type AttentionParams = z.infer<typeof AttentionParams>;
 
 const Matrix = z.array(z.array(z.number()));
@@ -42,7 +50,13 @@ export const AttentionState = z.strictObject({
   /** Each position's input: its embedding, plus its positional encoding when that is on. */
   inputs: Matrix,
   heads: z.array(z.strictObject({ logits: Matrix, weights: Matrix })),
+  /** The attention layer's output, each position's joined heads projected back. */
   output: Matrix,
+  /** With trained weights, each position's score for each answer, and the answer it picks; else empty. */
+  scores: Matrix,
+  predictions: z.array(z.int()),
+  /** The share of positions answered right, with trained weights and a task; else null. */
+  accuracy: z.number().nullable(),
   /** How far the output moves from the shuffled output when the input is reversed: 0 when attention cannot see order. */
   shuffleGap: z.number(),
   recurrent: bit,
@@ -50,7 +64,7 @@ export const AttentionState = z.strictObject({
 });
 export type AttentionState = z.infer<typeof AttentionState>;
 
-export type AttentionObservables = Readonly<{ meanEntropy: number; logitSpread: number; futureWeight: number; maxWeight: number; meanPathLength: number; shuffleGap: number }>;
+export type AttentionObservables = Readonly<{ meanEntropy: number; logitSpread: number; futureWeight: number; maxWeight: number; meanPathLength: number; shuffleGap: number; accuracy: number }>;
 
 /** The weights a seed gives: each uniform in ±1/√dModel, drawn in a fixed order. */
 interface Weights {
@@ -60,6 +74,7 @@ interface Weights {
 }
 
 function weightsOf(params: AttentionParams, seed: number): Weights {
+  if (params.weights) return params.weights;
   const random = mulberry32(seed);
   const scale = 1 / sqrt(params.dModel);
   const matrix = (rows: number, columns: number): number[][] => Array.from({ length: rows }, () => Array.from({ length: columns }, () => (2 * random.next() - 1) * scale));
@@ -84,6 +99,17 @@ export function positionalEncoding(position: number, dModel: number): number[] {
 const times = (rows: readonly (readonly number[])[], matrix: readonly (readonly number[])[]): number[][] =>
   rows.map((row) => (matrix[0] ?? []).map((_, column) => row.reduce((sum, value, index) => sum + value * (matrix[index]?.[column] ?? 0), 0)));
 
+const addRows = (a: readonly (readonly number[])[], b: readonly (readonly number[])[]): number[][] => a.map((row, i) => row.map((value, j) => value + (b[i]?.[j] ?? 0)));
+const withBias = (rows: readonly (readonly number[])[], bias: readonly number[]): number[][] => rows.map((row) => row.map((value, j) => value + (bias[j] ?? 0)));
+
+/** The rest of the miniature's block on trained weights: a residual, the feed-forward layer with its own residual, and the readout's scores. */
+function block(inputs: readonly (readonly number[])[], attended: readonly (readonly number[])[], weights: TrainedWeights): number[][] {
+  const h = addRows(inputs, attended);
+  const hidden = withBias(times(h, weights.ff1), weights.ff1Bias).map((row) => row.map((value) => (value > 0 ? value : 0)));
+  const h2 = addRows(h, withBias(times(hidden, weights.ff2), weights.ff2Bias));
+  return withBias(times(h2, weights.readout), weights.readoutBias);
+}
+
 /** One forward pass: the inputs, each head's logits and weights, and the output. */
 function forward(params: AttentionParams, weights: Weights, tokens: readonly number[]) {
   const dk = params.dModel / params.heads;
@@ -105,7 +131,11 @@ function forward(params: AttentionParams, weights: Weights, tokens: readonly num
     return { logits, weights: weightsOfRow, mixed };
   });
   const joined = tokens.map((_, position) => heads.flatMap((head) => head.mixed[position] ?? []));
-  return { inputs, heads: heads.map(({ logits, weights: rows }) => ({ logits, weights: rows })), output: times(joined, weights.out) };
+  const output = times(joined, weights.out);
+  const scores = params.weights ? block(inputs, output, params.weights) : [];
+  // Each position's answer: the highest score, the lowest answer on a tie.
+  const predictions = scores.map((row) => row.reduce((best, score, index) => (score > (row[best] ?? Number.NEGATIVE_INFINITY) ? index : best), 0));
+  return { inputs, heads: heads.map(({ logits, weights: rows }) => ({ logits, weights: rows })), output, scores, predictions };
 }
 
 /** The entropy of one row of weights, in nats: 0 when it rests on one position, ln n when spread evenly. */
@@ -129,7 +159,9 @@ function init(params: AttentionParams, seed: number): AttentionState {
   const reversed = forward(parsed, weights, [...parsed.tokens].reverse());
   const n = parsed.tokens.length;
   const shuffleGap = Math.max(...pass.output.flatMap((row, i) => row.map((value, d) => Math.abs((reversed.output[n - 1 - i]?.[d] ?? 0) - value))));
-  return deepFreeze({ tokens: [...parsed.tokens], ...pass, shuffleGap, recurrent: parsed.recurrent, causal: parsed.causal });
+  const answers = parsed.task === "previous-plus-mirror" ? previousPlusMirror(parsed.tokens) : null;
+  const accuracy = answers && pass.predictions.length > 0 ? pass.predictions.filter((answer, i) => answer === answers[i]).length / answers.length : null;
+  return deepFreeze({ tokens: [...parsed.tokens], ...pass, accuracy, shuffleGap, recurrent: parsed.recurrent, causal: parsed.causal });
 }
 
 const mean = (values: readonly number[]): number => (values.length === 0 ? 0 : orderFreeSum(values) / values.length);
@@ -150,6 +182,8 @@ function measure(state: AttentionState): AttentionObservables {
     maxWeight: mean(rows.map((row) => Math.max(...row))),
     meanPathLength: mean(reachable),
     shuffleGap: state.shuffleGap,
+    // Not a number where there is nothing to score: no trained readout, or no task.
+    accuracy: state.accuracy ?? Number.NaN,
   };
 }
 
@@ -172,10 +206,11 @@ function describe(): PrimitiveDescription {
       maxWeight: { unit: "share", meaning: "The largest weight in each row, averaged" },
       meanPathLength: { unit: "layers", meaning: "How many layers information needs between two tokens, averaged over the pairs it can reach" },
       shuffleGap: { unit: "output", meaning: "How far the output for the reversed input is from the output reversed: 0 when attention cannot see order" },
+      accuracy: { unit: "share", meaning: "The share of positions the miniature answers right, with trained weights and a task" },
     },
     assumptions: [
       "One self-attention layer; no feed-forward layer, residual or normalisation.",
-      "Weights drawn from the seed, uniform in ±1/√dModel, until trained weights arrive as data.",
+      "Weights drawn from the seed, uniform in ±1/√dModel, unless trained weights are given (ADR-0057); with them, one whole block: residuals, a feed-forward layer and a readout.",
       "The miniature: the mechanism at toy scale, not the paper's model or its results.",
     ],
   };
@@ -185,7 +220,7 @@ const DEFAULTS: AttentionParams = { tokens: [3, 1, 4, 1, 5, 9, 2, 6], vocab: 10,
 
 export const attentionToy: Primitive<AttentionParams, AttentionState, AttentionObservables> & { readonly defaults: AttentionParams } = Object.freeze({
   id: "attention.toy",
-  version: "1.0.0",
+  version: "1.1.0",
   family: "attention" as const,
   chance: true,
   fixedTimestep: 1,

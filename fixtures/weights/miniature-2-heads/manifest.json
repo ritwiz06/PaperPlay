@@ -1,0 +1,175 @@
+{
+  "schemaVersion": "weights/1",
+  "task": "previous digit plus mirrored digit, mod 10, over 8 digits",
+  "architecture": {
+    "vocab": 10,
+    "length": 8,
+    "dModel": 16,
+    "dFF": 64,
+    "positional": "sinusoidal",
+    "scaled": true,
+    "residual": true,
+    "heads": 2
+  },
+  "training": {
+    "command": "cd training && uv run python train.py",
+    "commit": "8837083",
+    "torch": "2.14.1",
+    "python": "3.12.13",
+    "platform": "Darwin arm64",
+    "steps": 8000,
+    "batch": 256,
+    "learningRate": 0.003,
+    "heldOut": 2000,
+    "seed": 6
+  },
+  "name": "miniature-2-heads",
+  "selection": {
+    "rule": "no seed of 20 specialised, so the most accurate of them all on the held-out set, the lowest seed on a tie",
+    "specialised": "0 of 20"
+  },
+  "metrics": {
+    "seed": 6,
+    "accuracy": 1.0,
+    "heads": [
+      {
+        "previous": 0.1776,
+        "mirrored": 0.188
+      },
+      {
+        "previous": 0.2736,
+        "mirrored": 0.3359
+      }
+    ],
+    "specialised": false
+  },
+  "dtype": "float32",
+  "byteOrder": "little",
+  "bytes": 13928,
+  "sha256": "f59615271bf347eae4d9e49e415b1a3eb9eb9effa8a5713172ca7185591438a9",
+  "tensors": [
+    {
+      "name": "embedding",
+      "shape": [
+        10,
+        16
+      ],
+      "offset": 0,
+      "count": 160
+    },
+    {
+      "name": "head0.q",
+      "shape": [
+        16,
+        8
+      ],
+      "offset": 640,
+      "count": 128
+    },
+    {
+      "name": "head0.k",
+      "shape": [
+        16,
+        8
+      ],
+      "offset": 1152,
+      "count": 128
+    },
+    {
+      "name": "head0.v",
+      "shape": [
+        16,
+        8
+      ],
+      "offset": 1664,
+      "count": 128
+    },
+    {
+      "name": "head1.q",
+      "shape": [
+        16,
+        8
+      ],
+      "offset": 2176,
+      "count": 128
+    },
+    {
+      "name": "head1.k",
+      "shape": [
+        16,
+        8
+      ],
+      "offset": 2688,
+      "count": 128
+    },
+    {
+      "name": "head1.v",
+      "shape": [
+        16,
+        8
+      ],
+      "offset": 3200,
+      "count": 128
+    },
+    {
+      "name": "out",
+      "shape": [
+        16,
+        16
+      ],
+      "offset": 3712,
+      "count": 256
+    },
+    {
+      "name": "ff1",
+      "shape": [
+        16,
+        64
+      ],
+      "offset": 4736,
+      "count": 1024
+    },
+    {
+      "name": "ff1.bias",
+      "shape": [
+        64
+      ],
+      "offset": 8832,
+      "count": 64
+    },
+    {
+      "name": "ff2",
+      "shape": [
+        64,
+        16
+      ],
+      "offset": 9088,
+      "count": 1024
+    },
+    {
+      "name": "ff2.bias",
+      "shape": [
+        16
+      ],
+      "offset": 13184,
+      "count": 16
+    },
+    {
+      "name": "readout",
+      "shape": [
+        16,
+        10
+      ],
+      "offset": 13248,
+      "count": 160
+    },
+    {
+      "name": "readout.bias",
+      "shape": [
+        10
+      ],
+      "offset": 13888,
+      "count": 10
+    }
+  ]
+}

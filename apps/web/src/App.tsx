@@ -10,6 +10,8 @@ import { LibraryPage } from "./library/LibraryPage.tsx";
 
 /** /create, on a development server only: a production build holds none of it (ADR-0030). */
 const CreatePage = import.meta.env.DEV ? lazy(() => import("./create/CreatePage.tsx").then((module) => ({ default: module.CreatePage }))) : null;
+/** The trained miniature's bits in the browser, for a test to compare with Node's, on a development server only (ADR-0057). */
+const MiniatureCheck = import.meta.env.DEV ? lazy(() => import("./check/MiniatureCheck.tsx").then((module) => ({ default: module.MiniatureCheck }))) : null;
 
 const subscribe = (onChange: () => void) => {
   window.addEventListener("popstate", onChange);
@@ -35,6 +37,12 @@ export function App() {
     if (job) return <FromJob id={job} />;
     const cached = /^\/world\/cached\/([a-z]+-[A-Za-z0-9.]+)$/.exec(path)?.[1];
     if (cached) return <FromCache keyed={cached} />;
+    if (path === "/check/miniature" && MiniatureCheck)
+      return (
+        <Suspense fallback={null}>
+          <MiniatureCheck />
+        </Suspense>
+      );
     if (path === "/create" && CreatePage)
       return (
         <Suspense fallback={null}>

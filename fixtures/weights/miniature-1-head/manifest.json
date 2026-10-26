@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "weights/1",
+  "task": "previous digit plus mirrored digit, mod 10, over 8 digits",
+  "architecture": {
+    "vocab": 10,
+    "length": 8,
+    "dModel": 16,
+    "dFF": 64,
+    "positional": "sinusoidal",
+    "scaled": true,
+    "residual": true,
+    "heads": 1
+  },
+  "training": {
+    "command": "cd training && uv run python train.py",
+    "commit": "8837083",
+    "torch": "2.14.1",
+    "python": "3.12.13",
+    "platform": "Darwin arm64",
+    "steps": 8000,
+    "batch": 256,
+    "learningRate": 0.003,
+    "heldOut": 2000,
+    "seed": 2
+  },
+  "name": "miniature-1-head",
+  "selection": {
+    "rule": "of 20 seeds, the most accurate on the held-out set, the lowest seed on a tie",
+    "specialised": null
+  },
+  "metrics": {
+    "seed": 2,
+    "accuracy": 1.0,
+    "heads": [
+      {
+        "previous": 0.388,
+        "mirrored": 0.3779
+      }
+    ],
+    "specialised": false
+  },
+  "dtype": "float32",
+  "byteOrder": "little",
+  "bytes": 13928,
+  "sha256": "d411acdd531e36faffd450e48e0901a4afdfa7e72ed3fe2c0fb2ed383fc3602d",
+  "tensors": [
+    {
+      "name": "embedding",
+      "shape": [
+        10,
+        16
+      ],
+      "offset": 0,
+      "count": 160
+    },
+    {
+      "name": "head0.q",
+      "shape": [
+        16,
+        16
+      ],
+      "offset": 640,
+      "count": 256
+    },
+    {
+      "name": "head0.k",
+      "shape": [
+        16,
+        16
+      ],
+      "offset": 1664,
+      "count": 256
+    },
+    {
+      "name": "head0.v",
+      "shape": [
+        16,
+        16
+      ],
+      "offset": 2688,
+      "count": 256
+    },
+    {
+      "name": "out",
+      "shape": [
+        16,
+        16
+      ],
+      "offset": 3712,
+      "count": 256
+    },
+    {
+      "name": "ff1",
+      "shape": [
+        16,
+        64
+      ],
+      "offset": 4736,
+      "count": 1024
+    },
+    {
+      "name": "ff1.bias",
+      "shape": [
+        64
+      ],
+      "offset": 8832,
+      "count": 64
+    },
+    {
+      "name": "ff2",
+      "shape": [
+        64,
+        16
+      ],
+      "offset": 9088,
+      "count": 1024
+    },
+    {
+      "name": "ff2.bias",
+      "shape": [
+        16
+      ],
+      "offset": 13184,
+      "count": 16
+    },
+    {
+      "name": "readout",
+      "shape": [
+        16,
+        10
+      ],
+      "offset": 13248,
+      "count": 160
+    },
+    {
+      "name": "readout.bias",
+      "shape": [
+        10
+      ],
+      "offset": 13888,
+      "count": 10
+    }
+  ]
+}

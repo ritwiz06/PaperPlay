@@ -8,7 +8,7 @@ export { judgeCandidates, judgeInParallel, type JudgeInput } from "./judge.ts";
 export { CandidatePicks, CANDIDATES_SHOWN, hookCandidates, pickerMessages, pickLevels, PICKER_INSTRUCTIONS, planFromPicks, shortList, validatePicks, type PickProblem } from "./picker.ts";
 export type { CandidateGenerator, LevelCandidate } from "./types.ts";
 
-export { ATTENTION_HOLDS, ATTENTION_SEEDS, attentionCandidates, type AttentionLevel, type AttentionSetting } from "./attention.ts";
+export { ATTENTION_HOLDS, ATTENTION_SEEDS, attentionCandidates, type AttentionContext, type AttentionLevel, type AttentionSetting } from "./attention.ts";
 
 import { attentionCandidates } from "./attention.ts";
 import { compartmentCandidates } from "./compartments.ts";
