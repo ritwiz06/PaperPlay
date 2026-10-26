@@ -1,6 +1,6 @@
 # ADR-0057: The miniature, trained: the task does not need two heads
 
-- Status: accepted. The owner, 2026-10-25: train the miniature offline in PyTorch on "previous digit
+- Status: accepted, amended 2026-10-25 (the multi-head level's task). The owner, 2026-10-25: train the miniature offline in PyTorch on "previous digit
   plus mirrored digit", 20 seeds, one shipped by a stated rule, its weights committed and checked in
   TypeScript and the browser. The results, and what they mean for the multi-head level, are mine.
 - Date: 2026-10-25
@@ -95,3 +95,79 @@ the rule above, one head leaning 0.49 on the previous position against 0.28 on t
   asymmetric one, where one head falls short, or another lesson for §3.2.2.
 - The re-run of 20 seeds after the commit stamp's fix reproduced the weights bit for bit (see the
   session log), so the training is deterministic on this machine.
+
+## Amendment, 2026-10-25: the multi-head level's task
+
+The owner, after the results above: the multi-head level's claim is accuracy, as the paper's is,
+one head's averaging failing where two heads succeed; heads that visibly split the work are a
+strong preference, not a requirement. Two goals, each on at least 16 of 20 seeds: (1) two heads beat
+one on held-out accuracy by at least 10 points, the same seed; (2) preferably, one head looks at the
+previous position at least twice as much as at the mirror and another head the reverse (the
+dominance ratio, which replaces "more than half" as the test of a split).
+
+**The probes**, three seeds each, then more where they were promising (`train.py --task`, `--length`):
+
+| Candidate | Seed | Two heads | One head | Gap, points | Heads: previous / mirrored | Split |
+|---|---|---|---|---|---|---|
+| a. minus, 8 digits | 1 | 99.4% | 62.6% | +36.7 | 0.23/0.16; 0.49/0.28 | no |
+| a. minus, 8 digits | 2 | 51.1% | 69.2% | −18.1 | 0.27/0.27; 0.25/0.24 | no |
+| a. minus, 8 digits | 3 | 91.6% | 70.6% | +21.0 | 0.19/0.16; 0.50/0.32 | no |
+| b. minus, 16 digits | 1 | 74.6% | 36.1% | +38.5 | 0.38/0.19; 0.39/0.20 | no |
+| b. minus, 16 digits | 2 | 76.0% | 25.5% | +50.5 | 0.11/0.16; 0.41/0.22 | no |
+| b. minus, 16 digits | 3 | 34.5% | 32.5% | +2.0 | 0.17/0.17; 0.17/0.16 | no |
+| b. minus, 32 digits | 1 | 16.2% | 18.1% | −1.8 | 0.04/0.04; 0.05/0.05 | no |
+| b. minus, 32 digits | 2 | 16.7% | 22.7% | −6.0 | 0.05/0.05; 0.08/0.08 | no |
+| b. minus, 32 digits | 3 | 16.4% | 16.8% | −0.3 | 0.05/0.04; 0.05/0.05 | no |
+| c. table, 8 digits | 1 | 100.0% | 99.5% | +0.5 | 0.02/0.90; 0.89/0.00 | yes |
+| c. table, 8 digits | 2 | 100.0% | 99.7% | +0.3 | 0.85/0.00; 0.01/0.87 | yes |
+| c. table, 8 digits | 3 | 100.0% | 81.6% | +18.4 | 0.01/0.91; 0.87/0.00 | yes |
+| b and c. table, 16 digits | 1 | 100.0% | 73.9% | +26.1 | 0.87/0.01; 0.00/0.91 | yes |
+| b and c. table, 16 digits | 2 | 100.0% | 74.2% | +25.8 | 0.91/0.00; 0.00/0.93 | yes |
+| b and c. table, 16 digits | 3 | 100.0% | 54.4% | +45.6 | 0.00/0.94; 0.94/0.00 | yes |
+
+The minus task keeps the two digits apart but leaves the heads blended; longer sequences widen
+two heads' lead but 32 digits did not learn in 8,000 steps; the random table, with no arithmetic
+shortcut, makes each head carry one digit exactly and split cleanly, but over 8 digits one head
+still solves it by leaning on one position. Over 16 digits, a single head's average blends in
+more distractors and the table forces the split: both goals at once. Minus over 8 digits at 20 seeds
+met neither: two heads won by 10 points on 14 of 20, and split on 0 of 20.
+
+**The chosen task: a fixed random table of the previous and the mirrored digit, over 16 digits.**
+In one sentence for a beginner: each digit's answer is looked up in a fixed table, by the digit
+before it and the digit in its mirrored place. It is not the simplest candidate, but the only one
+that met goal 1, and it meets goal 2 too. At 20 seeds:
+
+| Seed | Two heads | One head | Gap | Head on previous: previous / mirrored, ratio | Head on mirror: mirrored / previous, ratio | Split |
+|---|---|---|---|---|---|---|
+| 1 | 100.00% | 73.91% | +26.1 | 0.87 / 0.01, 147× | 0.91 / 0.00, 233× | yes |
+| 2 | 100.00% | 74.21% | +25.8 | 0.91 / 0.00, 650× | 0.93 / 0.00, 211× | yes |
+| 3 | 100.00% | 54.37% | +45.6 | 0.94 / 0.00, over 1000× | 0.94 / 0.00, 411× | yes |
+| 4 | 100.00% | 74.12% | +25.9 | 0.74 / 0.02, 36× | 0.84 / 0.01, 144× | yes |
+| 5 | 100.00% | 73.72% | +26.3 | 0.79 / 0.01, 62× | 0.85 / 0.01, 160× | yes |
+| 6 | 100.00% | 54.54% | +45.5 | 0.89 / 0.01, 116× | 0.87 / 0.00, 309× | yes |
+| 7 | 100.00% | 54.02% | +46.0 | 0.94 / 0.00, over 1000× | 0.96 / 0.00, 689× | yes |
+| 8 | 100.00% | 54.39% | +45.6 | 0.88 / 0.00, 801× | 0.94 / 0.00, 523× | yes |
+| 9 | 100.00% | 54.12% | +45.9 | 0.93 / 0.00, over 1000× | 0.93 / 0.00, 291× | yes |
+| 10 | 100.00% | 55.11% | +44.9 | 0.91 / 0.00, 457× | 0.92 / 0.00, 264× | yes |
+| 11 | 100.00% | 54.38% | +45.6 | 0.95 / 0.00, over 1000× | 0.94 / 0.00, 213× | yes |
+| 12 | 100.00% | 36.55% | +63.5 | 0.94 / 0.00, over 1000× | 0.95 / 0.00, 326× | yes |
+| 13 | 99.97% | 44.85% | +55.1 | 0.94 / 0.00, over 1000× | 0.93 / 0.00, 312× | yes |
+| 14 | 100.00% | 73.57% | +26.4 | 0.95 / 0.00, over 1000× | 0.93 / 0.00, 190× | yes |
+| 15 | 100.00% | 74.02% | +26.0 | 0.93 / 0.00, 775× | 0.95 / 0.00, 353× | yes |
+| 16 | 100.00% | 54.66% | +45.3 | 0.95 / 0.00, over 1000× | 0.96 / 0.00, 566× | yes |
+| 17 | 100.00% | 55.20% | +44.8 | 0.95 / 0.00, over 1000× | 0.88 / 0.01, 79× | yes |
+| 18 | 100.00% | 73.93% | +26.1 | 0.93 / 0.00, 774× | 0.92 / 0.00, 279× | yes |
+| 19 | 100.00% | 74.31% | +25.7 | 0.91 / 0.00, 907× | 0.88 / 0.01, 126× | yes |
+| 20 | 100.00% | 54.33% | +45.7 | 0.92 / 0.00, 766× | 0.95 / 0.00, 316× | yes |
+
+Two heads beat one by 25.7 points or more on 20 of 20 seeds, and split the work on 20 of 20, each
+head looking at its own position at least 36 times as much as at the other. Shipped by the rule:
+two heads seed 1 (100.00%, the lowest of 19 at 100%), one head seed 19 (the most accurate, 74.31%),
+in `fixtures/weights/miniature-table-16-*`, the table in their manifests. attention.toy@1.2.0 scores
+the task (and minus), and runs both as PyTorch does: two heads within 4.7e-7 on attention and 1.0e-6
+of a row on scores, one head within 4.8e-6 and 3.7e-5, every answer the same. The candidate
+generator finds the multi-head level on accuracy: one head instead of two, 100% to a median 75% of a
+16-digit input, lower by more than 13 points on 17 of 20 held-out inputs.
+
+The plus miniature stays: it teaches the scaling, the positions and the mask. A level may use a
+different miniature from its world's others, labelled as a teaching choice.

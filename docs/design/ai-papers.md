@@ -171,7 +171,9 @@ them (ADR-0053).
 3. **Training the miniature** (2026-10-25, done, ADR-0057): offline in PyTorch on "previous digit
    plus mirrored digit", 20 seeds, its weights committed, the TypeScript matching PyTorch and the
    browser matching Node to the bit. No seed's heads specialised, and one head answers as well as
-   two, so the multi-head level waits on the owner's choice of task.
+   two. The multi-head level has its own miniature (ADR-0057's amendment): a fixed random table of
+   the previous and mirrored digit over 16 digits, where two heads beat one by 26 points or more and
+   split the work, each head on its own position, on 20 of 20 seeds.
 4. **The scene kit**, built properly once the spike's look is approved.
 5. **The results explorer's smallest form** (tier C), alongside, as every family's fallback.
 6. **Attention Is All You Need**, hand-authored, the family's reference world.
@@ -189,9 +191,12 @@ rule on level 4 (multi-head, §3.2.2), measured once the miniature is trained:
    the mirrored position. Each output needs two places at once, so I expected two heads to
    specialise and a single head, averaging the two, to get it wrong. Training showed otherwise
    (ADR-0057): the answer depends only on the two digits' sum, which an even average still carries;
-   no seed of 20 specialised, and one head reached 100%. An asymmetric task, (previous − mirrored)
-   mod 10, separates them better in a three-seed probe (two heads up to 99.4%, one head at most
-   70.6%), the owner's choice.
+   no seed of 20 specialised, and one head reached 100%. It stays for the scaling, positions and
+   mask levels.
+3. **A fixed random table, over 16 digits** (ADR-0057's amendment), for the multi-head level: each
+   digit's answer looked up by the digit before it and its mirror. No arithmetic shortcut, so each
+   head carries one digit; 16 digits blend more distractors into one head's average. Two heads 99.97%
+   to 100%, one head 36.5% to 74.3%, the heads splitting the work on every seed.
 
 ## Decided by the owner, 2026-10-24 (ADR-0054)
 

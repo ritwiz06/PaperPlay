@@ -290,7 +290,9 @@ out. PubMed Central ingest, once here, landed in G3a.3.
   pure TypeScript with its own exp and softmax, its oracles by hand, and its candidate generator.
 - [x] The attention family, slice 3 (2026-10-25, ADR-0057): the miniature trained offline in PyTorch
   over 20 seeds, its weights committed, attention.toy@1.1.0 running them as PyTorch does, the
-  browser's bits Node's. Its heads did not specialise; the multi-head level waits on a task.
+  browser's bits Node's. Its heads did not specialise; the multi-head level has its own miniature,
+  a random table over 16 digits, whose two heads split the work and beat one head on every seed
+  (ADR-0057's amendment, 2026-10-25).
 - [ ] The attention family, slices 2 and 4 to 7 (`docs/design/ai-papers.md`): the scene spike, for the
   owner's review; the scene kit; the explorer's smallest form; Attention Is All You Need by hand;
   BERT generated, G3's gate.
