@@ -1,0 +1,11 @@
+[project]
+name = "paperplay-training"
+version = "0.1.0"
+description = "Trains PaperPlay's miniature transformer offline; its weights are committed as data (ADR-0057). Not part of the gate or CI."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "torch==2.14.1",
+]
+
+[tool.uv]
+package = false
