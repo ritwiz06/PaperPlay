@@ -327,7 +327,12 @@ def main() -> None:
         },
     }
     weights_root = here.parent / "fixtures" / "weights"
-    for heads, chosen, rule in ((2, chosen_two, f"of the {len(seeds)} seeds whose heads specialised ({len(specialised)}), the most accurate on the held-out set, the lowest seed on a tie"), (1, chosen_one, f"of {len(seeds)} seeds, the most accurate on the held-out set")):
+    two_rule = (
+        f"of the {len(specialised)} seeds of {len(seeds)} whose heads specialised, the most accurate on the held-out set, the lowest seed on a tie"
+        if specialised
+        else f"no seed of {len(seeds)} specialised, so the most accurate of them all on the held-out set, the lowest seed on a tie"
+    )
+    for heads, chosen, rule in ((2, chosen_two, two_rule), (1, chosen_one, f"of {len(seeds)} seeds, the most accurate on the held-out set, the lowest seed on a tie")):
         model = models[(heads, chosen["seed"])]
         name = f"miniature-{heads}-head{'s' if heads > 1 else ''}"
         manifest = {**common, "name": name, "architecture": {**common["architecture"], "heads": heads}, "training": {**common["training"], "seed": chosen["seed"]}, "selection": {"rule": rule, "specialised": f"{len(specialised)} of {len(seeds)}" if heads == 2 else None}, "metrics": chosen}
