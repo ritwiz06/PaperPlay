@@ -3,6 +3,7 @@
  * API holds since it started, each ready one linked to its world. A production build holds none of
  * this, so the public library lists only the worlds built beforehand.
  */
+import { GENERATED_MODEL_LABEL } from "@paperplay/contracts";
 import { useEffect, useState } from "react";
 
 interface JobRow {
@@ -10,6 +11,8 @@ interface JobRow {
   readonly source: string;
   readonly state: string;
   readonly world: { readonly title: string; readonly levels: readonly { readonly order: number; readonly title: string; readonly bonus: boolean }[] } | null;
+  /** A world on a module a coding model wrote, checked and never verified (ADR-0058). */
+  readonly generatedModel?: boolean;
 }
 
 type Listing = { readonly kind: "loading" } | { readonly kind: "none"; readonly why: string } | { readonly kind: "jobs"; readonly jobs: readonly JobRow[] };
@@ -40,10 +43,11 @@ export function ThisMachine() {
               <div className="library-text">
                 <h3>{job.world ? <a href={`/world/job/${job.jobId}`}>{job.world.title}</a> : job.source}</h3>
                 <p className="library-meta">
-                  <span className="library-status library-status-generated">{job.world ? "Generated" : "Not ready"}</span> <span>{job.source}</span>
+                  <span className="library-status library-status-generated">{job.world ? (job.generatedModel ? "Generated model" : "Generated") : "Not ready"}</span> <span>{job.source}</span>
                   <span aria-hidden="true"> · </span>
                   <span>job {job.state}</span>
                 </p>
+                {job.generatedModel ? <p className="library-note">{GENERATED_MODEL_LABEL.charAt(0).toUpperCase() + GENERATED_MODEL_LABEL.slice(1)}.</p> : null}
                 {job.world ? (
                   <ol className="library-levels" aria-label={`${job.world.title}'s levels`}>
                     {job.world.levels.map((level) => (

@@ -40,12 +40,14 @@ export function buildServer(options: ServerOptions = {}): FastifyInstance {
   // This server's jobs, for the library on a development server: each world made here, by job.
   app.get("/jobs", () => ({
     jobs: (store?.list() ?? []).map((job) => {
-      const world = job.state === "ready" ? (job.artifacts.get("world") as { title?: unknown; levels?: { order?: unknown; title?: unknown; bonus?: unknown }[] } | undefined) : undefined;
+      const world = job.state === "ready" ? (job.artifacts.get("world") as { title?: unknown; routing?: { family?: unknown }; levels?: { order?: unknown; title?: unknown; bonus?: unknown }[] } | undefined) : undefined;
       return {
         jobId: job.id,
         source: job.source,
         state: job.state,
         world: world ? { title: typeof world.title === "string" ? world.title : "", levels: (world.levels ?? []).map((level) => ({ order: Number(level.order), title: typeof level.title === "string" ? level.title : "", bonus: level.bonus === true })) } : null,
+        // A world on a module a coding model wrote (ADR-0058), which the library marks as such.
+        generatedModel: world?.routing?.family === "generated",
       };
     }),
   }));
