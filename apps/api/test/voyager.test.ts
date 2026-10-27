@@ -178,7 +178,7 @@ describe("[R09] the live client", () => {
     } finally {
       rmSync(folder, { recursive: true, force: true });
     }
-    expect(Object.keys(config.stages).sort()).toEqual(["explainer", "planner", "reader", "reviewer", "router", "second-planner", "second-reviewer", "second-transcriber", "transcriber"]);
+    expect(Object.keys(config.stages).sort()).toEqual(["explainer", "planner", "reader", "reviewer", "router", "second-planner", "second-reviewer", "second-transcriber", "transcriber", "writer"]);
     expect(config.jobTokenBudget).toBeGreaterThan(0);
   });
 

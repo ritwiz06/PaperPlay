@@ -27,6 +27,11 @@
  *            asked not to think, to learn whether it honours that; then each candidate model asked
  *            the compact planner's prompt three times, each call timed and its picks validated;
  *            writes eval/bakeoff/planner.json and prints the table. Never recorded: each call is asked
+ *   writer-bakeoff  the timed writer comparison (ADR-0058): `writer-bakeoff [<arXiv id with version>…]`,
+ *            by default Attention Is All You Need; each paper read once by the reader, then each
+ *            candidate coding model writing its mechanism through the whole fix loop, every call
+ *            asked live and timed; writes eval/bakeoff/writer.json and each module beside it.
+ *            Never recorded: each call is asked
  *   corpus-route  ingests every paper of fixtures/papers/corpus.json as a job would and runs the
  *            router on it, recorded; writes eval/routing/corpus-routes.json, the router's family,
  *            tier and reason for each, and what ingest read, never the paper's text (ADR-0052)
@@ -43,7 +48,8 @@ import { TERMINAL_STATES } from "@paperplay/contracts";
 import { fetchArxiv, registerAndText } from "@paperplay/pipeline/ingest";
 import { cappedClient, directoryStore, recordingClient, replayClient, resumingClient, thinkingClient } from "@paperplay/pipeline/models";
 import { PLANNER_PAPERS, plannerCall, plannerCase, plannerTable, pickPlanners, type PlannerBakeoff } from "./bakeoff/planner.ts";
-import { route } from "@paperplay/pipeline/stages";
+import { mechanismWriterInput, read, route } from "@paperplay/pipeline/stages";
+import { WRITER_CANDIDATES, writerAttempt, writerTable } from "./bakeoff/writer.ts";
 import { outboundFetch } from "../apps/api/src/contact.ts";
 import { CONFIG_FILE, loadModelConfig } from "../apps/api/src/models/config.ts";
 import { liveClient } from "../apps/api/src/models/live.ts";
@@ -349,7 +355,44 @@ async function plannerBakeoff(): Promise<void> {
   console.log(`picked: ${first ?? "none"} and ${second ?? "none"}`);
 }
 
-const commands: Readonly<Record<string, () => Promise<void>>> = { models, probe, bakeoff, design, rescore, report, serve, job, prebuild, "planner-bakeoff": plannerBakeoff, "corpus-route": corpusRoute };
+/** The writer comparison's papers by default: the one the tier is first run on end to end (the owner, 2026-10-26). */
+const WRITER_PAPERS = ["1706.03762v7"] as const;
+
+async function writerBakeoff(): Promise<void> {
+  const config = loadModelConfig();
+  const reader = config.stages.reader;
+  if (!reader) throw new Error("apps/api/models.json names no reader");
+  const reviewers = [config.stages.reviewer, config.stages["second-reviewer"]];
+  const models = WRITER_CANDIDATES.filter((model) => !reviewers.includes(model));
+  // Asked live every time, never replayed or recorded: each call must be timed, and the job run
+  // after this must read the paper afresh.
+  const live = thinkingClient(liveClient(config), { reader: config.thinking.reader, writer: false });
+  const example = readFileSync(join(import.meta.dirname, "..", "fixtures", "mechanisms", "heat-diffusion.js"), "utf8");
+  const papers = process.argv.slice(3).filter((value) => !value.startsWith("--"));
+  const out = join(import.meta.dirname, "..", "eval", "bakeoff", "writer");
+  mkdirSync(out, { recursive: true });
+  const attempts = [];
+  for (const paper of papers.length > 0 ? papers : WRITER_PAPERS) {
+    const fetched = await fetchArxiv(outboundFetch(), paper);
+    const { text } = registerAndText(fetched, new Date().toISOString());
+    const began = performance.now();
+    const reading = await read(live, reader, text, fetched.title, { structuredOutput: config.structuredOutput[reader] ?? false, sections: true });
+    console.log(`${paper}: read by ${reader} in ${Math.round((performance.now() - began) / 100) / 10} s; mechanism: ${reading.value.mechanism}`);
+    const input = mechanismWriterInput(text, fetched.title, reading.value, example);
+    const results = await Promise.all(models.map((model) => writerAttempt(live, model, paper, input, config.maxTokens.writer)));
+    for (const { attempt, source } of results) {
+      if (source) writeFileSync(join(out, `${paper}-${attempt.model}.js`), `${source}\n`);
+      console.log(`${attempt.model} on ${paper}: ${attempt.outcome}${attempt.reason ? ` (${attempt.reason})` : ""}, ${attempt.seconds} s over ${attempt.rounds.length} round(s): ${attempt.rounds.map((round) => `${round.writeSeconds} s write, ${round.checkSeconds} s check, ${round.failed.length > 0 ? `failed ${round.failed.join(", ")}` : "passed"}`).join("; ")}`);
+      attempts.push(attempt);
+    }
+  }
+  const rows = writerTable(attempts);
+  writeFileSync(join(import.meta.dirname, "..", "eval", "bakeoff", "writer.json"), `${JSON.stringify({ schemaVersion: "writer-bakeoff/1", ranOn: new Date().toISOString().slice(0, 10), reader, attempts, rows, picked: rows[0]?.passed ? rows[0].model : null }, null, 2)}\n`);
+  console.log(rows.map((row) => `${row.model}: ${row.passed} of ${row.attempts} passed, ${Number.isFinite(row.meanSeconds) ? `${row.meanSeconds.toFixed(1)} s on average when it passed` : "never passed"}, ${row.meanRounds.toFixed(1)} rounds`).join("\n"));
+  console.log(`picked: ${rows[0]?.passed ? rows[0].model : "none"}`);
+}
+
+const commands: Readonly<Record<string, () => Promise<void>>> = { models, probe, bakeoff, design, rescore, report, serve, job, prebuild, "planner-bakeoff": plannerBakeoff, "writer-bakeoff": writerBakeoff, "corpus-route": corpusRoute };
 const run = command === undefined ? undefined : commands[command];
 if (!run) {
   console.error(`usage: npm run pipeline:live -- <${Object.keys(commands).join("|")}>`);

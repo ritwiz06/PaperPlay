@@ -9,7 +9,8 @@
     "./flock": "./src/agents/flock/index.ts",
     "./compartments": "./src/compartments/index.ts",
     "./learning": "./src/learning/index.ts",
-    "./attention": "./src/attention/index.ts"
+    "./attention": "./src/attention/index.ts",
+    "./mechanism": "./src/mechanism/index.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json && tsc -p test/tsconfig.json"

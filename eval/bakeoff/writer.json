@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "writer-bakeoff/1",
+  "ranOn": "2026-10-27",
+  "reader": "qwen36-27b",
+  "attempts": [
+    {
+      "paper": "1706.03762v7",
+      "model": "glm-5-3",
+      "outcome": "passed",
+      "reason": null,
+      "rounds": [
+        {
+          "round": 0,
+          "writeSeconds": 233.1,
+          "checkSeconds": 0.3,
+          "failed": []
+        }
+      ],
+      "seconds": 233.4,
+      "characters": 7875,
+      "kit": "towers"
+    },
+    {
+      "paper": "1706.03762v7",
+      "model": "kimi-k2-7-code",
+      "outcome": "passed",
+      "reason": null,
+      "rounds": [
+        {
+          "round": 0,
+          "writeSeconds": 603.6,
+          "checkSeconds": 0.5,
+          "failed": [
+            "responds"
+          ]
+        },
+        {
+          "round": 1,
+          "writeSeconds": 242.7,
+          "checkSeconds": 0.4,
+          "failed": []
+        }
+      ],
+      "seconds": 847.1,
+      "characters": 8861,
+      "kit": "towers"
+    },
+    {
+      "paper": "1706.03762v7",
+      "model": "qwen3-coder-next",
+      "outcome": "passed",
+      "reason": null,
+      "rounds": [
+        {
+          "round": 0,
+          "writeSeconds": 176.7,
+          "checkSeconds": 0.1,
+          "failed": [
+            "loads"
+          ]
+        },
+        {
+          "round": 1,
+          "writeSeconds": 160.7,
+          "checkSeconds": 0.1,
+          "failed": [
+            "ranges",
+            "speed"
+          ]
+        },
+        {
+          "round": 2,
+          "writeSeconds": 162.4,
+          "checkSeconds": 0.3,
+          "failed": []
+        }
+      ],
+      "seconds": 500.2,
+      "characters": 7128,
+      "kit": "towers"
+    },
+    {
+      "paper": "1706.03762v7",
+      "model": "devstral2-123b",
+      "outcome": "failed",
+      "reason": "the module still failed its checks after 3 rounds of fixes",
+      "rounds": [
+        {
+          "round": 0,
+          "writeSeconds": 72,
+          "checkSeconds": 0.2,
+          "failed": [
+            "ranges",
+            "speed"
+          ]
+        },
+        {
+          "round": 1,
+          "writeSeconds": 70.5,
+          "checkSeconds": 0.1,
+          "failed": [
+            "ranges",
+            "speed"
+          ]
+        },
+        {
+          "round": 2,
+          "writeSeconds": 75.7,
+          "checkSeconds": 0.1,
+          "failed": [
+            "ranges",
+            "speed"
+          ]
+        },
+        {
+          "round": 3,
+          "writeSeconds": 74.2,
+          "checkSeconds": 0,
+          "failed": [
+            "ranges",
+            "speed"
+          ]
+        }
+      ],
+      "seconds": 292.9,
+      "characters": 5561,
+      "kit": "towers"
+    }
+  ],
+  "rows": [
+    {
+      "model": "glm-5-3",
+      "passed": 1,
+      "attempts": 1,
+      "meanSeconds": 233.4,
+      "meanRounds": 1
+    },
+    {
+      "model": "qwen3-coder-next",
+      "passed": 1,
+      "attempts": 1,
+      "meanSeconds": 500.2,
+      "meanRounds": 3
+    },
+    {
+      "model": "kimi-k2-7-code",
+      "passed": 1,
+      "attempts": 1,
+      "meanSeconds": 847.1,
+      "meanRounds": 2
+    },
+    {
+      "model": "devstral2-123b",
+      "passed": 0,
+      "attempts": 1,
+      "meanSeconds": null,
+      "meanRounds": 4
+    }
+  ],
+  "picked": "glm-5-3"
+}

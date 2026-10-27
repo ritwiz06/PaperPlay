@@ -6,7 +6,7 @@
 
 /** The pipeline's stages that call a model, and the probe that tests a model's abilities. */
 /** Every stage a model is chosen for. The second planner and second reviewer, from other vendors, may be left unchosen: a job then has one of each (ADR-0043, ADR-0044). */
-export const STAGES = ["reader", "transcriber", "second-transcriber", "router", "planner", "second-planner", "explainer", "reviewer", "second-reviewer"] as const;
+export const STAGES = ["reader", "transcriber", "second-transcriber", "router", "planner", "second-planner", "explainer", "reviewer", "second-reviewer", "writer"] as const;
 export type Stage = (typeof STAGES)[number];
 export type CallStage = Stage | "probe";
 

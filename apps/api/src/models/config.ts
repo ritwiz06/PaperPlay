@@ -12,7 +12,7 @@ const ModelId = z.string().min(1).max(200);
 
 /** The stages that review a world, and the stages whose work they review: its plans and its words. */
 export const REVIEWERS = ["reviewer", "second-reviewer"] as const satisfies readonly Stage[];
-export const AUTHORS = ["planner", "second-planner", "explainer"] as const satisfies readonly Stage[];
+export const AUTHORS = ["planner", "second-planner", "explainer", "writer"] as const satisfies readonly Stage[];
 
 /** Models the Voyager portal marks "Testing in progress", which its API does not show: as the owner last saw them. */
 export const Excluded = z.strictObject({
@@ -37,6 +37,8 @@ export const ModelConfig = z
     /** A job's deadline, and each stage's longest call within it, in milliseconds (R13, ADR-0053). */
     deadline: z.strictObject({
       jobMs: z.int().positive().max(3_600_000),
+      /** A job in the generated-mechanism tier, which writes and checks a module first (ADR-0058). */
+      mechanismJobMs: z.int().positive().max(3_600_000),
       stageMs: z.strictObject(Object.fromEntries(STAGES.map((stage) => [stage, z.int().positive().max(3_600_000)])) as Record<Stage, z.ZodInt>),
     }),
     /** Each stage's model, or null until the bake-off chooses one. */

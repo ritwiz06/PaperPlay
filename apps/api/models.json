@@ -13,7 +13,8 @@
     "second-planner": 32000,
     "explainer": 32000,
     "reviewer": 32000,
-    "second-reviewer": 32000
+    "second-reviewer": 32000,
+    "writer": 32000
   },
   "thinking": {
     "reader": false,
@@ -24,10 +25,12 @@
     "second-planner": false,
     "explainer": false,
     "reviewer": true,
-    "second-reviewer": true
+    "second-reviewer": true,
+    "writer": false
   },
   "deadline": {
     "jobMs": 900000,
+    "mechanismJobMs": 1200000,
     "stageMs": {
       "reader": 180000,
       "transcriber": 420000,
@@ -37,7 +40,8 @@
       "second-planner": 240000,
       "explainer": 180000,
       "reviewer": 240000,
-      "second-reviewer": 240000
+      "second-reviewer": 240000,
+      "writer": 420000
     }
   },
   "stages": {
@@ -49,7 +53,8 @@
     "second-planner": "muse-glimmer-30b",
     "explainer": "kimi-k2-7-code",
     "reviewer": "inkling-small",
-    "second-reviewer": "qwen38-27b"
+    "second-reviewer": "qwen38-27b",
+    "writer": "glm-5-3"
   },
   "excluded": {
     "asOf": "2026-10-16",

@@ -14,6 +14,10 @@ export default defineConfig(
     "reference/",
     // Claude Code's agent worktrees: full copies of the repository, linted where they live.
     "**/.claude/worktrees/",
+    // The modules the writer comparison kept: a model's output, kept as data for review (ADR-0058).
+    "eval/bakeoff/writer/",
+    // The training's own Python environment, which git ignores (ADR-0057).
+    "**/.venv/",
   ]),
   js.configs.recommended,
   tseslint.configs.recommendedTypeChecked,
@@ -31,6 +35,12 @@ export default defineConfig(
     // Files outside a type-aware tsconfig still get syntax-level linting.
     files: ["**/*.js", "apps/web/vite.config.ts"],
     extends: [tseslint.configs.disableTypeChecked],
+  },
+  {
+    // A generated mechanism is a plain script whose one name, `mechanism`, its sandbox reads (ADR-0058).
+    files: ["fixtures/mechanisms/**/*.js"],
+    languageOptions: { sourceType: "script" },
+    rules: { "@typescript-eslint/no-unused-vars": ["error", { varsIgnorePattern: "^mechanism$" }] },
   },
   {
     files: ["apps/web/src/**/*.{ts,tsx}", "packages/ui/src/**/*.{ts,tsx}"],

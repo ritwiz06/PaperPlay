@@ -13,7 +13,8 @@
     "./controller": "./src/controller/index.ts",
     "./assemble": "./src/assemble/index.ts",
     "./reproduce": "./src/reproduce/index.ts",
-    "./candidates": "./src/candidates/index.ts"
+    "./candidates": "./src/candidates/index.ts",
+    "./mechanism": "./src/mechanism/index.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json && tsc -p test/tsconfig.json"
