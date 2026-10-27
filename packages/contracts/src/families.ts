@@ -1,10 +1,11 @@
 import { z } from "zod";
+import { GENERATED_MODEL_LABEL } from "./mechanism.ts";
 
 // Primitive families (docs/design/every-paper.md §2.1, ADR-0024): a family is a set of trusted,
 // deterministic primitives with the checks and labels that come with them. This is the
 // catalogue, as data, so the builder, the router and the shell read one list.
 
-export const FamilyId = z.enum(["agents", "compartments", "learning", "study-design", "grids", "networks", "attention"]);
+export const FamilyId = z.enum(["agents", "compartments", "learning", "study-design", "grids", "networks", "attention", "generated"]);
 export type FamilyId = z.infer<typeof FamilyId>;
 
 /**
@@ -50,4 +51,7 @@ export const FAMILIES: Readonly<Record<FamilyId, Family>> = Object.freeze({
   networks: Object.freeze({ id: "networks", name: "Networks", variation: "seeds", forkFrom: "start" }),
   // One attention layer of a small transformer (ADR-0054): its weights vary with the seed until trained.
   attention: Object.freeze({ id: "attention", name: "Attention in a small transformer", label: "miniature: the mechanism at toy scale, not the paper's model", variation: "seeds", forkFrom: "start" }),
+  // A paper no family covers, its mechanism written as a module by a coding model and run only in a
+  // sandbox (ADR-0058): checked for behaviour, never verified, and labelled so on every world.
+  generated: Object.freeze({ id: "generated", name: "A mechanism written for this paper", label: GENERATED_MODEL_LABEL, variation: "seeds", forkFrom: "start" }),
 });

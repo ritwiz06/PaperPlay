@@ -58,7 +58,24 @@ export const SCENE_KITS: readonly SceneKitManifest[] = Object.freeze([
       "The ball marks where the optimizer stands after each step, and its trail where it has been. It rolls between steps only to be seen; the model moves in whole steps.",
     ]) as string[],
   }),
+  Object.freeze({
+    id: "mechanism",
+    version: "1.0.0",
+    name: "A generated mechanism, drawn as particles, towers and beams, a grid, a network, a landscape or bars",
+    draws: Object.freeze({ families: Object.freeze(["generated"]) as FamilyId[], spaces: Object.freeze(["none"]) as SpaceKind[] }),
+    run: Object.freeze({ one: "run", many: "runs", on: "in" as const }),
+    disclosures: Object.freeze([
+      "The drawing is the module's own picture of its state: it places and scales every shape itself, from 0 to 1, and the shell draws what it is given.",
+      "Colours mark groups the module names; they carry no meaning beyond it.",
+    ]) as string[],
+  }),
 ]);
 
 /** The scene kit with this id, if the shell has one. */
+/**
+ * The generated tier's kit (ADR-0058): a module's frames drawn in two dimensions by one of six
+ * simple drawings, the module choosing which; it has no Three.js half.
+ */
+export const MECHANISM_KIT_ID = "mechanism";
+
 export const sceneKit = (id: string): SceneKitManifest | undefined => SCENE_KITS.find((kit) => kit.id === id);

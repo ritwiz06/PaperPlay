@@ -7,12 +7,13 @@ describe("[R03] the primitive families' catalogue", () => {
     for (const id of FamilyId.options) expect(FAMILIES[id].id).toBe(id);
   });
 
-  it("labels the learning toys, a study's design and the attention miniature, and no other family", () => {
+  it("labels the learning toys, a study's design, the attention miniature and a generated mechanism, and no other family", () => {
     const labelled = Object.values(FAMILIES).filter((family) => family.label !== undefined);
     expect(labelled.map((family) => [family.id, family.label])).toEqual([
       ["learning", "miniature: the idea at toy scale"],
       ["study-design", "a model of how the study was designed, not its data"],
       ["attention", "miniature: the mechanism at toy scale, not the paper's model"],
+      ["generated", "generated model: behaviour checked, not verified against the paper"],
     ]);
   });
 

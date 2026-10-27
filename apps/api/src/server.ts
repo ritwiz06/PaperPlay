@@ -34,7 +34,7 @@ export function buildServer(options: ServerOptions = {}): FastifyInstance {
   app.get("/", () => ({
     service: "PaperPlay API",
     message: "This is the API behind the PaperPlay web app, and it has no pages. Run `npm run dev` and open the app, at http://127.0.0.1:5173 by default: /library lists every world, and /create makes one, reaching this API through /api.",
-    routes: ["GET /health", "GET /jobs", "POST /jobs", "POST /jobs/pdf", "GET /jobs/:id", "DELETE /jobs/:id", "GET /jobs/:id/events", "GET /jobs/:id/artifacts/:name", "GET /jobs/:id/world", "GET /jobs/:id/released", "GET /worlds/:key"],
+    routes: ["GET /health", "GET /jobs", "POST /jobs", "POST /jobs/pdf", "GET /jobs/:id", "DELETE /jobs/:id", "GET /jobs/:id/events", "GET /jobs/:id/artifacts/:name", "GET /jobs/:id/world", "GET /jobs/:id/released", "GET /worlds/:key", "GET /worlds/:key/mechanism"],
   }));
 
   // This server's jobs, for the library on a development server: each world made here, by job.
@@ -113,6 +113,13 @@ export function buildServer(options: ServerOptions = {}): FastifyInstance {
     const kept = cache.getByKey(request.params.key);
     if (!kept) return reply.code(404).send({ error: "no world is kept for that paper under today's rules" });
     return kept.world;
+  });
+
+  // A generated world's module (ADR-0058): its page checks the hash against the world's, then runs it in the sandbox.
+  app.get<{ Params: { key: string } }>("/worlds/:key/mechanism", async (request, reply) => {
+    const kept = cache.getByKey(request.params.key);
+    if (!kept?.mechanism) return reply.code(404).send({ error: "no generated module is kept for that paper" });
+    return kept.mechanism;
   });
 
   app.get<{ Params: { id: string }; Querystring: { after?: string } }>("/jobs/:id/events", (request, reply) => {

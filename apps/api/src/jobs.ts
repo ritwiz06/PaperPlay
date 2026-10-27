@@ -70,7 +70,7 @@ export class JobStore {
         job.events.push(event);
         job.state = state;
         if (folder) appendFileSync(join(folder, "events.jsonl"), `${JSON.stringify(event)}\n`);
-        if (state === "ready" && job.artifacts.has("world")) this.cache?.put(raw, id, job.artifacts.get("world"), event.at);
+        if (state === "ready" && job.artifacts.has("world")) this.cache?.put(raw, id, job.artifacts.get("world"), event.at, job.artifacts.get("mechanism"));
         for (const listener of job.listeners) listener(event);
       },
       artifact: (name, value) => {

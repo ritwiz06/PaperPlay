@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { FamilyId } from "./families.ts";
-import { Id } from "./ids.ts";
+import { Id, Sha256Hex } from "./ids.ts";
 import { UpdateRuleBinding } from "./learning.ts";
+import { MechanismManifest } from "./mechanism.ts";
 import { ModelSpec } from "./model.ts";
 import { actionWith, ParameterName, PrimitiveRef } from "./primitive.ts";
 import { Origin, SourceManifest } from "./provenance.ts";
@@ -110,8 +111,25 @@ export const EquationsBinding = z.strictObject({
 });
 export type EquationsBinding = z.infer<typeof EquationsBinding>;
 
-/** A primitive with its parameters, a model or an update rule with the primitive that runs it, or a sandboxed widget. */
-export const BindingV3 = z.discriminatedUnion("type", [...Binding.options, EquationsBinding, UpdateRuleBinding]);
+/**
+ * A generated mechanism (ADR-0058): a module a coding model wrote, named by its hash and kept beside
+ * the world, never inside it, and run only in a sandbox. Its manifest, as the checks parsed it, is
+ * what the builder checks a level against.
+ */
+export const MechanismBinding = z.strictObject({
+  type: z.literal("mechanism"),
+  /** The module as a primitive the world lists among those it uses: mechanismRef of its hash. */
+  primitive: PrimitiveRef,
+  module: z.strictObject({ sha256: Sha256Hex, characters: z.int().positive() }),
+  manifest: MechanismManifest,
+  params: z.record(ParameterName, z.number()),
+  /** How many steps a second of watching shows at 1x, a teaching choice. */
+  perWatchSecond: z.number().positive(),
+});
+export type MechanismBinding = z.infer<typeof MechanismBinding>;
+
+/** A primitive with its parameters, a model or an update rule with the primitive that runs it, a sandboxed widget, or a generated mechanism. */
+export const BindingV3 = z.discriminatedUnion("type", [...Binding.options, EquationsBinding, UpdateRuleBinding, MechanismBinding]);
 export type BindingV3 = z.infer<typeof BindingV3>;
 
 /** Something the world cannot show, with where the statement comes from: its journal page says each one. */
@@ -183,17 +201,21 @@ export type LevelV3 = z.infer<typeof LevelV3>;
 
 /**
  * How the paper was routed (docs/design/every-paper.md §3.2): tier A when a released family
- * primitive covers its mechanism, tier B when a new primitive, not yet merged, was drafted for it.
- * Tier C is an interactive explainer, which is not a WorldSpec.
+ * primitive covers its mechanism, tier B when a new primitive, not yet merged, was drafted for it,
+ * the generated tier when a coding model wrote the paper's mechanism as a module (ADR-0058). Tier C
+ * is an interactive explainer, which is not a WorldSpec.
  */
 export const Routing = z.strictObject({
-  tier: z.enum(["A", "B"]),
+  /** "generated": no family covers the paper, so a coding model wrote its mechanism (ADR-0058). */
+  tier: z.enum(["A", "B", "generated"]),
   family: FamilyId,
   /** Why the family covers the paper's mechanism, in a sentence. */
   reason: z.string().min(1),
   primitive: z.discriminatedUnion("status", [
     z.strictObject({ status: z.literal("released") }),
     z.strictObject({ status: z.literal("unmerged"), pullRequest: z.url() }),
+    /** A module written for this paper and checked for its behaviour, never verified. */
+    z.strictObject({ status: z.literal("generated") }),
   ]),
 });
 export type Routing = z.infer<typeof Routing>;
@@ -256,6 +278,8 @@ export const WorldSpecV3 = z
     const { tier, primitive } = spec.routing;
     if (tier === "A" && primitive.status !== "released") issue("a tier A world runs on a released primitive", primitive, ["routing", "primitive", "status"]);
     if (tier === "B" && primitive.status !== "unmerged") issue("a tier B world runs on a new primitive, not yet merged", primitive, ["routing", "primitive", "status"]);
+    if (tier === "generated" && (primitive.status !== "generated" || spec.routing.family !== "generated")) issue("a generated world runs on its own generated module, in the generated family", spec.routing, ["routing"]);
+    if (primitive.status === "generated" && spec.status === "reviewed") issue("a world on a generated module stays a draft: its behaviour is checked, never verified", spec.status, ["status"]);
     // A world on a primitive no one has merged is never shown as verified (every-paper.md §2.5).
     if (primitive.status === "unmerged" && spec.status === "reviewed") issue("a world on an unmerged primitive stays a draft", spec.status, ["status"]);
   });

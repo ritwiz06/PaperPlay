@@ -11,9 +11,10 @@ import { DATA_RULE } from "./source.ts";
 /**
  * The families the router may name: those its bake-off's recordings know. Attention has a primitive
  * (ADR-0054) but no worlds yet, so a paper on it is tier C until it does; adding it here would also
- * change the schema every recorded router call was asked with.
+ * change the schema every recorded router call was asked with. Nor is the generated tier a family a
+ * paper is routed to: it is where a paper goes when none covers it (ADR-0058).
  */
-export const RoutedFamily = FamilyId.exclude(["attention"]);
+export const RoutedFamily = FamilyId.exclude(["attention", "generated"]);
 export type RoutedFamily = z.infer<typeof RoutedFamily>;
 
 /** The families with a released primitive today (G3a): the flock's agents and the compartment solver. */

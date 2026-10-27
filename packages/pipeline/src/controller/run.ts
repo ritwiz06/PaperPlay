@@ -33,6 +33,8 @@ import { modelForComparison } from "../transcribe/score.ts";
 import { compareValueSets, pickValueSet, withValueSet } from "../transcribe/valuesets.ts";
 import { matchModels } from "../transcribe/match.ts";
 import { TranscriptionWithSets } from "../transcribe/schema.ts";
+import { runMechanismTier, type MechanismTierConfig } from "./mechanism.ts";
+import { Stop } from "./stop.ts";
 
 export const MAX_REPAIRS = 2;
 
@@ -49,6 +51,8 @@ export const RULES_VERSION = "2026-10-20";
  */
 export interface Deadline {
   readonly jobMs: number;
+  /** A job in the generated-mechanism tier, which writes and checks a module first (ADR-0058). */
+  readonly mechanismJobMs?: number;
   readonly stageMs: Readonly<Partial<Record<Stage, number>>>;
   readonly clock?: () => number;
 }
@@ -64,6 +68,11 @@ export interface JobConfig {
    * (ADR-0055). Left out, the planner writes the whole plan, as before 2026-10-25.
    */
   readonly planning?: "candidates";
+  /**
+   * The generated-mechanism tier (ADR-0058): a paper no family covers has its mechanism written as a
+   * module by a coding model and checked in a sandbox. Left out, such a paper is unsupported.
+   */
+  readonly mechanisms?: MechanismTierConfig;
 }
 
 export interface JobSink {
@@ -114,14 +123,6 @@ class PicksRefused extends Error {
 /** A level's facts, without its words: what code chose, so a repair's unchanged levels keep their words (ADR-0055). */
 const factsOf = (level: PlanLevel): string => JSON.stringify([level.control.parameter, level.watch, level.whatIf.parameter, level.whatIf.value, level.difference, level.finding]);
 
-/** How a job ends early, and why. */
-class Stop extends Error {
-  readonly state: "needs_information" | "unsupported" | "failed" | "cancelled";
-  constructor(state: Stop["state"], message: string) {
-    super(message);
-    this.state = state;
-  }
-}
 
 export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome> {
   // Moved by the closures below, so declared wide.
@@ -149,7 +150,9 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
   // job's, and how long each stage's calls took here, for what a repair would cost.
   const clock = input.deadline?.clock ?? (() => Date.now());
   const began = clock();
-  const left = (): number => (input.deadline ? input.deadline.jobMs - (clock() - began) : Number.POSITIVE_INFINITY);
+  /** The job's time: the tier it is routed to may lengthen it (ADR-0058). */
+  let jobMs = input.deadline?.jobMs ?? Number.POSITIVE_INFINITY;
+  const left = (): number => (input.deadline ? jobMs - (clock() - began) : Number.POSITIVE_INFINITY);
   const took = new Map<Stage, number>();
   const timed = async <T>(stage: Stage, call: (client: ModelClient) => Promise<T>, cancel?: AbortSignal): Promise<T> => {
     const limit = Math.min(input.deadline?.stageMs[stage] ?? Number.POSITIVE_INFINITY, left());
@@ -201,7 +204,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     say("deadline", `no time for a repair: ${seconds(left())} of the job's time is left, and a repair with the review after it is expected to take ${seconds(needs)}; the levels that pass ship`);
     return false;
   };
-  const timing = () => ({ jobMs: input.deadline?.jobMs ?? null, spentMs: clock() - began, stages: Object.fromEntries([...took].map(([stage, ms]) => [stage, ms])) });
+  const timing = () => ({ jobMs: input.deadline && Number.isFinite(jobMs) ? jobMs : null, spentMs: clock() - began, stages: Object.fromEntries([...took].map(([stage, ms]) => [stage, ms])) });
 
   const asked = input.source.kind === "ingested" ? input.source.register.sourceId : input.source.kind === "pdf" ? `a PDF, ${input.source.name}` : `${input.source.kind}:${input.source.id}`;
   sink.emit("received", "the request", `received ${asked}`);
@@ -230,6 +233,32 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     const routed = await timed("router", (client) => route(client, modelFor("router"), { title, abstract: front ? text.text.slice(front.start, front.end) : text.text.slice(0, 2000), equations: text.equations.slice(0, 6).map((equation) => equation.latex.slice(0, 300)) }, { structuredOutput: structured(modelFor("router")), capabilities: true }));
     sink.artifact("route", routed.value);
     if (routed.value.family !== "compartments" || routed.value.tier !== "A") {
+      // No family whose worlds are made from papers covers it: the generated tier writes its mechanism (ADR-0058).
+      if (input.config.mechanisms) {
+        return await runMechanismTier({
+          input,
+          config: input.config.mechanisms,
+          sink,
+          text,
+          register,
+          title,
+          route: routed.value,
+          move,
+          say,
+          timed,
+          modelFor,
+          structured,
+          cancelled,
+          left,
+          extend: (ms) => {
+            jobMs = Math.max(jobMs, ms);
+          },
+          timing,
+          released: (count) => {
+            released = count;
+          },
+        });
+      }
       throw new Stop("unsupported", `the router sends this paper to ${routed.value.family}, tier ${routed.value.tier}: ${routed.value.reason} PaperPlay generates compartment-model worlds only, so far.`);
     }
     say("routing", `compartments, tier A: ${routed.value.reason}`);
@@ -944,7 +973,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     return { state, message: "ready", world: spec };
   } catch (error) {
     // A deadline passed: the job stops rather than run on, and says what is left to play (R13).
-    const deadlineWords = (error: unknown): string => `${error instanceof Error ? error.message : String(error)}: the job stops at its deadline of ${seconds(input.deadline?.jobMs ?? 0)} rather than run on; ${released > 0 ? `the ${released} levels released stay playable, checked but not reviewed` : "no level passed its checks in time, so this paper falls back to the explainer page, tier C"}`;
+    const deadlineWords = (error: unknown): string => `${error instanceof Error ? error.message : String(error)}: the job stops at its deadline of ${seconds(Number.isFinite(jobMs) ? jobMs : 0)} rather than run on; ${released > 0 ? `the ${released} levels released stay playable, checked but not reviewed` : "no level passed its checks in time, so this paper falls back to the explainer page, tier C"}`;
     const stop = error instanceof Stop ? error : outOfTime(error) && input.deadline ? new Stop("failed", deadlineWords(error)) : new Stop("failed", error instanceof Error ? error.message.split("\n")[0] ?? "" : String(error));
     sink.artifact("timing", timing());
     if (state !== stop.state && canMove(state, stop.state)) move(stop.state, "stopped", stop.message);

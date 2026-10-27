@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { SCENE_KITS } from "@paperplay/contracts";
+import { MECHANISM_KIT_ID, SCENE_KITS } from "@paperplay/contracts";
 import { describe, expect, it } from "vitest";
 import { landscapeStage } from "../src/stage-core/kits/landscape/index.ts";
 import { FIGURES, townStage } from "../src/stage-core/kits/town/index.ts";
@@ -27,8 +27,9 @@ describe("scene kits", () => {
     for (const kit of STAGE_KITS) expect(THREE_KITS[kit.id]?.id).toBe(kit.id);
   });
 
-  it("are each the shell's own: every manifest has its halves, and every pair of halves its manifest", () => {
-    expect(SCENE_KITS.map((kit) => kit.id).sort()).toEqual(STAGE_KITS.map((kit) => kit.id).sort());
+  it("are each the shell's own: every manifest has its halves, and every pair of halves its manifest; the generated tier's kit draws in two dimensions on a stage of its own (ADR-0058)", () => {
+    expect(SCENE_KITS.map((kit) => kit.id).filter((id) => id !== MECHANISM_KIT_ID).sort()).toEqual(STAGE_KITS.map((kit) => kit.id).sort());
+    expect(SCENE_KITS.map((kit) => kit.id)).toContain(MECHANISM_KIT_ID);
   });
 
   it("disclose the town's figures as many as it draws", () => {

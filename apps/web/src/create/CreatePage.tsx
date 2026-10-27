@@ -7,7 +7,8 @@
  * a paper made before is served at once (R13, ADR-0053). The production build holds none of this;
  * the public site only plays worlds built beforehand.
  */
-import type { JobEvent, JobState } from "@paperplay/contracts";
+import type { JobEvent, JobState, Origin } from "@paperplay/contracts";
+import { OriginChip } from "@paperplay/ui/react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import "./create.css";
 
@@ -34,6 +35,18 @@ interface Released {
   readonly of: number;
 }
 
+/**
+ * The explainer page a paper falls back to, tier C (ADR-0058): what it asks and finds, each finding
+ * with its passage where the source holds it, and why there is no world.
+ */
+interface ExplainerPage {
+  readonly title: string;
+  readonly why: string;
+  readonly question: string | null;
+  readonly mechanism: string;
+  readonly findings: readonly { readonly text: string; readonly origin: Origin; readonly quote: string | null }[];
+}
+
 /** A paper made before, under today's rules: its world's address, and the job that made it. */
 interface Cached {
   readonly world: string;
@@ -44,6 +57,7 @@ interface Cached {
 export function CreatePage() {
   const [source, setSource] = useState("");
   const [released, setReleased] = useState<Released | null>(null);
+  const [explainer, setExplainer] = useState<ExplainerPage | null>(null);
   const [cached, setCached] = useState<Cached | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
@@ -58,6 +72,7 @@ export function CreatePage() {
     setError(null);
     setEvents([]);
     setReleased(null);
+    setExplainer(null);
     setCached(null);
     setJobId(null);
     stream.current?.close();
@@ -90,6 +105,12 @@ export function CreatePage() {
         void fetch(`/api/jobs/${id}/released`)
           .then((answer) => (answer.ok ? (answer.json() as Promise<Released>) : null))
           .then((value) => value && setReleased(value))
+          .catch(() => undefined);
+      // A paper that falls back to tier C: its explainer page, when the job made one.
+      if (parsed.state === "unsupported")
+        void fetch(`/api/jobs/${id}/artifacts/explainer`)
+          .then((answer) => (answer.ok ? (answer.json() as Promise<ExplainerPage>) : null))
+          .then((value) => value && setExplainer(value))
           .catch(() => undefined);
     });
     events.onerror = () => events.close();
@@ -190,6 +211,28 @@ export function CreatePage() {
               <h3>{ENDINGS[ending.state]}</h3>
               <p>{ending.message}</p>
             </div>
+          ) : null}
+          {explainer ? (
+            <article className="story-explainer" aria-labelledby="explainer-title">
+              <h3 id="explainer-title">What the paper says</h3>
+              <p className="story-explainer-why">There is no world to play for {explainer.title}: {explainer.why}.</p>
+              {explainer.question ? (
+                <p>
+                  <OriginChip origin="generated-inference" /> It asks: {explainer.question}
+                </p>
+              ) : null}
+              <p>
+                <OriginChip origin="generated-inference" /> Its mechanism: {explainer.mechanism}
+              </p>
+              <ul>
+                {explainer.findings.map((finding) => (
+                  <li key={finding.text}>
+                    <OriginChip origin={finding.origin} /> {finding.text}
+                    {finding.quote ? <blockquote>{finding.quote}</blockquote> : null}
+                  </li>
+                ))}
+              </ul>
+            </article>
           ) : null}
           {released && last?.state !== "ready" ? (
             <div className="story-levels" role="status">

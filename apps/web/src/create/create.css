@@ -215,3 +215,27 @@
     box-shadow: none;
   }
 }
+
+/* The explainer page a paper falls back to, tier C (ADR-0058). */
+.story-explainer {
+  margin-block: 1.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--line, #d2ddd3);
+  border-radius: 12px;
+  background: #fff;
+}
+.story-explainer ul {
+  padding-left: 1.1rem;
+}
+.story-explainer li {
+  margin-block: 0.6rem;
+}
+.story-explainer blockquote {
+  margin: 0.35rem 0 0;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--aqua, #62cbc2);
+  color: var(--sub, #526a66);
+}
+.story-explainer-why {
+  color: var(--sub, #526a66);
+}

@@ -9,6 +9,7 @@
  */
 import {
   FAMILIES,
+  mechanismRef,
   RULE_FASTEST_SPEED,
   RULE_WATCH_SECONDS,
   sceneKit,
@@ -42,6 +43,7 @@ import {
   type WorldSpecV3,
 } from "@paperplay/contracts";
 import type { Primitive, PrimitiveRegistry, VariableDescription } from "@paperplay/primitives";
+import { mechanismPrimitive } from "@paperplay/primitives/mechanism";
 import { familyProblems } from "./families.ts";
 
 export type Depth = keyof Explanation;
@@ -251,9 +253,17 @@ function buildLevel(level: LevelV3, at: (string | number)[], spec: WorldSpecV3, 
     problem([...at, "binding"], "widget bindings arrive with the widget tier (G3), behind FEATURE_WIDGETS=1 and in a sandboxed iframe");
     return null;
   }
-  const primitiveRef = binding.type === "primitive" ? binding.primitive : binding.solver;
+  const primitiveRef = binding.type === "primitive" || binding.type === "mechanism" ? binding.primitive : binding.solver;
   let primitive: Primitive<unknown, unknown> | undefined;
-  if (binding.type === "primitive") {
+  if (binding.type === "mechanism") {
+    // A generated module (ADR-0058): described by its manifest, named by its hash, and run only in its sandbox.
+    const expected = mechanismRef(binding.module.sha256);
+    if (binding.primitive.id !== expected.id || binding.primitive.version !== expected.version) {
+      problem([...at, "binding", "primitive"], `a generated module is named ${expected.id}@${expected.version} by its hash, not ${binding.primitive.id}@${binding.primitive.version}`);
+      return null;
+    }
+    primitive = mechanismPrimitive(binding.primitive, binding.manifest, binding.perWatchSecond);
+  } else if (binding.type === "primitive") {
     primitive = registry.get(binding.primitive);
     if (!primitive) {
       problem([...at, "binding", "primitive"], `the registry has no ${binding.primitive.id}@${binding.primitive.version}`);

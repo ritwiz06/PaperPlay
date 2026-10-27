@@ -22,6 +22,8 @@ export interface CachedWorld {
   /** RULES_VERSION when it was made. */
   readonly rules: string;
   readonly world: unknown;
+  /** A generated world's module (ADR-0058), which its page runs in the sandbox; absent for every other world. */
+  readonly mechanism?: unknown;
 }
 
 export const CACHE_DIR = join(import.meta.dirname, "..", "data", "worlds");
@@ -37,7 +39,7 @@ export function cacheKey(source: string): string | null {
 export interface WorldCache {
   get(source: string): CachedWorld | null;
   getByKey(key: string): CachedWorld | null;
-  put(source: string, jobId: string, world: unknown, madeAt: string): void;
+  put(source: string, jobId: string, world: unknown, madeAt: string, mechanism?: unknown): void;
 }
 
 /** The cache in a folder, or in memory alone when the folder is null, as tests keep it. */
@@ -55,10 +57,10 @@ export function worldCache(folder: string | null = CACHE_DIR, rules: string = RU
       const key = cacheKey(source);
       return key === null ? null : getByKey(key);
     },
-    put(source, jobId, world, madeAt) {
+    put(source, jobId, world, madeAt, mechanism) {
       const key = cacheKey(source);
       if (key === null) return;
-      const entry: CachedWorld = { schemaVersion: "cached-world/1", source, jobId, madeAt, rules, world };
+      const entry: CachedWorld = { schemaVersion: "cached-world/1", source, jobId, madeAt, rules, world, ...(mechanism === undefined ? {} : { mechanism }) };
       held.set(key, entry);
       if (folder) {
         mkdirSync(folder, { recursive: true });

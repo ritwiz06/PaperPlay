@@ -40,13 +40,18 @@ export function jobClient(client: ModelClient, config: Pick<ModelConfig, "maxTok
   return thinkingClient(budgetedClient(cappedClient(client, config.maxTokens), trace), config.thinking);
 }
 
+/** The module the writer is shown for its shape (ADR-0058): heat on a plate, which passes every check and shares nothing with any paper. */
+export const mechanismExample = (): string => readFileSync(join(import.meta.dirname, "..", "..", "..", "fixtures", "mechanisms", "heat-diffusion.js"), "utf8");
+
 export function pipelineRunner(client: ModelClient, config: ModelConfig, fetch: Fetch): JobRunner {
   const example = workedExample();
+  // The generated-mechanism tier, whenever a writer is chosen (ADR-0058).
+  const mechanisms = config.stages.writer ? { example: mechanismExample() } : undefined;
   return async (source: JobSource, sink: JobSink, signal: AbortSignal) => {
     const trace = newTrace(config.jobTokenBudget);
     try {
       // Each stage's thinking and its share of the job's deadline from models.json (R13, ADR-0053).
-      return await runJob({ source, client: jobClient(client, config, trace), config: { stages: config.stages, structuredOutput: config.structuredOutput, planning: "candidates" }, fetch, example, signal, deadline: config.deadline }, sink);
+      return await runJob({ source, client: jobClient(client, config, trace), config: { stages: config.stages, structuredOutput: config.structuredOutput, planning: "candidates", ...(mechanisms ? { mechanisms } : {}) }, fetch, example, signal, deadline: config.deadline }, sink);
     } finally {
       sink.artifact("trace", trace);
     }
