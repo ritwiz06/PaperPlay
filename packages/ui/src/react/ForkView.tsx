@@ -12,8 +12,10 @@ export interface ForkPane<Input = unknown, Emphasis extends BaseEmphasis = BaseE
 }
 
 export interface ForkViewProps<Input, Emphasis extends BaseEmphasis, Look, Frame extends BaseFrame> {
-  /** The scene kit both stages draw with. */
-  readonly kit: StageKit<Input, Emphasis, Look, Frame>;
+  /** The scene kit both stages draw with; absent when the world draws its own stages. */
+  readonly kit?: StageKit<Input, Emphasis, Look, Frame>;
+  /** A world with a stage of its own draws each pane's, such as a generated world's in its sandbox (ADR-0058). */
+  readonly renderStage?: (pane: ForkPane<Input, Emphasis>, which: "here" | "there") => ReactNode;
   /** The What-if, as a question. */
   readonly title: string;
   /** Under the title: what the other world changes, and whether both restart. */
@@ -45,7 +47,7 @@ export interface ForkViewProps<Input, Emphasis extends BaseEmphasis, Look, Frame
  * them charted beneath. The stages only draw; the app keeps both worlds in step.
  */
 export function ForkView<Input, Emphasis extends BaseEmphasis, Look, Frame extends BaseFrame>(props: ForkViewProps<Input, Emphasis, Look, Frame>) {
-  const { kit, title, note, here, there, stageLabel, look, chart, result, playing, done, onTogglePlay, onClose, onReadout, guide, controls, children } = props;
+  const { kit, renderStage, title, note, here, there, stageLabel, look, chart, result, playing, done, onTogglePlay, onClose, onReadout, guide, controls, children } = props;
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     heading.current?.focus({ preventScroll: true });
@@ -77,21 +79,25 @@ export function ForkView<Input, Emphasis extends BaseEmphasis, Look, Frame exten
         </div>
       </header>
       <div className="fork-pane fork-here" data-pane="here">
-        <WorldStage
-          kit={kit}
-          driver={here.driver}
-          name={here.name}
-          label={stageLabel}
-          tool="look"
-          framing="overview"
-          {...(look === undefined ? {} : { look })}
-          onTogglePlay={onTogglePlay}
-          {...(onReadout ? { onReadout } : {})}
-        />
+        {renderStage ? (
+          renderStage(here, "here")
+        ) : kit ? (
+          <WorldStage
+            kit={kit}
+            driver={here.driver}
+            name={here.name}
+            label={stageLabel}
+            tool="look"
+            framing="overview"
+            {...(look === undefined ? {} : { look })}
+            onTogglePlay={onTogglePlay}
+            {...(onReadout ? { onReadout } : {})}
+          />
+        ) : null}
         <p className="card fork-label">{here.label}</p>
       </div>
       <div className="fork-pane fork-there" data-pane="there">
-        <WorldStage kit={kit} driver={there.driver} name={there.name} label={stageLabel} tool="look" framing="overview" {...(look === undefined ? {} : { look })} onTogglePlay={onTogglePlay} />
+        {renderStage ? renderStage(there, "there") : kit ? <WorldStage kit={kit} driver={there.driver} name={there.name} label={stageLabel} tool="look" framing="overview" {...(look === undefined ? {} : { look })} onTogglePlay={onTogglePlay} /> : null}
         <p className="card fork-label">{there.label}</p>
       </div>
       <div className="card fork-result">

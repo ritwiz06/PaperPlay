@@ -10,7 +10,8 @@ const BUILT = "http://127.0.0.1:4318";
 const deploy = JSON.parse(readFileSync(fileURLToPath(new URL("../../vercel.json", import.meta.url)), "utf8")) as {
   headers: { source: string; headers: { key: string; value: string }[] }[];
 };
-const everyPage = deploy.headers.find((rule) => rule.source === "/(.*)")?.headers ?? [];
+// The headers every page of the app gets: every path but the mechanism sandbox's frame, which has its own (ADR-0058).
+const everyPage = deploy.headers.find((rule) => rule.source === "/((?!sandbox\\.html).*)")?.headers ?? [];
 
 async function watched(page: Page): Promise<{ violations: () => Promise<string[]>; errors: string[] }> {
   const errors: string[] = [];

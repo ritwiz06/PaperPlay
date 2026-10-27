@@ -17,7 +17,8 @@
     "./react": "./src/react/index.ts",
     "./react/valley": "./src/react/kits/valley/index.ts",
     "./react/town": "./src/react/kits/town/index.ts",
-    "./react/landscape": "./src/react/kits/landscape/index.ts"
+    "./react/landscape": "./src/react/kits/landscape/index.ts",
+    "./react/mechanism": "./src/react/mechanism/index.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json && tsc -p src/stage-core/tsconfig.json && tsc -p src/three-adapter/tsconfig.json && tsc -p src/react/tsconfig.json && tsc -p test/tsconfig.json"

@@ -23,9 +23,13 @@ const root = join(import.meta.dirname, "..");
 const config = JSON.parse(readFileSync(join(root, "vercel.json"), "utf8")) as VercelConfig;
 const dist = join(root, config.outputDirectory);
 
-/** vercel.json's sources here are plain paths with "(.*)" groups, which read as regular expressions as they stand. */
+/**
+ * vercel.json's sources here are plain paths with "(.*)" groups, or "/((?!path).*)" for every path
+ * but one (the sandbox's frame, which has headers of its own), and each reads as a regular
+ * expression as it stands.
+ */
 export function matcher(source: string): RegExp {
-  if (!/^\/[\w/.-]*(\(\.\*\))?$/.test(source)) throw new Error(`serve-dist does not understand the source pattern ${source}`);
+  if (!/^\/[\w/.-]*(\(\.\*\))?$/.test(source) && !/^\/\(\(\?![\w/\\.-]+\)\.\*\)$/.test(source)) throw new Error(`serve-dist does not understand the source pattern ${source}`);
   return new RegExp(`^${source}$`);
 }
 

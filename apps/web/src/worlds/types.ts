@@ -5,18 +5,32 @@
  * what it hands the shell and what the shell hands back always match.
  */
 import type { BuiltLevel, BuiltWorld } from "@paperplay/pipeline";
-import type { KitMark } from "@paperplay/ui/react";
-import type { BaseEmphasis, BaseFrame, StageKit } from "@paperplay/ui/stage-core";
-import type { ReactNode } from "react";
+import type { KitMark, StageDriver } from "@paperplay/ui/react";
+import type { BaseEmphasis, BaseFrame, Rect, StageKit } from "@paperplay/ui/stage-core";
+import type { ComponentType, ReactNode } from "react";
 import type { CoreSnapshot, SessionOptions, Stepped, WorldSession } from "../world/session.ts";
 
 export type PlaySession = WorldSession<Record<string, number>, Stepped, Record<string, number>, unknown, BaseEmphasis, unknown>;
 export type PlaySnapshot = CoreSnapshot<Record<string, number>, Record<string, number>>;
 
+/** What the shell gives a world's own stage: the driver it draws from, where to draw, and what the learner does. */
+export interface OwnStageProps {
+  readonly driver: StageDriver;
+  readonly name: string;
+  readonly window: Rect | null;
+  readonly onTogglePlay: () => void;
+  readonly onReadout?: () => void;
+}
+
 export interface PlayableWorld {
   readonly world: BuiltWorld;
-  /** The scene kit's pure half, which the stage draws with. */
-  readonly stage: StageKit<unknown, BaseEmphasis, unknown, BaseFrame>;
+  /** The scene kit's pure half, which the stage draws with; absent for a world that draws its own stage. */
+  readonly stage?: StageKit<unknown, BaseEmphasis, unknown, BaseFrame>;
+  /**
+   * A stage of the world's own, in place of a kit's Three.js stage: a generated world's drawing of
+   * what its sandbox sends (ADR-0058). Given a driver, it draws; it never measures.
+   */
+  readonly Stage?: ComponentType<OwnStageProps>;
   /** How the kit draws the world, apart from emphasis. */
   readonly look: unknown;
   /** Whether the stage follows the kit's focus, or holds the whole field still. */
@@ -34,7 +48,7 @@ export interface PlayableWorld {
   /** What the fork's chart calls a metric. */
   chartName(level: BuiltLevel, metricId: string): string;
   /** The top of the fork chart's value axis, fitted to the measured quantity as the visibility rule fits it; otherwise the shell rounds above what is drawn. */
-  chartTop?(level: BuiltLevel): number;
+  chartTop?(level: BuiltLevel, values: readonly number[]): number;
   /** A level's own look, when it differs from the world's, such as a town drawn through a lens. */
   lookFor?(level: BuiltLevel): unknown;
   /** A teaching choice in how the level is drawn, said on screen beside the fork, such as a lens; null when there is none. */

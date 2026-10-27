@@ -79,6 +79,8 @@ export interface WorldSession<P, S, O, Extra, Emphasis extends BaseEmphasis, Inp
   tick(frameSeconds: number): number;
   /** Takes exactly this many fixed steps now, playing or not: a fork keeps two worlds in step this way. */
   stepBy(steps: number): void;
+  /** Whether the session can step yet: false while a generated world's measurements are on their way from its sandbox (ADR-0058). Absent means always. */
+  ready?(): boolean;
   /** Runs at 1x, 2x or 4x: more fixed steps per frame, the same steps. */
   setSpeed(speed: Speed): void;
   play(): void;

@@ -56,7 +56,8 @@ describe("[R09] the production bundle's reach", () => {
     for (const chunk of chunks) {
       expect(chunk.text, chunk.name).not.toContain("/api/");
       expect(chunk.text, chunk.name).not.toContain("Make a world from a paper");
-      expect(chunk.text, chunk.name).not.toContain("EventSource");
+      // A job's event stream is opened only by /create; the sandbox's driver names EventSource only to take it away (ADR-0058).
+      expect(chunk.text, chunk.name).not.toContain("new EventSource(");
     }
   });
 });

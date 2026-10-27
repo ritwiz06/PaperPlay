@@ -12,6 +12,10 @@ import { LibraryPage } from "./library/LibraryPage.tsx";
 const CreatePage = import.meta.env.DEV ? lazy(() => import("./create/CreatePage.tsx").then((module) => ({ default: module.CreatePage }))) : null;
 /** The trained miniature's bits in the browser, for a test to compare with Node's, on a development server only (ADR-0057). */
 const MiniatureCheck = import.meta.env.DEV ? lazy(() => import("./check/MiniatureCheck.tsx").then((module) => ({ default: module.MiniatureCheck }))) : null;
+/** The mechanism sandbox in the browser, for the tests of what a module cannot reach, on a development server only (ADR-0058). */
+const SandboxCheck = import.meta.env.DEV ? lazy(() => import("./check/SandboxCheck.tsx").then((module) => ({ default: module.SandboxCheck }))) : null;
+/** The six generic scene kits, each drawing a hand-made frame, on a development server only (ADR-0058). */
+const KitsCheck = import.meta.env.DEV ? lazy(() => import("./check/KitsCheck.tsx").then((module) => ({ default: module.KitsCheck }))) : null;
 
 const subscribe = (onChange: () => void) => {
   window.addEventListener("popstate", onChange);
@@ -41,6 +45,18 @@ export function App() {
       return (
         <Suspense fallback={null}>
           <MiniatureCheck />
+        </Suspense>
+      );
+    if (path === "/check/sandbox" && SandboxCheck)
+      return (
+        <Suspense fallback={null}>
+          <SandboxCheck />
+        </Suspense>
+      );
+    if (path === "/check/kits" && KitsCheck)
+      return (
+        <Suspense fallback={null}>
+          <KitsCheck />
         </Suspense>
       );
     if (path === "/create" && CreatePage)

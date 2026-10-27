@@ -5,11 +5,16 @@
  * plays worlds built beforehand (ADR-0030). Either way the builder checks it here before it plays,
  * and a world that does not build is refused with the reason. A job still running plays the levels
  * it has released, each past every check, and says the reviewers have not read them (R13, ADR-0053).
+ * A world on a generated module (ADR-0058) plays that module in the browser's sandbox, once its
+ * source's hash matches the one the world names; otherwise it is refused.
  */
+import { MechanismManifest } from "@paperplay/contracts";
 import { buildWorld } from "@paperplay/pipeline";
 import { registry } from "@paperplay/primitives";
 import { useEffect, useState } from "react";
 import { HookWorld } from "../hook/HookWorld.tsx";
+import { openBrowserSandbox, type BrowserSandbox } from "../mechanism/sandbox.ts";
+import { mechanismWorld } from "./mechanism-world.tsx";
 import { townWorld } from "./town-world.tsx";
 import type { PlayableWorld } from "./types.ts";
 
@@ -27,6 +32,18 @@ interface Partial {
   readonly levels: number;
   readonly of: number;
 }
+
+/** A generated world's module (ADR-0058): from the job that wrote it, or the cache beside its world, on a development server. */
+async function moduleOf(from: From): Promise<string> {
+  if (!import.meta.env.DEV || "generated" in from) throw new Error("a generated module plays only on a local development server, from the job that wrote it");
+  const response = await fetch("job" in from ? `/api/jobs/${encodeURIComponent(from.job)}/artifacts/mechanism` : `/api/worlds/${encodeURIComponent(from.cached)}/mechanism`);
+  if (!response.ok) throw new Error(`the world's module is not available: the API answered ${response.status}`);
+  const { source } = (await response.json()) as { source?: unknown };
+  if (typeof source !== "string") throw new Error("the world's module came without its source");
+  return source;
+}
+
+const hex = (bytes: ArrayBuffer): string => [...new Uint8Array(bytes)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 
 async function load(from: From): Promise<{ readonly spec: unknown; readonly partial: Partial | null }> {
   if ("job" in from || "cached" in from) {
@@ -59,18 +76,32 @@ export function GeneratedWorld({ from }: { readonly from: From }) {
   const [round, setRound] = useState(0);
   useEffect(() => {
     let live = true;
+    let sandbox: BrowserSandbox | null = null;
     load(from)
-      .then(({ spec, partial: part }) => {
+      .then(async ({ spec, partial: part }) => {
         if (live) setPartial(part);
         const built = buildWorld(spec, registry);
         if (!built.ok) throw new Error(`the world does not build: ${built.problems.slice(0, 3).map((entry) => `${entry.path}: ${entry.message}`).join("; ")}`);
         // "A PaperPlay world about" the paper itself, by its title, so a generated world names its source.
         const about = `“${built.world.source.title}”`;
-        if (live) setPlay(townWorld(built.world, { about }));
+        if (built.world.family.id !== "generated") {
+          if (live) setPlay(townWorld(built.world, { about }));
+          return;
+        }
+        // A generated module: the one the world names by its hash, run only in the sandbox.
+        const binding = (spec as { levels: { binding: { module: { sha256: string }; manifest: unknown } }[] }).levels[0]?.binding;
+        if (!binding) throw new Error("the world names no module");
+        const source = await moduleOf(from);
+        const digest = hex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(source)));
+        if (digest !== binding.module.sha256) throw new Error("the module's source does not match the hash its world names, so it is not run");
+        const opened = openBrowserSandbox(source);
+        sandbox = opened;
+        if (live) setPlay(mechanismWorld(built.world, opened, MechanismManifest.parse(binding.manifest), { about }));
       })
       .catch((error: unknown) => live && setProblem(error instanceof Error ? error.message : String(error)));
     return () => {
       live = false;
+      void sandbox?.close();
     };
   }, [from, round]);
   // While levels are still arriving, the job's events say when more have passed or the world is ready.

@@ -1329,3 +1329,13 @@
     transition: none;
   }
 }
+
+/* A generated world's stage (ADR-0058): the module's drawing on cream, framed in the space the HUD leaves. */
+.stage-mechanism {
+  background: var(--cream);
+}
+.stage-mechanism-wait {
+  margin: 0;
+  padding: 1rem;
+  color: var(--sub);
+}

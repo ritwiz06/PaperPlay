@@ -27,6 +27,7 @@ import {
   useFreeRect,
   WorldStage,
   type CannotShowItem,
+  type ForkPane,
   type Depth,
   type GuideLine,
   type JournalPassage,
@@ -360,6 +361,8 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
     // A share reads as the number alone: "0.93", not "0.93 fraction from 0 to 1".
     if (difference.unit.startsWith("fraction")) return value.toFixed(2);
     // A count in the thousands or more reads whole, with its separators: "13,568,700 people", not "13568699.92 people".
+    // A generated module's small values keep two significant figures, as its claims state them (ADR-0058).
+    if (WORLD.family.id === "generated" && value !== 0 && Math.abs(value) < 0.1) return `${Number(value.toPrecision(2))}${unitAfter(difference.unit)}`;
     return `${Math.abs(value) >= 1000 ? Math.round(value).toLocaleString("en-GB") : value.toFixed(2)}${unitAfter(difference.unit)}`;
   };
   const threshold = difference.summary.kind === "first-reach" ? difference.summary.threshold : undefined;
@@ -379,7 +382,8 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
   const forkPanel =
     run && forkView ? (
       <ForkView
-        kit={play.stage}
+        {...(play.stage ? { kit: play.stage } : {})}
+        {...(play.Stage ? { renderStage: (pane: ForkPane, which: "here" | "there") => (play.Stage ? <play.Stage driver={pane.driver} name={pane.name} window={null} onTogglePlay={toggleFork} {...(which === "here" ? { onReadout: () => setForkView(run.fork.snapshot()) } : {})} /> : null) } : {})}
         title={whatIfSpec.prompt}
         note={
           <p>
@@ -408,7 +412,7 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
             here={forkView.samples.here.map(shown)}
             there={forkView.samples.there.map(shown)}
             top={shown(
-              play.chartTop?.(level) ??
+              play.chartTop?.(level, [...forkView.samples.here, ...forkView.samples.there]) ??
                 chartTop(level.primitive.describe().observables[difference.metricId]?.unit.startsWith("fraction") ?? false, [...forkView.samples.here, ...forkView.samples.there], threshold),
             )}
             {...(threshold === undefined ? {} : { threshold: shown(threshold) })}
@@ -463,18 +467,22 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
     >
       {forkPanel ?? (
         <>
-      <WorldStage
-        kit={play.stage}
-        driver={session}
-        label={play.stageLabel}
-        tool="look"
-        window={free}
-        framing={play.framing}
-        look={levelLook}
-        onTogglePlay={togglePlay}
-        onReadout={refresh}
-        onView={(view) => setYaw(view.yaw)}
-      />
+      {play.Stage ? (
+        <play.Stage driver={session} name="World stage" window={free} onTogglePlay={togglePlay} onReadout={refresh} />
+      ) : play.stage ? (
+        <WorldStage
+          kit={play.stage}
+          driver={session}
+          label={play.stageLabel}
+          tool="look"
+          window={free}
+          framing={play.framing}
+          look={levelLook}
+          onTogglePlay={togglePlay}
+          onReadout={refresh}
+          onView={(view) => setYaw(view.yaw)}
+        />
+      ) : null}
 
       <div className="hud">
         <header className="hud-top">

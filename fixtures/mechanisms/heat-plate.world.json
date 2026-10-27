@@ -1,0 +1,903 @@
+{
+  "world": {
+    "schemaVersion": "worldspec/3",
+    "status": "draft",
+    "title": "The Warm Plate",
+    "source": {
+      "schemaVersion": "sourcemanifest/1",
+      "sourceId": "fixture-heat",
+      "title": "Heat on a plate",
+      "authors": [
+        "A. Fixture"
+      ],
+      "year": 2026,
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "accessedAt": "2026-10-26T00:00:00.000Z",
+      "localCopyPermitted": true,
+      "sections": [
+        {
+          "id": "front",
+          "title": "Title"
+        },
+        {
+          "id": "s2-abstract",
+          "title": "Abstract"
+        },
+        {
+          "id": "s3-model",
+          "title": "Model"
+        }
+      ]
+    },
+    "digest": {
+      "question": "How does heat spread over a plate?",
+      "hookResult": {
+        "text": "Hot spots flatten out.",
+        "anchors": [
+          {
+            "sourceId": "fixture-heat",
+            "sectionId": "s3-model",
+            "charStart": 282,
+            "charEnd": 320,
+            "quote": "Hot spots flatten out as heat spreads."
+          }
+        ]
+      },
+      "causalChain": [
+        {
+          "id": "c1",
+          "claim": "Slower diffusion keeps the hottest point hot for longer.",
+          "dependsOn": [],
+          "anchors": [
+            {
+              "sourceId": "fixture-heat",
+              "sectionId": "s3-model",
+              "charStart": 321,
+              "charEnd": 382,
+              "quote": "With slower diffusion the hottest point stays hot for longer."
+            }
+          ],
+          "origin": "paper-derived"
+        },
+        {
+          "id": "c2",
+          "claim": "Faster cooling lowers the average temperature.",
+          "dependsOn": [],
+          "anchors": [
+            {
+              "sourceId": "fixture-heat",
+              "sectionId": "s3-model",
+              "charStart": 383,
+              "charEnd": 449,
+              "quote": "Faster cooling at the edge lowers the plate's average temperature."
+            }
+          ],
+          "origin": "paper-derived"
+        }
+      ]
+    },
+    "routing": {
+      "tier": "generated",
+      "family": "generated",
+      "reason": "No family plays a field's diffusion from papers yet.",
+      "primitive": {
+        "status": "generated"
+      }
+    },
+    "design": {
+      "world": "mechanism",
+      "palette": "cream-teal",
+      "density": "comfortable",
+      "sections": [
+        {
+          "levelId": "hook",
+          "chartType": "line",
+          "motion": "none"
+        },
+        {
+          "levelId": "level-2",
+          "chartType": "line",
+          "motion": "none"
+        },
+        {
+          "levelId": "level-3",
+          "chartType": "line",
+          "motion": "none"
+        }
+      ]
+    },
+    "timeUnit": "step",
+    "openingSeed": 1,
+    "levels": [
+      {
+        "id": "hook",
+        "order": 1,
+        "kind": "hook",
+        "title": "Spreading heat",
+        "goal": "Move the diffusion rate and watch the hot spots.",
+        "bonus": false,
+        "binding": {
+          "type": "mechanism",
+          "primitive": {
+            "id": "mechanism.g1c6532bb228b",
+            "version": "1.0.0"
+          },
+          "module": {
+            "sha256": "1c6532bb228b490643f500b6bcc8964dcf00b1d40961f0ae57840cc77c3f954a",
+            "characters": 3024
+          },
+          "manifest": {
+            "title": "Heat spreading over a plate",
+            "kit": "grid",
+            "params": [
+              {
+                "id": "diffusion",
+                "label": "How fast heat spreads",
+                "unit": "per step",
+                "min": 0.02,
+                "max": 0.24,
+                "default": 0.12
+              },
+              {
+                "id": "cooling",
+                "label": "Heat lost at the edge",
+                "unit": "per step",
+                "min": 0,
+                "max": 0.2,
+                "default": 0.05
+              }
+            ],
+            "measurements": [
+              {
+                "id": "mean",
+                "label": "Average temperature",
+                "unit": "",
+                "meaning": "The plate's mean temperature, from 0 (cold) to 1 (the hot spots' start)."
+              },
+              {
+                "id": "hottest",
+                "label": "Hottest point",
+                "unit": "",
+                "meaning": "The temperature of the plate's hottest cell."
+              }
+            ],
+            "steps": 300,
+            "stepLabel": "step"
+          },
+          "params": {},
+          "perWatchSecond": 7.5
+        },
+        "manipulable": {
+          "actionId": "diffusion",
+          "label": "Diffusion rate",
+          "targetVariable": "diffusion",
+          "range": [
+            0.02,
+            0.24
+          ],
+          "unit": "per step",
+          "defaultValue": 0.12,
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "slider": {
+          "step": 0.0015,
+          "ends": [
+            "Slow",
+            "Fast"
+          ]
+        },
+        "observable": {
+          "metricId": "mean",
+          "label": "Average temperature",
+          "shortLabel": "Average temperature",
+          "unit": "dimensionless",
+          "decimals": 1,
+          "origin": "computed-observation"
+        },
+        "counterfactual": {
+          "prompt": "What if heat spread at a different rate?",
+          "altParams": {
+            "diffusion": 0.02
+          },
+          "expectedQualitativeEffect": "The other plate differs by more than the level states.",
+          "origin": "teaching-choice",
+          "isSpeculative": false,
+          "anchors": [],
+          "difference": {
+            "metricId": "mean",
+            "label": "Average temperature at step 300",
+            "unit": "dimensionless",
+            "summary": {
+              "kind": "at",
+              "time": 300
+            },
+            "time": 300,
+            "claim": {
+              "kind": "each",
+              "relation": "higher",
+              "by": 0.0037
+            }
+          }
+        },
+        "setup": [],
+        "explanation": {
+          "beginner": {
+            "text": "Heat spreads out from the hot spots until the plate is even.",
+            "show": [
+              "range-words",
+              "analogy"
+            ],
+            "hide": [
+              "control-value",
+              "range-numbers",
+              "readout-number",
+              "equation"
+            ],
+            "analogy": "Like a drop of milk spreading through coffee.",
+            "origin": "teaching-choice",
+            "anchors": []
+          },
+          "intermediate": {
+            "text": "The diffusion rate sets how fast each spot shares its heat with its neighbours.",
+            "show": [
+              "control-value",
+              "range-numbers",
+              "readout-number"
+            ],
+            "hide": [
+              "range-words",
+              "equation",
+              "analogy"
+            ],
+            "origin": "teaching-choice",
+            "anchors": []
+          },
+          "advanced": {
+            "text": "Each cell moves toward its neighbours' average by the diffusion rate times the discrete Laplacian.",
+            "show": [
+              "control-value",
+              "range-numbers",
+              "readout-number",
+              "equation"
+            ],
+            "hide": [
+              "range-words",
+              "analogy"
+            ],
+            "equation": "u ← u + D ∇²u",
+            "origin": "teaching-choice",
+            "anchors": []
+          }
+        },
+        "caption": {
+          "text": "How heat spreads",
+          "origin": "paper-derived",
+          "anchors": [
+            {
+              "sourceId": "fixture-heat",
+              "sectionId": "s3-model",
+              "charStart": 282,
+              "charEnd": 320,
+              "quote": "Hot spots flatten out as heat spreads."
+            }
+          ]
+        },
+        "guide": {
+          "idle": "Watch the hot spots spread.",
+          "raised": "You raised it{to}, so heat spreads faster.",
+          "lowered": "You lowered it{to}, so heat spreads slower.",
+          "readings": [
+            {
+              "atLeast": 0.5,
+              "words": "hot"
+            },
+            {
+              "atLeast": 0.1,
+              "words": "warm"
+            },
+            {
+              "atLeast": 0,
+              "words": "cool"
+            }
+          ],
+          "trend": {
+            "rising": {
+              "beginner": "and rising",
+              "measured": "rising"
+            },
+            "falling": {
+              "beginner": "and falling",
+              "measured": "falling"
+            },
+            "steady": "holding",
+            "within": 0.005
+          }
+        },
+        "guidedExploration": {
+          "predictPrompt": "Will the other plate differ?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "interveneActionId": "diffusion",
+          "observeMetricId": "mean",
+          "explainPrompt": "Why does the hottest point cool?",
+          "explanation": {
+            "text": "The plate evens out as heat spreads from hot to cool.",
+            "origin": "teaching-choice",
+            "anchors": []
+          }
+        },
+        "furtherReading": [],
+        "carryForward": "Spreading evens out heat."
+      },
+      {
+        "id": "level-2",
+        "order": 2,
+        "kind": "result",
+        "title": "Spreading heat",
+        "goal": "Move the diffusion rate and watch the hot spots.",
+        "bonus": false,
+        "binding": {
+          "type": "mechanism",
+          "primitive": {
+            "id": "mechanism.g1c6532bb228b",
+            "version": "1.0.0"
+          },
+          "module": {
+            "sha256": "1c6532bb228b490643f500b6bcc8964dcf00b1d40961f0ae57840cc77c3f954a",
+            "characters": 3024
+          },
+          "manifest": {
+            "title": "Heat spreading over a plate",
+            "kit": "grid",
+            "params": [
+              {
+                "id": "diffusion",
+                "label": "How fast heat spreads",
+                "unit": "per step",
+                "min": 0.02,
+                "max": 0.24,
+                "default": 0.12
+              },
+              {
+                "id": "cooling",
+                "label": "Heat lost at the edge",
+                "unit": "per step",
+                "min": 0,
+                "max": 0.2,
+                "default": 0.05
+              }
+            ],
+            "measurements": [
+              {
+                "id": "mean",
+                "label": "Average temperature",
+                "unit": "",
+                "meaning": "The plate's mean temperature, from 0 (cold) to 1 (the hot spots' start)."
+              },
+              {
+                "id": "hottest",
+                "label": "Hottest point",
+                "unit": "",
+                "meaning": "The temperature of the plate's hottest cell."
+              }
+            ],
+            "steps": 300,
+            "stepLabel": "step"
+          },
+          "params": {},
+          "perWatchSecond": 7.5
+        },
+        "manipulable": {
+          "actionId": "diffusion",
+          "label": "Diffusion rate",
+          "targetVariable": "diffusion",
+          "range": [
+            0.02,
+            0.24
+          ],
+          "unit": "per step",
+          "defaultValue": 0.12,
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "slider": {
+          "step": 0.0015,
+          "ends": [
+            "Slow",
+            "Fast"
+          ]
+        },
+        "observable": {
+          "metricId": "mean",
+          "label": "Average temperature",
+          "shortLabel": "Average temperature",
+          "unit": "dimensionless",
+          "decimals": 1,
+          "origin": "computed-observation"
+        },
+        "counterfactual": {
+          "prompt": "What if heat spread at a different rate?",
+          "altParams": {
+            "diffusion": 0.02
+          },
+          "expectedQualitativeEffect": "The other plate differs by more than the level states.",
+          "origin": "teaching-choice",
+          "isSpeculative": false,
+          "anchors": [],
+          "difference": {
+            "metricId": "mean",
+            "label": "Average temperature over 300 steps",
+            "unit": "dimensionless",
+            "summary": {
+              "kind": "mean"
+            },
+            "time": 300,
+            "claim": {
+              "kind": "each",
+              "relation": "higher",
+              "by": 0.0018
+            }
+          }
+        },
+        "setup": [],
+        "explanation": {
+          "beginner": {
+            "text": "Heat spreads out from the hot spots until the plate is even.",
+            "show": [
+              "range-words",
+              "analogy"
+            ],
+            "hide": [
+              "control-value",
+              "range-numbers",
+              "readout-number",
+              "equation"
+            ],
+            "analogy": "Like a drop of milk spreading through coffee.",
+            "origin": "teaching-choice",
+            "anchors": []
+          },
+          "intermediate": {
+            "text": "The diffusion rate sets how fast each spot shares its heat with its neighbours.",
+            "show": [
+              "control-value",
+              "range-numbers",
+              "readout-number"
+            ],
+            "hide": [
+              "range-words",
+              "equation",
+              "analogy"
+            ],
+            "origin": "teaching-choice",
+            "anchors": []
+          },
+          "advanced": {
+            "text": "Each cell moves toward its neighbours' average by the diffusion rate times the discrete Laplacian.",
+            "show": [
+              "control-value",
+              "range-numbers",
+              "readout-number",
+              "equation"
+            ],
+            "hide": [
+              "range-words",
+              "analogy"
+            ],
+            "equation": "u ← u + D ∇²u",
+            "origin": "teaching-choice",
+            "anchors": []
+          }
+        },
+        "caption": {
+          "text": "How heat spreads",
+          "origin": "paper-derived",
+          "anchors": [
+            {
+              "sourceId": "fixture-heat",
+              "sectionId": "s3-model",
+              "charStart": 321,
+              "charEnd": 382,
+              "quote": "With slower diffusion the hottest point stays hot for longer."
+            }
+          ]
+        },
+        "guide": {
+          "idle": "Watch the hot spots spread.",
+          "raised": "You raised it{to}, so heat spreads faster.",
+          "lowered": "You lowered it{to}, so heat spreads slower.",
+          "readings": [
+            {
+              "atLeast": 0.5,
+              "words": "hot"
+            },
+            {
+              "atLeast": 0.1,
+              "words": "warm"
+            },
+            {
+              "atLeast": 0,
+              "words": "cool"
+            }
+          ],
+          "trend": {
+            "rising": {
+              "beginner": "and rising",
+              "measured": "rising"
+            },
+            "falling": {
+              "beginner": "and falling",
+              "measured": "falling"
+            },
+            "steady": "holding",
+            "within": 0.005
+          }
+        },
+        "guidedExploration": {
+          "predictPrompt": "Will the other plate differ?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "interveneActionId": "diffusion",
+          "observeMetricId": "mean",
+          "explainPrompt": "Why does the hottest point cool?",
+          "explanation": {
+            "text": "The plate evens out as heat spreads from hot to cool.",
+            "origin": "teaching-choice",
+            "anchors": []
+          }
+        },
+        "furtherReading": [],
+        "carryForward": "Spreading evens out heat."
+      },
+      {
+        "id": "level-3",
+        "order": 3,
+        "kind": "result",
+        "title": "Spreading heat",
+        "goal": "Move the diffusion rate and watch the hot spots.",
+        "bonus": false,
+        "binding": {
+          "type": "mechanism",
+          "primitive": {
+            "id": "mechanism.g1c6532bb228b",
+            "version": "1.0.0"
+          },
+          "module": {
+            "sha256": "1c6532bb228b490643f500b6bcc8964dcf00b1d40961f0ae57840cc77c3f954a",
+            "characters": 3024
+          },
+          "manifest": {
+            "title": "Heat spreading over a plate",
+            "kit": "grid",
+            "params": [
+              {
+                "id": "diffusion",
+                "label": "How fast heat spreads",
+                "unit": "per step",
+                "min": 0.02,
+                "max": 0.24,
+                "default": 0.12
+              },
+              {
+                "id": "cooling",
+                "label": "Heat lost at the edge",
+                "unit": "per step",
+                "min": 0,
+                "max": 0.2,
+                "default": 0.05
+              }
+            ],
+            "measurements": [
+              {
+                "id": "mean",
+                "label": "Average temperature",
+                "unit": "",
+                "meaning": "The plate's mean temperature, from 0 (cold) to 1 (the hot spots' start)."
+              },
+              {
+                "id": "hottest",
+                "label": "Hottest point",
+                "unit": "",
+                "meaning": "The temperature of the plate's hottest cell."
+              }
+            ],
+            "steps": 300,
+            "stepLabel": "step"
+          },
+          "params": {},
+          "perWatchSecond": 7.5
+        },
+        "manipulable": {
+          "actionId": "diffusion",
+          "label": "Diffusion rate",
+          "targetVariable": "diffusion",
+          "range": [
+            0.02,
+            0.24
+          ],
+          "unit": "per step",
+          "defaultValue": 0.12,
+          "origin": "teaching-choice",
+          "anchors": []
+        },
+        "slider": {
+          "step": 0.0015,
+          "ends": [
+            "Slow",
+            "Fast"
+          ]
+        },
+        "observable": {
+          "metricId": "hottest",
+          "label": "Hottest point",
+          "shortLabel": "Hottest point",
+          "unit": "dimensionless",
+          "decimals": 1,
+          "origin": "computed-observation"
+        },
+        "counterfactual": {
+          "prompt": "What if heat spread at a different rate?",
+          "altParams": {
+            "diffusion": 0.02
+          },
+          "expectedQualitativeEffect": "The other plate differs by more than the level states.",
+          "origin": "teaching-choice",
+          "isSpeculative": false,
+          "anchors": [],
+          "difference": {
+            "metricId": "hottest",
+            "label": "Hottest point at step 300",
+            "unit": "dimensionless",
+            "summary": {
+              "kind": "at",
+              "time": 300
+            },
+            "time": 300,
+            "claim": {
+              "kind": "each",
+              "relation": "higher",
+              "by": 0.066
+            }
+          }
+        },
+        "setup": [],
+        "explanation": {
+          "beginner": {
+            "text": "Heat spreads out from the hot spots until the plate is even.",
+            "show": [
+              "range-words",
+              "analogy"
+            ],
+            "hide": [
+              "control-value",
+              "range-numbers",
+              "readout-number",
+              "equation"
+            ],
+            "analogy": "Like a drop of milk spreading through coffee.",
+            "origin": "teaching-choice",
+            "anchors": []
+          },
+          "intermediate": {
+            "text": "The diffusion rate sets how fast each spot shares its heat with its neighbours.",
+            "show": [
+              "control-value",
+              "range-numbers",
+              "readout-number"
+            ],
+            "hide": [
+              "range-words",
+              "equation",
+              "analogy"
+            ],
+            "origin": "teaching-choice",
+            "anchors": []
+          },
+          "advanced": {
+            "text": "Each cell moves toward its neighbours' average by the diffusion rate times the discrete Laplacian.",
+            "show": [
+              "control-value",
+              "range-numbers",
+              "readout-number",
+              "equation"
+            ],
+            "hide": [
+              "range-words",
+              "analogy"
+            ],
+            "equation": "u ← u + D ∇²u",
+            "origin": "teaching-choice",
+            "anchors": []
+          }
+        },
+        "caption": {
+          "text": "How heat spreads",
+          "origin": "paper-derived",
+          "anchors": [
+            {
+              "sourceId": "fixture-heat",
+              "sectionId": "s3-model",
+              "charStart": 383,
+              "charEnd": 449,
+              "quote": "Faster cooling at the edge lowers the plate's average temperature."
+            }
+          ]
+        },
+        "guide": {
+          "idle": "Watch the hot spots spread.",
+          "raised": "You raised it{to}, so heat spreads faster.",
+          "lowered": "You lowered it{to}, so heat spreads slower.",
+          "readings": [
+            {
+              "atLeast": 0.5,
+              "words": "hot"
+            },
+            {
+              "atLeast": 0.1,
+              "words": "warm"
+            },
+            {
+              "atLeast": 0,
+              "words": "cool"
+            }
+          ],
+          "trend": {
+            "rising": {
+              "beginner": "and rising",
+              "measured": "rising"
+            },
+            "falling": {
+              "beginner": "and falling",
+              "measured": "falling"
+            },
+            "steady": "holding",
+            "within": 0.005
+          }
+        },
+        "guidedExploration": {
+          "predictPrompt": "Will the other plate differ?",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "interveneActionId": "diffusion",
+          "observeMetricId": "hottest",
+          "explainPrompt": "Why does the hottest point cool?",
+          "explanation": {
+            "text": "The plate evens out as heat spreads from hot to cool.",
+            "origin": "teaching-choice",
+            "anchors": []
+          }
+        },
+        "furtherReading": [],
+        "carryForward": "Spreading evens out heat."
+      }
+    ],
+    "primitivesUsed": [
+      {
+        "id": "mechanism.g1c6532bb228b",
+        "version": "1.0.0"
+      }
+    ],
+    "checks": {
+      "suiteIds": [
+        "worldspec-schema",
+        "builder-bindings",
+        "mechanism-checks",
+        "level-rule",
+        "provenance"
+      ],
+      "suiteVersions": {
+        "worldspec-schema": "worldspec/3",
+        "builder-bindings": "1",
+        "mechanism-checks": "1",
+        "level-rule": "1",
+        "provenance": "1"
+      }
+    },
+    "limits": [
+      {
+        "text": "A world made from the paper by PaperPlay's pipeline on a generated model: behaviour checked, not verified against the paper: a coding model wrote its mechanism as a module, which the sandbox's checks and the level rule ran; nothing in it reproduces the paper's own experiments.",
+        "origin": "teaching-choice",
+        "anchors": []
+      },
+      {
+        "text": "It leaves out the plate's thickness.",
+        "origin": "teaching-choice",
+        "anchors": []
+      },
+      {
+        "text": "A draft until the owner reviews it.",
+        "origin": "teaching-choice",
+        "anchors": []
+      }
+    ]
+  },
+  "mechanism": {
+    "schemaVersion": "mechanism/1",
+    "sha256": "1c6532bb228b490643f500b6bcc8964dcf00b1d40961f0ae57840cc77c3f954a",
+    "source": "// A hand-written mechanism module (ADR-0058), the example the writer is shown for its shape: heat\n// spreading over a square plate by the discrete heat equation, a few hot spots placed by the seed,\n// the plate's edge losing heat to the air. Plain JavaScript, no imports, chance from the seed alone.\n\nfunction generator(seed) {\n  // mulberry32: a small seeded generator, the same numbers for the same seed.\n  let a = seed >>> 0;\n  return function next() {\n    a = (a + 0x6d2b79f5) >>> 0;\n    let t = a;\n    t = Math.imul(t ^ (t >>> 15), t | 1);\n    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);\n    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;\n  };\n}\n\nconst SIZE = 32;\n\nconst mechanism = {\n  title: \"Heat spreading over a plate\",\n  kit: \"grid\",\n  params: [\n    { id: \"diffusion\", label: \"How fast heat spreads\", unit: \"per step\", min: 0.02, max: 0.24, default: 0.12 },\n    { id: \"cooling\", label: \"Heat lost at the edge\", unit: \"per step\", min: 0, max: 0.2, default: 0.05 },\n  ],\n  measurements: [\n    { id: \"mean\", label: \"Average temperature\", unit: \"\", meaning: \"The plate's mean temperature, from 0 (cold) to 1 (the hot spots' start).\" },\n    { id: \"hottest\", label: \"Hottest point\", unit: \"\", meaning: \"The temperature of the plate's hottest cell.\" },\n  ],\n  steps: 300,\n  stepLabel: \"step\",\n  init(seed, params) {\n    const next = generator(seed);\n    const cells = new Array(SIZE * SIZE).fill(0);\n    // Three hot spots, each a small square at full temperature.\n    for (let spot = 0; spot < 3; spot += 1) {\n      const row = 4 + Math.floor(next() * (SIZE - 8));\n      const col = 4 + Math.floor(next() * (SIZE - 8));\n      for (let dr = -1; dr <= 1; dr += 1) for (let dc = -1; dc <= 1; dc += 1) cells[(row + dr) * SIZE + col + dc] = 1;\n    }\n    return { cells, params };\n  },\n  step(state, params) {\n    // Each cell moves toward its four neighbours' average (the discrete Laplacian, an explicit\n    // Euler step, stable for diffusion up to 0.25); an edge cell also loses heat to the air.\n    const old = state.cells;\n    const cells = new Array(old.length);\n    for (let row = 0; row < SIZE; row += 1) {\n      for (let col = 0; col < SIZE; col += 1) {\n        const here = old[row * SIZE + col];\n        const at = (r, c) => (r < 0 || r >= SIZE || c < 0 || c >= SIZE ? here : old[r * SIZE + c]);\n        const laplacian = at(row - 1, col) + at(row + 1, col) + at(row, col - 1) + at(row, col + 1) - 4 * here;\n        const edge = row === 0 || col === 0 || row === SIZE - 1 || col === SIZE - 1;\n        cells[row * SIZE + col] = Math.max(0, here + params.diffusion * laplacian - (edge ? params.cooling * here : 0));\n      }\n    }\n    return { cells, params };\n  },\n  measure(state) {\n    let total = 0;\n    let hottest = 0;\n    for (const value of state.cells) {\n      total += value;\n      if (value > hottest) hottest = value;\n    }\n    return { mean: total / state.cells.length, hottest };\n  },\n  frame(state) {\n    return { rows: SIZE, cols: SIZE, cells: state.cells.map((value) => Math.min(1, value)) };\n  },\n};",
+    "manifest": {
+      "title": "Heat spreading over a plate",
+      "kit": "grid",
+      "params": [
+        {
+          "id": "diffusion",
+          "label": "How fast heat spreads",
+          "unit": "per step",
+          "min": 0.02,
+          "max": 0.24,
+          "default": 0.12
+        },
+        {
+          "id": "cooling",
+          "label": "Heat lost at the edge",
+          "unit": "per step",
+          "min": 0,
+          "max": 0.2,
+          "default": 0.05
+        }
+      ],
+      "measurements": [
+        {
+          "id": "mean",
+          "label": "Average temperature",
+          "unit": "",
+          "meaning": "The plate's mean temperature, from 0 (cold) to 1 (the hot spots' start)."
+        },
+        {
+          "id": "hottest",
+          "label": "Hottest point",
+          "unit": "",
+          "meaning": "The temperature of the plate's hottest cell."
+        }
+      ],
+      "steps": 300,
+      "stepLabel": "step"
+    },
+    "checks": [
+      {
+        "name": "loads",
+        "passed": true,
+        "problems": []
+      },
+      {
+        "name": "deterministic",
+        "passed": true,
+        "problems": []
+      },
+      {
+        "name": "ranges",
+        "passed": true,
+        "problems": []
+      },
+      {
+        "name": "finite",
+        "passed": true,
+        "problems": []
+      },
+      {
+        "name": "responds",
+        "passed": true,
+        "problems": []
+      },
+      {
+        "name": "frames",
+        "passed": true,
+        "problems": []
+      },
+      {
+        "name": "speed",
+        "passed": true,
+        "problems": []
+      }
+    ],
+    "stepMs": 0.5011638833333336,
+    "writer": "m-writer"
+  }
+}

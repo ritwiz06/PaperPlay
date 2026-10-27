@@ -1,0 +1,95 @@
+<!doctype html>
+<!--
+  The frame of a generated mechanism's sandbox (ADR-0058). The page frames it with
+  sandbox="allow-scripts" alone, so its origin is opaque, and it runs under its own policy: no
+  network, no storage, no code from strings, nothing but its one script and the worker it starts
+  from a blob, which inherits the same policy. The deploy sends that policy as a header too
+  (vercel.json), with frame-ancestors and sandbox, which a meta tag cannot carry. The script's hash
+  is in both policies; apps/web/test/sandbox.test.ts fails when they drift from the script.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-xpRHJls9/sHwsiH2KPG8F5l/DUZJHs4LFDprlKF/vxs='; worker-src blob:; connect-src 'none'; base-uri 'none'; form-action 'none'" />
+    <title>PaperPlay mechanism sandbox</title>
+  </head>
+  <body>
+    <script>
+"use strict";
+// One load message from the parent carries the worker's whole script; after it, requests go in
+// and answers come out one call at a time, each call held to its time limit by a watchdog here.
+(() => {
+  let started = false;
+  let worker = null;
+  let limits = null;
+  let current = null;
+  let closed = null;
+  const queue = [];
+  const send = (id, json) => parent.postMessage({ id, json }, "*");
+  const failure = (error, limit) => JSON.stringify(limit ? { ok: false, error, line: null, limit } : { ok: false, error, line: null });
+  const CLOSED = failure("the sandbox has closed");
+  // Ends the sandbox for good: the call in flight is answered with `answer`, every other call with `later`.
+  const close = (answer, later) => {
+    if (closed) return;
+    closed = later;
+    if (worker) worker.terminate();
+    worker = null;
+    if (current) {
+      clearTimeout(current.timer);
+      send(current.id, answer);
+      current = null;
+    }
+    for (const request of queue.splice(0)) send(request.id, later);
+  };
+  const next = () => {
+    if (current || closed || !worker || queue.length === 0) return;
+    const request = queue.shift();
+    current = { id: request.id, timer: setTimeout(() => close(failure("the call ran past its " + limits.callMs + " ms", "time"), CLOSED), limits.callMs) };
+    worker.postMessage(request);
+  };
+  const start = (data) => {
+    started = true;
+    if (!(data.callMs > 0) || !(data.answerChars > 0)) return close(failure("the sandbox was given no limits"), failure("the sandbox was given no limits"));
+    limits = { callMs: data.callMs, answerChars: data.answerChars };
+    try {
+      worker = new Worker(URL.createObjectURL(new Blob([data.load], { type: "text/javascript" })));
+    } catch (cause) {
+      const failed = failure("the sandbox could not start its worker: " + (cause && cause.message));
+      return close(failed, failed);
+    }
+    worker.addEventListener("message", (event) => {
+      const data = event.data;
+      // Only the answer to the call in flight passes; anything else the worker sends is dropped.
+      if (!current || !data || data.id !== current.id || typeof data.json !== "string") return;
+      // A browser gives no worker a heap limit of its own, so an answer's size is the one limit here.
+      if (data.json.length > limits.answerChars) return close(failure("the answer ran past its " + limits.answerChars + " characters", "memory"), CLOSED);
+      clearTimeout(current.timer);
+      send(current.id, data.json);
+      current = null;
+      next();
+    });
+    // A module that does not parse never runs; the worker reports it here, with the script's line.
+    worker.addEventListener("error", (event) => {
+      event.preventDefault();
+      const message = String(event.message || "the module did not load").replace(/^Uncaught (?:\w*Error: )?/, "");
+      const failed = JSON.stringify({ ok: false, error: message.slice(0, 500), line: event.lineno > 0 ? event.lineno : null });
+      close(failed, failed);
+    });
+    worker.addEventListener("messageerror", () => close(failure("the sandbox's answer could not be read"), CLOSED));
+    next();
+  };
+  addEventListener("message", (event) => {
+    if (event.source !== parent) return;
+    const data = event.data;
+    if (!data || typeof data !== "object") return;
+    if (!started && typeof data.load === "string") return start(data);
+    if (typeof data.id !== "number" || typeof data.json !== "string") return;
+    if (closed) return send(data.id, closed);
+    queue.push({ id: data.id, json: data.json });
+    next();
+  });
+  parent.postMessage({ ready: true }, "*");
+})();
+</script>
+  </body>
+</html>

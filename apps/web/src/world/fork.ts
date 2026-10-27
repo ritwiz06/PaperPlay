@@ -70,7 +70,15 @@ export function openFork<P, S extends Stepped, O extends Record<string, number>,
   const totalSteps = Math.round(difference.time / TIMESTEP);
   const metric = difference.metricId;
   const observed = (world: WorldSession<P, S, O, Extra, Emphasis, Input>): number => world.snapshot().observed[metric] ?? Number.NaN;
-  const samples = { here: [observed(here)], there: [observed(there)] };
+  /** Both worlds ready to step: always, but for a generated world whose measurements are still on their way (ADR-0058). */
+  const ready = (): boolean => (here.ready?.() ?? true) && (there.ready?.() ?? true);
+  const samples: { here: number[]; there: number[] } = { here: [], there: [] };
+  const first = (): void => {
+    if (samples.here.length > 0 || !ready()) return;
+    samples.here.push(observed(here));
+    samples.there.push(observed(there));
+  };
+  first();
   let steps = 0;
   let playing = options.playing;
   let speed: Speed = options.speed ?? 1;
@@ -78,6 +86,7 @@ export function openFork<P, S extends Stepped, O extends Record<string, number>,
   let version = 0;
 
   const take = (count: number): void => {
+    first();
     for (let i = 0; i < count && steps < totalSteps; i++) {
       here.stepBy(1);
       there.stepBy(1);
@@ -95,7 +104,7 @@ export function openFork<P, S extends Stepped, O extends Record<string, number>,
     here,
     there,
     tick(frameSeconds) {
-      if (!playing || steps >= totalSteps) return 0;
+      if (!playing || steps >= totalSteps || !ready()) return 0;
       const next = advance(clock, frameSeconds, WATCHED, undefined, speed);
       clock = next.clock;
       const count = Math.min(next.steps, totalSteps - steps);
