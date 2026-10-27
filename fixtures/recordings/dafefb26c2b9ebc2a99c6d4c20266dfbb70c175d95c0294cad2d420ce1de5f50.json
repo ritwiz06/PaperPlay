@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "router",
+  "model": "glm-5-3",
+  "promptHash": "dafefb26c2b9ebc2a99c6d4c20266dfbb70c175d95c0294cad2d420ce1de5f50",
+  "response": {
+    "model": "glm-5-3-mxfp4",
+    "text": "{\"domain\": \"routing\", \"family\": \"learning\", \"mechanism\": \"attention in transformers\", \"reason\": \"The paper's mechanism is the Transformer architecture: scaled dot-product attention, multi-head attention, feed-forward layers, positional encodings, and a warmup learning-rate schedule. The learning family explicitly excludes model architectures such as attention and transformers, and no other family covers sequence transduction or neural machine translation. The learning-rate schedule equation (\"\n  \t, \"tier\": \"C\"}",
+    "usage": {
+      "promptTokens": 1714,
+      "completionTokens": 105,
+      "totalTokens": 1819
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-27T03:27:06.029Z"
+}

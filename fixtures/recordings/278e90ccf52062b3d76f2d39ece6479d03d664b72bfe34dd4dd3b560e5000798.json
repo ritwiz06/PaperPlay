@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "278e90ccf52062b3d76f2d39ece6479d03d664b72bfe34dd4dd3b560e5000798",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\"advanced\": {\"equation\": \"Attention(Q, K, V) = softmax(QK^T / sqrt(d_k))V\", \"quote\": \"dropout is very helpful in avoiding over-fitting\", \"text\": \"Dropout randomly silences attention weights during training. The model watches peak attention (focus), the largest average single weight a token gives. Raising dropout from 0.1 to 0.5 makes focus higher by more than 0.021 at 150 layers, from 0.122 to 0.162, across 20 of 20 seeds. This suggests stronger dropout leaves attention less evenly spread, so each token leans more on one other token.\"}, \"afterwards\": {\"question\": \"Why might heavier dropout make attention peak more sharply instead of more diffuse?\", \"quote\": \"dropout is very helpful in avoiding over-fitting\", \"text\": \"The paper says dropout is very helpful in avoiding over-fitting. In this run, more dropout raised the peak attention weight.\"}, \"beginner\": {\"analogy\": \"Imagine a student picking one study partner. With light dropout, the student asks many classmates and averages their answers. With heavy dropout, several classmates are absent, so the student relies a\", \"text\": \"You change how often attention links are dropped. More dropout makes each token focus more strongly on its single favorite other token.\"}, \"carryForward\": \"Dropout can reshape attention sharpness, not just prevent overfitting.\", \"control\": {\"highEnd\": \"High\", \"label\": \"Attention dropout\", \"lowEnd\": \"Low\"}, \"effect\": \"Raising dropout from 0.1 to 0.5 raises peak attention from 0.122 to 0.162, an increase of more than 0.021, across 20 of 20 seeds.\", \"goal\": \"See how dropout changes the sharpness of attention peaks.\", \"guide\": {\"falling\": \"so attention spreads out more\", \"idle\": \"Drag the dropout slider to set the attention dropout rate.\", \"lowered\": \"You lower dropout, so attention spreads out more.\", \"raised\": \"You raise dropout, so attention focuses more sharply.\", \"readings\": [{\"atLeast\": 0.162, \"words\": \"very sharp peak attention\"}, {\"atLeast\": 0.122, \"words\": \"moderate peak attention\"}, {\"atLeast\": 0.0, \"words\": \"no attention at all\"}], \"rising\": \"so attention focuses more sharply\"}, \"intermediate\": {\"text\": \"The control is Attention dropout (dropout). The watched value is Peak attention (focus), the largest single attention weight a token gives, averaged over tokens. Raising dropout from 0.1 to 0.5 makes focus higher by more than 0.021 at 150 layers, from 0.122 to 0.162, across 20 of 20 seeds.\"}, \"passageTitle\": \"Model Variations\", \"prediction\": {\"claimed\": \"higher\", \"other\": \"lower or unchanged\", \"prompt\": \"Will raising dropout to 0.5 make peak attention higher or lower?\"}, \"title\": \"Dropout sharpens attention\", \"whatIf\": \"What happens to peak attention if dropout is raised to 0.5?\"}",
+    "usage": {
+      "promptTokens": 6825,
+      "completionTokens": 687,
+      "totalTokens": 7512
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-27T03:45:38.117Z"
+}

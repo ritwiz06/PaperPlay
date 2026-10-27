@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "7157c31270a1a0c7cc8e1d34fa9aa497f9ea24659025f435f7bec0e8ff6e1d36",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\"advanced\": {\"equation\": \"Attention(Q, K, V) = softmax(QK^T / sqrt(d_k))V\", \"quote\": \"Attention(Q, K, V) = softmax(QK^T / sqrt(d_k))V\", \"text\": \"The model uses scaled dot-product attention. The key scaling factor 1/sqrt(d_k) keeps dot products small so softmax does not saturate. Without it, attention becomes sharper. The watched value is peak attention (focus).\"}, \"afterwards\": {\"question\": \"Why might removing the scaling factor make attention focus more sharply on one token?\", \"quote\": \"We compute the dot products of the query with all keys, divide each by sqrt(d_k), and apply a softmax function to obtain the weights on the values.\", \"text\": \"The paper says: We compute the dot products of the query with all keys, divide each by sqrt(d_k), and apply a softmax function to obtain the weights on the values. Removing the division makes the softmax output more peaked.\"}, \"beginner\": {\"analogy\": \"Think of attention as a group of friends deciding whom to listen to. Scaling is like asking everyone to speak at the same volume. Without it, the loudest voice dominates.\", \"text\": \"This level is about key scaling in attention. You change how much the model divides attention scores. A higher value spreads attention more evenly. A lower value lets one token grab more attention.\"}, \"carryForward\": \"Key scaling controls how sharply attention focuses. Removing it makes attention peak higher.\", \"control\": {\"highEnd\": \"High\", \"label\": \"Key scaling 1/sqrt(d_k)\", \"lowEnd\": \"Low\"}, \"effect\": \"Setting key scaling to 0 makes peak attention lower by more than 0.013, from 0.122 to 0.0959, across 20 of 20 seeds.\", \"goal\": \"Change key scaling and observe how peak attention changes.\", \"guide\": {\"falling\": \"peak attention drops\", \"idle\": \"Move the key scaling slider to see how attention focus changes.\", \"lowered\": \"You lower key scaling to 0, so peak attention falls.\", \"raised\": \"You raise key scaling to 2, so peak attention rises.\", \"readings\": [{\"atLeast\": 0.122, \"words\": \"peak attention is at least 0.122\"}, {\"atLeast\": 0.0959, \"words\": \"peak attention is at least 0.0959\"}] , \"rising\": \"peak attention rises\"}, \"intermediate\": {\"text\": \"The control is key scaling 1/sqrt(d_k). The watched value is peak attention (focus), the largest single attention weight a token gives, averaged over tokens. Higher scaling spreads attention. Lower scaling sharpens it.\"}, \"passageTitle\": \"Abstract\", \"prediction\": {\"claimed\": \"peak attention will be lower\", \"other\": \"peak attention will stay the same or rise\", \"prompt\": \"What happens to peak attention if you remove key scaling?\"}, \"title\": \"Key scaling and attention focus\", \"whatIf\": \"What happens to peak attention if key scaling is set to 0?\"}",
+    "usage": {
+      "promptTokens": 7568,
+      "completionTokens": 663,
+      "totalTokens": 8231
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-27T03:46:20.150Z"
+}

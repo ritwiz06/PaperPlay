@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "second-reviewer",
+  "model": "qwen38-27b",
+  "promptHash": "d440049fc495d754c903c3dcc4a1c33066d1d76dbdfb0f8f58f8717b0293fcba",
+  "response": {
+    "model": "qwen38-27b",
+    "text": "{\"findings\":[]}",
+    "usage": {
+      "promptTokens": 9390,
+      "completionTokens": 1959,
+      "totalTokens": 11349
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-27T03:48:14.241Z"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "recording/1",
+  "stage": "explainer",
+  "model": "kimi-k2-7-code",
+  "promptHash": "d2fe1f85251d1a99832900c815b0554ec11afe16b8827f21974c33517ab9a6a2",
+  "response": {
+    "model": "kimi-k2-7-code-mxfp4-mn",
+    "text": " {\"advanced\": {\"equation\": \"Attention(Q, K, V) = softmax((QK^T)/sqrt(d_k))V\", \"quote\": \"Attention(Q, K, V) = softmax((QK^T)/sqrt(d_k))V\", \"text\": \"The model computes scaled dot-product attention. The scaling factor multiplies the query-key scores before softmax. A larger scaling factor sharpens the softmax, concentrating attention on fewer tokens. A smaller factor flattens it, spreading attention more evenly. Setting scaling to 0 removes the query-key signal, so every token receives nearly uniform attention. Peak attention then falls.\"}, \"afterwards\": {\"question\": \"Why does zeroing the scaling factor flatten attention even though the softmax still runs?\", \"quote\": \"We compute the dot products of the query with all keys, divide each by sqrt(d_k), and apply a softmax function to obtain the weights on the values.\", \"text\": \"The paper says: 'We compute the dot products of the query with all keys, divide each by sqrt(d_k), and apply a softmax function to obtain the weights on the values.' When the scaling factor is zero, the scores become zero, so the softmax outputs a uniform distribution and peak attention drops.\"}, \"beginner\": {\"analogy\": \"Imagine a spotlight. Turning the dimmer down spreads the beam evenly; the brightest spot gets weaker. Key scaling is the dimmer for attention.\", \"text\": \"Key scaling controls how sharply attention focuses on one token. Lower scaling spreads attention out. Higher scaling makes attention peak brighter.\"}, \"effect\": \"Setting key scaling to 0 makes peak attention lower by more than 0.013, from 0.122 to 0.0959, across 20 of 20 seeds.\", \"goal\": \"Change key scaling and observe how peak attention changes.\", \"guide\": {\"falling\": \"peak attention softens\", \"idle\": \"Move the key scaling slider to change how sharply attention focuses.\", \"lowered\": \"You lower key scaling to 0, so the query-key scores are multiplied by zero before softmax.\", \"raised\": \"You raise key scaling to 2, so the query-key scores are doubled before softmax.\", \"readings\": [{\"atLeast\": 0.15, \"words\": \"peak attention is at least 0.15\"}, {\"atLeast\": 0.12, \"words\": \"peak attention is at least 0.12\"}, {\"atLeast\": 0.09, \"words\": \"peak attention is at least 0.09\"}, {\"atLeast\": 0.08, \"words\": \"peak attention is at least 0.08\"}], \"rising\": \"peak attention sharpens\"}, \"intermediate\": {\"text\": \"The control is key scaling 1/sqrt(d_k). The watched value is peak attention, the largest single attention weight a token gives, averaged over tokens. Raising scaling sharpens the softmax and raises peak attention. Lowering scaling flattens the softmax and lowers peak attention.\"}, \"prediction\": \"What happens to peak attention if you remove key scaling?\", \"whatIf\": \"What happens to peak attention if key scaling is set to 0?\"}",
+    "usage": {
+      "promptTokens": 10773,
+      "completionTokens": 663,
+      "totalTokens": 11436
+    },
+    "finishReason": "stop"
+  },
+  "recordedAt": "2026-10-27T03:51:29.052Z"
+}
