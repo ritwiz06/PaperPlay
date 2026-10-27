@@ -149,6 +149,14 @@ describe("[R08] [R11] the generated-mechanism tier's job (ADR-0058)", () => {
     expect(events.find((event) => event.step === "release")?.message).toMatch(/levels pass every check and are playable/);
   }, 60_000);
 
+  it("names the world by its module when the explainer's name repeats its instruction", async () => {
+    const { client } = tierClient([fenced(heat)]);
+    const echoing: ModelClient = { complete: (request) => (request.stage === "explainer" && request.messages.some((message) => message.content.includes("You name a small learning game")) ? Promise.resolve({ model: request.model, text: JSON.stringify({ title: "at most 5 words, naming the paper's sujb", limits: ["It is a toy."] }), usage: { promptTokens: 1, completionTokens: 1, totalTokens: 2 }, finishReason: "stop" }) : client.complete(request)) };
+    const { outcome, artifacts } = await run(echoing);
+    expect(outcome.state).toBe("ready");
+    expect((artifacts.get("world") as { title: string }).title).toBe("Heat spreading over a plate");
+  }, 60_000);
+
   it("sends the checks' problems back to the writer, at most three times, then falls back to the explainer page", async () => {
     const deaf = heat.replace("const cells = new Array(old.length);", "const cells = new Array(old.length);\n    params = { diffusion: 0.12, cooling: 0.05 };");
     const fixed = await run(tierClient([fenced(deaf), fenced(heat)]).client);

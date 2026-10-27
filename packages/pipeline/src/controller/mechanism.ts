@@ -112,7 +112,8 @@ export async function runMechanismTier(ctx: TierContext): Promise<JobOutcome> {
 async function tier(ctx: TierContext, releasing: () => void): Promise<JobOutcome> {
   const { input, sink, text, register, title, move, say, timed, modelFor, structured } = ctx;
   if (input.deadline?.mechanismJobMs) ctx.extend(input.deadline.mechanismJobMs);
-  say("routing", `${ctx.route.family === "none" ? "no family" : `the ${ctx.route.family} family, which does not make worlds from papers yet,`} covers this paper (tier ${ctx.route.tier}: ${ctx.route.reason}); a coding model writes its mechanism as a module instead, checked in a sandbox (ADR-0058)${input.deadline?.mechanismJobMs ? `, and the job has ${seconds(input.deadline.mechanismJobMs)}` : ""}`);
+  // The router's reason is kept in its artifact; the event says what follows from it, briefly.
+  say("routing", `${ctx.route.tier === "B" ? `the ${ctx.route.family} family covers this paper but does not make worlds from papers yet` : "no family whose worlds are made from papers covers this paper"} (tier ${ctx.route.tier}); a coding model writes its mechanism as a module instead, checked in a sandbox (ADR-0058)${input.deadline?.mechanismJobMs ? `, within ${Math.round(input.deadline.mechanismJobMs / 60_000)} minutes` : ""}`);
   let reading: Reading | null = null;
   const fallBack = (why: string): never => {
     sink.artifact("explainer", explainerPage(ctx, reading, why));
@@ -129,7 +130,7 @@ async function tier(ctx: TierContext, releasing: () => void): Promise<JobOutcome
 
   // Writing: the module, checked in the sandbox, with at most three fixes the deadline can hold.
   const writer = modelFor("writer");
-  say("writing", `${writer} writes the mechanism as a module: ${reading.mechanism}`);
+  say("writing", `${writer} writes the paper's mechanism as a module`);
   const writerInput = mechanismWriterInput(text, title, reading, ctx.config.example);
   const outcome = await writeCheckedMechanism(writerInput, {
     call: async (messages, round) => {
@@ -189,7 +190,11 @@ async function tier(ctx: TierContext, releasing: () => void): Promise<JobOutcome
   const attempt = async (who: string, stage: "planner" | "second-planner") => {
     const picked = await timed(stage, (client) => pickLevels(client, who, pickInput, { stage, structuredOutput: structured(who) }), done.signal);
     const problems = pickProblems(picked.value);
-    if (problems.length > 0) throw Object.assign(new Error(`${who}'s picks: ${problems.slice(0, 3).join("; ")}`), { who, picks: picked.value, problems });
+    if (problems.length > 0) {
+      // Said as it happens, so a job that waits on the other planner shows why (R13).
+      say("planning", `${who}'s picks break the rules: ${problems.slice(0, 3).join("; ")}`);
+      throw Object.assign(new Error(`${who}'s picks: ${problems.slice(0, 3).join("; ")}`), { who, picks: picked.value, problems });
+    }
     return { who, picks: picked.value };
   };
   const plannerModel = modelFor("planner");
@@ -239,7 +244,11 @@ async function tier(ctx: TierContext, releasing: () => void): Promise<JobOutcome
   for (const index of unwritten) say("words", `level ${index + 1}'s words did not come (${firstLine(written[index]?.error)}); it is left out`);
   const kept = written.flatMap((entry, index) => (entry.value ? [withWords(plan.levels[index] as PlanLevel, entry.value.value)] : []));
   if (kept.length < 3) throw new Stop("failed", `only ${kept.length} levels have their words, and a world needs three`);
-  plan = { ...plan, title: world.value?.value.title ?? manifest.title.slice(0, 40), limits: world.value?.value.limits ?? ["It shows a small model of the paper's mechanism, not the paper's own system."], levels: kept.map((entry) => entry.level) };
+  // A name that repeats its instruction ("at most 5 words, naming…"), as one explainer's did, is no name: the module's title stands in.
+  const named = world.value?.value.title;
+  const title_ = named && !/\bat most\b|\bwords?\b.*\bnam|\bnaming\b/i.test(named) ? named : manifest.title.slice(0, 40);
+  if (named && title_ !== named) say("words", `the world's name came back as its instruction ("${named}"); the module's title stands in`);
+  plan = { ...plan, title: title_, limits: world.value?.value.limits ?? ["It shows a small model of the paper's mechanism, not the paper's own system."], levels: kept.map((entry) => entry.level) };
   let explanation = { levels: kept.map((entry) => entry.explained) };
 
   // Building, the level rule and release; then provenance and the reviewers.

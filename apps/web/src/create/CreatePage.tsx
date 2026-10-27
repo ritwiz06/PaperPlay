@@ -16,7 +16,7 @@ import "./create.css";
 const PATH: readonly { readonly state: JobState; readonly title: string; readonly what: string }[] = [
   { state: "received", title: "Received", what: "The request is in." },
   { state: "parsing", title: "Reading the source", what: "Fetched and read with restricted readers; its licence recorded." },
-  { state: "planning", title: "Planning", what: "Routed, read, transcribed twice by different vendors, matched, then levels planned." },
+  { state: "planning", title: "Planning", what: "Routed and read; the model transcribed twice by different vendors and matched, or, for a paper no family covers, written as a module and checked in a sandbox; then levels planned." },
   { state: "building", title: "Building", what: "Assembled and built against the solver, its units and checks." },
   { state: "running", title: "The level rule", what: "Every What-if swept over 20 starts." },
   { state: "checking", title: "Checking", what: "Every anchor checked against the source; the reviewer reads it." },
@@ -136,8 +136,8 @@ export function CreatePage() {
       <header className="create-head">
         <p className="create-local">On this machine only: the public site never runs this page.</p>
         <h1>Make a world from a paper</h1>
-        <p>Paste an arXiv id with its version or a PubMed Central id, or choose a PDF. PaperPlay makes worlds from compartment-model papers, so far.</p>
-        <p>A world takes up to twelve minutes; its first levels are playable as soon as they pass their checks. Agent-experiment worlds are made beforehand only, never on request.</p>
+        <p>Paste an arXiv id with its version or a PubMed Central id, or choose a PDF. A compartment-model paper becomes a verified world; any other paper's mechanism is written as a module by a coding model and checked, a generated model, never verified.</p>
+        <p>A world takes up to fifteen minutes, twenty for a generated model; its first levels are playable as soon as they pass their checks. Agent-experiment worlds are made beforehand only, never on request.</p>
       </header>
       <form className="create-form" onSubmit={(event) => void start(event)}>
         <label htmlFor="create-source">Paper</label>
