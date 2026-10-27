@@ -102,7 +102,7 @@ describe("[R11] the API's jobs", () => {
       expect((await app.inject({ method: "GET", url: "/jobs" })).json()).toEqual({ jobs: [] });
       const { jobId } = (await app.inject({ method: "POST", url: "/jobs", payload: { source: "pmc:PMC12334037" } })).json<{ jobId: string }>();
       await settle();
-      expect((await app.inject({ method: "GET", url: "/jobs" })).json()).toEqual({ jobs: [{ jobId, source: "pmc:PMC12334037", state: "ready", world: { title: "A world", levels: [] } }] });
+      expect((await app.inject({ method: "GET", url: "/jobs" })).json()).toEqual({ jobs: [{ jobId, source: "pmc:PMC12334037", state: "ready", world: { title: "A world", levels: [] }, generatedModel: false }] });
     } finally {
       await app.close();
     }
