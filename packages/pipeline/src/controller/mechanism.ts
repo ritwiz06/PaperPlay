@@ -53,6 +53,9 @@ export interface TierContext {
   readonly extend: (jobMs: number) => void;
   readonly timing: () => unknown;
   readonly released: (count: number) => void;
+  /** The reading, once the reader has given it, for the explainer page. */
+  readonly keep: (reading: Reading) => void;
+  readonly reading: () => Reading | null;
 }
 
 const seconds = (ms: number): string => `${Math.round(ms / 1000)} s`;
@@ -90,6 +93,23 @@ function explainerPage(ctx: TierContext, reading: Reading | null, why: string): 
 }
 
 export async function runMechanismTier(ctx: TierContext): Promise<JobOutcome> {
+  let released = false;
+  try {
+    return await tier(ctx, () => {
+      released = true;
+    });
+  } catch (error) {
+    // Out of time before any level was playable: the explainer page, saying so (R13). After a
+    // release, the controller's own ending keeps the released levels playable.
+    if (!released && error instanceof ModelError && error.kind === "timeout") {
+      ctx.sink.artifact("explainer", explainerPage(ctx, ctx.reading(), `the job's time ran out before a level passed its checks: ${error.message}`));
+      throw new Stop("unsupported", `the job's time ran out before a level passed its checks (${error.message}); this paper falls back to the explainer page, tier C`);
+    }
+    throw error;
+  }
+}
+
+async function tier(ctx: TierContext, releasing: () => void): Promise<JobOutcome> {
   const { input, sink, text, register, title, move, say, timed, modelFor, structured } = ctx;
   if (input.deadline?.mechanismJobMs) ctx.extend(input.deadline.mechanismJobMs);
   say("routing", `${ctx.route.family === "none" ? "no family" : `the ${ctx.route.family} family, which does not make worlds from papers yet,`} covers this paper (tier ${ctx.route.tier}: ${ctx.route.reason}); a coding model writes its mechanism as a module instead, checked in a sandbox (ADR-0058)${input.deadline?.mechanismJobMs ? `, and the job has ${seconds(input.deadline.mechanismJobMs)}` : ""}`);
@@ -103,6 +123,7 @@ export async function runMechanismTier(ctx: TierContext): Promise<JobOutcome> {
   say("reading", "reading what the paper asks, its mechanism and what it finds");
   const read_ = await timed("reader", (client) => read(client, modelFor("reader"), text, title, { structuredOutput: structured(modelFor("reader")), sections: true }));
   reading = read_.value;
+  ctx.keep(reading);
   sink.artifact("reading", reading);
   ctx.cancelled();
 
@@ -113,9 +134,12 @@ export async function runMechanismTier(ctx: TierContext): Promise<JobOutcome> {
   const outcome = await writeCheckedMechanism(writerInput, {
     call: async (messages, round) => {
       if (round > 0) move("repairing", "writing", `asking ${writer} for fix ${round} of the module`);
-      const reply = await timed("writer", (client) => client.complete({ stage: "writer", model: writer, messages, temperature: 0 }));
-      if (round > 0) move("planning", "checks", `checking fix ${round} in the sandbox`);
-      return reply.text;
+      try {
+        return (await timed("writer", (client) => client.complete({ stage: "writer", model: writer, messages, temperature: 0 }))).text;
+      } finally {
+        // Back to planning whether the reply came or its time ran out, so the next round can repair again.
+        if (round > 0) move("planning", "checks", `fix ${round}'s call has ended`);
+      }
     },
     // A fix begins only if it and the levels after it can still finish: the levels need a few minutes.
     timeLeft: () => ctx.left() - 4 * 60_000,
@@ -267,6 +291,7 @@ export async function runMechanismTier(ctx: TierContext): Promise<JobOutcome> {
   // Playable now, checked but not yet reviewed (R13).
   sink.artifact("released", { levels: plan.levels.map((level, index) => ({ level: index + 1, title: level.title })), of: plan.levels.length, reviewed: false, world: spec });
   ctx.released(plan.levels.length);
+  releasing();
   say("release", `${plan.levels.length} levels pass every check and are playable while the reviewers read them: ${plan.levels.map((level) => `"${level.title}"`).join(", ")}`);
 
   // The reviewers, each level read by both: a level whose words misdescribe the module is written

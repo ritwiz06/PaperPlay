@@ -4,7 +4,7 @@
  * has time for another round. The checks decide; the writer only ever reads their words.
  */
 import { MECHANISM_LIMITS, type MechanismManifest } from "@paperplay/contracts";
-import type { ChatMessage } from "../models/index.ts";
+import { ModelError, type ChatMessage } from "../models/index.ts";
 import { mechanismFixMessages, mechanismWriterMessages, moduleOf, type MechanismWriterInput } from "../stages/mechanism-writer.ts";
 import { checkMechanism, feedbackOf, type MechanismReport } from "./checks.ts";
 import type { SandboxLimits } from "./sandbox.ts";
@@ -53,7 +53,18 @@ export async function writeCheckedMechanism(input: MechanismWriterInput, options
       if (options.timeLeft() < needs) return { kind: "failed", source: last?.source ?? null, report: last?.report ?? null, rounds, reason: `no time for fix ${round}: the last round took ${Math.round(needs / 1000)} s and ${Math.round(options.timeLeft() / 1000)} s are left` };
     }
     const began = Date.now();
-    const text = await options.call(round === 0 ? mechanismWriterMessages(input) : mechanismFixMessages(input, history), round);
+    let text: string;
+    try {
+      text = await options.call(round === 0 ? mechanismWriterMessages(input) : mechanismFixMessages(input, history), round);
+    } catch (error) {
+      // A reply that never came within the call's time is a round lost, not the job: ask again, shorter.
+      if (!(error instanceof ModelError) || error.kind !== "timeout") throw error;
+      const entry: WriterRound = { round, writeMs: Date.now() - began, checkMs: 0, report: null, problems: `- your last answer did not arrive within its time (${error.message})` };
+      rounds.push(entry);
+      options.onRound?.(entry);
+      history.push({ source: "", problems: entry.problems });
+      continue;
+    }
     const writeMs = Date.now() - began;
     const reply = moduleOf(text);
     if (reply.kind === "refused") {

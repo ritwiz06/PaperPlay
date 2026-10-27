@@ -23,7 +23,7 @@ import { explainLevel, reword, writeLevel, writeWorld, type ExplainedLevel, type
 import { CANDIDATE_GENERATORS, CandidatePicks, hookCandidates, judgeInParallel, pickerMessages, pickLevels, planFromPicks, shortList, validatePicks, type LevelCandidate } from "../candidates/index.ts";
 import { PICKER_MAX_TOKENS } from "../candidates/picker.ts";
 import { plan as planWorld, Plan, PLANNER_MAX_TOKENS, plannerMessages, type PlanLevel } from "../stages/planner.ts";
-import { read } from "../stages/reader.ts";
+import { read, type Reading } from "../stages/reader.ts";
 import { equationsOf, review, type Review } from "../stages/reviewer.ts";
 import { route } from "../stages/router.ts";
 import { promptSource } from "../stages/source.ts";
@@ -235,6 +235,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     if (routed.value.family !== "compartments" || routed.value.tier !== "A") {
       // No family whose worlds are made from papers covers it: the generated tier writes its mechanism (ADR-0058).
       if (input.config.mechanisms) {
+        let kept: Reading | null = null;
         return await runMechanismTier({
           input,
           config: input.config.mechanisms,
@@ -257,6 +258,10 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
           released: (count) => {
             released = count;
           },
+          keep: (value) => {
+            kept = value;
+          },
+          reading: () => kept,
         });
       }
       throw new Stop("unsupported", `the router sends this paper to ${routed.value.family}, tier ${routed.value.tier}: ${routed.value.reason} PaperPlay generates compartment-model worlds only, so far.`);

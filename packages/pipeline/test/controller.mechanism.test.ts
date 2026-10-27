@@ -107,7 +107,7 @@ function tierClient(writer: readonly string[], options: { readonly reviewer?: un
   return { client, calls };
 }
 
-async function run(client: ModelClient) {
+async function run(client: ModelClient, stageMs: Partial<Record<"writer", number>> = {}) {
   const events: { state: JobState; step: string; message: string }[] = [];
   const artifacts = new Map<string, unknown>();
   const sink: JobSink = { emit: (state, step, message) => void events.push({ state, step, message }), artifact: (name, value) => void artifacts.set(name, value) };
@@ -118,7 +118,7 @@ async function run(client: ModelClient) {
       config: { stages: { reader: "m-reader", router: "m-router", planner: "m-planner", explainer: "m-explainer", reviewer: "m-reviewer", writer: "m-writer" }, structuredOutput: {}, planning: "candidates", mechanisms: { example: heat } },
       fetch: () => Promise.reject(new Error("no network")),
       example: "",
-      deadline: { jobMs: 60_000, mechanismJobMs: 600_000, stageMs: {} },
+      deadline: { jobMs: 60_000, mechanismJobMs: 600_000, stageMs },
     },
     sink,
   );
@@ -162,6 +162,16 @@ describe("[R08] [R11] the generated-mechanism tier's job (ADR-0058)", () => {
     const page = never.artifacts.get("explainer") as { findings: { origin: string; quote: string | null }[]; why: string };
     expect(page.why).toMatch(/still fails its checks/);
     expect(page.findings.map((finding) => finding.origin)).toEqual(["paper-derived", "paper-derived", "paper-derived"]);
+  }, 60_000);
+
+  it("falls back to the explainer page when the writer never answers within its time, after asking again", async () => {
+    const { client } = tierClient([fenced(heat)]);
+    const slow: ModelClient = { complete: (request) => (request.stage === "writer" ? new Promise((resolve) => setTimeout(() => resolve(client.complete(request)), 400)) : client.complete(request)) };
+    const { outcome, artifacts } = await run(slow, { writer: 100 });
+    expect(outcome.state).toBe("unsupported");
+    expect(outcome.message).toMatch(/explainer page, tier C/);
+    expect([0, 1, 2, 3].every((round) => (artifacts.get(`mechanism-round-${round}`) as { problems: string } | undefined)?.problems.includes("did not arrive"))).toBe(true);
+    expect(artifacts.has("explainer")).toBe(true);
   }, 60_000);
 
   it("takes the writer's refusal as the paper's answer, and shows the explainer page instead", async () => {

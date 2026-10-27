@@ -10,6 +10,9 @@ import type { ChatMessage } from "../models/index.ts";
 import type { Reading } from "./reader.ts";
 import { DATA_RULE } from "./source.ts";
 
+/** What the writer is asked for, half the sandbox's limit: the job waits on every character it writes (ADR-0058). */
+export const WRITER_ASKS_CHARS = 12_000;
+
 export const MECHANISM_WRITER_INSTRUCTIONS = [
   "You write a small simulation of the mechanism a scientific paper proposes, as one plain JavaScript module, so a learner can play with it in a game. Code checks it in a sandbox before anyone sees it.",
   DATA_RULE,
@@ -32,7 +35,7 @@ export const MECHANISM_WRITER_INSTRUCTIONS = [
   "- Each parameter is one the paper discusses that a learner can move while the world runs, and moving it across its range changes at least one measurement; each measurement responds to at least one parameter. Ranges are honest: the paper's own value as the default, inside the range.",
   "- Ids are camelCase, starting with a lowercase letter. Units in words, or \"\" when there is none.",
   `- Small and fast: a step with its measurement and frame well under ${MECHANISM_LIMITS.stepMs} ms; at most 64 towers, 2,000 particles, a 128 by 128 grid, 500 nodes.`,
-  `- At most ${MECHANISM_LIMITS.sourceChars.toLocaleString("en")} characters. Comment briefly, in plain sentences, what each part is, naming the paper's section or equation it comes from.`,
+  `- Short: about 150 lines, at most ${WRITER_ASKS_CHARS.toLocaleString("en")} characters; the sandbox refuses anything over ${MECHANISM_LIMITS.sourceChars.toLocaleString("en")}. A short module is written quickly, and the job waits for it. Comment briefly, in plain sentences, what each part is, naming the paper's section or equation it comes from.`,
   "- A toy at a small scale, not a reproduction of the paper's experiments: it shows how the mechanism behaves.",
   "The kits' frames; every x, y, height, weight, value, size and cell is from 0 to 1, x running rightward and y downward, a group from 0 to 5 picks a colour, a label is at most 24 characters:",
   "- particles: { particles: [{ x, y, heading, size, group }] }, heading in radians, optional with size and group; agents or particles moving on a square.",
@@ -76,10 +79,15 @@ export function mechanismWriterMessages(input: MechanismWriterInput): ChatMessag
 export function mechanismFixMessages(input: MechanismWriterInput, previous: readonly { readonly source: string; readonly problems: string }[]): ChatMessage[] {
   return [
     ...mechanismWriterMessages(input),
-    ...previous.flatMap((round): ChatMessage[] => [
-      { role: "assistant", content: `\`\`\`javascript\n${round.source}\n\`\`\`` },
-      { role: "user", content: `The checks found these problems:\n${round.problems}\nFix every one, changing nothing else, and answer with the whole module again in one \`\`\`javascript block.` },
-    ]),
+    ...previous.flatMap((round): ChatMessage[] =>
+      // A round whose reply never came has nothing to show: only what went wrong.
+      round.source === ""
+        ? [{ role: "user", content: `${round.problems}\nAnswer with a shorter module, in one \`\`\`javascript block.` }]
+        : [
+            { role: "assistant", content: `\`\`\`javascript\n${round.source}\n\`\`\`` },
+            { role: "user", content: `The checks found these problems:\n${round.problems}\nFix every one, changing nothing else, and answer with the whole module again in one \`\`\`javascript block.` },
+          ],
+    ),
   ];
 }
 

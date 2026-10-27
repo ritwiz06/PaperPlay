@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { writeCheckedMechanism } from "../src/mechanism/loop.ts";
-import type { ChatMessage } from "../src/models/index.ts";
+import { ModelError, type ChatMessage } from "../src/models/index.ts";
 import { moduleOf, type MechanismWriterInput } from "../src/stages/mechanism-writer.ts";
 
 // The writer's fix loop (ADR-0058), with a scripted writer: the checks decide, the writer reads
@@ -63,6 +63,20 @@ describe("[R08] the writer's fix loop (ADR-0058)", () => {
     const outcome = await writeCheckedMechanism(input, { call: writer.call });
     expect(outcome.kind).toBe("passed");
     expect(writer.asked[1]?.at(-1)?.content).toContain("holds no module");
+  });
+
+  it("counts a reply that never came within its time as a lost round, and asks again for a shorter module", async () => {
+    const asked: ChatMessage[][] = [];
+    const outcome = await writeCheckedMechanism(input, {
+      call: (messages, round) => {
+        asked.push(messages);
+        return round === 0 ? Promise.reject(new ModelError("timeout", "the writer call ran past its 420 s")) : Promise.resolve(fenced(reference));
+      },
+    });
+    expect(outcome.kind).toBe("passed");
+    expect(outcome.rounds[0]?.problems).toContain("did not arrive within its time");
+    expect(asked[1]?.at(-1)?.content).toContain("Answer with a shorter module");
+    expect(asked[1]?.some((message) => message.role === "assistant")).toBe(false);
   });
 
   it("begins no fix the deadline cannot hold", async () => {

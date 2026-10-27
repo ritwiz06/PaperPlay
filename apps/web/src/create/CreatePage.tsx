@@ -107,7 +107,7 @@ export function CreatePage() {
           .then((value) => value && setReleased(value))
           .catch(() => undefined);
       // A paper that falls back to tier C: its explainer page, when the job made one.
-      if (parsed.state === "unsupported")
+      if (parsed.state === "unsupported" || parsed.state === "failed")
         void fetch(`/api/jobs/${id}/artifacts/explainer`)
           .then((answer) => (answer.ok ? (answer.json() as Promise<ExplainerPage>) : null))
           .then((value) => value && setExplainer(value))
