@@ -7,6 +7,21 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-26 · The generated-mechanism tier, slice 1
+
+- Branches: `g3/mechanism-module`, `g3/mechanism-tier`, `g3/mechanism-web`, stacked, landed together.
+- Commits: `eb06cf5`, `130a804`, `54d0e0d`, `f3b5d6f`, `e81f15a`, `6dc46c3`, `4db3a7a`, `327460b`, and the docs.
+- Shipped (ADR-0058): the mechanism module and its contract; the driver; the Node sandbox, an empty
+  context in a worker thread with a heap limit; the browser's, a worker in its own-origin frame
+  under its own policy; the deterministic checks; the writer, glm-5-3 by a timed comparison, and its
+  fix loop; the tier's job through the machinery every world meets; the `generated` family, its
+  label on every level; the six kits in two dimensions; a generated world in the shell; the
+  explainer page as the fallback. Attention Is All You Need from /create: five levels playable at
+  9.4 minutes, every one meeting the level rule; the reviewers blocked the hook, and the job asked
+  the owner at 14 minutes.
+- Evidence: R08 133 tests, R02 20, R06 78, R11 36, R12 30, ahead of their gates.
+- Gate: G2's `check:gate` inside `npm run land`, as its log shows.
+
 ## 2026-10-25 · Planning in code
 
 - Branch: `g3/candidates`, landed alone.

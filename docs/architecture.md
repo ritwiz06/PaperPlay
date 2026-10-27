@@ -67,6 +67,31 @@ Inside `packages/ui`:
   - SpeedButton, the speed control (ADR-0020); `advance` in `stage-core/fixed-step.ts` takes the speed. The level card shows and hides its elements by
     the id a depth variant names (ADR-0016).
 
+### The generated-mechanism tier (ADR-0058)
+
+A paper no family covers has its mechanism written as a JavaScript module by a coding model, run
+only in a sandbox, and played as a world in the generated family, labelled as such:
+- `packages/contracts/src/mechanism.ts`: the module's manifest, the six kits' frames, `parseFrame`,
+  `MECHANISM_LIMITS`, `mechanismRef`, `GENERATED_MODEL_LABEL`; in `worldspec-v3.ts` the `mechanism`
+  binding and the `generated` routing tier; in `families.ts` the `generated` family; in `kits.ts`
+  the `mechanism` kit.
+- `@paperplay/primitives/mechanism`: the driver both sandboxes run (`driverScript`), and
+  `mechanismPrimitive`, the builder's description of a module, which never runs it.
+- `@paperplay/pipeline/mechanism`, Node only: `openSandbox` (an empty context in a worker thread with
+  a heap limit), `checkMechanism` and `feedbackOf`, `writeCheckedMechanism` (the fix loop), and in
+  `candidates.ts` the sweep over 20 seeds and the candidates' judging. The writer's stage is
+  `stages/mechanism-writer.ts`; the tier's job is `controller/mechanism.ts`, entered from `run.ts`
+  where the router finds no family; `assemble/world.ts` assembles either kind of model through one view.
+- `apps/api`: the `writer` stage in `models.json` and `deadline.mechanismJobMs`; the module kept as
+  the job's `mechanism` artifact and in the cache beside its world (`GET /worlds/:key/mechanism`);
+  the job list marks a world on a generated model.
+- `apps/web`: `public/sandbox.html`, the frame with its own policy; `src/mechanism/sandbox.ts`, the
+  page's side of it; `src/world/mechanism.ts`, the session that drives a module in it;
+  `src/worlds/mechanism-world.tsx`, the world in the shell, with a stage of its own; `/create`'s
+  explainer page for a paper that falls back; `/check/sandbox` and `/check/kits` on a development server.
+- `@paperplay/ui/react/mechanism`: the six kits drawn in two dimensions, `MechanismCanvas` and
+  `MechanismStage`; `ForkView` takes a world's own stage.
+
 ## Dependency directions
 
 An arrow means "may import". Dotted arrows are type-only imports.
@@ -153,6 +178,7 @@ flowchart LR
 | The families' catalogue (`FamilyId`, `FAMILIES`, `Variation`, `SpaceKind`) and `TimeUnit` | Unversioned data: a family, space or time unit is added by ADR | `packages/contracts/src/families.ts`, `packages/contracts/src/time.ts` (ADR-0025) |
 | Oracle fixtures | `oracle/1` | `fixtures/oracles/README.md` |
 | FrameDescription (the stage's part and a kit's layers), StageKit, ThreeKit; the valley kit's FlockFrame and FrameEmphasis | Unversioned: in-process only, never persisted | `packages/ui/src/stage-core/frame.ts`, `packages/ui/src/three-adapter/scene.ts`, `packages/ui/src/stage-core/kits/valley/frame.ts` (ADR-0026) |
+| MechanismManifest, the six kits' frames and the module's limits; worldspec/3's `mechanism` binding, naming a module by its hash | Versioned with the WorldSpec that holds the binding; the job's `mechanism` artifact is `mechanism/1` | `packages/contracts/src/mechanism.ts`, `packages/contracts/src/worldspec-v3.ts` (ADR-0058) |
 | Gate definitions | Requirements per gate | `gates.json` |
 
 ## Invariants and where they are enforced
@@ -240,6 +266,9 @@ flowchart LR
 | A repair the planner cannot write changes nothing: the plan stays, the repair is spent, and the rules drop what it was to mend | Controller tests [R10] | `packages/pipeline/src/controller/run.ts`, `packages/pipeline/test/controller.test.ts` (ADR-0044's amendment) |
 | A job's events are its real states, in order, numbered, resumed from where a client left off; no timer | API tests [R11] | `apps/api/test/jobs.test.ts` (ADR-0033) |
 | A source is read without running or fetching anything it asks for: archives refuse links and climbing paths, LaTeX macros are never expanded, XML entities beyond XML's own are never decoded; a PDF is read from its bytes alone, no font loaded, nothing fetched, no forms, at most 50 MB and 200 pages; paper text is sanitised before any prompt, offsets kept | Tests [R09] | `packages/pipeline/test/ingest.test.ts`, `packages/pipeline/test/sanitise.test.ts` (ADR-0031), `packages/pipeline/test/pdf.test.ts` (ADR-0038) |
+| A generated module reaches nothing but JavaScript's own objects: no host object, no code from strings, no import, no network, no clock and no chance in Node; in the browser no network, DOM, page, storage, clock or chance; each call timed, Node's heap capped | Tests [R08] | `packages/pipeline/test/mechanism.sandbox.test.ts`, `tests/e2e/sandbox.spec.ts` (ADR-0058) |
+| No level is made from a module before it passes every check: it loads, repeats on a seed, runs at both ends of every range, stays finite, responds to its parameters, draws in its kit and steps quickly; at most three fixes, then the explainer page | Tests [R08] [R11] | `packages/pipeline/test/mechanism.checks.test.ts`, `packages/pipeline/test/mechanism.loop.test.ts`, `packages/pipeline/test/controller.mechanism.test.ts` |
+| A world on a generated module is in the generated family, whose label every level shows, and stays a draft; a page runs its module only when the source's hash is the one its world names | Schema refinement and tests [R03] [R08] | `packages/contracts/src/worldspec-v3.ts`, `packages/contracts/test/families.test.ts`, `tests/e2e/mechanism-world.spec.ts` |
 
 ## Runtime and tooling
 
@@ -379,4 +408,7 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 | 2026-10-25 | 9cd1189 | `packages/primitives/src/attention/` and its export; the attention family in contracts; `packages/pipeline/src/candidates/attention.ts`; `RoutedFamily` in the router (ADR-0054, ADR-0056) |
 | 2026-10-25 | f57b0bd | `training/`; `fixtures/weights/`; attention.toy@1.1.0 with `weights.ts`; the attention generator over trained weights; `/check/miniature` (ADR-0057) |
 | 2026-10-25 | 5761705 | `training/train.py`'s tasks, lengths and dominance ratio; attention.toy@1.2.0's minus and table tasks; `fixtures/weights/miniature-table-16-*` (ADR-0057's amendment) |
+| 2026-10-26 | eb06cf5 | `packages/contracts/src/mechanism.ts`; `@paperplay/primitives/mechanism`, the driver; `@paperplay/pipeline/mechanism`, the Node sandbox, the checks and the fix loop; `stages/mechanism-writer.ts`; the `writer` stage; `pipeline:live writer-bakeoff`; `fixtures/mechanisms/` (ADR-0058) |
+| 2026-10-26 | 130a804 | The `generated` family, routing tier, `mechanism` binding and kit; `mechanismPrimitive`; the assembler's model view; `controller/mechanism.ts` and `controller/stop.ts`; `mechanism/candidates.ts`; the module in the job and the cache; `/create`'s explainer page (ADR-0058) |
+| 2026-10-26 | 54d0e0d | `apps/web/public/sandbox.html` and `src/mechanism/sandbox.ts`; `@paperplay/ui/react/mechanism`, the six kits, `MechanismCanvas` and `MechanismStage`; `src/world/mechanism.ts`, `src/worlds/mechanism-world.tsx`; a world's own stage in the shell and the fork; `/check/sandbox`, `/check/kits` (ADR-0058) |
 | 2026-10-17 | 7f25db9 | The learning family (ADR-0047): `learning.ts` in contracts; `learning.landscape@1.0.0` in `packages/primitives/src/learning/`, as `@paperplay/primitives/learning` and the registry's second solver; the `update-rule` binding; the landscape kit under `kits/landscape/` in each layer; `apps/web/src/world/landscape.ts`, `worlds/landscape-world.tsx` and `worlds/momentum.tsx` at `/world/momentum`; `fixtures/oracles/learning.landscape/` |

@@ -298,9 +298,17 @@ out. PubMed Central ingest, once here, landed in G3a.3.
   BERT generated, G3's gate.
 - [ ] Transcription by selection (ADR-0056), before biomedical work: code extracts the equations
   and values, the model selects; value sets by code; one reconciliation call; optimistic pipelining.
+- [x] The generated-mechanism tier, slice 1 (2026-10-26, ADR-0058): a paper no family covers has its
+  mechanism written as a module by glm-5-3, checked in a sandbox in Node and run in one in the
+  browser, with at most three fixes; its levels made by the rules every world meets; the six kits in
+  two dimensions; a generated world in the shell, labelled; the explainer page as its fallback;
+  Attention Is All You Need run end to end from /create.
+- [ ] The generated tier on ten corpus papers in the background: success rate and time; the most
+  common failures fixed.
+- [ ] The deploy (ADR-0017), serving `sandbox.html` with its own headers.
 
 Later:
-- The widget tier, behind `FEATURE_WIDGETS=1` (stretch).
+- The widget tier became the generated-mechanism tier (ADR-0058).
 - The four development and eight held-out section files of the flocking paper (moved from G2 on
   2026-10-09). G4 now evaluates on papers from three domains (ADR-0021), so whether they are
   still needed is decided when G4's protocol is frozen.
@@ -387,6 +395,7 @@ commit times). The owner's own focused hours are not tracked unless logged.
 | 2026-10-25 | R13's job budget is 15 minutes; planning moves into code, the planner only chooses; the planners are glm-5-3 and muse-glimmer-30b; a paper no existing family covers routes to tier C until its family exists | Owner decision (ADR-0055) |
 | 2026-10-24 | The first set to build: attention (four papers), formulas (two), diffusion (three), agents pre-built (two); the explorer's smallest form alongside attention, formulas second; agent-experiment worlds pre-built only | Owner decision (ADR-0054) |
 | 2026-10-18 | G2 made current and tagged v0.2.0; CI's gate skipped on main when its branch passed, the capture on demand only | Owner decisions (ADR-0048) |
+| 2026-10-26 | An autonomous tier for papers no family covers: a coding model writes the mechanism as a sandboxed module, checked before any level; its worlds labelled "generated model: behaviour checked, not verified against the paper"; a 20-minute budget. It replaces the widget tier, and the plan to hand-build the Attention world | Owner decision (ADR-0058) |
 | 2026-10-18 | Definitional corrected: the control in the measured compartment's own equation, measured on its level or peak; found by code before review; a spread headline's hook on an infected compartment; one reviewer's unsupported block enough, checked by code where the model can; reviewers never the planners or the explainer, inkling-small and qwen38-27b picked | Owner decisions (ADR-0044's amendment) |
 | 2026-10-17 | G3b's decisions: update rules as data, attention after G4, G3b's gate Adam alone, tier C now and minimal; a hand-authored momentum world as the learning family's reference | Owner decisions (ADR-0046) |
 | 2026-10-17 | What counts as definitional held by code: the direct-effect tag, a named term, emergent summaries exempt, two reviewers who must agree, unsupported words written again; the reviewers' bake-off reads its cases from data and keeps every live mistake | Owner decision (ADR-0044) |

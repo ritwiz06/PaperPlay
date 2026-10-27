@@ -1139,3 +1139,31 @@ levels as soon as the hook and two more pass every check, while repairs and revi
 - **Why here:** A learner can play within minutes, and every released level has passed the same
   checks as a finished world's; only the reviewers' reading is still to come, and the page says so.
 - **Learn more:** [Progressive delivery](https://launchdarkly.com/blog/what-is-progressive-delivery-all-about/)
+
+### Sandbox
+
+A place where untrusted code runs with nothing it could misuse within reach: no network, no files,
+no page, no clock, and limits on its time and memory. Here two: an empty JavaScript context in a
+worker thread in Node, and a worker inside a separate-origin frame in the browser, whose own
+Content-Security-Policy forbids every connection.
+
+- **Used in:** `packages/primitives/src/mechanism/driver.ts`, `packages/pipeline/src/mechanism/sandbox.ts`,
+  `apps/web/src/mechanism/sandbox.ts`, `apps/web/public/sandbox.html`
+- **Why here:** A generated world's mechanism is code a model wrote from a paper, which is untrusted
+  input (CLAUDE.md's fourth boundary); it may only compute, and every number it returns is parsed
+  before it is used. Each layer stops what the others might miss, so no one of them is trusted alone.
+- **Learn more:** [Sandbox (computer security)](https://en.wikipedia.org/wiki/Sandbox_(computer_security)),
+  [the iframe sandbox attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe#sandbox)
+
+### Checked, not verified
+
+Two kinds of trust. Verified: the model was derived from the paper's equations and held to oracles
+worked out by hand, so it computes what the paper says. Checked: code ran the model and confirmed
+it behaves, repeatable, finite, in range, responsive, but nothing confirmed it is the paper's model.
+
+- **Used in:** `packages/pipeline/src/mechanism/checks.ts`, `packages/contracts/src/families.ts`
+  (the generated family's label), `docs/decisions/ADR-0058-generated-mechanisms.md`
+- **Why here:** A generated world is playable within minutes because nothing waits for a person; the
+  price is that it can only be checked, so every level says so, and a learner never reads a
+  generated mechanism's behaviour as the paper's result.
+- **Learn more:** [Verification and validation](https://en.wikipedia.org/wiki/Verification_and_validation)
