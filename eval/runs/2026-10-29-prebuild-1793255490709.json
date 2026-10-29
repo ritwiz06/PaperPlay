@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "prebuild-run/1",
+  "fresh": true,
+  "rows": [
+    {
+      "source": "arxiv:1706.03762v7",
+      "jobId": "210f5f78-e6d3-48c7",
+      "outcome": "explainer fallback",
+      "firstPlayableSeconds": null,
+      "endSeconds": 872,
+      "levelsReleased": 0,
+      "failure": "the module never passed its checks",
+      "message": "the module still fails its checks: no time for fix 2: the last round took 420 s and 88 s are left; this paper falls back to the explainer page, tier C"
+    },
+    {
+      "source": "arxiv:1810.04805v2",
+      "jobId": "76073fe4-de72-4c10",
+      "outcome": "explainer fallback",
+      "firstPlayableSeconds": null,
+      "endSeconds": 869,
+      "levelsReleased": 0,
+      "failure": "the module never passed its checks",
+      "message": "the module still fails its checks: no time for fix 2: the last round took 420 s and 91 s are left; this paper falls back to the explainer page, tier C"
+    },
+    {
+      "source": "arxiv:1905.10650v3",
+      "jobId": "01d2fe3f-9bbd-4f8c",
+      "outcome": "failed",
+      "firstPlayableSeconds": null,
+      "endSeconds": 61,
+      "levelsReleased": 0,
+      "failure": "the job's deadline",
+      "message": "the router call ran past its 60 s: the job stops at its deadline of 900 s rather than run on; no level passed its checks in time, so this paper falls back to the explainer page, tier C"
+    },
+    {
+      "source": "arxiv:2001.08361v1",
+      "jobId": "f822843c-1aec-4ae1",
+      "outcome": "explainer fallback",
+      "firstPlayableSeconds": null,
+      "endSeconds": 875,
+      "levelsReleased": 0,
+      "failure": "the module never passed its checks",
+      "message": "the module still fails its checks: no time for fix 2: the last round took 420 s and 85 s are left; this paper falls back to the explainer page, tier C"
+    },
+    {
+      "source": "arxiv:1910.02054v3",
+      "jobId": "5166905d-f93c-44ad",
+      "outcome": "failed",
+      "firstPlayableSeconds": null,
+      "endSeconds": 61,
+      "levelsReleased": 0,
+      "failure": "the job's deadline",
+      "message": "the router call ran past its 60 s: the job stops at its deadline of 900 s rather than run on; no level passed its checks in time, so this paper falls back to the explainer page, tier C"
+    },
+    {
+      "source": "arxiv:1811.06965v5",
+      "jobId": "9d68eb00-eca7-45e0",
+      "outcome": "ready",
+      "firstPlayableSeconds": 560,
+      "endSeconds": 800,
+      "levelsReleased": 5,
+      "failure": null,
+      "message": "the world is built and checked: 5 levels on a generated model: behaviour checked, not verified against the paper, every one meeting the level rule, showing its difference and testing the paper's findings"
+    },
+    {
+      "source": "arxiv:2006.11239v2",
+      "jobId": "74500e25-2855-4f77",
+      "outcome": "failed",
+      "firstPlayableSeconds": null,
+      "endSeconds": 995,
+      "levelsReleased": 0,
+      "failure": "the explainer's words",
+      "message": "the hook's words did not come: kimi-k2-7-code's explainer reply was invalid twice. It does not match the schema:"
+    },
+    {
+      "source": "arxiv:2010.02502v4",
+      "jobId": "7cb8888d-d7c5-4746",
+      "outcome": "explainer fallback",
+      "firstPlayableSeconds": null,
+      "endSeconds": 880,
+      "levelsReleased": 0,
+      "failure": "the module never passed its checks",
+      "message": "the module still fails its checks: no time for fix 2: the last round took 420 s and 80 s are left; this paper falls back to the explainer page, tier C"
+    },
+    {
+      "source": "arxiv:2207.12598v1",
+      "jobId": "cae4375b-78a6-4913",
+      "outcome": "explainer fallback",
+      "firstPlayableSeconds": null,
+      "endSeconds": 870,
+      "levelsReleased": 0,
+      "failure": "the module never passed its checks",
+      "message": "the module still fails its checks: no time for fix 2: the last round took 420 s and 90 s are left; this paper falls back to the explainer page, tier C"
+    },
+    {
+      "source": "arxiv:2305.10601v2",
+      "jobId": "ca35b301-6e43-4b57",
+      "outcome": "failed",
+      "firstPlayableSeconds": null,
+      "endSeconds": 960,
+      "levelsReleased": 0,
+      "failure": "ingest",
+      "message": "the levels do not test enough of the paper's findings: only 2 level(s) test one of the paper's findings whose quote the source holds; at least 3 must"
+    }
+  ]
+}
