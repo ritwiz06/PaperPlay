@@ -7,6 +7,18 @@ never rewritten. The plan lives in [roadmap.md](roadmap.md) and the present stat
 Each entry gives the branch, the commits, what shipped, the requirement evidence counts,
 and the gate summary. Counts are passing tests tagged with each requirement.
 
+## 2026-10-28 · Two apps on one machine; the Attention run's fixes
+
+- Branches: `g3/two-apps`, `g3/mechanism-fixes`, stacked, landed together.
+- Commits: `450a390`, `c6d374b`, `9972730`, `d4cbce9`, `9e17775`, and the docs.
+- Shipped: ports from settings and 127.0.0.1 for every PaperPlay server, a busy port said plainly,
+  `npm run stop`, the gate's wait for a quiet machine, the README's section (ADR-0059); What-ifs as
+  the paper means each control, computed outcomes, the tier's own reviewer replacing a level whose
+  What-if it blocks, row-relative scene contrast, the readout's words, the note's place, CLAUDE.md's
+  second boundary (ADR-0058's amendment); a run of papers recorded row by row.
+- Evidence: see status.md's latest check:gate.
+- Gate: G2's `check:gate` inside `npm run land`, as its log shows.
+
 ## 2026-10-26 · The generated-mechanism tier, slice 1
 
 - Branches: `g3/mechanism-module`, `g3/mechanism-tier`, `g3/mechanism-web`, stacked, landed together.

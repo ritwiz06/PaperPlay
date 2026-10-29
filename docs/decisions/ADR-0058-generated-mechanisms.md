@@ -1,6 +1,6 @@
 # ADR-0058: An autonomous tier for papers no family covers: generated mechanisms
 
-- Status: accepted. The owner, 2026-10-26: PaperPlay must take any paper and, on its own, produce a
+- Status: accepted, amended 2026-10-28 (the Attention run's fixes). The owner, 2026-10-26: PaperPlay must take any paper and, on its own, produce a
   playable world in 10 to 20 minutes; verified families stay the high-trust path, and this tier
   covers everything else, promoting R08's sandboxed widget tier from a stretch goal to the main
   path. The interface, the sandboxes, the checks, the writer's comparison and the shell's
@@ -106,3 +106,40 @@ generated reads as verified.
   come next; then the deploy, which must serve `sandbox.html` with its own headers.
 - Not done: a per-worker heap limit in the browser (none exists); 3D kits; replaying a generated
   world's runs as records; the full `explainerspec/1`.
+
+## Amendment, 2026-10-28: the Attention run's fixes
+
+The owner, after the first live run: a reviewer's block on a What-if replaces the level, and
+rewording is only for wording; the writer declares what the paper means by each control; modules
+compute outcomes and never restate the paper's results; scenes show contrast; and CLAUDE.md's
+second boundary takes this ADR's first consequence, which the owner authorized (`c6d374b`).
+
+1. **What the paper means.** Each parameter declares `paper: { normal, without, meaning }`: the
+   paper's own value, which is the default; the value inside the range that takes it away as the
+   paper means, or null where taking it away means nothing; and that in a sentence. A check asks for
+   it. Candidates take a parameter away at that value, never past it, beside the ends of its range;
+   a candidate's brief says which; the planner chooses the hook among those taking something away.
+   A What-if whose words say it takes a setting away, where its value does not, is written again
+   once, then dropped, or for the hook left to the owner.
+2. **Computed, never restated.** The writer is told to compute every outcome and never write in the
+   paper's results; a static check flags a literal in a module's code equal to a decimal or a
+   percentage among the paper's reported results, unless it is one of the module's own settings; a
+   mechanism that cannot be simulated without inventing its outcomes, such as agents only a language
+   model could play, is refused, and the paper falls back to the explainer page.
+3. **The tier's own reviewer** (`stages/mechanism-reviewer.ts`), its findings of four kinds: a
+   What-if that cannot teach its level, and an outcome the module restates, replace the level with
+   the next valid candidate (the hook with the next hook-eligible one, testing the same finding,
+   its words written for it); words that misdescribe the module are written again; anything else is
+   advice. At most two rounds of repairs, each only when the job has time for it and its review; a
+   level still blocked is dropped, or the hook left to the owner. The family's reviewer, whose
+   recordings its bake-off replays, is unchanged.
+4. **Contrast.** The towers and network kits draw each row's weights relative to that row's range,
+   and tower fills relative to the towers' range, heights as given; a legend says so. Render-only.
+5. **Small ones.** A garbled world name gives way to the module's title; the Beginner readout says
+   the lowest reading's words, never "as measured"; the note that a job is still being made sits in
+   the HUD's flow, never over the fork or the journal. The deploy's headers for `sandbox.html` were
+   already in `vercel.json` from the tier's first slice, tested against the built app.
+
+The Attention world of 2026-10-26 replays from its recordings only at the commit that made it,
+`78c8fef`: its writer's and reviewers' prompts have changed since, and a recording is found by its
+prompt's hash.

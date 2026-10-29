@@ -1167,3 +1167,16 @@ it behaves, repeatable, finite, in range, responsive, but nothing confirmed it i
   price is that it can only be checked, so every level says so, and a learner never reads a
   generated mechanism's behaviour as the paper's result.
 - **Learn more:** [Verification and validation](https://en.wikipedia.org/wiki/Verification_and_validation)
+
+### Loopback address
+
+The address a computer uses to reach itself: 127.0.0.1 in IPv4, ::1 in IPv6. "localhost" is a name
+for either, and which one a program picks depends on how it resolves the name, so two servers can
+both seem to hold "localhost:5173", one on each address.
+
+- **Used in:** `scripts/machine/ports.ts`, `scripts/machine/servers.ts`, `apps/web/vite.config.ts`,
+  `apps/api/src/listen.ts`
+- **Why here:** PaperPlay shares this machine with another app; every PaperPlay server binds
+  127.0.0.1 by number and every URL it prints names it, and a port another program holds on either
+  address counts as busy, so no browser tab ever shows the wrong app.
+- **Learn more:** [Localhost](https://en.wikipedia.org/wiki/Localhost)

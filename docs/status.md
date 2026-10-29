@@ -1,6 +1,6 @@
 # Status
 
-Updated 2026-10-26: the generated-mechanism tier ([log](sessions/2026-10-26.md)).
+Updated 2026-10-28: two apps on one machine; the Attention run's fixes ([log](sessions/2026-10-28.md)).
 A snapshot, rewritten every session and kept under 80 lines; history is in
 [progress.md](progress.md) and the session logs.
 
@@ -8,22 +8,20 @@ A snapshot, rewritten every session and kept under 80 lines; history is in
 
 - **Gate:** G2 Verified authored world is current, tagged `v0.2.0` at `b37c7dc`; G1 is `v0.1.0`.
   Next: G3, whose gate is the attention family's first generated world, BERT (ADR-0052).
-- **Working commit:** `327460b`, the branch's last code commit, landed on `main` with this status.
+- **Working commit:** `9e17775`, the branch's last code commit, landed on `main` with this status.
 - **Purpose:** any paper, on its own, a playable world in 10 to 20 minutes (ADR-0058): verified
-  families the high-trust path, the generated tier for everything else; the 34 AI and ML papers of
-  `docs/papers/corpus.md` first.
-- **The generated tier** (ADR-0058): a paper no family covers has its mechanism written by glm-5-3 as
-  a JavaScript module, checked in a sandbox in Node (loads, repeats, ranges, finite, responds,
-  frames, speed), at most three fixes, then the same candidates, planner, explainer, rules and
-  reviewers as every world, played in the shell from a sandbox in the browser, labelled
-  "generated model: behaviour checked, not verified against the paper". Attention Is All You Need,
-  live from /create: five levels playable at 9.4 minutes; the reviewers blocked the hook's What-if
-  and the job asked the owner at 14 minutes (job `8cae14dd`, on this machine). A first attempt
-  stopped when the writer gave nothing within 420 s.
-- **R13, fast generation** (ADR-0053, ADR-0055): 15 minutes for a family's job, 20 for the generated
-  tier's. Tuberculosis was ready in 7.9 min with its transcriptions replayed.
-- **The attention family** (ADR-0054, ADR-0057): `attention.toy@1.2.0`, its trained miniatures; the
-  scene spike waits on its own branch for review.
+  families the high-trust path, the generated tier for everything else; the 34 AI and ML papers first.
+- **Running PaperPlay** (ADR-0059): the web app at http://127.0.0.1:5180, the API at 127.0.0.1:8787,
+  set by `PAPERPLAY_WEB_PORT` and `PAPERPLAY_API_PORT`; every server on 127.0.0.1, never "localhost";
+  `npm run stop` stops PaperPlay's own servers and runs and nothing else. Replay World keeps 5173.
+- **The generated tier** (ADR-0058 and its amendment): glm-5-3 writes a paper's mechanism as a module,
+  each parameter saying what the paper means by it; checked in a sandbox, never restating the paper's
+  results; levels from What-ifs as the paper means them; its own reviewer replaces a level whose
+  What-if it blocks. The ten-paper run, fresh, started after this session's land, writes its rows to
+  `eval/runs/`.
+- **R13, fast generation:** 15 minutes for a family's job, 20 for the generated tier's.
+- **The attention family:** `attention.toy@1.2.0` and its trained miniatures; the scene spike waits
+  on its own branch for review.
 - **Worktrees:** the main one, and `PaperPlay-land`, land's checkout for the gate (ADR-0051).
 - **Model provider:** an OpenAI-compatible gateway, its address and key in `apps/api/.env` only;
   called only by `npm run pipeline:live`.
@@ -38,8 +36,8 @@ A snapshot, rewritten every session and kept under 80 lines; history is in
 
 ## Latest check:gate
 
-G2 on `g3/mechanism-web` before `327460b`, 2026-10-26: 1129 tests (vitest 1006, playwright 123), 0
-skipped; one API test then failed, fixed in `327460b`. `npm run land` runs it again before it pushes.
+G2 on `g3/mechanism-fixes`, 2026-10-28: 1156 tests (vitest 1029, playwright 127), 0 skipped; one
+axe test's first frame missed its 5 s under load, passing alone. `npm run land` runs it again.
 
 ## Blockers
 
@@ -47,25 +45,17 @@ skipped; one API test then failed, fixed in `327460b`. `npm run land` runs it ag
 
 ## Decisions waiting on the owner
 
-1. **CLAUDE.md's second boundary**, which a session may not edit: ADR-0058's first consequence
-   gives the change, generated code as one sandboxed, checked, labelled module.
-2. **A reviewer's block on a hook's What-if** (job `8cae14dd`): replace the hook with the next
-   candidate, rather than reword it and ask the owner?
-3. **The attention scene spike**, branch `g3/attention-scene-spike`.
-4. **CI minutes**, **the old gateway key**, **paid branch protection** and **the deploy** (ADR-0017),
-   which must serve `sandbox.html` with its own headers.
+1. **The attention scene spike**, branch `g3/attention-scene-spike`.
+2. **CI minutes**, **the old gateway key**, **paid branch protection** and **the deploy** (ADR-0017).
 
 ## Next three actions
 
-1. A reviewer's block on a What-if replaces the level, not its words; the generated tier's world
-   name and readings checked once more on a second paper.
-2. The generated tier on ten corpus papers in the background: success rate, time, common failures.
+1. The ten papers' table: each outcome, time to the first playable level and to the end, levels;
+   the three most common failures, and fixes for them.
+2. `useFreeRect` watching the HUD as it changes, so the stage never draws under it after a fork.
 3. The deploy.
 
 ## Recommendations
 
-1. **Play the released Attention world:** make it again from /create under `npm run pipeline:live --
-   serve`, its recorded calls replayed (its artifacts are in `apps/api/data/jobs/8cae14dd-f6c7-467d/`);
-   its hook's What-if is the reviewer's point.
-2. **Apply ADR-0058's change to CLAUDE.md**, so the next session's instructions match the code.
-3. **Download Kermack and McKendrick 1927 in a browser.**
+1. **Use http://127.0.0.1:5180**, not localhost, and `npm run stop` before switching branches.
+2. **Download Kermack and McKendrick 1927 in a browser.**
