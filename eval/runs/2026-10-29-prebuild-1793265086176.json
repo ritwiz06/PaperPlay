@@ -1,0 +1,326 @@
+{
+  "schemaVersion": "prebuild-run/1",
+  "fresh": true,
+  "rows": [
+    {
+      "source": "arxiv:1706.03762v7",
+      "jobId": "274fda34-d16a-4fb8",
+      "outcome": "ready",
+      "firstPlayableSeconds": 478,
+      "endSeconds": 778,
+      "levelsReleased": 5,
+      "failure": null,
+      "message": "the world is built and checked: 5 levels on a generated model: behaviour checked, not verified against the paper, every one meeting the level rule, showing its difference and testing the paper's findings",
+      "writerRounds": [
+        {
+          "writer": "qwen3-coder-next",
+          "round": 0,
+          "seconds": 135,
+          "failed": [
+            "loads"
+          ]
+        },
+        {
+          "writer": "qwen3-coder-next",
+          "round": 1,
+          "seconds": 133,
+          "failed": [
+            "loads"
+          ]
+        },
+        {
+          "writer": "glm-5-3",
+          "round": 0,
+          "seconds": 285,
+          "failed": []
+        }
+      ]
+    },
+    {
+      "source": "arxiv:1810.04805v2",
+      "jobId": "d0c83462-280d-442f",
+      "outcome": "ready",
+      "firstPlayableSeconds": 688,
+      "endSeconds": 928,
+      "levelsReleased": 4,
+      "failure": null,
+      "message": "the world is built and checked: 4 levels on a generated model: behaviour checked, not verified against the paper, every one meeting the level rule, showing its difference and testing the paper's findings",
+      "writerRounds": [
+        {
+          "writer": "qwen3-coder-next",
+          "round": 0,
+          "seconds": 304,
+          "failed": [
+            "loads"
+          ]
+        },
+        {
+          "writer": "glm-5-3",
+          "round": 0,
+          "seconds": 420,
+          "failed": [
+            "time"
+          ]
+        },
+        {
+          "writer": "glm-5-3",
+          "round": 1,
+          "seconds": 175,
+          "failed": []
+        }
+      ]
+    },
+    {
+      "source": "arxiv:1905.10650v3",
+      "jobId": "8f33895c-31d7-4b34",
+      "outcome": "failed",
+      "firstPlayableSeconds": 414,
+      "endSeconds": 854,
+      "levelsReleased": 5,
+      "failure": "other",
+      "message": "kimi-k2-7-code's explainer reply was invalid twice. It does not match the schema: - guide.raised: holds {to} exactly once, and no other braces",
+      "writerRounds": [
+        {
+          "writer": "qwen3-coder-next",
+          "round": 0,
+          "seconds": 123,
+          "failed": [
+            "responds",
+            "frames"
+          ]
+        },
+        {
+          "writer": "qwen3-coder-next",
+          "round": 1,
+          "seconds": 110,
+          "failed": [
+            "responds"
+          ]
+        },
+        {
+          "writer": "glm-5-3",
+          "round": 0,
+          "seconds": 330,
+          "failed": []
+        }
+      ]
+    },
+    {
+      "source": "arxiv:2001.08361v1",
+      "jobId": "96cf54cc-dee1-433c",
+      "outcome": "failed",
+      "firstPlayableSeconds": null,
+      "endSeconds": 423,
+      "levelsReleased": 0,
+      "failure": "the job's deadline",
+      "message": "the transcriber call ran past its 420 s: the job stops at its deadline of 900 s rather than run on; no level passed its checks in time, so this paper falls back to the explainer page, tier C",
+      "writerRounds": []
+    },
+    {
+      "source": "arxiv:1910.02054v3",
+      "jobId": "a86e562f-b416-4bb0",
+      "outcome": "ready",
+      "firstPlayableSeconds": 304,
+      "endSeconds": 704,
+      "levelsReleased": 5,
+      "failure": null,
+      "message": "the world is built and checked: 5 levels on a generated model: behaviour checked, not verified against the paper, every one meeting the level rule, showing its difference and testing the paper's findings",
+      "writerRounds": [
+        {
+          "writer": "qwen3-coder-next",
+          "round": 0,
+          "seconds": 99,
+          "failed": [
+            "loads"
+          ]
+        },
+        {
+          "writer": "qwen3-coder-next",
+          "round": 1,
+          "seconds": 84,
+          "failed": [
+            "loads"
+          ]
+        },
+        {
+          "writer": "glm-5-3",
+          "round": 0,
+          "seconds": 211,
+          "failed": []
+        }
+      ]
+    },
+    {
+      "source": "arxiv:2006.11239v2",
+      "jobId": "ee9ce861-5eb9-425c",
+      "outcome": "failed",
+      "firstPlayableSeconds": null,
+      "endSeconds": 772,
+      "levelsReleased": 0,
+      "failure": "the planners chose no valid levels",
+      "message": "the planner's picks still break the rules after a repair: a candidate is chosen twice",
+      "writerRounds": [
+        {
+          "writer": "qwen3-coder-next",
+          "round": 0,
+          "seconds": 158,
+          "failed": [
+            "loads"
+          ]
+        },
+        {
+          "writer": "qwen3-coder-next",
+          "round": 1,
+          "seconds": 157,
+          "failed": [
+            "loads"
+          ]
+        },
+        {
+          "writer": "glm-5-3",
+          "round": 0,
+          "seconds": 420,
+          "failed": [
+            "time"
+          ]
+        },
+        {
+          "writer": "qwen3-coder-next",
+          "round": 2,
+          "seconds": 158,
+          "failed": [
+            "loads"
+          ]
+        },
+        {
+          "writer": "glm-5-3",
+          "round": 1,
+          "seconds": 175,
+          "failed": []
+        }
+      ]
+    },
+    {
+      "source": "arxiv:2010.02502v4",
+      "jobId": "ee10d297-3355-462c",
+      "outcome": "failed",
+      "firstPlayableSeconds": null,
+      "endSeconds": 403,
+      "levelsReleased": 0,
+      "failure": "the planners chose no valid levels",
+      "message": "the planner's picks still break the rules after a repair: only 0 level(s) test one of the paper's findings whose quote the source holds; at least 3 must",
+      "writerRounds": [
+        {
+          "writer": "qwen3-coder-next",
+          "round": 0,
+          "seconds": 127,
+          "failed": [
+            "frames"
+          ]
+        },
+        {
+          "writer": "qwen3-coder-next",
+          "round": 1,
+          "seconds": 130,
+          "failed": []
+        }
+      ]
+    },
+    {
+      "source": "arxiv:2207.12598v1",
+      "jobId": "f77d8b8a-9a54-4223",
+      "outcome": "needs-information",
+      "firstPlayableSeconds": 214,
+      "endSeconds": 1200,
+      "levelsReleased": 3,
+      "failure": "a reviewer blocked the hook",
+      "message": "the hook is still blocked after 2 rounds of repairs: kind wording In the params array for 'guidance', replace the paper meaning 'no guidance: using only the unconditional model (w=0)' with the correct description: 'no guidance: conditional score only, w=0 (the unconditional term is removed, leaving eps_cond per eq8)'. The paper defines w=0 as non-guided conditional sampling, not unconditional-only",
+      "writerRounds": [
+        {
+          "writer": "qwen3-coder-next",
+          "round": 0,
+          "seconds": 77,
+          "failed": [
+            "ranges",
+            "speed"
+          ]
+        },
+        {
+          "writer": "qwen3-coder-next",
+          "round": 1,
+          "seconds": 59,
+          "failed": []
+        }
+      ]
+    },
+    {
+      "source": "arxiv:2305.10601v2",
+      "jobId": "5cfe05a4-708f-41cd",
+      "outcome": "ready",
+      "firstPlayableSeconds": 572,
+      "endSeconds": 996,
+      "levelsReleased": 5,
+      "failure": null,
+      "message": "the world is built and checked: 5 levels on a generated model: behaviour checked, not verified against the paper, every one meeting the level rule, showing its difference and testing the paper's findings",
+      "writerRounds": [
+        {
+          "writer": "qwen3-coder-next",
+          "round": 0,
+          "seconds": 111,
+          "failed": [
+            "computes",
+            "responds",
+            "frames"
+          ]
+        },
+        {
+          "writer": "qwen3-coder-next",
+          "round": 1,
+          "seconds": 104,
+          "failed": [
+            "computes"
+          ]
+        },
+        {
+          "writer": "qwen3-coder-next",
+          "round": 2,
+          "seconds": 94,
+          "failed": [
+            "computes"
+          ]
+        },
+        {
+          "writer": "glm-5-3",
+          "round": 0,
+          "seconds": 344,
+          "failed": [
+            "loads"
+          ]
+        },
+        {
+          "writer": "glm-5-3",
+          "round": 1,
+          "seconds": 39,
+          "failed": [
+            "computes",
+            "frames"
+          ]
+        },
+        {
+          "writer": "qwen3-coder-next",
+          "round": 3,
+          "seconds": 92,
+          "failed": [
+            "computes"
+          ]
+        },
+        {
+          "writer": "glm-5-3",
+          "round": 2,
+          "seconds": 43,
+          "failed": []
+        }
+      ]
+    }
+  ]
+}
