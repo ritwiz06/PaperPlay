@@ -257,6 +257,7 @@ async function oneJob(raw: string, fresh: boolean): Promise<RunRow> {
   const world = ended?.artifacts.get("world") as { levels?: unknown[] } | undefined;
   const explainer = ended?.artifacts.has("explainer") ?? false;
   const state = ended?.state ?? "failed";
+  const rounds = ((ended?.artifacts.get("writer-rounds") ?? []) as { writer: string; round: number; writeMs: number; checkMs: number; failed: string[] }[]).map((round) => ({ writer: round.writer, round: round.round, seconds: Math.round((round.writeMs + round.checkMs) / 1000), failed: round.failed }));
   return {
     source: raw,
     jobId: started.id,
@@ -264,8 +265,9 @@ async function oneJob(raw: string, fresh: boolean): Promise<RunRow> {
     firstPlayableSeconds: secondsTo(events.find((event) => event.step === "release")?.at),
     endSeconds: secondsTo(events.at(-1)?.at),
     levelsReleased: (world?.levels ?? released?.levels ?? []).length,
-    failure: failureOf(state, message, explainer),
+    failure: failureOf(state, message, explainer, rounds),
     message: message.slice(0, 400),
+    writerRounds: rounds,
   };
 }
 

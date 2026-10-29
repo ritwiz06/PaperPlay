@@ -15,14 +15,26 @@ export interface RunRow {
   readonly levelsReleased: number;
   readonly failure: string | null;
   readonly message: string;
+  /** Every writer's rounds, in the order they ended: who, which round, how long it took, and the checks it failed ("time" when no module came). */
+  readonly writerRounds?: readonly WriterRoundRow[];
+}
+
+export interface WriterRoundRow {
+  readonly writer: string;
+  readonly round: number;
+  readonly seconds: number;
+  readonly failed: readonly string[];
 }
 
 /** A job's failure, by its ending's words: the category the next session counts. */
-export function failureOf(state: string, message: string, explainer: boolean): string | null {
+export function failureOf(state: string, message: string, explainer: boolean, rounds: readonly Pick<WriterRoundRow, "failed">[] = []): string | null {
   if (state === "ready") return null;
   const said = message.toLowerCase();
   if (said.includes("no mechanism")) return "the writer refused: no mechanism to simulate";
-  if (said.includes("still fails its checks") || said.includes("no time for fix")) return "the module never passed its checks";
+  // A module that never came is the writer's time, not a check: every round of the first run's five fallbacks ran out of it.
+  if (said.includes("still fails its checks") || said.includes("no time for fix")) return rounds.length > 0 && rounds.every((round) => round.failed.includes("time")) ? "the writer ran out of time" : "the module never passed its checks";
+  if (said.includes("router call ran past")) return "the router ran out of time";
+  if (said.includes("test enough of the paper's findings")) return "too few levels test a finding the source quotes";
   if (said.includes("did not arrive") || (said.includes("writer call") && said.includes("ran past"))) return "the writer ran out of time";
   if (said.includes("candidate levels pass the rules")) return "too few candidate levels passed the rules";
   if (said.includes("time ran out") || said.includes("deadline")) return "the job's deadline";
