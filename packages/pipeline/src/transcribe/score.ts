@@ -53,10 +53,10 @@ export function scoreTranscription(original: Transcription, gold: Gold, source: 
   ];
   const quotesFound = quotes.filter((quote) => findQuote(source.text, quote, "whole") !== null).length;
   const mine = { model: modelForComparison(transcription, source), problems: [] as string[] };
-  const theirs = toModelSpec(golden.transcription, source);
+  const theirs = toModelSpec(golden.transcription, source, { quotes: "whole" });
   const valuesTotal = gold.transcription.parameters.length + gold.transcription.compartments.length;
   if (!mine.model || !theirs.model) {
-    const strict = toModelSpec(transcription, source);
+    const strict = toModelSpec(transcription, source, { quotes: "whole" });
     return { converted: false, structural: false, valuesRight: 0, valuesTotal, quotesFound, quotesTotal: quotes.length, ...setScore, problems: strict.problems.slice(0, 3) };
   }
   const match = matchModels(theirs.model, mine.model);
@@ -86,7 +86,7 @@ export function modelForComparison(transcription: Transcription, source: SourceT
     parameters: transcription.parameters.map((parameter) => ({ ...parameter, quote: keep(parameter.quote) })),
     equations: transcription.equations.map((equation) => ({ ...equation, quote: keep(equation.quote) })),
   };
-  return toModelSpec(lenient, source).model;
+  return toModelSpec(lenient, source, { quotes: "whole" }).model;
 }
 
 export interface ReadingScore {

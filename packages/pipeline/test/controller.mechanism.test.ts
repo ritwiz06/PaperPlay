@@ -308,6 +308,78 @@ describe("[R08] [R11] the generated-mechanism tier's job (ADR-0058)", () => {
     expect(events.filter((event) => event.step === "words" && event.message.includes("its What-if says it takes"))).toHaveLength(1);
   }, 60_000);
 
+  it("leaves out a candidate a planner names twice, or one not shown, when three remain (ADR-0058's third amendment)", async () => {
+    const { client } = tierClient([fenced(heat)]);
+    const twice: ModelClient = {
+      complete: async (request) => {
+        const reply = await client.complete(request);
+        if (request.stage !== "planner") return reply;
+        const picks = JSON.parse(reply.text) as { levels: { candidate: string; finding: number }[] };
+        return { ...reply, text: JSON.stringify({ levels: [...picks.levels, picks.levels[1] as { candidate: string; finding: number }, { candidate: "c3", finding: 1 }] }) };
+      },
+    };
+    const { outcome, events } = await run(twice);
+    expect(outcome.state, events.at(-1)?.message).toBe("ready");
+    expect(events.map((event) => event.message)).toContain("m-planner's picks name 2 candidate(s) twice or not shown; they are left out");
+  }, 60_000);
+
+  it("tries the next candidate when a replacement's words do not come, never ending the job for a level (ADR-0058's third amendment)", async () => {
+    let blocked = 0;
+    const reviewer = (content: string) => (/^Level 1,/m.test(content) && (blocked += 1) === 1 ? { findings: [{ level: 1, severity: "blocking", kind: "what-if", finding: "This What-if cannot teach the level.", suggestion: "Change the setting as the paper means it." }] } : { findings: [] });
+    const { client } = tierClient([fenced(heat)], { reviewer });
+    let levelWords = 0;
+    // The first replacement's words come back without their fields, twice, as the rerun's did.
+    const refusing: ModelClient = {
+      complete: (request) => {
+        const content = request.messages.map((message) => message.content).join("\n");
+        const isLevel = request.stage === "explainer" && !content.includes("You name a small learning game") && !content.includes("words misdescribe the model");
+        if (isLevel && (levelWords += 1) >= 4 && levelWords <= 5) return Promise.resolve({ model: request.model, text: JSON.stringify({ title: "No words" }), usage: { promptTokens: 1, completionTokens: 1, totalTokens: 2 }, finishReason: "stop" });
+        return client.complete(request);
+      },
+    };
+    const { outcome, events } = await run(refusing);
+    expect(outcome.state, events.at(-1)?.message).toBe("ready");
+    expect(events.some((event) => /^g\d+'s words for level 1 did not come/.test(event.message))).toBe(true);
+    expect(events.some((event) => /level 1 is now g\d+/.test(event.message))).toBe(true);
+  }, 60_000);
+
+  it("drops a level whose blocked words cannot be written again, keeping the world (ADR-0058's third amendment)", async () => {
+    let blocked = 0;
+    const reviewer = (content: string) => (/^Level 2,/m.test(content) && (blocked += 1) === 1 ? { findings: [{ level: 2, severity: "blocking", kind: "wording", finding: "It says the plate heats up.", suggestion: "Say it cools." }] } : { findings: [] });
+    const { client } = tierClient([fenced(heat)], { reviewer });
+    const fourAndNoRewording: ModelClient = {
+      complete: async (request) => {
+        const content = request.messages.map((message) => message.content).join("\n");
+        if (request.stage === "explainer" && content.includes("words misdescribe the model")) return { model: request.model, text: JSON.stringify({ title: "No words" }), usage: { promptTokens: 1, completionTokens: 1, totalTokens: 2 }, finishReason: "stop" };
+        const reply = await client.complete(request);
+        if (request.stage !== "planner") return reply;
+        // Four levels, so one can go and three remain.
+        const picks = JSON.parse(reply.text) as { levels: { candidate: string; finding: number }[] };
+        const spare = [...content.matchAll(/^(g\d+): /gm)].map((match) => match[1] ?? "").find((id) => !picks.levels.some((pick) => pick.candidate === id));
+        return { ...reply, text: JSON.stringify({ levels: [...picks.levels, { candidate: spare ?? "", finding: 2 }] }) };
+      },
+    };
+    const { outcome, events } = await run(fourAndNoRewording);
+    expect(outcome.state, events.at(-1)?.message).toBe("ready");
+    expect(events.some((event) => event.message.startsWith("level 2's words could not be written again"))).toBe(true);
+    expect(events.at(-1)?.message).toMatch(/3 levels/);
+  }, 60_000);
+
+  it("sends a paper on to the generated tier when its family's transcription does not come in time (ADR-0058's third amendment)", async () => {
+    const { client } = tierClient([fenced(heat)]);
+    const misrouted: ModelClient = {
+      complete: (request) => {
+        if (request.stage === "router") return Promise.resolve({ model: request.model, text: JSON.stringify({ domain: "epidemiology", mechanism: "A well-mixed population.", family: "compartments", tier: "A", reason: "Its equations are ordinary differential equations." }), usage: { promptTokens: 1, completionTokens: 1, totalTokens: 2 }, finishReason: "stop" });
+        if (request.stage === "transcriber" || request.stage === "second-transcriber") return new Promise((_, reject) => request.signal?.addEventListener("abort", () => reject(new Error("aborted"))));
+        return client.complete(request);
+      },
+    };
+    const { outcome, events, artifacts } = await run(misrouted, { transcriber: 100, "second-transcriber": 100 }, { transcriber: "m-transcriber", "second-transcriber": "m-second-transcriber" });
+    expect(outcome.state, events.at(-1)?.message).toBe("ready");
+    expect(events.some((event) => event.message.includes("the compartment family's transcription did not come, so the generated tier writes the paper's mechanism instead"))).toBe(true);
+    expect((artifacts.get("world") as { routing: { tier: string } }).routing.tier).toBe("generated");
+  }, 60_000);
+
   it("takes the writer's refusal as the paper's answer, and shows the explainer page instead", async () => {
     const { outcome, artifacts } = await run(tierClient(["NO MECHANISM: the paper is a survey of plates."]).client);
     expect(outcome.state).toBe("unsupported");

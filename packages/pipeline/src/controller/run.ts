@@ -251,18 +251,17 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
       }
     }
     sink.artifact("route", routed.value);
-    if (routed.value.family !== "compartments" || routed.value.tier !== "A") {
-      // No family whose worlds are made from papers covers it: the generated tier writes its mechanism (ADR-0058).
-      if (input.config.mechanisms) {
-        let kept: Reading | null = null;
-        return await runMechanismTier({
+    // The generated tier, for a paper no family covers, or one whose family's transcription ran out of time.
+    const generatedTier = async (mechanisms: MechanismTierConfig, route: typeof routed.value): Promise<JobOutcome> => {
+      let kept: Reading | null = null;
+      return runMechanismTier({
           input,
-          config: input.config.mechanisms,
+          config: mechanisms,
           sink,
           text,
           register,
           title,
-          route: routed.value,
+          route,
           move,
           say,
           timed,
@@ -282,7 +281,10 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
           },
           reading: () => kept,
         });
-      }
+    };
+    if (routed.value.family !== "compartments" || routed.value.tier !== "A") {
+      // No family whose worlds are made from papers covers it: the generated tier writes its mechanism (ADR-0058).
+      if (input.config.mechanisms) return await generatedTier(input.config.mechanisms, routed.value);
       throw new Stop("unsupported", `the router sends this paper to ${routed.value.family}, tier ${routed.value.tier}: ${routed.value.reason} PaperPlay generates compartment-model worlds only, so far.`);
     }
     say("routing", `compartments, tier A: ${routed.value.reason}`);
@@ -292,11 +294,22 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     say("reading", "reading what the paper asks and shows");
     say("transcription", "the first transcription of the model");
     say("transcription", "the second transcription, by another vendor's model, which never sees the first");
-    const [reading, firstTranscription, secondTranscription] = await Promise.all([
-      timed("reader", (client) => read(client, modelFor("reader"), text, title, { structuredOutput: structured(modelFor("reader")), sections: true })),
-      timed("transcriber", (client) => transcribe(client, modelFor("transcriber"), text, title, { structuredOutput: structured(modelFor("transcriber")) })),
-      timed("second-transcriber", (client) => transcribe(client, modelFor("second-transcriber"), text, title, { structuredOutput: structured(modelFor("second-transcriber")), stage: "second-transcriber" })),
-    ]);
+    let asked: [Awaited<ReturnType<typeof read>>, Awaited<ReturnType<typeof transcribe>>, Awaited<ReturnType<typeof transcribe>>];
+    try {
+      asked = await Promise.all([
+        timed("reader", (client) => read(client, modelFor("reader"), text, title, { structuredOutput: structured(modelFor("reader")), sections: true })),
+        timed("transcriber", (client) => transcribe(client, modelFor("transcriber"), text, title, { structuredOutput: structured(modelFor("transcriber")) })),
+        timed("second-transcriber", (client) => transcribe(client, modelFor("second-transcriber"), text, title, { structuredOutput: structured(modelFor("second-transcriber")), stage: "second-transcriber" })),
+      ]);
+    } catch (error) {
+      // A transcriber out of time, as for a paper the router sent to a family it is not (Scaling Laws
+      // to compartments in the second run): the generated tier writes its mechanism with the time
+      // left of its own 20 minutes (ADR-0058's third amendment).
+      if (!outOfTime(error) || !input.config.mechanisms) throw error;
+      say("transcription", `${error instanceof Error ? error.message : String(error)}: the compartment family's transcription did not come, so the generated tier writes the paper's mechanism instead`);
+      return await generatedTier(input.config.mechanisms, { ...routed.value, family: "none", tier: "C", reason: `The router chose compartments, but its transcription did not come in time. ${routed.value.reason}` });
+    }
+    const [reading, firstTranscription, secondTranscription] = asked;
     sink.artifact("reading", reading.value);
     let first = firstTranscription.value;
     const second = secondTranscription.value;

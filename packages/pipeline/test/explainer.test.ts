@@ -24,6 +24,9 @@ describe("[R06] the explainer's guide lines", () => {
     expect(mendTo("You raise β_T toward 0.1 per step, so the noisiest latent becomes purer noise.")).toBe("You raise β_T{to}, so the noisiest latent becomes purer noise.");
     expect(mendTo("You raise σ², so each reverse step adds random noise around the mean.")).toBe("You raise σ²{to}, so each reverse step adds random noise around the mean.");
     expect(mendTo("You lower β₁, so the first step adds less noise and the model can recover more of x₀.")).toBe("You lower β₁{to}, so the first step adds less noise and the model can recover more of x₀.");
+    // Whatever the verb: the rerun's slip (ADR-0058's third amendment), up to the value the learner chose.
+    expect(mendTo("You drag the training rate up, so the heads update faster and the final error drops.")).toBe("You drag the training rate up{to}, so the heads update faster and the final error drops.");
+    expect(mendTo("You drag the training rate to zero, so the heads stop updating.")).toBe("You drag the training rate{to}, so the heads stop updating.");
     // A long opening clause, or one that is not the learner's move, is not read as one.
     expect(mendTo("You raise the rate at which every infectious person in the town meets another person, so it spreads.")).toBe("You raise the rate at which every infectious person in the town meets another person, so it spreads.");
     expect(mendTo("It spreads, so you watch.")).toBe("It spreads, so you watch.");

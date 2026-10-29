@@ -55,6 +55,13 @@ describe("[R05] quotes as anchors", () => {
     const text = "Limitations. Running ToT requires significantly more computations than IO or CoT prompting. For example, on Game of 24 it could require 5-100 times more generated tokens than CoT.";
     const found = findQuote(text, "Running ToT requires significantly more computations than IO or CoT prompting... could require 5-100 times more generated tokens than CoT.");
     expect(found && text.slice(found.start, found.end)).toBe("Running ToT requires significantly more computations than IO or CoT prompting. For example, on Game of 24 it could require 5-100 times more generated tokens than CoT.");
+    // Mathematics written differently, as the second run's DDIM reading did, is found by its prose.
+    const ddim = "We observe that DDIM ($\\eta = 0$) achieves the best sample quality when $\\dim(\\tau)$ is small, and DDPM ($\\eta = 1$) does not.";
+    const mangled = findQuote(ddim, "DDIM ($eta = 0$) achieves the best sample quality when $dim(au)$ is small");
+    expect(mangled && ddim.slice(mangled.start, mangled.end)).toBe("DDIM ($\\eta = 0$) achieves the best sample quality when $\\dim(\\tau)$ is small");
+    expect(findQuote(ddim, "DDIM ($eta = 0$) achieves the best sample quality when $dim(au)$ is small", "whole")).toBeNull();
+    // Too little prose to find by it alone: fewer than 30 letters and digits outside the mathematics.
+    expect(findQuote(ddim, "$dim(au)$ is small, and DDPM", "tolerant")).toBeNull();
     // The model bake-off scores by the rule its results were recorded with: whole quotes only.
     expect(findQuote(text, "Running ToT requires significantly more computations than IO or CoT prompting... could require 5-100 times more generated tokens than CoT.", "whole")).toBeNull();
     // Its pieces out of order, or one the text does not hold, find nothing.

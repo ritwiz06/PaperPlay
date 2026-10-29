@@ -19,7 +19,7 @@ import { resultNumbersOf } from "../mechanism/checks.ts";
 import { writeCheckedMechanism, type WriterOutcome, type WriterRound } from "../mechanism/loop.ts";
 import { completeStructured, ModelError, type ModelClient, type Stage } from "../models/index.ts";
 import { checkFindings } from "../rule/findings.ts";
-import { reword, writeLevel, writeWorld, type ExplainedLevel, type WrittenLevel } from "../stages/explainer.ts";
+import { reword, writeLevel, writeWorld, type ExplainedLevel, type RewordedLevel, type WrittenLevel } from "../stages/explainer.ts";
 import { mechanismWriterInput } from "../stages/mechanism-writer.ts";
 import type { Plan, PlanLevel } from "../stages/planner.ts";
 import { read, type Reading } from "../stages/reader.ts";
@@ -297,15 +297,32 @@ async function tier(ctx: TierContext, releasing: () => void): Promise<JobOutcome
   const hooks = shown.filter((candidate) => judged.away.includes(candidate.id)).map((candidate) => candidate.id);
   const pickInput = { title, reading, candidates: shown, hooks };
   const done = new AbortController();
+  /**
+   * Picks with a candidate named twice, or one not shown, have it left out, when three remain: a
+   * planner that gave the second run's DDPM five levels from four candidates, or named "c3", chose
+   * the rest well (ADR-0058's third amendment).
+   */
+  const tidied = (who: string, picks: CandidatePicks): CandidatePicks => {
+    const seen = new Set<string>();
+    const levels = picks.levels.filter((pick) => {
+      const keep = shown.some((candidate) => candidate.id === pick.candidate) && !seen.has(pick.candidate);
+      seen.add(pick.candidate);
+      return keep;
+    });
+    if (levels.length === picks.levels.length || levels.length < 3) return picks;
+    say("planning", `${who}'s picks name ${picks.levels.length - levels.length} candidate(s) twice or not shown; they are left out`);
+    return { ...picks, levels };
+  };
   const attempt = async (who: string, stage: "planner" | "second-planner") => {
     const picked = await timed(stage, (client) => pickLevels(client, who, pickInput, { stage, structuredOutput: structured(who) }), done.signal);
-    const problems = pickProblems(picked.value);
+    const picks = tidied(who, picked.value);
+    const problems = pickProblems(picks);
     if (problems.length > 0) {
       // Said as it happens, so a job that waits on the other planner shows why (R13).
       say("planning", `${who}'s picks break the rules: ${problems.slice(0, 3).join("; ")}`);
-      throw Object.assign(new Error(`${who}'s picks: ${problems.slice(0, 3).join("; ")}`), { who, picks: picked.value, problems });
+      throw Object.assign(new Error(`${who}'s picks: ${problems.slice(0, 3).join("; ")}`), { who, picks, problems });
     }
-    return { who, picks: picked.value };
+    return { who, picks };
   };
   const plannerModel = modelFor("planner");
   const secondPlanner = input.config.stages["second-planner"] ?? null;
@@ -314,17 +331,19 @@ async function tier(ctx: TierContext, releasing: () => void): Promise<JobOutcome
     chosen = await Promise.any([attempt(plannerModel, "planner"), ...(secondPlanner ? [attempt(secondPlanner, "second-planner")] : [])]);
   } catch (error) {
     const errors: unknown[] = error instanceof AggregateError ? error.errors : [error];
-    const refused = errors.find((entry): entry is Error & { who: string; picks: CandidatePicks; problems: string[] } => entry instanceof Error && "picks" in entry);
+    // The planner whose picks came closest is the one asked again.
+    const refused = errors.filter((entry): entry is Error & { who: string; picks: CandidatePicks; problems: string[] } => entry instanceof Error && "picks" in entry).sort((a, b) => a.problems.length - b.problems.length)[0];
     if (!refused) throw new Stop("failed", `no planner chose levels: ${errors.map(firstLine).join("; ")}`);
     // One scoped repair: the planner whose picks came back asked again, with what was wrong.
     move("repairing", "planning", `no planner chose levels the rules accept (${firstLine(refused)}); asking ${refused.who} to choose again`);
     const again = await timed("planner", (client) =>
       completeStructured(client, { stage: "planner", model: refused.who, messages: [...pickerMessages(pickInput), { role: "assistant", content: JSON.stringify(refused.picks) }, { role: "user", content: `These problems were found:\n${refused.problems.map((line) => `- ${line}`).join("\n")}\nChoose again.` }], temperature: 0, maxTokens: PICKER_MAX_TOKENS }, CandidatePicks, { name: "picks", structuredOutput: structured(refused.who), moreRoom: true }),
     );
-    const problems = pickProblems(again.value);
+    const picks = tidied(refused.who, again.value);
+    const problems = pickProblems(picks);
     if (problems.length > 0) throw new Stop("failed", `the planner's picks still break the rules after a repair: ${problems.slice(0, 4).join("; ")}`);
     move("planning", "planning", "the planner's new picks meet the rules");
-    chosen = { who: refused.who, picks: again.value };
+    chosen = { who: refused.who, picks };
   } finally {
     done.abort();
   }
@@ -477,19 +496,35 @@ async function tier(ctx: TierContext, releasing: () => void): Promise<JobOutcome
     const pool = order.filter((candidate) => !inWorld.has(factsKey(candidate.level)) && !refused.has(whatIfOf(candidate.level)));
     return (hook ? pool.find((candidate) => judged.away.includes(candidate.id)) : undefined) ?? pool[0] ?? null;
   };
-  /** A level in place of another, testing the same finding, its words written for it. */
+  /**
+   * A level in place of another, testing the same finding, its words written for it. A candidate
+   * whose words do not come gives way to the next, two at most; a level never ends the job
+   * (ADR-0058's third amendment).
+   */
   const replaceLevel = async (index: number): Promise<boolean> => {
     const old = plan.levels[index] as PlanLevel;
     refused.add(whatIfOf(old));
-    const candidate = nextCandidate(index === 0);
-    if (!candidate) return false;
-    const placed: PlanLevel = { ...candidate.level, kind: index === 0 ? "hook" : "result", finding: old.finding, passage: old.passage };
-    const target: Plan = { ...plan, levels: plan.levels.map((level, at) => (at === index ? placed : level)) };
-    const written = withWords(placed, (await levelWords(target, index, candidate.brief)).value);
-    plan = { ...target, levels: target.levels.map((level, at) => (at === index ? written.level : level)) };
-    explanation = { levels: explanation.levels.map((level, at) => (at === index ? written.explained : level)) };
-    say("review", `level ${index + 1} is now ${candidate.id}: ${candidate.brief.slice(0, 240)}`);
-    return true;
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const candidate = nextCandidate(index === 0);
+      if (!candidate) return false;
+      const placed: PlanLevel = { ...candidate.level, kind: index === 0 ? "hook" : "result", finding: old.finding, passage: old.passage };
+      const target: Plan = { ...plan, levels: plan.levels.map((level, at) => (at === index ? placed : level)) };
+      let words: WrittenLevel;
+      try {
+        words = (await levelWords(target, index, candidate.brief)).value;
+      } catch (error) {
+        if (error instanceof Stop) throw error;
+        refused.add(whatIfOf(candidate.level));
+        say("review", `${candidate.id}'s words for level ${index + 1} did not come (${firstLine(error)})`);
+        continue;
+      }
+      const written = withWords(placed, words);
+      plan = { ...target, levels: target.levels.map((level, at) => (at === index ? written.level : level)) };
+      explanation = { levels: explanation.levels.map((level, at) => (at === index ? written.explained : level)) };
+      say("review", `level ${index + 1} is now ${candidate.id}: ${candidate.brief.slice(0, 240)}`);
+      return true;
+    }
+    return false;
   };
   say("review", `${secondReviewer ? `two reviewers, ${reviewer} and ${secondReviewer},` : `the reviewer, ${reviewer},`} read each level, the module and the checks' results`);
   let blocks = await reviewOnce(plan.levels.map((_, index) => index), 1);
@@ -504,21 +539,34 @@ async function tier(ctx: TierContext, releasing: () => void): Promise<JobOutcome
     const rewording = [...blocks.reword.keys()].filter((index) => !blocks.replace.has(index));
     move("repairing", "review", [replacing.length > 0 ? `replacing ${replacing.map((index) => `level ${index + 1}`).join(", ")}, whose What-if a reviewer finds cannot teach it` : "", rewording.length > 0 ? `writing again the words of ${rewording.map((index) => `level ${index + 1}`).join(", ")}` : ""].filter(Boolean).join("; "));
     const changed: number[] = [];
+    const unworded: number[] = [];
     for (const index of replacing) if (await replaceLevel(index)) changed.push(index);
     for (const index of rewording) {
-      const words = (await timed("explainer", (client) => reword(client, explainer, { title, plan, passages, model: modelText }, index, `${blocks.reword.get(index) ?? ""}\n${moduleText}`, { structuredOutput: structured(explainer) }))).value;
+      let words: RewordedLevel;
+      try {
+        words = (await timed("explainer", (client) => reword(client, explainer, { title, plan, passages, model: modelText }, index, `${blocks.reword.get(index) ?? ""}\n${moduleText}`, { structuredOutput: structured(explainer) }))).value;
+      } catch (error) {
+        if (error instanceof Stop) throw error;
+        // Words a reviewer blocked, not written again: the level goes, as one still blocked would.
+        say("review", `level ${index + 1}'s words could not be written again (${firstLine(error)})`);
+        unworded.push(index);
+        continue;
+      }
       const { goal, whatIf, prediction, effect, ...level } = words;
       plan = { ...plan, levels: plan.levels.map((entry, at) => (at === index ? { ...entry, goal, effect, whatIf: { ...entry.whatIf, prompt: whatIf }, prediction: { ...entry.prediction, prompt: prediction } } : entry)) };
       explanation = { levels: explanation.levels.map((entry, at) => (at === index ? level : entry)) };
       changed.push(index);
     }
     const unplaced = replacing.filter((index) => !changed.includes(index));
-    if (unplaced.includes(0)) throw new Stop("needs_information", `no candidate is left to replace the hook, whose What-if a reviewer finds cannot teach it: ${blocks.replace.get(0) ?? ""}. The owner decides.`);
-    if (unplaced.length > 0) drop(unplaced, "has a What-if a reviewer refused, and no candidate is left to replace it");
+    if (unplaced.includes(0)) throw new Stop("needs_information", `no candidate could replace the hook, whose What-if a reviewer finds cannot teach it: ${blocks.replace.get(0) ?? ""}. The owner decides.`);
+    if (unworded.includes(0)) throw new Stop("needs_information", `the hook's words, which a reviewer blocked, could not be written again: ${blocks.reword.get(0) ?? ""}. The owner decides.`);
+    // Dropped at once, so no index moves between them.
+    const gone = [...unplaced, ...unworded];
+    if (gone.length > 0) drop(gone, unworded.length === 0 ? "has a What-if a reviewer refused, and no candidate is left to replace it" : unplaced.length === 0 ? "has words a reviewer blocked, which could not be written again" : "was blocked by a reviewer and could be neither replaced nor written again");
     spec = assemble().spec;
     if (!buildWorld(spec, registry).ok || checkProvenance(spec, text).length > 0 || checkFindings(plan, reading, text, 0).world.length > 0) throw new Stop("failed", "the world with its repaired levels does not pass its checks");
     move("checking", "review", "the reviewers read the levels repaired");
-    const again = await reviewOnce(changed.map((index) => index - unplaced.filter((dropped) => dropped < index).length), round + 1);
+    const again = await reviewOnce(changed.map((index) => index - gone.filter((dropped) => dropped < index).length), round + 1);
     if (!again.answered) unreviewed = "the reviewers did not answer on the levels repaired; every check passed";
     blocks = again;
   }

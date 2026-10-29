@@ -77,9 +77,18 @@ function notation(text: string): { readonly chars: string; readonly from: readon
  * individuals are …" for "Thus, exposed individuals are …"). The span returned is always the text's
  * own, so an anchor quotes the source, never the model's rendering of it.
  */
-export function findQuote(text: string, quote: string, rule: QuoteRule = "elided"): { readonly start: number; readonly end: number } | null {
+export function findQuote(text: string, quote: string, rule: QuoteRule = "tolerant"): { readonly start: number; readonly end: number } | null {
   const found = findWhole(text, quote);
   if (found || rule === "whole") return found;
+  // A quote whose mathematics a model wrote differently ("$dim(au)$" for "$\dim(\tau)$", its LaTeX
+  // mangled as JSON) is found by its prose: the letters and digits outside $…$, at least 30 of them
+  // (ADR-0058's third amendment).
+  const prose = proseOf(quote);
+  if (prose.chars.length >= PROSE_AT_LEAST) {
+    const source = proseOf(text);
+    const at = source.chars.indexOf(prose.chars);
+    if (at >= 0) return widen(text, source.from[at] ?? 0, (source.from[at + prose.chars.length - 1] ?? 0) + 1);
+  }
   // A quote with a passage left out ("… prompting... could require …") is found piece by piece, in
   // order, each within a paragraph of the last, and anchors the source's own span from the first
   // piece to the end of the last, the part left out included (ADR-0058's second amendment).
@@ -96,10 +105,36 @@ export function findQuote(text: string, quote: string, rule: QuoteRule = "elided
 }
 
 /**
- * Whether a quote with a passage left out is found: "elided" for the job, "whole" for the model
- * bake-off, which scores readers by the rule its recorded results were scored with (eval/models.md).
+ * How a quote may differ from the source: "tolerant", for the job, finds one with a passage left
+ * out, or with its mathematics written differently; "whole", for the model bake-off, which scores
+ * readers by the rule its recorded results were scored with (eval/models.md).
  */
-export type QuoteRule = "whole" | "elided";
+export type QuoteRule = "whole" | "tolerant";
+
+/** The fewest letters and digits a quote's prose must have to be found by them alone. */
+const PROSE_AT_LEAST = 30;
+
+/** A text's prose: its letters and digits outside $…$ and $$…$$, lowercased, each with where it came from. */
+function proseOf(text: string): { readonly chars: string; readonly from: readonly number[] } {
+  let chars = "";
+  const from: number[] = [];
+  let math = false;
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i] ?? "";
+    if (char === "$" && text[i - 1] !== "\\") {
+      if (text[i + 1] === "$") i++;
+      math = !math;
+      continue;
+    }
+    if (math) continue;
+    const lower = char.toLowerCase();
+    if (/[a-z0-9]/.test(lower)) {
+      chars += lower;
+      from.push(i);
+    }
+  }
+  return { chars, from };
+}
 
 /** The most a quote may leave out between two of its pieces: about a paragraph. */
 const ELIDED_GAP = 800;
@@ -171,8 +206,8 @@ export function sameSymbol(a: string, b: string): boolean {
 }
 
 /** A quote as an anchor into the source, or null when the source does not hold it. */
-export function anchorOf(source: SourceText, quote: string): Anchor | null {
-  const found = findQuote(source.text, quote);
+export function anchorOf(source: SourceText, quote: string, rule: QuoteRule = "tolerant"): Anchor | null {
+  const found = findQuote(source.text, quote, rule);
   if (!found) return null;
   const section = source.sections.find((candidate) => candidate.start <= found.start && found.start < candidate.end) ?? source.sections[0];
   if (!section) return null;
@@ -216,11 +251,11 @@ const cleanUnit = (unit: Unit): Unit => Object.fromEntries(Object.entries(unit).
 /** A range a learner's control may span, a teaching choice around the paper's value. */
 const rangeAround = (value: number): [number, number] => (value > 0 ? [0, value * 4] : value < 0 ? [value * 4, 0] : [0, 1]);
 
-export function toModelSpec(transcription: Transcription, source: SourceText, options: { readonly dt?: number; readonly tolerance?: number; readonly alternatives?: readonly ValueSet[] } = {}): Conversion {
+export function toModelSpec(transcription: Transcription, source: SourceText, options: { readonly dt?: number; readonly tolerance?: number; readonly alternatives?: readonly ValueSet[]; readonly quotes?: QuoteRule } = {}): Conversion {
   const problems: string[] = [];
   const unstated: string[] = [];
   const anchor = (quote: string, what: string): Anchor[] => {
-    const found = anchorOf(source, quote);
+    const found = anchorOf(source, quote, options.quotes);
     if (!found) problems.push(`${what}: the quote "${quote.slice(0, 80)}" is not in the source`);
     return found ? [found] : [];
   };
@@ -308,7 +343,7 @@ export function toModelSpec(transcription: Transcription, source: SourceText, op
             id: camelId(set.id),
             label: set.label,
             values: Object.fromEntries(set.values.filter((value) => names.parameters.has(value.of) || names.compartments.has(value.of)).map((value) => [names.compartments.has(value.of) ? `${idOf(value.of)}0` : idOf(value.of), value.value])),
-            anchors: [anchorOf(source, set.quote)].filter((found): found is Anchor => found !== null),
+            anchors: [anchorOf(source, set.quote, options.quotes)].filter((found): found is Anchor => found !== null),
           })),
         }
       : {}),
