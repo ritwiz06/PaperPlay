@@ -82,7 +82,7 @@ only in a sandbox, and played as a world in the generated family, labelled as su
   `candidates.ts` the sweep over 20 seeds and the candidates' judging. The writer's stage is
   `stages/mechanism-writer.ts`, the tier's reviewer `stages/mechanism-reviewer.ts` (ADR-0058's amendment); the tier's job is `controller/mechanism.ts`, entered from `run.ts`
   where the router finds no family; `assemble/world.ts` assembles either kind of model through one view.
-- `apps/api`: the `writer` stage in `models.json` and `deadline.mechanismJobMs`; the module kept as
+- `apps/api`: the `writer` and `second-writer` stages in `models.json`, which race (ADR-0058's second amendment), and `deadline.mechanismJobMs`; the module kept as
   the job's `mechanism` artifact and in the cache beside its world (`GET /worlds/:key/mechanism`);
   the job list marks a world on a generated model.
 - `apps/web`: `public/sandbox.html`, the frame with its own policy; `src/mechanism/sandbox.ts`, the
@@ -420,4 +420,5 @@ Found on 2026-10-09, when CI first ran (session log 2026-10-09-2).
 | 2026-10-28 | d4cbce9 | Row-relative contrast in the towers and network kits; HookWorld's `notice`; `tests/e2e/arriving.spec.ts` (ADR-0058's amendment) |
 | 2026-10-28 | 9e17775 | `scripts/live/runs.ts`; `prebuild` writes `eval/runs/` (ADR-0058's amendment) |
 | 2026-10-29 | b7df53c | One endpoint: `apps/api/src/dev.ts`; the web app's development server serves the API at `/api` in its own process; `pipeline:live serve` starts that server (ADR-0059's amendment) |
+| 2026-10-29 | 0370481 | `ChatRequest.watch`, the Voyager client reading a stream as it arrives; the `second-writer` stage; the writers' race and pace in `controller/mechanism.ts`; the `writer-rounds` artifact; the router asked twice; `findQuote`'s `QuoteRule` (ADR-0058's second amendment) |
 | 2026-10-17 | 7f25db9 | The learning family (ADR-0047): `learning.ts` in contracts; `learning.landscape@1.0.0` in `packages/primitives/src/learning/`, as `@paperplay/primitives/learning` and the registry's second solver; the `update-rule` binding; the landscape kit under `kits/landscape/` in each layer; `apps/web/src/world/landscape.ts`, `worlds/landscape-world.tsx` and `worlds/momentum.tsx` at `/world/momentum`; `fixtures/oracles/learning.landscape/` |

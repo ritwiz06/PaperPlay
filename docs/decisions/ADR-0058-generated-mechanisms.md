@@ -143,3 +143,38 @@ second boundary takes this ADR's first consequence, which the owner authorized (
 The Attention world of 2026-10-26 replays from its recordings only at the commit that made it,
 `78c8fef`: its writer's and reviewers' prompts have changed since, and a recording is found by its
 prompt's hash.
+
+## Second amendment, 2026-10-29: the ten-paper run's failures
+
+The first fresh run of ten AI and ML papers (`eval/runs/2026-10-29-prebuild-1793255490709.json`)
+made one world, GPipe's (1811.06965v5: first level at 560 s, five levels at 800 s). The rest, by
+cause:
+
+1. **The writer's time, 7 of 10.** glm-5-3 used its whole 420 s on a round of 7 papers, writing
+   21,000 to 28,000 characters of planning prose before about 7,000 of code; 5 of them ended on the
+   explainer page with every round out of time, and 2 more lost 420 s before their module passed.
+   The one fix round that ran after a module came took 80 s.
+2. **The router's time, 2 of 10.** It ran past its 60 s and the job ended at 61 s, no writer asked.
+3. **After a passing module, 2 of 10.** 2006.11239's hook words were refused twice: 5 of the
+   explainer's 10 replies wrote a guide line without `{to}`, as "toward 1000" or with no value
+   ("You raise σ², so …"). 2305.10601 fell one level short of the findings rule: a reader's quote
+   joined two passages with "...", so it and four anchors made from it were not found.
+
+What changed:
+
+- **Writing.** The writer's instruction asks for the module alone, its code first. A streamed reply
+  is read as it arrives (`ChatRequest.watch`, never part of the prompt's hash): the call ends when
+  the module's code block closes, and is ended early when its code has not begun by half its time,
+  or its pace cannot finish a module of 9,000 characters within it. Two writers from different
+  vendors, glm-5-3 and qwen3-coder-next (the `second-writer` stage), write at once; the first module
+  to pass every check wins and the other is ended. Every round of both is the `writer-rounds`
+  artifact, and each prebuild row carries them.
+- **Routing.** A router out of time is asked once more; out of time again, no family is assumed and
+  the paper goes on to the generated tier.
+- **Words and quotes.** `mendTo` reads both slips. A quote with a passage left out is found piece by
+  piece, in order, within a paragraph, and anchors the source's own span; the model bake-off keeps
+  scoring readers by whole quotes, the rule its recorded results were scored with.
+
+Not done, as the table does not support them: fix rounds that patch only the failing functions,
+and a scaffold per kit for the writer to fill. Time went to prose before the code, not to the code's
+size or to fixing it.

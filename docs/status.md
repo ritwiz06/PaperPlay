@@ -1,6 +1,6 @@
 # Status
 
-Updated 2026-10-29: PaperPlay on one endpoint ([log](sessions/2026-10-29.md)).
+Updated 2026-10-29: the ten papers' failures, and fixes for them ([log](sessions/2026-10-29-2.md)).
 A snapshot, rewritten every session and kept under 80 lines; history is in
 [progress.md](progress.md) and the session logs.
 
@@ -8,7 +8,7 @@ A snapshot, rewritten every session and kept under 80 lines; history is in
 
 - **Gate:** G2 Verified authored world is current, tagged `v0.2.0` at `b37c7dc`; G1 is `v0.1.0`.
   Next: G3, whose gate is the attention family's first generated world, BERT (ADR-0052).
-- **Working commit:** `b7df53c`, the branch's last code commit, landed on `main` with this status.
+- **Working commit:** `eced3d6`, the stack's last code commit, landed on `main` with this status.
 - **Purpose:** any paper, on its own, a playable world in 10 to 20 minutes (ADR-0058): verified
   families the high-trust path, the generated tier for everything else; the 34 AI and ML papers first.
 - **Running PaperPlay** (ADR-0059 and its amendment): `npm run dev`, one process on one port, the app
@@ -18,8 +18,9 @@ A snapshot, rewritten every session and kept under 80 lines; history is in
 - **The generated tier** (ADR-0058 and its amendment): glm-5-3 writes a paper's mechanism as a module,
   each parameter saying what the paper means by it; checked in a sandbox, never restating the paper's
   results; levels from What-ifs as the paper means them; its own reviewer replaces a level whose
-  What-if it blocks. The ten-paper run, fresh, started after this session's land, writes its rows to
-  `eval/runs/`.
+  What-if it blocks. Two writers race, glm-5-3 and qwen3-coder-next, each watched as it streams; a
+  silent router is asked twice (ADR-0058's second amendment). The first ten-paper run made one world
+  of ten; the nine others rerun with the fixes, their rows in `eval/runs/`.
 - **R13, fast generation:** 15 minutes for a family's job, 20 for the generated tier's.
 - **The attention family:** `attention.toy@1.2.0` and its trained miniatures; the scene spike waits
   on its own branch for review.
@@ -51,8 +52,7 @@ axe test's first frame missed its 5 s under load, passing alone. `npm run land` 
 
 ## Next three actions
 
-1. The ten papers' table: each outcome, time to the first playable level and to the end, levels;
-   the three most common failures, and fixes for them.
+1. The rerun's table: the same columns for the nine papers, and what still fails.
 2. `useFreeRect` watching the HUD as it changes, so the stage never draws under it after a fork.
 3. The deploy.
 
