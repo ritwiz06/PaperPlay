@@ -51,6 +51,17 @@ describe("[R05] quotes as anchors", () => {
     expect(findQuote("The rate is 0.05", "0.06")).toBeNull();
   });
 
+  it("finds a quote with a passage left out, piece by piece and in order, and anchors the source's span (ADR-0058's second amendment)", () => {
+    const text = "Limitations. Running ToT requires significantly more computations than IO or CoT prompting. For example, on Game of 24 it could require 5-100 times more generated tokens than CoT.";
+    const found = findQuote(text, "Running ToT requires significantly more computations than IO or CoT prompting... could require 5-100 times more generated tokens than CoT.");
+    expect(found && text.slice(found.start, found.end)).toBe("Running ToT requires significantly more computations than IO or CoT prompting. For example, on Game of 24 it could require 5-100 times more generated tokens than CoT.");
+    // The model bake-off scores by the rule its results were recorded with: whole quotes only.
+    expect(findQuote(text, "Running ToT requires significantly more computations than IO or CoT prompting... could require 5-100 times more generated tokens than CoT.", "whole")).toBeNull();
+    // Its pieces out of order, or one the text does not hold, find nothing.
+    expect(findQuote(text, "could require 5-100 times more generated tokens … Running ToT requires significantly more computations")).toBeNull();
+    expect(findQuote(text, "Running ToT requires significantly more computations … it could require 7 times more tokens than chain of thought")).toBeNull();
+  });
+
   it("finds a sentence quoted from its middle with a capital, and anchors the source's own letters", () => {
     const text = "An infected individual has a latency period. Thus, exposed individuals are TB-infected but not yet infectious.";
     const found = findQuote(text, "Exposed individuals are TB-infected but not yet infectious.");

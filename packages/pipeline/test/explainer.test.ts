@@ -10,13 +10,23 @@ describe("[R06] the explainer's guide lines", () => {
     expect(mendTo("You raise the rate to 0.1, so more people get sick.")).toBe("You raise the rate{to}, so more people get sick.");
     expect(mendTo("You lower adherence to 40%, so more quit.")).toBe("You lower adherence{to}, so more quit.");
     expect(mendTo("You raised it{to}, so it spreads.")).toBe("You raised it{to}, so it spreads.");
-    expect(mendTo("You raised it, so it spreads.")).toBe("You raised it, so it spreads.");
+    expect(mendTo("You raised it, so it spreads.")).toBe("You raised it{to}, so it spreads.");
   });
 
   it("mend a value named in a few words before the clause's comma, and nothing longer or without a comma", () => {
     expect(mendTo("You set the treatment rate to fast treatment, so the peak of infectious people lowers.")).toBe("You set the treatment rate{to}, so the peak of infectious people lowers.");
     expect(mendTo("You moved people to a place where they are safe from harm, so fewer fall ill.")).toBe("You moved people to a place where they are safe from harm, so fewer fall ill.");
-    expect(mendTo("You raised it, so more people move to treatment.")).toBe("You raised it, so more people move to treatment.");
+    expect(mendTo("You raised it, so more people move to treatment.")).toBe("You raised it{to}, so more people move to treatment.");
+  });
+
+  it("mend the two slips of the ten-paper run: a value given as \"toward\", and no value at all (ADR-0058's second amendment)", () => {
+    expect(mendTo("You raise T toward 1000, so the denoising schedule becomes longer and finer.")).toBe("You raise T{to}, so the denoising schedule becomes longer and finer.");
+    expect(mendTo("You raise β_T toward 0.1 per step, so the noisiest latent becomes purer noise.")).toBe("You raise β_T{to}, so the noisiest latent becomes purer noise.");
+    expect(mendTo("You raise σ², so each reverse step adds random noise around the mean.")).toBe("You raise σ²{to}, so each reverse step adds random noise around the mean.");
+    expect(mendTo("You lower β₁, so the first step adds less noise and the model can recover more of x₀.")).toBe("You lower β₁{to}, so the first step adds less noise and the model can recover more of x₀.");
+    // A long opening clause, or one that is not the learner's move, is not read as one.
+    expect(mendTo("You raise the rate at which every infectious person in the town meets another person, so it spreads.")).toBe("You raise the rate at which every infectious person in the town meets another person, so it spreads.");
+    expect(mendTo("It spreads, so you watch.")).toBe("It spreads, so you watch.");
   });
 
   it("still refuse a line with no place for the value", () => {
@@ -24,7 +34,7 @@ describe("[R06] the explainer's guide lines", () => {
       beginner: { text: "Watch.", analogy: "Like a tide." },
       intermediate: { text: "Watch." },
       advanced: { text: "Equations.", equation: "dx/dt", quote: null },
-      guide: { idle: "Watch.", raised: "You raised it, so it spreads.", lowered: "You lowered it to 0.2, so it slows.", readings: [{ atLeast: 1, words: "many" }, { atLeast: 0, words: "few" }], rising: "rising", falling: "falling" },
+      guide: { idle: "Watch.", raised: "It spreads faster now.", lowered: "You lowered it to 0.2, so it slows.", readings: [{ atLeast: 1, words: "many" }, { atLeast: 0, words: "few" }], rising: "rising", falling: "falling" },
       afterwards: { text: "As measured.", quote: null, question: "Why?" },
     };
     const parsed = ExplainedLevel.safeParse(level);

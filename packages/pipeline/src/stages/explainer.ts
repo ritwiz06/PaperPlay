@@ -15,15 +15,19 @@ const Words = (max: number) => z.string().min(1).max(max);
 const UpTo = (words: number) => z.string().min(1).refine((text) => wordCount(text) <= words, { error: `at most ${words} words` });
 /**
  * A guide line with {to} where the learner's new value goes. A model that writes a value there
- * instead has it mended to the placeholder, in the two ways that slip can be read: a number ("You
- * raise the rate to 0.1, so …"), or a value named in at most four words before the clause's comma
- * ("You set the treatment rate to fast treatment, so …"). Anything else must still hold {to}
- * exactly once.
+ * instead has it mended to the placeholder, in the three ways that slip can be read: a number ("You
+ * raise the rate to 0.1, so …", or "toward 0.1"), a value named in at most four words before the
+ * clause's comma ("You set the treatment rate to fast treatment, so …"), or no value at all in a
+ * short opening clause ("You raise σ², so …", the commonest in the ten-paper run, ADR-0058's second
+ * amendment). Anything else must still hold {to} exactly once.
  */
 export const mendTo = (text: unknown): unknown => {
   if (typeof text !== "string" || text.includes("{to}")) return text;
-  const numbered = text.replace(/\s+to\s+[-−]?\d+(?:[.,]\d+)*(?:\s*%|\s*(?:per|a|an)\s+\w+)?/, "{to}");
-  return numbered !== text ? numbered : text.replace(/\s+to\s+[^\s,{}]+(?:\s+[^\s,{}]+){0,3}(?=,)/, "{to}");
+  const numbered = text.replace(/\s+(?:to|towards?)\s+[-−]?\d+(?:[.,]\d+)*(?:\s*%|\s*(?:per|a|an)\s+\w+)?/, "{to}");
+  if (numbered !== text) return numbered;
+  const named = text.replace(/\s+to\s+[^\s,{}]+(?:\s+[^\s,{}]+){0,3}(?=,)/, "{to}");
+  if (named !== text) return named;
+  return text.replace(/^(You\s+(?:raised?|lower(?:ed)?|set|moved?|push(?:ed)?|drop(?:ped)?|increased?|decreased?|turn(?:ed)?)\s+[^,{}]{1,60}?)(?=,)/, (clause) => (/\s(?:to|towards?)\s/.test(clause) || clause.split(/\s+/).length > 8 ? clause : `${clause}{to}`));
 };
 const Did = z.preprocess(mendTo, z.string().refine((text) => text.split("{to}").length === 2 && !/[{}]/.test(text.replaceAll("{to}", "")), { error: "holds {to} exactly once, and no other braces" }));
 

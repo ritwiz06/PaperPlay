@@ -51,7 +51,7 @@ export function scoreTranscription(original: Transcription, gold: Gold, source: 
     ...transcription.parameters.map((parameter) => parameter.quote),
     ...transcription.equations.map((equation) => equation.quote),
   ];
-  const quotesFound = quotes.filter((quote) => findQuote(source.text, quote) !== null).length;
+  const quotesFound = quotes.filter((quote) => findQuote(source.text, quote, "whole") !== null).length;
   const mine = { model: modelForComparison(transcription, source), problems: [] as string[] };
   const theirs = toModelSpec(golden.transcription, source);
   const valuesTotal = gold.transcription.parameters.length + gold.transcription.compartments.length;
@@ -79,10 +79,10 @@ export function scoreTranscription(original: Transcription, gold: Gold, source: 
  */
 export function modelForComparison(transcription: Transcription, source: SourceText) {
   const anyQuote = source.text.slice(0, Math.min(40, source.text.length)).trim();
-  const keep = (quote: string): string => (findQuote(source.text, quote) ? quote : anyQuote);
+  const keep = (quote: string): string => (findQuote(source.text, quote, "whole") ? quote : anyQuote);
   const lenient: Transcription = {
     ...transcription,
-    compartments: transcription.compartments.map((compartment) => ({ ...compartment, quote: keep(compartment.quote), initialQuote: compartment.initialQuote && findQuote(source.text, compartment.initialQuote) ? compartment.initialQuote : null })),
+    compartments: transcription.compartments.map((compartment) => ({ ...compartment, quote: keep(compartment.quote), initialQuote: compartment.initialQuote && findQuote(source.text, compartment.initialQuote, "whole") ? compartment.initialQuote : null })),
     parameters: transcription.parameters.map((parameter) => ({ ...parameter, quote: keep(parameter.quote) })),
     equations: transcription.equations.map((equation) => ({ ...equation, quote: keep(equation.quote) })),
   };
@@ -107,9 +107,9 @@ export function scoreReading(reading: { readonly modelEquations: readonly string
   const both = [...mine].filter((id) => theirs.has(id)).length;
   return {
     equations: union === 0 ? 0 : both / union,
-    resultQuoteFound: findQuote(source.text, reading.result.quote) !== null,
-    findingQuotesFound: reading.findings.filter((finding) => findQuote(source.text, finding.quote) !== null).length,
+    resultQuoteFound: findQuote(source.text, reading.result.quote, "whole") !== null,
+    findingQuotesFound: reading.findings.filter((finding) => findQuote(source.text, finding.quote, "whole") !== null).length,
     findingQuotesTotal: reading.findings.length,
-    enoughFindings: [reading.result, ...reading.findings].filter((finding) => findQuote(source.text, finding.quote) !== null).length >= 3,
+    enoughFindings: [reading.result, ...reading.findings].filter((finding) => findQuote(source.text, finding.quote, "whole") !== null).length >= 3,
   };
 }

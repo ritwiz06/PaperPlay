@@ -77,7 +77,34 @@ function notation(text: string): { readonly chars: string; readonly from: readon
  * individuals are …" for "Thus, exposed individuals are …"). The span returned is always the text's
  * own, so an anchor quotes the source, never the model's rendering of it.
  */
-export function findQuote(text: string, quote: string): { readonly start: number; readonly end: number } | null {
+export function findQuote(text: string, quote: string, rule: QuoteRule = "elided"): { readonly start: number; readonly end: number } | null {
+  const found = findWhole(text, quote);
+  if (found || rule === "whole") return found;
+  // A quote with a passage left out ("… prompting... could require …") is found piece by piece, in
+  // order, each within a paragraph of the last, and anchors the source's own span from the first
+  // piece to the end of the last, the part left out included (ADR-0058's second amendment).
+  const pieces = quote.split(/\s*(?:\.\.\.|…|\[\s*(?:\.\.\.|…)\s*\])\s*/).filter((piece) => piece.replace(/\s+/g, "").length >= 12);
+  if (pieces.length < 2) return null;
+  let span: { start: number; end: number } | null = null;
+  for (const piece of pieces) {
+    const from: number = span ? span.end : 0;
+    const next: { readonly start: number; readonly end: number } | null = findWhole(text.slice(from, span ? from + ELIDED_GAP + piece.length * 2 : undefined), piece);
+    if (!next) return null;
+    span = { start: span ? span.start : from + next.start, end: from + next.end };
+  }
+  return span;
+}
+
+/**
+ * Whether a quote with a passage left out is found: "elided" for the job, "whole" for the model
+ * bake-off, which scores readers by the rule its recorded results were scored with (eval/models.md).
+ */
+export type QuoteRule = "whole" | "elided";
+
+/** The most a quote may leave out between two of its pieces: about a paragraph. */
+const ELIDED_GAP = 800;
+
+function findWhole(text: string, quote: string): { readonly start: number; readonly end: number } | null {
   const found = findAsWritten(text, quote);
   if (found) return found;
   const first = quote.charAt(0);
