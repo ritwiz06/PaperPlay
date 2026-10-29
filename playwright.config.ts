@@ -15,9 +15,11 @@ export default defineConfig({
   forbidOnly: true,
   retries: 0,
   fullyParallel: true,
-  // Half the cores locally, measured on 2026-10-19 on a 12-core M3 Pro: the suite took 122 s at 6
-  // workers and 139 s at 9, one test failing its first frame; software WebGL is CPU-bound (ADR-0051).
-  workers: process.env["CI"] ? undefined : "50%",
+  // A third of the cores locally. On 2026-10-19 the suite took 122 s at 6 workers and 139 s at 9 on a
+  // 12-core M3 Pro; by 2026-10-28 it had grown to 127 tests, and 6 workers' software WebGL, beside
+  // another app's work on the same machine, loaded it past 40 and cost first frames their 5 s.
+  // Fewer workers, never longer timeouts (ADR-0051, ADR-0059).
+  workers: process.env["CI"] ? undefined : "33%",
   reporter: [["list"], ["json", { outputFile: "reports/playwright.json" }]],
   use: { baseURL: origin, trace: "retain-on-failure" },
   projects: [
