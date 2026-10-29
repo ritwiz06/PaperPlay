@@ -8,7 +8,7 @@ A snapshot, rewritten every session and kept under 80 lines; history is in
 
 - **Gate:** G2 Verified authored world is current, tagged `v0.2.0` at `b37c7dc`; G1 is `v0.1.0`.
   Next: G3, whose gate is the attention family's first generated world, BERT (ADR-0052).
-- **Working commit:** `9e17775`, the branch's last code commit, landed on `main` with this status.
+- **Working commit:** `80eb6e3`, the branch's last code commit, landed on `main` with this status.
 - **Purpose:** any paper, on its own, a playable world in 10 to 20 minutes (ADR-0058): verified
   families the high-trust path, the generated tier for everything else; the 34 AI and ML papers first.
 - **Running PaperPlay** (ADR-0059): the web app at http://127.0.0.1:5180, the API at 127.0.0.1:8787,
