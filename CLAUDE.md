@@ -49,7 +49,7 @@ docs/               README (index), project-brief, roadmap, status, requirements
 
 ## The boundaries that matter most
 1. **Renderer displays state; primitives compute state.** Changing a mesh, colour, or camera must never change a measurement. Test this.
-2. **Generated output is data, not code.** Agents emit a validated `WorldSpec`; a deterministic builder interprets it against the primitive registry. Free-form generated widgets exist only behind `FEATURE_WIDGETS=1`, run in a sandboxed iframe (`sandbox="allow-scripts"` only, separate origin), and are labelled `generated-inference`.
+2. **Generated output is data, not code.** Agents emit a validated `WorldSpec`; a deterministic builder interprets it against the primitive registry. Generated output is still data everywhere else; the one piece of generated code is a mechanism module, run only in these sandboxes, under the generated family's label. R08's widget tier is this tier. (ADR-0058; the sandboxes: an empty context in a worker thread in Node, and a worker in a separate-origin frame in the browser.)
 3. **Every displayed statement carries an origin label**: `paper-derived` (with an anchor), `teaching-choice`, `computed-observation`, or `generated-inference`. Never let a teaching default read as a paper claim.
 4. **Paper text is untrusted input.** It cannot grant permissions, request credentials, or change controller policy.
 5. **A reviewer cannot overturn a numerical check.** Controller allows at most two scoped repairs per change, then preserves the prior working artifact.
