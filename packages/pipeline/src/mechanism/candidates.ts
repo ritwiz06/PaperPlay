@@ -28,13 +28,15 @@ type Series = readonly (readonly number[])[];
 export interface MechanismSweep {
   /** Every run, by setting and seed: "default" or "<param>=<value>". */
   readonly runs: ReadonlyMap<string, ReadonlyMap<number, Series>>;
-  readonly settings: readonly { readonly key: string; readonly param: string; readonly value: number }[];
+  readonly settings: readonly WhatIf[];
 }
 
 export interface MechanismJudged {
   readonly passing: LevelCandidate[];
   readonly refused: { readonly id: string; readonly why: string }[];
   readonly runs: number;
+  /** The candidates whose What-if takes a parameter away as the paper means: a hook's first choices. */
+  readonly away: readonly string[];
 }
 
 const median = (values: readonly number[]): number => {
@@ -45,9 +47,26 @@ const median = (values: readonly number[]): number => {
 const shown = (value: number): string => Number(value.toPrecision(3)).toString();
 const twoFigures = (value: number): number => Number(value.toPrecision(2));
 
-/** The What-ifs: each parameter at each end of its range that is not its default. */
-export function whatIfsOf(manifest: MechanismManifest): { readonly key: string; readonly param: string; readonly value: number }[] {
-  return manifest.params.flatMap((param) => [param.min, param.max].filter((value) => value !== param.default).map((value) => ({ key: `${param.id}=${value}`, param: param.id, value })));
+/** A What-if: a parameter set to a value, and whether that value takes it away as the paper means. */
+export interface WhatIf {
+  readonly key: string;
+  readonly param: string;
+  readonly value: number;
+  readonly away: boolean;
+}
+
+/**
+ * The What-ifs (ADR-0058's amendment): each parameter taken away as the paper means it, where the
+ * paper gives a meaning, and each end of its range, except an end beyond that point: a module's
+ * scaling run past "dividing by 1" to "multiplying by 0" teaches nothing the paper says.
+ */
+export function whatIfsOf(manifest: MechanismManifest): WhatIf[] {
+  return manifest.params.flatMap((param) => {
+    const without = param.paper?.without ?? null;
+    const beyond = (value: number): boolean => without !== null && (value - without) * (param.default - without) < 0;
+    const ends = [param.min, param.max].filter((value) => value !== param.default && value !== without && !beyond(value));
+    return [...(without !== null ? [without] : []), ...ends].map((value) => ({ key: `${param.id}=${value}`, param: param.id, value, away: value === without }));
+  });
 }
 
 /**
@@ -56,7 +75,7 @@ export function whatIfsOf(manifest: MechanismManifest): { readonly key: string; 
  */
 export async function sweepMechanism(source: string, manifest: MechanismManifest, options: { readonly sandboxes?: number; readonly limits?: SandboxLimits; readonly seeds?: readonly number[] } = {}): Promise<MechanismSweep & { readonly failures: readonly string[] }> {
   const seeds = options.seeds ?? MECHANISM_SEEDS;
-  const settings = [{ key: "default", param: "", value: 0 }, ...whatIfsOf(manifest)];
+  const settings: WhatIf[] = [{ key: "default", param: "", value: 0, away: false }, ...whatIfsOf(manifest)];
   const jobs = settings.flatMap((setting) => seeds.map((seed) => ({ setting, seed })));
   const runs = new Map<string, Map<number, Series>>(settings.map((setting) => [setting.key, new Map()]));
   const failures: string[] = [];
@@ -100,6 +119,7 @@ const SUMMARY_WORDS: Readonly<Record<Summary, (steps: number, unit: string) => s
 export function judgeMechanismCandidates(manifest: MechanismManifest, sweep: MechanismSweep, openingSeed = 1): MechanismJudged {
   const passing: LevelCandidate[] = [];
   const refused: { id: string; why: string }[] = [];
+  const takenAway: string[] = [];
   const base = sweep.runs.get("default");
   let count = 0;
   for (const setting of sweep.settings.filter((entry) => entry.key !== "default")) {
@@ -152,14 +172,16 @@ export function judgeMechanismCandidates(manifest: MechanismManifest, sweep: Mec
           carryForward: "To be written.",
         };
         const unit = param.unit ? ` ${param.unit}` : "";
+        if (setting.away) takenAway.push(id);
+        const change = setting.away ? `it taken away, as the paper means it (${param.paper?.meaning ?? ""}), set to ${shown(setting.value)}${unit}` : `it set to ${shown(setting.value)}${unit}, which is not taking it away in the paper's sense`;
         passing.push({
           id,
           level,
-          brief: `${id}: the control is ${param.label} (${param.id}, now ${shown(param.default)}${unit}); What-if: it set to ${shown(setting.value)}${unit}; measures ${measurement.label} (${measurement.id}), ${SUMMARY_WORDS[summary](manifest.steps, manifest.stepLabel)}: ${shown(here)} now, ${shown(away)} in the What-if, ${relation} by more than ${shown(by)}; holds on ${holds} of ${seeds.length} seeds`,
+          brief: `${id}: the control is ${param.label} (${param.id}, the paper's ${shown(param.default)}${unit}); What-if: ${param.paper ? change : `it set to ${shown(setting.value)}${unit}`}; measures ${measurement.label} (${measurement.id}), ${SUMMARY_WORDS[summary](manifest.steps, manifest.stepLabel)}: ${shown(here)} now, ${shown(away)} in the What-if, ${relation} by more than ${shown(by)}; holds on ${holds} of ${seeds.length} seeds`,
           holds,
         });
       }
     }
   }
-  return { passing, refused, runs: [...sweep.runs.values()].reduce((sum, runs) => sum + runs.size, 0) };
+  return { passing, refused, runs: [...sweep.runs.values()].reduce((sum, runs) => sum + runs.size, 0), away: takenAway };
 }

@@ -20,7 +20,7 @@ export const MECHANISM_WRITER_INSTRUCTIONS = [
   "const mechanism = {",
   '  title: "…",                 // at most 80 characters',
   `  kit: "towers",              // one of ${MECHANISM_KITS.join(", ")}`,
-  '  params: [{ id: "temperature", label: "Softmax temperature", unit: "", min: 0.1, max: 4, default: 1 }], // 1 to 6; add integer: true for a count',
+  '  params: [{ id: "temperature", label: "Softmax temperature", unit: "", min: 0.1, max: 4, default: 1, paper: { normal: 1, without: null, meaning: "The paper has no temperature; taking it away means nothing." } }], // 1 to 6; add integer: true for a count',
   '  measurements: [{ id: "entropy", label: "Spread of attention", unit: "bits", meaning: "One plain sentence." }], // 1 to 6',
   "  steps: 200,                 // one run's length, 1 to 1000",
   '  stepLabel: "iteration",     // what one step is, a word or two',
@@ -34,6 +34,8 @@ export const MECHANISM_WRITER_INSTRUCTIONS = [
   "- State is plain data: numbers, strings, arrays and objects. step returns the next state, new or changed.",
   "- Each parameter is one the paper discusses that a learner can move while the world runs, and moving it across its range changes at least one measurement; each measurement responds to at least one parameter. Ranges are honest: the paper's own value as the default, inside the range.",
   "- Ids are camelCase, starting with a lowercase letter. Units in words, or \"\" when there is none.",
+  "- Every parameter says what the paper means by it, as paper: normal, the paper's own value, which is also the default; without, the value inside the range that takes it away as the paper means, or null when taking it away means nothing in the paper; meaning, that in a sentence. Taking something away is what the paper means by it: removing the √dk scaling is dividing by 1, never multiplying the scores by 0. A What-if is made from these, so a range must hold the without value and nothing past it that would stop the mechanism itself.",
+  "- Compute every outcome from the mechanism. Never write in the paper's reported results, as constants or tables: the checks look for the paper's numbers in the code.",
   `- Small and fast: a step with its measurement and frame well under ${MECHANISM_LIMITS.stepMs} ms; at most 64 towers, 2,000 particles, a 128 by 128 grid, 500 nodes.`,
   `- Short: about 150 lines, at most ${WRITER_ASKS_CHARS.toLocaleString("en")} characters; the sandbox refuses anything over ${MECHANISM_LIMITS.sourceChars.toLocaleString("en")}. A short module is written quickly, and the job waits for it. Comment briefly, in plain sentences, what each part is, naming the paper's section or equation it comes from.`,
   "- A toy at a small scale, not a reproduction of the paper's experiments: it shows how the mechanism behaves.",
@@ -45,7 +47,7 @@ export const MECHANISM_WRITER_INSTRUCTIONS = [
   "- landscape: { heights: [[…], …], marks: [{ x, y, label, group }] }, 2 to 64 rows of equal length; a surface with points on it, such as a loss and an optimiser.",
   "- charts: { bars: [{ label, value, group }] }; amounts side by side, when nothing above fits.",
   "Answer with the module alone, in one ```javascript block, and nothing after it.",
-  "If the paper has no mechanism a learner could honestly play with, such as a survey, a benchmark or a theorem with no dynamics, answer exactly NO MECHANISM: and one sentence why.",
+  "If the paper has no mechanism a learner could honestly play with, such as a survey, a benchmark or a theorem with no dynamics, or its mechanism cannot be simulated without inventing its outcomes, such as agents whose behaviour only a language model could produce, answer exactly NO MECHANISM: and one sentence why.",
 ].join("\n");
 
 /** What the writer reads of the paper: what the reader found, and the equations that define its model. */

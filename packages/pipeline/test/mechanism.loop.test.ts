@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { writeCheckedMechanism } from "../src/mechanism/loop.ts";
 import { ModelError, type ChatMessage } from "../src/models/index.ts";
-import { moduleOf, type MechanismWriterInput } from "../src/stages/mechanism-writer.ts";
+import { mechanismWriterMessages, moduleOf, type MechanismWriterInput } from "../src/stages/mechanism-writer.ts";
 
 // The writer's fix loop (ADR-0058), with a scripted writer: the checks decide, the writer reads
 // their words, and the loop ends on a pass, a refusal, three fixes, or a deadline it cannot meet.
@@ -91,6 +91,13 @@ describe("[R08] the writer's fix loop (ADR-0058)", () => {
     });
     expect(outcome.kind).toBe("failed");
     expect(outcome.rounds).toHaveLength(1);
+  });
+
+  it("tells the writer what the paper means by each parameter, to compute and never restate, and when to refuse (ADR-0058's amendment)", () => {
+    const system = mechanismWriterMessages(input)[0]?.content ?? "";
+    expect(system).toContain("removing the √dk scaling is dividing by 1, never multiplying the scores by 0");
+    expect(system).toContain("Never write in the paper's reported results");
+    expect(system).toContain("cannot be simulated without inventing its outcomes");
   });
 
   it("finds the module in a reply: the longest fenced block, or bare code", () => {

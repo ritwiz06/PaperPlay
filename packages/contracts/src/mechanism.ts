@@ -40,10 +40,25 @@ export const MechanismParam = z
     default: Finite,
     /** Whole numbers only, such as a count of heads. */
     integer: z.boolean().optional(),
+    /**
+     * What the paper means by it (ADR-0058's amendment): its own value, and the value that takes it
+     * away as the paper means, which may not be the end of the range (for the √dk scaling, dividing by
+     * 1, not multiplying the scores by 0), or null when taking it away means nothing in the paper.
+     */
+    paper: z
+      .strictObject({
+        normal: Finite,
+        without: Finite.nullable(),
+        /** What taking it away means in the paper, in a sentence. */
+        meaning: Words(200),
+      })
+      .optional(),
   })
   .refine((param) => param.min < param.max, { error: "min must be below max", path: ["max"] })
   .refine((param) => param.default >= param.min && param.default <= param.max, { error: "default must lie between min and max", path: ["default"] })
-  .refine((param) => !param.integer || [param.min, param.max, param.default].every(Number.isInteger), { error: "an integer parameter's min, max and default must be whole numbers", path: ["integer"] });
+  .refine((param) => !param.integer || [param.min, param.max, param.default].every(Number.isInteger), { error: "an integer parameter's min, max and default must be whole numbers", path: ["integer"] })
+  .refine((param) => !param.paper || param.paper.normal === param.default, { error: "the paper's normal value is the default", path: ["paper", "normal"] })
+  .refine((param) => !param.paper || param.paper.without === null || (param.paper.without >= param.min && param.paper.without <= param.max && param.paper.without !== param.default), { error: "the value that takes it away lies in the range, and is not the default", path: ["paper", "without"] });
 export type MechanismParam = z.infer<typeof MechanismParam>;
 
 /** One number the module measures from its state. */

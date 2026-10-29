@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { checkMechanism, feedbackOf, type MechanismCheckName } from "../src/mechanism/checks.ts";
+import { checkMechanism, feedbackOf, restatedNumbers, resultNumbersOf, type MechanismCheckName } from "../src/mechanism/checks.ts";
 
 // The deterministic checks a generated mechanism must pass (ADR-0058), on the hand-written
 // reference module and on copies of it broken one way each: every check catches its own fault
@@ -20,7 +20,7 @@ describe("[R08] the checks on a generated mechanism (ADR-0058)", () => {
   it("pass the reference module, every one", async () => {
     const report = await checkMechanism(reference);
     expect(failed(report)).toEqual([]);
-    expect(report.checks.map((check) => check.name)).toEqual(["loads", "deterministic", "ranges", "finite", "responds", "frames", "speed"]);
+    expect(report.checks.map((check) => check.name)).toEqual(["loads", "declares", "computes", "deterministic", "ranges", "finite", "responds", "frames", "speed"]);
     expect(report.manifest?.kit).toBe("towers");
     expect(report.stepMs).toBeLessThan(8);
     expect(feedbackOf(report)).toBe("");
@@ -52,6 +52,19 @@ describe("[R08] the checks on a generated mechanism (ADR-0058)", () => {
     const report = await checkMechanism(broken("const width = params.width;", "const width = 32;"));
     expect(failed(report)).toEqual(["responds"]);
     expect(feedbackOf(report)).toContain("moving width from 4 to 64 changes no measurement");
+  });
+
+  it("ask every parameter what the paper means by it, and refuse a module that writes in the paper's results (ADR-0058's amendment)", async () => {
+    const undeclared = await checkMechanism(broken(', paper: { normal: 32, without: null, meaning: "the paper fixes the width; taking it away means nothing" } }', " }"));
+    expect(failed(undeclared)).toEqual(["declares"]);
+    expect(feedbackOf(undeclared)).toContain("width does not say what the paper means by it");
+    const results = resultNumbersOf(["Our model reaches a peak weight of 0.873 and 28.4 BLEU, at d_k 64, 8 heads and 48 words."]);
+    expect(results.map((result) => result.value)).toEqual([0.873, 28.4]);
+    const restating = await checkMechanism(broken("return { entropy, peak: Math.max(...weights) };", "return { entropy, peak: 0.873 };"), undefined, { results });
+    expect(failed(restating)).toContain("computes");
+    expect(feedbackOf(restating)).toMatch(/line \d+: 0\.873 is a number the paper reports as a result/);
+    // Its own settings and step counts are the paper's settings, not results: 32, 48 and 64 are never flagged.
+    expect(restatedNumbers(reference, (await checkMechanism(reference)).manifest!, resultNumbersOf(["the width 32.0 and 48.0 steps"]))).toEqual([]);
   });
 
   it("catch a frame outside its kit, and a slow step", async () => {

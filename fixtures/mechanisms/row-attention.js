@@ -38,8 +38,8 @@ const mechanism = {
   title: "One query attending over a row of words",
   kit: "towers",
   params: [
-    { id: "scaled", label: "Divide by the square root of the width", unit: "", min: 0, max: 1, default: 1, integer: true },
-    { id: "width", label: "Width of each key", unit: "dimensions", min: 4, max: 64, default: 32, integer: true },
+    { id: "scaled", label: "Divide by the square root of the width", unit: "", min: 0, max: 1, default: 1, integer: true, paper: { normal: 1, without: 0, meaning: "the dot products divided by 1 instead of by the square root of the width" } },
+    { id: "width", label: "Width of each key", unit: "dimensions", min: 4, max: 64, default: 32, integer: true, paper: { normal: 32, without: null, meaning: "the paper fixes the width; taking it away means nothing" } },
   ],
   measurements: [
     { id: "entropy", label: "Spread of attention", unit: "bits", meaning: "How evenly the query's attention spreads over the words: 0 when it all goes to one word." },

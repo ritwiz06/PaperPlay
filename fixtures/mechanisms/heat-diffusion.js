@@ -1,6 +1,7 @@
 // A hand-written mechanism module (ADR-0058), the example the writer is shown for its shape: heat
 // spreading over a square plate by the discrete heat equation, a few hot spots placed by the seed,
-// the plate's edge losing heat to the air. Plain JavaScript, no imports, chance from the seed alone.
+// the plate's edge losing heat to the air. Plain JavaScript, no imports, chance from the seed alone;
+// every number it measures is computed from its state, never written in.
 
 function generator(seed) {
   // mulberry32: a small seeded generator, the same numbers for the same seed.
@@ -19,9 +20,10 @@ const SIZE = 32;
 const mechanism = {
   title: "Heat spreading over a plate",
   kit: "grid",
+  // Each parameter says what the paper means by it: its own value, and what taking it away is.
   params: [
-    { id: "diffusion", label: "How fast heat spreads", unit: "per step", min: 0.02, max: 0.24, default: 0.12 },
-    { id: "cooling", label: "Heat lost at the edge", unit: "per step", min: 0, max: 0.2, default: 0.05 },
+    { id: "diffusion", label: "How fast heat spreads", unit: "per step", min: 0, max: 0.24, default: 0.12, paper: { normal: 0.12, without: 0, meaning: "no diffusion at all: each point keeps its own heat" } },
+    { id: "cooling", label: "Heat lost at the edge", unit: "per step", min: 0, max: 0.2, default: 0.05, paper: { normal: 0.05, without: 0, meaning: "an insulated plate, whose edge loses nothing to the air" } },
   ],
   measurements: [
     { id: "mean", label: "Average temperature", unit: "", meaning: "The plate's mean temperature, from 0 (cold) to 1 (the hot spots' start)." },

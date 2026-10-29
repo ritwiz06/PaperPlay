@@ -5,6 +5,7 @@ import { canMove, GENERATED_MODEL_LABEL, SourceText, type JobState, type SourceR
 import { registry } from "@paperplay/primitives";
 import { describe, expect, it } from "vitest";
 import { buildWorld } from "../src/builder/build.ts";
+import { garbledName } from "../src/controller/mechanism.ts";
 import { runJob, type JobSink } from "../src/controller/run.ts";
 import type { ChatRequest, ModelClient } from "../src/models/index.ts";
 
@@ -83,8 +84,11 @@ const words = {
 };
 const written = { ...words, title: "A level", goal: "Move the control and watch.", control: { label: "Diffusion", lowEnd: "Slow", highEnd: "Fast" }, whatIf: "What if heat spread slower?", effect: "The What-if differs by more than the claim.", prediction: { prompt: "Would it differ?", claimed: "Yes", other: "No" }, passageTitle: "The paper says", carryForward: "Spreading evens heat." };
 
+/** A level's words written again, in the shape a rewrite answers with: its depths, and its four sentences. */
+const rewritten = { ...words, goal: "Move the control and watch.", whatIf: "What if heat spread at a different rate?", prediction: "Will the other plate differ?", effect: "The What-if differs by more than the claim." };
+
 /** A client for the tier: the writer's modules in turn, the planner choosing the first three candidates it is shown, and the rest scripted. */
-function tierClient(writer: readonly string[], options: { readonly reviewer?: unknown } = {}) {
+function tierClient(writer: readonly string[], options: { readonly reviewer?: unknown; readonly words?: Partial<typeof written>; readonly reworded?: Partial<typeof rewritten> } = {}) {
   const calls: ChatRequest[] = [];
   let writes = 0;
   const client: ModelClient = {
@@ -96,10 +100,13 @@ function tierClient(writer: readonly string[], options: { readonly reviewer?: un
       else if (request.stage === "reader") text = JSON.stringify(reading);
       else if (request.stage === "writer") text = writer[Math.min(writes++, writer.length - 1)] ?? "";
       else if (request.stage === "planner" || request.stage === "second-planner") {
-        const ids = [...content.matchAll(/^(g\d+): /gm)].map((match) => match[1] ?? "");
-        text = JSON.stringify({ levels: ids.slice(0, 3).map((candidate, index) => ({ candidate, finding: index })) });
-      } else if (request.stage === "explainer") text = JSON.stringify(content.includes("You name a small learning game") ? { title: "The Warm Plate", limits: ["It leaves out the plate's thickness."] } : written);
-      else if (request.stage === "reviewer") text = JSON.stringify(options.reviewer ?? { findings: [] });
+        // The hook from its own list when there is one, then the first two of the others, as a planner must.
+        const [hooks = "", rest = ""] = content.split("Candidates for levels 2 to 5");
+        const idsIn = (part: string) => [...part.matchAll(/^(g\d+): /gm)].map((match) => match[1] ?? "");
+        const ids = rest ? [idsIn(hooks)[0] ?? "", ...idsIn(rest), ...idsIn(hooks).slice(1)].slice(0, 3) : idsIn(content).slice(0, 3);
+        text = JSON.stringify({ levels: ids.map((candidate, index) => ({ candidate, finding: index })) });
+      } else if (request.stage === "explainer") text = JSON.stringify(content.includes("You name a small learning game") ? { title: "The Warm Plate", limits: ["It leaves out the plate's thickness."] } : content.includes("words misdescribe the model") ? { ...rewritten, ...options.reworded } : { ...written, ...options.words });
+      else if (request.stage === "reviewer") text = JSON.stringify(typeof options.reviewer === "function" ? (options.reviewer as (content: string) => unknown)(content) : (options.reviewer ?? { findings: [] }));
       else return Promise.reject(new Error(`no scripted reply for ${request.stage}`));
       return Promise.resolve({ model: request.model, text, usage: { promptTokens: 1, completionTokens: 1, totalTokens: 2 }, finishReason: "stop" });
     },
@@ -149,6 +156,14 @@ describe("[R08] [R11] the generated-mechanism tier's job (ADR-0058)", () => {
     expect(events.find((event) => event.step === "release")?.message).toMatch(/levels pass every check and are playable/);
   }, 60_000);
 
+  it("knows a garbled world name: its instruction repeated, a run-on phrase, or a list", () => {
+    expect(garbledName("at most 5 words, naming the paper's sujb")).toBe(true);
+    expect(garbledName("Attention, the paper's big idea: why it works")).toBe(true);
+    expect(garbledName("A world where every token watches every other token closely")).toBe(true);
+    expect(garbledName("The Warm Plate")).toBe(false);
+    expect(garbledName("Attention in a row of words")).toBe(false);
+  });
+
   it("names the world by its module when the explainer's name repeats its instruction", async () => {
     const { client } = tierClient([fenced(heat)]);
     const echoing: ModelClient = { complete: (request) => (request.stage === "explainer" && request.messages.some((message) => message.content.includes("You name a small learning game")) ? Promise.resolve({ model: request.model, text: JSON.stringify({ title: "at most 5 words, naming the paper's sujb", limits: ["It is a toy."] }), usage: { promptTokens: 1, completionTokens: 1, totalTokens: 2 }, finishReason: "stop" }) : client.complete(request)) };
@@ -180,6 +195,44 @@ describe("[R08] [R11] the generated-mechanism tier's job (ADR-0058)", () => {
     expect(outcome.message).toMatch(/explainer page, tier C/);
     expect([0, 1, 2, 3].every((round) => (artifacts.get(`mechanism-round-${round}`) as { problems: string } | undefined)?.problems.includes("did not arrive"))).toBe(true);
     expect(artifacts.has("explainer")).toBe(true);
+  }, 60_000);
+
+  it("replaces a hook whose What-if a reviewer refuses with the next hook-eligible candidate, never rewording it (ADR-0058's amendment)", async () => {
+    let blocked = 0;
+    const reviewer = (content: string) => {
+      if (/^Level 1,/m.test(content) && (blocked += 1) === 1) return { findings: [{ level: 1, severity: "blocking", kind: "what-if", finding: "This What-if cannot teach the level.", suggestion: "Change the setting as the paper means it." }] };
+      return { findings: [] };
+    };
+    const { client, calls } = tierClient([fenced(heat)], { reviewer });
+    const { outcome, events, artifacts } = await run(client);
+    expect(outcome.state, events.at(-1)?.message).toBe("ready");
+    const hookOf = (world: unknown) => (world as { levels: { counterfactual: { altParams: Record<string, number> } }[] }).levels[0]?.counterfactual.altParams;
+    const before = hookOf((artifacts.get("released") as { world: unknown }).world);
+    const after = hookOf(artifacts.get("world"));
+    expect(after).not.toEqual(before);
+    // Both What-ifs take a parameter away as the paper means it: diffusion or cooling at 0.
+    expect(Object.values(before ?? {})).toEqual([0]);
+    expect(Object.values(after ?? {})).toEqual([0]);
+    expect(events.some((event) => event.state === "repairing" && event.message.includes("replacing level 1"))).toBe(true);
+    expect(events.some((event) => /level 1 is now g\d+/.test(event.message))).toBe(true);
+    expect(calls.some((call) => call.stage === "explainer" && call.messages.some((message) => message.content.includes("words misdescribe the model")))).toBe(false);
+  }, 60_000);
+
+  it("writes again the words a reviewer finds misdescribe the module, and keeps the level", async () => {
+    let blocked = 0;
+    const reviewer = (content: string) => (/^Level 2,/m.test(content) && (blocked += 1) === 1 ? { findings: [{ level: 2, severity: "blocking", kind: "wording", finding: "It says the plate heats up.", suggestion: "Say it cools." }] } : { findings: [] });
+    const { client, calls } = tierClient([fenced(heat)], { reviewer });
+    const { outcome, events } = await run(client);
+    expect(outcome.state, events.slice(-4).map((event) => event.message).join(" | ")).toBe("ready");
+    expect(events.some((event) => event.message.includes("writing again the words of level 2"))).toBe(true);
+    expect(calls.filter((call) => call.stage === "explainer" && call.messages.some((message) => message.content.includes("words misdescribe the model")))).toHaveLength(1);
+  }, 60_000);
+
+  it("writes again a What-if worded as taking a setting away where its value does not (ADR-0058's amendment)", async () => {
+    const { outcome, events } = await run(tierClient([fenced(heat)], { words: { whatIf: "What if the edge's cooling were removed?" }, reworded: { whatIf: "What if the rate were set to its highest?" } }).client);
+    expect(outcome.state, events.at(-1)?.message).toBe("ready");
+    // One level sets a parameter without taking it away (its highest); its words said otherwise, and are written again.
+    expect(events.filter((event) => event.step === "words" && event.message.includes("its What-if says it takes"))).toHaveLength(1);
   }, 60_000);
 
   it("takes the writer's refusal as the paper's answer, and shows the explainer page instead", async () => {

@@ -6,7 +6,7 @@
 import { MECHANISM_LIMITS, type MechanismManifest } from "@paperplay/contracts";
 import { ModelError, type ChatMessage } from "../models/index.ts";
 import { mechanismFixMessages, mechanismWriterMessages, moduleOf, type MechanismWriterInput } from "../stages/mechanism-writer.ts";
-import { checkMechanism, feedbackOf, type MechanismReport } from "./checks.ts";
+import { checkMechanism, feedbackOf, type MechanismReport, type PaperNumber } from "./checks.ts";
 import type { SandboxLimits } from "./sandbox.ts";
 
 /** At most this many rounds of fixes after the first module. */
@@ -36,6 +36,8 @@ export interface LoopOptions {
   readonly timeLeft?: () => number;
   readonly fixes?: number;
   readonly limits?: SandboxLimits;
+  /** The numbers the paper reports as results, which a module must never write in (ADR-0058's amendment). */
+  readonly results?: readonly PaperNumber[];
   /** Each round as it ends, for the job's events. */
   readonly onRound?: (round: WriterRound) => void;
 }
@@ -80,7 +82,7 @@ export async function writeCheckedMechanism(input: MechanismWriterInput, options
       continue;
     }
     const checking = Date.now();
-    const report = await checkMechanism(reply.source, options.limits);
+    const report = await checkMechanism(reply.source, options.limits, { results: options.results ?? [] });
     const entry: WriterRound = { round, writeMs, checkMs: Date.now() - checking, report, problems: feedbackOf(report) };
     rounds.push(entry);
     options.onRound?.(entry);

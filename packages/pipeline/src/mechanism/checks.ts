@@ -8,7 +8,7 @@
 import { MECHANISM_LIMITS, MechanismManifest, parseFrame, type MechanismParam } from "@paperplay/contracts";
 import { openSandbox, type MechanismSandbox, type SandboxAnswer, type SandboxLimits } from "./sandbox.ts";
 
-export type MechanismCheckName = "loads" | "deterministic" | "ranges" | "finite" | "responds" | "frames" | "speed";
+export type MechanismCheckName = "loads" | "declares" | "computes" | "deterministic" | "ranges" | "finite" | "responds" | "frames" | "speed";
 
 export interface MechanismCheck {
   readonly name: MechanismCheckName;
@@ -27,6 +27,8 @@ export interface MechanismReport {
 /** What each check asks, in the words the writer is told. */
 export const CHECK_WORDS: Readonly<Record<MechanismCheckName, string>> = Object.freeze({
   loads: "it loads: the source parses, defines mechanism with init, step, measure and frame, and declares a valid manifest",
+  declares: "every parameter says what the paper means by it: paper: { normal, without, meaning }",
+  computes: "it computes its outcomes from its mechanism and never writes in a number the paper reports as a result",
   deterministic: "the same seed gives the same measurements and frames, run after run",
   ranges: "it runs at its defaults, and at the minimum and the maximum of every parameter",
   finite: "every measurement is a finite number at every step: no NaN, no Infinity",
@@ -66,11 +68,64 @@ const differs = (a: MechanismRun, b: MechanismRun, index: number): boolean =>
     return Math.abs(x - y) > 1e-9 * Math.max(1, Math.abs(x), Math.abs(y));
   });
 
+/** A number the paper reports as a result, and the words it came from. */
+export interface PaperNumber {
+  readonly value: number;
+  readonly text: string;
+}
+
+/**
+ * The numbers the paper reports among its results, from the reader's headline and findings: those
+ * written with a decimal point or as a percentage, as results are. A whole number alone, a count, a
+ * size or a year, is as likely a setting a module needs, and is left alone.
+ */
+export function resultNumbersOf(texts: readonly string[]): PaperNumber[] {
+  const found = new Map<number, string>();
+  for (const text of texts) {
+    for (const match of text.matchAll(/(?<![\w.])(\d+(?:\.\d+)?)(\s?%)?(?![\w.]*\d)/g)) {
+      const literal = match[1] ?? "";
+      const value = Number(literal);
+      if (!Number.isFinite(value) || !(literal.includes(".") || match[2])) continue;
+      if (!found.has(value)) found.set(value, text.slice(Math.max(0, (match.index ?? 0) - 40), (match.index ?? 0) + literal.length + 20).trim());
+    }
+  }
+  return [...found].map(([value, text]) => ({ value, text }));
+}
+
+/** The source with its comments and strings blanked out, each line kept where it was. */
+const codeOnly = (source: string): string =>
+  source.replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*|"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|`(?:\\.|[^`\\])*`/g, (part) => part.replace(/[^\n]/g, " "));
+
+/**
+ * A module that writes in the paper's reported numbers, as constants or tables, restates results
+ * rather than computing them (ADR-0058's amendment): every literal in its code equal to one, unless
+ * it is one of the module's own parameter settings, such as the paper's d_k of 64.
+ */
+export function restatedNumbers(source: string, manifest: MechanismManifest, results: readonly PaperNumber[]): string[] {
+  const settings = new Set([manifest.steps, ...manifest.params.flatMap((param) => [param.min, param.max, param.default, param.paper?.normal, param.paper?.without ?? undefined].filter((value): value is number => value !== undefined))]);
+  const reported = results.filter((result) => !settings.has(result.value));
+  const code = codeOnly(source);
+  const problems: string[] = [];
+  for (const match of code.matchAll(/(?<![\w$.])(\d+(?:\.\d+)?(?:e[+-]?\d+)?)(?![\w$])/gi)) {
+    const value = Number(match[1]);
+    const result = reported.find((entry) => entry.value === value);
+    if (!result) continue;
+    const line = code.slice(0, match.index ?? 0).split("\n").length;
+    problems.push(`line ${line}: ${match[1] ?? ""} is a number the paper reports as a result ("${result.text}"); compute the outcome from the mechanism instead of writing it in`);
+  }
+  return problems;
+}
+
+export interface CheckOptions {
+  /** The numbers the paper reports among its results, which a module must never write in. */
+  readonly results?: readonly PaperNumber[];
+}
+
 /**
  * Runs every check on a module's source in a fresh sandbox, and closes it. Loading stops the rest
  * when it fails; the others all run, so the writer hears every problem at once.
  */
-export async function checkMechanism(source: string, limits: SandboxLimits = MECHANISM_LIMITS): Promise<MechanismReport> {
+export async function checkMechanism(source: string, limits: SandboxLimits = MECHANISM_LIMITS, options: CheckOptions = {}): Promise<MechanismReport> {
   const checks: MechanismCheck[] = [];
   const record = (name: MechanismCheckName, problems: readonly string[]) => checks.push({ name, passed: problems.length === 0, problems });
   if (source.length > MECHANISM_LIMITS.sourceChars) {
@@ -91,6 +146,8 @@ export async function checkMechanism(source: string, limits: SandboxLimits = MEC
     }
     record("loads", []);
     const manifest = parsed.data;
+    record("declares", manifest.params.filter((param) => !param.paper).map((param) => `${param.id} does not say what the paper means by it: give it paper: { normal, without, meaning }`));
+    record("computes", restatedNumbers(source, manifest, options.results ?? []).slice(0, 6));
 
     // The default run, twice on one seed: the reference every other check compares with.
     const first = await runOnce(sandbox, manifest, 1, paramsWith(manifest.params));
