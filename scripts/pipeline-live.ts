@@ -67,6 +67,7 @@ import { agreement, CANDIDATES, runBakeoff, type BakeoffResults } from "./bakeof
 import { probeModel, type ProbeResult } from "./live/probe.ts";
 import { heldLocks, holdLock, lockDir, whyNoLive } from "./machine/locks.ts";
 import { registerServer } from "./machine/servers.ts";
+import { failureOf, type RunRow } from "./live/runs.ts";
 
 const RECORDINGS = join(import.meta.dirname, "..", "fixtures", "recordings");
 const [command] = process.argv.slice(2);
@@ -225,14 +226,14 @@ async function serve(): Promise<void> {
 const FRESH_RECORDINGS = join(import.meta.dirname, "..", "apps", "api", "data", "recordings");
 
 /** One paper's job to its end: served from the cache when made before under today's rules, unless fresh. */
-async function oneJob(raw: string, fresh: boolean): Promise<void> {
+async function oneJob(raw: string, fresh: boolean): Promise<RunRow> {
   const source = parseSource(raw);
   if (!source) throw new Error(`a job takes an arXiv id with its version or a PMCID, such as pmc:PMC12334037, not "${raw}"`);
   const cache = worldCache();
   const kept = fresh ? null : cache.get(raw);
   if (kept) {
     console.log(`${raw}: served from the cache, made by job ${kept.jobId} at ${kept.madeAt} under the rules of ${kept.rules}`);
-    return;
+    return { source: raw, jobId: kept.jobId, outcome: "cached", firstPlayableSeconds: 0, endSeconds: 0, levelsReleased: 0, failure: null, message: "served from the cache" };
   }
   const config = loadModelConfig();
   // Fresh: every call asked of the gateway, as for a paper never seen, and recorded apart.
@@ -249,11 +250,30 @@ async function oneJob(raw: string, fresh: boolean): Promise<void> {
     check();
   });
   const ended = store.get(started.id);
-  console.log(`job ${started.id} ended ${ended?.state ?? "?"}: ${ended?.events.at(-1)?.message ?? ""}`);
+  const message = ended?.events.at(-1)?.message ?? "";
+  console.log(`job ${started.id} ended ${ended?.state ?? "?"}: ${message}`);
+  const events = ended?.events ?? [];
+  const began = events[0] ? Date.parse(events[0].at) : Number.NaN;
+  const secondsTo = (at: string | undefined): number | null => (at === undefined || Number.isNaN(began) ? null : Math.round((Date.parse(at) - began) / 1000));
+  const released = ended?.artifacts.get("released") as { levels?: unknown[] } | undefined;
+  const world = ended?.artifacts.get("world") as { levels?: unknown[] } | undefined;
+  const explainer = ended?.artifacts.has("explainer") ?? false;
+  const state = ended?.state ?? "failed";
+  return {
+    source: raw,
+    jobId: started.id,
+    outcome: state === "ready" ? "ready" : state === "needs_information" ? "needs-information" : explainer ? "explainer fallback" : state,
+    firstPlayableSeconds: secondsTo(events.find((event) => event.step === "release")?.at),
+    endSeconds: secondsTo(events.at(-1)?.at),
+    levelsReleased: (world?.levels ?? released?.levels ?? []).length,
+    failure: failureOf(state, message, explainer),
+    message: message.slice(0, 400),
+  };
 }
 
 async function job(): Promise<void> {
-  await oneJob(process.argv.slice(3).find((value) => !value.startsWith("--")) ?? "", process.argv.includes("--fresh"));
+  const row = await oneJob(process.argv.slice(3).find((value) => !value.startsWith("--")) ?? "", process.argv.includes("--fresh"));
+  console.log(JSON.stringify(row));
 }
 
 /**
@@ -266,13 +286,21 @@ async function prebuild(): Promise<void> {
   const corpus = process.argv.includes("--corpus") ? (JSON.parse(readFileSync(join(import.meta.dirname, "..", "fixtures", "papers", "corpus.json"), "utf8")) as { papers: { version: string }[] }).papers.map((paper) => `arxiv:${paper.version}`) : [];
   const sources = [...named, ...corpus];
   if (sources.length === 0) throw new Error("prebuild takes the papers to make, as arxiv:<id>v<n> or pmc:PMC<n>, or --corpus");
+  // Each job's row, written as it ends, so a run stopped part way keeps what it made (ADR-0058's amendment).
+  mkdirSync(join(import.meta.dirname, "..", "eval", "runs"), { recursive: true });
+  const out = join(import.meta.dirname, "..", "eval", "runs", `${new Date().toISOString().slice(0, 10)}-prebuild-${Date.now()}.json`);
+  const rows: RunRow[] = [];
   for (const raw of sources) {
     try {
-      await oneJob(raw, process.argv.includes("--fresh"));
+      rows.push(await oneJob(raw, process.argv.includes("--fresh")));
     } catch (error) {
-      console.log(`${raw}: ${error instanceof Error ? error.message.split("\n")[0] : String(error)}`);
+      const message = error instanceof Error ? (error.message.split("\n")[0] ?? "") : String(error);
+      console.log(`${raw}: ${message}`);
+      rows.push({ source: raw, jobId: null, outcome: "failed", firstPlayableSeconds: null, endSeconds: null, levelsReleased: 0, failure: failureOf("failed", message, false), message });
     }
+    writeFileSync(out, `${JSON.stringify({ schemaVersion: "prebuild-run/1", fresh: process.argv.includes("--fresh"), rows }, null, 2)}\n`);
   }
+  console.log(`the run's rows are in ${out}`);
 }
 
 /**
