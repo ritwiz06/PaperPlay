@@ -37,6 +37,8 @@ loaded the machine.
 6. **The gate waits for a quiet machine** before its browser tests: while the one-minute load is
    above twice the core count, it waits, saying the load, the heaviest processes and how long it has
    waited, up to 20 minutes; then the tests run, their timeouts unchanged (`scripts/machine/load.ts`).
+   Locally they run on a third of the cores, four workers here, not half: the suite's own software
+   WebGL, beside another app's browser tests, took the load past 40 and cost first frames their 5 s.
 7. **README.md**, new at the repository's root, says how to run PaperPlay next to another app.
 
 ## Consequences
