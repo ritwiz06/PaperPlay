@@ -4,6 +4,7 @@ import { z } from "zod";
 import { PDF_LIMITS } from "@paperplay/pipeline/ingest";
 import { CACHE_DIR, cacheKey, worldCache } from "./cache.ts";
 import { JobStore, parseSource, type JobRunner } from "./jobs.ts";
+import { urlOf, webPort } from "../../../scripts/machine/ports.ts";
 
 /** The largest request body the API reads: a job's request is a line of JSON. */
 export const BODY_LIMIT = 16 * 1024;
@@ -33,7 +34,7 @@ export function buildServer(options: ServerOptions = {}): FastifyInstance {
   // The API has no pages: its root says so, and where the app is, rather than "Route GET:/ not found".
   app.get("/", () => ({
     service: "PaperPlay API",
-    message: "This is the API behind the PaperPlay web app, and it has no pages. Run `npm run dev` and open the app, at http://127.0.0.1:5173 by default: /library lists every world, and /create makes one, reaching this API through /api.",
+    message: `This is the API behind the PaperPlay web app, and it has no pages. Run \`npm run dev\` and open the app, at ${urlOf(webPort())} (PAPERPLAY_WEB_PORT): /library lists every world, and /create makes one, reaching this API through /api.`,
     routes: ["GET /health", "GET /jobs", "POST /jobs", "POST /jobs/pdf", "GET /jobs/:id", "DELETE /jobs/:id", "GET /jobs/:id/events", "GET /jobs/:id/artifacts/:name", "GET /jobs/:id/world", "GET /jobs/:id/released", "GET /worlds/:key", "GET /worlds/:key/mechanism"],
   }));
 

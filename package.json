@@ -14,6 +14,7 @@
   "scripts": {
     "dev": "npm run dev --workspace @paperplay/web",
     "dev:api": "npm run dev --workspace @paperplay/api",
+    "stop": "node scripts/stop.ts",
     "build": "npm run build --workspace @paperplay/web && node scripts/check-bundle.ts",
     "typecheck": "tsc -p tsconfig.json && tsc -p tests/e2e/tsconfig.json && npm run typecheck --workspaces",
     "lint": "eslint . --max-warnings=0",

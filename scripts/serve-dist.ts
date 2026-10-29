@@ -1,5 +1,5 @@
 /**
- * node scripts/serve-dist.ts [--port 4318]
+ * node scripts/serve-dist.ts [--port <port>], by default PAPERPLAY_TEST_BUILT_PORT's (ADR-0059)
  *
  * Serves the production build (apps/web/dist) the way Vercel will, from vercel.json: every
  * matching header rule's headers, files first, then the rewrites. The browser tests run the
@@ -9,6 +9,7 @@
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { createServer } from "node:http";
 import { extname, join, normalize, sep } from "node:path";
+import { HOST, testBuiltPort, urlOf } from "./machine/ports.ts";
 
 interface Rule {
   readonly source: string;
@@ -51,11 +52,12 @@ function fileFor(path: string): string | null {
   return existsSync(resolved) && statSync(resolved).isFile() ? resolved : null;
 }
 
-const port = Number(process.argv[process.argv.indexOf("--port") + 1] ?? 4318) || 4318;
+const given = process.argv.indexOf("--port") >= 0 ? Number(process.argv[process.argv.indexOf("--port") + 1]) : Number.NaN;
+const port = Number.isInteger(given) && given > 0 ? given : testBuiltPort();
 if (!existsSync(join(dist, "index.html"))) throw new Error(`no build at ${dist}: run npm run build first`);
 
 createServer((request, response) => {
-  const path = new URL(request.url ?? "/", "http://localhost").pathname;
+  const path = new URL(request.url ?? "/", urlOf(port)).pathname;
   for (const rule of config.headers) if (matcher(rule.source).test(path)) for (const { key, value } of rule.headers) response.setHeader(key, value);
   let file = fileFor(path);
   if (!file) {
@@ -69,4 +71,4 @@ createServer((request, response) => {
   }
   response.setHeader("Content-Type", TYPES[extname(file)] ?? "application/octet-stream");
   response.end(readFileSync(file));
-}).listen(port, "127.0.0.1", () => console.log(`serving ${dist} as Vercel would, at http://127.0.0.1:${port}`));
+}).listen(port, HOST, () => console.log(`serving ${dist} as Vercel would, at ${urlOf(port)}`));

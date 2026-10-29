@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { expect, test, type Frame, type JSHandle, type Page } from "@playwright/test";
 import { BROWSER_SANDBOX_LIMITS, workerScript, type BrowserSandbox, type BrowserSandboxLimits, type SandboxAnswer } from "../../apps/web/src/mechanism/sandbox.ts";
 import { openSandbox as openNodeSandbox } from "../../packages/pipeline/src/mechanism/sandbox.ts";
+import { BUILT } from "./origins.ts";
 
 // The browser's sandbox of a generated mechanism (ADR-0058): a worker inside a frame of its own
 // origin, an opaque one, under a policy with no network. Each probe module below tries ways out
@@ -13,7 +14,6 @@ import { openSandbox as openNodeSandbox } from "../../packages/pipeline/src/mech
 // development server's /check/sandbox lends the tests its sandbox; the last tests run the frame
 // under the deploy's headers, served from the production build.
 
-const BUILT = "http://127.0.0.1:4318";
 const reference = readFileSync(fileURLToPath(new URL("../../fixtures/mechanisms/row-attention.js", import.meta.url)), "utf8");
 const deploy = JSON.parse(readFileSync(fileURLToPath(new URL("../../vercel.json", import.meta.url)), "utf8")) as { headers: { source: string; headers: { key: string; value: string }[] }[] };
 

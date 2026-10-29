@@ -1,5 +1,6 @@
 import { AxeBuilder } from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { BUILT } from "./origins.ts";
 
 // /create on the development server (ADR-0033): the storyboard shows a job's real states as the
 // API streams them, a repair under the stage it repairs, and an ending in the job's own words.
@@ -94,7 +95,7 @@ test("[R09] the production build has no /create: the public site only plays worl
     called = true;
     return route.abort();
   });
-  await page.goto("http://127.0.0.1:4318/create");
+  await page.goto(`${BUILT}/create`);
   await expect(page.getByRole("heading", { name: "Make a world from a paper" })).toHaveCount(0);
   await expect(page.getByLabel("Paper")).toHaveCount(0);
   expect(called).toBe(false);
@@ -106,7 +107,7 @@ test("[R09] the production build plays a world generated beforehand, with no API
     called = true;
     return route.abort();
   });
-  await page.goto("http://127.0.0.1:4318/world/generated/pmc-PMC12334037-2026-10-18-2");
+  await page.goto(`${BUILT}/world/generated/pmc-PMC12334037-2026-10-18-2`);
   await expect(page.getByRole("heading", { name: "Hepatitis C treatment town", level: 1 })).toBeVisible({ timeout: 30_000 });
   await expect(page.getByText(/A PaperPlay world about “Modeling the effects of treatment adherence/)).toBeVisible();
   await expect(page.getByRole("slider", { name: /Treatment quitting rate/ })).toBeVisible();
@@ -115,7 +116,7 @@ test("[R09] the production build plays a world generated beforehand, with no API
 
 test("[R09] the production build has no route for a retired world, which the library lists as retired (ADR-0051)", async ({ page }) => {
   for (const id of ["pmc-PMC12334037", "pmc-PMC12334037-2026-10-17", "pmc-PMC12334037-2026-10-18"]) {
-    await page.goto(`http://127.0.0.1:4318/world/generated/${id}`);
+    await page.goto(`${BUILT}/world/generated/${id}`);
     await expect(page.getByText(`there is no generated world ${id}`)).toBeVisible({ timeout: 30_000 });
   }
 });
@@ -130,7 +131,7 @@ for (const world of [
       called = true;
       return route.abort();
     });
-    await page.goto(`http://127.0.0.1:4318/world/generated/${world.id}`);
+    await page.goto(`${BUILT}/world/generated/${world.id}`);
     await expect(page.getByRole("heading", { name: world.title, level: 1 })).toBeVisible({ timeout: 30_000 });
     if (world.observation) await expect(page.locator("[data-observation]")).toContainText(world.observation);
     else await expect(page.locator("[data-observation]")).toHaveCount(0);

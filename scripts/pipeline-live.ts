@@ -36,6 +36,9 @@
  *            router on it, recorded; writes eval/routing/corpus-routes.json, the router's family,
  *            tier and reason for each, and what ingest read, never the paper's text (ADR-0052)
  *
+ * Every run is recorded as one of PaperPlay's, so `npm run stop` stops it (ADR-0059); `serve` listens
+ * on 127.0.0.1 and PAPERPLAY_API_PORT, as the API does.
+ *
  * With --background, any command runs detached from the terminal (ADR-0051): its output goes to
  * apps/api/data/live/<time>-<command>.log, and <time>-<command>.json says what ran, when it began,
  * when it ended and how. A build session never starts one unless the owner asked for it in that
@@ -56,12 +59,14 @@ import { liveClient } from "../apps/api/src/models/live.ts";
 import { pipelineRunner } from "../apps/api/src/runner.ts";
 import { worldCache } from "../apps/api/src/cache.ts";
 import { JobStore, parseSource } from "../apps/api/src/jobs.ts";
+import { listen } from "../apps/api/src/listen.ts";
 import { buildServer } from "../apps/api/src/server.ts";
 import { runDesignBakeoff, type DesignResults } from "./bakeoff/design.ts";
 import { rankReaders, toModelsMarkdown, transcriberPair } from "./bakeoff/report.ts";
 import { agreement, CANDIDATES, runBakeoff, type BakeoffResults } from "./bakeoff/run.ts";
 import { probeModel, type ProbeResult } from "./live/probe.ts";
 import { heldLocks, holdLock, lockDir, whyNoLive } from "./machine/locks.ts";
+import { registerServer } from "./machine/servers.ts";
 
 const RECORDINGS = join(import.meta.dirname, "..", "fixtures", "recordings");
 const [command] = process.argv.slice(2);
@@ -212,10 +217,8 @@ async function serve(): Promise<void> {
   if (missing.length > 0) throw new Error(`apps/api/models.json names no model for ${missing.join(", ")}; the bake-off chooses them (eval/models.md)`);
   // A call already recorded is replayed, so a job run again is the same job, at once.
   const client = resumingClient(liveClient(config), directoryStore(RECORDINGS));
-  const port = Number(process.env.PORT ?? 8787);
   const app = buildServer({ runner: pipelineRunner(client, config, outboundFetch()) });
-  await app.listen({ host: "127.0.0.1", port });
-  console.log(`PaperPlay API listening on http://127.0.0.1:${port}, with live model calls, recorded`);
+  await listen(app, "api live", "live model calls, recorded");
 }
 
 /** Recordings a fresh job makes, kept apart, so the committed ones the bake-offs replay are never overwritten. */
@@ -435,4 +438,6 @@ if (!["rescore", "report"].includes(command ?? "")) {
   }
   holdLock(locks, "live", `pipeline:live ${command ?? ""}`);
 }
+// A run is one of PaperPlay's, so `npm run stop` can stop it (ADR-0059); serve records itself as the API.
+if (command !== "serve") registerServer(`live ${command ?? ""}`, null);
 await run();

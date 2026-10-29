@@ -2,13 +2,13 @@ import { AxeBuilder } from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { expect, test } from "@playwright/test";
+import { BUILT } from "./origins.ts";
 
 // The library (ADR-0049): every world with its paper, kind, status, levels and picture, linked from
 // every world's title card, passing the axe scan at a desktop size and on a phone; the public build
 // lists the worlds built beforehand and asks no API.
 
 const WCAG = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa"];
-const BUILT = "http://127.0.0.1:4318";
 const index = JSON.parse(readFileSync(join(import.meta.dirname, "..", "..", "apps", "web", "src", "library", "worlds.json"), "utf8")) as {
   worlds: { id: string; route: string | null; title: string; status: "verified" | "draft" | "generated" | "retired"; levels: unknown[]; thumbnail: string }[];
 };

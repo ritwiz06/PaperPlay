@@ -1,12 +1,12 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { expect, test, type Page } from "@playwright/test";
+import { BUILT } from "./origins.ts";
 
 // The production build under the headers the first deploy will send (vercel.json, ADR-0017),
 // served by scripts/serve-dist.ts as Vercel would. Every page must run with no
 // Content-Security-Policy violation and no console error.
 
-const BUILT = "http://127.0.0.1:4318";
 const deploy = JSON.parse(readFileSync(fileURLToPath(new URL("../../vercel.json", import.meta.url)), "utf8")) as {
   headers: { source: string; headers: { key: string; value: string }[] }[];
 };

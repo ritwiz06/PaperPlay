@@ -23,6 +23,7 @@ import { createServer } from "vite";
 import { DEMO } from "../apps/web/src/capture/demo-script.ts";
 import { encodeArgs, playwrightFfmpegPath } from "./capture/ffmpeg.ts";
 import { parseCaptureOptions } from "./capture/options.ts";
+import { testBuiltPort } from "./machine/ports.ts";
 
 const root = join(import.meta.dirname, "..");
 const out = join(root, "captures");
@@ -48,10 +49,11 @@ const sha256 = (bytes: Buffer): string => createHash("sha256").update(bytes).dig
 const options = parseCaptureOptions(process.argv.slice(2));
 const encoder = ffmpegPath();
 mkdirSync(out, { recursive: true });
+// The capture's own server, on the built app's test port, never the one a person has open (ADR-0059).
+process.env["PAPERPLAY_WEB_PORT"] = String(testBuiltPort());
 const server = await createServer({
   root: join(root, "apps/web"),
   configFile: join(root, "apps/web/vite.config.ts"),
-  server: { host: "127.0.0.1", port: 4318 },
   logLevel: "error",
 });
 await server.listen();

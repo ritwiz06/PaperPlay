@@ -13,6 +13,7 @@ import { performance } from "node:perf_hooks";
 import { evaluateGate, fromPlaywrightReport, fromVitestReport, type TestResult } from "./gate/evidence.ts";
 import { reviewProblems } from "./gate/worlds.ts";
 import { heldLocks, holdLock, lockDir, whyNoGate } from "./machine/locks.ts";
+import { waitForQuietMachine } from "./machine/load.ts";
 
 interface Gate {
   title: string;
@@ -77,6 +78,8 @@ for (const script of gate.scripts) {
     continue;
   }
   console.log(`\n── check:gate ${gateId} · npm run ${script}\n`);
+  // The browser tests wait for a quiet machine, up to a limit, before they start (ADR-0059).
+  if (script === "test:e2e") await waitForQuietMachine("the browser tests");
   const started = performance.now();
   const run = npmCli
     ? spawnSync(process.execPath, [npmCli, "run", script], { cwd: root, stdio: "inherit" })

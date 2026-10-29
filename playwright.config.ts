@@ -1,9 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
+import { HOST, testBuiltPort, testWebPort } from "./scripts/machine/ports.ts";
 
-const port = 4317;
-const origin = `http://127.0.0.1:${port}`;
+// The tests' own servers, on their own ports from settings, never the ones a person has open (ADR-0059).
+const port = testWebPort();
+const origin = `http://${HOST}:${port}`;
 /** The production build, served as Vercel will serve it, with vercel.json's headers (ADR-0017). */
-const BUILT_ORIGIN = "http://127.0.0.1:4318";
+const BUILT_ORIGIN = `http://${HOST}:${testBuiltPort()}`;
 
 // Chromium only. No retries, so a flaky test fails instead of passing on a second try.
 // WebGL is forced onto SwiftShader (software) so the stage renders the same way on any
@@ -29,13 +31,14 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: `npm run dev --workspace @paperplay/web -- --host 127.0.0.1 --port ${port} --strictPort`,
+      command: "npm run dev --workspace @paperplay/web",
+      env: { PAPERPLAY_WEB_PORT: String(port) },
       url: origin,
       reuseExistingServer: false,
       timeout: 60_000,
     },
     {
-      command: "npm run build && node scripts/serve-dist.ts --port 4318",
+      command: "npm run build && node scripts/serve-dist.ts",
       url: BUILT_ORIGIN,
       reuseExistingServer: false,
       timeout: 120_000,
