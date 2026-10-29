@@ -280,7 +280,7 @@ function assembleFrom(view: ModelView, input: Omit<AssembleInput, "model">): Ass
     const passage = anchored(planned.passage?.quote ?? finding?.quote, `level ${index + 1}'s passage`);
     const advancedAnchors = anchored(words?.advanced.quote, `level ${index + 1}'s equation`);
     const afterAnchors = anchored(words?.afterwards.quote, `level ${index + 1}'s closing line`);
-    const readings = [...(words?.guide.readings ?? [{ atLeast: 0, words: "as measured" }])].sort((a, b) => b.atLeast - a.atLeast).filter((reading, at, all) => at === 0 || reading.atLeast < (all[at - 1]?.atLeast ?? Infinity));
+    const readings = [...(words?.guide.readings ?? [{ atLeast: 0, words: "now" }])].sort((a, b) => b.atLeast - a.atLeast).filter((reading, at, all) => at === 0 || reading.atLeast < (all[at - 1]?.atLeast ?? Infinity));
     return {
       id,
       order: index + 1,

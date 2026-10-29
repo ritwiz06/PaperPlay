@@ -18,7 +18,7 @@ export interface MechanismStageProps {
   /** The rectangle the HUD leaves free, in CSS pixels from the stage's top left: the drawing sits in it. */
   readonly window?: Rect | null;
   readonly onTogglePlay?: () => void;
-  /** Called at most ten times a second while the world changes, never once per frame. */
+  /** Called at most ten times a second while the world changes, never once per frame, and once after its last change. */
   readonly onReadout?: () => void;
 }
 
@@ -40,6 +40,8 @@ export function MechanismStage({ driver, label, name, window, onTogglePlay, onRe
     let last = performance.now();
     let seen = -1;
     let told = 0;
+    /** Whether the world changed since the readout was last told: a paused world's last change is told too. */
+    let owed = false;
     const loop = (now: number) => {
       const seconds = Math.min(0.25, Math.max(0, (now - last) / 1000));
       last = now;
@@ -48,11 +50,13 @@ export function MechanismStage({ driver, label, name, window, onTogglePlay, onRe
       const version = current.driver.version();
       if (version !== seen) {
         seen = version;
+        owed = true;
         setFrame(current.driver.stageInput().frame);
-        if (now - told >= 100) {
-          told = now;
-          current.onReadout?.();
-        }
+      }
+      if (owed && now - told >= 100) {
+        told = now;
+        owed = false;
+        current.onReadout?.();
       }
       handle = requestAnimationFrame(loop);
     };

@@ -252,17 +252,42 @@ a {
   }
 }
 
-/* A job's world while its levels are still arriving (R13): above the stage, never covering the level card. */
+/*
+ * A note about the world in the HUD's top row, under its buttons, such as a job's levels still
+ * arriving (R13). The stage draws in the room it leaves; the fork covers it, and it steps aside
+ * while the journal is open, coming back once the journal has slid away.
+ */
+.hud-notice {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  justify-self: end;
+  max-width: min(24rem, 100%);
+  pointer-events: auto;
+  transition: visibility 0s linear 0.25s;
+}
+.game[data-journal="open"] .hud-notice {
+  visibility: hidden;
+  transition: none;
+}
+@media (max-width: 760px) {
+  .hud-notice {
+    grid-row: 3;
+    justify-self: stretch;
+    max-width: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hud-notice {
+    transition: none;
+  }
+}
+
+/* A job's world while its levels are still arriving (R13). */
 .arriving {
-  position: fixed;
-  z-index: 40;
-  top: calc(max(0.5rem, env(safe-area-inset-top)) + 4.5rem);
-  right: 1rem;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem 0.75rem;
-  max-width: min(24rem, calc(100vw - 2rem));
   padding: 0.5rem 0.875rem;
   border: 2px solid var(--ink, #172b2b);
   border-radius: 14px;
@@ -283,10 +308,4 @@ a {
   color: inherit;
   font: inherit;
   font-weight: 600;
-}
-@media (max-width: 30rem) {
-  .arriving {
-    top: calc(max(0.5rem, env(safe-area-inset-top)) + 7rem);
-    left: 1rem;
-  }
 }

@@ -6,6 +6,8 @@
 import { parseFrame, type MechanismFrame, type MechanismKit } from "@paperplay/contracts";
 
 export interface KitSample {
+  /** A sample drawn only when named, as `?sample=towers-even`, has a name of its own. */
+  readonly id?: string;
   readonly kit: MechanismKit;
   readonly title: string;
   /** What the sample shows, in a sentence. */
@@ -128,6 +130,30 @@ export const KIT_SAMPLES: readonly KitSample[] = [
   { kit: "network", title: "Network", note: "Twelve nodes in two rings, joined by edges of different weights.", label: "Twelve labelled nodes in two rings of six, joined by edges of different weights.", frame: network },
   { kit: "landscape", title: "Landscape", note: "A 32 by 32 bowl, with where a run started and where it had reached.", label: "A bowl-shaped landscape with a ring at the start and a ring near the lowest point.", frame: landscape },
   { kit: "charts", title: "Charts", note: "Five bars, one for each variant.", label: "A bar chart of five bars rising from baseline to both.", frame: charts },
+];
+
+/**
+ * Attention spread almost evenly, as the first live run on "Attention Is All You Need" drew it:
+ * one row from the fourth word, every weight within a few hundredths of an eighth, and each
+ * word's tower as tall as the weight it receives.
+ */
+const EVEN = [0.118, 0.131, 0.109, 0.142, 0.121, 0.127, 0.114, 0.138];
+
+const evenTowers = {
+  towers: WORDS.map((label, index) => ({ label, height: EVEN[index] ?? 0, group: index === 3 ? 1 : 0 })),
+  beams: EVEN.map((weight, to) => ({ from: 3, to, weight })),
+};
+
+/** Frames kept off the page of six, each drawn alone when named, so one look can be judged. */
+export const LOOK_SAMPLES: readonly KitSample[] = [
+  {
+    id: "towers-even",
+    kit: "towers",
+    title: "Nearly even attention",
+    note: "Eight words; the fourth word's attention over all eight, every weight between 0.10 and 0.15.",
+    label: "Eight towers of nearly equal height, one per word, with arcs from the word fox to every word.",
+    frame: evenTowers,
+  },
 ];
 
 /** Each sample parsed as a module's frame is: the frame to draw, or what is wrong with it. */

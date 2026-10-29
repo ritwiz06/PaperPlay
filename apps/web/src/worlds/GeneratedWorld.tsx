@@ -119,28 +119,25 @@ export function GeneratedWorld({ from }: { readonly from: From }) {
   }, [partial, job]);
   if (problem) return <main className="page not-found"><p>{problem}</p></main>;
   if (!play) return <main className="page"><p>Building the world…</p></main>;
-  return (
-    <>
-      {partial ? (
-        <aside className="arriving" role="status">
-          <p>
-            Still being made: {partial.levels} of {partial.of} levels have passed every check and are playable; the reviewers have not read them yet.
-          </p>
-          {newer ? (
-            <button
-              type="button"
-              onClick={() => {
-                setNewer(false);
-                setPlay(null);
-                setRound((count) => count + 1);
-              }}
-            >
-              Show the newest levels
-            </button>
-          ) : null}
-        </aside>
+  // In the HUD's own flow, so it never lies over the fork or the journal.
+  const arriving = partial ? (
+    <aside className="arriving" role="status">
+      <p>
+        Still being made: {partial.levels} of {partial.of} levels have passed every check and are playable; the reviewers have not read them yet.
+      </p>
+      {newer ? (
+        <button
+          type="button"
+          onClick={() => {
+            setNewer(false);
+            setPlay(null);
+            setRound((count) => count + 1);
+          }}
+        >
+          Show the newest levels
+        </button>
       ) : null}
-      <HookWorld key={round} play={play} />
-    </>
-  );
+    </aside>
+  ) : null;
+  return <HookWorld key={round} play={play} notice={arriving} />;
 }

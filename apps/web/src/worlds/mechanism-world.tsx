@@ -10,6 +10,7 @@ import type { BuiltWorld } from "@paperplay/pipeline";
 import type { Primitive } from "@paperplay/primitives";
 import { Readout, type StageDriver } from "@paperplay/ui/react";
 import { MechanismMark, MechanismStage, type MechanismStageInput } from "@paperplay/ui/react/mechanism";
+import { describeReading } from "../hook/guide.ts";
 import type { BrowserSandbox } from "../mechanism/sandbox.ts";
 import { createMechanismSession, type MechanismState } from "../world/mechanism.ts";
 import type { SessionOptions } from "../world/session.ts";
@@ -51,8 +52,9 @@ export function mechanismWorld(world: BuiltWorld, sandbox: BrowserSandbox, manif
       const { metricId } = level.observable;
       const value = snapshot.observed[metricId] ?? Number.NaN;
       const measurement = measurementOf(metricId);
-      // Beginner reads the explainer's words for the value, each reading a lower bound in its own units.
-      const words = level.guide.readings.find((reading) => value >= reading.atLeast)?.words ?? "as measured";
+      // Beginner reads the explainer's words for the value, each reading a lower bound in its own units;
+      // a value below every bound takes the lowest reading's words, as the guide's line does.
+      const words = describeReading(level.guide.readings, value);
       const text = Number.isNaN(value) ? "starting" : showNumber ? value.toFixed(level.observable.decimals) : words;
       return (
         <dl className="readouts">

@@ -1,11 +1,12 @@
-import type { ChartsFrame, GridFrame, LandscapeFrame, MechanismFrame, NetworkFrame, ParticlesFrame, TowersFrame } from "@paperplay/contracts";
+import type { ChartsFrame, GridFrame, LandscapeFrame, MechanismFrame, MechanismKit, NetworkFrame, ParticlesFrame, TowersFrame } from "@paperplay/contracts";
 import { mixHex } from "../../stage-core/color.ts";
 import { groupColour, GROUP_COLOURS, mechanismPalette as palette, rampIndex, rampTable, unit } from "./palette.ts";
 
 // The generic scene kits a generated mechanism draws in (ADR-0058), on a 2D canvas. Each reads one
 // frame and draws it; none computes, keeps or writes anything, so the drawing can never change what
 // the mechanism measured (boundary 1). Every position and value arrives scaled to 0..1, and y grows
-// downward, as a grid's and a landscape's rows do.
+// downward, as a grid's and a landscape's rows do. Towers and a network shade their weights within
+// each row's own range, as their legend says, so a nearly even row still shows its strongest.
 
 /** The canvas's size in CSS pixels, and how many device pixels make one. */
 export interface CanvasSize {
@@ -19,6 +20,46 @@ export const MECHANISM_FONT_STACK = `"Fredoka", ui-rounded, system-ui, sans-seri
 
 const HEAT = rampTable(palette.heat);
 const TERRAIN = rampTable(palette.terrain);
+
+/**
+ * What a kit's brightness means, said under its drawing, for the kits that shade within a row:
+ * towers, whose beams from one tower form a row, and a network, whose edges from one node do.
+ */
+const LEGENDS: Partial<Readonly<Record<MechanismKit, string>>> = {
+  towers: "Brightness shows each tower's beams relative to that tower's own range, and the towers relative to one another.",
+  network: "Brightness shows each node's edges relative to that node's own range.",
+};
+
+/** The words under a kit's drawing that say how it shades, or null for a kit whose shades are absolute. */
+export function kitLegend(kit: MechanismKit): string | null {
+  return LEGENDS[kit] ?? null;
+}
+
+/** A row whose weights differ by less than this is even: each of them is drawn at the middle. */
+const EVEN_RANGE = 1e-6;
+
+/**
+ * Each weight's place within its own row, from 0 at the row's lowest to 1 at its highest, so the
+ * strongest of 0.10, 0.11 and 0.12 is drawn as bright as the strongest of 0.1, 0.5 and 0.9. Only
+ * brightness reads it: a height or a position is always drawn as given.
+ */
+export function relativeInRows<T>(items: readonly T[], rowOf: (item: T) => number, weightOf: (item: T) => number): number[] {
+  const ranges = new Map<number, { low: number; high: number }>();
+  for (const item of items) {
+    const [row, weight] = [rowOf(item), unit(weightOf(item))];
+    const range = ranges.get(row);
+    if (!range) ranges.set(row, { low: weight, high: weight });
+    else {
+      range.low = Math.min(range.low, weight);
+      range.high = Math.max(range.high, weight);
+    }
+  }
+  return items.map((item) => {
+    const range = ranges.get(rowOf(item));
+    if (!range || range.high - range.low < EVEN_RANGE) return 0.5;
+    return (unit(weightOf(item)) - range.low) / (range.high - range.low);
+  });
+}
 
 interface Box {
   readonly x: number;
@@ -276,47 +317,61 @@ function bar(context: CanvasRenderingContext2D, x: number, width: number, baseli
   context.closePath();
 }
 
-/**
- * Bars from the baseline, by group. A solid bar is the group's colour; a capped one, a tower, is a
- * pale tint of it under a cap of the full colour, so the beams above stay the loudest thing drawn
- * and the cap alone shows the height at 3:1.
- */
-function drawBars(sheet: Sheet, layout: Row, items: readonly { readonly value: number; readonly group?: number | undefined }[], width: number, fallback: string, capped: boolean): void {
+/** Where a bar of a value stands in its slot: its left edge and its top. A height of 0 keeps a stub, so its slot still shows where it stands. */
+function barAt(layout: Row, index: number, value: number, width: number): [x: number, top: number] {
+  return [layout.left + (index + 0.5) * layout.slot - width / 2, layout.baseline - Math.max(unit(value) * (layout.baseline - layout.top), 2)];
+}
+
+/** Solid bars from the baseline, each its group's colour. */
+function drawBars(sheet: Sheet, layout: Row, items: readonly { readonly value: number; readonly group?: number | undefined }[], width: number, fallback: string): void {
   const { context } = sheet;
-  const span = layout.baseline - layout.top;
   const indexed = items.map((item, index) => ({ ...item, index }));
-  const cap = clamp(width * 0.12, 3, 5);
   for (const [colour, bars] of byGroup(indexed, fallback)) {
-    const tops: [number, number][] = [];
     context.beginPath();
     for (const item of bars) {
-      const x = layout.left + (item.index + 0.5) * layout.slot - width / 2;
-      // A height of 0 keeps a stub, so its slot still shows where it stands.
-      const top = layout.baseline - Math.max(unit(item.value) * span, 2);
+      const [x, top] = barAt(layout, item.index, item.value, width);
       bar(context, x, width, layout.baseline, top, Math.min(6, width / 3));
-      tops.push([x, top]);
     }
-    if (!capped) {
-      context.fillStyle = colour;
-      context.fill();
-      continue;
-    }
-    context.fillStyle = mixHex(colour, palette.ground, 0.72);
+    context.fillStyle = colour;
+    context.fill();
+  }
+}
+
+/** A tower's tint of its colour, mixed toward the ground: palest for the shortest tower, deepest for the tallest. */
+const TOWER_TINT = { palest: 0.86, deepest: 0.4 } as const;
+
+/**
+ * Towers from the baseline, each a tint of its group's colour under a cap of the full colour, so
+ * the beams above stay the loudest thing drawn and the cap alone shows the height at 3:1. A
+ * tower's height is drawn as given; only its tint is relative, deeper the taller it stands among
+ * the frame's towers, so towers of nearly equal height still tell apart.
+ */
+function drawTowerBars(sheet: Sheet, layout: Row, towers: TowersFrame["towers"], width: number): void {
+  const { context } = sheet;
+  const cap = clamp(width * 0.12, 3, 5);
+  const shades = relativeInRows(towers, () => 0, (tower) => tower.height);
+  towers.forEach((tower, index) => {
+    const colour = groupColour(tower.group, palette.tower);
+    const [x, top] = barAt(layout, index, tower.height, width);
+    context.beginPath();
+    bar(context, x, width, layout.baseline, top, Math.min(6, width / 3));
+    context.fillStyle = mixHex(colour, palette.ground, TOWER_TINT.palest - (TOWER_TINT.palest - TOWER_TINT.deepest) * (shades[index] ?? 0.5));
     context.fill();
     context.save();
     context.clip();
-    context.beginPath();
-    for (const [x, top] of tops) context.rect(x, top, width, cap);
     context.fillStyle = colour;
-    context.fill();
+    context.fillRect(x, top, width, cap);
     context.restore();
-  }
+  });
 }
 
 function drawTowers(sheet: Sheet, frame: TowersFrame): void {
   const { context } = sheet;
   const count = frame.towers.length;
-  const valid = frame.beams.filter((beam) => beam.from < count && beam.to < count && beam.weight > 0);
+  // The beams from one tower are its row: each beam's strength is its place within that row's range.
+  const joined = frame.beams.filter((beam) => beam.from < count && beam.to < count);
+  const strengths = relativeInRows(joined, (beam) => beam.from, (beam) => beam.weight);
+  const valid = joined.map((beam, index) => ({ ...beam, strength: strengths[index] ?? 0.5 })).filter((beam) => beam.weight > 0);
   const widestSpan = Math.max(0, ...valid.map((beam) => Math.abs(beam.from - beam.to)));
   // Room above the tallest tower for the widest beam's arc, or for a beam's loop back to its own tower.
   const layout = row(
@@ -331,16 +386,15 @@ function drawTowers(sheet: Sheet, frame: TowersFrame): void {
   const arcRoom = layout.top - sheet.box.y;
 
   drawBaseline(sheet, layout, palette.rule);
-  drawBars(sheet, layout, frame.towers.map((tower) => ({ value: tower.height, group: tower.group })), width, palette.tower, true);
+  drawTowerBars(sheet, layout, frame.towers, width);
 
-  // Beams, faintest first so the strongest lie on top; each one's weight is its width and its opacity.
+  // Beams, faintest first so the strongest lie on top; each one's strength in its row is its width and its opacity.
   const scale = clamp(layout.slot / 48, 0.6, 1.25);
-  const order = [...valid].sort((a, b) => a.weight - b.weight);
+  const order = [...valid].sort((a, b) => a.strength - b.strength);
   context.lineCap = "round";
   for (const beam of order) {
-    const weight = unit(beam.weight);
-    context.globalAlpha = 0.1 + 0.8 * weight;
-    context.lineWidth = (0.7 + 3.3 * weight) * scale;
+    context.globalAlpha = 0.1 + 0.8 * beam.strength;
+    context.lineWidth = (0.7 + 3.3 * beam.strength) * scale;
     context.strokeStyle = groupColour(beam.group, GROUP_COLOURS[0]);
     context.beginPath();
     const [x0, x1] = [centre(beam.from), centre(beam.to)];
@@ -381,7 +435,7 @@ function drawCharts(sheet: Sheet, frame: ChartsFrame): void {
   context.lineWidth = 1;
   context.strokeStyle = palette.rule;
   context.stroke();
-  drawBars(sheet, layout, frame.bars, Math.min(layout.slot * 0.6, 64), GROUP_COLOURS[0], false);
+  drawBars(sheet, layout, frame.bars, Math.min(layout.slot * 0.6, 64), GROUP_COLOURS[0]);
   drawBaseline(sheet, layout, palette.quiet);
   drawLabels(sheet, layout, labels);
 }
@@ -425,7 +479,8 @@ function drawGrid(sheet: Sheet, frame: GridFrame): void {
   context.stroke();
 }
 
-// Network: edges as lines weighted by weight, nodes as circles sized and filled by value.
+// Network: edges as lines weighted by their strength among the edges from the same node, nodes as
+// circles sized and filled by value.
 
 function drawNetwork(sheet: Sheet, frame: NetworkFrame): void {
   const { context, text } = sheet;
@@ -441,15 +496,17 @@ function drawNetwork(sheet: Sheet, frame: NetworkFrame): void {
     field.y + inset + unit(node.y) * (field.h - 2 * inset - (labelled ? text : 0)),
   ];
   const scale = clamp(base / 8, 0.6, 1.4);
-  const edges = frame.edges.filter((edge) => edge.from < frame.nodes.length && edge.to < frame.nodes.length).sort((a, b) => a.weight - b.weight);
+  // The edges from one node are its row, as a tower's beams are; the faintest are drawn first.
+  const joined = frame.edges.filter((edge) => edge.from < frame.nodes.length && edge.to < frame.nodes.length);
+  const strengths = relativeInRows(joined, (edge) => edge.from, (edge) => edge.weight);
+  const edges = joined.map((edge, index) => ({ ...edge, strength: strengths[index] ?? 0.5 })).sort((a, b) => a.strength - b.strength);
   context.lineCap = "round";
   context.strokeStyle = palette.edge;
   for (const edge of edges) {
     const [from, to] = [frame.nodes[edge.from], frame.nodes[edge.to]];
     if (!from || !to) continue;
-    const weight = unit(edge.weight);
-    context.globalAlpha = 0.16 + 0.64 * weight;
-    context.lineWidth = (0.6 + 2.8 * weight) * scale;
+    context.globalAlpha = 0.16 + 0.64 * edge.strength;
+    context.lineWidth = (0.6 + 2.8 * edge.strength) * scale;
     context.beginPath();
     context.moveTo(...point(from));
     context.lineTo(...point(to));

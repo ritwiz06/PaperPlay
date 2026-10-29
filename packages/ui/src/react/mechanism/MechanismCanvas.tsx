@@ -1,6 +1,7 @@
 import type { MechanismFrame } from "@paperplay/contracts";
-import { useLayoutEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
-import { drawMechanismFrame, type CanvasSize } from "./draw.ts";
+import { useId, useLayoutEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
+import { drawMechanismFrame, kitLegend, type CanvasSize } from "./draw.ts";
+import { mechanismPalette } from "./palette.ts";
 
 export interface MechanismCanvasProps {
   /** The frame to draw, already parsed by the caller against its kit. */
@@ -10,19 +11,34 @@ export interface MechanismCanvasProps {
   readonly className?: string;
 }
 
-const HOST: CSSProperties = { position: "relative", width: "100%", height: "100%", minHeight: 0 };
+const FRAME: CSSProperties = { display: "flex", flexDirection: "column", width: "100%", height: "100%", minHeight: 0 };
+const HOST: CSSProperties = { position: "relative", flex: "1 1 auto", minHeight: 0 };
 const CANVAS: CSSProperties = { position: "absolute", inset: 0, width: "100%", height: "100%", display: "block" };
+/** Quiet words on the ground, at AA, under the drawing and never over it. */
+const LEGEND: CSSProperties = {
+  flex: "none",
+  margin: 0,
+  padding: "4px 14px 6px",
+  background: mechanismPalette.ground,
+  color: mechanismPalette.quiet,
+  fontSize: "0.8125rem",
+  lineHeight: 1.35,
+  textAlign: "center",
+};
 
 /**
  * A generated mechanism's frame, drawn in its scene kit (ADR-0058). It fills its container and
  * draws each frame it is given exactly once, at the screen's pixel density. It never animates on
- * its own: every frame comes from the caller, so under reduced motion the caller sends fewer.
+ * its own: every frame comes from the caller, so under reduced motion the caller sends fewer. A kit
+ * that shades within each row, towers or a network, says so in a line under the drawing.
  */
 export function MechanismCanvas({ frame, label, className }: MechanismCanvasProps) {
   const host = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const size = useCanvasSize(host);
   const fonts = useFontsLoaded();
+  const legendId = useId();
+  const legend = kitLegend(frame.kit);
 
   useLayoutEffect(() => {
     const element = canvas.current;
@@ -37,8 +53,15 @@ export function MechanismCanvas({ frame, label, className }: MechanismCanvasProp
   }, [frame, size, fonts]);
 
   return (
-    <div ref={host} className={className} style={HOST} data-kit={frame.kit}>
-      <canvas ref={canvas} role="img" aria-label={label} style={CANVAS} />
+    <div className={className} style={FRAME}>
+      <div ref={host} style={HOST} data-kit={frame.kit}>
+        <canvas ref={canvas} role="img" aria-label={label} aria-describedby={legend ? legendId : undefined} style={CANVAS} />
+      </div>
+      {legend ? (
+        <p id={legendId} className="mechanism-legend" style={LEGEND}>
+          {legend}
+        </p>
+      ) : null}
     </div>
   );
 }

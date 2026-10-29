@@ -3,7 +3,7 @@ import { join } from "node:path";
 import type { MechanismFrame } from "@paperplay/contracts";
 import { describe, expect, it } from "vitest";
 import { contrastRatio, relativeLuminance } from "../src/stage-core/color.ts";
-import { drawMechanismFrame, MECHANISM_FONT_STACK } from "../src/react/mechanism/draw.ts";
+import { drawMechanismFrame, kitLegend, MECHANISM_FONT_STACK, relativeInRows } from "../src/react/mechanism/draw.ts";
 import { GROUP_COLOURS, mechanismPalette, rampTable } from "../src/react/mechanism/palette.ts";
 import { tokens } from "../src/tokens.ts";
 
@@ -60,6 +60,37 @@ const count = (calls: readonly Call[], name: string): number => calls.filter((ca
 /** Paint calls in some colour other than the ground's: the kit drew something of the frame. */
 const painted = (calls: readonly Call[]): number =>
   calls.filter((call) => PAINTS.has(call.name) && ((call.name.startsWith("fill") && call.fill !== tokens.cream) || (call.name.startsWith("stroke") && call.stroke !== tokens.cream))).length;
+
+/** The opacity and width in force at each stroke of a path that drew `mark`: a beam's curve, an edge's line. */
+function strokes(calls: readonly Call[], mark: string): { alpha: number; width: number }[] {
+  const found: { alpha: number; width: number }[] = [];
+  let [alpha, width, marked] = [1, 1, false];
+  for (const call of calls) {
+    if (call.name === "set globalAlpha") alpha = Number(call.args[0]);
+    else if (call.name === "set lineWidth") width = Number(call.args[0]);
+    else if (call.name === mark) marked = true;
+    else if (call.name === "stroke" && marked) {
+      found.push({ alpha, width });
+      marked = false;
+    }
+  }
+  return found;
+}
+
+/** Each stroke's opacity and width, held to nine places, so a row's float rounding does not count. */
+const rounded = (found: readonly { alpha: number; width: number }[]): { alpha: number; width: number }[] => found.map(({ alpha, width }) => ({ alpha: Number(alpha.toFixed(9)), width: Number(width.toFixed(9)) }));
+
+/** Four towers of these heights, and beams from the first to the other three with these weights. */
+const row = (weights: readonly number[], heights: readonly number[] = [0.5, 0.5, 0.5, 0.5]): MechanismFrame => ({
+  kit: "towers",
+  frame: { towers: heights.map((height) => ({ height })), beams: weights.map((weight, index) => ({ from: 0, to: index + 1, weight })) },
+});
+
+/** Four nodes, and edges from the first to the other three with these weights. */
+const fan = (weights: readonly number[]): MechanismFrame => ({
+  kit: "network",
+  frame: { nodes: [0, 1, 2, 3].map((index) => ({ x: index / 3, y: 0.5, value: 0.5 })), edges: weights.map((weight, index) => ({ from: 0, to: index + 1, weight })) },
+});
 
 function deepFreeze<T>(value: T): T {
   if (value && typeof value === "object") {
@@ -210,6 +241,86 @@ describe("the generic scene kits (ADR-0058)", () => {
   it("skip a beam or an edge that joins something that is not there, rather than throw", () => {
     expect(() => draw({ kit: "towers", frame: { towers: [{ height: 1 }], beams: [{ from: 0, to: 3, weight: 1 }] } })).not.toThrow();
     expect(() => draw({ kit: "network", frame: { nodes: [{ x: 0, y: 0, value: 0 }], edges: [{ from: 0, to: 9, weight: 1 }] } })).not.toThrow();
+  });
+});
+
+describe("brightness within each row's own range (render-only)", () => {
+  it("place each weight within its row, from 0 at the row's lowest to 1 at its highest, and an even row at the middle", () => {
+    const items = [
+      { row: 0, weight: 0.1 },
+      { row: 0, weight: 0.11 },
+      { row: 0, weight: 0.12 },
+      { row: 1, weight: 0.4 },
+      { row: 1, weight: 0.4 },
+      { row: 2, weight: 0.9 },
+    ];
+    const places = relativeInRows(items, (item) => item.row, (item) => item.weight);
+    expect(places[0]).toBe(0);
+    expect(places[1]).toBeCloseTo(0.5, 9);
+    expect(places[2]).toBe(1);
+    expect(places.slice(3)).toEqual([0.5, 0.5, 0.5]);
+  });
+
+  it("draw the strongest beam of a row of 0.10, 0.11 and 0.12 as bright and as wide as the strongest of 0.1, 0.5 and 0.9", () => {
+    const close = strokes(draw(row([0.1, 0.11, 0.12])), "bezierCurveTo");
+    const spread = strokes(draw(row([0.1, 0.5, 0.9])), "bezierCurveTo");
+    expect(close).toHaveLength(3);
+    expect(rounded(close)).toEqual(rounded(spread));
+    const [faintest, , strongest] = close;
+    expect(strongest?.alpha).toBeCloseTo(0.9, 9);
+    expect(faintest?.alpha).toBeCloseTo(0.1, 9);
+    expect(strongest?.width ?? 0).toBeGreaterThan(faintest?.width ?? Infinity);
+  });
+
+  it("draw the strongest edge from a node as bright as the strongest of a wider row, in a network", () => {
+    const close = strokes(draw(fan([0.2, 0.21, 0.22])), "lineTo");
+    expect(close).toHaveLength(3);
+    expect(rounded(close)).toEqual(rounded(strokes(draw(fan([0, 0.5, 1])), "lineTo")));
+    expect(close.at(-1)?.alpha).toBeCloseTo(0.8, 9);
+  });
+
+  it("keep each tower's height as given, and shade it within the range of the frame's towers", () => {
+    const tops = (calls: readonly Call[]): unknown[] => calls.filter((call) => call.name === "arcTo").flatMap((call, index) => (index % 2 === 0 ? [call.args[1]] : []));
+    const fills = (calls: readonly Call[]): unknown[] => calls.filter((call) => call.name === "fill").map((call) => call.fill);
+    const [wide, close] = [draw(row([0.5, 0.5, 0.5], [0.2, 0.5, 0.8, 0.35])), draw(row([0.5, 0.5, 0.5], [0.5, 0.51, 0.52, 0.505]))];
+    // A height of 0.5 stands at the same top in both frames: heights are never stretched to the range.
+    expect(tops(wide)[1]).toBe(tops(close)[0]);
+    expect(tops(wide)[2]).not.toBe(tops(close)[2]);
+    // The shortest and the tallest take the palest and the deepest tint in both.
+    expect(fills(wide)).toHaveLength(4);
+    expect([fills(wide)[0], fills(wide)[2]]).toEqual([fills(close)[0], fills(close)[2]]);
+    expect(fills(wide)[0]).not.toBe(fills(wide)[2]);
+  });
+
+  it("draw a row of equal weights, and towers of equal height, at the middle and without error", () => {
+    expect(() => draw(row([0.3, 0.3, 0.3]))).not.toThrow();
+    const even = strokes(draw(row([0.3, 0.3, 0.3])), "bezierCurveTo");
+    expect(even).toHaveLength(3);
+    for (const beam of even) {
+      expect(beam.alpha).toBeCloseTo(0.5, 9);
+      expect(Number.isFinite(beam.width)).toBe(true);
+    }
+    expect(new Set(even.map((beam) => beam.width)).size).toBe(1);
+    const fills = draw(row([0.3, 0.3, 0.3])).filter((call) => call.name === "fill").map((call) => call.fill);
+    expect(new Set(fills).size).toBe(1);
+    const edges = strokes(draw(fan([0.4, 0.4, 0.4])), "lineTo");
+    expect(edges).toHaveLength(3);
+    for (const edge of edges) expect(edge.alpha).toBeCloseTo(0.48, 9);
+  });
+
+  it("[R02] never write to a frame it shades within its rows, nor reorder its beams or edges", () => {
+    for (const frame of [row([0.12, 0.1, 0.11], [0.3, 0.31, 0.32, 0.3]), row([0.3, 0.3, 0.3]), fan([0.22, 0.2, 0.21])]) {
+      const before = structuredClone(frame);
+      const frozen = deepFreeze(structuredClone(frame));
+      expect(() => draw(frozen)).not.toThrow();
+      expect(frozen).toEqual(before);
+    }
+  });
+
+  it("say so under the towers and the network, and under no other kit", () => {
+    expect(kitLegend("towers")).toMatch(/^Brightness shows each tower's beams relative to that tower's own range/);
+    expect(kitLegend("network")).toMatch(/^Brightness shows each node's edges relative to that node's own range/);
+    for (const kit of ["particles", "grid", "landscape", "charts"] as const) expect(kitLegend(kit)).toBeNull();
   });
 });
 

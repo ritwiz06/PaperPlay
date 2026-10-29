@@ -34,7 +34,7 @@ import {
   type MapLevel,
   type StageDriver,
 } from "@paperplay/ui/react";
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import type { BuiltWorld } from "@paperplay/pipeline";
 import { openFork, type Fork, type ForkSnapshot } from "../world/fork.ts";
 import type { PlayableWorld, PlaySession } from "../worlds/types.ts";
@@ -152,7 +152,17 @@ const capitalise = (text: string): string => text.charAt(0).toUpperCase() + text
 /** A unit after a number, with its space; nothing for a pure number, which a learning toy's loss is (ADR-0047). */
 const unitAfter = (unit: string): string => (unit === "dimensionless" ? "" : ` ${unit}`);
 
-export function HookWorld({ play }: { readonly play: PlayableWorld }) {
+export interface HookWorldProps {
+  readonly play: PlayableWorld;
+  /**
+   * A note about the world itself, such as a job's levels still arriving: it sits in the HUD's top
+   * row, where the stage's drawing leaves room for it, and steps aside while the journal is open.
+   * The fork covers the HUD, the note with it.
+   */
+  readonly notice?: ReactNode;
+}
+
+export function HookWorld({ play, notice: worldNotice }: HookWorldProps) {
   const WORLD = play.world;
   const LEVELS = WORLD.levels;
   /** The world's time unit in words, for its fork's chart and readings. */
@@ -538,6 +548,12 @@ export function HookWorld({ play }: { readonly play: PlayableWorld }) {
               <span className="btn-text">Journal</span>
             </button>
           </div>
+
+          {worldNotice ? (
+            <div className="hud-notice" data-hud data-hud-frame>
+              {worldNotice}
+            </div>
+          ) : null}
         </header>
 
         <div className="hud-bottom">

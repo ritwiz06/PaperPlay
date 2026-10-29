@@ -67,6 +67,7 @@ export const SCENE_KITS: readonly SceneKitManifest[] = Object.freeze([
     disclosures: Object.freeze([
       "The drawing is the module's own picture of its state: it places and scales every shape itself, from 0 to 1, and the shell draws what it is given.",
       "Colours mark groups the module names; they carry no meaning beyond it.",
+      "Brightness shows each row's weights relative to that row's own range. A row is the beams from one tower, or the edges from one node; towers are shaded relative to one another, and every height is drawn as given.",
     ]) as string[],
   }),
 ]);
