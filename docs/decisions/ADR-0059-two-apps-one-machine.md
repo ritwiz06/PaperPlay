@@ -1,6 +1,6 @@
 # ADR-0059: Two apps on one machine
 
-- Status: accepted. The owner, 2026-10-28: PaperPlay runs on the same Mac as another app, Replay
+- Status: accepted, amended 2026-10-29 (one endpoint). The owner, 2026-10-28: PaperPlay runs on the same Mac as another app, Replay
   World, and must never collide with it; the ports, the address, the start-up message, the stop
   command, the gate's wait and the README section below are the owner's list.
 - Date: 2026-10-28
@@ -49,3 +49,20 @@ loaded the machine.
   busy message names it as PaperPlay's and gives the `kill` that stops it.
 - The browser tests' development server still proxies `/api` to `PAPERPLAY_API_PORT`; the tests
   answer every API call they rely on themselves.
+
+## Amendment, 2026-10-29: one endpoint
+
+The owner: "why 2 different end points needed, put them under 1 only". They were two servers for
+history's sake: the API holds the gateway's key and runs jobs, and the public site is a static build
+with no API; on this machine the app reached the API through a proxy, so a browser only ever used the
+app's port, but starting PaperPlay took two commands and two ports. Now:
+
+- **`npm run dev` is the whole of PaperPlay, one process on one port** (`PAPERPLAY_WEB_PORT`, 5180):
+  the web app's development server hands every request under `/api` to the API in the same process
+  (`apps/api/src/dev.ts`, through Fastify's `routing`), with recorded model calls; no proxy and no
+  second server.
+- **`npm run pipeline:live -- serve`** starts the same server from `pipeline:live`, its API making
+  live calls, recorded; a live client is still refused anywhere else (ADR-0030).
+- `npm run dev:api` remains, the API alone on `PAPERPLAY_API_PORT` (8787), for a tool such as curl.
+- The gateway's key stays in `apps/api/.env` and in the server's Node process, never in a page: the
+  development server serves no `.env` file, and the production build holds no API at all.

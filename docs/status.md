@@ -1,6 +1,6 @@
 # Status
 
-Updated 2026-10-28: two apps on one machine; the Attention run's fixes ([log](sessions/2026-10-28.md)).
+Updated 2026-10-29: PaperPlay on one endpoint ([log](sessions/2026-10-29.md)).
 A snapshot, rewritten every session and kept under 80 lines; history is in
 [progress.md](progress.md) and the session logs.
 
@@ -8,12 +8,13 @@ A snapshot, rewritten every session and kept under 80 lines; history is in
 
 - **Gate:** G2 Verified authored world is current, tagged `v0.2.0` at `b37c7dc`; G1 is `v0.1.0`.
   Next: G3, whose gate is the attention family's first generated world, BERT (ADR-0052).
-- **Working commit:** `80eb6e3`, the branch's last code commit, landed on `main` with this status.
+- **Working commit:** `b7df53c`, the branch's last code commit, landed on `main` with this status.
 - **Purpose:** any paper, on its own, a playable world in 10 to 20 minutes (ADR-0058): verified
   families the high-trust path, the generated tier for everything else; the 34 AI and ML papers first.
-- **Running PaperPlay** (ADR-0059): the web app at http://127.0.0.1:5180, the API at 127.0.0.1:8787,
-  set by `PAPERPLAY_WEB_PORT` and `PAPERPLAY_API_PORT`; every server on 127.0.0.1, never "localhost";
-  `npm run stop` stops PaperPlay's own servers and runs and nothing else. Replay World keeps 5173.
+- **Running PaperPlay** (ADR-0059 and its amendment): `npm run dev`, one process on one port, the app
+  at http://127.0.0.1:5180 and its API at `/api`; `npm run pipeline:live -- serve` the same with live
+  calls; every server on 127.0.0.1, never "localhost"; `npm run stop` stops PaperPlay's own servers
+  and runs and nothing else. Replay World keeps 5173.
 - **The generated tier** (ADR-0058 and its amendment): glm-5-3 writes a paper's mechanism as a module,
   each parameter saying what the paper means by it; checked in a sandbox, never restating the paper's
   results; levels from What-ifs as the paper means them; its own reviewer replaces a level whose
@@ -57,5 +58,5 @@ axe test's first frame missed its 5 s under load, passing alone. `npm run land` 
 
 ## Recommendations
 
-1. **Use http://127.0.0.1:5180**, not localhost, and `npm run stop` before switching branches.
+1. **Use http://127.0.0.1:5180**, not localhost; `npm run dev` is all it takes.
 2. **Download Kermack and McKendrick 1927 in a browser.**
