@@ -15,8 +15,8 @@
  *            eval/bakeoff/design.json and eval/models.md again
  *   rescore  replays the recorded bake-off under today's scoring, calling nothing
  *   report   rewrites eval/models.md from the saved results, calling nothing
- *   serve    the API on 127.0.0.1 with live model calls, recorded (or replayed when recorded
- *            already), for /create on this machine
+ *   serve    PaperPlay on 127.0.0.1 and PAPERPLAY_WEB_PORT, as `npm run dev` serves it, its API at
+ *            /api making live model calls, recorded (or replayed when recorded already)
  *   job      `job <source> [--fresh]`: one job, with no server, as /create would start it (an arXiv id
  *            with its version or a PMCID), its events and artifacts kept in apps/api/data/jobs/; a
  *            paper made before under today's rules is served from the cache unless --fresh, which
@@ -36,8 +36,8 @@
  *            router on it, recorded; writes eval/routing/corpus-routes.json, the router's family,
  *            tier and reason for each, and what ingest read, never the paper's text (ADR-0052)
  *
- * Every run is recorded as one of PaperPlay's, so `npm run stop` stops it (ADR-0059); `serve` listens
- * on 127.0.0.1 and PAPERPLAY_API_PORT, as the API does.
+ * Every run is recorded as one of PaperPlay's, so `npm run stop` stops it (ADR-0059); `serve` is the
+ * web app's own server, its API inside it, on one port.
  *
  * With --background, any command runs detached from the terminal (ADR-0051): its output goes to
  * apps/api/data/live/<time>-<command>.log, and <time>-<command>.json says what ran, when it began,
@@ -59,8 +59,6 @@ import { liveClient } from "../apps/api/src/models/live.ts";
 import { pipelineRunner } from "../apps/api/src/runner.ts";
 import { worldCache } from "../apps/api/src/cache.ts";
 import { JobStore, parseSource } from "../apps/api/src/jobs.ts";
-import { listen } from "../apps/api/src/listen.ts";
-import { buildServer } from "../apps/api/src/server.ts";
 import { runDesignBakeoff, type DesignResults } from "./bakeoff/design.ts";
 import { rankReaders, toModelsMarkdown, transcriberPair } from "./bakeoff/report.ts";
 import { agreement, CANDIDATES, runBakeoff, type BakeoffResults } from "./bakeoff/run.ts";
@@ -213,13 +211,13 @@ async function report(): Promise<void> {
 
 /** The API with live calls, recorded as they are made, so a job run here can be replayed by dev:api and the tests; a call already recorded is replayed. */
 async function serve(): Promise<void> {
-  const config = loadModelConfig();
-  const missing = Object.entries(config.stages).filter(([, model]) => model === null).map(([stage]) => stage);
-  if (missing.length > 0) throw new Error(`apps/api/models.json names no model for ${missing.join(", ")}; the bake-off chooses them (eval/models.md)`);
-  // A call already recorded is replayed, so a job run again is the same job, at once.
-  const client = resumingClient(liveClient(config), directoryStore(RECORDINGS));
-  const app = buildServer({ runner: pipelineRunner(client, config, outboundFetch()) });
-  await listen(app, "api live", "live model calls, recorded");
+  // The whole of PaperPlay on one port, as `npm run dev` serves it, its API at /api making live
+  // calls, recorded as they are made; a call already recorded is replayed (ADR-0059's amendment).
+  process.env["PAPERPLAY_API_CALLS"] = "live";
+  const { createServer } = await import("vite");
+  const web = join(import.meta.dirname, "..", "apps", "web");
+  const server = await createServer({ root: web, configFile: join(web, "vite.config.ts") });
+  await server.listen();
 }
 
 /** Recordings a fresh job makes, kept apart, so the committed ones the bake-offs replay are never overwritten. */

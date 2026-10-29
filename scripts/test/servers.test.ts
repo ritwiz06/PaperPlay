@@ -4,7 +4,6 @@ import { createServer as listenOn, type Server } from "node:net";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { buildServer } from "../../apps/api/src/server.ts";
 import { waitForQuietMachine, type MachineProbe } from "../machine/load.ts";
 import { HOST, portOf } from "../machine/ports.ts";
 import { busyMessage, commandOf, stopServers } from "../machine/servers.ts";
@@ -53,7 +52,7 @@ describe("ports from settings (ADR-0059)", () => {
     expect(`${api.stdout}${api.stderr}`).not.toMatch(/^\s+at /m);
     const web = spawnSync(process.execPath, [join(root, "node_modules", "vite", "bin", "vite.js")], { cwd: join(root, "apps", "web"), env: { ...process.env, PAPERPLAY_WEB_PORT: String(port), VITEST: "" }, encoding: "utf8", timeout: 30_000 });
     expect(web.status).toBe(1);
-    expect(web.stderr).toContain(`PaperPlay cannot start the web app: port ${port} is in use.`);
+    expect(web.stderr).toContain(`PaperPlay cannot start the web app and its API: port ${port} is in use.`);
     expect(`${web.stdout}${web.stderr}`).not.toMatch(/^\s+at /m);
   }, 60_000);
 
@@ -63,25 +62,23 @@ describe("ports from settings (ADR-0059)", () => {
     expect(message).toContain("It is not a PaperPlay server; PaperPlay leaves it alone.");
   });
 
-  it("let the web app reach the API through its proxy, both on 127.0.0.1 and the ports set", async () => {
-    const [web, api] = [await freePort(), await freePort()];
+  it("serve the web app and its API on one port, the API at /api in the same process, on 127.0.0.1", async () => {
+    const web = await freePort();
     process.env["PAPERPLAY_WEB_PORT"] = String(web);
-    process.env["PAPERPLAY_API_PORT"] = String(api);
-    const backend = buildServer({ dataFolder: null });
-    await backend.listen({ host: HOST, port: api });
     const { createServer } = await import("vite");
     const frontend = await createServer({ root: join(root, "apps", "web"), configFile: join(root, "apps", "web", "vite.config.ts"), logLevel: "silent" });
     try {
       await frontend.listen();
       expect(frontend.config.server.host).toBe(HOST);
       expect(frontend.config.server.strictPort).toBe(true);
-      const answer = await fetch(`http://${HOST}:${web}/api/health`);
-      expect(await answer.json()).toEqual({ status: "ok" });
+      expect(frontend.config.server.proxy).toBeUndefined();
+      expect(await (await fetch(`http://${HOST}:${web}/api/health`)).json()).toEqual({ status: "ok" });
+      expect(await (await fetch(`http://${HOST}:${web}/api/jobs`)).json()).toEqual({ jobs: [] });
+      // The API's key lives in this process now, never in a page: the server serves no .env file.
+      expect((await fetch(`http://${HOST}:${web}/@fs${join(root, "apps", "api", ".env.example")}`)).status).toBe(403);
     } finally {
       await frontend.close();
-      await backend.close();
       delete process.env["PAPERPLAY_WEB_PORT"];
-      delete process.env["PAPERPLAY_API_PORT"];
     }
   }, 60_000);
 });
