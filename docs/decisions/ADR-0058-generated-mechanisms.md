@@ -178,3 +178,32 @@ What changed:
 Not done, as the table does not support them: fix rounds that patch only the failing functions,
 and a scaffold per kit for the writer to fill. Time went to prose before the code, not to the code's
 size or to fixing it.
+
+## Third amendment, 2026-10-29: the rerun's failures
+
+The nine papers rerun with the second amendment's fixes (`eval/runs/2026-10-29-prebuild-1793265086176.json`)
+made four worlds: Attention, BERT, ZeRO and Tree of Thoughts. Every paper that reached the writers
+got a module that passed its checks; the writer's time is no longer the failure. The five others:
+
+1. **Sixteen heads** released five levels, then failed: a replacement level's words were refused
+   twice ("You drag the training rate up, so …", a verb `mendTo` did not read), and that ended the job.
+   Now `mendTo` reads any verb in the learner's move; a replacement whose words do not come gives way
+   to the next candidate, two at most; words a reviewer blocked that cannot be written again drop
+   their level, or leave the hook to the owner. A level never ends the job.
+2. **Scaling Laws** was routed to the compartment family, whose transcriber ran out of its 420 s.
+   A family's transcription that does not come in time now sends the paper on to the generated tier,
+   within the tier's own 20 minutes from the job's start.
+3. **DDPM**: one planner chose five levels from four candidates, one twice; the other named a
+   candidate, "c3", it was not shown; the repair asked the first, which answered the same. A
+   candidate named twice or not shown is now left out when three remain, and the repair asks the
+   planner whose picks came closest.
+4. **DDIM**: five of nine findings' quotes did not anchor, as the reader wrote the paper's
+   mathematics differently ("$dim(au)$" for "$\dim(\tau)$", LaTeX mangled as JSON; "$10$" for
+   "$10 \times$"). A quote is now also found by its prose, the letters and digits outside `$…$`, at
+   least 30 of them; the anchor still quotes the source's own text. The model bake-off scores by
+   whole quotes, in its readings and its transcriptions (`QuoteRule`).
+5. **Classifier-free guidance**, not fixed yet: the module declared w=0 as "the unconditional model
+   only", where the paper means the conditional model alone. The reviewer rightly blocked the hook;
+   the declaration flows into each candidate's brief, so rewording the level cannot clear it. The
+   repair it needs is a module fix round with the reviewer's finding, then the checks and levels
+   again: the next session's.
