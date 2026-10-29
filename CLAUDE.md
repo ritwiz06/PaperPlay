@@ -22,7 +22,10 @@ Before stopping, update:
 Commit docs separately as "docs: …". `npm run check:docs`, which `check:gate` runs, fails when the docs drift from the repository. Docs take about ten minutes a session: update only the parts of status, roadmap and requirements that changed, keep the session log short, and add a concept only when one is new.
 
 ## Commands (Windows PowerShell first; use `npm.cmd` if `npm.ps1` is blocked)
-- `npm run dev` — web app (Vite) · `npm run dev:api` — Fastify API
+- `npm run dev` — the whole app, one process on one port: the web app and its API at `/api`, with recorded model calls; open http://127.0.0.1:5180 (ADR-0059)
+- `npm run pipeline:live -- serve` — the same, its API making live model calls, recorded as they are made
+- `npm run stop` — stops PaperPlay's own servers and background runs, and nothing else
+- `npm run dev:api` — a bare API on its own port, only for tools such as curl; the app never needs it
 - `npm run typecheck` · `npm run lint` · `npm run test` (Vitest) · `npm run test:e2e` (Playwright)
 - `npm run test:affected` — while developing: the Vitest tests related to what changed since main, and the Playwright specs for the routes it touches; the full gate runs only inside land (ADR-0051)
 - `npm run sweeps:cache` — records the sweeps' input and output hashes after a change to their inputs (ADR-0051)
