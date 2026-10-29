@@ -14,7 +14,8 @@
     "explainer": 32000,
     "reviewer": 32000,
     "second-reviewer": 32000,
-    "writer": 32000
+    "writer": 32000,
+    "second-writer": 32000
   },
   "thinking": {
     "reader": false,
@@ -26,7 +27,8 @@
     "explainer": false,
     "reviewer": true,
     "second-reviewer": true,
-    "writer": false
+    "writer": false,
+    "second-writer": false
   },
   "deadline": {
     "jobMs": 900000,
@@ -41,7 +43,8 @@
       "explainer": 180000,
       "reviewer": 240000,
       "second-reviewer": 240000,
-      "writer": 420000
+      "writer": 420000,
+      "second-writer": 420000
     }
   },
   "stages": {
@@ -54,7 +57,8 @@
     "explainer": "kimi-k2-7-code",
     "reviewer": "inkling-small",
     "second-reviewer": "qwen38-27b",
-    "writer": "glm-5-3"
+    "writer": "glm-5-3",
+    "second-writer": "qwen3-coder-next"
   },
   "excluded": {
     "asOf": "2026-10-16",

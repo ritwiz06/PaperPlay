@@ -46,7 +46,7 @@ export const MECHANISM_WRITER_INSTRUCTIONS = [
   "- network: { nodes: [{ x, y, value, label, group }], edges: [{ from, to, weight }] }; a graph, a layered network.",
   "- landscape: { heights: [[…], …], marks: [{ x, y, label, group }] }, 2 to 64 rows of equal length; a surface with points on it, such as a loss and an optimiser.",
   "- charts: { bars: [{ label, value, group }] }; amounts side by side, when nothing above fits.",
-  "Answer with the module alone, in one ```javascript block, and nothing after it.",
+  "Begin your reply with ```javascript and end it with the closing ```: the module alone, with no plan, notes or explanation before or after it. Every word before the code costs the learner time; plan in your head, or in a short comment.",
   "If the paper has no mechanism a learner could honestly play with, such as a survey, a benchmark or a theorem with no dynamics, or its mechanism cannot be simulated without inventing its outcomes, such as agents whose behaviour only a language model could produce, answer exactly NO MECHANISM: and one sentence why.",
 ].join("\n");
 

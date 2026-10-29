@@ -16,7 +16,7 @@ import { CandidatePicks, pickerMessages, pickLevels, planFromPicks, PICKER_MAX_T
 import { checkProvenance } from "../checks/provenance.ts";
 import { judgeMechanismCandidates, sweepMechanism } from "../mechanism/candidates.ts";
 import { resultNumbersOf } from "../mechanism/checks.ts";
-import { writeCheckedMechanism, type WriterRound } from "../mechanism/loop.ts";
+import { writeCheckedMechanism, type WriterOutcome, type WriterRound } from "../mechanism/loop.ts";
 import { completeStructured, ModelError, type ModelClient, type Stage } from "../models/index.ts";
 import { checkFindings } from "../rule/findings.ts";
 import { reword, writeLevel, writeWorld, type ExplainedLevel, type WrittenLevel } from "../stages/explainer.ts";
@@ -93,6 +93,13 @@ function explainerPage(ctx: TierContext, reading: Reading | null, why: string): 
   };
 }
 
+/** A writer still planning at this share of its call's time is ended (ADR-0058's second amendment). */
+const PLANNING_SHARE = 0.5;
+/** A module's usual length, in characters, for judging whether a writer's pace can finish one. */
+const MODULE_CHARS = 9_000;
+/** How many checks an outcome's last module failed, a failure with no module counting as all of them. */
+const failedCount = (outcome: { readonly kind: string; readonly report?: { readonly checks: readonly { readonly passed: boolean }[] } | null }): number => (outcome.kind === "passed" ? -1 : outcome.report ? outcome.report.checks.filter((check) => !check.passed).length : 99);
+
 /** A level's facts, as code chose them: its What-if, what it measures, and how. */
 const factsKey = (level: PlanLevel): string => `${level.whatIf.parameter}=${level.whatIf.value}|${level.difference.compartment}|${level.difference.summary}`;
 
@@ -154,36 +161,108 @@ async function tier(ctx: TierContext, releasing: () => void): Promise<JobOutcome
   sink.artifact("reading", reading);
   ctx.cancelled();
 
-  // Writing: the module, checked in the sandbox, with at most three fixes the deadline can hold.
-  const writer = modelFor("writer");
-  say("writing", `${writer} writes the paper's mechanism as a module`);
+  // Writing (ADR-0058's second amendment): two writers from different vendors race, each through its
+  // own fix loop; the first module to pass every check wins, and the other is ended. Each call is
+  // read as it arrives: it stops when its module's code closes, and ends early when it is still
+  // planning at half its time, or writes too slowly to finish a module in time.
+  const writers = [{ model: modelFor("writer"), stage: "writer" as const }, ...(input.config.stages["second-writer"] ? [{ model: input.config.stages["second-writer"], stage: "second-writer" as const }] : [])];
+  say("writing", `${writers.map((entry) => entry.model).join(" and ")} ${writers.length > 1 ? "race to write" : "writes"} the paper's mechanism as a module`);
   const writerInput = mechanismWriterInput(text, title, reading, ctx.config.example);
-  const outcome = await writeCheckedMechanism(writerInput, {
-    call: async (messages, round) => {
-      if (round > 0) move("repairing", "writing", `asking ${writer} for fix ${round} of the module`);
-      try {
-        return (await timed("writer", (client) => client.complete({ stage: "writer", model: writer, messages, temperature: 0 }))).text;
-      } finally {
-        // Back to planning whether the reply came or its time ran out, so the next round can repair again.
-        if (round > 0) move("planning", "checks", `fix ${round}'s call has ended`);
+  const results = resultNumbersOf([reading.result.text, reading.result.quote, ...reading.findings.flatMap((finding) => [finding.text, finding.quote])]);
+  const race = new AbortController();
+  const allRounds: Record<string, unknown>[] = [];
+  // A fix round of either writer is a repair; the job is repairing while any is under way.
+  let fixing = 0;
+  const startFix = (who: string, round: number) => {
+    if ((fixing += 1) === 1) move("repairing", "writing", `asking ${who} for fix ${round} of its module`);
+    else say("writing", `asking ${who} for fix ${round} of its module`);
+  };
+  const endFix = () => {
+    if ((fixing -= 1) === 0) move("planning", "checks", "the fix's call has ended");
+  };
+  const pacedCall = async (who: (typeof writers)[number], messages: Parameters<Parameters<typeof writeCheckedMechanism>[1]["call"]>[0]): Promise<string> => {
+    const limit = Math.min(input.deadline?.stageMs[who.stage] ?? Number.POSITIVE_INFINITY, ctx.left());
+    const began = Date.now();
+    let codeAt: number | null = null;
+    let why = "";
+    const pace = new AbortController();
+    const watch = (sofar: string): "stop" | "go" => {
+      const now = Date.now();
+      const open = sofar.indexOf("```");
+      if (open < 0) {
+        if (now - began > PLANNING_SHARE * limit) {
+          why = `its code had not begun after ${seconds(now - began)} of its ${seconds(limit)}`;
+          pace.abort();
+        }
+        return "go";
       }
-    },
-    // A fix begins only if it and the levels after it can still finish: the levels need a few minutes.
-    timeLeft: () => ctx.left() - 4 * 60_000,
-    // The paper's reported results, which a module must compute and never write in.
-    results: resultNumbersOf([reading.result.text, reading.result.quote, ...reading.findings.flatMap((finding) => [finding.text, finding.quote])]),
-    onRound: (round: WriterRound) => {
-      sink.artifact(`mechanism-round-${round.round}`, { round: round.round, writeMs: round.writeMs, checkMs: round.checkMs, checks: round.report?.checks ?? null, stepMs: round.report?.stepMs ?? null, problems: round.problems });
-      const failed = round.report?.checks.filter((check) => !check.passed).map((check) => check.name) ?? ["no module"];
-      say("checks", round.report?.passed ? `the module passes every check: it loads, repeats on a seed, runs across every range, stays finite, responds to its parameters, draws in its ${round.report.manifest?.kit ?? ""} kit, and steps in ${round.report.stepMs?.toFixed(2) ?? "?"} ms` : `round ${round.round}: the module fails ${failed.join(", ")} (${round.problems.split("\n").slice(0, 3).join(" ").slice(0, 300)})`);
-    },
+      codeAt ??= now;
+      const code = sofar.slice(sofar.indexOf("\n", open) + 1);
+      if (/\n```/.test(code) && code.includes("mechanism")) return "stop";
+      if (now - codeAt > 20_000) {
+        const rate = code.length / (now - codeAt);
+        if (now + (MODULE_CHARS - code.length) / Math.max(rate, 1e-6) > began + limit) {
+          why = `at ${Math.round(rate * 1000)} characters a second, its module would not be done within its ${seconds(limit)}`;
+          pace.abort();
+        }
+      }
+      return "go";
+    };
+    try {
+      return (await timed(who.stage, (client) => client.complete({ stage: who.stage, model: who.model, messages, temperature: 0, watch }), AbortSignal.any([pace.signal, race.signal]))).text;
+    } catch (error) {
+      if (pace.signal.aborted && !race.signal.aborted) throw new ModelError("timeout", `ended early: ${why}`);
+      throw error;
+    }
+  };
+  let winner: string | null = null;
+  const attempts = writers.map(async (who) => {
+    const outcome = await writeCheckedMechanism(writerInput, {
+      call: async (messages, round) => {
+        if (round > 0) startFix(who.model, round);
+        try {
+          return await pacedCall(who, messages);
+        } finally {
+          if (round > 0) endFix();
+        }
+      },
+      // A fix begins only if it and the levels after it can still finish: the levels need a few minutes.
+      timeLeft: () => ctx.left() - 4 * 60_000,
+      // The paper's reported results, which a module must compute and never write in.
+      results,
+      writer: who.model,
+      signal: race.signal,
+      onRound: (round: WriterRound) => {
+        const failed = round.report ? round.report.checks.filter((check) => !check.passed).map((check) => check.name) : [round.problems.includes("did not arrive") || round.problems.includes("ended early") ? "time" : "no module"];
+        allRounds.push({ writer: who.model, round: round.round, writeMs: round.writeMs, checkMs: round.checkMs, failed, problems: round.problems.slice(0, 600) });
+        sink.artifact("writer-rounds", allRounds);
+        say("checks", round.report?.passed ? `${who.model}'s module passes every check: it loads, repeats on a seed, runs across every range, stays finite, responds to its parameters, draws in its ${round.report.manifest?.kit ?? ""} kit, and steps in ${round.report.stepMs?.toFixed(2) ?? "?"} ms` : `${who.model}, round ${round.round}: ${failed.join(", ")} (${round.problems.split("\n").slice(0, 2).join(" ").slice(0, 240)})`);
+      },
+    }).catch((error: unknown): WriterOutcome => {
+      // One writer's call failing outright ends that writer, not the race: the other may still pass.
+      if (writers.length === 1 || error instanceof Stop) throw error;
+      const reason = error instanceof Error ? error.message.split("\n")[0] ?? "" : String(error);
+      say("writing", `${who.model} ended: ${reason}`);
+      return { kind: "failed", source: null, report: null, rounds: [], reason };
+    });
+    if (outcome.kind === "passed" && winner === null) {
+      winner = who.model;
+      race.abort();
+    }
+    return { who, outcome };
   });
+  const outcomes = await Promise.all(attempts);
+  const won = outcomes.find((entry) => entry.who.model === winner);
+  const outcome = won?.outcome ?? outcomes.find((entry) => entry.outcome.kind === "refused")?.outcome ?? [...outcomes].sort((a, b) => failedCount(a.outcome) - failedCount(b.outcome))[0]?.outcome;
+  if (!outcome) throw new Stop("failed", "no writer was asked");
+  const writer = won?.who.model ?? outcomes[0]?.who.model ?? "";
   if (outcome.kind === "refused") fallBack(`the writer finds no mechanism a learner could play with: ${outcome.reason}`);
   if (outcome.kind === "failed") {
     if (outcome.source) sink.artifact("mechanism-failed", { source: outcome.source, checks: outcome.report?.checks ?? null });
-    fallBack(`the module still fails its checks: ${outcome.reason}`);
+    fallBack(`the module still fails its checks: ${outcomes.map((entry) => `${entry.who.model}: ${entry.outcome.kind === "failed" ? entry.outcome.reason : entry.outcome.kind}`).join("; ")}`);
   }
-  if (outcome.kind !== "passed") throw new Stop("failed", "the writer's loop ended without a module");
+  if (outcome.kind !== "passed") throw new Stop("failed", "the writers' loops ended without a module");
+  if (writers.length > 1) say("writing", `${writer}'s module passed first; the other writer was ended`);
   const { source, manifest } = outcome;
   const sha256 = createHash("sha256").update(source).digest("hex");
   const module = { sha256, characters: source.length, manifest };

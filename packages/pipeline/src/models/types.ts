@@ -6,7 +6,7 @@
 
 /** The pipeline's stages that call a model, and the probe that tests a model's abilities. */
 /** Every stage a model is chosen for. The second planner and second reviewer, from other vendors, may be left unchosen: a job then has one of each (ADR-0043, ADR-0044). */
-export const STAGES = ["reader", "transcriber", "second-transcriber", "router", "planner", "second-planner", "explainer", "reviewer", "second-reviewer", "writer"] as const;
+export const STAGES = ["reader", "transcriber", "second-transcriber", "router", "planner", "second-planner", "explainer", "reviewer", "second-reviewer", "writer", "second-writer"] as const;
 export type Stage = (typeof STAGES)[number];
 export type CallStage = Stage | "probe";
 
@@ -33,6 +33,12 @@ export interface ChatRequest {
   readonly thinking?: false;
   /** Ends the call when the job's deadline for it passes (ADR-0053); never part of the prompt. */
   readonly signal?: AbortSignal;
+  /**
+   * Reads the reply as it arrives (ADR-0058's second amendment): given its text so far, "stop" ends
+   * the call there, that text its reply, as when a module's code block has closed. Never part of the
+   * prompt; a recording replays its whole reply.
+   */
+  readonly watch?: (text: string) => "stop" | "go";
 }
 
 export interface Usage {

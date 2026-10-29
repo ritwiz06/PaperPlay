@@ -12,7 +12,7 @@ const ModelId = z.string().min(1).max(200);
 
 /** The stages that review a world, and the stages whose work they review: its plans and its words. */
 export const REVIEWERS = ["reviewer", "second-reviewer"] as const satisfies readonly Stage[];
-export const AUTHORS = ["planner", "second-planner", "explainer", "writer"] as const satisfies readonly Stage[];
+export const AUTHORS = ["planner", "second-planner", "explainer", "writer", "second-writer"] as const satisfies readonly Stage[];
 
 /** Models the Voyager portal marks "Testing in progress", which its API does not show: as the owner last saw them. */
 export const Excluded = z.strictObject({

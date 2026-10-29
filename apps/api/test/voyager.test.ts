@@ -97,6 +97,25 @@ describe("[R09] the Voyager gateway's client", () => {
     expect(calls).toHaveLength(2);
   });
 
+  it("shows a streamed reply to its watcher as it arrives, and stops it there when the watcher says so (ADR-0058's second amendment)", async () => {
+    // A stream sent piece by piece, as a gateway sends one: the watcher stops it once a code block closes.
+    const pieces = ["Plan: none.\n```javascript\nconst mechanism = {};", "\n```", "\nAnd a long note after the code that is never read."];
+    let sent = 0;
+    const body = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        const piece = pieces[sent++];
+        if (piece === undefined) return controller.close();
+        controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ model: "model-a", choices: [{ delta: { content: piece } }] })}\n\n`));
+      },
+    });
+    const seen: string[] = [];
+    const { made } = client([new Response(body, { status: 200, headers: { "content-type": "text/event-stream" } })]);
+    const reply = await made.complete({ ...request, watch: (text) => (seen.push(text), /```javascript[\s\S]*\n```/.test(text) ? "stop" : "go") });
+    expect(reply.text).toBe("Plan: none.\n```javascript\nconst mechanism = {};\n```");
+    expect(seen).toEqual(["Plan: none.\n```javascript\nconst mechanism = {};", "Plan: none.\n```javascript\nconst mechanism = {};\n```"]);
+    expect(sent).toBeLessThan(pieces.length + 1);
+  });
+
   it("retries a rate limit and a server's error with exponential backoff, honouring Retry-After", async () => {
     const { made, waits, calls } = client([failure(503, "busy"), failure(429, "slow down", { "retry-after": "3" }), ok(completion("done"))]);
     expect((await made.complete(request)).text).toBe("done");
@@ -178,7 +197,7 @@ describe("[R09] the live client", () => {
     } finally {
       rmSync(folder, { recursive: true, force: true });
     }
-    expect(Object.keys(config.stages).sort()).toEqual(["explainer", "planner", "reader", "reviewer", "router", "second-planner", "second-reviewer", "second-transcriber", "transcriber", "writer"]);
+    expect(Object.keys(config.stages).sort()).toEqual(["explainer", "planner", "reader", "reviewer", "router", "second-planner", "second-reviewer", "second-transcriber", "second-writer", "transcriber", "writer"]);
     expect(config.jobTokenBudget).toBeGreaterThan(0);
   });
 

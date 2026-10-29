@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 import { buildWorld } from "../src/builder/build.ts";
 import { garbledName } from "../src/controller/mechanism.ts";
 import { runJob, type JobSink } from "../src/controller/run.ts";
-import type { ChatRequest, ModelClient } from "../src/models/index.ts";
+import type { ChatRequest, ModelClient, Stage } from "../src/models/index.ts";
 
 // The generated-mechanism tier's job (ADR-0058), on a synthetic paper no family covers, every model
 // reply from a script and the module run for real in its sandbox: the writer's module is checked,
@@ -88,7 +88,7 @@ const written = { ...words, title: "A level", goal: "Move the control and watch.
 const rewritten = { ...words, goal: "Move the control and watch.", whatIf: "What if heat spread at a different rate?", prediction: "Will the other plate differ?", effect: "The What-if differs by more than the claim." };
 
 /** A client for the tier: the writer's modules in turn, the planner choosing the first three candidates it is shown, and the rest scripted. */
-function tierClient(writer: readonly string[], options: { readonly reviewer?: unknown; readonly words?: Partial<typeof written>; readonly reworded?: Partial<typeof rewritten> } = {}) {
+function tierClient(writer: readonly string[], options: { readonly reviewer?: unknown; readonly words?: Partial<typeof written>; readonly reworded?: Partial<typeof rewritten>; readonly second?: readonly string[] } = {}) {
   const calls: ChatRequest[] = [];
   let writes = 0;
   const client: ModelClient = {
@@ -99,6 +99,7 @@ function tierClient(writer: readonly string[], options: { readonly reviewer?: un
       if (request.stage === "router") text = JSON.stringify({ domain: "physics", mechanism: "Heat diffusing on a plate.", family: "none", tier: "C", reason: "No family plays a field's diffusion from papers yet." });
       else if (request.stage === "reader") text = JSON.stringify(reading);
       else if (request.stage === "writer") text = writer[Math.min(writes++, writer.length - 1)] ?? "";
+      else if (request.stage === "second-writer" && options.second) text = options.second[0] ?? "";
       else if (request.stage === "planner" || request.stage === "second-planner") {
         // The hook from its own list when there is one, then the first two of the others, as a planner must.
         const [hooks = "", rest = ""] = content.split("Candidates for levels 2 to 5");
@@ -114,7 +115,7 @@ function tierClient(writer: readonly string[], options: { readonly reviewer?: un
   return { client, calls };
 }
 
-async function run(client: ModelClient, stageMs: Partial<Record<"writer", number>> = {}) {
+async function run(client: ModelClient, stageMs: Partial<Record<Stage, number>> = {}, stages: Partial<Record<Stage, string>> = {}) {
   const events: { state: JobState; step: string; message: string }[] = [];
   const artifacts = new Map<string, unknown>();
   const sink: JobSink = { emit: (state, step, message) => void events.push({ state, step, message }), artifact: (name, value) => void artifacts.set(name, value) };
@@ -122,7 +123,7 @@ async function run(client: ModelClient, stageMs: Partial<Record<"writer", number
     {
       source: { kind: "ingested", text: source, register },
       client,
-      config: { stages: { reader: "m-reader", router: "m-router", planner: "m-planner", explainer: "m-explainer", reviewer: "m-reviewer", writer: "m-writer" }, structuredOutput: {}, planning: "candidates", mechanisms: { example: heat } },
+      config: { stages: { reader: "m-reader", router: "m-router", planner: "m-planner", explainer: "m-explainer", reviewer: "m-reviewer", writer: "m-writer", ...stages }, structuredOutput: {}, planning: "candidates", mechanisms: { example: heat } },
       fetch: () => Promise.reject(new Error("no network")),
       example: "",
       deadline: { jobMs: 60_000, mechanismJobMs: 600_000, stageMs },
@@ -180,8 +181,10 @@ describe("[R08] [R11] the generated-mechanism tier's job (ADR-0058)", () => {
     const never = await run(tierClient([fenced(deaf)]).client);
     expect(never.outcome.state).toBe("unsupported");
     expect(never.outcome.message).toMatch(/still fails its checks.*explainer page, tier C/);
-    expect([0, 1, 2, 3].every((round) => never.artifacts.has(`mechanism-round-${round}`))).toBe(true);
-    expect(never.artifacts.has("mechanism-round-4")).toBe(false);
+    // The first answer and three fixes, each round recorded with the checks it failed, and no fourth fix.
+    const rounds = never.artifacts.get("writer-rounds") as { round: number; failed: string[] }[];
+    expect(rounds.map((round) => round.round)).toEqual([0, 1, 2, 3]);
+    expect(rounds.every((round) => round.failed.includes("responds"))).toBe(true);
     const page = never.artifacts.get("explainer") as { findings: { origin: string; quote: string | null }[]; why: string };
     expect(page.why).toMatch(/still fails its checks/);
     expect(page.findings.map((finding) => finding.origin)).toEqual(["paper-derived", "paper-derived", "paper-derived"]);
@@ -193,8 +196,78 @@ describe("[R08] [R11] the generated-mechanism tier's job (ADR-0058)", () => {
     const { outcome, artifacts } = await run(slow, { writer: 100 });
     expect(outcome.state).toBe("unsupported");
     expect(outcome.message).toMatch(/explainer page, tier C/);
-    expect([0, 1, 2, 3].every((round) => (artifacts.get(`mechanism-round-${round}`) as { problems: string } | undefined)?.problems.includes("did not arrive"))).toBe(true);
+    const rounds = artifacts.get("writer-rounds") as { writer: string; round: number; failed: string[]; problems: string }[];
+    expect(rounds.map((round) => round.round)).toEqual([0, 1, 2, 3]);
+    expect(rounds.every((round) => round.writer === "m-writer" && round.failed[0] === "time" && round.problems.includes("did not arrive"))).toBe(true);
     expect(artifacts.has("explainer")).toBe(true);
+  }, 60_000);
+
+  it("races two writers from different vendors: the first module to pass every check wins, and the other writer is ended (ADR-0058's second amendment)", async () => {
+    const { client } = tierClient([fenced(heat)], { second: [fenced(heat)] });
+    let ended = false;
+    // The first writer would answer only after a long while; the second's module passes first.
+    const racing: ModelClient = {
+      complete: (request) =>
+        request.stage === "writer"
+          ? new Promise((resolve, reject) => {
+              const timer = setTimeout(() => resolve(client.complete(request)), 20_000);
+              request.signal?.addEventListener("abort", () => {
+                clearTimeout(timer);
+                ended = true;
+                reject(new Error("aborted"));
+              });
+            })
+          : client.complete(request),
+    };
+    const { outcome, artifacts, events } = await run(racing, {}, { "second-writer": "m-second" });
+    expect(outcome.state, events.at(-1)?.message).toBe("ready");
+    expect(ended).toBe(true);
+    expect((artifacts.get("mechanism") as { writer: string }).writer).toBe("m-second");
+    expect(events.map((event) => event.message)).toContain("m-second's module passed first; the other writer was ended");
+    expect((artifacts.get("writer-rounds") as { writer: string; failed: string[] }[]).map((round) => [round.writer, round.failed])).toEqual([["m-second", []]]);
+  }, 60_000);
+
+  it("ends a writer early whose code has not begun by half its time, and asks again (ADR-0058's second amendment)", async () => {
+    const { client } = tierClient([fenced(heat)]);
+    let writes = 0;
+    // The first reply streams planning prose and never reaches code; the second is the module.
+    const planning: ModelClient = {
+      complete: (request) =>
+        request.stage === "writer" && writes++ === 0
+          ? new Promise((_, reject) => {
+              let prose = "Plan: ";
+              const timer = setInterval(() => request.watch?.((prose += "first I think about the plate at length. ")), 20);
+              request.signal?.addEventListener("abort", () => {
+                clearInterval(timer);
+                reject(new Error("aborted"));
+              });
+            })
+          : client.complete(request),
+    };
+    const { outcome, artifacts, events } = await run(planning, { writer: 2_000 });
+    expect(outcome.state, events.at(-1)?.message).toBe("ready");
+    const rounds = artifacts.get("writer-rounds") as { writeMs: number; failed: string[]; problems: string }[];
+    expect(rounds[0]?.problems).toMatch(/ended early: its code had not begun after/);
+    expect(rounds[0]?.failed).toEqual(["time"]);
+    expect(rounds[0]?.writeMs).toBeLessThan(1_900);
+    expect(rounds[1]?.failed).toEqual([]);
+  }, 60_000);
+
+  it("asks a router that ran out of time once more, and after a second timeout goes on to the generated tier (ADR-0058's second amendment)", async () => {
+    const { client } = tierClient([fenced(heat)]);
+    let routes = 0;
+    const silent: ModelClient = {
+      complete: (request) => {
+        if (request.stage !== "router") return client.complete(request);
+        routes += 1;
+        return new Promise((_, reject) => request.signal?.addEventListener("abort", () => reject(new Error("aborted"))));
+      },
+    };
+    const { outcome, artifacts, events } = await run(silent, { router: 100 });
+    expect(routes).toBe(2);
+    expect(artifacts.get("route")).toMatchObject({ family: "none", tier: "C" });
+    expect(events.map((event) => event.message).some((message) => message.includes("did not answer in time twice"))).toBe(true);
+    expect(outcome.state, events.at(-1)?.message).toBe("ready");
   }, 60_000);
 
   it("replaces a hook whose What-if a reviewer refuses with the next hook-eligible candidate, never rewording it (ADR-0058's amendment)", async () => {

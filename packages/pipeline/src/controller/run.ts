@@ -189,6 +189,9 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     }
   };
   const outOfTime = (error: unknown): boolean => error instanceof ModelError && error.kind === "timeout";
+  // A reply the schema refused says why on the lines after its first: kept, on one line, so a failed
+  // job's last event names the field that failed, not just "It does not match the schema:".
+  const reasonOf = (message: string): string => (message.includes("\n") ? message.replace(/\s*\n\s*/g, " ").slice(0, 600) : message);
   const settle = <T>(promise: Promise<T>): Promise<{ readonly value: T; readonly error: null } | { readonly value: null; readonly error: unknown }> =>
     promise.then(
       (value) => ({ value, error: null }),
@@ -230,7 +233,23 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
     move("planning", "routing", "deciding which family covers the paper's mechanism");
     const title = register.title;
     const front = text.sections.find((section) => section.title === "Abstract");
-    const routed = await timed("router", (client) => route(client, modelFor("router"), { title, abstract: front ? text.text.slice(front.start, front.end) : text.text.slice(0, 2000), equations: text.equations.slice(0, 6).map((equation) => equation.latex.slice(0, 300)) }, { structuredOutput: structured(modelFor("router")), capabilities: true }));
+    const routeOnce = () => timed("router", (client) => route(client, modelFor("router"), { title, abstract: front ? text.text.slice(front.start, front.end) : text.text.slice(0, 2000), equations: text.equations.slice(0, 6).map((equation) => equation.latex.slice(0, 300)) }, { structuredOutput: structured(modelFor("router")), capabilities: true }));
+    // A router out of time is asked once more; out of time again, no family is assumed, and a job that
+    // can write a mechanism goes on to the generated tier rather than ending (ADR-0058's second amendment).
+    let routed: Awaited<ReturnType<typeof routeOnce>>;
+    try {
+      routed = await routeOnce();
+    } catch (error) {
+      if (!outOfTime(error)) throw error;
+      say("routing", `the router did not answer in time (${error instanceof Error ? error.message : String(error)}); asking it once more`);
+      try {
+        routed = await routeOnce();
+      } catch (again) {
+        if (!outOfTime(again) || !input.config.mechanisms) throw again;
+        say("routing", "the router did not answer in time twice: no family is assumed, and the generated tier writes the paper's mechanism");
+        routed = { value: { domain: "unknown", mechanism: "not routed", family: "none", tier: "C", reason: "The router did not answer in time twice, so no family is assumed." }, attempts: 0 } as unknown as Awaited<ReturnType<typeof routeOnce>>;
+      }
+    }
     sink.artifact("route", routed.value);
     if (routed.value.family !== "compartments" || routed.value.tier !== "A") {
       // No family whose worlds are made from papers covers it: the generated tier writes its mechanism (ADR-0058).
@@ -979,7 +998,7 @@ export async function runJob(input: JobInput, sink: JobSink): Promise<JobOutcome
   } catch (error) {
     // A deadline passed: the job stops rather than run on, and says what is left to play (R13).
     const deadlineWords = (error: unknown): string => `${error instanceof Error ? error.message : String(error)}: the job stops at its deadline of ${seconds(Number.isFinite(jobMs) ? jobMs : 0)} rather than run on; ${released > 0 ? `the ${released} levels released stay playable, checked but not reviewed` : "no level passed its checks in time, so this paper falls back to the explainer page, tier C"}`;
-    const stop = error instanceof Stop ? error : outOfTime(error) && input.deadline ? new Stop("failed", deadlineWords(error)) : new Stop("failed", error instanceof Error ? error.message.split("\n")[0] ?? "" : String(error));
+    const stop = error instanceof Stop ? error : outOfTime(error) && input.deadline ? new Stop("failed", deadlineWords(error)) : new Stop("failed", error instanceof Error ? reasonOf(error.message) : String(error));
     sink.artifact("timing", timing());
     if (state !== stop.state && canMove(state, stop.state)) move(stop.state, "stopped", stop.message);
     else sink.emit(stop.state === "failed" || stop.state === "cancelled" ? stop.state : "failed", "stopped", stop.message);

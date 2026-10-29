@@ -13,6 +13,8 @@ import type { SandboxLimits } from "./sandbox.ts";
 export const FIX_ROUNDS = 3;
 
 export interface WriterRound {
+  /** The model that wrote it, when writers race (ADR-0058's second amendment). */
+  readonly writer?: string;
   /** 0 for the first module, then each fix. */
   readonly round: number;
   /** The writer's call, then the checks, in milliseconds. */
@@ -38,6 +40,9 @@ export interface LoopOptions {
   readonly limits?: SandboxLimits;
   /** The numbers the paper reports as results, which a module must never write in (ADR-0058's amendment). */
   readonly results?: readonly PaperNumber[];
+  /** The writer's name, on each round; and the race it runs in, which ends it once another writer's module passes. */
+  readonly writer?: string;
+  readonly signal?: AbortSignal;
   /** Each round as it ends, for the job's events. */
   readonly onRound?: (round: WriterRound) => void;
 }
@@ -47,7 +52,9 @@ export async function writeCheckedMechanism(input: MechanismWriterInput, options
   const history: { source: string; problems: string }[] = [];
   const fixes = options.fixes ?? FIX_ROUNDS;
   let last: { source: string; report: MechanismReport | null } | null = null;
+  const lost = (): WriterOutcome => ({ kind: "failed", source: last?.source ?? null, report: last?.report ?? null, rounds, reason: "another writer's module passed first" });
   for (let round = 0; round <= fixes; round += 1) {
+    if (options.signal?.aborted) return lost();
     if (round > 0 && options.timeLeft) {
       // A round costs about what the last one did; one that would run past the deadline is not begun.
       const previous = rounds[rounds.length - 1];
@@ -59,9 +66,10 @@ export async function writeCheckedMechanism(input: MechanismWriterInput, options
     try {
       text = await options.call(round === 0 ? mechanismWriterMessages(input) : mechanismFixMessages(input, history), round);
     } catch (error) {
+      if (options.signal?.aborted) return lost();
       // A reply that never came within the call's time is a round lost, not the job: ask again, shorter.
       if (!(error instanceof ModelError) || error.kind !== "timeout") throw error;
-      const entry: WriterRound = { round, writeMs: Date.now() - began, checkMs: 0, report: null, problems: `- your last answer did not arrive within its time (${error.message})` };
+      const entry: WriterRound = { ...(options.writer ? { writer: options.writer } : {}), round, writeMs: Date.now() - began, checkMs: 0, report: null, problems: `- your last answer did not arrive within its time (${error.message})` };
       rounds.push(entry);
       options.onRound?.(entry);
       history.push({ source: "", problems: entry.problems });
@@ -70,12 +78,12 @@ export async function writeCheckedMechanism(input: MechanismWriterInput, options
     const writeMs = Date.now() - began;
     const reply = moduleOf(text);
     if (reply.kind === "refused") {
-      rounds.push({ round, writeMs, checkMs: 0, report: null, problems: `refused: ${reply.reason}` });
+      rounds.push({ ...(options.writer ? { writer: options.writer } : {}), round, writeMs, checkMs: 0, report: null, problems: `refused: ${reply.reason}` });
       options.onRound?.(rounds[rounds.length - 1] as WriterRound);
       return { kind: "refused", reason: reply.reason, rounds };
     }
     if (reply.kind === "unusable") {
-      const entry: WriterRound = { round, writeMs, checkMs: 0, report: null, problems: `- ${reply.problem}` };
+      const entry: WriterRound = { ...(options.writer ? { writer: options.writer } : {}), round, writeMs, checkMs: 0, report: null, problems: `- ${reply.problem}` };
       rounds.push(entry);
       options.onRound?.(entry);
       history.push({ source: text.slice(0, MECHANISM_LIMITS.sourceChars), problems: entry.problems });
@@ -83,7 +91,7 @@ export async function writeCheckedMechanism(input: MechanismWriterInput, options
     }
     const checking = Date.now();
     const report = await checkMechanism(reply.source, options.limits, { results: options.results ?? [] });
-    const entry: WriterRound = { round, writeMs, checkMs: Date.now() - checking, report, problems: feedbackOf(report) };
+    const entry: WriterRound = { ...(options.writer ? { writer: options.writer } : {}), round, writeMs, checkMs: Date.now() - checking, report, problems: feedbackOf(report) };
     rounds.push(entry);
     options.onRound?.(entry);
     last = { source: reply.source, report };

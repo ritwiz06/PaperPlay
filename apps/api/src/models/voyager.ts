@@ -64,7 +64,7 @@ export function voyagerClient(options: VoyagerOptions): VoyagerClient {
   };
 
   /** One HTTP call with a timeout; the gateway's own error text is kept, trimmed, and never holds the key. */
-  async function send(path: string, init: { readonly method: "GET" | "POST"; readonly body?: string; readonly raw?: boolean; readonly signal?: AbortSignal }): Promise<unknown> {
+  async function send(path: string, init: { readonly method: "GET" | "POST"; readonly body?: string; readonly raw?: boolean; readonly signal?: AbortSignal; readonly watch?: ChatRequest["watch"] }): Promise<unknown> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), options.timeoutMs);
     // The job's deadline for the call ends it as the adapter's own timeout does, but is never retried.
@@ -94,7 +94,54 @@ export function voyagerClient(options: VoyagerOptions): VoyagerClient {
       (error as ModelError & { retryAfterMs?: number }).retryAfterMs = retryAfter(response.headers.get("retry-after"));
       throw error;
     }
+    if (init.raw && init.watch && response.body) return read(response.body, init.watch, controller, init.signal);
     return init.raw ? response.text() : response.json();
+  }
+
+  /**
+   * A streamed reply read as it arrives (ADR-0058's second amendment): its content so far shown to
+   * the watcher after each piece, the reading stopped, and the gateway's generation with it, when the
+   * watcher says so or the job's deadline for the call passes. The events read so far are the reply.
+   */
+  async function read(body: ReadableStream<Uint8Array>, watch: NonNullable<ChatRequest["watch"]>, controller: AbortController, deadline: AbortSignal | undefined): Promise<string> {
+    const reader = body.getReader();
+    const decoder = new TextDecoder();
+    let raw = "";
+    let pending = "";
+    let content = "";
+    try {
+      for (;;) {
+        if (deadline?.aborted) throw new ModelError("timeout", "the job's deadline for this call passed while the gateway was answering");
+        const { done, value } = await reader.read();
+        if (done) return raw;
+        const piece = decoder.decode(value, { stream: true });
+        raw += piece;
+        pending += piece;
+        for (let end = pending.indexOf("\n"); end >= 0; end = pending.indexOf("\n")) {
+          const line = pending.slice(0, end).trim();
+          pending = pending.slice(end + 1);
+          const data = line.startsWith("data:") ? line.slice(5).trim() : "";
+          if (data === "" || data === "[DONE]") continue;
+          try {
+            const chunk = JSON.parse(data) as StreamChunk;
+            const text = chunk.choices?.[0]?.delta?.content;
+            if (typeof text === "string") content += text;
+          } catch {
+            // A partial or odd event: completionOf judges the whole reply.
+          }
+        }
+        if (watch(content) === "stop") {
+          controller.abort();
+          return raw;
+        }
+      }
+    } catch (error) {
+      if (error instanceof ModelError) throw error;
+      if (deadline?.aborted) throw new ModelError("timeout", "the job's deadline for this call passed while the gateway was answering");
+      throw new ModelError("network", `the gateway's stream broke: ${error instanceof Error ? error.message : String(error)}`, { retryable: true });
+    } finally {
+      reader.releaseLock();
+    }
   }
 
   /** Tries a call, and again after a backoff while it may still succeed. */
@@ -129,7 +176,7 @@ export function voyagerClient(options: VoyagerOptions): VoyagerClient {
       });
       let reply: CompletionBody;
       try {
-        reply = await withRetries(async () => completionOf((await send("/chat/completions", { method: "POST", body, raw: true, ...(request.signal ? { signal: request.signal } : {}) })) as string, request));
+        reply = await withRetries(async () => completionOf((await send("/chat/completions", { method: "POST", body, raw: true, ...(request.signal ? { signal: request.signal } : {}), ...(request.watch ? { watch: request.watch } : {}) })) as string, request));
       } catch (error) {
         // A gateway that refuses the switch answers 400: that model is asked as before, thinking, from now on.
         if (!(quiet && error instanceof ModelError && error.kind === "http" && error.status === 400)) throw error;
